@@ -2,6 +2,8 @@
 
 [![Dristhi](opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/350338afc9564e5cb44d6fee62fb32f7)](https://www.codacy.com/app/peetldee/opensrp-client-core?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=OpenSRP/opensrp-client-core&amp;utm_campaign=Badge_Grade)
+
 To run this project, you need to do this:
 ========================================
 
