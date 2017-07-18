@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="empty_string"></string>
+    <string name="app_name">OpenSRP</string>
+    <string name="userNameEditText">Enter user name</string>
+    <string name="passwordEditText">Enter password</string>
+    <string name="login_text">Log In</string>
+    <string name="logout_text">Logout</string>
+    <string name="image_description">logo</string>
+    <string name="spacer">spacer</string>
+    <string name="loggin_in_dialog_title">Logging in…</string>
+    <string name="loggin_in_dialog_message">Please wait</string>
+    <string name="login_failed_dialog_title">Log in failed</string>
+    <string name="login_failed_dialog_message">Please check the credentials</string>
+    <string name="form_back_confirm_dialog_message">Are you sure you want to go back? All the data you have entered in
+        this form will be cleared.
+    </string>
+    <string name="form_back_confirm_dialog_title">Confirm form close</string>
+    <string name="yes_button_label">Yes</string>
+    <string name="no_button_label">No</string>
+
+    <string name="home_ec_label">Eligible Couple</string>
+    <string name="home_fp_label">FP</string>
+    <string name="home_anc_label">ANC</string>
+    <string name="home_pnc_label">PNC</string>
+    <string name="home_child_label">Child</string>
+    <string name="home_report_label">Reporting</string>
+    <string name="register_label">Register</string>
+    <string name="home_videos_label">Videos</string>
+
+    <string name="videos_cannot_play_video_dialog_title">Cannot play video.</string>
+    <string name="videos_IEC_not_installed_dialog_message">Please install IEC application to play the videos.
+    </string>
+    <string name="videos_unknown_error_dialog_message">Unable to play video due to technical error.</string>
+    <string name="settings_logout_confirm_title">Confirm Log out</string>
+    <string name="settings_logout_confirm_dialog_message">Are you sure you want to log out? All the data will be
+        cleared.
+    </string>
+    <string name="unsynced_forms_count_message">forms unsynced</string>
+
+    <string name="str_next">"Next &gt;&gt;"</string>
+    <string name="str_previous">"&lt;&lt; Previous"</string>
+    <string name="str_page_info">Page {0} of {1}</string>
+
+    <string name="header_name">NAME</string>
+    <string name="header_ec_no">EC NO.</string>
+    <string name="header_gplsa">GPLSA</string>
+    <string name="header_fp">FP METHOD</string>
+    <string name="header_children">CHILDREN</string>
+    <string name="header_status">STATUS</string>
+    <string name="header_edit"></string>
+
+    <string name="couple_selection">All Eligible Couples</string>
+    <string name="str_ec_search_hint">Search</string>
+    <string name="str_fp_search_hint">Search FP Register</string>
+    <string name="str_pnc_search_hint">Search PNC Register</string>
+    <string name="str_child_search_hint">Search Child Register</string>
+    <string name="label_sorted_by">Sorted By:</string>
+    <string name="label_village">, Village:</string>
+    <string name="ec_register_wife_age">({0})</string>
+
+    <string name="ec_register_male_child">Male\n{0}</string>
+    <string name="ec_register_female_child">Female\n{0}</string>
+    <string name="ec_register_no_fp">No FP</string>
+
+    <string name="status_delivery">Delivery:</string>
+    <string name="str_lmp">LMP:</string>
+    <string name="str_edd">EDD:</string>
+    <string name="str_anc">ANC</string>
+    <string name="str_pnc">PNC</string>
+    <string name="str_fp">FP</string>
+    <string name="str_number_of_strips">No. strips:</string>
+    <string name="str_number_given">No. Given:</string>
+    <string name="str_gravida">G</string>
+    <string name="str_parity">P</string>
+    <string name="str_number_of_living_children">L</string>
+    <string name="str_number_of_still_births">S</string>
+    <string name="str_number_of_abortions">A</string>
+
+    <string name="str_out_of_area">(O/A)</string>
+
+    <string name="sort_by_name_label">Name (A to Z)</string>
+    <string name="sort_by_name_label_reverse">Name (Z to A)</string>
+    <string name="sort_by_ec_number_label">EC Number</string>
+    <string name="sort_by_date_of_delivery_label">Date of Delivery</string>
+    <string name="sort_by_sc_label">SC</string>
+    <string name="sort_by_st_label">ST</string>
+    <string name="sort_by_high_priority_label">High Priority (HP)</string>
+    <string name="sort_by_high_risk_pregnancy_label">HRP</string>
+    <string name="sort_by_high_risk_label">High Risk (HR)</string>
+    <string name="sort_by_bpl_label">BPL</string>
+
+    <string name="filter_by_all_label">All</string>
+    <string name="filter_by_out_of_area_label">O/A</string>
+    <string name="filter_by_leave_the_place_label">L/P</string>
+    <string name="ec_register_title_in_short">EC</string>
+
+    <string name="str_register_anc_form">Register ANC</string>
+    <string name="str_register_fp_form">Register FP</string>
+    <string name="str_register_child_form">Register Child</string>
+    <string name="str_fp_change_form">FP Change</string>
+    <string name="str_fp_change_fp_form">Change FP</string>
+    <string name="str_record_ecp_form">Record ECP</string>
+    <string name="str_edit_ec_form">Edit EC</string>
+    <string name="str_close_ec_form">Close EC</string>
+    <string name="report_month_sample_text">26/03 - 25/04</string>
+    <string name="str_switch_language">Switch Language</string>
+
+    <string name="str_register_anc_visit_form">ANC Visit</string>
+    <string name="str_register_hb_test_form">Hb Test</string>
+    <string name="str_register_ifa_form">IFA</string>
+    <string name="str_register_tt_form">TT</string>
+    <string name="str_register_delivery_plan_form">Delivery Plan</string>
+    <string name="str_register_pnc_registration_form">PNC Registration</string>
+    <string name="str_register_anc_investigations_form">ANC Investigations</string>
+    <string name="str_register_anc_close_form">ANC Close</string>
+
+    <string name="str_reporting">Reporting</string>
+    <string name="str_videos">Videos</string>
+
+    <string name="child_register_title_in_short">Child:</string>
+    <string name="child_service_mode_overview">Overview</string>
+    <string name="child_service_mode_immunization_0_to_9">Immunization 0-9</string>
+    <string name="child_service_mode_immunization_9_plus">Immunization 9+</string>
+    <string name="header_id_no">ID NO</string>
+    <string name="header_dob">DOB</string>
+    <string name="header_sick_status">SICK STATUS</string>
+    <string name="header_last_service">LAST SERVICE</string>
+    <string name="header_bcg">BCG</string>
+    <string name="header_hep_b_birth">HEP B BIRTH</string>
+    <string name="header_opv">OPV</string>
+    <string name="header_pentavalent">PENTAVALENT</string>
+    <string name="header_measles">MEASLES</string>
+    <string name="header_opv_booster">OPV BOOSTER</string>
+    <string name="header_dpt_booster">DPT BOOSTER</string>
+    <string name="header_vitamin_a">VITAMIN A</string>
+    <string name="thayi_label">Thayi:</string>
+    <string name="mother_ec_label">Mother EC:</string>
+    <string name="sort_by_child_age">Age</string>
+    <string name="sort_by_child_hr">HR</string>
+    <string name="str_child_immunizations">Child Immunizations</string>
+    <string name="str_child_illness">Child Illness</string>
+    <string name="str_child_close">Child Close</string>
+    <string name="str_vitamin_a">Vitamin A</string>
+    <string name="service_type_pnc">PNC</string>
+    <string name="service_type_pentavalent_2">Pentavalent 2</string>
+    <string name="service_type_bcg">BCG</string>
+    <string name="service_type_pentavalent_3">Pentavalent 3</string>
+    <string name="service_type_pentavalent_1">Pentavalent 1</string>
+    <string name="service_type_opv_0">OPV 0</string>
+    <string name="service_type_opv_1">OPV 1</string>
+    <string name="service_type_opv_2">OPV 2</string>
+    <string name="service_type_opv_3">OPV 3</string>
+    <string name="service_type_dpt_booster_1">DPT Boost. 1</string>
+    <string name="service_type_dpt_booster_2">DPT Boost. 2</string>
+    <string name="service_type_opv_booster">OPV Boost</string>
+    <string name="service_type_measles">Measles</string>
+    <string name="service_type_measles_booster">Measles Booster</string>
+    <string name="service_type_measles_booster_short">Measles B</string>
+    <string name="service_type_hepb_0">Hep B</string>
+    <string name="service_type_je">JE</string>
+    <string name="service_type_mmr">MMR</string>
+    <string name="service_type_vitamin_a">Vitamin A</string>
+    <string name="service_type_illness_visit">Illness Visit</string>
+    <string name="service_type_empty"/>
+    <string name="sick_visit">Sick Visit</string>
+    <string name="illness_report"><b>Illness Report:</b> %s</string>
+    <string name="illness_date">Date:</string>
+    <string name="str_bcg">BCG</string>
+    <string name="str_bcg_on">On</string>
+    <string name="hep_b_birth">Hep B</string>
+    <string name="opv">OPV</string>
+    <string name="tt">TT</string>
+    <string name="ifa">IFA</string>
+    <string name="pentavalent">Pentavalent</string>
+    <string name="measles">Measles</string>
+    <string name="opv_booster">OPV Booster</string>
+    <string name="dpt_booster">DPT Booster</string>
+    <string name="vitamin_a">Vitamin A</string>
+    <string name="service_type_pentavalent_1_short">Pentav 1</string>
+    <string name="service_type_pentavalent_2_short">Pentav 2</string>
+    <string name="service_type_pentavalent_3_short">Pentav 3</string>
+    <string name="service_type_dpt_booster_1_short">DPT B1</string>
+    <string name="service_type_dpt_booster_2_short">DPT B2</string>
+    <string name="pentavalent_short">Pentav</string>
+
+    <string name="fp_register_title_in_short">FP:</string>
+    <string name="pnc_register_title_in_short">PNC:</string>
+    <string name="header_method">METHOD</string>
+    <string name="header_side_effects">SIDE EFFECTS</string>
+    <string name="header_followup_refill">FOLLOW UP/REFILL</string>
+    <string name="header_fp_prioritization_risks">RISKS</string>
+    <string name="fp_register_service_mode_all_methods">All Methods</string>
+    <string name="fp_register_service_mode_condom">Condom</string>
+    <string name="fp_register_service_mode_dmpa">DMPA/Injectable</string>
+    <string name="fp_register_service_mode_iucd">IUCD</string>
+    <string name="fp_register_service_mode_ocp">OCP</string>
+    <string name="fp_register_service_mode_female_sterilization">Female Sterilization</string>
+    <string name="fp_register_service_mode_male_sterilization">Male Sterilization</string>
+    <string name="fp_register_service_mode_others">Others</string>
+
+    <string name="fp_register_service_mode_ecp">ECP</string>
+    <string name="fp_register_service_mode_traditional">Traditional Methods</string>
+    <string name="fp_register_service_mode_lam">LAM</string>
+    <string name="fp_register_service_mode_centchroman">Centchroman</string>
+    <string name="fp_register_service_mode_none_ps">None - PS</string>
+    <string name="fp_register_service_mode_none_ss">None - SS</string>
+
+    <string name="fp_prioritization_all_ec_service_mode">All EC</string>
+    <string name="fp_prioritization_high_priority_service_mode">High Priority (HP)</string>
+    <string name="fp_prioritization_two_plus_children_service_mode">2+ Children</string>
+    <string name="fp_prioritization_one_child_service_mode">1 Child</string>
+    <string name="fp_register_child_details">Child:</string>
+    <string name="str_due">"Due "</string>
+    <string name="fp_methods">FP Methods</string>
+    <string name="fp_prioritization">FP Prioritization</string>
+    <string name="fp_prioritization_add_fp">Add FP</string>
+    <string name="fp_prioritization_fp_videos">FP Videos</string>
+
+    <string name="header_thayi_number">THAYI NO.</string>
+    <string name="header_delivery_info">DELIVERY INFO</string>
+    <string name="header_delivery_complications">COMPLICATIONS</string>
+    <string name="header_pp_fp">PP FP</string>
+    <string name="header_child">CHILD</string>
+    <string name="header_days_pp">DAYS PP</string>
+    <string name="header_first_seven_days">FIRST 7 DAYS</string>
+    <string name="header_pnc_visits">PNC VISITS</string>
+
+    <string name="pnc_register_service_mode_overview">Overview</string>
+    <string name="pnc_register_service_mode_pnc_visits">PNC Visits</string>
+
+    <string name="str_pnc_visit_form">PNC Visit</string>
+    <string name="str_pnc_postpartum_family_planning_form">Postpartum family planning</string>
+    <string name="str_pnc_close_form">PNC Close</string>
+
+    <string name="str_referred">Referred</string>
+    <string name="str_referral">referral</string>
+    <string name="str_follow_up">follow-up</string>
+    <string name="str_refill">refill</string>
+    <string name="str_update">Update</string>
+    <string name="str_side_effects">Side Effects</string>
+
+    <string name="anc_label">ANC:</string>
+    <string name="hb_test_label">Hb Test</string>
+    <string name="edd_label">"EDD: "</string>
+    <string name="str_days_past_due">day (s) past due</string>
+    <string name="lmp_label">LMP:</string>
+    <string name="str_weeks">weeks</string>
+    <string name="anc_register_title_in_short">ANC:</string>
+    <string name="str_bp">BP</string>
+    <string name="str_weight">Wt.</string>
+    <string name="str_anc_search_hint">Search ANC Register</string>
+    <string name="anc_service_mode_overview">Overview</string>
+    <string name="anc_service_mode_anc_visits">ANC Visits</string>
+    <string name="anc_service_mode_tt">TT</string>
+    <string name="anc_service_mode_hb_ifa">Hb/IFA</string>
+    <string name="anc_service_mode_delivery_plan">Delivery Plan</string>
+    <string name="anc_service_mode_hb_unit">" g/dl</string>
+    <string name="anc_service_mode_ifa_tablets">" Tablets</string>
+    <string name="header_id">ID</string>
+    <string name="header_anc_status">ANC STATUS</string>
+    <string name="header_risk_factors">RISK FACTORS</string>
+    <string name="header_anc_1">ANC1</string>
+    <string name="header_anc_2">ANC2</string>
+    <string name="header_anc_3">ANC3</string>
+    <string name="header_anc_4">ANC4</string>
+    <string name="header_other">Other</string>
+    <string name="header_visits">VISITS</string>
+    <string name="header_tt">TT</string>
+    <string name="header_tt_1">TT 1</string>
+    <string name="header_tt_2">TT 2</string>
+    <string name="header_tt_booster">TT Booster</string>
+    <string name="header_ifa">IFA</string>
+    <string name="header_hb">HB</string>
+    <string name="header_delivery_plan">DELIVERY PLAN</string>
+    <string name="str_delivery_at">Delivery At</string>
+    <string name="str_transport">Transport:</string>
+    <string name="str_has_companion">Has companion:</string>
+    <string name="str_asha">Asha:</string>
+    <string name="str_contact">Contact:</string>
+    <string name="str_risks_reviewed">Risks reviewed:</string>
+    <string name="sort_by_edd_label">EDD</string>
+
+    <string name="str_pnc_delivery_date">Date:</string>
+    <string name="str_pnc_delivery_place">Place:</string>
+    <string name="str_pnc_delivery_type">Type:</string>
+    <string name="str_pp_fp">PP FP</string>
+    <string name="str_pnc_child_weight">Wt: %1$s kg</string>
+    <string name="str_pnc_dob_label">DOB:</string>
+
+    <string name="str_pnc_clause">PNC</string>
+    <string name="str_pnc_circle_type_expected">expected</string>
+    <string name="str_pnc_circle_type_actual">actual</string>
+    <string name="str_pnc_circle_status_done">done</string>
+    <string name="str_pnc_circle_status_missed">missed</string>
+    <string name="str_pnc_circle_color_yellow">yellow</string>
+    <string name="str_pnc_circle_color_green">green</string>
+    <string name="str_pnc_circle_color_red">red</string>
+    <string name="str_child_illness_ari">ari</string>
+    <string name="str_child_illness_sam">sam</string>
+    <string name="str_pnc_visit_button_label">PNC Visit</string>
+
+
+    <string name="ic_check_circle_blank">&#xe03e;</string>
+    <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
+    <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
+    <string name="ic_keyboard_arrow_right">&#xe0c7;</string>
+    <string name="ic_keyboard_arrow_up">&#xe0c8;</string>
+
+    <string name="event_fields_extractor">{       \"obs\": [         {\"name\":\"father_name\"}       ],       \"attributes\" : [         {\"name\":\"voided\"},{\"name\":\"providerId\"}       ]     }</string>
+    <string name="client_fields_extractor">{       \"property\": [         {\"name\":\"father_name\"}       ],       \"attributes\" : [        ]     }</string>
+    <string name="string_global">Global</string>
+    <string name="str_provider_profile">Profile</string>
+    <string name="device_time_ok">This device\'s time is correct</string>
+    <string name="timezone_mismatch">Please change timezone to \'%1$s\' in the device settings before logging in</string>
+    <string name="time_mismatch">This device\'s time seems to be wrong. Please correct it before continuing</string>
+    <string name="time_error">Couldn\'t determine if this device\'s time is correct</string>
+</resources>

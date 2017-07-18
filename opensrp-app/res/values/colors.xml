@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="light_blue">#1a93d2</color>
+
+    <color name="smart_register_client_divider_color">#d9d9d9</color>
+    <color name="status_bar_background_dark_grey">#494949</color>
+    <color name="status_bar_text_almost_white">#f5f5f5</color>
+    <color name="text_black">#333333</color>
+    <color name="text_blue">#389cc8</color>
+    <color name="client_list_header_dark_grey">#e6e6e6</color>
+    <color name="smart_register_blue">#389cc8</color>
+
+    <color name="transparent_gray">#44ffffff</color>
+    <color name="transparent_blue">#44389cc8</color>
+    <color name="transparent_blue_for_edit_button">#bb389cc8</color>
+    <color name="dialog_option_color">#1a1a1a</color>
+    <color name="client_list_header_text_color">#424242</color>
+
+    <color name="alert_upcoming_light_blue">#cae2ed</color>
+    <color name="alert_urgent_red">#f04646</color>
+    <color name="alert_in_progress_blue">#389cc8</color>
+    <color name="alert_complete_green">#25aa4a</color>
+
+    <color name="pnc_pp_fp_grey">#f5f5f5</color>
+
+    <color name="pnc_circle_yellow">#EDCA00</color>
+    <color name="pnc_circle_red">#d13f3f</color>
+    <color name="pnc_circle_green">#25aa4a</color>
+
+    <color name="hb_level_normal">#43ae23</color>
+    <color name="hb_level_dangerous">#d13f3f</color>
+    <color name="hb_level_high">#edca00</color>
+    <color name="transparent">#00000000</color>
+
+</resources>

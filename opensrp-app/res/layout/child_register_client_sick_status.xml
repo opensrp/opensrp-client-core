@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/btn_sick_visit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="@string/sick_visit"
+            android:layout_margin="5dp"
+            android:background="@color/status_bar_text_almost_white"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <RelativeLayout
+            android:id="@+id/sick_details_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_illness"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                style="@style/CustomFontTextViewStyle.ListView.Normal.TwoLine"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/lbl_illness_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/txt_illness"
+                android:text="@string/illness_date"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_illness_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/txt_illness"
+                android:layout_toRightOf="@id/lbl_illness_date"
+                style="@style/CustomFontTextViewStyle.ListView.Normal.TwoLine"/>
+    </RelativeLayout>
+</FrameLayout>

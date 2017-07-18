@@ -1,0 +1,77 @@
+<div id="method" class="span4 line-right full-height span-no-margin width-without-margins span-content">
+    <div class="row-fluid full-height">
+        <div class="span8 full-height">
+            <span class="text-bold">{{client.fp_method | fpMethodName:ecsWithFPMethodServiceModeOptions.options }}</span>
+            <br/>
+            <span>{{client.family_planning_method_change_date | date:'dd/MM/yy'}}</span>
+            <br/>
+            <ng:switch on="client.fp_method">
+                <span ng-switch-when="iud">
+                    <span>{{client.iudPlace | uppercase}}</span>
+                    <span ng-if="client.iudPlace">, </span>
+                    <span>{{client.iudPerson | uppercase}}</span>
+                </span>
+                <span ng-switch-when="ocp" ng-if="client.numberOfOCPDelivered">No. strips: {{client.numberOfOCPDelivered}}</span>
+                <span ng-switch-when="condom" ng-if="client.numberOfCondomsSupplied">No. given: {{client.numberOfCondomsSupplied}}</span>
+                <span ng-switch-when="centchroman" ng-if="client.numberOfCentchromanPillsDelivered">No. strips: {{client.numberOfCentchromanPillsDelivered}}</span>
+            </ng:switch>
+        </div>
+        <div class="span4 full-height">
+            <button class="btn btn-done btn-sr btn-new-form full-height"
+                    ng-click="openFPChangeModal(client.entityId)"><span>Update</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div id="sideeffects" class="span4 full-height span-no-margin width-without-margins span-content line-right">
+    <div class="row-fluid full-height">
+        <div class="span8 full-height">
+            <span ng-if="client.complication_date" class="text-bold">
+                {{client.complication_date}}
+                <br/>
+            </span>
+            <ng-switch on="client.refill_follow_ups.type">
+                <span ng-switch-when="referral" class="text-past-due text-bold"><i class="icon-warning-sign"></i> Referred</span>
+                <span ng-switch-default>{{getSideEffect(client) | camelCase | commaSeparated | humanize}}</span>
+            </ng-switch>
+        </div>
+        <div class="span4 full-height">
+            <button class="btn btn-done btn-sr btn-new-form full-height"
+                    ng-click="openForm('fp_complications', client.entityId)"><span>Side Effects</span>
+            </button>
+        </div>
+    </div>
+</div>
+<div id="followUpAndRefill" class="span4 full-height span-no-margin width-without-margins span-content"
+     ng-if="client.refill_follow_ups">
+    <div class="row-fluid full-height">
+        <div class="span12 full-height">
+            <ng:switch on="client.refill_follow_ups.type">
+                <button ng-switch-when="follow-up"
+                        class="btn btn-primary btn-block full-height text-align-left"
+                        ng-class="client.alerts[client.refill_follow_ups.alert_index].status"
+                        ng-click="openForm('fp_followup', client.entityId, {'entityId': client.entityId, 'alertName': client.alerts[client.refill_follow_ups.alert_index].name})">
+                    <span class="text-bold">Follow Up</span>
+                    <br/>
+                    <span>due {{client.alerts[client.refill_follow_ups.alert_index].date | date:'dd/MM'}}</span>
+                </button>
+                <button ng-switch-when="refill"
+                        class="btn btn-primary btn-block full-height text-align-left"
+                        ng-class="client.alerts[client.refill_follow_ups.alert_index].status"
+                        ng-click="openForm('renew_fp_product', client.entityId, {'entityId': client.entityId, 'alertName': client.alerts[client.refill_follow_ups.alert_index].name})">
+                    <span class="text-bold">Refill</span>
+                    <br/>
+                    <span>due {{client.alerts[client.refill_follow_ups.alert_index].date | date:'dd/MM'}}</span>
+                </button>
+                <button ng-switch-when="referral"
+                        class="btn btn-primary btn-block full-height text-align-left"
+                        ng-class="client.alerts[client.refill_follow_ups.alert_index].status"
+                        ng-click="openForm('fp_referral_followup', client.entityId, {'entityId': client.entityId, 'alertName': client.alerts[client.refill_follow_ups.alert_index].name})">
+                    <span class="text-bold">Referral Follow Up</span>
+                    <br/>
+                    <span>due {{client.alerts[client.refill_follow_ups.alert_index].date | date:'dd/MM'}}</span>
+                </button>
+            </ng:switch>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,200 @@
+
+description = 'opensrp-app - Application'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:1.2.3"
+        classpath 'org.apache.commons:commons-lang3:3.3.2'
+        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+apply plugin: 'org.robolectric'
+
+android {
+    compileSdkVersion androidCompileSdkVersion
+    buildToolsVersion androidBuildToolsVersion
+
+    signingConfigs {
+        config {
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+            storeFile file("$rootDir/assets/security/debug.keystore")
+            storePassword 'android'
+        }
+    }
+
+    buildTypes {
+        debug {
+            minifyEnabled false
+            debuggable true
+            testCoverageEnabled = true
+            signingConfig signingConfigs.config
+            zipAlignEnabled true
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    defaultConfig {
+        // Enabling multidex support.
+        multiDexEnabled true
+        //applicationId "org.ei.opensrp"
+        minSdkVersion 16
+        targetSdkVersion 21
+        versionCode 1
+        versionName "3.0.1"
+        testInstrumentationRunner "android.test.InstrumentationTestRunner"
+    }
+
+    sourceSets {
+        main {
+            manifest.srcFile 'AndroidManifest.xml'
+            java.srcDir 'src/main/java'
+            res.srcDirs = ['res']
+            assets.srcDir 'assets'
+            jniLibs.srcDirs 'src/main/native'
+            resources.srcDir 'resources'
+        }
+        androidTest.setRoot('src/androidTest')
+    }
+
+
+    aaptOptions {
+        noCompress 'apk'
+    }
+
+    // avoid errors with message 'Duplicate files copied in APK ...'
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+    }
+}
+
+def filesToCopy = copySpec{
+    from "${projectDir}/src/test/resources"
+}
+
+task copyTestResources() {
+    def path = "${buildDir}/intermediates/classes/test"
+    def paths = [ "${path}/debug", "${path}/release"]
+    paths.each { dest ->
+        copy {
+            with filesToCopy
+            into dest
+        }
+    }
+}
+
+assembleDebug.dependsOn(copyTestResources)
+
+configurations.all {
+    resolutionStrategy.force 'commons-codec:commons-codec:1.10'
+}
+
+dependencies {
+    compile 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
+    compile 'com.android.support:multidex:1.0.0'
+    compile 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
+    compile 'com.android.support:appcompat-v7:21.0.3'
+    compile "org.apache.httpcomponents:httpmime:4.2.3"
+    compile 'com.google.code.gson:gson:2.3'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.1.1'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
+    compile group: 'com.google.guava', name: 'guava', version:'15.0'
+    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+    compile 'org.apache.commons:commons-lang3:3.2'
+    compile 'org.mozilla:rhino:1.7R4'
+    compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
+    compile 'joda-time:joda-time:2.3'
+    compile 'com.github.bmelnychuk:atv:1.2.+'
+    compile 'com.github.johnkil.print:print:1.2.3'
+    compile 'ch.acra:acra:4.5.0'
+
+    compile 'com.google.guava:guava:18.0'
+    compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'com.cloudant:cloudant-http:2.7.0'
+
+}
+
+dependencies {
+    androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3'
+    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
+    androidTestCompile 'junit:junit:4.11'
+
+    testCompile group: 'com.google.android', name: 'android-test', version:'4.1.1.4'
+    testCompile 'junit:junit:4.11'
+    testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
+    testCompile 'org.mockito:mockito-core:1.9.5'
+    testCompile('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
+    testCompile 'org.robolectric:robolectric:2.4'
+}
+task clearJar(type: Delete) {
+    delete 'build/libs/myCompiledLibrary.jar'
+}
+
+task makeJar(type: Copy) {
+    from('build/intermediates/bundles/release/')
+    into('build/libs/')
+    include('classes.jar')
+    rename ('classes.jar', 'myCompiledLibrary.jar')
+}
+
+makeJar.dependsOn(clearJar, build)
+
+import org.apache.commons.lang3.StringUtils
+gradle.projectsEvaluated {
+    def variants = android.libraryVariants.collect()
+
+    tasks.withType(Test) { task ->
+        try {
+            variants.each { variant ->
+                def buildTypeName = variant.buildType.name.capitalize()
+
+                def productFlavorNames = variant.productFlavors.collect { it.name.capitalize() }
+                if (productFlavorNames.isEmpty()) {
+                    productFlavorNames = [""]
+                }
+                def productFlavorName = productFlavorNames.join('')
+
+                def variationName = "${productFlavorName}${buildTypeName}"
+
+                if (task.name.contains(variationName)) {
+                    def variationPath = variant.buildType.name;
+
+                    if (StringUtils.isNotEmpty(productFlavorName)) {
+                        variationPath = StringUtils.uncapitalize(productFlavorName) + "/" + variationPath
+                    }
+
+                    def copyResourcesTask = project.tasks.create("copy${variationName}Resources", Copy)
+                    copyResourcesTask.from("${projectDir}/src/test/resources")
+                    copyResourcesTask.into("${buildDir}/intermediates/classes/test/${variationPath}")
+
+                    task.dependsOn(copyResourcesTask)
+
+                    variants.remove(variant)
+
+                    throw new Exception("Break") // Breaking the loop
+                }
+            }
+        } catch (Exception e) {} // Just drop the exception
+    }
+
+}

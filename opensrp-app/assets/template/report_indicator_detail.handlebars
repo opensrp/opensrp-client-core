@@ -1,0 +1,39 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <ul class="area-full nav pull-left">
+            <li class="area-8_0">
+                <div class="navbar-header ellipsis">{{categoryDescription}}</div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="content">
+    <div class="registry-container container-fluid">
+        <div class="big-text-black">{{description}}</div>
+        <table class="table table-bordered indicator-report">
+            <tbody>
+            {{#each monthlySummaries}}
+            <tr class="indicator-monthly-report" data-month="{{month}}">
+                <td>
+                    <div class="report-medium">{{../annualTarget}}</div>
+                    <div class="meta-summary-text">Target</div>
+                </td>
+                <td>
+                    <div class="report-medium text-blue">{{currentProgress}}</div>
+                    <div class="meta-summary-text">{{monthName month}} '{{shortYear year}}</div>
+                </td>
+                <td>
+                    <div class="report-medium text-blue">{{aggregatedProgress}}</div>
+                    <div class="meta-summary-text">Total</div>
+                </td>
+                <td>
+                    <div class="report-medium text-green">{{percentage aggregatedProgress ../annualTarget}}</div>
+                    <div class="meta-summary-text">Percent</div>
+                </td>
+            </tr>
+            {{/each}}
+            </tbody>
+        </table>
+    </div>
+</div>

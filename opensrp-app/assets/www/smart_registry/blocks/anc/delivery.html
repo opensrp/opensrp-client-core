@@ -1,0 +1,85 @@
+<div class="span7 full-height width-without-margins span-no-margin">
+    <div ng-if="client.visits.delivery_plan.next && client.visits.delivery_plan.next.status !== 'complete'"
+         class="row-fluid full-height">
+        <div class="span12 line-right full-height width-without-margins span-no-margin span-content">
+            <!--VISITS-->
+            <button class="btn btn-primary btn-sr full-height"
+                    ng-class="client.visits.delivery_plan.next.status"
+                    ng-click="openForm('delivery_plan', client.entityId, {'entityId': client.entityId, 'alertName': 'Delivery Plan'});closeECFormModal();">
+                <span class="text-bold">Delivery Plan</span>
+                <br/>
+                <span>Due {{client.visits.delivery_plan.next.visit_date}}</span>
+            </button>
+        </div>
+    </div>
+    <div ng-if="(!client.visits.delivery_plan.next || client.visits.delivery_plan.next.status==='complete') && client.visits.delivery_plan['Delivery Plan']"
+         class="row-fluid full-height">
+        <div class="span2 line-right full-height width-without-margins span-no-margin span-content">
+            <i class="icon-bigger icon-block"
+               ng-class="{'icon-ok green': client.visits.delivery_plan['Delivery Plan'].data.deliveryFacilityName != null,
+                       'icon-remove red': client.visits.delivery_plan['Delivery Plan'].data.deliveryFacilityName == null}"></i>
+            <span>Delivery At:</span>
+            <br/>
+            <ng:switch on="client.visits.delivery_plan['Delivery Plan'].data.deliveryFacilityName">
+                <span ng-switch-when="client.visits.delivery_plan['Delivery Plan'].data.deliveryFacilityName"
+                      class="delivery-plan-info ellipsis">
+                    {{client.visits.delivery_plan['Delivery Plan'].data.deliveryFacilityName}}</span>
+                <span ng-switch-default>none</span>
+            </ng:switch>
+        </div>
+        <div class="span2 line-right full-height width-without-margins span-no-margin span-content">
+            <i class="icon-bigger icon-block"
+               ng-class="{'icon-ok green': client.visits.delivery_plan['Delivery Plan'].data.transportationPlan != null,
+                       'icon-remove red': client.visits.delivery_plan['Delivery Plan'].data.transportationPlan == null}"></i>
+            <span>Transport:</span>
+            <br/>
+            <ng:switch on="client.visits.delivery_plan['Delivery Plan'].data.transportationPlan">
+                <span ng-switch-default class="">none</span>
+                <span ng-switch-when="client.visits.delivery_plan['Delivery Plan'].data.transportationPlan"
+                      class="delivery-plan-info ellipsis">{{client.visits.delivery_plan['Delivery Plan'].data.transportationPlan | humanize}}</span>
+            </ng:switch>
+        </div>
+        <div class="span2 line-right full-height width-without-margins span-no-margin span-content">
+            <i class="icon-bigger icon-block"
+               ng-class="{'icon-ok green': client.visits.delivery_plan['Delivery Plan'].data.birthCompanion != null,
+                       'icon-remove red': client.visits.delivery_plan['Delivery Plan'].data.birthCompanion == null}"></i>
+            <ng:switch on="client.visits.delivery_plan['Delivery Plan'].data.birthCompanion">
+                <span ng-switch-when="null" class="">No companion</span>
+                <span ng-switch-default>Has companion</span>
+            </ng:switch>
+        </div>
+        <div class="span2 line-right full-height width-without-margins span-no-margin span-content">
+            <i class="icon-bigger icon-block"
+               ng-class="{'icon-ok green': client.ashaPhoneNumber != null,
+                       'icon-remove red': client.ashaPhoneNumber == null}"></i>
+            <span>ASHA:</span>
+            <br/>
+            <ng:switch on="client.ashaPhoneNumber">
+                <span ng-switch-when="client.ashaPhoneNumber" class="">{{client.ashaPhoneNumber}}</span>
+                <span ng-switch-default>none</span>
+            </ng:switch>
+        </div>
+        <div class="span2 line-right full-height width-without-margins span-no-margin span-content">
+            <i class="icon-bigger icon-block"
+               ng-class="{'icon-ok green': client.visits.delivery_plan['Delivery Plan'].data.phoneNumber != null,
+                       'icon-remove red': client.visits.delivery_plan['Delivery Plan'].data.phoneNumber == null}"></i>
+            <span>Contact:</span>
+            <ng:switch on="client.visits.delivery_plan['Delivery Plan'].data.phoneNumber">
+                <span ng-switch-default class="">none</span>
+                <span ng-switch-when ="client.visits.delivery_plan['Delivery Plan'].data.phoneNumber" >
+                    {{client.visits.delivery_plan['Delivery Plan'].data.phoneNumber}}</span>
+            </ng:switch>
+        </div>
+        <div class="span2 line-right full-height width-without-margins span-no-margin span-content">
+            <i class="icon-bigger icon-block"
+               ng-class="{'icon-ok green': client.visits.delivery_plan['Delivery Plan'].data.reviewedHRPStatus != null,
+                       'icon-remove red': client.visits.delivery_plan['Delivery Plan'].data.reviewedHRPStatus == null}"></i>
+            <ng:switch on="client.visits.delivery_plan['Delivery Plan'].data.reviewedHRPStatus">
+                <span ng-switch-when="null" class="">Risks not reviewed</span>
+                <span ng-switch-default>Risks reviewed</span>
+            </ng:switch>
+        </div>
+    </div>
+</div>
+
+

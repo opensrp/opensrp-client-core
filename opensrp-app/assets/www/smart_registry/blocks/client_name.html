@@ -1,0 +1,15 @@
+<div id="pic">
+    <img ng-src="{{client.photo_path}}"/>
+</div>
+<div class="names">
+    <span class="client-name text-bold ellipsis">{{client.displayName}}</span>
+    <span class="client-age text-bold">({{client.displayAge}})</span>
+    <br/>
+    <span class="client-husband-name ellipsis"
+          style="font-size:15px;">{{client.displayHusbandName}}</span>
+    <br/>
+    <span class="client-village ellipsis">
+        {{client.displayVillage}}
+    </span>
+    <span class="client-location-status" ng-if="locationStatusMapping[client.locationStatus]">({{villageOptions.options[locationStatusMapping[client.locationStatus]].label}})</span>
+</div>

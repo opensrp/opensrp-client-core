@@ -1,0 +1,83 @@
+.manual-sync {
+    margin-top: 7px !important;
+}
+#reports-videos-buttons .btn {
+    padding: 14px;
+    font-size: 20px;
+}
+.row-fluid.with-margin {
+    margin-bottom: 20px;
+}
+.row-fluid.with-padding {
+    padding: 0 10px;
+    width: 98%;
+}
+#logo-and-buttons {
+    background: url("../img/smart_registry/bg-texture.jpg") repeat;
+}
+#drishti-logo {
+    margin-top: 10px;
+}
+.btn-home {
+    background-image: none;
+}
+.btn-register {
+    position: relative;
+    height: 176px;
+    width: 183px;
+    text-transform: uppercase;
+    border: none;
+    padding: 60px 0 0;
+}
+.btn-register .register-count {
+    position: absolute;
+    top: 4px;
+    right: 20px;
+    width: 41px;
+    height: 35px;
+    background: url("../img/smart_registry/badge.png") no-repeat;
+    color: #ffffff;
+    padding: 10px 0 0;
+    text-align: center;
+    font-size: 14px;
+}
+.btn-register .register-title {
+    font-weight: bold;
+    font-size: 24px;
+    display: block;
+}
+#ec-register .btn-register {
+    background: url("../img/smart_registry/register-ec.png") no-repeat;
+}
+
+#fp-register .btn-register {
+    background: url("../img/smart_registry/register-fp.png") no-repeat;
+}
+
+#anc-register .btn-register {
+    background: url("../img/smart_registry/register-anc.png") no-repeat;
+}
+
+#pnc-register .btn-register {
+    background: url("../img/smart_registry/register-pnc.png") no-repeat;
+}
+
+#child-register .btn-register {
+    background: url("../img/smart_registry/register-child.png") no-repeat;
+}
+
+.icon-tv {
+    background-image: url("../img/smart_registry/icon-tv.png");
+    width: 29px;
+    height: 28px;
+    background-position: 50% 0;
+    background-size: 76%;
+}
+
+.icon-reporting {
+    background-image: url("../img/smart_registry/icon-reporting.png");
+    width: 34px;
+    height: 27px;
+    background-position: 50% 0;
+    background-size: 84%;
+}

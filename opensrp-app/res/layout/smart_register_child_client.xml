@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_height"
+              android:weightSum="@integer/child_list_item_weight_count">
+
+    <include
+            android:id="@+id/profile_info_layout"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/child_list_profile_box_weight"
+            layout="@layout/smart_register_client_profile"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include
+            android:id="@+id/client_id_details_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/child_list_id_no_view_weight"
+            layout="@layout/child_smart_register_id_details"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/child_register_service_mode_options_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/child_list_service_mode_views_section_weight"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+        <include
+                android:id="@+id/overview_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/child_register_overview_service_mode_views"/>
+
+        <include
+                android:id="@+id/immunization0to9_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/child_register_immunization0to9_service_mode_views"/>
+
+        <include
+                android:id="@+id/immunization9plus_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/child_register_immunization9plus_service_mode_views"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

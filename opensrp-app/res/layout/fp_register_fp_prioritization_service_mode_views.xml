@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/fp_list_service_mode_views_section_weight">
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_fp_prioritization_risks"
+            android:layout_width="@dimen/list_fp_view_width"
+            android:layout_height="fill_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/fp_list_prioritization_risks_view_weight"
+            android:textColor="@color/text_black"
+            style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/lyt_fp_add"
+            android:layout_width="@dimen/list_fp_view_width"
+            android:layout_height="fill_parent"
+            android:background="@color/client_list_header_dark_grey"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/fp_list_prioritization_button_weight" >
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_plus_add_fp" />
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_fp_add_fp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fp_prioritization_add_fp"
+                android:textColor="@color/light_blue"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/lyt_fp_videos"
+            android:layout_width="@dimen/list_fp_view_width"
+            android:layout_height="fill_parent"
+            android:background="@color/client_list_header_dark_grey"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/fp_list_prioritization_button_weight" >
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_fp_video" />
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_fp_videos"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/fp_prioritization_fp_videos"
+                android:textColor="@color/light_blue"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+    </LinearLayout>
+
+</LinearLayout>

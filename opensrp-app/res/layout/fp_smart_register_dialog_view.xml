@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:padding="15dp"
+              android:background="@android:color/white"
+              android:orientation="vertical">
+
+    <RadioGroup
+            android:id="@+id/rg_fp_tab"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="left|center">
+
+        <org.ei.opensrp.view.customControls.CustomFontRadioButton
+                android:id="@+id/rb_fp_method"
+                android:layout_width="wrap_content"
+                style="@style/FPModalTabStyle"
+                android:text="@string/fp_methods" />
+
+        <org.ei.opensrp.view.customControls.CustomFontRadioButton
+                android:id="@+id/rb_fp_prioritization"
+                android:layout_width="wrap_content"
+                style="@style/FPModalTabStyle"
+                android:text="@string/fp_prioritization" />
+    </RadioGroup>
+
+    <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/dialog_shape">
+
+        <ListView
+                android:id="@+id/dialog_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="1dip"
+                android:background="#ffffffff"/>
+    </FrameLayout>
+
+</LinearLayout>

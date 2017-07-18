@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/anc_list_service_mode_views_section_weight"
+              android:orientation="horizontal"
+        >
+
+    <LinearLayout
+            android:id="@+id/layout_hb_details_holder"
+            android:layout_weight="@integer/anc_list_hb_ifa_service_mode_hb_details_view_weight"
+            android:layout_width="@dimen/list_hb_details_view_width"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+    </LinearLayout>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_hb"
+                  android:layout_height="match_parent"
+                  android:layout_width="0dp"
+                  android:layout_weight="@integer/anc_list_hb_ifa_service_mode_hb_alert_view_weight"
+                  android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="20">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/btn_hb"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/hb_test_label"
+                    android:textColor="@color/light_blue"
+                    android:background="@color/status_bar_text_almost_white"
+                    style="@style/CustomFontTextViewStyle.ListView.Small"/>
+
+
+            <RelativeLayout
+                    android:id="@+id/layout_hb_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_hb_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_hb_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_hb_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/layout_ifa_details_holder"
+            android:layout_weight="@integer/anc_list_hb_ifa_service_mode_ifa_details_view_weight"
+            android:layout_width="@dimen/list_ifa_details_view_width"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <FrameLayout
+            android:layout_width="@dimen/list_ifa_alert_view_width"
+            android:layout_height="fill_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/anc_list_hb_ifa_service_mode_ifa_alert_view_weight">
+
+        <RelativeLayout
+                android:id="@+id/layout_ifa"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_ifa_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/ic_yes_large"
+                    android:visibility="gone"
+                    android:textColor="@color/text_black"
+                    android:layout_alignParentLeft="true"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_ifa_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@id/txt_ifa_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_ifa_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_ifa_type"
+                    android:layout_toRightOf="@id/txt_ifa_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+        </RelativeLayout>
+    </FrameLayout>
+</LinearLayout>

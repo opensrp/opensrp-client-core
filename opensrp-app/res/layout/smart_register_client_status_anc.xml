@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_status_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/str_anc"
+            style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/lmp_type_str"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_status_type"
+            android:layout_alignParentLeft="true"
+            android:text="@string/str_lmp"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_status_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_status_type"
+            android:layout_toRightOf="@id/lmp_type_str"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/str_edd_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/lmp_type_str"
+            android:layout_alignParentLeft="true"
+            android:text="@string/str_edd"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_anc_status_edd_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_status_date"
+            android:layout_toRightOf="@id/str_edd_type"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+</RelativeLayout>
+
+        

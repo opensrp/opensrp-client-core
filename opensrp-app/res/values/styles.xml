@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="CustomFontTextViewStyle" parent="@android:style/Widget.TextView">
+        <item name="fontVariant">regular</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal.Bold" >
+        <item name="fontVariant">bold</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal.White">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal.NoPadding">
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal.TwoLine">
+        <item name="android:maxLines">2</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Small" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:height">18dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Small.NoPadding">
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Small.NoHeight" parent="@android:style/Widget.TextView">
+        <item name="fontVariant">medium</item>
+        <item name="android:textColor">@android:color/black</item>
+        <!--<item name="android:paddingLeft">10dp</item>-->
+        <item name="android:ellipsize">none</item>
+    </style>
+    <style name="CustomFontTextViewStyle.ListView.Small.paddingNoHeight" parent="@android:style/Widget.TextView">
+        <item name="fontVariant">medium</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.VerySmall" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">medium</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal.GPLSA">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">3dp</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Medium" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">bold</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Medium.TwoLine">
+        <item name="android:maxLines">2</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:ellipsize">none</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Normal.MultipleLines">
+        <item name="android:textSize">16sp</item>
+        <item name="fontVariant">regular</item>
+        <item name="android:singleLine">false</item>
+        <item name="android:maxLines">4</item>
+        <item name="android:paddingLeft">5dp</item>
+        <item name="android:paddingRight">5dp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Medium.NoPadding">
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Medium.White">
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Bold" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">bold</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Bold.NoPadding">
+        <item name="android:ellipsize">none</item>
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Bold.NoPadding.SmallSize">
+        <item name="android:textSize">17sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.NavBar">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:shadowColor">@android:color/black</item>
+        <item name="android:shadowRadius">1</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.NavBar.Bold">
+        <item name="fontVariant">bold</item>
+        <item name="android:textSize">23sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.NavBar.Black">
+        <item name="fontVariant">black</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.StatusBar">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/status_bar_text_almost_white</item>
+        <item name="android:gravity">left|center_vertical</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.StatusBar.Bold">
+        <item name="fontVariant">bold</item>
+    </style>
+    <style name="CustomFontTextViewStyle.StatusBar.Bold.NoPadding">
+        <item name="fontVariant">bold</item>
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.StatusBar.Black">
+        <item name="fontVariant">black</item>
+        <item name="android:textSize">19sp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.Header.Black" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/client_list_header_text_color</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.Home">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_gravity">top|center_horizontal</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.Home.RegisterName">
+        <item name="fontVariant">black</item>
+        <item name="android:textSize">24sp</item>
+        <item name="android:paddingTop">65dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.Home.RegisterLabel">
+        <item name="fontVariant">regular</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">90dp</item>
+    </style>
+
+    <style name="ImageButton.Home.Register" parent="@android:style/Widget.ImageButton">
+        <item name="android:gravity">center</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/transparent_blue_background</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.Home.Buttons">
+        <item name="fontVariant">black</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:background">@drawable/home_button_background</item>
+        <item name="android:layout_margin">5dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.Badge">
+        <item name="fontVariant">bold</item>
+        <item name="android:layout_gravity">top|right</item>
+        <item name="android:layout_marginTop">10dp</item>
+        <item name="android:layout_marginRight">28dp</item>
+        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingRight">0dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/badge</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="FPModalTabStyle" parent="CustomFontTextViewStyle.ListView.Medium">
+        <item name="android:layout_height">@dimen/fp_modal_header_text_height</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:background">@drawable/fp_modal_button_background</item>
+        <item name="android:textColor">@color/fp_modal_text_color</item>
+        <item name="android:gravity">center</item>
+        <item name="android:button">@null</item>
+        <item name="android:clickable">true</item>
+    </style>
+
+
+        <style name="TreeNodeStyle">
+            <item name="android:paddingLeft">20dp</item>
+        </style>
+
+    <style name="TreeNodeStyleDivided">
+        <item name="android:showDividers">middle</item>
+        <item name="android:divider">@android:drawable/divider_horizontal_bright</item>
+    </style>
+
+    <style name="progress_dialog_theme">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="AppThemeNoTitle" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="AppThemeNoActionBarAndTitle" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ListView.Small.Bold" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">bold</item>
+    </style>
+</resources>

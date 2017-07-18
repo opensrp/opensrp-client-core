@@ -1,0 +1,50 @@
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <sr-service-button sr-bind="client.visits.measles"
+                       ng-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\""+client.visits.measles.next.name+"\"}");'
+                       sr-click-alt="openForm('child_immunizations', client.entityId)"
+                       sr-icon="needle">
+    </sr-service-button>
+    <span ng-if="client.visits.measles.previous" class="previous-alert">
+    <i class="icon-ok green"></i>
+    <span class="">{{client.visits.measles.previous.name | friendlyAbbrev}}: </span>
+    <span>{{client.visits.measles.previous.visit_date}}</span>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning">
+        <sr-service-button sr-bind="client.visits.opvbooster"
+                           ng-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\""+client.visits.opvbooster.next.name+"\"}");'
+                           sr-click-alt="openForm('child_immunizations', client.entityId)"
+                           sr-icon="dropper">
+        </sr-service-button>
+        <span ng-if="client.visits.opvbooster.previous" class="previous-alert">
+        <i class="icon-ok green"></i>
+        <span class="">{{client.visits.opvbooster.previous.name | friendlyAbbrev}}: </span>
+        <span>{{client.visits.opvbooster.previous.visit_date}}</span>
+    </span>
+    </div>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning">
+        <sr-service-button sr-bind="client.visits.dpt"
+                           ng-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\""+client.visits.dpt.next.name+"\"}");'
+                           sr-click-alt="openForm('child_immunizations', client.entityId)"
+                           sr-icon="needle">
+        </sr-service-button>
+        <span ng-if="client.visits.dpt.previous" class="previous-alert">
+        <i class="icon-ok green"></i>
+        <span class="">{{client.visits.dpt.previous.name | friendlyAbbrev}}: </span>
+        <span>{{client.visits.dpt.previous.visit_date}}</span>
+    </span>
+    </div>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <button class="btn btn-large btn-sr btn-visit-status btn-new-form"
+            ng-click="openForm('vitamin_a', client.entityId);">
+        <span class="text-bold">Vitamin A</span>
+    </button>
+    <span ng-if="client.visits.vitamin_a.previous" class="previous-alert">
+        <i class="icon-ok green"></i>
+        <span class="">{{client.visits.vitamin_a.previous.name | friendlyAbbrev}}: </span>
+        <span>{{client.visits.vitamin_a.previous.visit_date}}</span>
+    </span>
+</div>

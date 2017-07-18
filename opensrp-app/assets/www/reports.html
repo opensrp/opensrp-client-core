@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+
+<body>
+<div class="page">
+    <div id="mainpanel" class="mainpanel">
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <ul class="nav pull-left">
+                    <li class="navbar-header">Reporting</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="registry-container container-fluid">
+                <table class="table table-bordered indicator-report">
+                    <tbody>
+                    <tr>
+                        <td class="report-category" data-target="FPS">
+                            <div class="report-medium">Family Planning Services</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="report-category" data-target="ANC_SERVICES">
+                            <div class="report-medium">ANC Services</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="report-category" data-target="PREGNANCY_OUTCOMES">
+                            <div class="report-medium">Pregnancy Outcomes</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="report-category" data-target="PNC_SERVICES">
+                            <div class="report-medium">PNC Services</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="report-category" data-target="BENEFICIARY_SCHEMES">
+                            <div class="report-medium">Beneficiary Schemes</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="report-category" data-target="CHILD_SERVICES">
+                            <div class="report-medium">Child Services</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="report-category" data-target="MORTALITY">
+                            <div class="report-medium">Mortality</div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script src="../js/lib/jquery.min.js"></script>
+<script src="../js/lib/bootstrap.min.js"></script>
+<script src="../js/lib/handlebars.runtime.js"></script>
+<script src="../js/custom.ui.js"></script>
+<script src="../template/templates.js"></script>
+<script src="../js/reports.js"></script>
+<script src="../js/international_text.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var reports = new Reports(new ReportsBridge());
+        reports.bindEveryItemToItsIndicatorListView(".report-category");
+    });
+</script>
+
+</html>

@@ -1,0 +1,12 @@
+<div class="span6 line-right span-no-margin width-without-margins span-content">
+    <p>{{client.highPriorityReason | camelCase | commaSeparated | humanize}}</p>
+</div>
+<div class="span3 full-height span-no-margin width-without-margins span-content">
+    <button class="btn btn-done btn-sr btn-new-form full-height" ng-click="openFPChangeModal(client.entityId)">
+        <i class="icon-plus"></i> Add FP</button>
+</div>
+<div class="span3 full-height span-no-margin width-without-margins span-content">
+    <button class="btn btn-done btn-sr btn-new-form full-height">
+        <i class="icon-facetime-video"></i> FP Videos
+    </button>
+</div>

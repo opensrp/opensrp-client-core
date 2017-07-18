@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js touch">
+	<head>
+		<title>Drishti</title>
+		<meta charset="utf-8">
+		<meta name="author" content="Martijn van de Rijdt (Enketo LLC) &amp; Modi Research Group">
+		<meta name="robots" content="noindex">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+
+		<link href="css/dristhi.css" media="all" rel="stylesheet" type="text/css">
+
+	</head>
+	<body>
+
+		<div id="dialog-alert" class="modal fade" role="dialog" aria-labelledby="alert dialog" aria-hidden="true"  data-keyboard="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h3></h3>
+					</div>
+					<div class="modal-body">
+						<p class=""></p>
+					</div>
+					<div class="modal-footer">
+						<span class="self-destruct-timer"></span>
+						<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="main">
+			<article class="paper">
+				<div class="form-header clearfix"><span class="form-language-selector"><span>Choose Language</span></span></div>
+				
+				<form class="or">
+				</form>
+				
+				<button id="submit-form" class="btn btn-info btn-large" disabled>Save</button>	
+				<div class="enketo-power">Powered by <img src="images/enketo_bare_100x37.png" alt="enketo logo" /></div>
+			</article>
+		</div>
+
+		<!--    for development: separate and unminified: -->
+		<!--<script type="text/javascript" data-main="../../main.js" src="../../lib/enketo-core/lib/require.js"></script>-->
+
+		<!-- 	for production: combined & minified: -->
+		<script type="text/javascript" src="js/enketo-dristhi-combined.min.js"></script>
+	</body>
+</html>

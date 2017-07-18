@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest
+    package="com.github.johnkil.print"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="6"
+    android:versionName="1.2.3" >
+
+    <uses-sdk
+        android:minSdkVersion="3"
+        android:targetSdkVersion="21" />
+
+    <application />
+
+</manifest>

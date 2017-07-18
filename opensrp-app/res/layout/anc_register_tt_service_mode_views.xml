@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/anc_list_service_mode_views_section_weight"
+              android:orientation="horizontal"
+        >
+
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/anc_list_tt_service_mode_tt_1_view_weight">
+
+        <RelativeLayout
+                android:id="@+id/layout_tt_1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_1_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/ic_yes_large"
+                    android:visibility="gone"
+                    android:textColor="@color/text_black"
+                    android:layout_alignParentLeft="true"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_1_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@id/txt_tt_1_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_1_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_tt_1_type"
+                    android:layout_toRightOf="@id/txt_tt_1_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/anc_list_tt_service_mode_tt_2_view_weight">
+
+        <RelativeLayout
+                android:id="@+id/layout_tt_2"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_2_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/ic_yes_large"
+                    android:visibility="gone"
+                    android:textColor="@color/text_black"
+                    android:layout_alignParentLeft="true"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_2_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@id/txt_tt_2_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_2_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_tt_2_type"
+                    android:layout_toRightOf="@id/txt_tt_2_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_margin="5dp"
+            android:layout_weight="@integer/anc_list_tt_service_mode_tt_booster_view_weight">
+
+        <RelativeLayout
+                android:id="@+id/layout_tt_booster"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_booster_done"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:background="@drawable/ic_yes_large"
+                    android:visibility="gone"
+                    android:textColor="@color/text_black"
+                    android:layout_alignParentLeft="true"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_booster_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toRightOf="@id/txt_tt_booster_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/txt_tt_booster_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/txt_tt_booster_type"
+                    android:layout_toRightOf="@id/txt_tt_booster_done"
+                    android:textColor="@color/text_black"
+                    style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

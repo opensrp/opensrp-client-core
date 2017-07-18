@@ -1,0 +1,14 @@
+<div id="name" ng-click="openProfile(client.entityId)" class="span8 client-details line-right full-height span-no-margin width-without-margins span-content">
+    <ng:include src="'blocks/client_name.html'"></ng:include>
+    <div class="flag-container">
+        <div ng-if="client.isHighRisk" class="flag flag-hr"></div>
+        <div ng-if="client.isBPL" class="flag flag-bpl"></div>
+        <ng:switch on="client.caste.toUpperCase()">
+            <div ng-switch-when="SC" class="flag flag-sc"></div>
+            <div ng-switch-when="ST" class="flag flag-st"></div>
+        </ng:switch>
+    </div>
+</div>
+<div class="span4 line-right full-height span-no-margin width-without-margins span-content">
+    <span class="text-bold">{{client.thayi}}</span>
+</div>

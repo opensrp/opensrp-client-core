@@ -1,0 +1,71 @@
+<!doctype html>
+<html ng-app="smartRegistry">
+<head>
+    <link href="../../css/smart_registry/reset.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/smart_registry/styles.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/flat-bootstrap.css" rel="stylesheet">
+    <link href="../../css/custom.css" rel="stylesheet">
+    <script src="../../js/lib/angular.min.js" type="text/javascript"></script>
+    <script src="../../js/lib/ui-bootstrap-tpls-0.3.0.min.js"></script>
+    <script src="../../js/anmNavigation.js" type="text/javascript"></script>
+    <script src="../../js/video.js" type="text/javascript"></script>
+    <script src="../../js/smart_registry/app.js" type="text/javascript"></script>
+    <script src="../../js/smart_registry/smart_filters.js" type="text/javascript"></script>
+    <script src="../../js/smart_registry/smart_helper_service.js" type="text/javascript"></script>
+    <script src="../../js/smart_registry/smart_directives.js" type="text/javascript"></script>
+    <script src="../../js/smart_registry/video_controller.js" type="text/javascript"></script>
+    <!-- temporary plceholders -->
+    <script src="../../js/lib/holder.js" type="text/javascript"></script>
+    <style type="text/css">
+        body {
+            background: #4D4D4D;
+        }
+    </style>
+</head>
+<body>
+<div ng-controller="VideoController">
+    <div class="header">
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner black">
+                <ul class="nav" ng-click="goBack()">
+                    <li><a href="#" class="btn-back"><i class="icon-white"></i></a></li>
+                    <li class="divider-vertical"></li>
+                    <li><a class="brand" href="#">Videos</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <div class="content-videos container-fluid container-no-padding">
+        <div class="row-fluid">
+            <div class="span3 video-categories">
+                <ul class="nav nav-tabs nav-stacked">
+                    <li data-ng-repeat="category in videoCategories" data-ng-class="category.css_class">
+                        <a ng-click="setCurrentCategory(category.id)"
+                            ng-class="{active: currentCategoryId == category.id}">{{category.title}} ({{category.num_videos}}) <i class="icon-chevron-right" style="float: right"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <div class="span9 videos-container">
+                <ul class="thumbnails video-list">
+                    <li data-ng-repeat="video in videoList | filter:{category: currentCategoryId}" class="video-item"
+                        ng-click="videoClicked(video.id)">
+                        <div class="thumbnail">
+                            <img ng-src="{{video.previewImageUrl}}" class="video-thumbnail-image" />
+                            <div class="caption">
+                                <p class="video-title text-bold">{{video.title}}</p>
+                                <p class="video-time">{{video.time}}</p>
+                            </div>
+                        </div>
+
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

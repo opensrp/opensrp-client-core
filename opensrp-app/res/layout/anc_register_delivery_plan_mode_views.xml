@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/anc_list_service_mode_views_section_weight"
+              android:orientation="horizontal"
+        >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_delivery_plan"
+                  android:layout_width="@dimen/list_delivery_plan_alert_view_width"
+                  android:layout_height="match_parent"
+                  android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_alert_view_weight"
+                  android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <RelativeLayout
+                    android:id="@+id/layout_delivery_plan_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_delivery_plan_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_delivery_plan_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_delivery_plan_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+            </RelativeLayout>
+
+            <LinearLayout android:id="@+id/layout_delivery_plan_service_provided"
+                          android:layout_width="fill_parent"
+                          android:background="@color/status_bar_text_almost_white"
+                          android:orientation="horizontal"
+                          android:weightSum="58"
+                          android:layout_height="fill_parent">
+
+                <RelativeLayout
+                        android:id="@+id/layout_delivery_place"
+                        android:layout_width="@dimen/list_delivery_plan_service_provided_view_width"
+                        android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_service_provided_delivery_at_view_weight"
+                        android:layout_height="fill_parent">
+
+                    <ImageView
+                            android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                            android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
+                            android:id="@+id/img_delivery_place_status"
+                            />
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/lbl_delivery_place"
+                            android:layout_width="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_below="@id/img_delivery_place_status"
+                            android:text="@string/str_delivery_at"
+                            android:layout_height="wrap_content"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/txt_delivery_place"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lbl_delivery_place"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                </RelativeLayout>
+
+                <ImageView
+                        android:layout_width="@dimen/smart_register_client_divider_height"
+                        android:layout_height="fill_parent"
+                        android:src="@color/smart_register_client_divider_color"/>
+
+                <RelativeLayout
+                        android:id="@+id/layout_transport"
+                        android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                        android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_service_provided_transport_view_weight"
+                        android:layout_height="fill_parent">
+
+                    <ImageView
+                            android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                            android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
+                            android:id="@+id/img_transport_status"
+                            />
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/lbl_transport"
+                            android:layout_width="wrap_content"
+                            android:text="@string/str_transport"
+                            android:layout_below="@id/img_transport_status"
+                            android:layout_height="wrap_content"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/txt_transport"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lbl_transport"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                </RelativeLayout>
+
+                <ImageView
+                        android:layout_width="@dimen/smart_register_client_divider_height"
+                        android:layout_height="fill_parent"
+                        android:src="@color/smart_register_client_divider_color"/>
+
+                <RelativeLayout
+                        android:id="@+id/layout_has_companion"
+                        android:layout_width="@dimen/list_delivery_plan_service_provided_view_width"
+                        android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_service_provided_has_companion_view_weight"
+                        android:layout_height="fill_parent">
+
+                    <ImageView
+                            android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                            android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
+                            android:id="@+id/img_has_companion_status"
+                            />
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/lbl_has_companion"
+                            android:layout_width="wrap_content"
+                            android:text="@string/str_has_companion"
+                            android:layout_below="@id/img_has_companion_status"
+                            android:layout_height="wrap_content"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/txt_has_companion"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lbl_has_companion"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                </RelativeLayout>
+
+                <ImageView
+                        android:layout_width="@dimen/smart_register_client_divider_height"
+                        android:layout_height="fill_parent"
+                        android:src="@color/smart_register_client_divider_color"/>
+
+                <RelativeLayout
+                        android:id="@+id/layout_asha_phone_number"
+                        android:layout_width="@dimen/list_delivery_plan_service_provided_view_width"
+                        android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_service_provided_asha_phone_number_view_weight"
+                        android:layout_height="fill_parent">
+
+                    <ImageView
+                            android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                            android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
+                            android:id="@+id/img_asha_phone_number_status"
+                            />
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/lbl_asha_phone_number"
+                            android:layout_width="wrap_content"
+                            android:text="@string/str_asha"
+                            android:layout_below="@id/img_asha_phone_number_status"
+                            android:layout_height="wrap_content"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/txt_asha_phone_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lbl_asha_phone_number"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                </RelativeLayout>
+
+                <ImageView
+                        android:layout_width="@dimen/smart_register_client_divider_height"
+                        android:layout_height="fill_parent"
+                        android:src="@color/smart_register_client_divider_color"/>
+
+                <RelativeLayout
+                        android:id="@+id/layout_contact_phone_number"
+                        android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                        android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_service_provided_contact_phone_number_view_weight"
+                        android:layout_height="fill_parent">
+
+                    <ImageView
+                            android:id="@+id/img_contact_phone_number_status"
+                            android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                            android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
+                            />
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/lbl_contact_phone_number"
+                            android:layout_width="wrap_content"
+                            android:text="@string/str_contact"
+                            android:layout_below="@id/img_contact_phone_number_status"
+                            android:layout_height="wrap_content"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/txt_contact_phone_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lbl_contact_phone_number"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                </RelativeLayout>
+
+                <ImageView
+                        android:layout_width="@dimen/smart_register_client_divider_height"
+                        android:layout_height="fill_parent"
+                        android:src="@color/smart_register_client_divider_color"/>
+
+                <RelativeLayout
+                        android:id="@+id/layout_risks_reviewed"
+                        android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                        android:layout_weight="@integer/anc_list_delivery_plan_service_mode_delivery_plan_service_provided_risks_reviewed_view_weight"
+                        android:layout_height="fill_parent">
+
+                    <ImageView
+                            android:layout_width="@dimen/anc_list_delivery_plan_service_mode_tick_view_width"
+                            android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
+                            android:id="@+id/img_risk_reviewed_status"
+                            />
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/lbl_risks_reviewed"
+                            android:layout_width="wrap_content"
+                            android:text="@string/str_risks_reviewed"
+                            android:layout_below="@id/img_risk_reviewed_status"
+                            android:layout_height="wrap_content"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                    <org.ei.opensrp.view.customControls.CustomFontTextView
+                            android:id="@+id/txt_risks_reviewed"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/lbl_risks_reviewed"
+                            style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <link href="../../css/font-awesome.min.css" media="all" rel="stylesheet" type="text/css"/>
+    <script src="../../js/lib/d3.v3.min.js" type="text/javascript"></script>
+    <script language="javascript">
+        function drawSevenDayGraphic(first_7_days) {
+            var svg = d3.select('svg');
+            var g = svg.select('g');
+            g.remove();
+            g = svg.append('g');
+            var x_offset = 18;
+            var x_scale = 28;
+            var y_offset = 30;
+            var thickness = 4, thickness_scaled = thickness * 0.5;
+            var radius = 10, radius_scaled = radius * 0.7;
+            var text_width = 13;
+            var tick_height = 12;
+
+            var colors = {
+                RED: '#d13f3f',
+                YELLOW: '#EDCA00',
+                GREEN: '#25aa4a',
+                GREY: '#B6B6B6',
+                BLACK: '#000000'
+            };
+            var first7DaysJson = JSON.parse(first_7_days);
+            var color = colors[first7DaysJson.active_color] || colors.yellow;
+            g.selectAll('.lines')
+                    .data(first7DaysJson.lines)
+                    .enter()
+                    .append('rect')
+                    .attr('x', function (d) {
+                        return ((d.start - 1) * x_scale) + x_offset;
+                    })
+                    .attr('y', y_offset - thickness / 2)
+                    .attr('width', function (d) {
+                        return (d.end - d.start) * x_scale;
+                    })
+                    .attr('height', thickness)
+                    .attr('fill', function (d) {
+                        return d.type === 'EXPECTED' ? colors.GREY : color;
+                    });
+
+            g.selectAll('.ticks')
+                    .data(first7DaysJson.ticks)
+                    .enter()
+                    .append('rect')
+                    .attr('x', function (d) {
+                        return ((d.day - 1) * x_scale) + x_offset;
+                    })
+                    .attr('y', y_offset - tick_height / 2)
+                    .attr('width', thickness_scaled)
+                    .attr('height', tick_height)
+                    .attr('fill', function (d) {
+                        return d.type === 'expected' ? colors.GREY : color;
+                    });
+
+            g.selectAll('.circles')
+                    .data(first7DaysJson.circles)
+                    .enter()
+                    .append('circle')
+                    .attr('cx', function (d) {
+                        return ((d.day - 1) * x_scale) + x_offset;
+                    })
+                    .attr('cy', y_offset)
+                    .attr('fill', function (d) {
+                        return d.type === 'ACTUAL' ? colors.BLACK : (d.colored ? color : colors.GREY);
+                    })
+                    .attr('r', function (d) {
+                        return d.type === 'EXPECTED' ? radius : radius_scaled;
+                    });
+
+            g.selectAll('.statuses')
+                    .data(first7DaysJson.statuses)
+                    .enter()
+                    .append('text')
+                    .text(function (d) {
+                        return d.status === 'MISSED' ? '\uf00d' : '\uf00c';
+                    })
+                    .style('font-family', 'FontAwesome')
+                    .attr('x', function (d) {
+                        return (((d.day - 1) * x_scale) + x_offset) - text_width / 2;
+                    })
+                    .attr('y', function (d) {
+                        return y_offset - radius * 1.5;
+                    })
+                    .attr('fill', function (d) {
+                        return d.status === 'DONE' ? colors.GREEN : colors.RED;
+                    });
+
+            g.selectAll('.day_nos')
+                    .data(first7DaysJson.day_nos)
+                    .enter()
+                    .append('text')
+                    .text(function (d) {
+                        return d.day;
+                    })
+                    .attr('x', function (d) {
+                        return (((d.day - 1) * x_scale) + x_offset) - text_width / 3;
+                    })
+                    .attr('y', (y_offset + radius) * 1.4)
+                    .attr('fill', function (d) {
+                        return d.type === 'ACTUAL' ? colors.BLACK : colors.GREY;
+                    });
+        }
+
+    </script>
+</head>
+<body>
+<div class="relative-positioning full-height seven-day-graphic">
+    <svg width="100%" height="100%"></svg>
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+{{#shouldDisplayBirthPlan this}}
+<div class="registry-container container-fluid">
+    <div class="big-text row-fluid detail-section-header">
+        Delivery Plan
+        <div class="edit-birth-plan btn btn-primary pull-right" data-form="birth_plan" data-caseid="{{caseId}}">Edit</div>
+    </div>
+    <div class="well well-for-beneficiary-details-no-padding">
+        <div class="container-fluid container-no-padding">
+            <div class="delivery-plan">
+
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="span2">
+                        {{{imageForDeliveryFacility details}}}
+                    </div>
+                    <div class="span6 big-text-black">
+                        Facility
+                    </div>
+                    <div class="span4 meta-summary-text-with-margin">
+                        {{formatDeliveryFacilityType details}}
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="span2">
+                        {{{imageBasedOnValueIsEmptyOrNot details.transportPlan}}}
+                    </div>
+                    <div class="span6 big-text-black">
+                        Transportation
+                    </div>
+                    <div class="span4 meta-summary-text-with-margin">
+                        {{formatTransportPlan details.transportPlan}}
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                {{#ifFalse details.isHighRisk}}
+                    <div class="row-fluid beneficiary-detail-component">
+                        <div class="span2">
+                            {{{imageBasedOnYesOrNo details.isHighRiskStatusReviewed}}}
+                        </div>
+                        <div class="span6 big-text-black">
+                            Reviewed HRP Status
+                        </div>
+                        <div class="span4 meta-summary-text-with-margin">
+                            {{formatBooleanToYesOrNo details.isHighRiskStatusReviewed}}
+                        </div>
+                    </div>
+
+                    <div class="divider"></div>
+                {{/ifFalse}}
+
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="span2">
+                        {{{imageBasedOnYesOrNo details.isThereABirthCompanion}}}
+                    </div>
+                    <div class="span6 big-text-black">
+                        Birth companion
+                    </div>
+                    <div class="span4 meta-summary-text-with-margin">
+                        {{formatBooleanToYesOrNo details.isThereABirthCompanion}}
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="span2">
+                        {{{imageBasedOnValueIsEmptyOrNot details.contactNumber}}}
+                    </div>
+                    <div class="span6 big-text-black">
+                        Contact No.
+                    </div>
+                    <div class="span4 meta-summary-text-with-margin">
+                        {{formatText details.contactNumber}}
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="span2">
+                        {{{imageBasedOnValueIsEmptyOrNot details.ashaPhoneNumber}}}
+                    </div>
+                    <div class="span6 big-text-black">
+                        ASHA
+                    </div>
+                    <div class="span4 meta-summary-text-with-margin">
+                        {{formatText details.ashaPhoneNumber}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{else}}
+<div class="registry-container container-fluid">
+    <div class="big-text row-fluid detail-section-header">
+        Delivery Plan
+        <div class="edit-birth-plan btn btn-primary pull-right" data-form="BIRTH_PLANNING" data-caseid="{{caseId}}">Edit</div>
+    </div>
+    <div class="well well-for-beneficiary-details-no-padding">
+        <div class="container-fluid container-no-padding">
+            <div class="delivery-plan">
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="span2">
+                        <img class="no"/>
+                    </div>
+                    <div class="span10" style="">Please discuss delivery plan</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{/shouldDisplayBirthPlan}}

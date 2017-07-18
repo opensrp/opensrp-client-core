@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="couchdb_user"></string>
+    <string name="couchdb_dbname">opensrp_devtest</string>
+    <string name="couchdb_server_url">http://46.101.51.199</string>
+    <string name="couchdb_server_port">5984</string>
+    <string name="datastore_name">opensrp_clients_events</string>
+
+</resources>

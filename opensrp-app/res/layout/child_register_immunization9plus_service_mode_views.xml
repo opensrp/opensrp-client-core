@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/child_list_service_mode_views_section_weight"
+              android:orientation="horizontal"
+              android:visibility="gone">
+    <LinearLayout
+            android:id="@+id/layout_measles"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/child_list_measles_view_weight"
+            android:weightSum="10"
+            android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/btn_measles"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/measles"
+                    android:textColor="@color/light_blue"
+                    android:background="@color/status_bar_text_almost_white"
+                    style="@style/CustomFontTextViewStyle.ListView.Small"/>
+
+            <RelativeLayout
+                    android:id="@+id/layout_measles_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_measles_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/measles"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_measles_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_measles_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="centerInside"
+                        android:layout_toRightOf="@id/txt_measles_due_on"
+                        android:src="@drawable/ic_needle"/>
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_measles_on"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:drawableLeft="@drawable/ic_yes_small"
+                style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/layout_opv_booster"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/child_list_opv_booster_view_weight"
+            android:weightSum="10"
+            android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/btn_opv_booster"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/opv_booster"
+                    android:textColor="@color/light_blue"
+                    android:background="@color/status_bar_text_almost_white"
+                    style="@style/CustomFontTextViewStyle.ListView.Small"/>
+
+            <RelativeLayout
+                    android:id="@+id/layout_opv_booster_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_opv_booster_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/opv_booster"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_opv_booster_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_opv_booster_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="centerInside"
+                        android:layout_toRightOf="@id/txt_opv_booster_due_on"
+                        android:src="@drawable/ic_needle"/>
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_opv_booster_on"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:drawableLeft="@drawable/ic_yes_small"
+                style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/layout_dpt_booster"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/child_list_dpt_booster_view_weight"
+            android:weightSum="10"
+            android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/btn_dpt_booster"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/dpt_booster"
+                    android:textColor="@color/light_blue"
+                    android:background="@color/status_bar_text_almost_white"
+                    style="@style/CustomFontTextViewStyle.ListView.Small"/>
+
+            <RelativeLayout
+                    android:id="@+id/layout_dpt_booster_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_dpt_booster_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/dpt_booster"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_dpt_booster_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_dpt_booster_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="centerInside"
+                        android:layout_toRightOf="@id/txt_dpt_booster_due_on"
+                        android:src="@drawable/ic_needle"/>
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_dpt_booster_on"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:drawableLeft="@drawable/ic_yes_small"
+                style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/layout_vitamin_a"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/child_list_vitamin_a_view_weight"
+            android:weightSum="10"
+            android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/btn_vitamin_a"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/vitamin_a"
+                    android:textColor="@color/light_blue"
+                    android:background="@color/status_bar_text_almost_white"
+                    style="@style/CustomFontTextViewStyle.ListView.Small"/>
+
+            <RelativeLayout
+                    android:id="@+id/layout_vitamin_a_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_vitamin_a_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/vitamin_a"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_vitamin_a_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_vitamin_a_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="fill_parent"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentRight="true"
+                        android:scaleType="centerInside"
+                        android:layout_toRightOf="@id/txt_vitamin_a_due_on"
+                        android:src="@drawable/ic_needle"/>
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_vitamin_a_on"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:drawableLeft="@drawable/ic_yes_small"
+                style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+
+    </LinearLayout>
+</LinearLayout>

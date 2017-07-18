@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_height"
+              android:weightSum="@integer/pnc_list_item_weight_count">
+
+    <include
+            android:id="@+id/profile_info_layout"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_profile_box_weight"
+            layout="@layout/smart_register_client_profile"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_thayi_number"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_thayi_number_view_weight"
+            android:gravity="center"
+            style="@style/CustomFontTextViewStyle.ListView.Medium.NoPadding"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/pnc_register_service_mode_options_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/pnc_list_service_mode_views_section_weight"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+        <include
+                android:id="@+id/pnc_overview_service_mode_views"
+                layout="@layout/pnc_overview_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"/>
+
+        <include
+                android:id="@+id/pnc_visits_service_mode_views"
+                layout="@layout/pnc_visits_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"/>
+    </LinearLayout>
+
+</LinearLayout>

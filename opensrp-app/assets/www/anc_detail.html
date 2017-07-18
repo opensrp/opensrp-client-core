@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="../css/bootstrap.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link href="../css/timeline.css" rel="stylesheet">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+</head>
+
+<body>
+
+<div class="page">
+    <div id="mainpanel" class="mainpanel"></div>
+</div>
+
+</body>
+
+<script src="../js/lib/jquery.min.js"></script>
+<script src="../js/lib/jquery-ui-1.8.23.custom.min.js"></script>
+<script src="../js/lib/bootstrap.min.js"></script>
+<script src="../js/lib/handlebars.runtime.js"></script>
+
+<script src="../js/custom.ui.js"></script>
+<script src="../js/birth_plan.ui.js"></script>
+<script src="../template/templates.js"></script>
+<script src="../js/modal.js"></script>
+<script src="../js/international_text.js"></script>
+<script src="../js/page_view.js"></script>
+<script src="../js/form_context.js"></script>
+
+<script type="text/javascript" src="../js/anc_detail.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var anc = new ANC(new ANCBridge(), new FormBridge());
+        anc.populateInto("#mainpanel");
+        anc.bindEveryItemToForm("#deliveryOutcomeFormButton");
+        anc.bindEveryItemToForm(".modal-row");
+        anc.bindTimelineEventToShowMoreButton(".timelineEvent", ".show-more-button", 5);
+        anc.bindToCamera("#womanPhoto");
+        anc.bindToDefaultPhoto("#womanPhoto", "../img/woman-placeholder.png");
+
+        pageView.onReloadPhoto(function (caseId, photoPath) {
+            anc.reloadPhoto("#womanPhoto", caseId, photoPath);
+        });
+
+        new Modal().bindToClick();
+
+        $("#goToProfileButton").click(function (event) {
+            $('#warning').hide();
+            $("#warning-modal-container").hide();
+            event.stopPropagation();
+            return true;
+        });
+    });
+</script>
+
+</html>

@@ -1,0 +1,54 @@
+<div class="span2 line-right full-height span-no-margin width-without-margins span-content">
+    <!-- ANC or not ANC -->
+    <ng-switch on="client.status.type">
+        <div ng-switch-when="anc">
+            <span class="text-bold">Pregnant</span>
+        </div>
+        <div ng-switch-default>
+            <div ng-if="client.fpMethod">
+                <span class="text-bold">{{client.fpMethod | fpMethodName:ecsWithFPMethodServiceModeOptions.options }}</span>
+                <br/>
+                <span>{{client.familyPlanningMethodChangeDate}}</span>
+                <br/>
+                <ng:switch on="client.fpMethod">
+                    <span ng-switch-when="iud">
+                        <span>{{client.iudPlace | uppercase}}</span>
+                        <span ng-if="client.iudPlace">, </span>
+                        <span>{{client.iudPerson | uppercase}}</span>
+                    </span>
+                    <span ng-switch-when="ocp" ng-if="client.numberOfOCPDelivered">No. strips: {{client.numberOfOCPDelivered}}</span>
+                    <span ng-switch-when="condom" ng-if="client.numberOfCondomsSupplied">No. given: {{client.numberOfCondomsSupplied}}</span>
+                    <span ng-switch-when="centchroman" ng-if="client.numberOfCentchromanPillsDelivered">No. strips: {{client.numberOfCentchromanPillsDelivered}}</span>
+                </ng:switch>
+            </div>
+            <div ng-if="!client.fpMethod">
+                <span style="color: #ff0000" class="text-bold">No FP</span>
+            </div>
+        </div>
+    </ng-switch>
+</div>
+<div class="span3 line-right full-height span-no-margin width-without-margins span-content">
+    <button data-ng-repeat="child in client.children | limitTo:2" class="btn btn-sr btn-large btn-visit-status complete btn-primary full-height"
+            data-ng-class="{'btn-half-width': client.children.length > 1, 'left': $index == 0, 'right': $index == 1}">
+        <div class="done-icon right full-height" style="margin: 0;"><i></i></div>
+        <span class="text-bold">{{child.gender | camelCase}}</span>
+        <br/>
+        <span>{{child.calulatedAge}}</span>
+    </button>
+</div>
+<div class="span5 line-right full-height span-no-margin width-without-margins span-content">
+    <ng-switch on="client.status.type">
+        <div ng-switch-when="pnc/fp" class="full-height">
+            <sr-ec-status-button client="client" status-type="pnc" class="btn-half-width left"></sr-ec-status-button>
+            <sr-ec-status-button client="client" status-type="fp" class="btn-half-width right"></sr-ec-status-button>
+        </div>
+        <div ng-switch-default class="full-height">
+            <sr-ec-status-button client="client" status-type="" ng-click="openForm()"></sr-ec-status-button>
+        </div>
+    </ng-switch>
+</div>
+<div class="span2 line-right full-height span-no-margin width-without-margins span-content">
+    <button class="btn btn-primary btn-large normal btn-sr full-height" ng-click="openECFormModal(client.entityId)">
+        <center><i class="icon-pencil icon-large"></i></center>
+    </button>
+</div>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="@dimen/smart_register_dialog_list_item_width"
+              android:layout_height="@dimen/smart_register_dialog_list_item_height"
+              android:orientation="horizontal"
+              android:weightSum="100">
+
+    <TextView
+            android:id="@+id/dialog_list_option"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/dialog_option_color"
+            android:gravity="center_vertical|left"
+            android:paddingLeft="10dp"
+            android:layout_weight="90"/>
+
+    <ImageView
+            android:id="@+id/dialog_list_item_arrow"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="10"
+            android:paddingRight="30dp"
+            android:gravity="center_horizontal|right"
+            android:src="@drawable/ic_chevron_right"/>
+</LinearLayout>

@@ -1,0 +1,15 @@
+<!--TODO: check if we need this file-->
+<div class="row-fluid full-height">
+    <div id="id" class="span5 line-right full-height width-without-margins">
+        <small>ANC:</small> <b>{{client.ec_number}}</b>
+        <br/>
+        <small>Thayi:</small> <b>{{client.thayi}}</b>
+        <div style="clear: both"></div>
+    </div>
+    <div class="span7 line-right span-no-margin width-without-margins">
+        <!--weeks pregnant-->
+        <div style="margin-top: 4px"><b><span style="font-size: 24px">{{client.weeks_pregnant}}</span></b> <b><span style="font-size: 20px">weeks</b></div>
+        <div style="margin-top: 6px"><small>EDD:</small> {{client.eddLongFormat}}</div>
+        <div style="margin-top: 2px"><small>LMP:</small> {{client.lmpLongFormat}}</div>
+    </div>
+</div>

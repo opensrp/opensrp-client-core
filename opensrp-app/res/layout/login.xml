@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:id="@+id/login_layout"
+    android:orientation="vertical"
+    android:background="@drawable/login_background">
+
+    <ImageView
+        android:id="@+id/login_logo"
+        android:contentDescription="@string/image_description"
+        android:src="@drawable/login_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="2"/>
+
+    <EditText
+        android:id="@+id/login_userNameText"
+        android:inputType="textNoSuggestions|textFilter|textVisiblePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:hint="@string/userNameEditText"
+        android:ems="10"
+        android:typeface="sans"
+        android:singleLine="true"
+        android:textCursorDrawable="@null"
+        android:background="@drawable/rounded_corner_edittext"
+        android:paddingLeft="8dp"
+        android:width="260dp"
+        android:cursorVisible="true"
+        android:layout_gravity="center"
+        android:textColorHint="#bfbfbf"
+        android:textColor="#666666"/>
+
+    <EditText
+        android:id="@+id/login_passwordText"
+        android:inputType="textNoSuggestions|textFilter|textVisiblePassword"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:hint="@string/passwordEditText"
+        android:ems="10"
+        android:background="@drawable/rounded_corner_edittext"
+        android:paddingLeft="8dp"
+        android:typeface="sans"
+        android:singleLine="true"
+        android:width="260dp"
+        android:layout_marginTop="10dp"
+        android:textCursorDrawable="@null"
+        android:layout_gravity="center"
+        android:cursorVisible="true"
+        android:textColorHint="#666666"
+        android:textColor="#666666"/>
+
+    <Button
+        android:id="@+id/login_loginButton"
+        android:layout_height="45dp"
+        android:layout_width="wrap_content"
+        android:text="@string/login_text"
+        android:onClick="login"
+        android:ems="10"
+        android:width="260dp"
+        android:background="@drawable/login_button"
+        android:shadowColor="#ffffff"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="0.5"
+        android:textColor="#666666"
+        android:textSize="20sp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:layout_weight="0"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_spacer"
+        android:layout_weight="1"
+        android:contentDescription="@string/spacer"/>
+
+    <TextView
+        android:id="@+id/login_build"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:textColor="#90c4dc"
+        android:textSize="16sp"
+        android:typeface="sans"
+        android:layout_marginBottom="5dp"
+        android:layout_weight="0"
+        android:layout_gravity="center"/>
+</LinearLayout>

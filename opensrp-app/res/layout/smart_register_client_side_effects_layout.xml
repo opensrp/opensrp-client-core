@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<org.ei.opensrp.view.customControls.ClientSideEffectsView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/side_effects_layout"
+        android:layout_width="@dimen/list_fp_view_width"
+        android:layout_height="fill_parent"
+        android:layout_weight="@integer/fp_list_side_effects_view_weight"
+        android:layout_marginTop="3dp"
+        android:orientation="vertical">
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_complication_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/CustomFontTextViewStyle.ListView.Medium.TwoLine"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_side_effects"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/CustomFontTextViewStyle.ListView.Small.NoHeight"/>
+
+</org.ei.opensrp.view.customControls.ClientSideEffectsView>
+
+    

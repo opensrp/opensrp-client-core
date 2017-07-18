@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_height"
+              android:weightSum="@integer/anc_list_item_weight_count">
+
+    <include
+            android:id="@+id/profile_info_layout"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/anc_list_profile_box_weight"
+            layout="@layout/smart_register_client_profile"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include
+            android:id="@+id/client_id_details_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/anc_list_id_no_view_weight"
+            layout="@layout/anc_smart_register_id_details"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include
+            android:id="@+id/client_status_layout"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/anc_list_status_view_weight"
+            layout="@layout/anc_smart_register_status"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/anc_register_service_mode_options_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/anc_list_service_mode_views_section_weight"
+            android:orientation="horizontal"
+            android:weightSum="1">
+
+        <include
+                android:id="@+id/overview_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/anc_register_overview_service_mode_views"/>
+
+        <include
+                android:id="@+id/anc_visit_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/anc_register_anc_visits_service_mode_views"/>
+
+        <include
+                android:id="@+id/tt_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/anc_register_tt_service_mode_views"/>
+
+        <include
+                android:id="@+id/hb_ifa_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/anc_register_hb_ifa_service_mode_views"/>
+
+        <include
+                android:id="@+id/delivery_plan_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/anc_register_delivery_plan_mode_views"/>
+
+    </LinearLayout>
+
+</LinearLayout>

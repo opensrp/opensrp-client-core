@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_height"
+              android:weightSum="@integer/fp_list_item_weight_count" >
+
+    <include
+            android:id="@+id/profile_info_layout"
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/fp_list_profile_box_weight"
+            layout="@layout/smart_register_client_profile"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_ec_number"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/fp_list_ec_no_view_weight"
+            android:layout_marginTop="3dp"
+            style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include layout="@layout/smart_register_fp_client_gplsa_child_layout"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+
+    <LinearLayout
+            android:id="@+id/fp_register_service_mode_options_view"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="@integer/fp_list_service_mode_views_section_weight"
+            android:orientation="horizontal"
+            android:weightSum="1" >
+        <!--android:layout_weight="@integer/fp_list_service_mode_views_section_weight"-->
+
+        <include
+                android:id="@+id/fp_method_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/fp_register_fp_method_service_mode_views"/>
+
+        <include
+                android:id="@+id/fp_prioritization_service_mode_views"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                layout="@layout/fp_register_fp_prioritization_service_mode_views"/>
+
+    </LinearLayout>
+</LinearLayout>

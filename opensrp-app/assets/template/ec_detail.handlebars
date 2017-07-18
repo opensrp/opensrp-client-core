@@ -1,0 +1,165 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <ul class="area-6_5 nav pull-left">
+            <li class="area-7_5">
+                <div class="navbar-header ellipsis">{{formatText coupleDetails.wifeName}}</div>
+            </li>
+        </ul>
+
+        <ul class="nav pull-right">
+            <li><img class="separator"></li>
+            <li data-modal-target="#ecFormModal"><img class="update-data"></li>
+        </ul>
+    </div>
+</div>
+
+<div id="ecFormModal" class="modal-content">
+    <div class="modal-row" data-form="anc_registration" data-caseid="{{caseId}}">Register as ANC</div>
+    <div class="divider"></div>
+    <div class="modal-row" data-form="child_registration_ec" data-caseid="{{caseId}}">Register a child</div>
+    <div class="divider"></div>
+    <div class="modal-row" data-form="ec_close" data-caseid="{{caseId}}">Close EC</div>
+</div>
+
+<div id="content" class="content-detail">
+    <div class="status-bar">
+        <span class="left-text">EC</span>
+        {{#ifFalse isHighPriority}}
+        <span class="right-text high-risk">High Priority</span>
+        {{else}}
+        <span class="right-text normal-risk">Normal Priority</span>
+        {{/ifFalse}}
+    </div>
+    <div class="registry-container container-fluid">
+        <div class="row-fluid">
+            <div class="span4">
+                <img id="womanPhoto" src="file://{{photoPath}}">
+            </div>
+            <div class="span8">
+                <ul class="client-details unstyled">
+                    <li>
+                        <div class="row-fluid">
+                            <div class="span9 big-text">{{formatText coupleDetails.wifeName}}</div>
+                            <div class="span3 social-vulnerability text-right">{{formatSocialVulnerability details.caste details.economicStatus}}</div>
+                        </div>
+                    </li>
+                    <li class="medium-text spacing-below">{{capitalize coupleDetails.husbandName}}</li>
+                    <li>{{formatText village}}</li>
+                    <li class="light-text">EC No: {{ecNumber}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="registry-container container-fluid">
+        <div class="big-text row-fluid detail-section-header">
+            Summary
+        </div>
+        <div class="well well-for-beneficiary-details-no-padding">
+            <div class="container-fluid container-no-padding">
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="beneficiary-detail-content">
+                        {{#ifFalse isHighPriority}}
+                        <div class="big-text high-risk">
+                            <i class="icon-circle-arrow-up priority-indicator-icon"></i> High Priority</span>
+                        </div>
+                        <div class="beneficiary-detail-footer risk-detail-text">
+                            <ul>{{camelCaseAndConvertToListItems details.highPriorityReason}}</ul>
+                        </div>
+                        {{else}}
+
+
+                        <div class="text-center big-text normal-risk">Normal Priority</div>
+                        {{/ifFalse}}
+                    </div>
+                </div>
+            </div>
+            <div class="container-fluid container-no-padding">
+                <div class="row-fluid beneficiary-detail-component">
+                    {{#ifNotZero children.length}}
+                    <div class="divider divider-padding-bottom"></div>
+                    <div class="beneficiary-detail-header">Children</div>
+                    <div class="beneficiary-detail-content">
+                        {{#each children}}
+                        {{#if isFemale}}
+                        <div class="ec-child girl">
+                            <div>
+                                <span class="gender-text">Girl</span><br>
+                                {{age}}
+                            </div>
+                        </div>
+                        {{else}}
+                        <div class="ec-child boy">
+                            <div>
+                                <span class="gender-text">Boy</span><br>
+                                {{age}}
+                            </div>
+                        </div>
+                        {{/if}}
+                        {{/each}}
+                    </div>
+                    {{/ifNotZero}}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="registry-container container-fluid">
+        <div class="big-text row-fluid detail-section-header">
+            Family Planning
+        </div>
+        <div class="well well-for-beneficiary-details">
+            <div class="container-fluid container-no-padding">
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="beneficiary-detail-content">
+                        {{#ifequal details.currentMethod "none"}}
+                        <i class="icon-remove"></i><span class="family-planning-label">Current</span><span class="family-planning-current">None</span><br/>
+                        {{else}}
+                        <i class="icon-ok"></i><span class="family-planning-label">Current</span><span class="family-planning-current">{{friendlyFPName details.currentMethod}}</span><br/>
+                        {{/ifequal}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="registry-container container-fluid">
+        <div class="big-text row-fluid detail-section-header">
+            Timeline
+        </div>
+        <div class="well well-for-beneficiary-details-no-padding">
+            <div class="container-fluid container-no-padding">
+                {{#ifequal timelineEvents.length 0}}
+                <div class="row-fluid unavailable-data">
+                    No medical history data available
+                </div>
+                {{else}}
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="beneficiary-detail-content">
+                        <div class="timeline">
+                            {{#each timelineEvents}}
+                            <div class="timeline-component row-fluid timelineEvent">
+                                <div class="span3 type {{this.type}}"></div>
+                                <div class="span5">
+                                    <strong>{{title}}</strong><br>
+                                    {{#each details}}
+                                    {{{formatText this}}}<br>
+                                    {{/each}}
+                                </div>
+                                <div class="span4 pull-right text-right">
+                                    {{date}}
+                                </div>
+                            </div>
+                            {{/each}}
+                        </div>
+                        <div class="container-section-component row-fluid show-more-button">
+                            <div class="divider"></div>
+                            <div class="expand"> Show more</div>
+                        </div>
+                    </div>
+                </div>
+                {{/ifequal}}
+            </div>
+        </div>
+    </div>
+</div>

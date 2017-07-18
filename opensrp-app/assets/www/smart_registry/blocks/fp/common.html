@@ -1,0 +1,44 @@
+<div id="name" ng-click="openProfile(client.entityId)" class=" client-details span7 line-right full-height span-no-margin width-without-margins span-content">
+    <ng:include src="'blocks/client_name.html'"></ng:include>
+    <div class="flag-container">
+        <div ng-if="client.isHighPriority" class="flag flag-hp"></div>
+        <div ng-if="client.isBPL" class="flag flag-bpl"></div>
+        <ng:switch on="client.caste.toUpperCase()">
+            <div ng-switch-when="SC" class="flag flag-sc"></div>
+            <div ng-switch-when="ST" class="flag flag-st"></div>
+        </ng:switch>
+    </div>
+</div>
+<div class="span2 line-right full-height span-no-margin width-without-margins span-content">
+    <span class="text-bold text-bigger">{{client.ec_number}}</span>
+</div>
+<div class="span3 line-right full-height span-no-margin width-without-margins span-content">
+    <div class="row-fluid">
+        <span class="span2 offset1 gplsa-info">
+            G<br/>
+            {{client.num_pregnancies}}
+        </span>
+        <span class="span2 gplsa-info">
+            P<br/>
+            {{client.parity}}
+        </span>
+        <span class="span2 gplsa-info">
+            L<br/>
+            {{client.num_living_children}}
+        </span>
+        <span class="span2 gplsa-info">
+            S<br/>
+            {{client.num_stillbirths}}
+        </span>
+        <span class="span2 gplsa-info">
+            A<br/>
+            {{client.num_abortions}}
+        </span>
+    </div>
+    <div class="row-fluid" style="margin-top: 8px;" ng-if="client.youngest_child_age">
+        <span class="offset1">
+            Child: {{client.youngest_child_age}} m
+        </span>
+    </div>
+
+</div>

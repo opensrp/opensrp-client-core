@@ -1,0 +1,34 @@
+[
+    {
+        "anmIdentifier": "ANM 1",
+        "caseID": "Case X",
+        "data": {
+            "alertStatus": "normal",
+            "beneficiaryType": "mother",
+            "scheduleName": "Ante Natal Care - Normal",
+            "visitCode": "ANC 1",
+            "startDate": "2012-01-01",
+            "expiryDate": "2012-01-11"
+        },
+        "details": {
+        },
+        "actionTarget": "alert",
+        "actionType": "createAlert",
+        "timeStamp": 1333695798583,
+        "isActionActive": true
+    },
+    {
+        "anmIdentifier": "ANM 1",
+        "caseID": "Case Y",
+        "data": {
+            "visitCode": "ANC 1",
+            "completionDate": "2012-01-01"
+        },
+        "details": {
+        },
+        "actionTarget": "alert",
+        "actionType": "closeAlert",
+        "timeStamp": 1333695798644,
+        "isActionActive": true
+    }
+]

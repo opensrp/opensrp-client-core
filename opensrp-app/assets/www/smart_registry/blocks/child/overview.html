@@ -1,0 +1,31 @@
+<div class="span5 span4 span-no-margin width-without-margins full-height">
+    <div class="row-fluid full-height">
+            <div class="span5 span-no-margin width-without-margins line-right span-content">{{client.dob |
+                date:'dd/MM/yy'}}
+        </div>
+        <sr-last-service bind="client.services_provided"></sr-last-service>
+    </div>
+</div>
+<div class="span4 span-no-margin width-without-margins line-right span-content">
+    <div ng-if="client.visits.child_illness.previous && client.visits.child_illness.previous.data.sickVisitDate" class="full-height">
+        <span class="text-bold">Illness Visit: </span><span>{{client.visits.child_illness.previous.data.childSigns | humanize}}</span>
+        <span ng-if="client.visits.child_illness.previous.data.childSigns">, {{client.visits.child_illness.previous.data.childSignsOther | humanize}}</span>
+        <br/>
+        <span>Date: {{client.visits.child_illness.previous.data.sickVisitDate | date:'dd/MM/yy'}}</span>
+    </div>
+    <div ng-if="client.visits.child_illness.previous && client.visits.child_illness.previous.data.reportChildDiseaseDate" class="full-height">
+        <span class="text-bold">Illness Report: </span><span>{{client.visits.child_illness.previous.data.reportChildDisease | humanize}}</span>
+        <span ng-if="client.visits.child_illness.previous.data.reportChildDiseaseOther">, {{client.visits.child_illness.previous.data.reportChildDiseaseOther | humanize}}</span>
+        <br/>
+        <span class="text-bold">Date: </span><span>{{client.visits.child_illness.previous.data.reportChildDiseaseDate | date:'dd/MM/yy'}}</span>
+    </div>
+    <button ng-if="!client.visits.child_illness.previous" class="btn btn-primary btn-large btn-sr complete btn-new-form full-height"
+            ng-click="openForm('child_illness', client.entityId);">
+        Sick Visit
+    </button>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <button class="btn btn-primary btn-large normal btn-sr full-height" ng-click="openChildFormModal(client.entityId)">
+        <center><i class="icon-pencil icon-large"></i></center>
+    </button>
+</div>

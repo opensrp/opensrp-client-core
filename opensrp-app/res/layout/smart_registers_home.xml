@@ -1,0 +1,222 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              android:background="#ff313131">
+
+    <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:background="@drawable/bg_texture">
+
+        <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/logo"/>
+
+        <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+                <ImageButton
+                        android:id="@+id/btn_ec_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/register_ec"
+                        style="@style/ImageButton.Home.Register"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EC"
+                        android:textStyle="bold"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REGISTER"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_ec_register_client_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/CustomFontTextViewStyle.Badge"/>
+            </FrameLayout>
+
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+                <ImageButton
+                        android:id="@+id/btn_fp_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/register_fp"
+                        style="@style/ImageButton.Home.Register"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="FP"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REGISTER"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_fp_register_client_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/CustomFontTextViewStyle.Badge"/>
+            </FrameLayout>
+
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+                <ImageButton
+                        android:id="@+id/btn_anc_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/register_anc"
+                        style="@style/ImageButton.Home.Register"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ANC"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REGISTER"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_register_client_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/CustomFontTextViewStyle.Badge"/>
+            </FrameLayout>
+
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+                <ImageButton
+                        android:id="@+id/btn_pnc_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/register_pnc"
+                        style="@style/ImageButton.Home.Register"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PNC"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REGISTER"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_pnc_register_client_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/CustomFontTextViewStyle.Badge"/>
+            </FrameLayout>
+
+            <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1">
+
+                <ImageButton
+                        android:id="@+id/btn_child_register"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/register_child"
+                        style="@style/ImageButton.Home.Register"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="CHILD"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="REGISTER"
+                        style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_child_register_client_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/CustomFontTextViewStyle.Badge"/>
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/btn_reporting"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_reporting"
+                android:drawablePadding="5dp"
+                android:paddingLeft="185dp"
+                android:paddingRight="185dp"
+                android:text="@string/str_reporting"
+                style="@style/CustomFontTextViewStyle.Home.Buttons"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/btn_videos"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:drawableLeft="@drawable/ic_tv"
+                android:drawablePadding="5dp"
+                android:paddingLeft="200dp"
+                android:paddingRight="200dp"
+                android:text="@string/str_videos"
+                style="@style/CustomFontTextViewStyle.Home.Buttons"/>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="@dimen/list_item_height"
+              android:weightSum="@integer/ec_list_item_weight_count">
+
+    <include layout="@layout/smart_register_client_profile"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_ec_number"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/ec_list_ec_no_view_weight"
+            android:layout_marginTop="3dp"
+            style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include layout="@layout/smart_register_client_gplsa_layout"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include layout="@layout/smart_register_client_fp_method_layout"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include layout="@layout/smart_register_client_children_layout"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include layout="@layout/smart_register_client_status_layout"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <ImageButton
+            android:id="@+id/btn_edit"
+            android:layout_width="@dimen/list_edit_icon_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/ec_list_edit_icon_view_weight"
+            android:scaleType="center"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/edit_button_background"/>
+</LinearLayout>

@@ -1,0 +1,57 @@
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <p class="text-left">
+        <span>Date:</span>
+        <span class="delivery-info ellipsis text-bold">{{client.deliveryDateLongFormat}}</span>
+    </p>
+
+    <p class="text-left">
+        <span>Place:</span>
+        <span class="delivery-info ellipsis text-bold">{{client.deliveryPlace | humanize | uppercase}}</span>
+    </p>
+
+    <p class="text-left" ng-if="client.deliveryType">
+        <span>Type:</span>
+        <span class="delivery-info text-bold ellipsis">{{client.deliveryType | humanize}}</span>
+    </p>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content vertical-ellipsis">
+    {{client.deliveryComplications |
+    camelCase | commaSeparated | humanize}}
+</div>
+<div class="span2 span-no-margin width-without-margins line-right span-content" ng-if="client.fp_method">
+    <span class="text-bold">{{client.fp_method | fpMethodName:ecsWithFPMethodServiceModeOptions.options }}</span>
+    <br/>
+    <span>{{client.family_planning_method_change_date}}</span>
+    <br/>
+    <ng:switch on="client.fp_method">
+                <span ng-switch-when="iud">
+                    <span class="iud-place">{{client.iudPlace | uppercase}}</span>
+                    <span ng-if="client.iudPlace">, </span>
+                    <span>{{client.iudPerson | uppercase}}</span>
+                </span>
+        <span ng-switch-when="ocp">No. Strips: {{client.numberOfOCPDelivered}}</span>
+        <span ng-switch-when="condom">No. Given: {{client.numberOfCondomsSupplied}}</span>
+        <span ng-switch-when="centchroman">No. Strips: {{client.numberOfCentchromanPillsDelivered}}</span>
+    </ng:switch>
+</div>
+<div class="span2 span-no-margin width-without-margins line-right span-content" ng-if="!client.fp_method">
+    <button class="btn btn-large btn-sr btn-fill-cell btn-done btn-new-form" ng-if="!client.fp_method"
+            ng-click="openForm('postpartum_family_planning', client.entityId);" style="">PP FP
+    </button>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content hide-extra">
+    <div ng-repeat="child in client.children">
+        <!--<img ng-src="{{client.photo_path}}" class="img-rounded img-left pnc-child-img" width="40" height="40" />-->
+        <p class="text-left">
+            <span>{{child.gender | camelCase}}</span>
+            <br/>
+            <span ng-if="child.weight">Birth Wt:</span>
+            <span ng-if="child.weight">{{child.weight}} kg</span>
+        </p>
+    </div>
+</div>
+<div class="span1 span-no-margin width-without-margins full-height span-content">
+    <button class="btn btn-primary btn-large normal btn-sr full-height" ng-click="openPNCFormModal(client.entityId)">
+        <center><i class="icon-pencil icon-large"></i></center>
+    </button>
+</div>

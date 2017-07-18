@@ -1,0 +1,18 @@
+<button class="btn btn-sr btn-large btn-visit-status complete btn-primary full-height">
+    <div class="done-icon right large full-height"><i></i></div>
+    <span class="text-bold">{{statusType | uppercase}}</span>
+    <ng-switch on="statusType">
+        <div ng-switch-when="anc">
+            <span>LMP: {{client.status.date}}</span>
+            <br/>
+            <span>EDD: {{client.status.edd}}</span>
+        </div>
+        <div ng-switch-when="pnc">
+            <span>Delivery:<br/>
+                {{client.status.date}}</span>
+        </div>
+        <div ng-switch-default>
+            <span>{{client.status.date}}</span>
+        </div>
+    </ng-switch>
+</button>

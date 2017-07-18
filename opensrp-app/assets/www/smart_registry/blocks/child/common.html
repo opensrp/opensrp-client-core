@@ -1,0 +1,39 @@
+<div id="name" ng-click="openProfile(client.entityId)"
+     class="span8 client-details line-right full-height span-no-margin width-without-margins span-content">
+    <div id="pic">
+        <img ng-src="{{client.photo_path}}"/>
+    </div>
+    <div class="names">
+        <div>
+            <span class="client-name text-bold ellipsis">{{nameOrMothers(client) | humanize | camelCase}}</span>
+            <span class="client-age text-bold">({{childsAge(client)}}, {{client.gender | slice:0:1 | uppercase }})</span>
+        </div>
+        <div class="client-parents-name ellipsis" style="font-size:15px;">
+            <span>{{client.motherName | humanize | camelCase}}</span>
+            <span ng-if="client.motherAge">({{client.motherAge}})</span>
+            <span ng-if="client.fatherName">, {{client.fatherName | humanize | camelCase}}</span>
+        </div>
+        <div>
+            <span class="client-village ellipsis">{{client.village | humanize | camelCase}}</span>
+            <span class="client-location-status" ng-if="locationStatusMapping[client.locationStatus]">({{villageOptions.options[locationStatusMapping[client.locationStatus]].label}})</span>
+        </div>
+    </div>
+    <div class="flag-container">
+        <div ng-if="client.isHighPriority" class="flag flag-hp"></div>
+        <div ng-if="client.isHighRisk" class="flag flag-hr"></div>
+        <div ng-if="client.isBPL"
+             class="flag flag-bpl"></div>
+        <ng:switch on="client.caste.toUpperCase()">
+            <div ng-switch-when="SC" class="flag flag-sc"></div>
+            <div ng-switch-when="ST" class="flag flag-st"></div>
+        </ng:switch>
+    </div>
+</div>
+<div class="span4 line-right full-height span-no-margin width-without-margins span-content">
+    <div ng-if="client.thayiCardNumber">
+        <span>Thayi:</span> <span class="text-bold">{{client.thayiCardNumber}}</span>
+    </div>
+    <div ng-if="client.locationStatus != 'out_of_area'">
+        <span>Mother EC:</span> <span class="text-bold">{{client.ecNumber}}</span>
+    </div>
+</div>

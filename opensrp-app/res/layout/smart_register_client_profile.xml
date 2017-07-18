@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<org.ei.opensrp.view.customControls.ClientProfileView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                      android:id="@+id/profile_info_layout"
+                                                      android:layout_width="@dimen/list_profile_box_width"
+                                                      android:layout_height="fill_parent"
+                                                      android:layout_weight="@integer/ec_list_profile_box_weight"
+                                                      android:background="@drawable/transparent_blue_background">
+    <FrameLayout
+            android:id="@+id/img_profile_layout"
+            android:layout_width="@dimen/client_profile_pic_width"
+            android:layout_height="fill_parent">
+
+        <ImageView
+                android:id="@+id/img_profile"
+                android:layout_width="@dimen/client_profile_pic_width"
+                android:layout_height="@dimen/client_profile_pic_height"
+                android:layout_marginLeft="@dimen/client_profile_pic_margin_left"
+                android:layout_marginRight="@dimen/client_profile_pic_margin_right"
+                android:layout_marginTop="@dimen/client_profile_pic_margin_top"/>
+
+        <LinearLayout
+                android:id="@+id/badges_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingTop="@dimen/client_profile_badge_layout_margin_top"
+                android:orientation="vertical">
+
+            <ImageView
+                    android:id="@+id/img_hp_badge"
+                    android:layout_width="@dimen/client_profile_badge_width"
+                    android:layout_height="@dimen/client_profile_badge_height"
+                    android:layout_marginBottom="-5dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/flag_hp"/>
+
+            <ImageView
+                    android:id="@+id/img_hr_badge"
+                    android:layout_width="@dimen/client_profile_badge_width"
+                    android:layout_height="@dimen/client_profile_badge_height"
+                    android:layout_marginBottom="-5dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/flag_hr"/>
+
+            <ImageView
+                    android:id="@+id/img_bpl_badge"
+                    android:layout_width="@dimen/client_profile_badge_width"
+                    android:layout_height="@dimen/client_profile_badge_height"
+                    android:layout_marginBottom="-5dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/flag_bpl"/>
+
+            <ImageView
+                    android:id="@+id/img_sc_badge"
+                    android:layout_width="@dimen/client_profile_badge_width"
+                    android:layout_height="@dimen/client_profile_badge_height"
+                    android:layout_marginBottom="-5dp"
+                    android:scaleType="fitStart"
+                    android:src="@drawable/flag_sc"/>
+
+            <ImageView
+                    android:id="@+id/img_st_badge"
+                    android:layout_width="@dimen/client_profile_badge_width"
+                    android:layout_height="@dimen/client_profile_badge_height"
+                    android:scaleType="fitStart"
+                    android:layout_marginBottom="-5dp"
+                    android:src="@drawable/flag_st"/>
+        </LinearLayout>
+    </FrameLayout>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_wife_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_toRightOf="@id/img_profile_layout"
+            android:layout_toLeftOf="@+id/txt_age"
+            android:singleLine="true"
+            style="@style/CustomFontTextViewStyle.ListView.Bold"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_husband_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_wife_name"
+            android:layout_toRightOf="@id/img_profile_layout"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_village_name"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/txt_husband_name"
+            android:layout_toRightOf="@id/img_profile_layout"
+            android:layout_toLeftOf="@+id/txt_out_of_area"
+            android:layout_marginTop="@dimen/client_profile_village_margin"
+            android:layout_marginBottom="@dimen/client_profile_village_margin"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_age"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:paddingTop="@dimen/client_age_padding"
+            android:paddingRight="5dp"
+            android:paddingLeft="5dp"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_out_of_area"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:padding="5dp"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+</org.ei.opensrp.view.customControls.ClientProfileView>

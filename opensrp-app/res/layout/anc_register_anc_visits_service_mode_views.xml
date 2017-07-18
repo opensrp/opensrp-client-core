@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/anc_list_service_mode_views_section_weight"
+              android:orientation="horizontal"
+        >
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_anc_visit_1"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="@integer/anc_list_anc_visit_service_mode_anc_visit_1_view_weight"
+                  android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <RelativeLayout
+                    android:id="@+id/layout_anc_visit_1_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_1_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_1_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_anc_visit_1_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+
+            <RelativeLayout android:id="@+id/layout_anc_visit_1_service_provided"
+                            android:layout_width="fill_parent"
+                            android:background="@color/status_bar_text_almost_white"
+                            android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_1_done_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_yes_small"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_1_bp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_bp"
+                        android:layout_below="@id/txt_anc_visit_1_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_1_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_weight"
+                        android:layout_below="@id/lbl_anc_visit_1_bp"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_1_bp_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_1_bp"
+                        android:layout_below="@id/txt_anc_visit_1_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_1_weight_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_1_weight"
+                        android:layout_below="@id/txt_anc_visit_1_bp_value"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_anc_visit_2"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="@integer/anc_list_anc_visit_service_mode_anc_visit_2_view_weight"
+                  android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <RelativeLayout
+                    android:id="@+id/layout_anc_visit_2_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_2_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_2_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_anc_visit_2_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+            <RelativeLayout android:id="@+id/layout_anc_visit_2_service_provided"
+                            android:background="@color/status_bar_text_almost_white"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_2_done_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_yes_small"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_2_bp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_bp"
+                        android:layout_below="@id/txt_anc_visit_2_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_2_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_weight"
+                        android:layout_below="@id/lbl_anc_visit_2_bp"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_2_bp_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_2_bp"
+                        android:layout_below="@id/txt_anc_visit_2_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_2_weight_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_2_weight"
+                        android:layout_below="@id/txt_anc_visit_2_bp_value"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_anc_visit_3"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="@integer/anc_list_anc_visit_service_mode_anc_visit_3_view_weight"
+                  android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <RelativeLayout
+                    android:id="@+id/layout_anc_visit_3_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_3_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_3_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_anc_visit_3_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+            <RelativeLayout android:id="@+id/layout_anc_visit_3_service_provided"
+                            android:background="@color/status_bar_text_almost_white"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_3_done_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:drawableLeft="@drawable/ic_yes_small"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_3_bp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_bp"
+                        android:layout_below="@id/txt_anc_visit_3_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_3_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_weight"
+                        android:layout_below="@id/lbl_anc_visit_3_bp"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_3_bp_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_3_bp"
+                        android:layout_below="@id/txt_anc_visit_3_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_3_weight_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_3_weight"
+                        android:layout_below="@id/txt_anc_visit_3_bp_value"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_anc_visit_4"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="@integer/anc_list_anc_visit_service_mode_anc_visit_4_view_weight"
+                  android:orientation="vertical">
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_margin="5dp"
+                android:layout_weight="7">
+
+            <RelativeLayout
+                    android:id="@+id/layout_anc_visit_4_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_4_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_4_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_anc_visit_4_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+            <RelativeLayout android:id="@+id/layout_anc_visit_4_service_provided"
+                            android:background="@color/status_bar_text_almost_white"
+                            android:layout_width="fill_parent"
+                            android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_4_done_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:drawableLeft="@drawable/ic_yes_small"
+                        android:text="@string/anc_label"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_4_bp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_bp"
+                        android:layout_below="@id/txt_anc_visit_4_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/lbl_anc_visit_4_weight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="@string/str_weight"
+                        android:layout_below="@id/lbl_anc_visit_4_bp"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_4_bp_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_4_bp"
+                        android:layout_below="@id/txt_anc_visit_4_done_date"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_anc_visit_4_weight_value"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/lbl_anc_visit_4_weight"
+                        android:layout_below="@id/txt_anc_visit_4_bp_value"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+            </RelativeLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/btn_other_anc_visit"
+            android:layout_weight="@integer/anc_list_anc_visit_service_mode_anc_visit_button_view_weight"
+            android:scaleType="center"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@color/status_bar_text_almost_white"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="@string/str_register_anc_visit_form"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"
+            />
+
+</LinearLayout>

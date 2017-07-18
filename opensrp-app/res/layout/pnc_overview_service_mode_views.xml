@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:weightSum="@integer/pnc_list_service_mode_views_section_weight">
+
+    <include layout="@layout/smart_register_client_delivery_info"
+             android:layout_width="@dimen/list_fp_view_width"
+             android:layout_height="fill_parent"
+             android:layout_weight="@integer/pnc_list_delivery_info_view_weight"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_complications"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_complication_view_weight"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <include layout="@layout/smart_register_client_pnc_pp_fp_method_layout"
+             android:layout_width="@dimen/list_fp_view_width"
+             android:layout_height="fill_parent"
+             android:layout_weight="@integer/pnc_list_pp_fp_view_weight"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+    <LinearLayout
+            android:id="@+id/lyt_pnc_child_holder"
+            android:layout_width="@dimen/list_fp_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_child_view_weight"
+            android:orientation="vertical" >
+
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <ImageButton
+            android:id="@+id/btn_edit"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_edit_icon_view_weight"
+            android:scaleType="center"
+            android:gravity="center"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/edit_button_background"/>
+
+</LinearLayout>

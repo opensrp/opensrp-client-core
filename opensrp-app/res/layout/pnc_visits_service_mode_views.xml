@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="wrap_content"
+              android:layout_height="match_parent"
+              android:weightSum="@integer/pnc_list_service_mode_views_section_weight">
+
+    <LinearLayout
+            android:id="@+id/lyt_days_pp"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:layout_weight="@integer/pnc_list_days_pp_view_weight">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_no_of_visits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                style="@style/CustomFontTextViewStyle.ListView.Bold"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_label_dob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                android:text="@string/str_pnc_dob_label"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_dob"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/text_black"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_pnc_visits_complications"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_complication_view_weight"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"/>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <WebView
+            android:id="@+id/wbv_pnc_visit_graph"
+            android:layout_width="@dimen/list_ec_no_view_width"
+            android:layout_height="fill_parent"
+            android:background="@color/alert_complete_green"
+            android:clickable="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:layout_weight="@integer/pnc_list_graph_view_weight" >
+    </WebView>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout
+            android:id="@+id/lyt_pnc_recent_visits_holder"
+            android:layout_width="@dimen/list_fp_view_width"
+            android:layout_height="fill_parent"
+            android:layout_weight="@integer/pnc_list_recent_visits_weight"
+            android:orientation="vertical">
+    </LinearLayout>
+
+    <ImageView
+            android:layout_width="@dimen/smart_register_client_divider_height"
+            android:layout_height="fill_parent"
+            android:src="@color/smart_register_client_divider_color"/>
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:id="@+id/layout_pnc_visit"
+                  android:layout_width="0dp"
+                  android:layout_height="match_parent"
+                  android:layout_weight="@integer/pnc_list_visit_alerts_weight"
+                  android:orientation="vertical">
+
+
+        <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/list_ec_no_view_width"
+                android:layout_margin="5dp"
+                android:layout_weight="@integer/pnc_list_visit_alerts_button_holder_weight">
+
+            <org.ei.opensrp.view.customControls.CustomFontTextView
+                    android:id="@+id/btn_pnc_visit"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="center"
+                    android:text="@string/str_pnc_visit_button_label"
+                    android:textColor="@color/light_blue"
+                    android:background="@color/status_bar_text_almost_white"
+                    style="@style/CustomFontTextViewStyle.ListView.Small.NoPadding"/>
+
+            <RelativeLayout
+                    android:id="@+id/layout_pnc_visit_alert"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent">
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_pnc_visit_due_type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+                <org.ei.opensrp.view.customControls.CustomFontTextView
+                        android:id="@+id/txt_pnc_visit_due_on"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/txt_anc_visit_due_type"
+                        android:layout_alignParentLeft="true"
+                        style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+            </RelativeLayout>
+
+        </FrameLayout>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_pnc_visit_on"
+                android:layout_width="fill_parent"
+                android:layout_height="0dp"
+                android:layout_weight="3"
+                android:drawableLeft="@drawable/ic_yes_small"
+                android:paddingLeft="0dp"
+                style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
+    </LinearLayout>
+
+</LinearLayout>

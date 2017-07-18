@@ -1,0 +1,65 @@
+configure(allprojects) { project ->
+    buildscript {
+        repositories {
+            jcenter()
+            mavenCentral()
+            maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+            mavenLocal()
+        }
+    }
+}
+
+project.ext.preDexLibs = !project.hasProperty('disablePreDex')
+
+subprojects {
+
+    group = 'org.ei.opensrp'
+
+    ext.androidToolsBuildGradle     = '21.1.2'
+    ext.androidBuildToolsVersion    = '26.0.0'
+    ext.androidMinSdkVersion        = 16
+    ext.androidCompileSdkVersion    = 21
+    ext.androidTargetSdkVersion     = 21
+
+    ext.androidAnnotationsVersion = '3.0.1';
+    ext.androidAnnotationsAPIVersion = '3.0.1';
+
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven { url 'https://jitpack.io' }
+        maven { url "${projectDir}/libs/" }
+        maven { url "http://nexus.motechproject.org/content/repositories/drishti" }
+        maven { url "http://nexus.motechproject.org/content/repositories/snapshots" }
+        maven { url "http://acra.googlecode.com/svn/repository/releases" }
+        maven { url "http://repo.maven.apache.org/maven2" }
+        maven { url "http://cloudant.github.io/cloudant-sync-eap/repository" }
+        maven {
+            url "${projectDir}/opensrp-app/../libs/"
+        }
+        maven {
+            url "${projectDir}/opensrp-app-it/../libs/"
+        }
+        mavenLocal()
+    }
+
+    // Improve build server performance by allowing disabling of pre-dexing
+    // (see http://tools.android.com/tech-docs/new-build-system/tips#TOC-Improving-Build-Server-performance.)
+    project.plugins.whenPluginAdded { plugin ->
+        if("com.android.build.gradle.AppPlugin".equals(plugin.class.name)) {
+            project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+        } else if ("com.android.build.gradle.LibraryPlugin".equals(plugin.class.name)) {
+            project.android.dexOptions.preDexLibraries = rootProject.ext.preDexLibs
+        }
+    }
+}
+
+apply plugin : 'java'
+apply plugin : 'build-dashboard'
+
+buildDashboard {
+    reports.html.destination = "build/"
+}
+
+test.reports.html.enabled = false
+test.reports.junitXml.enabled = false

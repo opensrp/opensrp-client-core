@@ -1,0 +1,46 @@
+<div class="span7 full-height span-no-margin width-without-margins">
+    <div class="row-fluid full-height">
+        <div class="span10 full-height span-no-margin width-without-margins">
+            <div class="row-fluid full-height">
+                <div data-ng-repeat="milestone in ['ANC 1', 'ANC 2', 'ANC 3', 'ANC 4']"
+                     class="visits span3 line-right span-no-margin width-without-margins span-content">
+                    <!--ANC x-->
+                    <button ng-if="client.visits.anc[milestone]" class="btn btn-primary btn-sr full-height"
+                            ng-class="client.visits.anc[milestone].status"
+                            ng-click="client.visits.anc[milestone].status == 'complete' || openForm(milestoneForm[milestone], client.entityId, {'entityId': client.entityId, 'alertName': milestone})">
+                        <ng:switch on="client.visits.anc[milestone].status">
+                            <div ng-switch-when="complete" class="full-height">
+                                <div class="done-icon full-height"><i class="icon-ok green"></i></div>
+                                <span class="text-bold">{{client.visits.anc[milestone].visit_date}}</span>
+                                <br/>
+                                <span ng-if="client.visits.anc[milestone].data.bpSystolic && client.visits.anc[milestone].data.bpDiastolic">
+                                    BP {{client.visits.anc[milestone].data.bpSystolic}}/{{client.visits.anc[milestone].data.bpDiastolic}}
+                                    <br/>
+                                </span>
+                                <span ng-if="client.visits.anc[milestone].data.weight">Wt. {{client.visits.anc[milestone].data.weight}} kg</span>
+                            </div>
+                            <div ng-switch-default class="button-text-container">
+                                <span class="text-bold text-upper">{{milestone}}</span>
+                                <br/>
+                                <ng:switch on="client.visits.anc[milestone].status">
+                                    <span ng-switch-when="complete">Done </span>
+                                    <span ng-switch-default>Due </span>
+                                </ng:switch>
+                                <span>{{client.visits.anc[milestone].visit_date}}</span>
+                            </div>
+                        </ng:switch>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="span2 full-height span-no-margin width-without-margins span-content">
+            <button class="btn btn-primary btn-large btn-sr complete btn-new-form full-height"
+                    ng-click="openForm('anc_visit', client.entityId);closeANCFormModal();">
+                ANC Visit
+            </button>
+        </div>
+    </div>
+</div>
+
+
+

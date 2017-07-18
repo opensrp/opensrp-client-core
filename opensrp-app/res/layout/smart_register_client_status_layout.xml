@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<org.ei.opensrp.view.customControls.ClientStatusView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/status_layout"
+        android:layout_width="@dimen/list_status_view_width"
+        android:layout_height="fill_parent"
+        android:layout_weight="@integer/ec_list_status_view_weight"
+        android:layout_margin="5dp"
+        android:background="@color/status_bar_text_almost_white">
+
+    <ViewStub
+            android:id="@+id/ec_and_fp_status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/smart_register_client_status_ec_and_fp"/>
+
+    <ViewStub
+            android:id="@+id/anc_status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/smart_register_client_status_anc"/>
+
+    <ViewStub
+            android:id="@+id/pnc_status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/smart_register_client_status_pnc"/>
+
+    <ViewStub
+            android:id="@+id/pnc_and_fp_status_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/smart_register_client_status_pnc_and_fp"/>
+</org.ei.opensrp.view.customControls.ClientStatusView>

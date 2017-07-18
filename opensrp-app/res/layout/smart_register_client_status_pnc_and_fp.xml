@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:baselineAligned="false"
+        android:background="@android:color/white">
+
+    <LinearLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginRight="5dp"
+            android:background="@color/status_bar_text_almost_white">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_pnc_status_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_pnc"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/status_delivery"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_status_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginLeft="5dp"
+            android:background="@color/status_bar_text_almost_white">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_fp_status_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_fp"
+                style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_fp_status_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+    </LinearLayout>
+</LinearLayout>
+
+    

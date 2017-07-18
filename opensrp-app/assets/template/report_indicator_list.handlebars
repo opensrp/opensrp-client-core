@@ -1,0 +1,37 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <ul class="area-full nav pull-left">
+            <li class="area-8_0"><div class="navbar-header ellipsis">{{description}}</div></li>
+        </ul>
+    </div>
+</div>
+
+<div class="content">
+    <div class="registry-container container-fluid">
+        {{#each indicatorReports}}
+        <div class="big-text-black">{{description}}</div>
+        <table class="table table-bordered indicator-report" data-indicator="{{indicatorIdentifier}}">
+            <tbody>
+            <tr>
+                <td>
+                    <div class="report-medium">{{annualTarget}}</div>
+                    <div class="meta-summary-text">Annual Target</div>
+                </td>
+                <td>
+                    <div class="report-medium text-blue">{{currentProgress}}</div>
+                    <div class="meta-summary-text">in {{monthName currentMonth}}</div>
+                </td>
+                <td>
+                    <div class="report-medium text-blue">{{aggregatedProgress}}</div>
+                    <div class="meta-summary-text">Total to {{monthName currentMonth}}</div>
+                </td>
+                <td>
+                    <div class="report-medium text-green">{{percentage aggregatedProgress annualTarget}}</div>
+                    <div class="meta-summary-text">Percent of Target</div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        {{/each}}
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<!-- do not copy to Dristhi Android repo -->
+<!-- this file is meant to make dristhi devs life easier by listing all dristhi forms -->
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>Index Page for Dristhi Developers</title>
+		<style type="text/css">
+			ul {
+				list-style-type: none;
+				padding: 0;
+				font-family: arial, sans-serif;
+			}
+			li {
+				display: block;
+				margin: 10px;
+			}
+			li a:hover {
+				background: #e4f4ff;
+			}
+			li a {
+				display: block;
+				box-sizing: border-box;
+				width: 100%;
+				padding: 10px;
+				border: 1px solid #cccccc;
+				border-radius: 5px;
+				text-align: center;
+				text-decoration: none;
+				color: black;
+			}
+		</style>
+		<script type="text/javascript" src="mock/transforms.mock.js"></script>
+		<script type="text/javascript">
+			function populateList() {
+				var li, link,
+				list = document.getElementById("formlist");
+			
+				for (var form in mockForms) {
+					li = document.createElement("li");
+					link = document.createElement("a");
+					link.setAttribute("href", "template.html?formName="+form+"&instanceId=a&debug=true");
+					link.appendChild(document.createTextNode(form));
+					li.appendChild(link);
+					list.appendChild(li);
+				}
+			}
+		</script>
+	</head>
+	<body onload="populateList();">
+		<ul id="formlist"></ul>
+	</body>
+</html>

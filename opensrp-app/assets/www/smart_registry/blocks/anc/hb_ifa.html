@@ -1,0 +1,85 @@
+<div class="span7 full-height span-no-margin width-without-margins">
+    <div class="row-fluid full-height">
+        <div class="span6 full-height span-no-margin width-without-margins">
+            <div class="row-fluid full-height">
+                <div class="span7 full-height span-no-margin width-without-margins span-content">
+                    <div ng-if="client.visits.hb['Hb Test']"
+                         data-ng-repeat="hb in client.visits.hb['Hb Test'] | orderBy:'-visit_date' | limitTo: 3" class="row-fluid hb">
+                        <div class="span1 width-without-margins hb-legend"
+                             ng-class="hbLegendClass(hb.data.hbLevel)">
+                        </div>
+                        <div class="span5 span-no-margin width-without-margins hb-content">
+                            <span>{{hb.visit_date}}</span>
+                        </div>
+                        <div class="span6 span-no-margin width-without-margins hb-content hb-content-right-aligned">
+                            <span>{{hb.data.hbLevel}} g/dl</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="span5 line-right full-height span-no-margin width-without-margins span-content">
+                    <button class="btn btn-primary btn-sr full-height"
+                            ng-if="client.visits.hb.next"
+                            ng-class="client.visits.hb.next.status"
+                            ng-click="openForm('hb_test', client.entityId, {'entityId': client.entityId, 'alertName': client.visits.hb.next.name})">
+                        <div class="button-text-container">
+                            <span class="text-bold">Hb Test</span>
+                            <br/>
+                            <span>Due {{client.visits.hb.next.visit_date}}</span>
+                        </div>
+                    </button>
+                    <button class="btn btn-done btn-sr btn-new-form full-height"
+                            ng-if="!client.visits.hb.next"
+                            ng-click="openForm('hb_test', client.entityId)">Hb Test
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="span6 full-height span-no-margin width-without-margins">
+            <div class="row-fluid full-height span-no-margin width-without-margins">
+                <div class="span7 line-right full-height span-no-margin width-without-margins span-content">
+                    <div ng-if="client.visits.ifa['IFA']"
+                         data-ng-repeat="ifa in client.visits.ifa['IFA'] | orderBy:'-visit_date' | limitTo: 3">
+                        <div class="row-fluid hb">
+                            <div class="span4 span-no-margin width-without-margins hb-content">
+                                {{ifa.visit_date}}
+                            </div>
+                            <div class="span8 span-no-margin width-without-margins hb-content hb-content-right-aligned">
+                                <i class="icon-ok green"></i> {{ifa.data.dose}} Tablets
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="span5 full-height span-no-margin width-without-margins span-content">
+                    <!--IFA-->
+                    <button class="btn btn-done btn-sr btn-new-form full-height"
+                            ng-if="(!client.visits.ifa['IFA'] && !client.visits.ifa.next)"
+                            ng-click="openForm('ifa', client.entityId, {'entityId': client.entityId})">IFA
+                    </button>
+                    <button class="btn btn-primary btn-sr full-height"
+                       ng-if="client.visits.ifa.next && client.visits.ifa.next.status != 'complete'"
+                       ng-class="client.visits.ifa.next.status"
+                       ng-click="openForm('ifa', client.entityId, {'entityId': client.entityId, 'alertName': client.visits.ifa.next.name})">
+                        <div class="button-text-container">
+                            <span class="text-bold">IFA Tablets</span>
+                            <br/>
+                            <span>Due {{client.visits.ifa.next.visit_date}}</span>
+                        </div>
+                    </button>
+                    <button class="btn btn-primary btn-sr full-height complete"
+                            ng-if="client.visits.ifa['IFA'] && ((client.visits.ifa.next && client.visits.ifa.next.status == 'complete') ||
+                                (!client.visits.ifa.next))">
+                        <div class="done-icon full-height">
+                            <i class="icon-ok green icon-large"></i>
+                        </div>
+                        <div class="button-text-container">
+                            <span class="text-bold">IFA {{sumIFATablets(client.visits.ifa)}}</span>
+                            <br/>
+                            <span>On {{client.visits.ifa.previous.visit_date}}</span>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

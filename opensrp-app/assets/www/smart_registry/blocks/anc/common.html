@@ -1,0 +1,39 @@
+<div id="name" ng-click="openProfile(client.entityId)" class="span6 client-details line-right grid-content-padding span-no-margin width-without-margins">
+    <ng:include src="'blocks/client_name.html'"></ng:include>
+    <div class="flag-container">
+        <div ng-if="client.isHighRisk" class="flag flag-hrp"></div>
+        <div ng-if="client.isBPL" class="flag flag-bpl"></div>
+        <ng:switch on="client.caste.toUpperCase()">
+            <div ng-switch-when="SC" class="flag flag-sc"></div>
+            <div ng-switch-when="ST" class="flag flag-st"></div>
+        </ng:switch>
+    </div>
+</div>
+<div class="span6 span-no-margin width-without-margins full-height">
+    <div class="row-fluid full-height">
+        <div id="id" class="span5 line-right full-height span-content">
+            <small>ANC:</small>
+            <b>{{client.ancNumber}}</b>
+            <br/>
+            <small>Thayi:</small>
+            <b>{{client.thayi}}</b>
+        </div>
+        <div class="span7 line-right full-height span-no-margin width-without-margins span-content anc-status"
+             ng-class="{'text-due': client.days_past_edd > -30 && client.days_past_edd < 0,
+             'text-past-due': client.days_past_edd >= 0}">
+            <!--weeks pregnant-->
+            <div ng-if="client.days_past_edd <= 0" style="margin-top: 4px"><b><span style="font-size: 24px">{{weeksPregnant(client)}}</span></b>
+                <b><span style="font-size: 20px">weeks</span></b>
+            </div>
+            <div ng-if="client.days_past_edd <= 0" style="margin-top: 2px" class="text-bold">
+                LMP: {{client.lmpLongFormat}}
+            </div>
+            <div style="margin-top: 2px" class="text-bold">
+                EDD: {{client.eddLongFormat}}
+            </div>
+            <div ng-if="client.days_past_edd > 0" style="margin-top: 4px"><b><span style="font-size: 20px">{{client.days_past_edd}}</span></b>
+                <b><span style="font-size: 16px">day(s) past due</span></b>
+            </div>
+        </div>
+    </div>
+</div>

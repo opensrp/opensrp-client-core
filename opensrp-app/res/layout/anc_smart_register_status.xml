@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.ei.opensrp.view.customControls.ANCStatusView
+        android:id="@+id/anc_client_status_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="@integer/anc_list_status_view_weight">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_anc_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/lbl_anc_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_weeks"
+                android:layout_toRightOf="@id/txt_anc_status"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/lbl_lmp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/txt_anc_status"
+                android:text="@string/lmp_label"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_lmp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/lbl_anc_status"
+                android:layout_toRightOf="@id/lbl_lmp"
+                style="@style/CustomFontTextViewStyle.ListView.Medium.NoPadding"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/lbl_edd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/lbl_lmp"
+                android:text="@string/edd_label"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_days_past_due"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/lbl_edd"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_edd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/lbl_edd"
+                android:layout_below="@id/txt_lmp"
+                style="@style/CustomFontTextViewStyle.ListView.Medium.NoPadding"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/lbl_days_past_due"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/txt_days_past_due"
+                android:text="@string/str_days_past_due"
+                android:layout_below="@id/txt_edd"
+                style="@style/CustomFontTextViewStyle.ListView.Normal.TwoLine"/>
+
+</org.ei.opensrp.view.customControls.ANCStatusView>

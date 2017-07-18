@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<org.ei.opensrp.view.customControls.ClientIdDetailsView
+        android:id="@+id/client_id_details_layout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="@integer/child_list_id_no_view_weight">
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/lbl_thayi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:text="@string/thayi_label"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/lbl_mother_ec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/lbl_thayi"
+            android:text="@string/mother_ec_label"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_thayi_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/lbl_thayi"
+            android:layout_alignParentTop="true"
+            style="@style/CustomFontTextViewStyle.ListView.Medium.NoPadding"/>
+
+    <org.ei.opensrp.view.customControls.CustomFontTextView
+            android:id="@+id/txt_mother_ec_no"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/lbl_mother_ec"
+            android:layout_below="@id/txt_thayi_no"
+            style="@style/CustomFontTextViewStyle.ListView.Medium.NoPadding"/>
+</org.ei.opensrp.view.customControls.ClientIdDetailsView>

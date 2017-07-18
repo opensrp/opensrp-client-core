@@ -1,0 +1,85 @@
+<div class="span6 full-height span-no-margin width-without-margins">
+    <div class="row-fluid full-height">
+        <div class="span3 line-right span-no-margin width-without-margins span-content vertical-ellipsis">
+            {{client.riskFactors | camelCase | commaSeparated | humanize}}
+        </div>
+        <div data-ng-repeat="schedule in ['anc', 'tt', 'ifa']"
+             class="visits span3 line-right span-no-margin width-without-margins span-content">
+            <div class="relative-positioning">
+                <button class="btn btn-primary btn-sr"
+                        ng-if="schedule === 'tt' && client.visits[schedule].next && (client.visits[schedule].next.name === 'TT 1' || client.visits[schedule].next.name === 'TT Booster')"
+                        ng-class="client.visits[schedule].next.status"
+                        ng-click='client.visits[schedule].next.status === "inProcess" || openFormWithFieldOverridesAndMetaData("tt", client.entityId, {"entityId": client.entityId, "alertName": client.visits[schedule].next.name});'>
+                    <span class="text-bold text-upper" ng-if='client.visits[schedule].next.status === "complete"'>{{client.visits[schedule].next.name}}</span>
+                    <span class="text-bold text-upper" ng-if='client.visits[schedule].next.status != "complete"'>TT</span>
+                    <br/>
+                        <span ng-if="client.visits[schedule].next.status == 'normal'
+                                || client.visits[schedule].next.status == 'urgent'
+                                || client.visits[schedule].next.status == 'upcoming'">
+                            Due
+                        </span>
+                    <span>{{client.visits[schedule][client.visits[schedule].next.name].visit_date}}</span>
+                </button>
+                <button class="btn btn-primary btn-sr"
+                        ng-if="schedule === 'tt' && client.visits[schedule].next && (client.visits[schedule].next.name !== 'TT 1' && client.visits[schedule].next.name !== 'TT Booster')"
+                        ng-class="client.visits[schedule].next.status"
+                        ng-click='client.visits[schedule].next.status == "complete"
+                        || openFormWithFieldOverridesAndMetaData("tt", client.entityId,
+                        {"entityId": client.entityId, "alertName": client.visits[schedule].next.name},
+                        "{\"ttDose\":\""+client.visits[schedule].next.reminder_form_value+"\"}")'>
+                    <span class="text-bold text-upper">{{ client.visits[schedule].next.name }}</span>
+                    <br/>
+                        <span ng-if="client.visits[schedule].next.status == 'normal'
+                                || client.visits[schedule].next.status == 'urgent'
+                                || client.visits[schedule].next.status == 'upcoming'">
+                            Due
+                        </span>
+                    <span>{{client.visits[schedule][client.visits[schedule].next.name].visit_date}}</span>
+                </button>
+                <button class="btn btn-primary btn-sr"
+                        ng-if="schedule !== 'tt' && client.visits[schedule].next && useMicroForm(schedule)"
+                        ng-class="client.visits[schedule].next.status"
+                        ng-click="text-boldclient.visits[schedule].next.status == 'complete'
+                                || openFormWithFieldOverridesAndMetaData(milestoneForm[client.visits[schedule].next.name], client.entityId, {'entityId': client.entityId, 'alertName': client.visits[schedule].next.name})">
+                    <span class="text-upper">{{client.visits[schedule].next.name}}</span>
+                    <br/>
+                        <span ng-if="client.visits[schedule].next.status == 'normal'
+                                || client.visits[schedule].next.status == 'urgent'
+                                || client.visits[schedule].next.status == 'upcoming'">
+                            Due
+                        </span>
+                    <span>{{client.visits[schedule][client.visits[schedule].next.name].visit_date}}</span>
+                </button>
+                <button class="btn btn-primary btn-sr"
+                        ng-if="schedule !== 'tt' && client.visits[schedule].next && !useMicroForm(schedule)"
+                        ng-class="client.visits[schedule].next.status"
+                        ng-click="client.visits[schedule].next.status === 'complete'
+                                || openForm(milestoneForm[client.visits[schedule].next.name], client.entityId, {'entityId': client.entityId, 'alertName': client.visits[schedule].next.name})">
+                    <span class="text-bold text-upper">{{client.visits[schedule].next.name}}</span>
+                    <br/>
+                        <span ng-if="client.visits[schedule].next.status == 'normal'
+                                || client.visits[schedule].next.status == 'urgent'
+                                || client.visits[schedule].next.status == 'upcoming'">
+                            Due
+                        </span>
+                    <span>{{client.visits[schedule][client.visits[schedule].next.name].visit_date}}</span>
+                </button>
+                <span ng-if="client.visits[schedule].previous" class="previous-alert">
+                    <i class="icon-ok green"></i>
+                    <ng:switch on="client.visits[schedule].previous.name">
+                        <span ng-switch-default class="text-upper">{{client.visits[schedule].previous.name}}:</span>
+                        <span ng-switch-when="TT Booster" class="text-upper">TT B:</span>
+                    </ng:switch>
+                    {{client.visits[schedule].previous.visit_date}}
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="span1 full-height span-no-margin width-without-margins span-content">
+    <button class="btn btn-primary btn-large normal btn-sr full-height" ng-click="openANCFormModal(client)">
+        <center><i class="icon-pencil icon-large"></i></center>
+    </button>
+</div>
+

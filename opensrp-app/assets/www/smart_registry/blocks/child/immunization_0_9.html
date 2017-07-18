@@ -1,0 +1,60 @@
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <ng-switch on="client.visits.bcg.bcg.status">
+        <button ng-switch-when="complete"
+                class="btn btn-primary btn-large btn-sr btn-visit-status complete full-height"
+                ng-disabled="true">
+            <div class="done-icon large full-height"><i class="icon-ok green"></i></div>
+            <span class="text-bold">BCG</span>
+            <br/>
+            <span>on {{client.visits.bcg.bcg.visit_date}}</span>
+        </button>
+        <button ng-switch-default
+                class="btn btn-primary btn-large btn-sr btn-visit-status full-height normal"
+                ng-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\"bcg\"}");'>
+            <div class="done-icon large right full-height"><i class="icon-needle"></i></div>
+            <span class="text-bold">BCG</span>
+        </button>
+    </ng-switch>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning">
+        <sr-service-button sr-bind="client.visits.hepb"
+                           sr-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\"hepb_0\"}");'
+                           sr-click-alt="openForm('child_immunizations', client.entityId)"
+                           sr-icon="dropper">
+        </sr-service-button>
+    <span ng-if="client.visits.hepb.previous" class="previous-alert">
+        <i class="icon-ok green"></i>
+        <span class="">{{client.visits.hepb.previous.name | friendlyAbbrev}}: </span>
+        <span>{{client.visits.hepb.hepb_0.visit_date}}</span>
+    </span>
+    </div>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning">
+        <sr-service-button sr-bind="client.visits.opv"
+                           sr-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\""+client.visits.opv.next.name+"\"}");'
+                           sr-click-alt="openForm('child_immunizations', client.entityId)"
+                           sr-icon="dropper">
+        </sr-service-button>
+    <span ng-if="client.visits.opv.previous" class="previous-alert">
+        <i class="icon-ok green"></i>
+        <span class="">{{client.visits.opv.previous.name | friendlyAbbrev}}: </span>
+         <span>{{client.visits.opv.[client.visits.opv.previous.name].visit_date}}</span>
+    </span>
+    </div>
+</div>
+<div class="span3 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning">
+        <sr-service-button sr-bind="client.visits.pentavalent"
+                           sr-click='openFormWithFieldOverrides("child_immunizations", client.entityId, "{\"immunizationsReceived\":\""+client.visits.pentavalent.next.name+"\"}");'
+                           sr-click-alt="openForm('child_immunizations', client.entityId)"
+                           sr-icon="needle">
+        </sr-service-button>
+    <span ng-if="client.visits.pentavalent.previous" class="previous-alert">
+        <i class="icon-ok green"></i>
+        <span class="">{{client.visits.pentavalent.previous.name | friendlyAbbrev}}: </span>
+        <span>{{client.visits.pentavalent.previous.visit_date}}</span>
+    </span>
+    </div>
+</div>

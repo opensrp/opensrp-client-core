@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="ec_list_item_weight_count">1000</integer>
+    <integer name="ec_list_profile_box_weight">244</integer>
+    <integer name="ec_list_ec_no_view_weight">75</integer>
+    <integer name="ec_list_gplsa_view_weight">125</integer>
+    <integer name="ec_list_fp_view_weight">109</integer>
+    <integer name="ec_list_children_view_weight">160</integer>
+    <integer name="ec_list_status_view_weight">218</integer>
+    <integer name="ec_list_edit_icon_view_weight">89</integer>
+
+    <integer name="child_list_item_weight_count">100</integer>
+    <integer name="child_list_profile_box_weight">26</integer>
+    <integer name="child_list_id_no_view_weight">14</integer>
+    <integer name="child_list_service_mode_views_section_weight">60</integer>
+    <integer name="child_list_dob_view_weight">12</integer>
+    <integer name="child_list_last_service_view_weight">15</integer>
+    <integer name="child_list_sick_status_view_weight">23</integer>
+    <integer name="child_list_edit_icon_view_weight">10</integer>
+
+    <integer name="child_list_bcg_view_weight">15</integer>
+    <integer name="child_list_hep_b_birth_view_weight">15</integer>
+    <integer name="child_list_opv_view_weight">15</integer>
+    <integer name="child_list_pentavalent_view_weight">15</integer>
+
+    <integer name="child_list_measles_view_weight">15</integer>
+    <integer name="child_list_opv_booster_view_weight">15</integer>
+    <integer name="child_list_dpt_booster_view_weight">15</integer>
+    <integer name="child_list_vitamin_a_view_weight">15</integer>
+
+    <integer name="fp_list_item_weight_count">100</integer>
+    <integer name="fp_list_profile_box_weight">24</integer>
+    <integer name="fp_list_ec_no_view_weight">6</integer>
+    <integer name="fp_list_gplsa_view_weight">10</integer>
+    <integer name="fp_list_service_mode_views_section_weight">60</integer>
+    <integer name="fp_list_method_view_weight">13</integer>
+    <integer name="fp_list_update_view_weight">7</integer>
+    <integer name="fp_list_side_effects_view_weight">13</integer>
+    <integer name="fp_list_side_effects_button_view_weight">7</integer>
+    <integer name="fp_list_followup_view_weight">20</integer>
+    <integer name="fp_list_prioritization_risks_view_weight">30</integer>
+    <integer name="fp_list_prioritization_button_weight">15</integer>
+
+    <integer name="anc_list_item_weight_count">100</integer>
+    <integer name="anc_list_profile_box_weight">20</integer>
+    <integer name="anc_list_id_no_view_weight">9</integer>
+    <integer name="anc_list_status_view_weight">13</integer>
+    <integer name="anc_list_service_mode_views_section_weight">58</integer>
+    <integer name="anc_list_overview_service_mode_risk_factors_weight">12</integer>
+    <integer name="anc_list_overview_service_mode_tt_view_weight">12</integer>
+    <integer name="anc_list_overview_service_mode_ifa_view_weight">12</integer>
+    <integer name="anc_list_overview_service_mode_anc_visit_view_weight">12</integer>
+    <integer name="anc_list_overview_service_mode_edit_button_view_weight">10</integer>
+    <integer name="anc_list_anc_visit_service_mode_anc_visit_1_view_weight">14</integer>
+    <integer name="anc_list_anc_visit_service_mode_anc_visit_2_view_weight">14</integer>
+    <integer name="anc_list_anc_visit_service_mode_anc_visit_3_view_weight">14</integer>
+    <integer name="anc_list_anc_visit_service_mode_anc_visit_4_view_weight">14</integer>
+    <integer name="anc_list_anc_visit_service_mode_anc_visit_button_view_weight">2</integer>
+    <integer name="anc_list_tt_service_mode_tt_1_view_weight">20</integer>
+    <integer name="anc_list_tt_service_mode_tt_2_view_weight">20</integer>
+    <integer name="anc_list_tt_service_mode_tt_booster_view_weight">18</integer>
+    <integer name="anc_list_hb_ifa_service_mode_hb_details_view_weight">15</integer>
+    <integer name="anc_list_hb_ifa_service_mode_ifa_details_view_weight">14</integer>
+    <integer name="anc_list_hb_ifa_service_mode_hb_alert_view_weight">15</integer>
+    <integer name="anc_list_hb_ifa_service_mode_ifa_alert_view_weight">14</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_alert_view_weight">58</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_service_provided_delivery_at_view_weight">9</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_service_provided_transport_view_weight">9</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_service_provided_has_companion_view_weight">11</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_service_provided_asha_phone_number_view_weight">9</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_service_provided_contact_phone_number_view_weight">9</integer>
+    <integer name="anc_list_delivery_plan_service_mode_delivery_plan_service_provided_risks_reviewed_view_weight">9</integer>
+
+    <integer name="pnc_list_item_weight_count">100</integer>
+    <integer name="pnc_list_profile_box_weight">24</integer>
+    <integer name="pnc_list_thayi_number_view_weight">8</integer>
+    <integer name="pnc_list_delivery_info_view_weight">17</integer>
+    <integer name="pnc_list_complication_view_weight">15</integer>
+    <integer name="pnc_list_pp_fp_view_weight">9</integer>
+    <integer name="pnc_list_child_view_weight">16</integer>
+    <integer name="pnc_list_graph_view_weight">22</integer>
+    <integer name="pnc_list_recent_visits_weight">12</integer>
+    <integer name="pnc_list_visit_alerts_weight">12</integer>
+    <integer name="pnc_list_visit_alerts_button_holder_weight">7</integer>
+
+    <integer name="pnc_list_edit_icon_view_weight">7</integer>
+    <integer name="pnc_list_service_mode_views_section_weight">68</integer>
+    <integer name="pnc_list_days_pp_view_weight">7</integer>
+
+</resources>

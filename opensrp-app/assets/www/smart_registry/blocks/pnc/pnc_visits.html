@@ -1,0 +1,54 @@
+<div class="span4 span-no-margin width-without-margins full-height">
+    <div class="row-fluid full-height">
+        <div class="span4 span-no-margin width-without-margins line-right span-content">
+            <p class="new-line-with-margin">
+                <span class="text-bold text-bigger">{{daysPP(client)}}</span>
+            </p>
+            <p class="new-line-with-margin">
+                <span>DOB: </span>
+            </p>
+            <p class="new-line-with-margin">
+                <span class="text-bold">{{client.deliveryDateSmallFormat}}</span>
+            </p>
+        </div>
+        <div class="span8 span-no-margin width-without-margins line-right span-content vertical-ellipsis">{{pncComplications(client.pncComplications) |
+            camelCase | commaSeparated | humanize}}
+        </div>
+    </div>
+</div>
+<div class="span4 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning full-height seven-day-graphic">
+        {{drawSevenDayGraphic(client, '#client-' + $index + ' .seven-day-graphic svg')}}
+        <svg width="100%" height="100%"></svg>
+    </div>
+</div>
+<div class="span2 span-no-margin width-without-margins line-right span-content">
+    <p data-ng-repeat="visit in client.services_provided | dateFallsWithin:client.deliveryDate:'date':7:true |  orderBy:'-date' | limitTo:3"
+       class="text-left text-bold">
+        <span>{{visit.data.day}} </span>
+        <span class="text-due">{{visit.date | date:'dd/MM' }}</span>
+    </p>
+</div>
+<div class="span2 span-no-margin width-without-margins line-right span-content">
+    <div class="relative-positioning">
+        <button ng-if="client.visits.pnc.next"
+                class="btn btn-primary btn-large btn-sr btn-visit-status"
+                ng-class="client.visits.pnc.next.status"
+                ng-click="openForm('pnc_visit', client.entityId);">
+            <span class="text-bold">PNC Visit</span>
+            <br/>
+            <ng-switch on="client.visits.pnc.next.status">
+                <span ng-switch-when="complete">done {{client.visits.pnc.next.visit_date | date:"dd/MM"}}</span>
+                <span ng-switch-default>due {{client.visits.pnc.next.visit_date | date:"dd/MM"}}</span>
+            </ng-switch>
+        </button>
+        <button class="btn btn-large btn-sr btn-visit-status btn-done btn-new-form"
+                ng-if="!client.visits.pnc.next"
+                ng-click="openForm('pnc_visit', client.entityId)">PNC Visit
+        </button>
+        <span ng-if="client.visits.pnc.previous" class="previous-alert">
+            <i class="icon-ok green"></i>
+            <span class="text-upper">PNC: </span><span>{{client.visits.pnc.previous.visit_date | date:"dd/MM"}}</span>
+        </span>
+    </div>
+</div>

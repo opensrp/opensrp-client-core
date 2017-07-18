@@ -1,0 +1,36 @@
+@font-face {
+    font-family: 'RobotoRegular';
+    src: url('../../font/roboto/Roboto-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RobotoRegular';
+    src: url('../../font/roboto/Roboto-Bold.ttf') format('truetype');
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: 'RobotoRegular';
+    src: url('../../font/roboto/Roboto-Medium.ttf') format('truetype');
+    font-weight: 500;
+}
+
+.modal-row {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+    font-size: 26px;
+}
+
+.modal-row ul li a {
+    color: #1a1a1a;
+    padding: 15px;
+    border-color: #fff;
+}
+
+.high-priority {
+    color: #ff0000;
+}
+

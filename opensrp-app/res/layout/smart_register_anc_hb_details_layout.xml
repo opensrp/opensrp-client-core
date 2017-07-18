@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/layout_hb_details"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="2dp"
+                android:paddingBottom="2dp"
+                android:layout_weight="@integer/anc_list_hb_ifa_service_mode_hb_details_view_weight"
+        >
+
+    <ImageView
+            android:layout_width="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_width"
+            android:layout_height="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_height"
+            android:id="@+id/hb_level_indicator"
+            android:layout_marginTop="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin"
+            android:layout_marginBottom="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin"
+            android:layout_marginLeft="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin"
+            android:layout_alignParentLeft="true"/>
+
+    <TextView
+            android:id="@+id/txt_hb_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            android:layout_toRightOf="@id/hb_level_indicator"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <TextView
+            android:id="@+id/txt_hb_level"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            android:layout_toRightOf="@id/txt_hb_date"
+            android:layout_alignParentRight="true"
+            android:gravity="right"
+            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+    <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/smart_register_client_divider_height"
+            android:layout_below="@id/txt_hb_level"
+            android:layout_marginLeft="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin"
+            android:layout_marginRight="@dimen/anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin"
+            android:src="@color/smart_register_client_divider_color"/>
+
+</RelativeLayout>

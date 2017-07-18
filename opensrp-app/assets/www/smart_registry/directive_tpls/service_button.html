@@ -1,0 +1,21 @@
+<button class="btn btn-sr btn-large btn-visit-status {{schedule.next.status}}"
+        ng-class="{'btn-primary': schedule.next, 'btn-done btn-new-form': !schedule.next}"
+        ng-disabled="schedule.next.status == 'complete'">
+    <div ng-if="schedule.next" class="done-icon large full-height"
+         ng-class="{'right': schedule.next.status != 'complete'}">
+        <i ng-class="{'icon-ok green': schedule.next.status == 'complete',
+            'icon-needle': schedule.next && schedule.next.status != 'complete' && useNeedle,
+            'icon-dropper': schedule.next && schedule.next.status != 'complete' && useDropper}"></i>
+    </div>
+    <span ng-if="schedule.next" class="text-bold">{{schedule.next.name | friendlyAbbrev}}</span>
+    <span ng-if="!schedule.next" class="text-bold">{{schedule_id | friendlyAbbrev}}</span>
+    <br/>
+
+    <div ng-if="schedule.next">
+        <ng-switch on="schedule.next.status">
+            <span ng-switch-when="complete">On</span>
+            <span ng-switch-default>due</span>
+        </ng-switch>
+        <span>{{schedule.next.visit_date | date:"dd/MM"}}</span>
+    </div>
+</button>

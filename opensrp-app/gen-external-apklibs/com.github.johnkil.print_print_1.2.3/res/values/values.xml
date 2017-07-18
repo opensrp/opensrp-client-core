@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PrintView"><attr format="string" name="iconText"/><attr format="color" name="iconColor"/><attr format="dimension" name="iconSize"/><attr format="string" name="iconFont"/></declare-styleable>
+</resources>

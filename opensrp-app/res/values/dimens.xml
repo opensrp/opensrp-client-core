@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="list_profile_box_width">0dp</dimen>
+    <dimen name="list_ec_no_view_width">0dp</dimen>
+    <dimen name="list_risk_factors_view_width">0dp</dimen>
+    <dimen name="list_fp_alert_width">0dp</dimen>
+    <dimen name="list_gplsa_view_width">0dp</dimen>
+    <dimen name="list_fp_view_width">0dp</dimen>
+    <dimen name="list_hb_details_view_width">0dp</dimen>
+    <dimen name="list_ifa_details_view_width">0dp</dimen>
+    <dimen name="list_ifa_alert_view_width">0dp</dimen>
+    <dimen name="list_delivery_plan_alert_view_width">0dp</dimen>
+    <dimen name="list_delivery_plan_service_provided_view_width">0dp</dimen>
+    <dimen name="list_children_view_width">0dp</dimen>
+    <dimen name="list_status_view_width">0dp</dimen>
+    <dimen name="list_edit_icon_view_width">0dp</dimen>
+    <dimen name="list_delivery_info_view_width">0dp</dimen>
+
+    <dimen name="list_item_height">82dp</dimen>
+
+    <dimen name="client_profile_pic_width">80dp</dimen>
+    <dimen name="client_profile_pic_height">70dp</dimen>
+    <dimen name="client_profile_pic_margin_left">5dp</dimen>
+    <dimen name="client_profile_pic_margin_right">5dp</dimen>
+    <dimen name="client_profile_pic_margin_top">5dp</dimen>
+    <dimen name="client_profile_badge_width">30dp</dimen>
+    <dimen name="client_profile_badge_height">22dp</dimen>
+    <dimen name="client_profile_badge_layout_margin_top">5dp</dimen>
+    <dimen name="wife_name_padding_right_due_to_age_display">30dp</dimen>
+    <dimen name="client_profile_village_margin">3dp</dimen>
+    <dimen name="fp_register_follow_up_margin">5dp</dimen>
+
+    <dimen name="list_item_text_font_size">16sp</dimen>
+    <dimen name="list_main_text_font_size">19sp</dimen>
+
+    <dimen name="list_header_font_size">24sp</dimen>
+    <dimen name="list_service_mode_font_size">22sp</dimen>
+
+    <dimen name="ec_main_header_height">49dp</dimen>
+    <dimen name="smart_register_status_bar_height">30dp</dimen>
+
+    <dimen name="list_header_height">25dp</dimen>
+
+    <dimen name="pagination_bar_height">50dp</dimen>
+    <dimen name="pagination_bar_button_width">120dp</dimen>
+    <dimen name="pagination_bar_text_size">16sp</dimen>
+
+    <dimen name="ec_main_header_search_box_width">150dp</dimen>
+    <dimen name="ec_main_header_search_cancel_button_width">50dp</dimen>
+    <dimen name="ec_main_header_search_layout_width">200dp</dimen>
+    <dimen name="smart_register_client_divider_height">1dp</dimen>
+    <dimen name="list_item_text_padding_left_size">10dp</dimen>
+    <dimen name="client_age_padding">2dp</dimen>
+
+    <dimen name="list_main_header_size">22sp</dimen>
+
+    <dimen name="smart_register_dialog_list_item_height">50dp</dimen>
+    <dimen name="smart_register_dialog_list_item_width">540dp</dimen>
+    <dimen name="list_view_margin_left_and_right">10dp</dimen>
+    <dimen name="smart_register_nav_bar_separator">3dp</dimen>
+    <dimen name="gplsa_item_width">22dp</dimen>
+    <dimen name="fp_register_gplsa_item_width">22dp</dimen>
+    <dimen name="fp_modal_header_text_height">45dp</dimen>
+
+    <dimen name="anc_list_hb_ifa_service_mode_hb_details_indicator_view_width">15dp</dimen>
+    <dimen name="anc_list_hb_ifa_service_mode_hb_details_indicator_view_height">10dp</dimen>
+    <dimen name="anc_list_hb_ifa_service_mode_hb_details_indicator_view_margin">5dp</dimen>
+    <dimen name="anc_list_delivery_plan_service_mode_tick_view_height">25dp</dimen>
+    <dimen name="anc_list_delivery_plan_service_mode_tick_view_width">25dp</dimen>
+
+    <dimen name="daily_tallies_pic_dim">65dp</dimen>
+    <dimen name="sent_monthly_pic_dim">70dp</dimen>
+</resources>

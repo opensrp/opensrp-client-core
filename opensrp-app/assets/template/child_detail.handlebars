@@ -1,0 +1,139 @@
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <ul class="area-6_5 nav pull-left">
+            <li class="area-7_5">
+                <div class="navbar-header ellipsis">B/O {{formatText coupleDetails.wifeName}}</div>
+            </li>
+        </ul>
+
+        <ul class="nav pull-right">
+            <li><img class="separator"></li>
+            <li data-modal-target="#childFormModal"><img class="update-data"></li>
+        </ul>
+    </div>
+</div>
+
+<div id="childFormModal" class="modal-content">
+    <div class="modal-row" data-form="child_immunizations" data-caseid="{{caseId}}">Child Immunizations</div>
+    <div class="divider"></div>
+    <div class="modal-row" data-form="child_close" data-caseid="{{caseId}}">Close Child</div>
+</div>
+
+<div id="content" class="content-detail">
+    <div class="status-bar">
+        <span class="left-text">Child</span>
+        {{#ifFalse details.isChildHighRisk}}
+        <span class="right-text high-risk">High Risk</span>
+        {{else}}
+        <span class="right-text normal-risk">Normal Risk</span>
+        {{/ifFalse}}
+    </div>
+    <div class="registry-container container-fluid">
+        <div class="row-fluid">
+            <div class="span12">
+                <ul class="client-details unstyled">
+                    <li class="big-text">B/O {{formatText coupleDetails.wifeName}}</li>
+                    <li class="medium-text spacing-below">{{capitalize coupleDetails.husbandName}}</li>
+                    <li>{{formatText location.villageName}}</li>
+                    <li class="light-text">{{#if coupleDetails.isInArea}}EC No: {{coupleDetails.ecNumber}}, {{else}}Out of area, {{/if}}Thayi No: {{thayiCardNumber}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="divider"></div>
+    <div class="registry-container container-fluid">
+        <div class="row-fluid">
+            <div class="span4">
+                <img id="childPhoto" src="file://{{photo_path}}">
+            </div>
+            <div class="span8">
+                <ul class="client-details unstyled">
+                    <li class="big-text-margin">{{#ifequal childDetails.gender "male"}}Boy{{else}}Girl{{/ifequal}}</li>
+                    <li class="text-blue">Infant</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="registry-container container-fluid">
+        <div class="big-text row-fluid detail-section-header">
+            Summary
+        </div>
+        <div class="well well-for-beneficiary-details-no-padding">
+            <div class="container-fluid container-no-padding">
+                <div class="row-fluid beneficiary-detail-component">
+                    <div class="beneficiary-detail-content">
+                        {{#ifFalse details.isChildHighRisk}}
+                        <div class="big-text high-risk">
+                            <i class="icon-circle-arrow-up priority-indicator-icon"></i> High Risk</span>
+                        </div>
+                        <div class="beneficiary-detail-footer risk-detail-text">
+                            <ul>{{camelCaseAndConvertToListItems details.highRiskReasonChild}}</ul>
+                        </div>
+                        {{else}}
+                        <div class="big-text normal-risk">Normal Risk</div>
+                        {{/ifFalse}}
+                    </div>
+                    <div class="divider"></div>
+                    <div class="beneficiary-detail-content">
+                        <div class="span6 text-center right-border padded">
+                            <span class="big-text">{{childDetails.age}}</span><br><span class="meta-summary-text">Age</span>
+                        </div>
+                        <div class="span6 text-center padded">
+                            <span class="big-text">{{formatDate childDetails.dateOfBirth}}</span><br><span class="meta-summary-text">Date of Birth</span>
+                        </div>
+                    </div>
+                    {{#ifFalse details.childWeight}}
+                    <div class="divider"></div>
+                    <div class="beneficiary-detail-content">
+                        <div class="row-fluid beneficiary-detail-component">
+                            <span class="big-text">Growth monitoring</span>
+                            <div class="summary-text">{{details.childWeight}} kg on {{formatDate childDetails.dateOfBirth}}</div>
+                        </div>
+                    </div>
+                    {{/ifFalse}}
+                </div>
+            </div>
+        </div>
+
+        <div class="registry-container container-fluid">
+            <div class="big-text row-fluid detail-section-header">
+                Timeline
+            </div>
+            <div class="well well-for-beneficiary-details-no-padding">
+                <div class="container-fluid container-no-padding">
+                    {{#ifequal timelineEvents.length 0}}
+                    <div class="row-fluid unavailable-data">
+                        No medical history data available
+                    </div>
+                    {{else}}
+                    <div class="row-fluid beneficiary-detail-component">
+                        <div class="beneficiary-detail-content">
+                            <div class="timeline">
+                                {{#each timelineEvents}}
+                                <div class="timeline-component row-fluid timelineEvent">
+                                    <div class="span3 type {{this.type}}"></div>
+                                    <div class="span5">
+                                        <strong>{{title}}</strong><br>
+                                        {{#each details}}
+                                        {{{formatText this}}}<br>
+                                        {{/each}}
+                                    </div>
+                                    <div class="span4 pull-right text-right">
+                                        {{date}}
+                                    </div>
+                                </div>
+                                {{/each}}
+                            </div>
+                            <div class="container-section-component row-fluid show-more-button">
+                                <div class="divider"></div>
+                                <div class="expand"> Show more</div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/ifequal}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/lyt_pnc_recent_visits"
+              android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:layout_weight="@integer/pnc_list_child_view_weight"
+              android:orientation="horizontal" >
+    <TextView
+            android:id="@+id/txt_recent_visit_day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_blue"
+            style="@style/CustomFontTextViewStyle.ListView.Normal" />
+
+    <TextView
+            android:id="@+id/txt_recent_visit_date"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_black"
+            style="@style/CustomFontTextViewStyle.ListView.Normal" />
+</LinearLayout>

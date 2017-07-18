@@ -1,0 +1,63 @@
+language: android
+# sudo set to required because of an issue with how TravisCI handles builds in Docker containers https://github.com/travis-ci/travis-ci/issues/3695.
+# Setting sudo to required prevents Travis from testing the project in a Docker container.
+sudo: required
+jdk: oraclejdk8
+
+env:
+  matrix:
+    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+  global:
+    # wait up to 10 minutes for adb to connect to emulator
+    - ADB_INSTALL_TIMEOUT=10
+    - MALLOC_ARENA_MAX=2
+
+android:
+  components:
+    # tools required
+    - tools
+    # The BuildTools version used by your project
+    - build-tools-26.0.0
+    # The SDK version used to compile your projects
+    - android-22
+    # Additional components
+    - extra-google-google_play_services
+    - extra-google-m2repository
+    - extra-android-m2repository
+    - addon-google_apis-google-19
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+    - sys-img-armeabi-v7a-android-19
+
+
+addons:
+  apt_packages:
+  - pandoc
+
+before_script:
+  # Emulator Management: Create, Start and Wait
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+  - adb wait-for-device
+  - adb shell input keyevent 82 &
+
+script: 
+  - echo "Travis branch is $TRAVIS_BRANCH"
+  - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
+  - chmod 755 gradlew
+  - ls -la
+  # Enable the line below once we get all the test passing, currently most of the tests are failing 
+  # so we'll just if the project compiles 
+  #- ./gradlew connectedAndroidTest
+  # - ./gradlew opensrp-mcare:connectedAndroidTest -i --stacktrace
+  #Run All tests Unit and Instrumentation
+  - travis_wait ./gradlew opensrp-path:jacocoTestReport coveralls -i --stacktrace
+
+after_failure:
+ - pandoc opensrp-mcare/build/reports/androidTests/connected/index.html -t plain
+ - pandoc opensrp-path/build/reports/tests/index.html -t plain
+
+
+notifications:
+  slack:
+    secure: fAiZ4yA7DM6nUKh7nqsCTqZBb03VEAvi5NcRu5mNh5coNn/50XNeZl+qpv7Dw70Ef85Y/k68uc6KwTGVqPXEmVq9Hk3e7lqpBNN8rufvgCYDDGPmywBmU5BhSeykKo0Ee7llM3mRR/EipjIWw1+YvMcS3hCoygf/UlMDDhG0Jo0=

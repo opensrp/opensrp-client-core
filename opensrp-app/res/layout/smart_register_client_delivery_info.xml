@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<org.ei.opensrp.view.customControls.DeliveryInfoView xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     android:id="@+id/delivery_info_layout"
+                                                     android:layout_width="@dimen/list_delivery_info_view_width"
+                                                     android:layout_height="match_parent"
+                                                     android:orientation="vertical"
+                                                     android:layout_weight="@integer/pnc_list_delivery_info_view_weight" >
+
+    <LinearLayout
+            android:id="@+id/lyt_delivery_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_delivery_date_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_pnc_delivery_date"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_delivery_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CustomFontTextViewStyle.ListView.Bold.NoPadding.SmallSize"/>
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/lyt_delivery_place"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_delivery_place_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/str_pnc_delivery_place"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_delivery_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CustomFontTextViewStyle.ListView.Bold.NoPadding.SmallSize"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:id="@+id/lyt_delivery_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_delivery_type_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txt_delivery_place_label"
+                android:text="@string/str_pnc_delivery_type"
+                style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+
+        <org.ei.opensrp.view.customControls.CustomFontTextView
+                android:id="@+id/txt_delivery_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/CustomFontTextViewStyle.ListView.Bold.NoPadding.SmallSize"/>
+
+    </LinearLayout>
+
+</org.ei.opensrp.view.customControls.DeliveryInfoView>

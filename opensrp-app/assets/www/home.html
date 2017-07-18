@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <link href="../css/flat-bootstrap-grid10.min.css" rel="stylesheet">
+    <link href="../css/custom.css" rel="stylesheet">
+    <link href="../css/home.css" rel="stylesheet">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+          charset="UTF-8">
+</head>
+<body>
+<div class="menu-background container-fluid container-no-padding" id="template-container">
+</div>
+</body>
+
+<script src="../js/lib/jquery.min.js"></script>
+<script src="../js/lib/bootstrap.min.js"></script>
+<script src="../js/lib/handlebars.runtime.js"></script>
+
+<script src="../js/custom.ui.js"></script>
+<script src="../template/templates.js"></script>
+<script src="../js/anmNavigation.js"></script>
+<script src="../js/page_view.js"></script>
+<script src="../js/international_text.js"></script>
+
+<script src="../js/home.js"></script>
+<script>
+    $(document).ready(function () {
+        var home = new Home(new ANMNavigationPanel(new ANMNavigationBridge()), new HomeBridge());
+
+        pageView.onReload(function () {
+            home.populateInto("#template-container", function () {
+            });
+        });
+
+        pageView.onUpdateANMDetails(function (anmDetailsJSON) {
+            var anmDetails = JSON.parse(anmDetailsJSON);
+            $("#eligibleCoupleCount").text(anmDetails.eligibleCoupleCount);
+            $("#fpCount").text(anmDetails.fpCount);
+            $("#ancCount").text(anmDetails.ancCount);
+            $("#pncCount").text(anmDetails.pncCount);
+            $("#childCount").text(anmDetails.childCount);
+        });
+
+        home.populateInto("#template-container", function () {
+        });
+        home.pageHasFinishedLoading();
+
+        $("html").css("background-color", "#333");
+    });
+</script>
+
+</html>

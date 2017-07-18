@@ -1,0 +1,33 @@
+<div class="span7 full-height span-no-margin width-without-margins">
+    <div class="row-fluid full-height no-padding-left">
+        <div data-ng-repeat="milestone in ['TT 1', 'TT 2', 'TT Booster']"
+             class="span4 line-right span-no-margin width-without-margins span-content">
+            <!--VISITS-->
+            <button class="btn btn-primary btn-sr full-height"
+                    ng-if="client.visits.tt[milestone]"
+                    ng-class="client.visits.tt[milestone].status"
+                    ng-click='client.visits.tt[milestone].status == "complete"
+                        || openFormWithFieldOverridesAndMetaData("tt",
+                        client.entityId,
+                        {"entityId": client.entityId, "alertName": client.visits.tt.next.name},
+                        "{\"ttDose\":\""+client.visits.tt.next.reminder_form_value+"\"}")'>
+                <ng-switch on="client.visits.tt[milestone].status">
+                    <div ng-switch-when="complete" class="done-icon full-height">
+                        <i class="icon-ok green icon-large"></i>
+                    </div>
+                </ng-switch>
+                <div class="button-text-container"
+                     ng-class="client.visits.tt[milestone].status">
+                    <span class="text-bold text-upper">{{milestone}}</span>
+                    <br/>
+                    <ng:switch on="client.visits.tt[milestone].status">
+                        <span ng-switch-when="complete">On </span>
+                        <span ng-switch-default>Due </span>
+                    </ng:switch>
+                    <span ng-if="client.visits.tt[milestone].visit_date">{{client.visits.tt[milestone].visit_date}}</span>
+                </div>
+            </button>
+        </div>
+    </div>
+</div>
+
