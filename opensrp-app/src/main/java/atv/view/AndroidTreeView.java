@@ -10,7 +10,7 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
-import org.ei.opensrp.R;
+import org.opensrp.R;
 import atv.holder.SimpleViewHolder;
 import atv.model.TreeNode;
 

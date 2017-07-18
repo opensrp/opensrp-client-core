@@ -5,7 +5,7 @@
               android:weightSum="@integer/child_list_service_mode_views_section_weight"
               android:orientation="horizontal">
 
-    <org.ei.opensrp.view.customControls.CustomFontTextView
+    <org.opensrp.view.customControls.CustomFontTextView
             android:id="@+id/child_register_dob"
             android:layout_width="0dp"
             android:layout_height="match_parent"

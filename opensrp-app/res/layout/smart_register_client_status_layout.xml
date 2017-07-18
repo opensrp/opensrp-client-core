@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<org.ei.opensrp.view.customControls.ClientStatusView
+<org.opensrp.view.customControls.ClientStatusView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/status_layout"
         android:layout_width="@dimen/list_status_view_width"
@@ -33,4 +33,4 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout="@layout/smart_register_client_status_pnc_and_fp"/>
-</org.ei.opensrp.view.customControls.ClientStatusView>
+</org.opensrp.view.customControls.ClientStatusView>

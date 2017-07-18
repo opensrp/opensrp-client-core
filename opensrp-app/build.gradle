@@ -50,7 +50,7 @@ android {
     defaultConfig {
         // Enabling multidex support.
         multiDexEnabled true
-        //applicationId "org.ei.opensrp"
+        //applicationId "org.opensrp"
         minSdkVersion 16
         targetSdkVersion 21
         versionCode 1
