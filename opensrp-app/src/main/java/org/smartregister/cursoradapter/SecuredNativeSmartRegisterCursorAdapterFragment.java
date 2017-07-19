@@ -29,8 +29,8 @@ import org.smartregister.domain.ReportMonth;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.smartregister.view.customControls.CustomFontTextView;
-import org.smartregister.view.customControls.FontVariant;
+import org.smartregister.view.customcontrols.CustomFontTextView;
+import org.smartregister.view.customcontrols.FontVariant;
 import org.smartregister.view.dialog.AllClientsFilter;
 import org.smartregister.view.dialog.DialogOption;
 import org.smartregister.view.dialog.DialogOptionModel;
@@ -567,7 +567,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
             }
 
             Log.i(getClass().getName(), query);
-            c = commonRepository().RawCustomQueryForAdapter(query);
+            c = commonRepository().rawCustomQueryForAdapter(query);
             c.moveToFirst();
             totalcount = c.getInt(0);
             Log.v("total count here", "" + totalcount);
@@ -634,7 +634,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
                     @Override
                     public Cursor loadInBackground() {
                         String query = filterandSortQuery();
-                        Cursor cursor = commonRepository().RawCustomQueryForAdapter(query);
+                        Cursor cursor = commonRepository().rawCustomQueryForAdapter(query);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

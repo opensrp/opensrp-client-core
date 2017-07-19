@@ -8,10 +8,10 @@ import org.smartregister.view.contract.ANCSmartRegisterClient;
 import org.smartregister.view.contract.ChildSmartRegisterClient;
 import org.smartregister.view.contract.FPSmartRegisterClient;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewHolder.NativeANCSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.NativeChildSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.NativeFPSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.NativePNCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeANCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 

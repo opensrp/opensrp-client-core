@@ -1,20 +1,16 @@
 package org.smartregister.view.dialog;
 
-import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.view.View;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.*;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewHolder.NativeANCSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.NativeChildSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.NativeFPSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.NativePNCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeANCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;

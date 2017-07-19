@@ -1,29 +1,29 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
-import android.widget.RadioButton;
+import android.widget.TextView;
 import org.smartregister.R;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;
 
-public class CustomFontRadioButton extends RadioButton {
+public class CustomFontTextView extends TextView {
 
     private Cache<Typeface> cache;
 
     @SuppressWarnings("UnusedDeclaration")
-    public CustomFontRadioButton(Context context) {
+    public CustomFontTextView(Context context) {
         this(context, null, 0);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public CustomFontRadioButton(Context context, AttributeSet attrs) {
+    public CustomFontTextView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public CustomFontRadioButton(Context context, AttributeSet attrs, int defStyle) {
+    public CustomFontTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, 0);
         cache = org.smartregister.Context.getInstance().typefaceCache();
         TypedArray attributes = context.obtainStyledAttributes(

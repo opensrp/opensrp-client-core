@@ -60,7 +60,7 @@ public class FormAttributeParser {
         Map<String, String> formAttributes = getAttributesForBindPath(fs.defaultBindPath(), modelXml);
         List<FormFieldMap> fields = new ArrayList<FormFieldMap>();
         for (FormField fsf : fs.instance().form().fields()) {
-            String bindPath = getPropertyBindFromFormDefinition(fsf.name(), fs.formName(), formDefinitionData);
+            String bindPath = getPropertyBindFromFormDefinition(fsf.name(), formDefinitionData);
             String type = bindPath==null?null:getFieldType(bindPath, jsonForm);
             Map<String, String> fieldAttributes = bindPath==null?new HashMap<String, String>():getAttributesForBindPath(bindPath, modelXml);
 
@@ -88,8 +88,8 @@ public class FormAttributeParser {
                     Map<String, String> subformAttributes = getAttributesForBindPath(sf.defaultBindPath(), modelXml);
                     List<FormFieldMap> sfFields = new ArrayList<>();
                     for (Entry<String, String> sffl : flvl.entrySet()) {
-                        String source = getSourceFromSubformDefinition(sf.name(), sffl.getKey(), fs.formName(), formDefinitionData);
-                        String bindPath = getPathFromSubformDefinition(sf.name(), sffl.getKey(), fs.formName(), formDefinitionData);
+                        String source = getSourceFromSubformDefinition(sf.name(), sffl.getKey(), formDefinitionData);
+                        String bindPath = getPathFromSubformDefinition(sf.name(), sffl.getKey(), formDefinitionData);
                         String type = bindPath==null?null:getFieldType(bindPath, jsonForm);
                         Map<String, String> attributes = bindPath==null?new HashMap<String, String>():getAttributesForBindPath(bindPath, modelXml);
                         boolean ismultiselect = bindPath==null?false:isMultiselect(bindPath, jsonForm);
@@ -440,7 +440,7 @@ public class FormAttributeParser {
     }
     public Map<String, String> getAttributesForField (String fieldName, String subform, String formName) throws JsonSyntaxException, IOException, XPathExpressionException, ParserConfigurationException, SAXException{
 
-        String formBindForField = getPathFromSubformDefinition(subform, fieldName, formName, getFormDefinitionData(formName));
+        String formBindForField = getPathFromSubformDefinition(subform, fieldName, getFormDefinitionData(formName));
         Node tagAndAttributes = null;
         if(formBindForField!=null)
         {
@@ -534,10 +534,10 @@ public class FormAttributeParser {
     {
         String bindPath = null;
         if(StringUtils.isEmpty(subform)){
-            bindPath = getPropertyBindFromFormDefinition(fieldName, formName, formDefinition);
+            bindPath = getPropertyBindFromFormDefinition(fieldName, formDefinition);
         }
         else {
-            bindPath = getPathFromSubformDefinition(subform, fieldName, formName, formDefinition);
+            bindPath = getPathFromSubformDefinition(subform, fieldName, formDefinition);
         }
 
         return getInstanceAttributesForFormFieldAndValue(bindPath, fieldVal, jsonForm);
@@ -547,10 +547,10 @@ public class FormAttributeParser {
     {
         String bindPath = null;
         if(StringUtils.isEmpty(subform)){
-            bindPath = getPropertyBindFromFormDefinition(fieldName, fs.formName(), getFormDefinitionData(fs.formName()));
+            bindPath = getPropertyBindFromFormDefinition(fieldName, getFormDefinitionData(fs.formName()));
         }
         else {
-            bindPath = getPathFromSubformDefinition(subform, fieldName, fs.formName(), getFormDefinitionData(fs.formName()));
+            bindPath = getPathFromSubformDefinition(subform, fieldName, getFormDefinitionData(fs.formName()));
         }
 
         return getInstanceAttributesForFormFieldAndValue(bindPath, fieldVal, getJSONFormData(fs.formName()));
@@ -645,7 +645,7 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    String getDefaultBindPathFromSubformDefinition(String subformName, FormSubmission formSubmission) throws IOException, JsonSyntaxException
+    private String getDefaultBindPathFromSubformDefinition(String subformName, FormSubmission formSubmission) throws IOException, JsonSyntaxException
     {
         JsonObject jsonObject = getFormDefinitionData(formSubmission.formName());
         JsonArray subforms = jsonObject.get("form").getAsJsonObject().get("sub_forms").getAsJsonArray();
@@ -660,15 +660,15 @@ public class FormAttributeParser {
 
     /**
      * Gets the bind path of specified field for given subform in given form submission
+     * @param
      * @param subformName
      * @param field
-     * @param
      * @return
      * @throws
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    String getPathFromSubformDefinition(String subformName, String field, String formName, JsonObject formDefinition) throws IOException, JsonSyntaxException
+    private String getPathFromSubformDefinition(String subformName, String field, JsonObject formDefinition) throws IOException, JsonSyntaxException
     {
         JsonArray subforms = formDefinition.get("form").getAsJsonObject().get("sub_forms").getAsJsonArray();
         for (JsonElement jsonElement : subforms) {
@@ -687,14 +687,14 @@ public class FormAttributeParser {
     }
     /**
      * Gets the bind path of specified field for given subform in given form submission
+     * @param
      * @param subformName
      * @param field
-     * @param 
      * @return
      * @throws JsonSyntaxException
      * @throws IOException
      */
-    String getSourceFromSubformDefinition(String subformName, String field, String formName, JsonObject formDefinition) throws IOException, JsonSyntaxException
+    private String getSourceFromSubformDefinition(String subformName, String field, JsonObject formDefinition) throws IOException, JsonSyntaxException
     {
         JsonArray subforms = formDefinition.get("form").getAsJsonObject().get("sub_forms").getAsJsonArray();
         for (JsonElement jsonElement : subforms) {
@@ -717,13 +717,13 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    String getPropertyBindFromFormDefinition(String fieldName, String formName) throws JsonSyntaxException, IOException
+    private String getPropertyBindFromFormDefinition(String fieldName, String formName) throws JsonSyntaxException, IOException
     {
         JsonObject jsonObject = getFormDefinitionData(formName);
-        return getPropertyBindFromFormDefinition(fieldName, formName, jsonObject);
+        return getPropertyBindFromFormDefinition(fieldName, jsonObject);
     }
 
-    String getPropertyBindFromFormDefinition(String fieldName, String formName, JsonObject formDefinition) throws JsonSyntaxException, IOException
+    private String getPropertyBindFromFormDefinition(String fieldName, JsonObject formDefinition) throws JsonSyntaxException, IOException
     {
         JsonElement formElement = formDefinition.get("form");
         JsonArray formFields = formElement.getAsJsonObject().get("fields").getAsJsonArray();

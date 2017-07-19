@@ -4,8 +4,8 @@ package org.smartregister.commonregistry;
  * Created by Raihan Ahmed on 3/16/15.
  */
 public class CommonRepositoryInformationHolder {
-    String bindtypename;
-    String [] columnNames;
+    private String bindtypename;
+    private String [] columnNames;
 
     public String getBindtypename() {
         return bindtypename;

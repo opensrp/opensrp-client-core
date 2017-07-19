@@ -1,20 +1,14 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
-import org.smartregister.util.StringUtil;
-import org.smartregister.view.contract.AlertDTO;
 import org.smartregister.view.contract.FPSmartRegisterClient;
 
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.smartregister.Context.getInstance;
 
 public class ClientSideEffectsView extends LinearLayout {

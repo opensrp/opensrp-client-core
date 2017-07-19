@@ -19,7 +19,7 @@ public class NativeHomeActivityTest {
     private NativeHomeActivity homeActivity;
 
     @Before
-    public void setup() {
+    public void setUp() {
         homeActivity = Robolectric.buildActivity(NativeHomeActivity.class)
                 .create()
                 .start()

@@ -13,10 +13,10 @@ import java.util.Comparator;
 public class CommonObjectSort implements SortOption {
 
 
-    String field;
-    ByColumnAndByDetails byColumnAndByDetails;
-    boolean isInteger;
-    String sortOptionName;
+    private String field;
+    private ByColumnAndByDetails byColumnAndByDetails;
+    private boolean isInteger;
+    private String sortOptionName;
     public enum ByColumnAndByDetails{
         byColumn,byDetails;
     }

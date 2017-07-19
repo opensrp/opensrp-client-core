@@ -1,4 +1,4 @@
-package org.smartregister.view.viewHolder;
+package org.smartregister.view.viewholder;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -6,10 +6,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.smartregister.R;
-import org.smartregister.view.customControls.ClientFpMethodView;
-import org.smartregister.view.customControls.ClientGplsaChildView;
-import org.smartregister.view.customControls.ClientProfileView;
-import org.smartregister.view.customControls.ClientSideEffectsView;
+import org.smartregister.view.customcontrols.ClientFpMethodView;
+import org.smartregister.view.customcontrols.ClientGplsaChildView;
+import org.smartregister.view.customcontrols.ClientProfileView;
+import org.smartregister.view.customcontrols.ClientSideEffectsView;
 
 public class NativeFPSmartRegisterViewHolder {
     private final ClientProfileView profileInfoLayout;

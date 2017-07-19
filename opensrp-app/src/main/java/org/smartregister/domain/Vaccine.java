@@ -8,20 +8,20 @@ import java.util.HashMap;
  */
 public class Vaccine {
     private static final String ZEIR_ID = "ZEIR_ID";
-    Long id;
-    String baseEntityId;
-    String programClientId;
-    String name;
-    Integer calculation;
-    Date date;
-    String anmId;
-    String locationId;
-    String syncStatus;
-    String hia2Status;
-    Long updatedAt;
-    String eventId;
-    String formSubmissionId;
-    Integer outOfCatchment;
+    private Long id;
+    private String baseEntityId;
+    private String programClientId;
+    private String name;
+    private Integer calculation;
+    private Date date;
+    private String anmId;
+    private String locationId;
+    private String syncStatus;
+    private String hia2Status;
+    private Long updatedAt;
+    private String eventId;
+    private String formSubmissionId;
+    private Integer outOfCatchment;
 
 
     public Vaccine() {

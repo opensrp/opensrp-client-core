@@ -1,4 +1,4 @@
-package org.smartregister.view.viewHolder;
+package org.smartregister.view.viewholder;
 
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;

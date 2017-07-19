@@ -1,4 +1,4 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,7 +10,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.smartregister.view.viewHolder.ProfilePhotoLoader;
+import org.smartregister.view.viewholder.ProfilePhotoLoader;
 
 public class ClientProfileView extends RelativeLayout {
     private ImageView imgProfileView;

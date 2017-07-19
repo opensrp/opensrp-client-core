@@ -15,7 +15,7 @@ public class ECChildClientTest {
     private LocalDate today;
 
     @Before
-    public void setup() {
+    public void setUp() {
         today = LocalDate.parse("2014-04-27");
         DateUtil.fakeIt(today);
     }

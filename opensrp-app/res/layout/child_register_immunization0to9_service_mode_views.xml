@@ -12,7 +12,7 @@
             android:layout_height="match_parent"
             android:layout_weight="@integer/child_list_bcg_view_weight">
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_bcg_pending"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -39,7 +39,7 @@
                     android:src="@drawable/ic_yes_large"
                     android:background="@android:color/transparent"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_bcg_done"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                     android:text="@string/str_bcg"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_bcg_on"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -78,7 +78,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/btn_hep_b_birth"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -93,7 +93,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.smartregister.view.customControls.CustomFontTextView
+                <org.smartregister.view.customcontrols.CustomFontTextView
                         android:id="@+id/txt_hep_b_birth_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
                         android:text="@string/hep_b_birth"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.smartregister.view.customControls.CustomFontTextView
+                <org.smartregister.view.customcontrols.CustomFontTextView
                         android:id="@+id/txt_hep_b_birth_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -122,7 +122,7 @@
 
         </FrameLayout>
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_hep_b_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
@@ -151,7 +151,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/btn_opv"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -166,7 +166,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.smartregister.view.customControls.CustomFontTextView
+                <org.smartregister.view.customcontrols.CustomFontTextView
                         android:id="@+id/txt_opv_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -175,7 +175,7 @@
                         android:text="@string/opv"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.smartregister.view.customControls.CustomFontTextView
+                <org.smartregister.view.customcontrols.CustomFontTextView
                         android:id="@+id/txt_opv_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -195,7 +195,7 @@
 
         </FrameLayout>
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_opv_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
@@ -224,7 +224,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/btn_pentav"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -239,7 +239,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.smartregister.view.customControls.CustomFontTextView
+                <org.smartregister.view.customcontrols.CustomFontTextView
                         android:id="@+id/txt_pentav_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -248,7 +248,7 @@
                         android:text="@string/pentavalent_short"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.smartregister.view.customControls.CustomFontTextView
+                <org.smartregister.view.customcontrols.CustomFontTextView
                         android:id="@+id/txt_pentav_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -268,7 +268,7 @@
 
         </FrameLayout>
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_pentav_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"

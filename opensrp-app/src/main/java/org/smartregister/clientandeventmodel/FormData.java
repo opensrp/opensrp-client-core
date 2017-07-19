@@ -93,20 +93,12 @@ public class FormData {
         return ToStringBuilder.reflectionToString(this);
     }
 
-    public String getBind_type() {
+    public String getBindType() {
         return bind_type;
     }
 
-    public void setBind_type(String bind_type) {
+    public void setBindType(String bind_type) {
         this.bind_type = bind_type;
-    }
-
-    public String getDefault_bind_path() {
-        return default_bind_path;
-    }
-
-    public void setDefault_bind_path(String default_bind_path) {
-        this.default_bind_path = default_bind_path;
     }
 
     public List<FormField> getFields() {
@@ -115,21 +107,5 @@ public class FormData {
 
     public void setFields(List<FormField> fields) {
         this.fields = fields;
-    }
-
-    public List<SubFormData> getSub_forms() {
-        return sub_forms;
-    }
-
-    public void setSub_forms(List<SubFormData> sub_forms) {
-        this.sub_forms = sub_forms;
-    }
-
-    public Map<String, String> getMapOfFieldsByName() {
-        return mapOfFieldsByName;
-    }
-
-    public void setMapOfFieldsByName(Map<String, String> mapOfFieldsByName) {
-        this.mapOfFieldsByName = mapOfFieldsByName;
     }
 }

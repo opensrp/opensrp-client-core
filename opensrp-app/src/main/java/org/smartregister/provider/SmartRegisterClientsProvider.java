@@ -7,7 +7,7 @@ import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
-import org.smartregister.view.viewHolder.OnClickFormLauncher;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 public interface SmartRegisterClientsProvider {
 

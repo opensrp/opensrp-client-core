@@ -1,4 +1,4 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,7 +10,7 @@ import android.widget.TextView;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.R;
 import org.smartregister.view.contract.ECSmartRegisterClient;
-import org.smartregister.view.viewHolder.ViewStubInflater;
+import org.smartregister.view.viewholder.ViewStubInflater;
 
 import java.util.HashMap;
 import java.util.Map;

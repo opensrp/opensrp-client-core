@@ -99,7 +99,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnSortedResultsForECNumberSortOption() {
+    public void shouldReturnSortedResultsForECNumberSortOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
 
         SmartRegisterClients filteredClients = originalClients.applyFilter(
@@ -118,7 +118,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnSortedResultsForBPLSortOption() {
+    public void shouldReturnSortedResultsForBPLSortOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new AllClientsFilter(),
@@ -135,7 +135,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnSortedResultsForHPSortOption() {
+    public void shouldReturnSortedResultsForHPSortOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new AllClientsFilter(),
@@ -152,7 +152,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnSortedResultsForSCSortOption() {
+    public void shouldReturnSortedResultsForSCSortOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new AllClientsFilter(),
@@ -169,7 +169,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnSortedResultsForSTSortOption() {
+    public void shouldReturnSortedResultsForSTSortOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new AllClientsFilter(),
@@ -186,7 +186,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturn2ResultsFor_Half_Bherya_VillageFilterOption() {
+    public void shouldReturn2ResultsFor_Half_Bherya_VillageFilterOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new VillageFilter("Half bherya"),
@@ -199,7 +199,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturn2ResultsFor_Hosa_agrahara_VillageFilterOption() {
+    public void shouldReturn2ResultsFor_Hosa_agrahara_VillageFilterOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new VillageFilter("Hosa agrahara"),
@@ -211,7 +211,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturn1ResultsFor_Battiganahalli_VillageFilterOption() {
+    public void shouldReturn1ResultsFor_Battiganahalli_VillageFilterOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new VillageFilter("Battiganahalli"),
@@ -223,7 +223,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturn1ResultsFor_Somanahalli_colony_VillageFilterOption() {
+    public void shouldReturn1ResultsFor_Somanahalli_colony_VillageFilterOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new VillageFilter("Somanahalli colony"),
@@ -235,7 +235,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturn1ResultsForOutOfAreaFilterOption() {
+    public void shouldReturn1ResultsForOutOfAreaFilterOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new OutOfAreaFilter(),
@@ -248,7 +248,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnCascadedResultsApplyingMultipleFilterOption() {
+    public void shouldReturnCascadedResultsApplyingMultipleFilterOption() {
         SmartRegisterClients originalClients = getSmartRegisterClientsWithProperDetails();
 
         SmartRegisterClients filteredClients = originalClients.applyFilter(
@@ -262,7 +262,7 @@ public class SmartRegisterClientsTest {
     }
 
     @Test
-    public void ShouldReturnFilteredListForFP() {
+    public void shouldReturnFilteredListForFP() {
         when(applicationContext.getString(R.string.fp_register_service_mode_condom)).thenReturn("Condom");
 
         SmartRegisterClients originalClients = getFPSmartRegisterClientsWithProperDetails();

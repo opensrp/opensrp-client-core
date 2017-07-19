@@ -3,18 +3,14 @@ package org.smartregister.commonregistry;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
 import org.junit.Before;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.smartregister.util.EasyMap.create;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static junit.framework.Assert.assertEquals;
 
 
 /*

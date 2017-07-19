@@ -1,4 +1,4 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 public enum FontVariant {
     THIN(0, "roboto_v1.2/Roboto-Thin.ttf"),

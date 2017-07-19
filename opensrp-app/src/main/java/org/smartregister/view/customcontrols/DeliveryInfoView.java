@@ -1,4 +1,4 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
 import android.util.AttributeSet;

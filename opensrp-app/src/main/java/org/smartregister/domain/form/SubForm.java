@@ -49,20 +49,12 @@ public class SubForm {
         this.name = name;
     }
 
-    public String getBind_type() {
+    public String getBindType() {
         return bind_type;
     }
 
-    public void setBind_type(String bind_type) {
-        this.bind_type = bind_type;
-    }
-
-    public String getDefault_bind_path() {
+    public String getDefaultBindPath() {
         return default_bind_path;
-    }
-
-    public void setDefault_bind_path(String default_bind_path) {
-        this.default_bind_path = default_bind_path;
     }
 
     public List<FormField> getFields() {

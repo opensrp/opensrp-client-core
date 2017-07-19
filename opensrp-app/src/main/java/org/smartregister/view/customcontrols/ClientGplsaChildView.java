@@ -1,15 +1,12 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import org.apache.commons.lang3.StringUtils;
+
 import org.smartregister.R;
 import org.smartregister.view.contract.FPSmartRegisterClient;
-
-import static android.view.View.GONE;
 
 public class ClientGplsaChildView extends RelativeLayout {
     private TextView txtGravida;

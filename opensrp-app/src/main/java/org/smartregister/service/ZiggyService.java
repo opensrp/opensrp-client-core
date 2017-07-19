@@ -24,7 +24,6 @@ public class ZiggyService {
     private FormDataRepository dataRepository;
     private FormSubmissionRouter formSubmissionRouter;
     private Context context;
-    private ScriptableObject scope;
     private Function saveFunction;
 
     public ZiggyService(ZiggyFileLoader ziggyFileLoader, FormDataRepository dataRepository, FormSubmissionRouter formSubmissionRouter) {
@@ -45,7 +44,7 @@ public class ZiggyService {
         try {
             context = enter();
             context.setOptimizationLevel(-1);
-            scope = context.initStandardObjects();
+            ScriptableObject scope = context.initStandardObjects();
             String jsFiles = ziggyFileLoader.getJSFiles();
             scope.put(REPOSITORY, scope, toObject(dataRepository, scope));
             scope.put(ZIGGY_FILE_LOADER, scope, toObject(ziggyFileLoader, scope));
