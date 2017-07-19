@@ -1,5 +1,5 @@
 
-description = 'opensrp-app - Application'
+description = 'OpenSRP core client library'
 
 buildscript {
     repositories {
