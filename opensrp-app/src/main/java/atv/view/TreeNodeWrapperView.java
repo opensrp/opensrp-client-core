@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import org.opensrp.R;
+import org.smartregister.R;
 
 
 /**

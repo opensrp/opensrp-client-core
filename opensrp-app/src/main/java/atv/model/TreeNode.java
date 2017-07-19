@@ -4,7 +4,7 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.opensrp.R;
+import org.smartregister.R;
 
 import atv.view.AndroidTreeView;
 import atv.view.TreeNodeWrapperView;

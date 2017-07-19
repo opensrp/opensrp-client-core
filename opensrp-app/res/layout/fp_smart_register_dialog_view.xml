@@ -14,13 +14,13 @@
             android:orientation="horizontal"
             android:gravity="left|center">
 
-        <org.opensrp.view.customControls.CustomFontRadioButton
+        <org.smartregister.view.customControls.CustomFontRadioButton
                 android:id="@+id/rb_fp_method"
                 android:layout_width="wrap_content"
                 style="@style/FPModalTabStyle"
                 android:text="@string/fp_methods" />
 
-        <org.opensrp.view.customControls.CustomFontRadioButton
+        <org.smartregister.view.customControls.CustomFontRadioButton
                 android:id="@+id/rb_fp_prioritization"
                 android:layout_width="wrap_content"
                 style="@style/FPModalTabStyle"

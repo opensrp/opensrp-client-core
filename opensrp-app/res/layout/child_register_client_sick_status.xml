@@ -4,7 +4,7 @@
              android:layout_width="match_parent"
              android:layout_height="match_parent">
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/btn_sick_visit"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/txt_illness"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
                 android:layout_alignParentTop="true"
                 style="@style/CustomFontTextViewStyle.ListView.Normal.TwoLine"/>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/lbl_illness_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -36,7 +36,7 @@
                 android:text="@string/illness_date"
                 style="@style/CustomFontTextViewStyle.ListView.Medium"/>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/txt_illness_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
