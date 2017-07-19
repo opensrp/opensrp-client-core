@@ -6,7 +6,7 @@
               android:layout_height="wrap_content"
               android:weightSum="@integer/fp_list_service_mode_views_section_weight">
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/txt_fp_prioritization_risks"
             android:layout_width="@dimen/list_fp_view_width"
             android:layout_height="fill_parent"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_plus_add_fp" />
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_fp_add_fp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_fp_video" />
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_fp_videos"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

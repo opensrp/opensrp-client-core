@@ -4,13 +4,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
         android:orientation="vertical">
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/last_service_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"
             style="@style/CustomFontTextViewStyle.ListView.Normal"/>
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/last_service_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

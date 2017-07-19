@@ -8,7 +8,7 @@ import org.smartregister.domain.ChildServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.*;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewHolder.*;
+import org.smartregister.view.viewholder.*;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;

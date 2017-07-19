@@ -234,8 +234,8 @@ public class FormUtils {
         if (subForms != null) {
             for (SubForm sf : subForms) {
                 SubFormData sd = new SubFormData();
-                sd.setDefault_bind_path(sf.getDefault_bind_path());
-                sd.setBind_type(sf.getBind_type());
+                sd.setDefault_bind_path(sf.getDefaultBindPath());
+                sd.setBind_type(sf.getBindType());
 
                 List<FormField> subFormFields = convertFormFields(sf.getFields());
                 sd.setFields(subFormFields);

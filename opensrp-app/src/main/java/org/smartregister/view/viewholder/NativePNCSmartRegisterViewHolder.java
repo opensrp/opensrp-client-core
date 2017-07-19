@@ -1,4 +1,4 @@
-package org.smartregister.view.viewHolder;
+package org.smartregister.view.viewholder;
 
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,7 +7,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import org.smartregister.R;
-import org.smartregister.view.customControls.*;
+import org.smartregister.view.customcontrols.*;
 
 public class NativePNCSmartRegisterViewHolder {
     private final ClientProfileView profileInfoLayout;

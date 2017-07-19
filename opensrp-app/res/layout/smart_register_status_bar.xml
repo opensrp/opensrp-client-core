@@ -7,27 +7,27 @@
               android:orientation="horizontal"
               android:paddingLeft="10dp">
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/label_sorted_by"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/label_sorted_by"
             style="@style/CustomFontTextViewStyle.StatusBar.Bold.NoPadding"/>
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/sorted_by"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:paddingLeft="1dp"
             style="@style/CustomFontTextViewStyle.StatusBar.Black"/>
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="@string/label_village"
             style="@style/CustomFontTextViewStyle.StatusBar.Bold.NoPadding" />
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/village"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

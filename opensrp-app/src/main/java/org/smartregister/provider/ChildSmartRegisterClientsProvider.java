@@ -15,10 +15,10 @@ import org.smartregister.view.controller.ChildSmartRegisterController;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
-import org.smartregister.view.viewHolder.ChildRegisterProfilePhotoLoader;
-import org.smartregister.view.viewHolder.NativeChildSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.OnClickFormLauncher;
-import org.smartregister.view.viewHolder.ProfilePhotoLoader;
+import org.smartregister.view.viewholder.ChildRegisterProfilePhotoLoader;
+import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
+import org.smartregister.view.viewholder.ProfilePhotoLoader;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 

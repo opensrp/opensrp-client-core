@@ -12,7 +12,7 @@ import org.smartregister.view.contract.pnc.PNCClients;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 import org.smartregister.view.controller.PNCSmartRegisterController;
 import org.smartregister.view.dialog.*;
-import org.smartregister.view.viewHolder.*;
+import org.smartregister.view.viewholder.*;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 

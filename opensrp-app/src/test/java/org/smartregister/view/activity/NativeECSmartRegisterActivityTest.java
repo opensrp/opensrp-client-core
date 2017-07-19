@@ -16,7 +16,7 @@ import org.smartregister.view.contract.Village;
 import org.smartregister.view.contract.Villages;
 import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
-import org.smartregister.view.viewHolder.NativeECSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeECSmartRegisterViewHolder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,8 +28,6 @@ import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowIntent;
 
 import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.FormNames.EC_REGISTRATION;
 import static org.junit.Assert.*;
 
 @RunWith(DrishtiTestRunner.class)

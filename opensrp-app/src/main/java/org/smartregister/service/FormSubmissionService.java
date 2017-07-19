@@ -99,7 +99,7 @@ public class FormSubmissionService {
         List<SubForm> subForms  =form.getSub_forms();
         if(subForms != null && !subForms.isEmpty()){
             for(SubForm subForm: subForms){
-                String subBindType = subForm.getBind_type();
+                String subBindType = subForm.getBindType();
                 List<Map<String, String>> instances = subForm.instances();
                 if(instances != null && !instances.isEmpty()) {
                     for(Map<String, String> instance: instances) {

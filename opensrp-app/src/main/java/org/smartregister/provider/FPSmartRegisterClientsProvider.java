@@ -7,16 +7,15 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
-import org.smartregister.view.contract.FPClients;
 import org.smartregister.view.contract.FPSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.controller.FPSmartRegisterController;
 import org.smartregister.view.dialog.*;
-import org.smartregister.view.viewHolder.ECProfilePhotoLoader;
-import org.smartregister.view.viewHolder.NativeFPSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.OnClickFormLauncher;
-import org.smartregister.view.viewHolder.ProfilePhotoLoader;
+import org.smartregister.view.viewholder.ECProfilePhotoLoader;
+import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
+import org.smartregister.view.viewholder.ProfilePhotoLoader;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 

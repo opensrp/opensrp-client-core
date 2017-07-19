@@ -18,7 +18,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_1_done"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
                     android:layout_alignParentLeft="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_1_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
                     android:textColor="@color/text_black"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_1_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_2_done"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                     android:layout_alignParentLeft="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_2_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -85,7 +85,7 @@
                     android:textColor="@color/text_black"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_2_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent">
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_booster_done"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -123,7 +123,7 @@
                     android:layout_alignParentLeft="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_booster_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
                     android:textColor="@color/text_black"
                     style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-            <org.smartregister.view.customControls.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                     android:id="@+id/txt_tt_booster_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

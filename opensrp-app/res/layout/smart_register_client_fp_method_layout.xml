@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.smartregister.view.customControls.ClientFpMethodView
+<org.smartregister.view.customcontrols.ClientFpMethodView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fp_method_layout"
         android:layout_width="@dimen/list_fp_view_width"
@@ -9,13 +9,13 @@
         android:layout_marginTop="3dp"
         android:orientation="vertical">
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/txt_fp_method"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/CustomFontTextViewStyle.ListView.Medium.TwoLine"/>
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/txt_fp_method_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,30 +25,30 @@
                   android:layout_height="wrap_content"
                   android:orientation="horizontal">
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_fp_method_quantity_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/CustomFontTextViewStyle.ListView.Small"
                 android:text="@string/str_number_of_strips"/>
 
-        <org.smartregister.view.customControls.CustomFontTextView
+        <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/txt_fp_method_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/CustomFontTextViewStyle.ListView.Small"/>
     </LinearLayout>
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/txt_iud_place"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/CustomFontTextViewStyle.ListView.Small"/>
 
-    <org.smartregister.view.customControls.CustomFontTextView
+    <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/txt_iud_person"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             style="@style/CustomFontTextViewStyle.ListView.Small"/>
 
-</org.smartregister.view.customControls.ClientFpMethodView>
+</org.smartregister.view.customcontrols.ClientFpMethodView>

@@ -1,18 +1,15 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import org.apache.commons.lang3.StringUtils;
+
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.view.contract.BaseFPSmartRegisterClient;
-import org.smartregister.view.contract.ECSmartRegisterClient;
-import org.smartregister.view.contract.FPSmartRegisterClient;
 
 public class ClientPNCPpFpMethodView extends LinearLayout {
     private TextView ppFpMethodView;

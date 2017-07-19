@@ -14,10 +14,10 @@ import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
-import org.smartregister.view.viewHolder.ECProfilePhotoLoader;
-import org.smartregister.view.viewHolder.NativeECSmartRegisterViewHolder;
-import org.smartregister.view.viewHolder.OnClickFormLauncher;
-import org.smartregister.view.viewHolder.ProfilePhotoLoader;
+import org.smartregister.view.viewholder.ECProfilePhotoLoader;
+import org.smartregister.view.viewholder.NativeECSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
+import org.smartregister.view.viewholder.ProfilePhotoLoader;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 

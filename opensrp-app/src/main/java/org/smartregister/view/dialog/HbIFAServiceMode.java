@@ -12,7 +12,7 @@ import org.smartregister.util.FloatUtil;
 import org.smartregister.util.IntegerUtil;
 import org.smartregister.view.contract.*;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewHolder.*;
+import org.smartregister.view.viewholder.*;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.HbTestFields.HB_LEVEL;

@@ -1,4 +1,4 @@
-package org.smartregister.view.customControls;
+package org.smartregister.view.customcontrols;
 
 
 import android.net.http.SslError;

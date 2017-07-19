@@ -2,14 +2,13 @@ package org.smartregister.cursoradapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
-import org.smartregister.view.viewHolder.OnClickFormLauncher;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 /**
  * Created by raihan on 3/9/16.
