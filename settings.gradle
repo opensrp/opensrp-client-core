@@ -1,4 +1,4 @@
-rootProject.name = 'opensrp-app-parent'
-include ':opensrp-app', ':opensrp-drishti', ':opensrp-mcare', ':opensrp-indonesia', ':opensrp-vaccinator', ':opensrp-path', ':android-json-form-wizard'
+rootProject.name = 'opensrp-client-core'
+include ':opensrp-app', ':opensrp-drishti'
 
 project(':opensrp-app').projectDir = "$rootDir/opensrp-app" as File

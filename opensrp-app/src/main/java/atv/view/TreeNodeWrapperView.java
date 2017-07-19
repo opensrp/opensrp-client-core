@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import org.ei.opensrp.R;
+import org.opensrp.R;
 
 
 /**
