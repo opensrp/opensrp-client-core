@@ -9,18 +9,18 @@ import java.util.HashMap;
 public class Weight {
     private static final String ZEIR_ID = "ZEIR_ID";
     Long id;
-    String baseEntityId;
-    String eventId;
-    String formSubmissionId;
-    String programClientId;
-    Float kg;
-    Date date;
-    String anmId;
-    String locationId;
-    String syncStatus;
-    Integer outOfCatchment;
-    Long updatedAt;
-    Double zScore;
+    private String baseEntityId;
+    private String eventId;
+    private String formSubmissionId;
+    private String programClientId;
+    private Float kg;
+    private Date date;
+    private String anmId;
+    private String locationId;
+    private String syncStatus;
+    private Integer outOfCatchment;
+    private Long updatedAt;
+    private Double zScore;
 
     public Weight() {
     }

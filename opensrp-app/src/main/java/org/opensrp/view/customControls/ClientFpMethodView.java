@@ -11,10 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.opensrp.R;
 import org.opensrp.domain.FPMethod;
 import org.opensrp.view.contract.BaseFPSmartRegisterClient;
-import org.opensrp.view.contract.ECSmartRegisterClient;
-import org.opensrp.view.contract.FPSmartRegisterClient;
-
-import java.text.DateFormat;
 
 import static org.opensrp.Context.getInstance;
 

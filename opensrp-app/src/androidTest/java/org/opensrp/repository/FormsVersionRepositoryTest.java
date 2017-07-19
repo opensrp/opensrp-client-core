@@ -3,8 +3,6 @@ package org.opensrp.repository;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
-import com.google.gson.Gson;
-
 import org.opensrp.domain.FormDefinitionVersion;
 import org.opensrp.util.Session;
 
@@ -12,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
 import static org.opensrp.util.EasyMap.create;
 import static org.opensrp.domain.SyncStatus.PENDING;
 import static org.opensrp.domain.SyncStatus.SYNCED;
