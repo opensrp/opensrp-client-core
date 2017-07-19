@@ -25,7 +25,6 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
@@ -41,9 +40,10 @@ public class DisplayFormFragment extends Fragment {
 
     public static final String TAG = "DisplayFormFragment";
 
+    String formData = "";
+    private boolean formPartialSaving = true;
     WebView webView;
     ProgressBar progressBar;
-    boolean formPartialSaving = true;
 
     public boolean isFormPartialSaving() {
         return formPartialSaving;
@@ -178,7 +178,7 @@ public class DisplayFormFragment extends Fragment {
     }
 
     public String readFileAssets(String fileName) {
-        String fileContents = null;
+        String fileContents;
         try {
             InputStream is = getActivity().getAssets().open(fileName);
             int size = is.available();
@@ -248,7 +248,7 @@ public class DisplayFormFragment extends Fragment {
             }
         }).start();
     }
-    String formData="";
+
     private void postXmlDataToForm(final String data){
         webView.post(new Runnable() {
             @Override

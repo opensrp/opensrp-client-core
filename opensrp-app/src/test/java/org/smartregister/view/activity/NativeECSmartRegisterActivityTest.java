@@ -37,7 +37,7 @@ public class NativeECSmartRegisterActivityTest {
     private Activity ecActivity;
 
     @Before
-    public void setup() {
+    public void setUp() {
         ecActivity = Robolectric.buildActivity(NativeECSmartRegisterActivity.class)
                 .create()
                 .start()

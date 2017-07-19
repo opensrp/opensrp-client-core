@@ -709,59 +709,6 @@ public class ClientProcessor {
         return humanReadableValue;
     }
 
-    /**
-     * convert concept responses to human readable values based on the concept mappings values
-     * attached to the column json mappings in ec_client_fields.json
-     *
-     * @param value
-     * @param conceptMappings
-     * @return
-     * @throws Exception
-     */
-    private String humanizeConceptResponse(String value, JSONObject conceptMappings) throws Exception {
-        if (conceptMappings == null) {
-            return value;
-        }
-        String humanReadableValue = null;
-        if (value.startsWith("[")) {
-            JSONArray jsonArray = new JSONArray(value);
-            if (jsonArray.length() == 1) {
-                value = jsonArray.get(0).toString();
-                humanReadableValue = conceptMappings.has(value) ? conceptMappings.getString(value) : null;
-
-            } else {
-                JSONArray humanReadableValues = new JSONArray();
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    String val = conceptMappings.has(jsonArray.get(i).toString()) ? conceptMappings.getString(jsonArray.get(i).toString()) : null;
-                    humanReadableValues.put(val);
-                }
-                humanReadableValue = humanReadableValues.toString();
-            }
-        } else {
-            humanReadableValue = conceptMappings.has(value) ? conceptMappings.getString(value) : null;
-        }
-        return humanReadableValue;
-    }
-
-    public String queryTableForColumnValue(String query, String tableName, String column) {
-        String columnValue = null;
-        Cursor cursor = null;
-        try {
-            cursor = queryTable(query, tableName);
-            if (cursor != null && cursor.moveToFirst()) { // entity exists in table
-                columnValue = cursor.getString(cursor.getColumnIndex(column));
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-        } finally {
-            //close the cursor
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return columnValue;
-    }
-
     public Map<String, String> getClientAddressAsMap(JSONObject client) {
         Map<String, String> addressMap = new HashMap<String, String>();
         try {

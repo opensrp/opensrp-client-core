@@ -4,21 +4,20 @@ package org.smartregister.domain;
  * Created by keyman on 3/1/17.
  */
 public class ServiceType {
-    Long id;
-    String type;
-    String name;
-    String serviceNameEntity;
-    String serviceNameEntityId;
-    String dateEntity;
-    String dateEntityId;
-    String units;
-    String serviceLogic;
-    String prerequisite;
-    String preOffset;
-    String expiryOffset;
-    String milestoneOffset;
-    Long updatedAt;
-
+    private Long id;
+    private String type;
+    private String name;
+    private String serviceNameEntity;
+    private String serviceNameEntityId;
+    private String dateEntity;
+    private String dateEntityId;
+    private String units;
+    private String serviceLogic;
+    private String prerequisite;
+    private String preOffset;
+    private String expiryOffset;
+    private String milestoneOffset;
+    private Long updatedAt;
 
     public ServiceType() {
     }

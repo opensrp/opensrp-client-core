@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import static net.sqlcipher.DatabaseUtils.longForQuery;
-import static org.smartregister.util.EasyMap.create;
 
 /**
  * Created by Dimas Ciputra on 3/21/15.
