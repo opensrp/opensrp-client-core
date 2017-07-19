@@ -35,20 +35,20 @@
                         android:src="@drawable/register_ec"
                         style="@style/ImageButton.Home.Register"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="EC"
                         android:textStyle="bold"
                         style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="REGISTER"
                         style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_ec_register_client_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -67,19 +67,19 @@
                         android:src="@drawable/register_fp"
                         style="@style/ImageButton.Home.Register"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="FP"
                         style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="REGISTER"
                         style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_fp_register_client_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -98,19 +98,19 @@
                         android:src="@drawable/register_anc"
                         style="@style/ImageButton.Home.Register"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="ANC"
                         style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="REGISTER"
                         style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_register_client_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -129,19 +129,19 @@
                         android:src="@drawable/register_pnc"
                         style="@style/ImageButton.Home.Register"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="PNC"
                         style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="REGISTER"
                         style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_pnc_register_client_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -160,19 +160,19 @@
                         android:src="@drawable/register_child"
                         style="@style/ImageButton.Home.Register"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="CHILD"
                         style="@style/CustomFontTextViewStyle.Home.RegisterName"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="REGISTER"
                         style="@style/CustomFontTextViewStyle.Home.RegisterLabel"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_child_register_client_count"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -193,7 +193,7 @@
             android:layout_marginBottom="10dp"
             android:orientation="horizontal">
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/btn_reporting"
                 android:layout_width="0dp"
                 android:layout_height="50dp"
@@ -205,7 +205,7 @@
                 android:text="@string/str_reporting"
                 style="@style/CustomFontTextViewStyle.Home.Buttons"/>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/btn_videos"
                 android:layout_width="0dp"
                 android:layout_height="50dp"

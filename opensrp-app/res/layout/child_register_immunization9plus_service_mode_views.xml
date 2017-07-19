@@ -19,7 +19,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.opensrp.view.customControls.CustomFontTextView
+            <org.smartregister.view.customControls.CustomFontTextView
                     android:id="@+id/btn_measles"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -34,7 +34,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_measles_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
                         android:text="@string/measles"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_measles_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
 
         </FrameLayout>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/txt_measles_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
@@ -92,7 +92,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.opensrp.view.customControls.CustomFontTextView
+            <org.smartregister.view.customControls.CustomFontTextView
                     android:id="@+id/btn_opv_booster"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -107,7 +107,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_opv_booster_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -116,7 +116,7 @@
                         android:text="@string/opv_booster"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_opv_booster_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -136,7 +136,7 @@
 
         </FrameLayout>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/txt_opv_booster_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
@@ -165,7 +165,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.opensrp.view.customControls.CustomFontTextView
+            <org.smartregister.view.customControls.CustomFontTextView
                     android:id="@+id/btn_dpt_booster"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -180,7 +180,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_dpt_booster_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -189,7 +189,7 @@
                         android:text="@string/dpt_booster"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_dpt_booster_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
 
         </FrameLayout>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/txt_dpt_booster_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"
@@ -238,7 +238,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="7">
 
-            <org.opensrp.view.customControls.CustomFontTextView
+            <org.smartregister.view.customControls.CustomFontTextView
                     android:id="@+id/btn_vitamin_a"
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
@@ -253,7 +253,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_vitamin_a_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -262,7 +262,7 @@
                         android:text="@string/vitamin_a"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_vitamin_a_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -282,7 +282,7 @@
 
         </FrameLayout>
 
-        <org.opensrp.view.customControls.CustomFontTextView
+        <org.smartregister.view.customControls.CustomFontTextView
                 android:id="@+id/txt_vitamin_a_on"
                 android:layout_width="fill_parent"
                 android:layout_height="0dp"

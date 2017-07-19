@@ -26,7 +26,7 @@
                     android:layout_height="fill_parent">
 
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_delivery_plan_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_delivery_plan_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                             android:id="@+id/img_delivery_place_status"
                             />
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/lbl_delivery_place"
                             android:layout_width="wrap_content"
                             android:layout_alignParentLeft="true"
@@ -72,7 +72,7 @@
                             android:layout_height="wrap_content"
                             style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/txt_delivery_place"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -98,7 +98,7 @@
                             android:id="@+id/img_transport_status"
                             />
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/lbl_transport"
                             android:layout_width="wrap_content"
                             android:text="@string/str_transport"
@@ -106,7 +106,7 @@
                             android:layout_height="wrap_content"
                             style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/txt_transport"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -132,7 +132,7 @@
                             android:id="@+id/img_has_companion_status"
                             />
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/lbl_has_companion"
                             android:layout_width="wrap_content"
                             android:text="@string/str_has_companion"
@@ -140,7 +140,7 @@
                             android:layout_height="wrap_content"
                             style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/txt_has_companion"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -166,7 +166,7 @@
                             android:id="@+id/img_asha_phone_number_status"
                             />
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/lbl_asha_phone_number"
                             android:layout_width="wrap_content"
                             android:text="@string/str_asha"
@@ -174,7 +174,7 @@
                             android:layout_height="wrap_content"
                             style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/txt_asha_phone_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -200,7 +200,7 @@
                             android:layout_height="@dimen/anc_list_delivery_plan_service_mode_tick_view_height"
                             />
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/lbl_contact_phone_number"
                             android:layout_width="wrap_content"
                             android:text="@string/str_contact"
@@ -208,7 +208,7 @@
                             android:layout_height="wrap_content"
                             style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/txt_contact_phone_number"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -234,7 +234,7 @@
                             android:id="@+id/img_risk_reviewed_status"
                             />
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/lbl_risks_reviewed"
                             android:layout_width="wrap_content"
                             android:text="@string/str_risks_reviewed"
@@ -242,7 +242,7 @@
                             android:layout_height="wrap_content"
                             style="@style/CustomFontTextViewStyle.ListView.VerySmall"/>
 
-                    <org.opensrp.view.customControls.CustomFontTextView
+                    <org.smartregister.view.customControls.CustomFontTextView
                             android:id="@+id/txt_risks_reviewed"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

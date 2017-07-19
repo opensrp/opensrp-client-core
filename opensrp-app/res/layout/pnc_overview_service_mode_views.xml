@@ -16,7 +16,7 @@
             android:src="@color/smart_register_client_divider_color"/>
 
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_complications"
             android:layout_width="@dimen/list_ec_no_view_width"
             android:layout_height="fill_parent"

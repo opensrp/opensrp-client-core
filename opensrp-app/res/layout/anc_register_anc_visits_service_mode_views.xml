@@ -25,7 +25,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_1_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_1_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                             android:background="@color/status_bar_text_almost_white"
                             android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_1_done_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_1_bp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
                         android:layout_below="@id/txt_anc_visit_1_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_1_weight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                         android:layout_below="@id/lbl_anc_visit_1_bp"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_1_bp_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -84,7 +84,7 @@
                         android:layout_below="@id/txt_anc_visit_1_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_1_weight_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -118,7 +118,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_2_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -127,7 +127,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_2_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_2_done_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -150,7 +150,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_2_bp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
                         android:layout_below="@id/txt_anc_visit_2_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_2_weight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -168,7 +168,7 @@
                         android:layout_below="@id/lbl_anc_visit_2_bp"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_2_bp_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -176,7 +176,7 @@
                         android:layout_below="@id/txt_anc_visit_2_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_2_weight_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -210,7 +210,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_3_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -219,7 +219,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_3_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -232,7 +232,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_3_done_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -242,7 +242,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_3_bp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -251,7 +251,7 @@
                         android:layout_below="@id/txt_anc_visit_3_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_3_weight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -260,7 +260,7 @@
                         android:layout_below="@id/lbl_anc_visit_3_bp"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_3_bp_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -268,7 +268,7 @@
                         android:layout_below="@id/txt_anc_visit_3_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_3_weight_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -302,7 +302,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_4_due_type"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -311,7 +311,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_4_due_on"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -324,7 +324,7 @@
                             android:layout_width="fill_parent"
                             android:layout_height="fill_parent">
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_4_done_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -334,7 +334,7 @@
                         android:text="@string/anc_label"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_4_bp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -343,7 +343,7 @@
                         android:layout_below="@id/txt_anc_visit_4_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/lbl_anc_visit_4_weight"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -352,7 +352,7 @@
                         android:layout_below="@id/lbl_anc_visit_4_bp"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_4_bp_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -360,7 +360,7 @@
                         android:layout_below="@id/txt_anc_visit_4_done_date"
                         style="@style/CustomFontTextViewStyle.ListView.Normal"/>
 
-                <org.opensrp.view.customControls.CustomFontTextView
+                <org.smartregister.view.customControls.CustomFontTextView
                         android:id="@+id/txt_anc_visit_4_weight_value"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -376,7 +376,7 @@
             android:layout_height="fill_parent"
             android:src="@color/smart_register_client_divider_color"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/btn_other_anc_visit"
             android:layout_weight="@integer/anc_list_anc_visit_service_mode_anc_visit_button_view_weight"
             android:scaleType="center"

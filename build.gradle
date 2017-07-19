@@ -13,7 +13,7 @@ project.ext.preDexLibs = !project.hasProperty('disablePreDex')
 
 subprojects {
 
-    group = 'org.opensrp'
+    group = 'org.smartregister'
 
     ext.androidToolsBuildGradle     = '21.1.2'
     ext.androidBuildToolsVersion    = '26.0.0'

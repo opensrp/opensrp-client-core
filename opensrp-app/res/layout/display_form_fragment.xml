@@ -3,12 +3,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <org.opensrp.view.customControls.OpenSRPWebView
+    <org.smartregister.view.customControls.OpenSRPWebView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:windowSoftInputMode="adjustResize"
         android:id="@+id/webview">
-    </org.opensrp.view.customControls.OpenSRPWebView>
+    </org.smartregister.view.customControls.OpenSRPWebView>
 
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"

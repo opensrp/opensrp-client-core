@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<org.opensrp.view.customControls.ClientGplsaChildView
+<org.smartregister.view.customControls.ClientGplsaChildView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gplsa_child_layout"
         android:layout_width="@dimen/fp_register_gplsa_item_width"
@@ -11,7 +11,7 @@
         android:paddingRight="5dp"
         android:orientation="vertical">
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/label_gravida"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
             android:text="@string/str_gravida"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/label_parity"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
             android:text="@string/str_parity"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/label_number_of_living_children"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
             android:text="@string/str_number_of_living_children"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/label_number_of_still_births"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
             android:text="@string/str_number_of_still_births"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/label_number_of_abortions"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
             android:text="@string/str_number_of_abortions"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_gravida"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
             android:layout_below="@id/label_gravida"
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_parity"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -67,7 +67,7 @@
             android:layout_below="@id/label_parity"
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_number_of_living_children"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             android:layout_below="@id/label_number_of_living_children"
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_number_of_still_births"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -83,7 +83,7 @@
             android:layout_below="@id/label_number_of_still_births"
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_number_of_abortions"
             android:layout_width="@dimen/fp_register_gplsa_item_width"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
             android:layout_below="@id/label_number_of_abortions"
             style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/label_child"
             android:layout_width="55dp"
             android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal"
             android:text="@string/fp_register_child_details"/>
 
-    <org.opensrp.view.customControls.CustomFontTextView
+    <org.smartregister.view.customControls.CustomFontTextView
             android:id="@+id/txt_child_age"
             android:layout_width="50dp"
             android:layout_height="wrap_content"
@@ -109,4 +109,4 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal"
             />
 
-</org.opensrp.view.customControls.ClientGplsaChildView>
+</org.smartregister.view.customControls.ClientGplsaChildView>

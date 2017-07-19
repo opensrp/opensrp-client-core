@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.github.johnkil.print.PrintView;
 
-import org.opensrp.R;
+import org.smartregister.R;
 
 import atv.model.TreeNode;
 
