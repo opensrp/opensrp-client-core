@@ -645,7 +645,7 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    String getDefaultBindPathFromSubformDefinition(String subformName, FormSubmission formSubmission) throws IOException, JsonSyntaxException
+    private String getDefaultBindPathFromSubformDefinition(String subformName, FormSubmission formSubmission) throws IOException, JsonSyntaxException
     {
         JsonObject jsonObject = getFormDefinitionData(formSubmission.formName());
         JsonArray subforms = jsonObject.get("form").getAsJsonObject().get("sub_forms").getAsJsonArray();
@@ -668,7 +668,7 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    String getPathFromSubformDefinition(String subformName, String field, String formName, JsonObject formDefinition) throws IOException, JsonSyntaxException
+    private String getPathFromSubformDefinition(String subformName, String field, String formName, JsonObject formDefinition) throws IOException, JsonSyntaxException
     {
         JsonArray subforms = formDefinition.get("form").getAsJsonObject().get("sub_forms").getAsJsonArray();
         for (JsonElement jsonElement : subforms) {
@@ -694,7 +694,7 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws IOException
      */
-    String getSourceFromSubformDefinition(String subformName, String field, String formName, JsonObject formDefinition) throws IOException, JsonSyntaxException
+    private String getSourceFromSubformDefinition(String subformName, String field, String formName, JsonObject formDefinition) throws IOException, JsonSyntaxException
     {
         JsonArray subforms = formDefinition.get("form").getAsJsonObject().get("sub_forms").getAsJsonArray();
         for (JsonElement jsonElement : subforms) {
@@ -717,13 +717,13 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    String getPropertyBindFromFormDefinition(String fieldName, String formName) throws JsonSyntaxException, IOException
+    private String getPropertyBindFromFormDefinition(String fieldName, String formName) throws JsonSyntaxException, IOException
     {
         JsonObject jsonObject = getFormDefinitionData(formName);
         return getPropertyBindFromFormDefinition(fieldName, formName, jsonObject);
     }
 
-    String getPropertyBindFromFormDefinition(String fieldName, String formName, JsonObject formDefinition) throws JsonSyntaxException, IOException
+    private String getPropertyBindFromFormDefinition(String fieldName, String formName, JsonObject formDefinition) throws JsonSyntaxException, IOException
     {
         JsonElement formElement = formDefinition.get("form");
         JsonArray formFields = formElement.getAsJsonObject().get("fields").getAsJsonArray();
