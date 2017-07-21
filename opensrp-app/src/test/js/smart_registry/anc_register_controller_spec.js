@@ -1,4 +1,4 @@
-describe('ANC Register controller: ', function () {
+describe("ANC Register controller: ", function () {
 
     var controller, scope;
 
@@ -19,21 +19,21 @@ describe('ANC Register controller: ', function () {
     it("should sum the number of tablets from ifa data", function () {
         var ifaData = {
             next: {
-                name: 'ifa2',
-                status: 'upcoming',
+                name: "ifa2",
+                status: "upcoming",
                 visit_date: null
             },
             IFA: [
                 {
-                    status: 'done',
-                    visit_date: '04/04',
+                    status: "done",
+                    visit_date: "04/04",
                     data: {
                         dose: 100
                     }
                 },
                 {
-                    status: 'done',
-                    visit_date: '04/04',
+                    status: "done",
+                    visit_date: "04/04",
                     data: {
                         dose: 120
                     }
@@ -68,13 +68,13 @@ describe('ANC Register controller: ', function () {
     });
 
     describe("Weeks Pregnant", function () {
-        it("calculates weeks pregnant from client's lmp", function () {
+        it("calculates weeks pregnant from client"s lmp", function () {
             var today = new Date();
             var a_week_ago = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-            var month = ('0' + (a_week_ago.getMonth() + 1)).substr(-2);
-            var day = ('0' + a_week_ago.getDate()).substr(-2);
+            var month = ("0" + (a_week_ago.getMonth() + 1)).substr(-2);
+            var day = ("0" + a_week_ago.getDate()).substr(-2);
             var client = {
-                lmp: a_week_ago.getFullYear() + '-' + month + '-' + day
+                lmp: a_week_ago.getFullYear() + "-" + month + "-" + day
             };
 
             expect(scope.weeksPregnant(client)).toEqual(1);
@@ -84,17 +84,17 @@ describe('ANC Register controller: ', function () {
     describe("HB Level Legend", function () {
         it("should return hb-legend-dangerous id level < 7", function () {
             var level = 5;
-            expect(scope.hbLegendClass(level)).toEqual('hb-legend-dangerous');
+            expect(scope.hbLegendClass(level)).toEqual("hb-legend-dangerous");
         });
 
         it("should return hb-legend-high id level >= 7 and < 11", function () {
             var level = 10;
-            expect(scope.hbLegendClass(level)).toEqual('hb-legend-high');
+            expect(scope.hbLegendClass(level)).toEqual("hb-legend-high");
         });
 
         it("should return hb-legend-normal id level >= 11", function () {
             var level = 12;
-            expect(scope.hbLegendClass(level)).toEqual('hb-legend-normal');
+            expect(scope.hbLegendClass(level)).toEqual("hb-legend-normal");
         });
     });
 

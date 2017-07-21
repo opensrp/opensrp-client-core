@@ -1,4 +1,4 @@
-describe('PNC Service', function () {
+describe("PNC Service", function () {
     var pncService, smartHelper;
 
     beforeEach(module("smartRegistry.services"));
@@ -42,23 +42,23 @@ describe('PNC Service', function () {
                 var services_provided = [
                     {
                         name: "PNC",
-                        date: '2013-05-26'
+                        date: "2013-05-26"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-15'
+                        date: "2013-05-15"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-14'
+                        date: "2013-05-14"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-17'
+                        date: "2013-05-17"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-20'
+                        date: "2013-05-20"
                     }
                 ];
 
@@ -66,22 +66,22 @@ describe('PNC Service', function () {
                     {
                         name: "PNC",
                         day: 1,
-                        date: '2013-05-14'
+                        date: "2013-05-14"
                     },
                     {
                         name: "PNC",
                         day: 2,
-                        date: '2013-05-15'
+                        date: "2013-05-15"
                     },
                     {
                         name: "PNC",
                         day: 4,
-                        date: '2013-05-17'
+                        date: "2013-05-17"
                     },
                     {
                         name: "PNC",
                         day: 7,
-                        date: '2013-05-20'
+                        date: "2013-05-20"
                     }
                 ];
 
@@ -97,11 +97,11 @@ describe('PNC Service', function () {
                 var services_provided = [
                     {
                         name: "PNC",
-                        date: '2013-05-26'
+                        date: "2013-05-26"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-14'
+                        date: "2013-05-14"
                     }
                 ];
 
@@ -110,7 +110,7 @@ describe('PNC Service', function () {
                     {
                         name: "PNC",
                         day: 1,
-                        date: '2013-05-14'
+                        date: "2013-05-14"
                     }
                 ];
 
@@ -126,19 +126,19 @@ describe('PNC Service', function () {
                 var services_provided = [
                     {
                         name: "PNC",
-                        date: '2013-05-20'
+                        date: "2013-05-20"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-16'
+                        date: "2013-05-16"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-16'
+                        date: "2013-05-16"
                     },
                     {
                         name: "PNC",
-                        date: '2013-05-14'
+                        date: "2013-05-14"
                     }
                 ];
 
@@ -147,17 +147,17 @@ describe('PNC Service', function () {
                     {
                         name: "PNC",
                         day: 1,
-                        date: '2013-05-14'
+                        date: "2013-05-14"
                     },
                     {
                         name: "PNC",
                         day: 3,
-                        date: '2013-05-16'
+                        date: "2013-05-16"
                     },
                     {
                         name: "PNC",
                         day: 7,
-                        date: '2013-05-20'
+                        date: "2013-05-20"
                     }
                 ];
 
@@ -195,17 +195,17 @@ describe('PNC Service', function () {
                 var expected_circles = [
                     {
                         day: 1,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     },
                     {
                         day: 3,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     },
                     {
                         day: 7,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     }
                 ];
@@ -229,26 +229,26 @@ describe('PNC Service', function () {
                 pncService.preProcessFirst7Days(client, expected_visit_data, current_date);
 
                 /// check active color
-                expect(client.visits.first_7_days.active_color).toEqual('green');
+                expect(client.visits.first_7_days.active_color).toEqual("green");
             });
 
             it("should create grey ticks for each of the tick days", function () {
                 var expected_ticks = [
                     {
                         day: 2,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 4,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 5,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 6,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -267,7 +267,7 @@ describe('PNC Service', function () {
                     {
                         start: 1,
                         end: 7,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -282,15 +282,15 @@ describe('PNC Service', function () {
                 var expected_day_nos = [
                     {
                         day: 1,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 3,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 7,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -326,17 +326,17 @@ describe('PNC Service', function () {
                 var expected_circles = [
                     {
                         day: 1,
-                        type: 'expected',
+                        type: "expected",
                         colored: true
                     },
                     {
                         day: 3,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     },
                     {
                         day: 7,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     }
                 ];
@@ -354,7 +354,7 @@ describe('PNC Service', function () {
                 var expected_statuses = [
                     {
                         day: 1,
-                        status: 'missed'
+                        status: "missed"
                     }
                 ];
 
@@ -369,26 +369,26 @@ describe('PNC Service', function () {
                 pncService.preProcessFirst7Days(client, expected_visit_data, current_date);
 
                 /// check active color
-                expect(client.visits.first_7_days.active_color).toEqual('red');
+                expect(client.visits.first_7_days.active_color).toEqual("red");
             });
 
             it("should create a colored tick on the current date and grey for the remainder", function () {
                 var expected_ticks = [
                     {
                         day: 2,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 4,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 5,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 6,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -407,12 +407,12 @@ describe('PNC Service', function () {
                     {
                         start: 1,
                         end: 2,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         start: 2,
                         end: 7,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -428,11 +428,11 @@ describe('PNC Service', function () {
                 var expected_day_nos = [
                     {
                         day: 3,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 7,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -473,22 +473,22 @@ describe('PNC Service', function () {
                 var expected_circles = [
                     {
                         day: 1,
-                        type: 'expected',
+                        type: "expected",
                         colored: true
                     },
                     {
                         day: 3,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     },
                     {
                         day: 7,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     },
                     {
                         day: 2,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 
@@ -506,7 +506,7 @@ describe('PNC Service', function () {
                 var expected_statuses = [
                     {
                         day: 1,
-                        status: 'missed'
+                        status: "missed"
                     }
                 ];
 
@@ -521,22 +521,22 @@ describe('PNC Service', function () {
                 pncService.preProcessFirst7Days(client, expected_visit_data, current_date);
 
                 /// check active color
-                expect(client.visits.first_7_days.active_color).toEqual('yellow');
+                expect(client.visits.first_7_days.active_color).toEqual("yellow");
             });
 
             it("should not create a tick on day 2 with grey ticks on the remainder", function () {
                 var expected_ticks = [
                     {
                         day: 4,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 5,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 6,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -554,12 +554,12 @@ describe('PNC Service', function () {
                     {
                         start: 1,
                         end: 3,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         start: 3,
                         end: 7,
-                        type: 'expected'
+                        type: "expected"
                     }
                 ];
 
@@ -575,15 +575,15 @@ describe('PNC Service', function () {
                 var expected_day_nos = [
                     /*{
                         day: 3,
-                        type: 'expected'
+                        type: "expected"
                     },*/
                     {
                         day: 7,
-                        type: 'expected'
+                        type: "expected"
                     },
                     {
                         day: 2,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 
@@ -651,19 +651,19 @@ describe('PNC Service', function () {
                 var expected_circles = [
                     {
                         day: 1,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 2,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 3,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 7,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 
@@ -680,15 +680,15 @@ describe('PNC Service', function () {
                 var expected_statuses = [
                     {
                         day: 1,
-                        status: 'done'
+                        status: "done"
                     },
                     {
                         day: 3,
-                        status: 'done'
+                        status: "done"
                     },
                     {
                         day: 7,
-                        status: 'done'
+                        status: "done"
                     }
                 ];
 
@@ -705,22 +705,22 @@ describe('PNC Service', function () {
                 pncService.preProcessFirst7Days(client, expected_visit_data, current_date);
 
                 /// check active color
-                expect(client.visits.first_7_days.active_color).toEqual('green');
+                expect(client.visits.first_7_days.active_color).toEqual("green");
             });
 
             it("should create ticks on days 4, 5 and 6", function () {
                 var expected_ticks = [
                     {
                         day: 4,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 5,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 6,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 
@@ -739,7 +739,7 @@ describe('PNC Service', function () {
                     {
                         start: 1,
                         end: 7,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 
@@ -755,19 +755,19 @@ describe('PNC Service', function () {
                 var expected_day_nos = [
                     {
                         day:1,
-                        type:'actual'
+                        type:"actual"
                     },
                     {
                         day:2,
-                        type:'actual'
+                        type:"actual"
                     },
                     {
                         day:3,
-                        type:'actual'
+                        type:"actual"
                     },
                     {
                         day:7,
-                        type:'actual'
+                        type:"actual"
                     }
                 ];
 
@@ -803,17 +803,17 @@ describe('PNC Service', function () {
                 var expected_circles = [
                     {
                         day: 1,
-                        type: 'expected',
+                        type: "expected",
                         colored: true
                     },
                     {
                         day: 3,
-                        type: 'expected',
+                        type: "expected",
                         colored: true
                     },
                     {
                         day: 7,
-                        type: 'expected',
+                        type: "expected",
                         colored: true
                     }
                 ];
@@ -831,15 +831,15 @@ describe('PNC Service', function () {
                 var expected_statuses = [
                     {
                         day: 1,
-                        status: 'missed'
+                        status: "missed"
                     },
                     {
                         day: 3,
-                        status: 'missed'
+                        status: "missed"
                     },
                     {
                         day: 7,
-                        status: 'missed'
+                        status: "missed"
                     }
                 ];
 
@@ -856,26 +856,26 @@ describe('PNC Service', function () {
                 pncService.preProcessFirst7Days(client, expected_visit_data, current_date);
 
                 /// check active color
-                expect(client.visits.first_7_days.active_color).toEqual('red');
+                expect(client.visits.first_7_days.active_color).toEqual("red");
             });
 
             it("should create ticks on days 2,4,5,6", function () {
                 var expected_ticks = [
                     {
                         day: 2,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 4,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 5,
-                        type: 'actual'
+                        type: "actual"
                     },
                     {
                         day: 6,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 
@@ -894,7 +894,7 @@ describe('PNC Service', function () {
                     {
                         start: 1,
                         end: 7,
-                        type: 'actual'
+                        type: "actual"
                     }
                 ];
 

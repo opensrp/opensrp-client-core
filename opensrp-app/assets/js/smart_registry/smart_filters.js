@@ -1,34 +1,34 @@
 var fpMethodMap = {
-    condom: 'Condom',
-    dmpa_injectable: 'DMPA/Injectable',
-    iud: 'IUCD',
-    ocp: 'OCP',
-    female_sterilization: 'Female Sterilization',
-    male_sterilization: 'Male Sterilization',
-    centchroman: 'Centchroman',
-    traditional_methods: 'Traditional Methods',
-    lam: 'LAM',
-    none: 'None'
+    condom: "Condom",
+    dmpa_injectable: "DMPA/Injectable",
+    iud: "IUCD",
+    ocp: "OCP",
+    female_sterilization: "Female Sterilization",
+    male_sterilization: "Male Sterilization",
+    centchroman: "Centchroman",
+    traditional_methods: "Traditional Methods",
+    lam: "LAM",
+    none: "None"
 };
 
 var friendlyNameMap = {
-    vitamin_a: 'Vitamin A',
-    bcg: 'BCG',
-    measles: 'Measles',
-    measlesbooster: 'Measles Booster',
-    dpt: 'DPT Booster',
-    opv: 'OPV',
-    opv_0: 'OPV 0',
-    opv_1: 'OPV 1',
-    opv_2: 'OPV 2',
-    opv_3: 'OPV 3',
-    opvbooster: 'OPV Booster',
-    pentavalent: 'Pentavalent',
-    pentavalent_1: 'Pentavalent 1',
-    pentavalent_2: 'Pentavalent 2',
-    pentavalent_3: 'Pentavalent 3',
-    dptbooster_1: 'DPT Boost. 1',
-    dptbooster_2: 'DPT Boost. 2',
+    vitamin_a: "Vitamin A",
+    bcg: "BCG",
+    measles: "Measles",
+    measlesbooster: "Measles Booster",
+    dpt: "DPT Booster",
+    opv: "OPV",
+    opv_0: "OPV 0",
+    opv_1: "OPV 1",
+    opv_2: "OPV 2",
+    opv_3: "OPV 3",
+    opvbooster: "OPV Booster",
+    pentavalent: "Pentavalent",
+    pentavalent_1: "Pentavalent 1",
+    pentavalent_2: "Pentavalent 2",
+    pentavalent_3: "Pentavalent 3",
+    dptbooster_1: "DPT Boost. 1",
+    dptbooster_2: "DPT Boost. 2",
     hepb_0: "Hep. B",
     je: "JE",
     mmr: "MMR"
@@ -36,17 +36,17 @@ var friendlyNameMap = {
 
 var friendlyAbbrevMap = {
     hepb: "Hep. B",
-    pentavalent_1: 'Pentav. 1',
-    pentavalent_2: 'Pentav. 2',
-    pentavalent_3: 'Pentav. 3',
-    dptbooster_1: 'DPT B. 1',
-    dptbooster_2: 'DPT B. 2',
-    opvbooster: 'OPV Booster',
-    measlesbooster: 'Measles B'
+    pentavalent_1: "Pentav. 1",
+    pentavalent_2: "Pentav. 2",
+    pentavalent_3: "Pentav. 3",
+    dptbooster_1: "DPT B. 1",
+    dptbooster_2: "DPT B. 2",
+    opvbooster: "OPV Booster",
+    measlesbooster: "Measles B"
 };
 
 angular.module("smartRegistry.filters")
-    .filter('humanize', function () {
+    .filter("humanize", function () {
         return function (input) {
             try {
                 var text = input.toString();
@@ -59,7 +59,7 @@ angular.module("smartRegistry.filters")
             }
         }
     })
-    .filter('camelCase', function () {
+    .filter("camelCase", function () {
         return function (input) {
             try {
                 var text = input.toString();
@@ -74,13 +74,13 @@ angular.module("smartRegistry.filters")
             }
         }
     })
-    .filter('fpMethodName', function () {
+    .filter("fpMethodName", function () {
         return function (input) {
             return fpMethodMap[input] ? fpMethodMap[input] : input;
 
         }
     })
-    .filter('commaSeparated', function () {
+    .filter("commaSeparated", function () {
         return function (input) {
             try {
                 var text = input.toString().trim();
@@ -110,16 +110,16 @@ angular.module("smartRegistry.filters")
             return input.slice(start, end);
         }
     }])
-    .filter('friendlyName', function () {
+    .filter("friendlyName", function () {
         return function (input) {
             return friendlyNameMap[input] ? friendlyNameMap[input] : input;
         }
     })
-    .filter('friendlyAbbrev',function () {
+    .filter("friendlyAbbrev",function () {
         return function (input) {
             return friendlyAbbrevMap[input] || friendlyNameMap[input] || input;
         }
-    }).filter('startFrom', function () {
+    }).filter("startFrom", function () {
         return function (input, start) {
             start = +start;
             return input.slice(start);

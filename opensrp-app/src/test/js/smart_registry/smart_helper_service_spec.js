@@ -1,4 +1,4 @@
-describe('Smart Helpers', function () {
+describe("Smart Helpers", function () {
 
     var smartHelper;
 

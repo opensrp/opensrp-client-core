@@ -1,4 +1,4 @@
-describe('ANC Service:', function () {
+describe("ANC Service:", function () {
     var ancService, smartHelper;
 
     beforeEach(module("smartRegistry.services"));
@@ -13,8 +13,8 @@ describe('ANC Service:', function () {
                 alerts: [
                     {
                         name: "ANC 1",
-                        date: '2012-10-24', // 2013-04-10T12:40:45.195Z ISO String
-                        status: 'normal'
+                        date: "2012-10-24", // 2013-04-10T12:40:45.195Z ISO String
+                        status: "normal"
                     }
                 ],
                 services_provided: []
@@ -22,14 +22,14 @@ describe('ANC Service:', function () {
             var expected_visits = {
                 anc: {
                     next: {
-                        name: 'ANC 1',
-                        reminder_form_value: 'ANC 1',
-                        status: 'normal',
-                        visit_date: '24/10'
+                        name: "ANC 1",
+                        reminder_form_value: "ANC 1",
+                        status: "normal",
+                        visit_date: "24/10"
                     },
-                    'ANC 1': {
-                        status: 'normal',
-                        visit_date: '24/10'
+                    "ANC 1": {
+                        status: "normal",
+                        visit_date: "24/10"
                     }
                 }
             };
@@ -45,8 +45,8 @@ describe('ANC Service:', function () {
                 alerts: [
                     {
                         name: "TT 1",
-                        date: '2012-10-24', // 2013-04-10T12:40:45.195Z ISO String
-                        status: 'normal'
+                        date: "2012-10-24", // 2013-04-10T12:40:45.195Z ISO String
+                        status: "normal"
                     }
                 ],
                 services_provided: []
@@ -54,14 +54,14 @@ describe('ANC Service:', function () {
             var expected_visits = {
                 tt: {
                     next: {
-                        name: 'TT 1',
-                        reminder_form_value: 'tt1',
-                        status: 'normal',
-                        visit_date: '24/10'
+                        name: "TT 1",
+                        reminder_form_value: "tt1",
+                        status: "normal",
+                        visit_date: "24/10"
                     },
-                    'TT 1': {
-                        status: 'normal',
-                        visit_date: '24/10'
+                    "TT 1": {
+                        status: "normal",
+                        visit_date: "24/10"
                     }
                 }
             };
@@ -93,11 +93,11 @@ describe('ANC Service:', function () {
                 alerts: [],
                 services_provided: [
                     {
-                        name: 'ANC 1',
-                        date: '2011-10-24',
+                        name: "ANC 1",
+                        date: "2011-10-24",
                         data: {
-                            bp: '120/79',
-                            weight: '63'
+                            bp: "120/79",
+                            weight: "63"
                         }
                     }
                 ]
@@ -105,21 +105,21 @@ describe('ANC Service:', function () {
 
             var expected_visits = {
                 anc: {
-                    'ANC 1': {
-                        visit_date: '24/10',
+                    "ANC 1": {
+                        visit_date: "24/10",
                         status: ancService.status.COMPLETE,
                         data: {
-                            bp: '120/79',
-                            weight: '63'
+                            bp: "120/79",
+                            weight: "63"
                         }
                     },
                     previous: {
-                        name: 'ANC 1',
-                        visit_date: '24/10',
+                        name: "ANC 1",
+                        visit_date: "24/10",
                         status: ancService.status.COMPLETE,
                         data: {
-                            bp: '120/79',
-                            weight: '63'
+                            bp: "120/79",
+                            weight: "63"
                         }
                     }
                 }
@@ -131,22 +131,22 @@ describe('ANC Service:', function () {
             expect(client.visits).toEqual(expected_visits);
         });
 
-        it("should NOT set a 'complete' alert as the previous if its also specified under services_provided", function () {
+        it("should NOT set a "complete" alert as the previous if its also specified under services_provided", function () {
             var client = {
                 alerts: [
                     {
-                        name: 'ANC 1',
-                        status: 'complete',
-                        date: '2012-10-24'
+                        name: "ANC 1",
+                        status: "complete",
+                        date: "2012-10-24"
                     }
                 ],
                 services_provided: [
                     {
-                        name: 'ANC 1',
-                        date: '2011-10-24',
+                        name: "ANC 1",
+                        date: "2011-10-24",
                         data: {
-                            bp: '120/79',
-                            weight: '63'
+                            bp: "120/79",
+                            weight: "63"
                         }
                     }
                 ]
@@ -155,17 +155,17 @@ describe('ANC Service:', function () {
             var expected_visits = {
                 anc: {
                     next: {
-                        name: 'ANC 1',
-                        reminder_form_value: 'ANC 1',
-                        status: 'complete',
-                        visit_date: '24/10'
+                        name: "ANC 1",
+                        reminder_form_value: "ANC 1",
+                        status: "complete",
+                        visit_date: "24/10"
                     },
-                    'ANC 1': {
-                        visit_date: '24/10',
+                    "ANC 1": {
+                        visit_date: "24/10",
                         status: ancService.status.COMPLETE,
                         data: {
-                            bp: '120/79',
-                            weight: '63'
+                            bp: "120/79",
+                            weight: "63"
                         }
                     }
                 }
@@ -181,45 +181,45 @@ describe('ANC Service:', function () {
             var client = {
                 alerts: [
                     {
-                        name: 'IFA 3',
-                        date: '2012-06-24',
-                        status: 'normal'
+                        name: "IFA 3",
+                        date: "2012-06-24",
+                        status: "normal"
                     }
                 ],
                 services_provided: [
                     {
-                        name: 'IFA',
-                        date: '2012-05-13',
+                        name: "IFA",
+                        date: "2012-05-13",
                         data: {}
                     },
                     {
-                        name: 'IFA',
-                        date: '2012-05-26',
+                        name: "IFA",
+                        date: "2012-05-26",
                         data: {}
                     }
                 ]
             };
 
             var expected_visits = {
-                'ifa': {
+                "ifa": {
                     next: {
-                        name: 'IFA 3',
-                        reminder_form_value: 'IFA 3',
-                        visit_date: '24/06',
-                        status: 'normal'
+                        name: "IFA 3",
+                        reminder_form_value: "IFA 3",
+                        visit_date: "24/06",
+                        status: "normal"
                     },
-                    'IFA 3': {
-                        visit_date: '24/06',
-                        status: 'normal'
+                    "IFA 3": {
+                        visit_date: "24/06",
+                        status: "normal"
                     },
-                    'IFA': [
-                        {visit_date: '13/05', status: ancService.status.COMPLETE, data: {}},
-                        {visit_date: '26/05', status: ancService.status.COMPLETE, data: {}}
+                    "IFA": [
+                        {visit_date: "13/05", status: ancService.status.COMPLETE, data: {}},
+                        {visit_date: "26/05", status: ancService.status.COMPLETE, data: {}}
                     ],
                     previous: {
-                        name: 'IFA',
-                        visit_date: '26/05',
-                        status: 'complete',
+                        name: "IFA",
+                        visit_date: "26/05",
+                        status: "complete",
                         data: {}
                     }
                 }
@@ -235,14 +235,14 @@ describe('ANC Service:', function () {
             var client = {
                 alerts: [
                     {
-                        name: 'IFA 2',
-                        date: '2012-06-24',
-                        status: 'urgent'
+                        name: "IFA 2",
+                        date: "2012-06-24",
+                        status: "urgent"
                     },
                     {
-                        name: 'IFA 3',
-                        date: '2012-06-24',
-                        status: 'complete'
+                        name: "IFA 3",
+                        date: "2012-06-24",
+                        status: "complete"
                     }
                 ],
                 services_provided: []
@@ -251,18 +251,18 @@ describe('ANC Service:', function () {
             var expected_visits = {
                 ifa: {
                     next: {
-                        name: 'IFA 2',
-                        reminder_form_value: 'IFA 2',
-                        visit_date: '24/06',
-                        status: 'urgent'
+                        name: "IFA 2",
+                        reminder_form_value: "IFA 2",
+                        visit_date: "24/06",
+                        status: "urgent"
                     },
-                    'IFA 2': {
-                        visit_date: '24/06',
-                        status: 'urgent'
+                    "IFA 2": {
+                        visit_date: "24/06",
+                        status: "urgent"
                     },
-                    'IFA 3': {
-                        visit_date: '24/06',
-                        status: 'complete'
+                    "IFA 3": {
+                        visit_date: "24/06",
+                        status: "complete"
                     }
                 }
             };

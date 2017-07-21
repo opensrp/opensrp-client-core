@@ -1,5 +1,5 @@
 angular.module("smartRegistry.services")
-    .service('$debounce', ['$rootScope', '$browser', '$q', '$exceptionHandler',
+    .service("$debounce", ["$rootScope", "$browser", "$q", "$exceptionHandler",
         function ($rootScope, $browser, $q, $exceptionHandler) {
             var deferreds = {},
                 methods = {},
@@ -26,7 +26,7 @@ angular.module("smartRegistry.services")
                     methods[methodId] = {fn: fn};
                 } else {
                     // clear the old timeout
-                    deferreds[methods[methodId].timeoutId].reject('bounced');
+                    deferreds[methods[methodId].timeoutId].reject("bounced");
                     $browser.defer.cancel(methods[methodId].timeoutId);
                 }
 
@@ -61,10 +61,10 @@ angular.module("smartRegistry.services")
             }
 
 
-            // similar to angular's $timeout cancel
+            // similar to angular"s $timeout cancel
             debounce.cancel = function (promise) {
                 if (promise && promise.$$timeoutId in deferreds) {
-                    deferreds[promise.$$timeoutId].reject('canceled');
+                    deferreds[promise.$$timeoutId].reject("canceled");
                     return $browser.defer.cancel(promise.$$timeoutId);
                 }
                 return false;

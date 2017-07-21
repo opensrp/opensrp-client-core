@@ -180,23 +180,23 @@ angular.module("smartRegistry.controllers")
             }
         };
 
-        $scope.microformSchedules = ['tt', 'ifa'];
+        $scope.microformSchedules = ["tt", "ifa"];
 
         $scope.useMicroForm = function (schedule) {
             return $scope.microformSchedules.indexOf(schedule) !== -1;
         };
 
         $scope.milestoneForm = {
-            'ANC 1': 'anc_visit',
-            'ANC 2': 'anc_visit',
-            'ANC 3': 'anc_visit',
-            'ANC 4': 'anc_visit',
-            'TT 1': 'tt_1',
-            'TT 2': 'tt_2',
-            'TT Booster': 'tt_booster',
-            'IFA 1': 'ifa',
-            'IFA 2': 'ifa',
-            'IFA 3': 'ifa'
+            "ANC 1": "anc_visit",
+            "ANC 2": "anc_visit",
+            "ANC 3": "anc_visit",
+            "ANC 4": "anc_visit",
+            "TT 1": "tt_1",
+            "TT 2": "tt_2",
+            "TT Booster": "tt_booster",
+            "IFA 1": "ifa",
+            "IFA 2": "ifa",
+            "IFA 3": "ifa"
         };
 
         $scope.hbLegendClass = function (level) {

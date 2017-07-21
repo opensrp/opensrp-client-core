@@ -1,4 +1,4 @@
-describe('Smart Filters', function () {
+describe("Smart Filters", function () {
 
     var humanize, camelCase, fpMethodName, commaSeparated, dateFallsWithin;
 
@@ -69,7 +69,7 @@ describe('Smart Filters', function () {
         });
 
         it("should convert iud into IUD", function(){
-            expect(fpMethodName("dmpa_injectable", options)).toEqual('DMPA/Injectable');
+            expect(fpMethodName("dmpa_injectable", options)).toEqual("DMPA/Injectable");
         });
     });
 
@@ -94,39 +94,39 @@ describe('Smart Filters', function () {
     describe("Period filter", function(){
         var visits = [
             {
-                date: '2013-06-14' // within 7 days
+                date: "2013-06-14" // within 7 days
             },
             {
-                date: '2013-06-20' // within 7 days
+                date: "2013-06-20" // within 7 days
             },
             {
-                date: '2013-06-21' // outside 7 days
+                date: "2013-06-21" // outside 7 days
             }
         ];
 
         var client = {
-            deliveryDate: '2013-06-13'
+            deliveryDate: "2013-06-13"
         };
 
         it("should return visits whose dates fall within the specified period if invert is undefined or false", function(){
             var expected_visits = [
                 {
-                    date: '2013-06-14' // within 7 days
+                    date: "2013-06-14" // within 7 days
                 },
                 {
-                    date: '2013-06-20' // within 7 days
+                    date: "2013-06-20" // within 7 days
                 }
             ];
-            expect(dateFallsWithin(visits, client.deliveryDate, 'date', 7)).toEqual(expected_visits);
+            expect(dateFallsWithin(visits, client.deliveryDate, "date", 7)).toEqual(expected_visits);
         });
 
         it("should return visits whose dates fall outside the specified period if invert is true", function(){
             var expected_visits = [
                 {
-                    date: '2013-06-21' // within 7 days
+                    date: "2013-06-21" // within 7 days
                 }
             ];
-            expect(dateFallsWithin(visits, client.deliveryDate, 'date', 7, true)).toEqual(expected_visits);
+            expect(dateFallsWithin(visits, client.deliveryDate, "date", 7, true)).toEqual(expected_visits);
         });
     });
 });

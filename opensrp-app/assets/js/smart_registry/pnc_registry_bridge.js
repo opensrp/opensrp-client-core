@@ -18,13 +18,13 @@ function FakePNCSmartRegistryContext() {
                 {
                     entityId: "entity id 1",
                     entityIdToSavePhoto: "entity id 1",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Zubina',
-                    thayi: '4636587',
-                    age: '24',
-                    womanDOB: '1980-02-25',
-                    husbandName: 'Billy Bob',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Zubina",
+                    thayi: "4636587",
+                    age: "24",
+                    womanDOB: "1980-02-25",
+                    husbandName: "Billy Bob",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: true,
                     isHighRisk: true,
@@ -33,7 +33,7 @@ function FakePNCSmartRegistryContext() {
                     caste: "sc",
                     iudPlace: "PNC",
                     iudPerson: "",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: null,
                     numberOfOCPDelivered: "8",
                     numberOfCentchromanPillsDelivered: null,
@@ -45,49 +45,49 @@ function FakePNCSmartRegistryContext() {
                     otherDeliveryComplications: "",
                     alerts: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-26',
-                            status: 'urgent'
+                            name: "PNC",
+                            date: "2013-06-26",
+                            status: "urgent"
                         }
                     ],
                     services_provided: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-16',
+                            name: "PNC",
+                            date: "2013-06-16",
                             data: {
                                 day: 14
                             }
                         },
                         {
-                            name: 'PNC',
-                            date: '2013-06-18',
+                            name: "PNC",
+                            date: "2013-06-18",
                             data: {
                                 day: 18
                             }
                         },
                         {
-                            name: 'Not PNC',
-                            date: '2013-06-09',
+                            name: "Not PNC",
+                            date: "2013-06-09",
                             data: {}
                         }
                     ],
                     children: [
                         {
-                            gender: 'female',
-                            weight: '3.5'
+                            gender: "female",
+                            weight: "3.5"
                         }
                     ]
                 },
                 {
                     entityId: "entity id 2",
                     entityIdToSavePhoto: "entity id 2",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Radhia',
-                    thayi: '3728256',
-                    age: '21',
-                    womanDOB: '1981-06-18',
-                    husbandName: 'Bob Billy',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Radhia",
+                    thayi: "3728256",
+                    age: "21",
+                    womanDOB: "1981-06-18",
+                    husbandName: "Bob Billy",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: false,
                     isHighRisk: false,
@@ -97,7 +97,7 @@ function FakePNCSmartRegistryContext() {
                     fp_method: "ocp",
                     iudPlace: "PNC",
                     iudPerson: "",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: null,
                     numberOfOCPDelivered: "10",
                     numberOfCentchromanPillsDelivered: null,
@@ -109,29 +109,29 @@ function FakePNCSmartRegistryContext() {
                     otherDeliveryComplications: "",
                     alerts: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-26',
-                            status: 'complete'
+                            name: "PNC",
+                            date: "2013-06-26",
+                            status: "complete"
                         }
                     ],
                     services_provided: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-03',
+                            name: "PNC",
+                            date: "2013-06-03",
                             data: {
                                 day: 14
                             }
                         },
                         {
-                            name: 'PNC',
-                            date: '2013-06-07',
+                            name: "PNC",
+                            date: "2013-06-07",
                             data: {
                                 day: 18
                             }
                         },
                         {
-                            name: 'PNC',
-                            date: '2013-06-09',
+                            name: "PNC",
+                            date: "2013-06-09",
                             data: {
                                 day: 7
                             }
@@ -141,13 +141,13 @@ function FakePNCSmartRegistryContext() {
                 {
                     entityId: "entity id 3",
                     entityIdToSavePhoto: "entity id 3",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Carolyn 314',
-                    thayi: '4636587',
-                    age: '24',
-                    womanDOB: '1982-02-25',
-                    husbandName: 'Billy Bob',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Carolyn 314",
+                    thayi: "4636587",
+                    age: "24",
+                    womanDOB: "1982-02-25",
+                    husbandName: "Billy Bob",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: true,
                     isHighRisk: false,
@@ -157,7 +157,7 @@ function FakePNCSmartRegistryContext() {
                     fp_method: "iud",
                     iudPlace: "PRIVATE_FACILITY",
                     iudPerson: "MO",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: "20",
                     numberOfOCPDelivered: null,
                     numberOfCentchromanPillsDelivered: null,
@@ -169,22 +169,22 @@ function FakePNCSmartRegistryContext() {
                     otherDeliveryComplications: "",
                     alerts: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-30',
-                            status: 'normal'
+                            name: "PNC",
+                            date: "2013-06-30",
+                            status: "normal"
                         }
                     ],
                     services_provided: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-12',
+                            name: "PNC",
+                            date: "2013-06-12",
                             data: {
                                 day: 2
                             }
                         },
                         {
-                            name: 'PNC',
-                            date: '2013-06-18',
+                            name: "PNC",
+                            date: "2013-06-18",
                             data: {
                                 day: 8
                             }
@@ -192,20 +192,20 @@ function FakePNCSmartRegistryContext() {
                     ],
                     children: [
                         {
-                            gender: 'female'
+                            gender: "female"
                         }
                     ]
                 },
                 {
                     entityId: "entity id 4",
                     entityIdToSavePhoto: "entity id 4",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Carolyn 4',
-                    thayi: '4636587',
-                    age: '24',
-                    womanDOB: '1982-02-25',
-                    husbandName: 'Billy Bob',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Carolyn 4",
+                    thayi: "4636587",
+                    age: "24",
+                    womanDOB: "1982-02-25",
+                    husbandName: "Billy Bob",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: false,
                     isHighRisk: false,
@@ -215,7 +215,7 @@ function FakePNCSmartRegistryContext() {
                     fp_method: "ocp",
                     iudPlace: "PNC",
                     iudPerson: "",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: null,
                     numberOfOCPDelivered: "8",
                     numberOfCentchromanPillsDelivered: null,
@@ -227,15 +227,15 @@ function FakePNCSmartRegistryContext() {
                     otherDeliveryComplications: "",
                     alerts: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-30',
-                            status: 'normal'
+                            name: "PNC",
+                            date: "2013-06-30",
+                            status: "normal"
                         }
                     ],
                     services_provided: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-19',
+                            name: "PNC",
+                            date: "2013-06-19",
                             data: {
                                 day: 2
                             }
@@ -243,21 +243,21 @@ function FakePNCSmartRegistryContext() {
                     ],
                     children: [
                         {
-                            gender: 'female',
-                            weight: '3.5'
+                            gender: "female",
+                            weight: "3.5"
                         }
                     ]
                 },
                 {
                     entityId: "entity id 5",
                     entityIdToSavePhoto: "entity id 5",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Carolyn',
-                    thayi: '4636587',
-                    age: '24',
-                    womanDOB: '1982-02-25',
-                    husbandName: 'Billy Bob',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Carolyn",
+                    thayi: "4636587",
+                    age: "24",
+                    womanDOB: "1982-02-25",
+                    husbandName: "Billy Bob",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: true,
                     isHighRisk: false,
@@ -267,7 +267,7 @@ function FakePNCSmartRegistryContext() {
                     fp_method: "condom",
                     iudPlace: "PNC",
                     iudPerson: "",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: null,
                     numberOfOCPDelivered: "8",
                     numberOfCentchromanPillsDelivered: null,
@@ -279,22 +279,22 @@ function FakePNCSmartRegistryContext() {
                     otherDeliveryComplications: "",
                     alerts: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-30',
-                            status: 'normal'
+                            name: "PNC",
+                            date: "2013-06-30",
+                            status: "normal"
                         }
                     ],
                     services_provided: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-12',
+                            name: "PNC",
+                            date: "2013-06-12",
                             data: {
                                 day: 2
                             }
                         },
                         {
-                            name: 'PNC',
-                            date: '2013-06-18',
+                            name: "PNC",
+                            date: "2013-06-18",
                             data: {
                                 day: 8
                             }
@@ -302,21 +302,21 @@ function FakePNCSmartRegistryContext() {
                     ],
                     children: [
                         {
-                            gender: 'female',
-                            weight: '3.5'
+                            gender: "female",
+                            weight: "3.5"
                         }
                     ]
                 },
                 {
                     entityId: "entity id 6",
                     entityIdToSavePhoto: "entity id 6",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Radhia',
-                    thayi: '3728256',
-                    age: '21',
-                    womanDOB: '1981-06-18',
-                    husbandName: 'Bob Billy',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Radhia",
+                    thayi: "3728256",
+                    age: "21",
+                    womanDOB: "1981-06-18",
+                    husbandName: "Bob Billy",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: false,
                     isHighRisk: true,
@@ -326,7 +326,7 @@ function FakePNCSmartRegistryContext() {
                     fp_method: "ocp",
                     iudPlace: "PNC",
                     iudPerson: "",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: null,
                     numberOfOCPDelivered: "10",
                     numberOfCentchromanPillsDelivered: null,
@@ -341,15 +341,15 @@ function FakePNCSmartRegistryContext() {
                     ],
                     services_provided: [
                         {
-                            name: 'PNC',
-                            date: '2013-06-17',
+                            name: "PNC",
+                            date: "2013-06-17",
                             data: {
                                 day: 14
                             }
                         },
                         {
-                            name: 'PNC',
-                            date: '2013-06-19',
+                            name: "PNC",
+                            date: "2013-06-19",
                             data: {
                                 day: 18
                             }
@@ -359,13 +359,13 @@ function FakePNCSmartRegistryContext() {
                 {
                     entityId: "entity id 7",
                     entityIdToSavePhoto: "entity id 7",
-                    ec_number: '314',
-                    village: 'Chikkabherya',
-                    name: 'Radhia',
-                    thayi: '3728256',
-                    age: '21',
-                    womanDOB: '1981-06-18',
-                    husbandName: 'Bob Billy',
+                    ec_number: "314",
+                    village: "Chikkabherya",
+                    name: "Radhia",
+                    thayi: "3728256",
+                    age: "21",
+                    womanDOB: "1981-06-18",
+                    husbandName: "Bob Billy",
                     photo_path: "../../img/woman-placeholder.png",
                     isHighPriority: false,
                     isHighRisk: true,
@@ -375,7 +375,7 @@ function FakePNCSmartRegistryContext() {
                     fp_method: "ocp",
                     iudPlace: "PNC",
                     iudPerson: "",
-                    family_planning_method_change_date: '2013-08-13',
+                    family_planning_method_change_date: "2013-08-13",
                     numberOfCondomsSupplied: null,
                     numberOfOCPDelivered: "10",
                     numberOfCentchromanPillsDelivered: null,

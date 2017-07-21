@@ -19,34 +19,34 @@ angular.module("smartRegistry.controllers")
                     label: "Name (A to Z)",
                     handler: "sortByMothersName",
                     sortDescending: false,
-                    secondarySortKey: 'motherName'
+                    secondarySortKey: "motherName"
                 },
                 {
                     label: "Age",
                     handler: "sortByChildsAge",
                     sortDescending: true,
-                    secondarySortKey: 'motherName'
+                    secondarySortKey: "motherName"
                 },
                 {
                     label: "HR",
                     handler: "sortByRisk",
                     sortDescending: false,
-                    secondarySortKey: 'motherName'
+                    secondarySortKey: "motherName"
                 },
                 {
                     label: "BPL",
                     handler: "sortByBPL",
-                    secondarySortKey: 'motherName'
+                    secondarySortKey: "motherName"
                 },
                 {
                     label: "SC",
                     handler: "sortBySC",
-                    secondarySortKey: 'motherName'
+                    secondarySortKey: "motherName"
                 },
                 {
                     label: "ST",
                     handler: "sortByST",
-                    secondarySortKey: 'motherName'
+                    secondarySortKey: "motherName"
                 }
             ]
         };

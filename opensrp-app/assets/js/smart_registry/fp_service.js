@@ -1,5 +1,5 @@
 angular.module("smartRegistry.services")
-    .service('FPService', function ($filter) {
+    .service("FPService", function ($filter) {
         var constants = {
             CONDOM_REFILL: "Condom Refill",
             DPMA_INJECTABLE_REFILL: "DMPA Injectable Refill",
@@ -98,13 +98,13 @@ angular.module("smartRegistry.services")
                             }
                         }
                     }
-                    client.familyPlanningMethodChangeDate = $filter('date')(client.familyPlanningMethodChangeDate, 'dd/MM/yy');
-                    client.complicationDate = $filter('date')(client.complicationDate, 'dd/MM/yy');
-                    client.isBPL = client.economicStatus && (client.economicStatus.toUpperCase() == 'BPL');
-                    client.displayName = $filter('camelCase')($filter('humanize')(client.name));
+                    client.familyPlanningMethodChangeDate = $filter("date")(client.familyPlanningMethodChangeDate, "dd/MM/yy");
+                    client.complicationDate = $filter("date")(client.complicationDate, "dd/MM/yy");
+                    client.isBPL = client.economicStatus && (client.economicStatus.toUpperCase() == "BPL");
+                    client.displayName = $filter("camelCase")($filter("humanize")(client.name));
                     client.displayAge = client.age || client.calculatedAge;
-                    client.displayHusbandName = $filter('camelCase')($filter('humanize')(client.husbandName));
-                    client.displayVillage = $filter('camelCase')($filter('humanize')(client.village));
+                    client.displayHusbandName = $filter("camelCase")($filter("humanize")(client.husbandName));
+                    client.displayVillage = $filter("camelCase")($filter("humanize")(client.village));
                     client.isSC = client.caste && client.caste.toUpperCase() === "SC";
                     client.isST = client.caste && client.caste.toUpperCase() === "ST";
                 });

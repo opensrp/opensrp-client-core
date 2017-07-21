@@ -10,7 +10,7 @@ angular.module("smartRegistry.controllers")
 
         var updateClientListAndPageInformation = function (currentPage) {
             var filteredClients = $scope.clients.filter($scope.filterList);
-            var sortedClients = $filter('orderBy')(filteredClients, $scope.sortList, $scope.sortDescending);
+            var sortedClients = $filter("orderBy")(filteredClients, $scope.sortList, $scope.sortDescending);
 
             $scope.currentPage = currentPage || 0;
             if (sortedClients.length === 0) {
@@ -59,7 +59,7 @@ angular.module("smartRegistry.controllers")
 
         $scope.sort = function (option) {
             $scope.currentSortOption = option;
-            option.secondarySortKey = option.secondarySortKey || 'name';
+            option.secondarySortKey = option.secondarySortKey || "name";
             $scope.sortList = [$scope[option.handler], option.secondarySortKey];
             $scope.sortDescending = option.sortDescending || false;
         };
@@ -164,7 +164,7 @@ angular.module("smartRegistry.controllers")
             else {
                 start_date.setMonth(start_date.getMonth(), 26);
             }
-            return $filter('date')(start_date, 'dd/MM');
+            return $filter("date")(start_date, "dd/MM");
         };
 
         $scope.getReportingPeriodEnd = function (date_str) {
@@ -181,7 +181,7 @@ angular.module("smartRegistry.controllers")
             else {
                 end_date.setMonth(end_date.getMonth() + 1, 25);
             }
-            return $filter('date')(end_date, 'dd/MM');
+            return $filter("date")(end_date, "dd/MM");
         };
 
         $scope.reportingPeriodStart = $scope.getReportPeriodStartDate();
@@ -203,7 +203,7 @@ angular.module("smartRegistry.controllers")
 
         $scope.inSearchMode = false;
 
-        $scope.$watch('searchFilterStringInput', function (newValue, oldValue) {
+        $scope.$watch("searchFilterStringInput", function (newValue, oldValue) {
             if (newValue === oldValue) {
                 return;
             }
