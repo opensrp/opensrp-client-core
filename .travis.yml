@@ -3,6 +3,7 @@ language: android
 # Setting sudo to required prevents Travis from testing the project in a Docker container.
 sudo: required
 jdk: oraclejdk8
+dist: precise
 
 env:
   matrix:
