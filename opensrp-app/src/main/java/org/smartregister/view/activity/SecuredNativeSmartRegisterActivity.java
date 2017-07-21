@@ -116,36 +116,36 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     public interface ClientsHeaderProvider {
 
-        public abstract int count();
+        int count();
 
-        public abstract int weightSum();
+        int weightSum();
 
-        public abstract int[] weights();
+        int[] weights();
 
-        public abstract int[] headerTextResourceIds();
+        int[] headerTextResourceIds();
     }
 
     public interface DefaultOptionsProvider {
 
-        public abstract ServiceModeOption serviceMode();
+        ServiceModeOption serviceMode();
 
-        public abstract FilterOption villageFilter();
+        FilterOption villageFilter();
 
-        public abstract SortOption sortOption();
+        SortOption sortOption();
 
-        public abstract String nameInShortFormForTitle();
+        String nameInShortFormForTitle();
 
     }
 
     public interface NavBarOptionsProvider {
 
-        public abstract DialogOption[] filterOptions();
+        DialogOption[] filterOptions();
 
-        public abstract DialogOption[] serviceModeOptions();
+        DialogOption[] serviceModeOptions();
 
-        public abstract DialogOption[] sortingOptions();
+        DialogOption[] sortingOptions();
 
-        public abstract String searchHint();
+        String searchHint();
     }
 
     private DefaultOptionsProvider defaultOptionProvider;

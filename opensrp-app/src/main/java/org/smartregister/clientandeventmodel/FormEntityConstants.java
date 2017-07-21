@@ -22,8 +22,8 @@ public class FormEntityConstants {
     }
 
     public interface FormEntity {
-        public String entity();
-        public String entityId();
+        String entity();
+        String entityId();
 
     }
 

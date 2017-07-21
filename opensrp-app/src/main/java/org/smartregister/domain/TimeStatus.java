@@ -13,7 +13,7 @@ public enum TimeStatus {
     ERROR(R.string.time_error);
 
     private final int message;
-    private TimeStatus(int message) {
+    TimeStatus(int message) {
         this.message = message;
     }
 

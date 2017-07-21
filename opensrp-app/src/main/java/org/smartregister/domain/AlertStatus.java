@@ -13,7 +13,7 @@ public enum AlertStatus {
 
     private String value;
 
-    private AlertStatus(String value) {
+    AlertStatus(String value) {
         this.value = value;
     }
 

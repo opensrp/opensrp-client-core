@@ -18,7 +18,7 @@ public class CommonObjectSort implements SortOption {
     private boolean isInteger;
     private String sortOptionName;
     public enum ByColumnAndByDetails{
-        byColumn,byDetails;
+        byColumn,byDetails
     }
 
     public CommonObjectSort(ByColumnAndByDetails byColumnAndByDetails, boolean isinteger, String field,String sortOptionName) {

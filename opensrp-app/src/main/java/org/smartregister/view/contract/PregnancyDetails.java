@@ -14,7 +14,7 @@ public class PregnancyDetails {
     public PregnancyDetails(String monthsPregnant, String edd, int daysPastEdd) {
         this.monthsPregnant = monthsPregnant;
         this.edd = edd;
-        isEDDPassed = (Integer.valueOf(monthsPregnant) >= 9) ? true : false;
+        isEDDPassed = (Integer.valueOf(monthsPregnant) >= 9);
         isLastMonthOfPregnancy = Integer.valueOf(monthsPregnant) >= 8;
         this.daysPastEdd = daysPastEdd;
     }

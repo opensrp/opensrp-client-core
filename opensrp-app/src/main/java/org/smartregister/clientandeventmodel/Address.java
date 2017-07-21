@@ -280,7 +280,7 @@ public class Address{
      * @return
      */
     public int durationInMonths() {
-        return durationInDays()==-1?durationInDays():((int) (durationInDays()/30));
+        return durationInDays()==-1?durationInDays(): durationInDays()/30;
     }
     /**
      * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date

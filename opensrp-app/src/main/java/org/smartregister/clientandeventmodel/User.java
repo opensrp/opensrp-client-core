@@ -117,18 +117,12 @@ public class User extends BaseEntity {
     }
     @JsonIgnore
     public boolean isDefaultAdmin() {
-        if((username.equalsIgnoreCase("admin") || username.equalsIgnoreCase("administrator"))
-                && (hasRole("admin") || hasRole("administrator"))){
-            return true;
-        }
-        return false;
+        return (username.equalsIgnoreCase("admin") || username.equalsIgnoreCase("administrator"))
+                && (hasRole("admin") || hasRole("administrator"));
     }
     @JsonIgnore
     public boolean hasAdminRights() {
-        if(isDefaultAdmin() || hasRole("admin") || hasRole("administrator")){
-            return true;
-        }
-        return false;
+        return isDefaultAdmin() || hasRole("admin") || hasRole("administrator");
     }
 
     public List<String> getPermissions() {

@@ -173,7 +173,7 @@ public class AllFormVersionSyncService {
                     }
                 }
                 if(!formFound) {
-                    formsVersionRepository.updateSyncStatus(form.get(formsVersionRepository.FORM_DIR_NAME_COLUMN), PENDING);
+                    formsVersionRepository.updateSyncStatus(form.get(FormsVersionRepository.FORM_DIR_NAME_COLUMN), PENDING);
                 }
             }
         }

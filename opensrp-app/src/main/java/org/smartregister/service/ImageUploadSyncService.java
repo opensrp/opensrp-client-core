@@ -26,7 +26,7 @@ public class ImageUploadSyncService extends IntentService {
      */
     public ImageUploadSyncService() {
         super("ImageUploadSyncService");
-        imageRepo=(ImageRepository) org.smartregister.Context.getInstance().imageRepository();
+        imageRepo= Context.getInstance().imageRepository();
     }
 
     @Override

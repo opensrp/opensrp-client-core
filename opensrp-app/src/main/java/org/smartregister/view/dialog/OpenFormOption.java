@@ -20,7 +20,7 @@ public class OpenFormOption implements EditOption {
     ByColumnAndByDetails byColumnAndByDetails;
 
     public enum ByColumnAndByDetails{
-        byColumn,byDetails,bydefault;
+        byColumn,byDetails,bydefault
     }
 
     public String getFormName(){

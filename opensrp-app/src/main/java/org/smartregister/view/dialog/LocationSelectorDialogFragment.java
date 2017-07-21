@@ -37,7 +37,7 @@ public class LocationSelectorDialogFragment extends DialogFragment {
 
 
     public interface OnLocationSelectedListener {
-        public void OnLocationSelected(String locationSelected);
+        void OnLocationSelected(String locationSelected);
     }
 
     public static LocationSelectorDialogFragment newInstance(

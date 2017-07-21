@@ -146,7 +146,7 @@ public class SmartRegisterQueryBuilder {
         }
 
         if(ids.isEmpty()){
-            res += String.format(" WHERE %s IN () ", idColumn);;
+            res += String.format(" WHERE %s IN () ", idColumn);
         }else {
             String joinedIds = "'" + StringUtils.join(ids, "','") + "'";
             res += String.format(" WHERE %s IN (%s) ", idColumn, joinedIds);
@@ -164,7 +164,7 @@ public class SmartRegisterQueryBuilder {
         }
 
         if(ids.isEmpty()){
-            res += String.format(" WHERE %s IN () ", idColumn);;
+            res += String.format(" WHERE %s IN () ", idColumn);
         }else {
             String joinedIds = "'" + StringUtils.join(ids, "','") + "'";
             res += String.format(" WHERE %s IN (%s) ", idColumn, joinedIds);

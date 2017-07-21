@@ -167,7 +167,7 @@ public class CloudantSyncHandler {
      * <p>Stops running replications and reloads the replication settings from
      * the app's preferences.</p>
      */
-    public void reloadReplicationSettings(PullFilter pullFilter) throws URISyntaxException, Exception {
+    public void reloadReplicationSettings(PullFilter pullFilter) throws Exception {
         this.stopAllReplications();
 
         // Set up the new replicator objects

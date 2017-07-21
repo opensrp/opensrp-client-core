@@ -126,6 +126,6 @@ public class FPSmartRegisterDialogFragment extends DialogFragment {
     }
 
     public interface onSelectedListener {
-        public void onSelected(int id);
+        void onSelected(int id);
     }
 }

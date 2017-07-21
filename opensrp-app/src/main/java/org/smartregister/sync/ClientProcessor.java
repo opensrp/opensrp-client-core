@@ -155,7 +155,7 @@ public class ClientProcessor {
             }
 
             // Incase the details have not been updated
-            boolean updated = event.has(detailsUpdated) ? event.getBoolean(detailsUpdated) : false;
+            boolean updated = event.has(detailsUpdated) && event.getBoolean(detailsUpdated);
             if (!updated) {
                 updateClientDetailsTable(event, client);
             }
@@ -197,7 +197,7 @@ public class ClientProcessor {
             }
 
             // Incase the details have not been updated
-            boolean updated = event.has(detailsUpdated) ? event.getBoolean(detailsUpdated) : false;
+            boolean updated = event.has(detailsUpdated) && event.getBoolean(detailsUpdated);
             if (!updated) {
                 updateClientDetailsTable(event, client);
             }

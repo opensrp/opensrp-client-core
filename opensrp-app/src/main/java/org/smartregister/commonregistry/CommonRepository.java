@@ -565,7 +565,7 @@ public class CommonRepository extends DrishtiRepository {
                 searchValues.put(CommonFtsObject.relationalIdColumn, commonPersonObject.getRelationalId());
             }
 
-            searchValues.put(CommonFtsObject.isClosedColumnName, (short) commonPersonObject.getClosed());
+            searchValues.put(CommonFtsObject.isClosedColumnName, commonPersonObject.getClosed());
             return searchValues;
         }catch (Exception e){
             Log.e("", "Update Search Error", e);

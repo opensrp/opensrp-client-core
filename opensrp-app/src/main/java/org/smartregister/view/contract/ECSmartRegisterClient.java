@@ -17,31 +17,31 @@ public interface ECSmartRegisterClient extends BaseFPSmartRegisterClient, ECSmar
         }
     };
 
-    public String numberOfPregnancies();
+    String numberOfPregnancies();
 
-    public String parity();
+    String parity();
 
-    public String numberOfLivingChildren();
+    String numberOfLivingChildren();
 
-    public String numberOfStillbirths();
+    String numberOfStillbirths();
 
-    public String numberOfAbortions();
+    String numberOfAbortions();
 
-    public String familyPlanningMethodChangeDate();
+    String familyPlanningMethodChangeDate();
 
-    public String numberOfOCPDelivered();
+    String numberOfOCPDelivered();
 
-    public String numberOfCondomsSupplied();
+    String numberOfCondomsSupplied();
 
-    public String numberOfCentchromanPillsDelivered();
+    String numberOfCentchromanPillsDelivered();
 
-    public String iudPerson();
+    String iudPerson();
 
-    public String iudPlace();
+    String iudPlace();
 
-    public FPMethod fpMethod();
+    FPMethod fpMethod();
 
-    public List<ECChildClient> children();
+    List<ECChildClient> children();
 
-    public Map<String, String> status();
+    Map<String, String> status();
 }

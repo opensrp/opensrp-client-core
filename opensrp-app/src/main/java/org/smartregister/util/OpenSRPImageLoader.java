@@ -473,7 +473,7 @@ public class OpenSRPImageLoader extends ImageLoader {
      * Interface an activity can implement to provide an ImageLoader to its children fragments.
      */
     public interface ImageLoaderProvider {
-        public OpenSRPImageLoader getImageLoaderInstance();
+        OpenSRPImageLoader getImageLoaderInstance();
     }
 
     /**
@@ -589,7 +589,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                     profileImage.setFilepath(absoluteFileName);
                     profileImage.setFilecategory("profilepic");
                     profileImage.setSyncStatus(ImageRepository.TYPE_Synced);
-                    ImageRepository imageRepo = (ImageRepository) org.smartregister.Context.getInstance().imageRepository();
+                    ImageRepository imageRepo = org.smartregister.Context.getInstance().imageRepository();
                     imageRepo.add(profileImage);
                 }
 

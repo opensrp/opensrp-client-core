@@ -639,7 +639,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
                             @Override
                             public void run() {
                                 hideProgressView();
-                            };
+                            }
                         });
 
                          return cursor;

@@ -10,7 +10,7 @@ public enum FetchStatus implements Displayable, Serializable{
     noConnection("No network connection detected");
     private String displayValue;
 
-    private FetchStatus(String displayValue) {
+    FetchStatus(String displayValue) {
         this.displayValue = displayValue;
     }
 

@@ -6,50 +6,50 @@ import java.util.List;
 
 public interface FPSmartRegisterClient extends BaseFPSmartRegisterClient, ECSmartRegisterBaseClient {
 
-    public String numberOfPregnancies();
+    String numberOfPregnancies();
 
-    public String parity();
+    String parity();
 
-    public String numberOfLivingChildren();
+    String numberOfLivingChildren();
 
-    public String numberOfStillbirths();
+    String numberOfStillbirths();
 
-    public String numberOfAbortions();
+    String numberOfAbortions();
 
-    public String familyPlanningMethodChangeDate();
+    String familyPlanningMethodChangeDate();
 
-    public String numberOfOCPDelivered();
+    String numberOfOCPDelivered();
 
-    public String numberOfCondomsSupplied();
+    String numberOfCondomsSupplied();
 
-    public String numberOfCentchromanPillsDelivered();
+    String numberOfCentchromanPillsDelivered();
 
-    public String iudPerson();
+    String iudPerson();
 
-    public String iudPlace();
+    String iudPlace();
 
-    public FPMethod fpMethod();
+    FPMethod fpMethod();
 
-    public String youngestChildAge();
+    String youngestChildAge();
 
-    public String complicationDate();
+    String complicationDate();
 
-    public String condomSideEffect();
+    String condomSideEffect();
 
-    public String iudSidEffect();
+    String iudSidEffect();
 
-    public String ocpSideEffect();
+    String ocpSideEffect();
 
-    public String sterilizationSideEffect();
+    String sterilizationSideEffect();
 
-    public String injectableSideEffect();
+    String injectableSideEffect();
 
-    public String otherSideEffect();
+    String otherSideEffect();
 
-    public List<AlertDTO> alerts();
+    List<AlertDTO> alerts();
 
-    public RefillFollowUps refillFollowUps();
+    RefillFollowUps refillFollowUps();
 
-    public String highPriorityReason();
+    String highPriorityReason();
 }
 

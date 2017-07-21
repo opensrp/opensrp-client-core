@@ -11,5 +11,5 @@ public interface ECSmartRegisterBaseClient {
         }
     };
 
-    public Integer ecNumber();
+    Integer ecNumber();
 }

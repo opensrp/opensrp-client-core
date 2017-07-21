@@ -19,7 +19,7 @@ public enum FPPrioritizationServiceModes {
     private static final Map<String, FPPrioritizationServiceModes> serviceModeMap = new HashMap<String, FPPrioritizationServiceModes>();
 
 
-    private FPPrioritizationServiceModes(String name) {
+    FPPrioritizationServiceModes(String name) {
         this.name = name;
     }
 

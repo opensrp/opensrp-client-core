@@ -17,43 +17,43 @@ public interface ANCSmartRegisterClient extends SmartRegisterClient {
         }
     };
 
-    public String eddForDisplay();
+    String eddForDisplay();
 
     LocalDateTime edd();
 
-    public String pastDueInDays();
+    String pastDueInDays();
 
-    public String weeksAfterLMP();
+    String weeksAfterLMP();
 
-    public AlertDTO getAlert(ANCServiceType type);
+    AlertDTO getAlert(ANCServiceType type);
 
-    public boolean isVisitsDone();
+    boolean isVisitsDone();
 
-    public boolean isTTDone();
+    boolean isTTDone();
 
-    public boolean isIFADone();
+    boolean isIFADone();
 
-    public String visitDoneDateWithVisitName();
+    String visitDoneDateWithVisitName();
 
-    public String ttDoneDate();
+    String ttDoneDate();
 
-    public String ifaDoneDate();
+    String ifaDoneDate();
 
-    public String thayiCardNumber();
+    String thayiCardNumber();
 
-    public String ancNumber();
+    String ancNumber();
 
-    public String lmp();
+    String lmp();
 
-    public String riskFactors();
+    String riskFactors();
 
-    public ServiceProvidedDTO serviceProvidedToACategory(String category);
+    ServiceProvidedDTO serviceProvidedToACategory(String category);
 
-    public String getHyperTension(ServiceProvidedDTO ancServiceProvided);
+    String getHyperTension(ServiceProvidedDTO ancServiceProvided);
 
-    public ServiceProvidedDTO getServiceProvidedDTO(String serviceName);
+    ServiceProvidedDTO getServiceProvidedDTO(String serviceName);
 
-    public List<ServiceProvidedDTO> allServicesProvidedForAServiceType(String serviceType);
+    List<ServiceProvidedDTO> allServicesProvidedForAServiceType(String serviceType);
 
-    public String ashaPhoneNumber();
+    String ashaPhoneNumber();
 }

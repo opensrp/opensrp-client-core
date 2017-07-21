@@ -21,7 +21,7 @@ public class CommonObjectDateSort implements SortOption {
     ByColumnAndByDetails byColumnAndByDetails;
 
     public enum ByColumnAndByDetails{
-        byColumn,byDetails;
+        byColumn,byDetails
     }
 
     public CommonObjectDateSort(ByColumnAndByDetails byColumnAndByDetails, String field) {

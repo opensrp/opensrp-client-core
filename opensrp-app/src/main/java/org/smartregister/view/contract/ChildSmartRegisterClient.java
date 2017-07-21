@@ -21,7 +21,7 @@ List<String> illnessAcronyms = new ArrayList<String>(
         Arrays.asList(Context.getInstance().getStringResource(R.string.str_child_illness_ari),
                 Context.getInstance().getStringResource(R.string.str_child_illness_sam)));
 
-    public static class ChildSickStatus {
+    class ChildSickStatus {
         public static ChildSickStatus noDiseaseStatus = new ChildSickStatus(null, null, null);
 
         private String diseases;
@@ -47,65 +47,65 @@ List<String> illnessAcronyms = new ArrayList<String>(
         }
     }
 
-    public String gender();
+    String gender();
 
-    public String weight();
+    String weight();
 
-    public String thayiCardNumber();
+    String thayiCardNumber();
 
-    public String motherEcNumber();
+    String motherEcNumber();
 
-    public String dateOfBirth();
+    String dateOfBirth();
 
-    public String fatherName();
+    String fatherName();
 
-    public String motherName();
+    String motherName();
 
-    public String locationStatus();
+    String locationStatus();
 
-    public List<ServiceProvidedDTO> serviceProvided();
+    List<ServiceProvidedDTO> serviceProvided();
 
-    public ServiceProvidedDTO lastServiceProvided();
+    ServiceProvidedDTO lastServiceProvided();
 
-    public ServiceProvidedDTO illnessVisitServiceProvided();
+    ServiceProvidedDTO illnessVisitServiceProvided();
 
-    public ChildSickStatus sickStatus();
+    ChildSickStatus sickStatus();
 
-    public boolean isBcgDone();
+    boolean isBcgDone();
 
-    public boolean isOpvDone();
+    boolean isOpvDone();
 
-    public boolean isHepBDone();
+    boolean isHepBDone();
 
-    public boolean isPentavDone();
+    boolean isPentavDone();
 
-    public String bcgDoneDate();
+    String bcgDoneDate();
 
-    public String opvDoneDate();
+    String opvDoneDate();
 
-    public String hepBDoneDate();
+    String hepBDoneDate();
 
-    public String pentavDoneDate();
+    String pentavDoneDate();
 
-    public boolean isMeaslesDone();
+    boolean isMeaslesDone();
 
-    public boolean isOpvBoosterDone();
+    boolean isOpvBoosterDone();
 
-    public boolean isDptBoosterDone();
+    boolean isDptBoosterDone();
 
-    public boolean isVitaminADone();
+    boolean isVitaminADone();
 
-    public String measlesDoneDate();
+    String measlesDoneDate();
 
-    public String opvBoosterDoneDate();
+    String opvBoosterDoneDate();
 
-    public String dptBoosterDoneDate();
+    String dptBoosterDoneDate();
 
-    public String vitaminADoneDate();
+    String vitaminADoneDate();
 
-    public List<AlertDTO> alerts();
+    List<AlertDTO> alerts();
 
-    public AlertDTO getAlert(ChildServiceType measles);
+    AlertDTO getAlert(ChildServiceType measles);
 
-    public boolean isDataError();
+    boolean isDataError();
 }
