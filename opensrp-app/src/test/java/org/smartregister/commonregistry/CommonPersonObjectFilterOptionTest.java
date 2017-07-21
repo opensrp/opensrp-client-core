@@ -16,6 +16,8 @@ import static org.mockito.MockitoAnnotations.initMocks;
 /*
  by Raihan Ahmed
  */
+
+//FIXME Test failing
 //@RunWith(RobolectricTestRunner.class)
 public class CommonPersonObjectFilterOptionTest {
     @Mock
