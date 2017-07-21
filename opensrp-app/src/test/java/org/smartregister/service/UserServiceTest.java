@@ -68,7 +68,10 @@ public class UserServiceTest {
     public void shouldUseHttpAgentToDoRemoteLoginCheck() {
         LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload("{}");
         when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
-        when(httpAgent.urlCanBeAccessWithGivenCredentials("http://dristhi_base_url/security/authenticate", "userX", "password Y")).thenReturn(loginResponse);
+        when(httpAgent.urlCanBeAccessWithGivenCredentials(
+                "http://dristhi_base_url/security/authenticate",
+                "userX",
+                "password Y")).thenReturn(loginResponse);
 
         userService.isValidRemoteLogin("userX", "password Y");
 
@@ -95,7 +98,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldConsiderALocalLoginValidWhenUsernameMatchesRegisteredUserAndPasswordMatchesTheOneInDB() {
+    public void shouldConsiderALocalLoginValid() {
+        // When Username Matches Registered User And Password Matches The One In DB
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
         when(repository.canUseThisPassword("password Z")).thenReturn(true);
 
