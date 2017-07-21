@@ -68,14 +68,18 @@ public class UserServiceTest {
     public void shouldUseHttpAgentToDoRemoteLoginCheck() {
         LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload("{}");
         when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
+        String httpAuthenticateUrl = "http://dristhi_base_url/security/authenticate";
+        String user = "user";
+        String password = "password Y";
+
         when(httpAgent.urlCanBeAccessWithGivenCredentials(
-                "http://dristhi_base_url/security/authenticate",
-                "userX",
-                "password Y")).thenReturn(loginResponse);
+                httpAuthenticateUrl,
+                user,
+                password)).thenReturn(loginResponse);
 
-        userService.isValidRemoteLogin("userX", "password Y");
+        userService.isValidRemoteLogin(user, password);
 
-        verify(httpAgent).urlCanBeAccessWithGivenCredentials("http://dristhi_base_url/security/authenticate", "userX", "password Y");
+        verify(httpAgent).urlCanBeAccessWithGivenCredentials(httpAuthenticateUrl, user, password);
     }
 
     @Test
