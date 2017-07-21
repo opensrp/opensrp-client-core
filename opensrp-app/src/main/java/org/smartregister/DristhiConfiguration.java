@@ -5,6 +5,7 @@ import android.util.Log;
 
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.IntegerUtil;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -71,5 +72,9 @@ public class DristhiConfiguration {
 
     public boolean shouldSyncForm() {
         return this.get(SYNC_FORM) != null ? Boolean.parseBoolean(this.get(SYNC_FORM)) : false;
+    }
+
+    public DrishtiApplication getDrishtiApplication() {
+        return DrishtiApplication.getInstance();
     }
 }

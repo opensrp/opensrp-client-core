@@ -3,10 +3,11 @@ language: android
 # Setting sudo to required prevents Travis from testing the project in a Docker container.
 sudo: required
 jdk: oraclejdk8
+dist: precise
 
 env:
   matrix:
-    - ANDROID_TARGET=android-19 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
   global:
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
@@ -19,16 +20,17 @@ android:
     # The BuildTools version used by your project
     - build-tools-26.0.0
     # The SDK version used to compile your projects
+    - android-21
     - android-22
     # Additional components
     - extra-google-google_play_services
     - extra-google-m2repository
     - extra-android-m2repository
     - addon-google_apis-google-19
+
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-19
-
+    - sys-img-armeabi-v7a-android-22
 
 addons:
   apt_packages:
@@ -47,15 +49,12 @@ script:
   - chmod 755 gradlew
   - ls -la
   # Enable the line below once we get all the test passing, currently most of the tests are failing 
-  # so we'll just if the project compiles 
-  #- ./gradlew connectedAndroidTest
-  # - ./gradlew opensrp-mcare:connectedAndroidTest -i --stacktrace
+  # so we'll just if the project compiles
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew opensrp-path:jacocoTestReport coveralls -i --stacktrace
+  - travis_wait ./gradlew build  -i --stacktrace
 
 after_failure:
- - pandoc opensrp-mcare/build/reports/androidTests/connected/index.html -t plain
- - pandoc opensrp-path/build/reports/tests/index.html -t plain
+ - pandoc opensrp-app/build/reports/tests/index.html -t plain
 
 
 notifications:

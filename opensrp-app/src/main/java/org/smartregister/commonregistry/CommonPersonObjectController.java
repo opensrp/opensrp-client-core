@@ -394,7 +394,9 @@ public class CommonPersonObjectController {
     private void updateDetails(List<CommonPersonObject> p){
         DetailsRepository detailsRepository = org.smartregister.Context.getInstance().detailsRepository();
         for(CommonPersonObject pc: p) {
-            detailsRepository.updateDetails(pc);
+            if(detailsRepository != null) {
+                detailsRepository.updateDetails(pc);
+            }
         }
 
     }

@@ -1,5 +1,6 @@
 package org.smartregister.service;
 
+import org.smartregister.domain.LoginResponse;
 import org.smartregister.repository.*;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.opensrp.api.domain.Location;
@@ -15,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Map;
 
@@ -64,11 +66,20 @@ public class UserServiceTest {
 
     @Test
     public void shouldUseHttpAgentToDoRemoteLoginCheck() {
+        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload("{}");
         when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
+        String httpAuthenticateUrl = "http://dristhi_base_url/security/authenticate";
+        String user = "user";
+        String password = "password Y";
 
-        userService.isValidRemoteLogin("userX", "password Y");
+        when(httpAgent.urlCanBeAccessWithGivenCredentials(
+                httpAuthenticateUrl,
+                user,
+                password)).thenReturn(loginResponse);
 
-        verify(httpAgent).urlCanBeAccessWithGivenCredentials("http://dristhi_base_url/security/authenticate", "userX", "password Y");
+        userService.isValidRemoteLogin(user, password);
+
+        verify(httpAgent).urlCanBeAccessWithGivenCredentials(httpAuthenticateUrl, user, password);
     }
 
     @Test
@@ -91,7 +102,8 @@ public class UserServiceTest {
     }
 
     @Test
-    public void shouldConsiderALocalLoginValidWhenUsernameMatchesRegisteredUserAndPasswordMatchesTheOneInDB() {
+    public void shouldConsiderALocalLoginValid() {
+        // When Username Matches Registered User And Password Matches The One In DB
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
         when(repository.canUseThisPassword("password Z")).thenReturn(true);
 
@@ -124,6 +136,12 @@ public class UserServiceTest {
 
     @Test
     public void shouldRegisterANewUser() {
+        when(configuration.getDrishtiApplication()).thenReturn(new DrishtiApplication() {
+            @Override
+            public void logoutCurrentUser() {
+                // Nothing to cleanup
+            }
+        });
         userService.remoteLogin("user X", "password Y", "");
 
         verify(allSettings).registerANM("user X", "password Y");
