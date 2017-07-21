@@ -58,8 +58,9 @@ public class OpenSRPImageLoader extends ImageLoader {
 
     private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
     private static final String TAG = "OpenSRPImageLoader";
-    private static final ColorDrawable transparentDrawable = new ColorDrawable(Color.BLACK);
     private static final float IMAGE_SCALE_PROPORTION = 0.95F;
+
+    private static final ColorDrawable transparentDrawable = new ColorDrawable(Color.BLACK);
 
     private Resources mResources;
     private ArrayList<Drawable> mPlaceHolderDrawables;
@@ -141,9 +142,9 @@ public class OpenSRPImageLoader extends ImageLoader {
      * image. The assumption here is that this method will be used to fetch profile images whereby
      * the name of the file is equals to the client's base entity id.
      *
-     * @param entityId- The id of the image to be retrieved
+     * @param entityId - The id of the image to be retrieved
      * @return ImageContainer that will contain either the specified default bitmap or the loaded
-     * bitmap. If the default was returned, the
+     *     bitmap. If the default was returned, the
      * {@link OpenSRPImageLoader} will be invoked when the request is fulfilled.
      */
     public void getImageByClientId(String entityId, OpenSRPImageListener opensrpImageListener) {
@@ -304,9 +305,9 @@ public class OpenSRPImageLoader extends ImageLoader {
                 public HttpResponse performRequest(Request<?> request, Map<String, String> headers)
                         throws IOException, AuthFailureError {
 
-                     headers.putAll(
-                             org.smartregister.Context.getInstance().allSettings().
-                                     getAuthParams());
+                        headers.putAll(
+                                org.smartregister.Context.getInstance().allSettings().
+                                        getAuthParams());
 
                     return super.performRequest(request, headers);
                 }
@@ -562,9 +563,9 @@ public class OpenSRPImageLoader extends ImageLoader {
         private ImageView imageView;
         private OpenSRPImageLoader cachedImageLoader;
 
-        public LoadBitmapFromDiskTask(OpenSRPImageListener opensrpImageListenerArg,
-                                      ProfileImage imageRecordArg,
-                                      OpenSRPImageLoader cachedImageLoaderArg) {
+        LoadBitmapFromDiskTask(OpenSRPImageListener opensrpImageListenerArg,
+                               ProfileImage imageRecordArg,
+                               OpenSRPImageLoader cachedImageLoaderArg) {
             opensrpImageListener = opensrpImageListenerArg;
             imageRecord = imageRecordArg;
             imageView = opensrpImageListenerArg.getImageView();

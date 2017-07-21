@@ -41,12 +41,12 @@ public class AllFormVersionSyncService {
     private static final String FORM_DEF_VERSION_FIELD = "form_data_definition_version";
     private static final String FORM_DEF_JSON_FILENAME = "form_definition.json";
 
-    public AllFormVersionSyncService(HTTPAgent httpAgent,
-                                     DristhiConfiguration configuration,
-                                     FormsVersionRepository formsVersionRepository) {
-        this.formsVersionRepository = formsVersionRepository;
-        this.httpAgent = httpAgent;
-        this.configuration = configuration;
+    public AllFormVersionSyncService(HTTPAgent httpAgentArg,
+                                     DristhiConfiguration configurationArg,
+                                     FormsVersionRepository formsVersionRepositoryArg) {
+        formsVersionRepository = formsVersionRepositoryArg;
+        httpAgent = httpAgentArg;
+        configuration = configurationArg;
     }
 
     public FetchStatus pullFormDefinitionFromServer() {
@@ -144,7 +144,7 @@ public class AllFormVersionSyncService {
 
         for(File f : zipFiles) {
             ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(), FormPathService.sdcardPath
-                    + f.getName().replaceAll(".zip", "") + "/");
+                    + f.getName().replaceAll(".zip", "") + File.separator);
             zipUtil.unzip();
         }
     }
@@ -200,7 +200,7 @@ public class AllFormVersionSyncService {
 
         try {
             FileInputStream fln = new FileInputStream(
-                    new File(f.getAbsolutePath() + "/" + FORM_DEF_JSON_FILENAME));
+                    new File(f.getAbsolutePath() + File.separator + FORM_DEF_JSON_FILENAME));
             String jsonString = null;
             try {
                 FileChannel fc = fln.getChannel();

@@ -17,7 +17,8 @@ public class AllConstants {
     public static final String DATABASE_NAME="drishti.db";
     public static final int DATABASE_VERSION=1;
 
-    public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;// Maximum time difference between server and client time in milliseconds
+    // Maximum time difference between server and client time in milliseconds
+    public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
     public static final String SERVER_TIMEZONE = "server_timezone";
     public static final String FORCE_REMOTE_LOGIN = "force_remote_login";
     public static final String ENCRYPTED_PASSWORD_PREFIX = "crptPw-";

@@ -46,13 +46,16 @@ import static org.smartregister.AllConstants.*;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
+    private static final String TIME = "time";
     private static final String TAG = UserService.class.getCanonicalName();
     private static final String KEYSTORE = "AndroidKeyStore";
     private static final String CIPHER = "RSA/ECB/PKCS1Padding";
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
+
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
             "yyyy-MM-dd HH:mm:ss");
+
     private final Repository repository;
     private final AllSettings allSettings;
     private final AllSharedPreferences allSharedPreferences;
@@ -63,22 +66,22 @@ public class UserService {
     private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
-    public UserService(Repository repository,
-                       AllSettings allSettings,
-                       AllSharedPreferences allSharedPreferences,
-                       HTTPAgent httpAgent,
-                       Session session,
-                       DristhiConfiguration configuration,
-                       SaveANMLocationTask saveANMLocationTask,
-                       SaveUserInfoTask saveUserInfoTask) {
-        this.repository = repository;
-        this.allSettings = allSettings;
-        this.allSharedPreferences = allSharedPreferences;
-        this.httpAgent = httpAgent;
-        this.session = session;
-        this.configuration = configuration;
-        this.saveANMLocationTask = saveANMLocationTask;
-        this.saveUserInfoTask = saveUserInfoTask;
+    public UserService(Repository repositoryArg,
+                       AllSettings allSettingsArg,
+                       AllSharedPreferences allSharedPreferencesArg,
+                       HTTPAgent httpAgentArg,
+                       Session sessionArg,
+                       DristhiConfiguration configurationArg,
+                       SaveANMLocationTask saveANMLocationTaskArg,
+                       SaveUserInfoTask saveUserInfoTaskArg) {
+        repository = repositoryArg;
+        allSettings = allSettingsArg;
+        allSharedPreferences = allSharedPreferencesArg;
+        httpAgent = httpAgentArg;
+        session = sessionArg;
+        configuration = configurationArg;
+        saveANMLocationTask = saveANMLocationTaskArg;
+        saveUserInfoTask = saveUserInfoTaskArg;
         initKeyStore();
     }
 
@@ -163,7 +166,7 @@ public class UserService {
         if (userInfo != null) {
             try {
                 JSONObject userInfoData = new JSONObject(userInfo);
-                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject("time").
+                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject(TIME).
                         getString("timeZone"));
                 return timeZone;
             } catch (Exception e) {
@@ -178,7 +181,7 @@ public class UserService {
         if (userInfo != null) {
             try {
                 JSONObject userInfoData = new JSONObject(userInfo);
-                return DATE_FORMAT.parse(userInfoData.getJSONObject("time").getString("time"));
+                return DATE_FORMAT.parse(userInfoData.getJSONObject(TIME).getString(TIME));
             } catch (Exception e) {
                 Log.e(TAG, Log.getStackTraceString(e));
             }

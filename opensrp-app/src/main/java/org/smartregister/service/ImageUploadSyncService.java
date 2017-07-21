@@ -26,16 +26,18 @@ public class ImageUploadSyncService extends IntentService {
      */
     public ImageUploadSyncService() {
         super("ImageUploadSyncService");
-        imageRepo= Context.getInstance().imageRepository();
+        imageRepo = Context.getInstance().imageRepository();
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
             List<ProfileImage> profileImages = imageRepo.findAllUnSynced();
-            for(int i = 0;i<profileImages.size();i++){
-                String response = Context.getInstance().getHttpAgent().httpImagePost(Context.getInstance().configuration().dristhiBaseURL()+ AllConstants.PROFILE_IMAGES_UPLOAD_PATH,profileImages.get(i));
-                if(response.contains("success")){
+            for (int i = 0; i < profileImages.size(); i++) {
+                String response = Context.getInstance().getHttpAgent().httpImagePost(
+                        Context.getInstance().configuration().dristhiBaseURL()
+                                + AllConstants.PROFILE_IMAGES_UPLOAD_PATH, profileImages.get(i));
+                if (response.contains("success")) {
                     imageRepo.close(profileImages.get(i).getImageid());
                 }
             }

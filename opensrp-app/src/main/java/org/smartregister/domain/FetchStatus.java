@@ -2,16 +2,17 @@ package org.smartregister.domain;
 
 import java.io.Serializable;
 
-public enum FetchStatus implements Displayable, Serializable{
+public enum FetchStatus implements Displayable, Serializable {
     fetchStarted("Update started"),
     fetched("Update successful."),
     nothingFetched("Already up to date."),
     fetchedFailed("Update failed. Please try again."),
     noConnection("No network connection detected");
+
     private String displayValue;
 
-    FetchStatus(String displayValue) {
-        this.displayValue = displayValue;
+    FetchStatus(String displayValueArg) {
+        displayValue = displayValueArg;
     }
 
     public String displayValue() {
