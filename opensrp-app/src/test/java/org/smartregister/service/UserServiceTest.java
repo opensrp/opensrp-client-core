@@ -131,7 +131,7 @@ public class UserServiceTest {
         when(configuration.getDrishtiApplication()).thenReturn(new DrishtiApplication() {
             @Override
             public void logoutCurrentUser() {
-
+                // Nothing to cleanup
             }
         });
         userService.remoteLogin("user X", "password Y", "");
