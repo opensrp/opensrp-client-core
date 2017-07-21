@@ -2,11 +2,11 @@ language: android
 # sudo set to required because of an issue with how TravisCI handles builds in Docker containers https://github.com/travis-ci/travis-ci/issues/3695.
 # Setting sudo to required prevents Travis from testing the project in a Docker container.
 sudo: required
-jdk: oraclejdk7
+jdk: oraclejdk8
 
 env:
   matrix:
-    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
   global:
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
@@ -17,9 +17,9 @@ android:
     # tools required
     - tools
     # The BuildTools version used by your project
-    - build-tools-22.0.1
+    - build-tools-26.0.0
     # The SDK version used to compile your projects
-    - android-22
+    - android-21
     # Additional components
     - extra-google-google_play_services
     - extra-google-m2repository
@@ -28,9 +28,7 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-22
-    - sys-img-armeabi-v7a-android-17
-
+    - sys-img-armeabi-v7a-android-21
 
 addons:
   apt_packages:
