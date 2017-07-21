@@ -3,7 +3,7 @@ angular.module("smartRegistry.services", []);
 angular.module("smartRegistry.filters", []);
 angular.module("smartRegistry", ["ui.bootstrap", "smartRegistry.controllers", "smartRegistry.services",
         "smartRegistry.filters", "smartRegistry.directives"]).config(
-        ['$dialogProvider', function ($dialogProvider) {
+        ["$dialogProvider", function ($dialogProvider) {
             $dialogProvider.options({backdropFade: false, dialogFade: false});
         }]);
 if (Array.prototype.find === undefined) {

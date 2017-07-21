@@ -1,5 +1,5 @@
 angular.module("smartRegistry.services")
-    .service('PNCService', function ($filter, SmartHelper) {
+    .service("PNCService", function ($filter, SmartHelper) {
         var calculateExpectedVisitDates = function (client) {
             var delivery_date = new Date(Date.parse(client.deliveryDate));
             var visit_days = [1, 3, 7];
@@ -12,8 +12,8 @@ angular.module("smartRegistry.services")
 
                 expected_visit_days.push({
                     day: offset,
-                    date: d.getUTCFullYear() + '-' +
-                        SmartHelper.zeroPad(d.getUTCMonth() + 1) + '-' +
+                    date: d.getUTCFullYear() + "-" +
+                        SmartHelper.zeroPad(d.getUTCMonth() + 1) + "-" +
                         SmartHelper.zeroPad(d.getUTCDate())
                 });
             });
@@ -78,7 +78,7 @@ angular.module("smartRegistry.services")
                 if (expected_visit_day >= current_day) {
                     circle_datas.push({
                         day: expected_visit_day,
-                        type: 'expected',
+                        type: "expected",
                         colored: false
                     });
                 }
@@ -87,14 +87,14 @@ angular.module("smartRegistry.services")
                     if (num_visits === 0) {
                         circle_datas.push({
                             day: expected_visit_day,
-                            type: 'expected',
+                            type: "expected",
                             colored: true
                         });
 
                         status_datas.push(
                             {
                                 day: expected_visit_day,
-                                status: 'missed'
+                                status: "missed"
                             }
                         );
                     }
@@ -102,7 +102,7 @@ angular.module("smartRegistry.services")
                         status_datas.push(
                             {
                                 day: expected_visit_day,
-                                status: 'done'
+                                status: "done"
                             }
                         );
                     }
@@ -113,7 +113,7 @@ angular.module("smartRegistry.services")
             first_7_days_services.forEach(function (actual_visit) {
                 circle_datas.push({
                     day: actual_visit.day,
-                    type: 'actual'
+                    type: "actual"
                 });
             });
 
@@ -121,7 +121,7 @@ angular.module("smartRegistry.services")
             client.visits.first_7_days.statuses = status_datas;
 
             /// determine the active color - start off as yellow
-            client.visits.first_7_days.active_color = 'yellow';
+            client.visits.first_7_days.active_color = "yellow";
 
             var valid_expected_visit_days = expected_visits
                 .filter(function (d) {
@@ -137,12 +137,12 @@ angular.module("smartRegistry.services")
                 });
 
             if (first_7_days_services.length === 0 && current_day > 1) {
-                client.visits.first_7_days.active_color = 'red';
+                client.visits.first_7_days.active_color = "red";
             }
             else if (valid_expected_visit_days.every(function (d) {
                 return valid_actual_visit_days.indexOf(d) !== -1;
             })) {
-                client.visits.first_7_days.active_color = 'green';
+                client.visits.first_7_days.active_color = "green";
             }
 
             // create tick data, tick only exist where there are no circles and can only exist on days 2,4,5 and 6
@@ -158,13 +158,13 @@ angular.module("smartRegistry.services")
                 if (tick_day > current_day) {
                     tick_datas.push({
                         day: tick_day,
-                        type: 'expected'
+                        type: "expected"
                     });
                 }
                 else {
                     tick_datas.push({
                         day: tick_day,
-                        type: 'actual'
+                        type: "actual"
                     });
                 }
             });
@@ -178,7 +178,7 @@ angular.module("smartRegistry.services")
                 lines_datas.push({
                     start: 1,
                     end: Math.min(7, current_day),
-                    type: 'actual'
+                    type: "actual"
                 });
             }
 
@@ -187,7 +187,7 @@ angular.module("smartRegistry.services")
                 lines_datas.push({
                     start: Math.max(1, current_day),
                     end: 7,
-                    type: 'expected'
+                    type: "expected"
                 });
             }
 
@@ -196,7 +196,7 @@ angular.module("smartRegistry.services")
             /// generate day nos - put a number wherever we have a visit and where we have an expected visit in the future
             var day_nos = circle_datas
                 .filter(function (d) {
-                    return d.type === 'actual' || d.day > current_day;
+                    return d.type === "actual" || d.day > current_day;
                 })
                 .map(function (d) {
                     return {
@@ -223,14 +223,14 @@ angular.module("smartRegistry.services")
                         // calculate expected visit data
                         var expected_visits = calculateExpectedVisitDates(client, current_date);
                         preProcessFirst7Days(client, expected_visits, current_date);
-                        client.deliveryDateLongFormat = $filter('date')(client.deliveryDate, 'dd/MM/yy');
-                        client.deliveryDateSmallFormat = $filter('date')(client.deliveryDate, 'dd/MM');
-                        client.familyPlanningMethodChangeDate = $filter('date')(client.familyPlanningMethodChangeDate, 'dd/MM/yy');
-                        client.isBPL = client.economicStatus && (client.economicStatus.toUpperCase() == 'BPL');
-                        client.displayName = $filter('camelCase')($filter('humanize')(client.name));
+                        client.deliveryDateLongFormat = $filter("date")(client.deliveryDate, "dd/MM/yy");
+                        client.deliveryDateSmallFormat = $filter("date")(client.deliveryDate, "dd/MM");
+                        client.familyPlanningMethodChangeDate = $filter("date")(client.familyPlanningMethodChangeDate, "dd/MM/yy");
+                        client.isBPL = client.economicStatus && (client.economicStatus.toUpperCase() == "BPL");
+                        client.displayName = $filter("camelCase")($filter("humanize")(client.name));
                         client.displayAge = client.age || client.calculatedAge;
-                        client.displayHusbandName = $filter('camelCase')($filter('humanize')(client.husbandName));
-                        client.displayVillage = $filter('camelCase')($filter('humanize')(client.village));
+                        client.displayHusbandName = $filter("camelCase")($filter("humanize")(client.husbandName));
+                        client.displayVillage = $filter("camelCase")($filter("humanize")(client.village));
                         client.isSC = client.caste && client.caste.toUpperCase() === "SC";
                         client.isST = client.caste && client.caste.toUpperCase() === "ST";
                     }

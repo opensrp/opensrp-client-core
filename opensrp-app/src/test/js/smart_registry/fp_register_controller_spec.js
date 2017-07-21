@@ -1,4 +1,4 @@
-describe('FP Register controller:', function () {
+describe("FP Register controller:", function () {
 
     var controller, scope;
 
@@ -74,7 +74,7 @@ describe('FP Register controller:', function () {
             expect(scope.filterByPriority(client)).toBeFalsy();
         });
 
-        it("should change the content template to 'high priority without fp'.", function () {
+        it("should change the content template to "high priority without fp".", function () {
             scope.contentTemplate = "default";
             var client = {
                 name: "client1",
@@ -135,7 +135,7 @@ describe('FP Register controller:', function () {
             expect(scope.filterByNumberOfChildrenGreaterThanOne(client)).toBeFalsy();
         });
 
-        it("should change the content template to 'high priority without fp'.", function () {
+        it("should change the content template to "high priority without fp".", function () {
             scope.contentTemplate = "default";
             var client = {
                 name: "client1",
@@ -196,7 +196,7 @@ describe('FP Register controller:', function () {
             expect(scope.filterByNumberOfChildrenEqualToOne(client)).toBeFalsy();
         });
 
-        it("should change the content template to 'high priority without fp'.", function () {
+        it("should change the content template to "high priority without fp".", function () {
             scope.contentTemplate = "default";
             var client = {
                 name: "client1",
@@ -250,7 +250,7 @@ describe('FP Register controller:', function () {
             expect(scope.filterByFPMethod(client, "condom")).toBeFalsy();
         });
 
-        it("should change the content template to 'fp_methods'.", function () {
+        it("should change the content template to "fp_methods".", function () {
             scope.contentTemplate = "default";
             var client = {
                 name: "client1",
@@ -264,7 +264,7 @@ describe('FP Register controller:', function () {
     });
 
     describe("filterByFPMethodOther", function () {
-        it("should allow those clients who have 'other' fp methods.", function () {
+        it("should allow those clients who have "other" fp methods.", function () {
             var client = {
                 name: "client1",
                 fp_method: "lam"
@@ -287,7 +287,7 @@ describe('FP Register controller:', function () {
             expect(scope.filterByFPMethodOther(client)).toBeTruthy();
         });
 
-        it("should filter those clients who have different fp method than 'other' methods.", function () {
+        it("should filter those clients who have different fp method than "other" methods.", function () {
             var client = {
                 name: "client1",
                 fp_method: "none"
@@ -310,7 +310,7 @@ describe('FP Register controller:', function () {
             expect(scope.filterByFPMethodOther(client)).toBeFalsy();
         });
 
-        it("should change the content template to 'fp_methods'.", function () {
+        it("should change the content template to "fp_methods".", function () {
             scope.contentTemplate = "default";
             var client = {
                 name: "client1",
@@ -418,7 +418,7 @@ describe('FP Register controller:', function () {
             var client =
             {
                 name: "Client 1",
-                fp_method: 'condom',
+                fp_method: "condom",
                 condomSideEffect: "Itchy!"
             };
             expect(scope.getSideEffect(client)).toEqual("Itchy!");
@@ -428,7 +428,7 @@ describe('FP Register controller:', function () {
             var client =
             {
                 name: "Client 1",
-                fp_method: 'iud',
+                fp_method: "iud",
                 condomSideEffect: "Itchy!"
             };
             expect(scope.getSideEffect(client)).toEqual(undefined);
@@ -449,7 +449,7 @@ describe('FP Register controller:', function () {
             ];
 
             var filterFunc = scope.sortByECNumber;
-            var filteredClients = $filter('orderBy')(clients, filterFunc);
+            var filteredClients = $filter("orderBy")(clients, filterFunc);
             expect(filteredClients[0]).toEqual(clients[1]);
             expect(filteredClients[1]).toEqual(clients[0]);
         }));

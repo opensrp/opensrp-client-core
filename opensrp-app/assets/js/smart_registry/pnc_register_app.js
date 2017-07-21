@@ -159,7 +159,7 @@ angular.module("smartRegistry.controllers")
         };
 
         $scope.pncComplications = function(pncComplications) {
-            return pncComplications ? pncComplications.replace('no_problems', '') : '';
+            return pncComplications ? pncComplications.replace("no_problems", "") : "";
         };
 
         $scope.getToday = function () {
@@ -173,17 +173,17 @@ angular.module("smartRegistry.controllers")
 
         $scope.drawSevenDayGraphic = function (client, selector) {
             var svg = d3.selectAll(selector);
-            // TODO: perhaps we could skip drawing if g exists for performance since we've already drawn
-            var g = svg.select('g');
+            // TODO: perhaps we could skip drawing if g exists for performance since we"ve already drawn
+            var g = svg.select("g");
             g.remove();
-            g = svg.append('g');
+            g = svg.append("g");
             var colors = {
-                red: '#d13f3f',
-                yellow: '#EDCA00',
-                green: '#25aa4a',
-                grey: '#B6B6B6'
+                red: "#d13f3f",
+                yellow: "#EDCA00",
+                green: "#25aa4a",
+                grey: "#B6B6B6"
             };
-            var active_color = colors[client.visits.first_7_days.active_color || 'yellow'];
+            var active_color = colors[client.visits.first_7_days.active_color || "yellow"];
 
             (function (client, svg, color, red, yellow, green, grey) {
                 var x_offset = 18;
@@ -194,85 +194,85 @@ angular.module("smartRegistry.controllers")
                 var text_width = 13;
                 var tick_height = 12;
 
-                svg.selectAll('.lines')
+                svg.selectAll(".lines")
                     .data(client.lines)
                     .enter()
-                    .append('rect')
-                    .attr('x', function (d) {
+                    .append("rect")
+                    .attr("x", function (d) {
                         return ((d.start - 1) * x_scale) + x_offset;
                     })
-                    .attr('y', y_offset - thickness / 2)
-                    .attr('width', function (d) {
+                    .attr("y", y_offset - thickness / 2)
+                    .attr("width", function (d) {
                         return (d.end - d.start) * x_scale;
                     })
-                    .attr('height', thickness)
-                    .attr('fill', function (d) {
-                        return d.type === 'expected' ? grey : color;
+                    .attr("height", thickness)
+                    .attr("fill", function (d) {
+                        return d.type === "expected" ? grey : color;
                     });
 
-                svg.selectAll('.ticks')
+                svg.selectAll(".ticks")
                     .data(client.ticks)
                     .enter()
-                    .append('rect')
-                    .attr('x', function (d) {
+                    .append("rect")
+                    .attr("x", function (d) {
                         return ((d.day - 1) * x_scale) + x_offset;
                     })
-                    .attr('y', y_offset - tick_height / 2)
-                    .attr('width', thickness_scaled)
-                    .attr('height', tick_height)
-                    .attr('fill', function (d) {
-                        return d.type === 'expected' ? grey : color;
+                    .attr("y", y_offset - tick_height / 2)
+                    .attr("width", thickness_scaled)
+                    .attr("height", tick_height)
+                    .attr("fill", function (d) {
+                        return d.type === "expected" ? grey : color;
                     });
 
-                svg.selectAll('.circles')
+                svg.selectAll(".circles")
                     .data(client.circles)
                     .enter()
-                    .append('circle')
-                    .attr('cx', function (d) {
+                    .append("circle")
+                    .attr("cx", function (d) {
                         return ((d.day - 1) * x_scale) + x_offset;
                     })
-                    .attr('cy', y_offset)
-                    .attr('fill', function (d) {
-                        return d.type === 'actual' ? 'black' : (d.colored ? color : grey);
+                    .attr("cy", y_offset)
+                    .attr("fill", function (d) {
+                        return d.type === "actual" ? "black" : (d.colored ? color : grey);
                     })
-                    .attr('r', function (d) {
-                        return d.type === 'expected' ? radius : radius_scaled;
+                    .attr("r", function (d) {
+                        return d.type === "expected" ? radius : radius_scaled;
                     });
 
-                svg.selectAll('.statuses')
+                svg.selectAll(".statuses")
                     .data(client.statuses)
                     .enter()
-                    .append('text')
+                    .append("text")
                     .text(function (d) {
-                        return d.status === 'missed' ? 'X' : 'V';
+                        return d.status === "missed" ? "X" : "V";
                     })
                     .text(function (d) {
-                        return d.status === 'missed' ? '\uf00d' : '\uf00c';
+                        return d.status === "missed" ? "\uf00d" : "\uf00c";
                     })
-                    .style('font-family', 'FontAwesome')
-                    .attr('x', function (d) {
+                    .style("font-family", "FontAwesome")
+                    .attr("x", function (d) {
                         return (((d.day - 1) * x_scale) + x_offset) - text_width / 2;
                     })
-                    .attr('y', function (d) {
+                    .attr("y", function (d) {
                         return y_offset - radius * 1.5;
                     })
-                    .attr('fill', function (d) {
-                        return d.status === 'done' ? green : red;
+                    .attr("fill", function (d) {
+                        return d.status === "done" ? green : red;
                     });
 
-                svg.selectAll('.day_nos')
+                svg.selectAll(".day_nos")
                     .data(client.day_nos)
                     .enter()
-                    .append('text')
+                    .append("text")
                     .text(function (d) {
                         return d.day;
                     })
-                    .attr('x', function (d) {
+                    .attr("x", function (d) {
                         return (((d.day - 1) * x_scale) + x_offset) - text_width / 3;
                     })
-                    .attr('y', (y_offset + radius) * 1.4)
-                    .attr('fill', function (d) {
-                        return d.type === 'actual' ? 'black' : grey;
+                    .attr("y", (y_offset + radius) * 1.4)
+                    .attr("fill", function (d) {
+                        return d.type === "actual" ? "black" : grey;
                     });
             })(client.visits.first_7_days, g, active_color, colors.red, colors.yellow, colors.green, colors.grey);
         };

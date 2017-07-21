@@ -1,5 +1,5 @@
 angular.module("smartRegistry.services")
-    .service('SmartHelper', function ($filter) {
+    .service("SmartHelper", function ($filter) {
         var daysBetween = function (start_date, end_date) {
             return (end_date - start_date) / 1000 / 60 / 60 / 24;
         };
@@ -62,11 +62,11 @@ angular.module("smartRegistry.services")
                         var next_milestone = {};
                         next_milestone.name = milestone_alert.name;
                         next_milestone.status = milestone_alert.status;
-                        next_milestone.visit_date = $filter('date')(milestone_alert.date, 'dd/MM');
+                        next_milestone.visit_date = $filter("date")(milestone_alert.date, "dd/MM");
                         visit.next = next_milestone;
                         visit[next_milestone.name] = {
                             status: next_milestone.status,
-                            visit_date: $filter('date')(next_milestone.visit_date, 'dd/MM')
+                            visit_date: $filter("date")(next_milestone.visit_date, "dd/MM")
                         };
                         // only break if status is not complete so we can keep looking for other in-complete milestones
                         if(milestone_alert.status !== alert_status.COMPLETE)
@@ -90,7 +90,7 @@ angular.module("smartRegistry.services")
                             services_provided.forEach(function(service_provided){
                                 var service = {};
                                 service.status = alert_status.COMPLETE;
-                                service.visit_date = $filter('date')(service_provided.date, 'dd/MM');
+                                service.visit_date = $filter("date")(service_provided.date, "dd/MM");
                                 service.data = service_provided.data;
                                 services.push(service);
                             });
@@ -107,7 +107,7 @@ angular.module("smartRegistry.services")
                                 visit.previous = {
                                     name: previous.name,
                                     status: alert_status.COMPLETE,
-                                    visit_date: $filter('date')(previous.date, 'dd/MM'),
+                                    visit_date: $filter("date")(previous.date, "dd/MM"),
                                     data: previous.data
                                 };
                             }
@@ -116,7 +116,7 @@ angular.module("smartRegistry.services")
                         {
                             var service = {};
                             service.status = alert_status.COMPLETE;
-                            service.visit_date = $filter('date')(services_provided[0].date, 'dd/MM');
+                            service.visit_date = $filter("date")(services_provided[0].date, "dd/MM");
                             service.data = services_provided[0].data;
                             visit[services_provided[0].name] = service;
 
@@ -127,7 +127,7 @@ angular.module("smartRegistry.services")
                                 visit.previous = {
                                     name: services_provided[0].name,
                                     status: alert_status.COMPLETE,
-                                    visit_date: $filter('date')(services_provided[0].date, 'dd/MM'),
+                                    visit_date: $filter("date")(services_provided[0].date, "dd/MM"),
                                     data: services_provided[0].data
                                 };
                             }

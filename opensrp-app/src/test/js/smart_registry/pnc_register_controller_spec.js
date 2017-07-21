@@ -1,4 +1,4 @@
-describe('PNC Register controller', function () {
+describe("PNC Register controller", function () {
 
     var controller, scope, pncService, ancService;
 
@@ -16,7 +16,7 @@ describe('PNC Register controller', function () {
 
     describe("Days Post-partum", function () {
         it("should return zero days pp on the day of delivery", function () {
-            var deliveryDate = '2013-01-14';
+            var deliveryDate = "2013-01-14";
             scope.getToday = function() {
                 return new Date(Date.parse("Jan 14, 2013 22:10:00 GMT+0530"));
             };
@@ -27,7 +27,7 @@ describe('PNC Register controller', function () {
         });
 
         it("should return one day pp on the next day of delivery", function () {
-            var deliveryDate = '2013-01-13';
+            var deliveryDate = "2013-01-13";
             scope.getToday = function() {
                 return new Date(Date.parse("Jan 14, 2013 22:10:00 GMT+0530"));
             };

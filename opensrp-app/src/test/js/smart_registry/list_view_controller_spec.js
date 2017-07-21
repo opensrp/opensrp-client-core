@@ -8,8 +8,8 @@ describe("List view controller:", function () {
         scope = $rootScope.$new();
         scope.bridge = bridge;
         scope.clients = [
-            {name: 'name 1'},
-            {name: 'name 2'}
+            {name: "name 1"},
+            {name: "name 2"}
         ];
         scope.villageFilterOption = {};
         scope.serviceModeOption = {};
@@ -38,27 +38,27 @@ describe("List view controller:", function () {
 
     describe("Reporting period:", function () {
         it("should start on the 26th of the previous month if the specified day is on or before the 25th", function () {
-            var date_str = '2012-02-25';
+            var date_str = "2012-02-25";
             expect(scope.getReportPeriodStartDate(date_str)).toEqual("26/01");
         });
 
         it("should end on the 25th of the current month if the day is on or before the 25th", function () {
-            var date_str = '2012-02-25';
+            var date_str = "2012-02-25";
             expect(scope.getReportingPeriodEnd(date_str)).toEqual("25/02");
         });
 
         it("should start on the 26th of the current month if the specified day is after the 25th", function () {
-            var date_str = '2012-02-26';
+            var date_str = "2012-02-26";
             expect(scope.getReportPeriodStartDate(date_str)).toEqual("26/02");
         });
 
         it("should end on the 25th of the next month if the day is after the 25th", function () {
-            var date_str = '2012-02-26';
+            var date_str = "2012-02-26";
             expect(scope.getReportingPeriodEnd(date_str)).toEqual("25/03");
         });
 
         it("should end in Jan of the next year if the next month is january", function () {
-            var date_str = '2012-12-26';
+            var date_str = "2012-12-26";
             expect(scope.getReportingPeriodEnd(date_str)).toEqual("25/01");
         });
     });
@@ -81,18 +81,18 @@ describe("List view controller:", function () {
             };
             scope.sort(sortOption);
 
-            expect(scope.sortList).toEqual([scope.sortByName, 'name']);
+            expect(scope.sortList).toEqual([scope.sortByName, "name"]);
         });
 
         it("should set sort list handler based on the selected sort option along with specific secondary sort field.", function () {
             var sortOption = {
                 label: "Name (A to Z)",
                 handler: "sortByName",
-                secondarySortKey: 'age'
+                secondarySortKey: "age"
             };
             scope.sort(sortOption);
 
-            expect(scope.sortList).toEqual([scope.sortByName, 'age']);
+            expect(scope.sortList).toEqual([scope.sortByName, "age"]);
         });
 
         it("should set sort order based on the selected sort option.", function () {
@@ -311,17 +311,17 @@ describe("List view controller:", function () {
                 {
                     name: "client1",
                     economicStatus: "",
-                    isBPL: "" && ("".toUpperCase() == 'BPL')
+                    isBPL: "" && ("".toUpperCase() == "BPL")
                 },
                 {
                     name: "client2",
                     economicStatus: "bpl",
-                    isBPL: "bpl" && ("bpl".toUpperCase() == 'BPL')
+                    isBPL: "bpl" && ("bpl".toUpperCase() == "BPL")
                 }
             ];
 
             var filterFunc = scope.sortByBPL;
-            var filteredClients = $filter('orderBy')(clients, filterFunc);
+            var filteredClients = $filter("orderBy")(clients, filterFunc);
             expect(filteredClients[0]).toEqual(clients[1]);
             expect(filteredClients[1]).toEqual(clients[0]);
         }));
@@ -343,7 +343,7 @@ describe("List view controller:", function () {
             ];
 
             var filterFunc = scope.sortBySC;
-            var filteredClients = $filter('orderBy')(clients, filterFunc);
+            var filteredClients = $filter("orderBy")(clients, filterFunc);
             expect(filteredClients[0]).toEqual(clients[1]);
             expect(filteredClients[1]).toEqual(clients[0]);
         }));
@@ -365,7 +365,7 @@ describe("List view controller:", function () {
             ];
 
             var filterFunc = scope.sortByST;
-            var filteredClients = $filter('orderBy')(clients, filterFunc);
+            var filteredClients = $filter("orderBy")(clients, filterFunc);
             expect(filteredClients[0]).toEqual(clients[1]);
             expect(filteredClients[1]).toEqual(clients[0]);
         }));

@@ -1,4 +1,4 @@
-describe('FP Service:', function () {
+describe("FP Service:", function () {
 
     var fpSrvc;
 
@@ -16,19 +16,19 @@ describe('FP Service:', function () {
                     family_planning_method_change_date:"2013-02-25",
                     alerts:[
                         {
-                            name:'OCP Refill',
-                            date:'2012-07-24',
-                            status:'urgent'
+                            name:"OCP Refill",
+                            date:"2012-07-24",
+                            status:"urgent"
                         },
                         {
-                            name:'Female Sterilization Followup 1',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Female Sterilization Followup 1",
+                            date:"2012-05-18",
+                            status:"urgent"
                         },
                         {
-                            name:'FP Referral Followup',
-                            date:'2012-05-18',
-                            status:'normal'
+                            name:"FP Referral Followup",
+                            date:"2012-05-18",
+                            status:"normal"
                         }
                     ]
                 }
@@ -50,19 +50,19 @@ describe('FP Service:', function () {
                     family_planning_method_change_date:"2013-02-25",
                     alerts:[
                         {
-                            name:'OCP Refill',
-                            date:'2012-07-24',
-                            status:'urgent'
+                            name:"OCP Refill",
+                            date:"2012-07-24",
+                            status:"urgent"
                         },
                         {
-                            name:'Female Sterilization Followup 1',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Female Sterilization Followup 1",
+                            date:"2012-05-18",
+                            status:"urgent"
                         },
                         {
-                            name:'FP Followup',
-                            date:'2012-05-12',
-                            status:'normal'
+                            name:"FP Followup",
+                            date:"2012-05-12",
+                            status:"normal"
                         }
                     ]
                 }
@@ -84,14 +84,14 @@ describe('FP Service:', function () {
                     family_planning_method_change_date:"2013-02-25",
                     alerts:[
                         {
-                            name:'OCP Refill',
-                            date:'2013-07-24',
-                            status:'urgent'
+                            name:"OCP Refill",
+                            date:"2013-07-24",
+                            status:"urgent"
                         },
                         {
-                            name:'Female sterilization Followup 1',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Female sterilization Followup 1",
+                            date:"2012-05-18",
+                            status:"urgent"
                         }
                     ]
                 }
@@ -113,14 +113,14 @@ describe('FP Service:', function () {
                     family_planning_method_change_date:"2013-02-25",
                     alerts:[
                         {
-                            name:'Male Sterilization Followup',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Male Sterilization Followup",
+                            date:"2012-05-18",
+                            status:"urgent"
                         },
                         {
-                            name:'Female sterilization Followup 1',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Female sterilization Followup 1",
+                            date:"2012-05-18",
+                            status:"urgent"
                         }
                     ]
                 }
@@ -142,14 +142,14 @@ describe('FP Service:', function () {
                     family_planning_method_change_date:"2013-02-25",
                     alerts:[
                         {
-                            name:'OCP Refill',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"OCP Refill",
+                            date:"2012-05-18",
+                            status:"urgent"
                         },
                         {
-                            name:'Condom Refill',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Condom Refill",
+                            date:"2012-05-18",
+                            status:"urgent"
                         }
                     ]
                 }
@@ -171,14 +171,14 @@ describe('FP Service:', function () {
                     family_planning_method_change_date:"2013-02-25",
                     alerts:[
                         {
-                            name:'Female sterilization Followup 1',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Female sterilization Followup 1",
+                            date:"2012-05-18",
+                            status:"urgent"
                         },
                         {
-                            name:'Condom Refill',
-                            date:'2012-05-18',
-                            status:'urgent'
+                            name:"Condom Refill",
+                            date:"2012-05-18",
+                            status:"urgent"
                         }
                     ]
                 }
