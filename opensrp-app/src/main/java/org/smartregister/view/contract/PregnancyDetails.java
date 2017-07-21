@@ -13,12 +13,12 @@ public class PregnancyDetails {
     private boolean isLastMonthOfPregnancy;
     private int daysPastEdd;
 
-    public PregnancyDetails(String monthsPregnantParam, String eddParam, int daysPastEddParam) {
-        monthsPregnant = monthsPregnantParam;
-        edd = eddParam;
+    public PregnancyDetails(String monthsPregnantArg, String eddArg, int daysPastEddArg) {
+        monthsPregnant = monthsPregnantArg;
+        edd = eddArg;
         isEDDPassed = Integer.valueOf(monthsPregnant) >= MONTHS_PREGNANT;
         isLastMonthOfPregnancy = Integer.valueOf(monthsPregnant) >= MONTHS_PREGNANT - 1;
-        daysPastEdd = daysPastEddParam;
+        daysPastEdd = daysPastEddArg;
     }
 
     @Override

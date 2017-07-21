@@ -1,51 +1,22 @@
 package org.smartregister.view.contract;
 
-
+import org.smartregister.AllConstants;
 import org.smartregister.Context;
-import org.smartregister.R;
 import org.smartregister.domain.ChildServiceType;
+import org.smartregister.R;
+import org.smartregister.util.DateUtil;
+import org.smartregister.util.StringUtil;
 
-import static org.smartregister.AllConstants.COMMA_WITH_SPACE;
-import static org.smartregister.AllConstants.SPACE;
-import static org.smartregister.util.StringUtil.humanize;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.smartregister.util.DateUtil.formatDate;
-import static org.smartregister.util.StringUtil.replaceAndHumanize;
-import static org.smartregister.util.StringUtil.replaceAndHumanizeWithInitCapText;
 
 public interface ChildSmartRegisterClient extends SmartRegisterClient {
-List<String> illnessAcronyms = new ArrayList<String>(
+    List<String> illnessAcronyms = new ArrayList<String>(
         Arrays.asList(Context.getInstance().getStringResource(R.string.str_child_illness_ari),
                 Context.getInstance().getStringResource(R.string.str_child_illness_sam)));
-
-    class ChildSickStatus {
-        public static ChildSickStatus noDiseaseStatus = new ChildSickStatus(null, null, null);
-
-        private String diseases;
-        private String otherDiseases;
-        private String date;
-
-        public ChildSickStatus(String diseases, String otherDiseases, String date) {
-            this.diseases = diseases;
-            this.otherDiseases = otherDiseases;
-            this.date = date;
-        }
-
-        public String diseases() {
-            return getDiseasesCapitalizeIfAcronymsOrHumanize() + (isBlank(otherDiseases) ? "" : (", " + replaceAndHumanizeWithInitCapText(otherDiseases, SPACE, COMMA_WITH_SPACE)));
-        }
-
-        private String getDiseasesCapitalizeIfAcronymsOrHumanize() {
-            return replaceAndHumanizeWithInitCapText(illnessAcronyms.contains(diseases) ? diseases.toUpperCase() : diseases, SPACE, COMMA_WITH_SPACE);
-        }
-
-        public String date() {
-            return formatDate(date);
-        }
-    }
 
     String gender();
 
@@ -108,4 +79,37 @@ List<String> illnessAcronyms = new ArrayList<String>(
     AlertDTO getAlert(ChildServiceType measles);
 
     boolean isDataError();
+
+    class ChildSickStatus {
+        public static ChildSickStatus noDiseaseStatus = new ChildSickStatus(null, null, null);
+
+        private String diseases;
+        private String otherDiseases;
+        private String date;
+
+        public ChildSickStatus(String diseasesArg, String otherDiseasesArg, String dateArg) {
+            this.diseases = diseasesArg;
+            this.otherDiseases = otherDiseasesArg;
+            this.date = dateArg;
+        }
+
+        public String diseases() {
+            return getDiseasesCapitalizeIfAcronymsOrHumanize() + (
+                    isBlank(otherDiseases) ? "" : (", "
+                            + StringUtil.replaceAndHumanizeWithInitCapText(otherDiseases,
+                                    AllConstants.SPACE,
+                                    AllConstants.COMMA_WITH_SPACE)));
+        }
+
+        private String getDiseasesCapitalizeIfAcronymsOrHumanize() {
+            return StringUtil.replaceAndHumanizeWithInitCapText(
+                    illnessAcronyms.contains(diseases) ? diseases.toUpperCase() : diseases,
+                    AllConstants.SPACE,
+                    AllConstants.COMMA_WITH_SPACE);
+        }
+
+        public String date() {
+            return DateUtil.formatDate(date);
+        }
+    }
 }
