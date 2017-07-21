@@ -16,7 +16,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 /*
  by Raihan Ahmed
  */
-@RunWith(RobolectricTestRunner.class)
+//@RunWith(RobolectricTestRunner.class)
 public class CommonPersonObjectFilterOptionTest {
     @Mock
     private AllCommonsRepository allCommonsRepository;
@@ -29,7 +29,7 @@ public class CommonPersonObjectFilterOptionTest {
     private CommonObjectFilterOption commonObjectFilterOption;
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        //initMocks(this);
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository, allBeneficiaries, new Cache<String>(), new Cache<CommonPersonObjectClients>(),"name","bindtype","name", CommonPersonObjectController.ByColumnAndByDetails.byDetails);
     }

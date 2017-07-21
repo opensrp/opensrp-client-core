@@ -1,5 +1,6 @@
 package org.smartregister.service;
 
+import org.smartregister.domain.LoginResponse;
 import org.smartregister.repository.*;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.opensrp.api.domain.Location;
@@ -15,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Map;
 
@@ -64,7 +66,9 @@ public class UserServiceTest {
 
     @Test
     public void shouldUseHttpAgentToDoRemoteLoginCheck() {
+        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload("{}");
         when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
+        when(httpAgent.urlCanBeAccessWithGivenCredentials("http://dristhi_base_url/security/authenticate", "userX", "password Y")).thenReturn(loginResponse);
 
         userService.isValidRemoteLogin("userX", "password Y");
 
@@ -124,6 +128,12 @@ public class UserServiceTest {
 
     @Test
     public void shouldRegisterANewUser() {
+        when(configuration.getDrishtiApplication()).thenReturn(new DrishtiApplication() {
+            @Override
+            public void logoutCurrentUser() {
+
+            }
+        });
         userService.remoteLogin("user X", "password Y", "");
 
         verify(allSettings).registerANM("user X", "password Y");

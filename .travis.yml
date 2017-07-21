@@ -47,15 +47,12 @@ script:
   - chmod 755 gradlew
   - ls -la
   # Enable the line below once we get all the test passing, currently most of the tests are failing 
-  # so we'll just if the project compiles 
-  #- ./gradlew connectedAndroidTest
-  # - ./gradlew opensrp-mcare:connectedAndroidTest -i --stacktrace
+  # so we'll just if the project compiles
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew opensrp-path:jacocoTestReport coveralls -i --stacktrace
+  - travis_wait ./gradlew build  -i --stacktrace
 
 after_failure:
- - pandoc opensrp-mcare/build/reports/androidTests/connected/index.html -t plain
- - pandoc opensrp-path/build/reports/tests/index.html -t plain
+ - pandoc opensrp-app/build/reports/tests/index.html -t plain
 
 
 notifications:

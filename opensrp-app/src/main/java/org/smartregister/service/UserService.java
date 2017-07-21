@@ -202,9 +202,9 @@ public class UserService {
                     String encryptedPassword = allSharedPreferences.fetchEncryptedPassword(userName);
                     String decryptedPassword = decryptString(privateKeyEntry, encryptedPassword);
 
-                    if(password.equals(decryptedPassword)) {
+                    if (password.equals(decryptedPassword)) {
                         String groupId = getGroupId(userName, privateKeyEntry);
-                        if(groupId != null) {
+                        if (groupId != null) {
                             return isValidGroupId(groupId);
                         }
                     }
@@ -251,8 +251,8 @@ public class UserService {
      * Checks whether the groupId for the provided user is the same as the first person to
      * successfully login
      *
-     * @param userName  The user to check
-     * @return  TRUE if the groupIds match
+     * @param userName The user to check
+     * @return TRUE if the groupIds match
      */
     public boolean isUserInPioneerGroup(String userName) {
         String pioneerUser = allSharedPreferences.fetchPioneerUser();
@@ -311,9 +311,8 @@ public class UserService {
     /**
      * Checks whether to use the groupId for the current user to decrypt the database
      *
-     * @param userName  The user to check
-     *
-     * @return  TRUE if the user decrypts the database using the groupId
+     * @param userName The user to check
+     * @return TRUE if the user decrypts the database using the groupId
      */
     private boolean usesGroupIdAsDBPassword(String userName) {
         try {
@@ -388,16 +387,16 @@ public class UserService {
     }
 
     public void saveUserInfo(String userInfo) {
-       try{
-           JSONObject userInfoObject = new JSONObject(userInfo);
-           if (userInfoObject.has("preferredName")) {
-               String preferredName=userInfoObject.getString("preferredName");
-               String userName=userInfoObject.getString("username");
-               allSharedPreferences.updateANMPreferredName(userName,preferredName);
-           }
-       }catch(Exception e){
-        Log.e(TAG,e.getMessage());
-       }
+        try {
+            JSONObject userInfoObject = new JSONObject(userInfo);
+            if (userInfoObject.has("preferredName")) {
+                String preferredName = userInfoObject.getString("preferredName");
+                String userName = userInfoObject.getString("username");
+                allSharedPreferences.updateANMPreferredName(userName, preferredName);
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        }
 
         saveUserInfoTask.save(userInfo);
     }
@@ -406,10 +405,10 @@ public class UserService {
      * Saves the a user's groupId and password in . GroupId and password
      * are not saved if groupId could not be found in userInfo
      *
-     * @param userName  The username you want to save the password and groupId
-     * @param password  The user's password
-     * @param userInfo  The user's info from the
-     *                  endpoint (should contain the {team}.{team}.{uuid} key)
+     * @param userName The username you want to save the password and groupId
+     * @param password The user's password
+     * @param userInfo The user's info from the
+     *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
     public void saveUserGroup(String userName, String password, String userInfo) {
         if (keyStore != null && userName != null) {
@@ -431,7 +430,7 @@ public class UserService {
                         allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 
                         // Finally, save the pioneer user
-                        if(allSharedPreferences.fetchPioneerUser() == null) {
+                        if (allSharedPreferences.fetchPioneerUser() == null) {
                             allSharedPreferences.savePioneerUser(userName);
                         }
                     }
@@ -464,7 +463,7 @@ public class UserService {
 
     protected void setupContextForLogin(String userName, String password) {
         session().start(session().lengthInMilliseconds());
-        DrishtiApplication.getInstance().setPassword(password);
+        configuration.getDrishtiApplication().setPassword(password);
         session().setPassword(password);
     }
 
@@ -494,9 +493,9 @@ public class UserService {
     /**
      * Creates a keypair for the provided username
      *
-     * @param username  The username to create the keypair for
-     * @return  {@link java.security.KeyStore.PrivateKeyEntry} corresponding to the user or NULL if
-     *          a problem occurred
+     * @param username The username to create the keypair for
+     * @return {@link java.security.KeyStore.PrivateKeyEntry} corresponding to the user or NULL if
+     * a problem occurred
      * @throws Exception
      */
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -508,14 +507,14 @@ public class UserService {
                 Calendar expiry = Calendar.getInstance();
                 expiry.add(Calendar.YEAR, 1);
 
-                int serialNumber = Math.abs(0 + (int)(Math.random() * (Integer.MAX_VALUE + 1)));
+                int serialNumber = Math.abs(0 + (int) (Math.random() * (Integer.MAX_VALUE + 1)));
 
                 KeyPairGeneratorSpec generatorSpec = new KeyPairGeneratorSpec.Builder(DrishtiApplication.getInstance())
                         .setAlias(username)
                         .setSubject(new X500Principal("CN=" + username + ", O=OpenSRP"))
                         .setStartDate(now.getTime())
                         .setEndDate(expiry.getTime())
-                        .setSerialNumber(BigInteger.valueOf((long)serialNumber))
+                        .setSerialNumber(BigInteger.valueOf((long) serialNumber))
                         .build();
 
                 KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", KEYSTORE);
@@ -530,16 +529,16 @@ public class UserService {
     /**
      * Decrypts a string using the provided keypair
      *
-     * @param privateKeyEntry   Keypair to use to decrypt the string
-     * @param cipherText        String to be decrypted
-     * @return  Plain text derived from the cipher text
+     * @param privateKeyEntry Keypair to use to decrypt the string
+     * @param cipherText      String to be decrypted
+     * @return Plain text derived from the cipher text
      * @throws Exception
      */
     private String decryptString(KeyStore.PrivateKeyEntry privateKeyEntry, String cipherText)
             throws Exception {
 
         Cipher output;
-        if(Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             output = Cipher.getInstance(CIPHER);
             output.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
         } else {
@@ -568,9 +567,9 @@ public class UserService {
     /**
      * Encrypts a string using the provided keypair
      *
-     * @param privateKeyEntry   The keypair to use to encrypt the text
-     * @param plainText         The plain text to encrypt (should be at most 256bytes)
-     * @return  Cipher text corresponding to the plain text
+     * @param privateKeyEntry The keypair to use to encrypt the text
+     * @param plainText       The plain text to encrypt (should be at most 256bytes)
+     * @return Cipher text corresponding to the plain text
      * @throws Exception
      */
     private String encryptString(KeyStore.PrivateKeyEntry privateKeyEntry, String plainText)
@@ -578,7 +577,7 @@ public class UserService {
         RSAPublicKey publicKey = (RSAPublicKey) privateKeyEntry.getCertificate().getPublicKey();
 
         Cipher input;
-        if(Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             input = Cipher.getInstance(CIPHER);
         } else {
             input = Cipher.getInstance(CIPHER, CIPHER_PROVIDER);
