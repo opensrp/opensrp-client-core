@@ -51,7 +51,8 @@ public class UserService {
     private static final String CIPHER = "RSA/ECB/PKCS1Padding";
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
+            "yyyy-MM-dd HH:mm:ss");
     private final Repository repository;
     private final AllSettings allSettings;
     private final AllSharedPreferences allSharedPreferences;
@@ -62,8 +63,13 @@ public class UserService {
     private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
-    public UserService(Repository repository, AllSettings allSettings, AllSharedPreferences allSharedPreferences, HTTPAgent httpAgent, Session session,
-                       DristhiConfiguration configuration, SaveANMLocationTask saveANMLocationTask,
+    public UserService(Repository repository,
+                       AllSettings allSettings,
+                       AllSharedPreferences allSharedPreferences,
+                       HTTPAgent httpAgent,
+                       Session session,
+                       DristhiConfiguration configuration,
+                       SaveANMLocationTask saveANMLocationTask,
                        SaveUserInfoTask saveUserInfoTask) {
         this.repository = repository;
         this.allSettings = allSettings;
@@ -80,7 +86,8 @@ public class UserService {
         try {
             this.keyStore = KeyStore.getInstance(KEYSTORE);
             this.keyStore.load(null);
-        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
+        } catch (KeyStoreException
+                | IOException | NoSuchAlgorithmException | CertificateException e) {
             e.printStackTrace();
         }
     }
@@ -156,7 +163,8 @@ public class UserService {
         if (userInfo != null) {
             try {
                 JSONObject userInfoData = new JSONObject(userInfo);
-                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject("time").getString("timeZone"));
+                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject("time").
+                        getString("timeZone"));
                 return timeZone;
             } catch (Exception e) {
                 Log.e(TAG, Log.getStackTraceString(e));
@@ -180,7 +188,9 @@ public class UserService {
     }
 
     public boolean isValidLocalLogin(String userName, String password) {
-        return allSharedPreferences.fetchRegisteredANM().equals(userName) && repository.canUseThisPassword(password) && !allSharedPreferences.fetchForceRemoteLogin();
+        return allSharedPreferences.fetchRegisteredANM().equals(userName)
+                && repository.canUseThisPassword(password)
+                && !allSharedPreferences.fetchForceRemoteLogin();
     }
 
     public boolean isUserInValidGroup(final String userName, final String password) {
@@ -191,7 +201,8 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 if (privateKeyEntry != null) {
                     // Compare stored encrypted password with provided password
-                    String encryptedPassword = allSharedPreferences.fetchEncryptedPassword(userName);
+                    String encryptedPassword = allSharedPreferences.
+                            fetchEncryptedPassword(userName);
                     String decryptedPassword = decryptString(privateKeyEntry, encryptedPassword);
 
                     if (password.equals(decryptedPassword)) {
@@ -267,7 +278,8 @@ public class UserService {
 
         requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
 
-        LoginResponse loginResponse = httpAgent.urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
+        LoginResponse loginResponse = httpAgent.urlCanBeAccessWithGivenCredentials(
+                requestURL, userName, password);
         saveUserGroup(userName, password, loginResponse.payload());
 
         return loginResponse;
@@ -410,7 +422,8 @@ public class UserService {
                     JSONObject userInfoObject = new JSONObject(userInfo);
                     if (userInfoObject.has("team")
                             && userInfoObject.getJSONObject("team").has("team")
-                            && userInfoObject.getJSONObject("team").getJSONObject("team").has("uuid")) {
+                            && userInfoObject.getJSONObject("team").getJSONObject("team").
+                            has("uuid")) {
                         // First save the encrypted password
                         String encryptedPassword = encryptString(privateKeyEntry, password);
                         allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
@@ -501,7 +514,8 @@ public class UserService {
 
                 int serialNumber = Math.abs(0 + (int) (Math.random() * (Integer.MAX_VALUE + 1)));
 
-                KeyPairGeneratorSpec generatorSpec = new KeyPairGeneratorSpec.Builder(DrishtiApplication.getInstance())
+                KeyPairGeneratorSpec generatorSpec = new KeyPairGeneratorSpec.Builder(
+                        DrishtiApplication.getInstance())
                         .setAlias(username)
                         .setSubject(new X500Principal("CN=" + username + ", O=OpenSRP"))
                         .setStartDate(now.getTime())

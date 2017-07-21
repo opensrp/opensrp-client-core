@@ -15,10 +15,15 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
  */
 public interface SmartRegisterCLientsProviderForCursorAdapter  {
     void getView(SmartRegisterClient client, View view);
+
     SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
                                        FilterOption searchFilter, SortOption sortOption);
+
     void onServiceModeSelected(ServiceModeOption serviceModeOption);
+
     OnClickFormLauncher newFormLauncher(String formName, String entityId, String metaData);
+
     LayoutInflater inflater();
+
     View inflatelayoutForCursorAdapter();
 }

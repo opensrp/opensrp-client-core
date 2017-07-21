@@ -59,7 +59,7 @@ public class OpenSRPImageLoader extends ImageLoader {
     private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
     private static final String TAG = "OpenSRPImageLoader";
     private static final ColorDrawable transparentDrawable = new ColorDrawable(Color.BLACK);
-    public static final float IMAGE_SCALE_PROPORTION = 0.95F;
+    private static final float IMAGE_SCALE_PROPORTION = 0.95F;
 
     private Resources mResources;
     private ArrayList<Drawable> mPlaceHolderDrawables;
@@ -86,8 +86,8 @@ public class OpenSRPImageLoader extends ImageLoader {
 
 
         mPlaceHolderDrawables = new ArrayList<Drawable>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null :
-                mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
+                : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     public OpenSRPImageLoader(Context context, int defaultPlaceHolderResId) {
@@ -95,8 +95,8 @@ public class OpenSRPImageLoader extends ImageLoader {
         mResources = DrishtiApplication.getInstance().getResources();
 
         mPlaceHolderDrawables = new ArrayList<Drawable>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null :
-                mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
+                : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     /**
@@ -107,8 +107,8 @@ public class OpenSRPImageLoader extends ImageLoader {
         this(activity);
 
         mPlaceHolderDrawables = new ArrayList<Drawable>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null :
-                mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
+                : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     /**
@@ -138,10 +138,8 @@ public class OpenSRPImageLoader extends ImageLoader {
     /**
      * Retrieves a locally stored image using the id of the image from the images db table. If the
      * file is not present, this function will also attempt to retrieve it using url of the source
-     * image.
-     *
-     * The assumption here is that this method will be used to fetch profile images whereby the
-     * name of the file is equals to the client's base entity id
+     * image. The assumption here is that this method will be used to fetch profile images whereby
+     * the name of the file is equals to the client's base entity id.
      *
      * @param entityId- The id of the image to be retrieved
      * @return ImageContainer that will contain either the specified default bitmap or the loaded
@@ -221,8 +219,8 @@ public class OpenSRPImageLoader extends ImageLoader {
 
         // Find any old image load request pending on this ImageView (in case this view was
         // recycled)
-        ImageContainer imageContainer = imageView.getTag() != null &&
-                imageView.getTag() instanceof ImageContainer
+        ImageContainer imageContainer = imageView.getTag() != null
+                && imageView.getTag() instanceof ImageContainer
                 ? (ImageContainer) imageView.getTag() : null;
 
         // Find image url from prior request
@@ -394,13 +392,6 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     /**
-     * Interface an activity can implement to provide an ImageLoader to its children fragments.
-     */
-    public interface ImageLoaderProvider {
-        OpenSRPImageLoader getImageLoaderInstance();
-    }
-
-    /**
      * Custom implementation of ImageListener which encapsulates basic functionality of showing a
      * default image until the network response is received, at which point it will switch to
      * either the actual image or the error image. Additional functionality also includes saving
@@ -500,8 +491,8 @@ public class OpenSRPImageLoader extends ImageLoader {
             try {
 
                 if (entityId != null && !entityId.isEmpty()) {
-                    final String absoluteFileName = DrishtiApplication.getAppDir() +
-                            File.separator + entityId+".JPEG";
+                    final String absoluteFileName = DrishtiApplication.getAppDir()
+                            + File.separator + entityId + ".JPEG";
 
                     File outputFile = new File(absoluteFileName);
                     os = new FileOutputStream(outputFile);
@@ -544,7 +535,7 @@ public class OpenSRPImageLoader extends ImageLoader {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected <T> void  startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] paramsArg) {
         T[] params = paramsArg;
-        
+
         if (paramsArg == null) {
             @SuppressWarnings("unchecked")
             T[] arr = (T[]) new Void[0];
@@ -557,6 +548,13 @@ public class OpenSRPImageLoader extends ImageLoader {
         }
     }
 
+    /**
+     * Interface an activity can implement to provide an ImageLoader to its children fragments.
+     */
+    public interface ImageLoaderProvider {
+        OpenSRPImageLoader getImageLoaderInstance();
+    }
+
     private class LoadBitmapFromDiskTask extends AsyncTask<String, Void, Bitmap> {
 
         private OpenSRPImageListener opensrpImageListener;
@@ -564,13 +562,13 @@ public class OpenSRPImageLoader extends ImageLoader {
         private ImageView imageView;
         private OpenSRPImageLoader cachedImageLoader;
 
-        public LoadBitmapFromDiskTask(OpenSRPImageListener opensrpImageListener,
-                                      ProfileImage imageRecord,
-                                      OpenSRPImageLoader cachedImageLoader) {
-            this.opensrpImageListener = opensrpImageListener;
-            this.imageRecord = imageRecord;
-            this.imageView = opensrpImageListener.getImageView();
-            this.cachedImageLoader = cachedImageLoader;
+        public LoadBitmapFromDiskTask(OpenSRPImageListener opensrpImageListenerArg,
+                                      ProfileImage imageRecordArg,
+                                      OpenSRPImageLoader cachedImageLoaderArg) {
+            opensrpImageListener = opensrpImageListenerArg;
+            imageRecord = imageRecordArg;
+            imageView = opensrpImageListenerArg.getImageView();
+            cachedImageLoader = cachedImageLoaderArg;
         }
 
         @Override
@@ -591,8 +589,8 @@ public class OpenSRPImageLoader extends ImageLoader {
                             opensrpImageListener);
                     if (opensrpImageListener != null) {
                         if (opensrpImageListener.getHasImageViewTag()) {
-                            String imageId = opensrpImageListener.getImageView().getTag()
-                                    .toString();
+                            String imageId = opensrpImageListener.getImageView().getTag().
+                                    toString();
                             if (imageRecord.getEntityID().equalsIgnoreCase(imageId))
                                 opensrpImageListener.onResponse(imgContainer, true);
                         } else
@@ -663,7 +661,7 @@ public class OpenSRPImageLoader extends ImageLoader {
         private OpenSRPImageListener opensrpImageListener;
         private String entityId;
 
-        public LoadProfileImageTask(OpenSRPImageLoader openSRPImageLoaderArg,
+        LoadProfileImageTask(OpenSRPImageLoader openSRPImageLoaderArg,
                                     OpenSRPImageListener opensrpImageListenerArg,
                                     String entityIdArg) {
             this.openSRPImageLoader = openSRPImageLoaderArg;
