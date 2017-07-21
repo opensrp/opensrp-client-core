@@ -34,8 +34,8 @@ public class SmartRegisterQueryBuilder {
     public  String queryForRegisterSortBasedOnRegisterAndAlert(String tablename,String[]columns,String condition,String AlertName){
         Selectquery = "Select "+tablename+".id as _id";
 
-        for(int i = 0;i<columns.length;i++){
-            Selectquery= Selectquery + " , " + columns[i];
+        for (String column : columns) {
+            Selectquery = Selectquery + " , " + column;
         }
         Selectquery= Selectquery+ " FROM " + tablename;
         Selectquery = Selectquery+ " LEFT JOIN alerts ";
@@ -72,8 +72,8 @@ public class SmartRegisterQueryBuilder {
     public String SelectInitiateMainTable(String tablename,String [] columns){
         Selectquery = "Select "+tablename+".id as _id";
 
-        for(int i = 0;i<columns.length;i++){
-            Selectquery= Selectquery + " , " + columns[i];
+        for (String column : columns) {
+            Selectquery = Selectquery + " , " + column;
         }
         Selectquery= Selectquery+ " FROM " + tablename;
         return Selectquery;
@@ -81,8 +81,8 @@ public class SmartRegisterQueryBuilder {
 
     public String SelectInitiateMainTable(String tablenames[],String [] columns){
         Selectquery = "Select " + tablenames[0] + ".id as _id";
-        for(int i = 0;i<columns.length;i++){
-            Selectquery= Selectquery + " , " + columns[i];
+        for (String column : columns) {
+            Selectquery = Selectquery + " , " + column;
         }
 
         StringBuilder sb = new StringBuilder();

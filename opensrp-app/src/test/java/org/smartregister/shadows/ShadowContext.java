@@ -59,7 +59,7 @@ public class ShadowContext {
 
     public PendingFormSubmissionService pendingFormSubmissionService() {
         pendingFormSubmissionService = Mockito.mock(PendingFormSubmissionService.class);
-        when(pendingFormSubmissionService.pendingFormSubmissionCount()).thenReturn(0l);
+        when(pendingFormSubmissionService.pendingFormSubmissionCount()).thenReturn(0L);
         return pendingFormSubmissionService;
     }
 }

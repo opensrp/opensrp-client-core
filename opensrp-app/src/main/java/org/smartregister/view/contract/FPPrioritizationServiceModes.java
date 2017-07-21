@@ -23,9 +23,7 @@ public enum FPPrioritizationServiceModes {
         this.name = name;
     }
 
-    /**
-     * Create a map with all enums
-     */
+    // Create a map with all enums
     static {
         for (FPPrioritizationServiceModes serviceMode : EnumSet.allOf(FPPrioritizationServiceModes.class))
             serviceModeMap.put(serviceMode.toString(), serviceMode);

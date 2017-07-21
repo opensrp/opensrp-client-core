@@ -195,7 +195,8 @@ public class AllFormVersionSyncService {
         String version = null;
 
         try {
-            FileInputStream fln = new FileInputStream(new File(f.getAbsolutePath()+ "/" + FORM_DEF_JSON_FILENAME));
+            FileInputStream fln = new FileInputStream(
+                    new File(f.getAbsolutePath()+ "/" + FORM_DEF_JSON_FILENAME));
             String jsonString = null;
             try {
                 FileChannel fc = fln.getChannel();

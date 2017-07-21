@@ -540,9 +540,7 @@ public class ClientProcessor {
     protected void addContentValuesToDetailsTable(ContentValues values, Long eventDate) {
         try {
             String baseEntityId = values.getAsString("base_entity_id");
-            Iterator<String> it = values.keySet().iterator();
-            while (it.hasNext()) {
-                String key = it.next();
+            for (String key : values.keySet()) {
                 String value = values.getAsString(key);
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }

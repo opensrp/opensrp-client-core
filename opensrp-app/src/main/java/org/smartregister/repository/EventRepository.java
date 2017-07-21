@@ -27,8 +27,8 @@ public class EventRepository extends SQLiteOpenHelper {
         additionalcolumns = columns;
         TABLE_NAME = tablename;
         common_SQL = "CREATE TABLE IF NOT EXISTS "+ TABLE_NAME + "(_id INTEGER PRIMARY KEY AUTOINCREMENT,baseEntityId VARCHAR,";
-        for(int i = 0;i<columns.length;i++){
-            common_SQL = common_SQL+ columns[i] + " VARCHAR,";
+        for (String column : columns) {
+            common_SQL = common_SQL + column + " VARCHAR,";
         }
         common_SQL = common_SQL +"attributedetails VARCHAR, obsdetails VARCHAR)";
     }

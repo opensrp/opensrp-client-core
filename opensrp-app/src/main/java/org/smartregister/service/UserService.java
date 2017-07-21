@@ -1,13 +1,11 @@
 package org.smartregister.service;
 
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
 
-import org.smartregister.AllConstants;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
@@ -82,13 +80,7 @@ public class UserService {
         try {
             this.keyStore = KeyStore.getInstance(KEYSTORE);
             this.keyStore.load(null);
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException | CertificateException e) {
             e.printStackTrace();
         }
     }
@@ -558,7 +550,7 @@ public class UserService {
 
         byte[] bytes = new byte[values.size()];
         for (int i = 0; i < bytes.length; i++) {
-            bytes[i] = values.get(i).byteValue();
+            bytes[i] = values.get(i);
         }
 
         return new String(bytes, 0, bytes.length, CIPHER_TEXT_CHARACTER_CODE);

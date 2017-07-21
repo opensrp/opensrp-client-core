@@ -28,20 +28,28 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
         try {
             String action = intent.getAction();
 
-            if (action.equals(Intent.ACTION_TIME_CHANGED)) {
-                ((SecuredActivity) activity).showToast("TIME CHANGED");
-                Log.d(TAG, "timechanged");
-            } else if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)) {
-                ((SecuredActivity) activity).showToast("TIMEZONE CHANGED");
-                Log.d(TAG, "timezonechanged");
-            } else if (action.equals(AllConstants.CloudantSync.ACTION_DATABASE_CREATED)) {
-                //  ((SecuredActivity) activity).loadDatabase();
-            } else if (action.equals(AllConstants.CloudantSync.ACTION_REPLICATION_COMPLETED)) {
-                Integer docsReplicated = intent.getIntExtra(AllConstants.CloudantSync.DOCUMENTS_REPLICATED, 0);
-                Integer batchReplicated = intent.getIntExtra(AllConstants.CloudantSync.BATCHES_REPLICATED, 0);
-                //((SecuredActivity) activity).showToast("Replication completed.");
-            } else if (action.equals(AllConstants.CloudantSync.ACTION_REPLICATION_ERROR)) {
-                ((SecuredActivity) activity).showToast("Replicaton error occurred");
+            switch (action) {
+                case Intent.ACTION_TIME_CHANGED:
+                    ((SecuredActivity) activity).showToast("TIME CHANGED");
+                    Log.d(TAG, "timechanged");
+                    break;
+                case Intent.ACTION_TIMEZONE_CHANGED:
+                    ((SecuredActivity) activity).showToast("TIMEZONE CHANGED");
+                    Log.d(TAG, "timezonechanged");
+                    break;
+                case AllConstants.CloudantSync.ACTION_DATABASE_CREATED:
+                    //  ((SecuredActivity) activity).loadDatabase();
+                    break;
+                case AllConstants.CloudantSync.ACTION_REPLICATION_COMPLETED:
+                    Integer docsReplicated = intent.getIntExtra(
+                            AllConstants.CloudantSync.DOCUMENTS_REPLICATED, 0);
+                    Integer batchReplicated = intent.getIntExtra(
+                            AllConstants.CloudantSync.BATCHES_REPLICATED, 0);
+                    //((SecuredActivity) activity).showToast("Replication completed.");
+                    break;
+                case AllConstants.CloudantSync.ACTION_REPLICATION_ERROR:
+                    ((SecuredActivity) activity).showToast("Replication error occurred");
+                    break;
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

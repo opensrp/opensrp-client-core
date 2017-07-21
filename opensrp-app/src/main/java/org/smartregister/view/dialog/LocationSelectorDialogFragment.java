@@ -104,8 +104,8 @@ public class LocationSelectorDialogFragment extends DialogFragment {
     }
 
     public void addChildToParentNode(TreeNode parent,TreeNode [] nodes){
-        for (int i = 0;i<nodes.length;i++){
-            parent.addChild(nodes[i]);
+        for (TreeNode node : nodes) {
+            parent.addChild(node);
         }
     }
 
