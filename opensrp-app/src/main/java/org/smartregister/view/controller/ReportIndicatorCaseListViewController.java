@@ -1,7 +1,9 @@
 package org.smartregister.view.controller;
 
 import android.content.Context;
+
 import com.google.gson.Gson;
+
 import org.smartregister.domain.ReportIndicator;
 import org.smartregister.view.contract.Beneficiary;
 import org.smartregister.view.contract.IndicatorReportCases;
@@ -12,11 +14,12 @@ import static org.smartregister.domain.ReportIndicator.valueOf;
 
 public class ReportIndicatorCaseListViewController {
     private final Context context;
-    private String indicator;
     private final List<String> caseIds;
     private final String month;
+    private String indicator;
 
-    public ReportIndicatorCaseListViewController(Context context, String indicator, List<String> caseIds, String month) {
+    public ReportIndicatorCaseListViewController(Context context, String indicator, List<String>
+            caseIds, String month) {
         this.context = context;
         this.indicator = indicator;
         this.caseIds = caseIds;

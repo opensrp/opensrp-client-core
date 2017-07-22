@@ -3,7 +3,8 @@ package org.smartregister.domain.mapper;
 import static org.smartregister.domain.ServiceProvided.*;
 
 public enum TTMapper {
-    ttbooster(TT_BOOSTER_SERVICE_PROVIDED_NAME), tt1(TT_1_SERVICE_PROVIDED_NAME), tt2(TT_2_SERVICE_PROVIDED_NAME);
+    ttbooster(TT_BOOSTER_SERVICE_PROVIDED_NAME), tt1(TT_1_SERVICE_PROVIDED_NAME), tt2(
+            TT_2_SERVICE_PROVIDED_NAME);
 
     private String value;
 

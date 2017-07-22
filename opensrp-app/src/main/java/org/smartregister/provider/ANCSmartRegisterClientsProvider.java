@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -34,14 +35,12 @@ public class ANCSmartRegisterClientsProvider implements SmartRegisterClientsProv
 
     private ServiceModeOption currentServiceModeOption;
 
-    public ANCSmartRegisterClientsProvider(SecuredActivity activity,
-                                           View.OnClickListener onClickListener,
-                                           ANCSmartRegisterController controller) {
+    public ANCSmartRegisterClientsProvider(SecuredActivity activity, View.OnClickListener
+            onClickListener, ANCSmartRegisterController controller) {
         this.onClickListener = onClickListener;
         this.controller = controller;
         this.activity = activity;
         this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
 
         photoLoader = new ECProfilePhotoLoader(activity.getResources(),
                 activity.getResources().getDrawable(R.drawable.woman_placeholder));
@@ -51,7 +50,8 @@ public class ANCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     }
 
     @Override
-    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup viewGroup) {
+    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup
+            viewGroup) {
         ViewGroup itemView;
         NativeANCSmartRegisterViewHolder viewHolder;
         if (convertView == null) {
@@ -75,15 +75,18 @@ public class ANCSmartRegisterClientsProvider implements SmartRegisterClientsProv
         return itemView;
     }
 
-    private void setupANCStatusView(NativeANCSmartRegisterViewHolder viewHolder, ANCSmartRegisterClient client) {
+    private void setupANCStatusView(NativeANCSmartRegisterViewHolder viewHolder,
+                                    ANCSmartRegisterClient client) {
         viewHolder.ancStatusView().bindData(client);
     }
 
-    private void setupClientIdDetailsView(NativeANCSmartRegisterViewHolder viewHolder, ANCSmartRegisterClient client) {
+    private void setupClientIdDetailsView(NativeANCSmartRegisterViewHolder viewHolder,
+                                          ANCSmartRegisterClient client) {
         viewHolder.ancClientIdDetailsView().bindData(client);
     }
 
-    private void setupClientProfileView(SmartRegisterClient client, NativeANCSmartRegisterViewHolder viewHolder) {
+    private void setupClientProfileView(SmartRegisterClient client,
+                                        NativeANCSmartRegisterViewHolder viewHolder) {
         viewHolder.profileInfoLayout().bindData(client, photoLoader);
         viewHolder.profileInfoLayout().setOnClickListener(onClickListener);
         viewHolder.profileInfoLayout().setTag(client);
@@ -95,8 +98,8 @@ public class ANCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     }
 
     @Override
-    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
-                                              FilterOption searchFilter, SortOption sortOption) {
+    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
+            serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
         return getClients().applyFilter(villageFilter, serviceModeOption, searchFilter, sortOption);
     }
 

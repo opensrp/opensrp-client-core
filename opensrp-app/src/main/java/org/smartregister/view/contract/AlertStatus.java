@@ -1,6 +1,7 @@
 package org.smartregister.view.contract;
 
 import android.graphics.Color;
+
 import org.smartregister.R;
 
 public enum AlertStatus {
@@ -12,8 +13,7 @@ public enum AlertStatus {
         public int fontColor() {
             return Color.BLACK;
         }
-    },
-    UPCOMING {
+    }, UPCOMING {
         public int backgroundColorResourceId() {
             return R.color.alert_upcoming_light_blue;
         }
@@ -21,8 +21,7 @@ public enum AlertStatus {
         public int fontColor() {
             return Color.BLACK;
         }
-    },
-    NORMAL {
+    }, NORMAL {
         public int backgroundColorResourceId() {
             return R.color.alert_in_progress_blue;
         }
@@ -30,8 +29,7 @@ public enum AlertStatus {
         public int fontColor() {
             return Color.WHITE;
         }
-    },
-    URGENT {
+    }, URGENT {
         public int backgroundColorResourceId() {
             return R.color.alert_urgent_red;
         }
@@ -39,8 +37,7 @@ public enum AlertStatus {
         public int fontColor() {
             return Color.WHITE;
         }
-    },
-    INPROCESS {
+    }, INPROCESS {
         public int backgroundColorResourceId() {
             return R.color.alert_complete_green;
         }
@@ -48,8 +45,7 @@ public enum AlertStatus {
         public int fontColor() {
             return Color.WHITE;
         }
-    },
-    COMPLETE {
+    }, COMPLETE {
         public int backgroundColorResourceId() {
             return R.color.status_bar_text_almost_white;
         }
@@ -59,13 +55,12 @@ public enum AlertStatus {
         }
     };
 
+    public static AlertStatus from(String value) {
+        return valueOf(value.toUpperCase());
+    }
 
     public abstract int backgroundColorResourceId();
 
     public abstract int fontColor();
-
-    public static AlertStatus from(String value) {
-        return valueOf(value.toUpperCase());
-    }
 
 }

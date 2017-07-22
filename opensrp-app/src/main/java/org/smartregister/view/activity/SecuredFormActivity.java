@@ -69,23 +69,26 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
         webView.setWebChromeClient(new GeoWebChromeClient());
         webViewSettings.setDatabaseEnabled(true);
         webViewSettings.setDomStorageEnabled(true);
-        webView.addJavascriptInterface(new FormWebInterface(model, form, this), ANDROID_CONTEXT_FIELD);
+        webView.addJavascriptInterface(new FormWebInterface(model, form, this),
+                ANDROID_CONTEXT_FIELD);
         webView.addJavascriptInterface(Context.getInstance().formDataRepository(), REPOSITORY);
         webView.addJavascriptInterface(Context.getInstance().ziggyFileLoader(), ZIGGY_FILE_LOADER);
-        webView.addJavascriptInterface(Context.getInstance().formSubmissionRouter(), FORM_SUBMISSION_ROUTER);
+        webView.addJavascriptInterface(Context.getInstance().formSubmissionRouter(),
+                FORM_SUBMISSION_ROUTER);
         String encodedFieldOverrides = null;
         try {
             if (isNotBlank(this.fieldOverrides)) {
                 encodedFieldOverrides = URLEncoder.encode(this.fieldOverrides, "utf-8");
             }
         } catch (Exception e) {
-            logError(MessageFormat.format("Cannot encode field overrides: {0} due to : {1}", fieldOverrides, e));
+            logError(MessageFormat
+                    .format("Cannot encode field overrides: {0} due to : {1}", fieldOverrides, e));
         }
-        webView.loadUrl(MessageFormat.format("file:///android_asset/www/enketo/template.html?{0}={1}&{2}={3}&{4}={5}&{6}={7}&touch=true",
-                FORM_NAME_PARAM, formName,
-                ENTITY_ID_PARAM, entityId,
-                INSTANCE_ID_PARAM, randomUUID(),
-                FIELD_OVERRIDES_PARAM, encodedFieldOverrides));
+        webView.loadUrl(MessageFormat.format("file:///android_asset/www/enketo/template" + "" + ""
+                        + ".html?{0}={1}&{2}={3}&{4}={5}&{6}={7}&touch=true", FORM_NAME_PARAM,
+                formName,
+                ENTITY_ID_PARAM, entityId, INSTANCE_ID_PARAM, randomUUID(), FIELD_OVERRIDES_PARAM,
+                encodedFieldOverrides));
     }
 
     @Override
@@ -95,24 +98,16 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
 
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setMessage(form_back_confirm_dialog_message)
-                .setTitle(form_back_confirm_dialog_title)
-                .setCancelable(false)
-                .setPositiveButton(yes_button_label,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                                goBack();
-                            }
-                        })
-                .setNegativeButton(no_button_label,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int whichButton) {
-                            }
-                        })
-                .show();
+        new AlertDialog.Builder(this).setMessage(form_back_confirm_dialog_message)
+                .setTitle(form_back_confirm_dialog_title).setCancelable(false)
+                .setPositiveButton(yes_button_label, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        goBack();
+                    }
+                }).setNegativeButton(no_button_label, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        }).show();
     }
 
     private void goBack() {
@@ -121,8 +116,8 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
 
     public class GeoWebChromeClient extends WebChromeClient {
         @Override
-        public void onGeolocationPermissionsShowPrompt(String origin,
-                                                       GeolocationPermissions.Callback callback) {
+        public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions
+                .Callback callback) {
             // Always grant permission since the app itself requires location
             // permission and the user has therefore already granted it
             callback.invoke(origin, true, false);

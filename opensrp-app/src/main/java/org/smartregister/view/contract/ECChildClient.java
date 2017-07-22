@@ -28,7 +28,8 @@ public class ECChildClient {
     }
 
     public int getAgeInDays() {
-        return StringUtils.isBlank(dateOfBirth) ? 0 : Days.daysBetween(LocalDate.parse(dateOfBirth), DateUtil.today()).getDays();
+        return StringUtils.isBlank(dateOfBirth) ? 0
+                : Days.daysBetween(LocalDate.parse(dateOfBirth), DateUtil.today()).getDays();
     }
 
     public String getAgeInString() {
@@ -40,13 +41,13 @@ public class ECChildClient {
         int WEEKS_THRESHOLD = 119;
         int MONTHS_THRESHOLD = 720;
         if (days_since < DAYS_THRESHOLD) {
-            return (int)Math.floor(days_since) + "d";
+            return (int) Math.floor(days_since) + "d";
         } else if (days_since < WEEKS_THRESHOLD) {
-            return (int)Math.floor(days_since / 7) + "w";
+            return (int) Math.floor(days_since / 7) + "w";
         } else if (days_since < MONTHS_THRESHOLD) {
-            return (int)Math.floor(days_since / 30) + "m";
+            return (int) Math.floor(days_since / 30) + "m";
         } else {
-            return (int)Math.floor(days_since / 365) + "y";
+            return (int) Math.floor(days_since / 365) + "y";
         }
     }
 

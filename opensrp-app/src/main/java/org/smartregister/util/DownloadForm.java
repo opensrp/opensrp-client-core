@@ -24,16 +24,15 @@ import java.io.InputStream;
  */
 public class DownloadForm {
 
-    public static Response<DownloadStatus> DownloadFromURL(String downloadURL,
-                                                           String fileName,
-                                                           final GZipEncodingHttpClient httpClient)
-    {
+    public static Response<DownloadStatus> DownloadFromURL(String downloadURL, String fileName,
+                                                           final GZipEncodingHttpClient
+                                                                   httpClient) {
 
         try {
 
             File dir = new File(FormPathService.sdcardPathDownload);
 
-            if(!dir.exists()) {
+            if (!dir.exists()) {
                 dir.mkdirs();
             }
 
@@ -51,7 +50,8 @@ public class DownloadForm {
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
                 Log.d("DownloadFormService", "Server returned HTTP " + statusCode);
-                return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
+                return new Response<DownloadStatus>(ResponseStatus.failure,
+                        DownloadStatus.failedDownloaded);
             }
 
             HttpEntity entity = response.getEntity();
@@ -63,8 +63,9 @@ public class DownloadForm {
             /* This will be for count download percentage */
             long fileLength = entity.getContentLength();
 
-            if(fileLength == 0) {
-                return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.nothingDownloaded);
+            if (fileLength == 0) {
+                return new Response<DownloadStatus>(ResponseStatus.success,
+                        DownloadStatus.nothingDownloaded);
             }
 
             Log.d("DownloadFormService", "file length : " + fileLength);
@@ -82,11 +83,14 @@ public class DownloadForm {
             fos.flush();
             fos.close();
 
-            Log.d("DownloadFormService", "download finished in " + ((System.currentTimeMillis()-startTime) / 1000) + " sec");
+            Log.d("DownloadFormService",
+                    "download finished in " + ((System.currentTimeMillis() - startTime) / 1000)
+                            + " sec");
 
         } catch (IOException e) {
             Log.d("DownloadFormService", "download error : " + e);
-            return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
+            return new Response<DownloadStatus>(ResponseStatus.success,
+                    DownloadStatus.failedDownloaded);
         }
 
         return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.downloaded);

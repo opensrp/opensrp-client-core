@@ -1,8 +1,10 @@
 package org.smartregister.view.activity;
 
 import android.content.Intent;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.event.CapturedPhotoInformation;
@@ -25,7 +27,9 @@ public abstract class SmartRegisterActivity extends SecuredWebActivity {
             @Override
             public void onEvent(CapturedPhotoInformation data) {
                 if (webView != null) {
-                    webView.loadUrl("javascript:pageView.reloadPhoto('" + data.entityId() + "', '" + data.photoPath() + "')");
+                    webView.loadUrl(
+                            "javascript:pageView.reloadPhoto('" + data.entityId() + "', " + "'"
+                                    + data.photoPath() + "')");
                 }
             }
         };

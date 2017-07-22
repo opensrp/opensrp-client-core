@@ -1,6 +1,5 @@
 package org.smartregister.sync;
 
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -35,23 +34,19 @@ import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessor {
 
-    private static ClientProcessor instance;
-    private CloudantDataHandler mCloudantDataHandler;
-    private static final String TAG = "ClientProcessor";
     public static final String baseEntityIdJSONKey = "baseEntityId";
     protected static final String providerIdJSONKey = "providerId";
-
-    private static final String detailsUpdated = "detailsUpdated";
-
     protected static final String VALUES_KEY = "values";
-
-    private static final String[] openmrs_gen_ids = { "zeir_id" };
-
-
+    private static final String TAG = "ClientProcessor";
+    private static final String detailsUpdated = "detailsUpdated";
+    private static final String[] openmrs_gen_ids = {"zeir_id"};
+    private static ClientProcessor instance;
     Context mContext;
+    private CloudantDataHandler mCloudantDataHandler;
 
     public ClientProcessor(Context context) {
         mContext = context;
+
         try {
             mCloudantDataHandler = CloudantDataHandler.getInstance(context);
         } catch (Exception e) {
@@ -64,6 +59,7 @@ public class ClientProcessor {
         if (instance == null) {
             instance = new ClientProcessor(context);
         }
+
         return instance;
     }
 
@@ -82,16 +78,20 @@ public class ClientProcessor {
         if (!eventsAndAlerts.isEmpty()) {
             for (JSONObject eventOrAlert : eventsAndAlerts) {
                 String type = eventOrAlert.has("type") ? eventOrAlert.getString("type") : null;
+
                 if (type.equals("Event")) {
 
                     JSONObject clientClassificationJson = new JSONObject(clientClassificationStr);
+
                     if (isNullOrEmptyJSONObject(clientClassificationJson)) {
                         continue;
                     }
-                    //iterate through the events
+
+                    // Iterate through the events
                     processEvent(eventOrAlert, clientClassificationJson);
                 } else if (type.equals("Action")) {
                     JSONObject clientAlertClassificationJson = new JSONObject(clientAlertsStr);
+
                     if (isNullOrEmptyJSONObject(clientAlertClassificationJson)) {
                         continue;
                     }
@@ -115,7 +115,8 @@ public class ClientProcessor {
                 if (isNullOrEmptyJSONObject(clientClassificationJson)) {
                     continue;
                 }
-                //iterate through the events
+
+                // Iterate through the events
                 if (event.has("client")) {
                     processEvent(event, event.getJSONObject("client"), clientClassificationJson);
                 }
@@ -124,31 +125,36 @@ public class ClientProcessor {
 
     }
 
-    public Boolean processEvent(JSONObject event, JSONObject clientClassificationJson) throws Exception {
+    public Boolean processEvent(JSONObject event, JSONObject clientClassificationJson) throws
+            Exception {
 
         try {
             String baseEntityId = event.getString(baseEntityIdJSONKey);
+
             if (event.has("creator")) {
                 Log.i(TAG, "EVENT from openmrs");
             }
-            //for data integrity check if a client exists, if not pull one from cloudant and insert in drishti sqlite db
 
+            // For data integrity check if a client exists, if not pull one from cloudant and
+            // insert in drishti sqlite db
             JSONObject client = getClient(baseEntityId);
             if (isNullOrEmptyJSONObject(client)) {
                 return false;
             }
 
             // Check if child is deceased and skip
-            if(client.has("deathdate") &&  !client.getString("deathdate").isEmpty()){
-
+            if (client.has("deathdate") && !client.getString("deathdate").isEmpty()) {
                 return false;
             }
 
             // Get the client type classification
-            JSONArray clientClasses = clientClassificationJson.getJSONArray("case_classification_rules");
+            JSONArray clientClasses = clientClassificationJson
+                    .getJSONArray("case_classification_rules");
             if (isNullOrEmptyJSONArray(clientClasses)) {
+
                 return false;
             }
+
             for (int i = 0; i < clientClasses.length(); i++) {
                 JSONObject clientClass = clientClasses.getJSONObject(i);
                 processClientClass(clientClass, event, client);
@@ -159,34 +165,39 @@ public class ClientProcessor {
             if (!updated) {
                 updateClientDetailsTable(event, client);
             }
+
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
+
             return null;
         }
     }
 
-    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson) throws Exception {
+    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject
+            clientClassificationJson) throws Exception {
 
         try {
             String baseEntityId = event.getString(baseEntityIdJSONKey);
             if (event.has("creator")) {
                 Log.i(TAG, "EVENT from openmrs");
             }
-            //for data integrity check if a client exists, if not pull one from cloudant and insert in drishti sqlite db
+            // For data integrity check if a client exists, if not pull one from cloudant and
+            // insert in drishti sqlite db
 
             if (isNullOrEmptyJSONObject(client)) {
                 return false;
             }
 
             // Get the client type classification
-            JSONArray clientClasses = clientClassificationJson.getJSONArray("case_classification_rules");
+            JSONArray clientClasses = clientClassificationJson
+                    .getJSONArray("case_classification_rules");
             if (isNullOrEmptyJSONArray(clientClasses)) {
                 return false;
             }
 
             // Check if child is deceased and skip
-            if(client.has("deathdate") &&  !client.getString("deathdate").isEmpty()){
+            if (client.has("deathdate") && !client.getString("deathdate").isEmpty()) {
 
                 return false;
             }
@@ -198,12 +209,15 @@ public class ClientProcessor {
 
             // Incase the details have not been updated
             boolean updated = event.has(detailsUpdated) && event.getBoolean(detailsUpdated);
+
             if (!updated) {
                 updateClientDetailsTable(event, client);
             }
+
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
+
             return null;
         }
     }
@@ -211,7 +225,6 @@ public class ClientProcessor {
     public Boolean processClientClass(JSONObject clientClass, JSONObject event, JSONObject client) {
 
         try {
-
             if (clientClass == null || clientClass.length() == 0) {
                 return false;
             }
@@ -226,6 +239,7 @@ public class ClientProcessor {
 
             JSONObject ruleObject = clientClass.getJSONObject("rule");
             JSONArray fields = ruleObject.getJSONArray("fields");
+
             for (int i = 0; i < fields.length(); i++) {
                 JSONObject fieldJson = fields.getJSONObject(i);
                 processField(fieldJson, event, client);
@@ -244,44 +258,57 @@ public class ClientProcessor {
                 return false;
             }
 
-            // keep checking if the event data matches the values expected by each rule, break the moment the rule fails
+            // keep checking if the event data matches the values expected by each rule, break the
+            // moment the rule fails
             String dataSegment = null;
             String fieldName = fieldJson.has("field") ? fieldJson.getString("field") : null;
-            String fieldValue = fieldJson.has("field_value") ? fieldJson.getString("field_value") : null;
+            String fieldValue =
+                    fieldJson.has("field_value") ? fieldJson.getString("field_value") : null;
             String responseKey = null;
+
             if (fieldName != null && fieldName.contains(".")) {
                 String fieldNameArray[] = fieldName.split("\\.");
                 dataSegment = fieldNameArray[0];
                 fieldName = fieldNameArray[1];
                 String concept = fieldJson.has("concept") ? fieldJson.getString("concept") : null;
+
                 if (concept != null) {
                     fieldValue = concept;
                     responseKey = VALUES_KEY;
                 }
             }
 
-            JSONArray createsCase = fieldJson.has("creates_case") ? fieldJson.getJSONArray("creates_case") : null;
-            JSONArray closesCase = fieldJson.has("closes_case") ? fieldJson.getJSONArray("closes_case") : null;
+            JSONArray createsCase =
+                    fieldJson.has("creates_case") ? fieldJson.getJSONArray("creates_case") : null;
+            JSONArray closesCase =
+                    fieldJson.has("closes_case") ? fieldJson.getJSONArray("closes_case") : null;
 
-            //some fields are in the main doc e.g event_type so fetch them from the main doc
+            // some fields are in the main doc e.g event_type so fetch them from the main doc
             if (dataSegment != null && !dataSegment.isEmpty()) {
 
-                JSONArray responseValue = fieldJson.has(responseKey) ? fieldJson.getJSONArray(responseKey) : null;
+                JSONArray responseValue =
+                        fieldJson.has(responseKey) ? fieldJson.getJSONArray(responseKey) : null;
                 List<String> responseValues = getValues(responseValue);
 
                 if (event.has(dataSegment)) {
                     JSONArray jsonDataSegment = event.getJSONArray(dataSegment);
-                    //iterate in the segment e.g obs segment
+
+                    // Iterate in the segment e.g obs segment
                     for (int j = 0; j < jsonDataSegment.length(); j++) {
                         JSONObject segmentJsonObject = jsonDataSegment.getJSONObject(j);
-                        //let's discuss this further, to get the real value in the doc we've to use the keys 'fieldcode' and 'value'
+                        // let's discuss this further, to get the real value in the doc we've to
+                        // use the keys 'fieldcode' and 'value'
+                        String docSegmentFieldValue =
+                                segmentJsonObject.has(fieldName) ? segmentJsonObject.get(fieldName)
+                                        .toString() : "";
+                        List<String> docSegmentResponseValues =
+                                segmentJsonObject.has(responseKey) ? getValues(
+                                        segmentJsonObject.get(responseKey)) : null;
 
-                        String docSegmentFieldValue = segmentJsonObject.has(fieldName) ? segmentJsonObject.get(fieldName).toString() : "";
-                        List<String> docSegmentResponseValues = segmentJsonObject.has(responseKey) ? getValues(segmentJsonObject.get(responseKey)) : null;
-
-
-                        if (docSegmentFieldValue.equalsIgnoreCase(fieldValue) && (!Collections.disjoint(responseValues, docSegmentResponseValues))) {
-                            //this is the event obs we're interested in put it in the respective bucket specified by type variable
+                        if (docSegmentFieldValue.equalsIgnoreCase(fieldValue) && (!Collections
+                                .disjoint(responseValues, docSegmentResponseValues))) {
+                            // this is the event obs we're interested in put it in the respective
+                            // bucket specified by type variable
                             processCaseModel(event, client, createsCase);
                             closeCase(client, closesCase);
                         }
@@ -289,34 +316,36 @@ public class ClientProcessor {
                     }
                 }
 
-
             } else {
                 //fetch from the main doc
-                String docSegmentFieldValue = event.has(fieldName) ? event.get(fieldName).toString() : "";
+                String docSegmentFieldValue =
+                        event.has(fieldName) ? event.get(fieldName).toString() : "";
 
                 if (docSegmentFieldValue.equalsIgnoreCase(fieldValue)) {
-
                     processCaseModel(event, client, createsCase);
                     closeCase(client, closesCase);
                 }
 
             }
+
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
+
             return null;
         }
     }
 
-    public Boolean processAlert(JSONObject alert, JSONObject clientAlertClassificationJson) throws Exception {
+    public Boolean processAlert(JSONObject alert, JSONObject clientAlertClassificationJson)
+            throws Exception {
 
         try {
-
             if (alert == null || alert.length() == 0) {
                 return false;
             }
 
-            if (clientAlertClassificationJson == null || clientAlertClassificationJson.length() == 0) {
+            if (clientAlertClassificationJson == null
+                    || clientAlertClassificationJson.length() == 0) {
                 return false;
             }
 
@@ -330,6 +359,7 @@ public class ClientProcessor {
                 JSONObject jsonMapping = colObject.getJSONObject("json_mapping");
                 String dataSegment = null;
                 String fieldName = jsonMapping.getString("field");
+
                 if (fieldName != null && fieldName.contains(".")) {
                     String fieldNameArray[] = fieldName.split("\\.");
                     dataSegment = fieldNameArray[0];
@@ -351,10 +381,13 @@ public class ClientProcessor {
                 //e.g client attributes section
                 String columnValue = null;
                 JSONObject jsonDocSegmentObject = (JSONObject) jsonDocSegment;
-                columnValue = jsonDocSegmentObject.has(fieldName) ? jsonDocSegmentObject.getString(fieldName) : "";
+                columnValue = jsonDocSegmentObject.has(fieldName) ? jsonDocSegmentObject
+                        .getString(fieldName) : "";
+
                 // after successfully retrieving the column name and value store it in Content value
                 if (columnValue != null) {
-                    columnValue = getHumanReadableConceptResponse(columnValue, jsonDocSegmentObject);
+                    columnValue = getHumanReadableConceptResponse(columnValue,
+                            jsonDocSegmentObject);
                     contentValues.put(columnName, columnValue);
                 }
             }
@@ -363,10 +396,12 @@ public class ClientProcessor {
             if (contentValues.size() > 0) {
                 executeInsertAlert(contentValues);
             }
+
             return true;
 
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
+
             return null;
         }
     }
@@ -384,9 +419,11 @@ public class ClientProcessor {
                 closeCase(tableName, baseEntityId);
                 updateFTSsearch(tableName, baseEntityId, null);
             }
+
             return true;
         } catch (JSONException e) {
             Log.e(TAG, e.toString(), e);
+
             return null;
         }
     }
@@ -395,7 +432,6 @@ public class ClientProcessor {
         try {
 
             if (createsCase == null || createsCase.length() == 0) {
-
                 return false;
             }
             for (int openCase = 0; openCase < createsCase.length(); openCase++) {
@@ -405,7 +441,8 @@ public class ClientProcessor {
                 JSONObject columnMappings = getColumnMappings(clientType);
                 JSONArray columns = columnMappings.getJSONArray("columns");
                 String baseEntityId = client.getString(baseEntityIdJSONKey);
-                String expectedEncounterType = event.has("eventType") ? event.getString("eventType") : null;
+                String expectedEncounterType =
+                        event.has("eventType") ? event.getString("eventType") : null;
 
                 ContentValues contentValues = new ContentValues();
                 //Add the base_entity_id
@@ -421,11 +458,14 @@ public class ClientProcessor {
                     String fieldName = jsonMapping.getString("field");
                     String fieldValue = null;
                     String responseKey = null;
+
                     if (fieldName != null && fieldName.contains(".")) {
                         String fieldNameArray[] = fieldName.split("\\.");
                         dataSegment = fieldNameArray[0];
                         fieldName = fieldNameArray[1];
-                        fieldValue = jsonMapping.has("concept") ? jsonMapping.getString("concept") : (jsonMapping.has("formSubmissionField") ? jsonMapping.getString("formSubmissionField") : null);
+                        fieldValue = jsonMapping.has("concept") ? jsonMapping.getString("concept")
+                                : (jsonMapping.has("formSubmissionField") ? jsonMapping
+                                        .getString("formSubmissionField") : null);
                         if (fieldValue != null) {
                             responseKey = VALUES_KEY;
                         }
@@ -433,39 +473,46 @@ public class ClientProcessor {
 
                     JSONObject jsonDocument = docType.equalsIgnoreCase("Event") ? event : client;
 
-                    Object jsonDocSegment = null;
+                    Object jsonDocSegment;
 
                     if (dataSegment != null) {
-                        //pick data from a specific section of the doc
-                        jsonDocSegment = jsonDocument.has(dataSegment) ? jsonDocument.get(dataSegment) : null;
+                        // pick data from a specific section of the doc
+                        jsonDocSegment =
+                                jsonDocument.has(dataSegment) ? jsonDocument.get(dataSegment)
+                                        : null;
 
                     } else {
-                        //else the use the main doc as the doc segment
+                        // else the use the main doc as the doc segment
                         jsonDocSegment = jsonDocument;
-
                     }
 
-                    //special handler needed to process address,
+                    // special handler needed to process address,
                     if (dataSegment != null && dataSegment.equalsIgnoreCase("addresses")) {
                         Map<String, String> addressMap = getClientAddressAsMap(client);
                         if (addressMap.containsKey(fieldName)) {
-                            contentValues.put(columnName, addressMap.get(fieldName).toString());
+                            contentValues.put(columnName, addressMap.get(fieldName));
                         }
                         continue;
                     }
-                    //special handler for relationalid
+
+                    // special handler for relationalid
                     if (dataSegment != null && dataSegment.equalsIgnoreCase("relationships")) {
-                        JSONObject relationshipsObject = jsonDocument.getJSONObject("relationships");
+                        JSONObject relationshipsObject = jsonDocument
+                                .getJSONObject("relationships");
                         JSONArray relationshipsArray = relationshipsObject.getJSONArray(fieldName);
+
                         if (relationshipsArray != null && relationshipsArray.length() > 0) {
                             List<String> relationalIds = getValues(relationshipsArray);
                             contentValues.put(columnName, relationalIds.get(0));
 
                         }
+
                         continue;
                     }
 
-                    String encounterType = jsonMapping.has("event_type") ? jsonMapping.getString("event_type") : null;
+                    String encounterType =
+                            jsonMapping.has("event_type") ? jsonMapping.getString("event_type")
+                                    : null;
 
                     if (jsonDocSegment instanceof JSONArray) {
 
@@ -474,25 +521,38 @@ public class ClientProcessor {
                         for (int j = 0; j < jsonDocSegmentArray.length(); j++) {
                             JSONObject jsonDocObject = jsonDocSegmentArray.getJSONObject(j);
                             String columnValue = null;
+
                             if (fieldValue == null) {
-                                //this means field_value and response_key are null so pick the value from the json object for the field_name
+                                // This means field_value and response_key are null so pick the
+                                // value from the json object for the field_name
                                 if (jsonDocObject.has(fieldName)) {
                                     columnValue = jsonDocObject.getString(fieldName);
                                 }
                             } else {
-                                //this means field_value and response_key are not null e.g when retrieving some value in the events obs section
+                                // this means field_value and response_key are not null e.g when
+                                // retrieving some value in the events obs section
                                 String expectedFieldValue = jsonDocObject.getString(fieldName);
-                                //some events can only be differentiated by the event_type value eg pnc1,pnc2, anc1,anc2
-                                //check if encountertype (the one in ec_client_fields.json) is null or it matches the encounter type from the ec doc we're processing
-                                boolean encounterTypeMatches = (encounterType == null) || (encounterType != null && encounterType.equalsIgnoreCase(expectedEncounterType));
+                                // some events can only be differentiated by the event_type value
+                                // eg pnc1,pnc2, anc1,anc2
+                                // check if encountertype (the one in ec_client_fields.json) is
+                                // null or it matches the encounter type from the ec doc we're
+                                // processing
+                                boolean encounterTypeMatches =
+                                        (encounterType == null) || (encounterType != null
+                                                && encounterType
+                                                .equalsIgnoreCase(expectedEncounterType));
 
-                                if (encounterTypeMatches && expectedFieldValue.equalsIgnoreCase(fieldValue)) {
+                                if (encounterTypeMatches && expectedFieldValue
+                                        .equalsIgnoreCase(fieldValue)) {
                                     columnValue = getValues(jsonDocObject.get(responseKey)).get(0);
                                 }
                             }
-                            // after successfully retrieving the column name and value store it in Content value
+
+                            // after successfully retrieving the column name and value store it
+                            // in Content value
                             if (columnValue != null) {
-                                columnValue = getHumanReadableConceptResponse(columnValue, jsonDocObject);
+                                columnValue = getHumanReadableConceptResponse(columnValue,
+                                        jsonDocObject);
                                 contentValues.put(columnName, columnValue);
                             }
                         }
@@ -501,19 +561,20 @@ public class ClientProcessor {
                         //e.g client attributes section
                         String columnValue = null;
                         JSONObject jsonDocSegmentObject = (JSONObject) jsonDocSegment;
-                        columnValue = jsonDocSegmentObject.has(fieldName) ? jsonDocSegmentObject.getString(fieldName) : "";
-                        // after successfully retrieving the column name and value store it in Content value
+                        columnValue = jsonDocSegmentObject.has(fieldName) ? jsonDocSegmentObject
+                                .getString(fieldName) : "";
+
+                        // after successfully retrieving the column name and value store it in
+                        // Content value
                         if (columnValue != null) {
-                            columnValue = getHumanReadableConceptResponse(columnValue, jsonDocSegmentObject);
+                            columnValue = getHumanReadableConceptResponse(columnValue,
+                                    jsonDocSegmentObject);
                             contentValues.put(columnName, columnValue);
                         }
-
                     }
-
-
                 }
 
-                // Modify openmrs generated identifier, Remove hyphe if it exists
+                // Modify openmrs generated identifier, Remove hyphen if it exists
                 updateIdenitifier(contentValues);
 
                 // save the values to db
@@ -523,9 +584,11 @@ public class ClientProcessor {
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);
             }
+
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
+
             return null;
         }
 
@@ -540,6 +603,7 @@ public class ClientProcessor {
     protected void addContentValuesToDetailsTable(ContentValues values, Long eventDate) {
         try {
             String baseEntityId = values.getAsString("base_entity_id");
+
             for (String key : values.keySet()) {
                 String value = values.getAsString(key);
                 saveClientDetails(baseEntityId, key, value, eventDate);
@@ -549,11 +613,11 @@ public class ClientProcessor {
         }
     }
 
-
     /**
-     * Update the details table with the new info, All the obs are extracted and saved as key value <br/>
-     * with the key being the formSubmissionField and value being the value field <br/>
-     * If the key value already exists then the row will simply be updated with the value if the event date is most recent
+     * Update the details table with the new info, All the obs are extracted and saved as key
+     * value with the key being the formSubmissionField and value being the value field.
+     * If the key value already exists then the row will simply be updated with the value if the
+     * event date is most recent
      *
      * @param event
      * @param client
@@ -580,8 +644,7 @@ public class ClientProcessor {
             event.put(detailsUpdated, true);
 
             Log.i(TAG, "Finished updateClientDetailsTable");
-            //save the other misc, client info date of birth...
-
+            // save the other misc, client info date of birth...
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
         }
@@ -596,6 +659,7 @@ public class ClientProcessor {
      */
     private Map<String, String> getObsFromEvent(JSONObject event) {
         Map<String, String> obs = new HashMap<String, String>();
+
         try {
             String obsKey = "obs";
             if (event.has(obsKey)) {
@@ -603,8 +667,11 @@ public class ClientProcessor {
                 if (obsArray != null && obsArray.length() > 0) {
                     for (int i = 0; i < obsArray.length(); i++) {
                         JSONObject object = obsArray.getJSONObject(i);
-                        String key = object.has("formSubmissionField") ? object.getString("formSubmissionField") : null;
-                        List<String> values = object.has(VALUES_KEY) ? getValues(object.get(VALUES_KEY)) : null;
+                        String key = object.has("formSubmissionField") ? object
+                                .getString("formSubmissionField") : null;
+                        List<String> values =
+                                object.has(VALUES_KEY) ? getValues(object.get(VALUES_KEY)) : null;
+
                         for (String conceptValue : values) {
                             String value = getHumanReadableConceptResponse(conceptValue, object);
                             if (key != null && value != null) {
@@ -622,6 +689,7 @@ public class ClientProcessor {
 
     private Map<String, String> getClientAttributes(JSONObject client) {
         Map<String, String> attributes = new HashMap<String, String>();
+
         try {
             String attributesKey = "attributes";
             if (client.has(attributesKey)) {
@@ -631,7 +699,9 @@ public class ClientProcessor {
                     Iterator<String> it = attributesJson.keys();
                     while (it.hasNext()) {
                         String key = it.next();
-                        boolean shouldSkipNode = attributesJson.get(key) instanceof JSONArray || attributesJson.get(key) instanceof JSONObject;
+                        boolean shouldSkipNode =
+                                attributesJson.get(key) instanceof JSONArray || attributesJson
+                                        .get(key) instanceof JSONObject;
                         if (!shouldSkipNode) {
                             String value = attributesJson.getString(key);
                             attributes.put(key, value);
@@ -642,11 +712,13 @@ public class ClientProcessor {
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
         }
+
         return attributes;
     }
 
     private Map<String, String> getClientSingleValueAttribute(JSONObject client, String key) {
         Map<String, String> map = new HashMap<String, String>();
+
         try {
             if (client.has(key)) {
                 String value = client.getString(key);
@@ -655,17 +727,14 @@ public class ClientProcessor {
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
         }
+
         return map;
     }
 
     public void saveClientDetails(String baseEntityId, Map<String, String> values, Long timestamp) {
-        Iterator<String> it = values.keySet().iterator();
-        if (it != null) {
-            while (it.hasNext()) {
-                String key = it.next();
-                String value = values.get(key);
-                saveClientDetails(baseEntityId, key, value, timestamp);
-            }
+        for (String key : values.keySet()) {
+            String value = values.get(key);
+            saveClientDetails(baseEntityId, key, value, timestamp);
         }
     }
 
@@ -677,32 +746,42 @@ public class ClientProcessor {
      * @param value
      * @param timestamp
      */
-    public void saveClientDetails(String baseEntityId, String key, String value, Long timestamp) {
-        DetailsRepository detailsRepository = org.smartregister.Context.getInstance().detailsRepository();
+    private void saveClientDetails(String baseEntityId, String key, String value, Long timestamp) {
+        DetailsRepository detailsRepository = org.smartregister.Context.getInstance().
+                detailsRepository();
         detailsRepository.add(baseEntityId, key, value, timestamp);
     }
 
     /**
-     * Get human readable values from the json doc humanreadablevalues key if the key is empty return value
+     * Get human readable values from the json doc humanreadablevalues key if the key is empty
+     * return value
      *
      * @param value
      * @param jsonDocObject
      * @return
      * @throws Exception
      */
-    protected String getHumanReadableConceptResponse(String value, JSONObject jsonDocObject) throws Exception {
+    protected String getHumanReadableConceptResponse(String value, JSONObject jsonDocObject)
+            throws Exception {
 
-        JSONArray humanReadableValues = jsonDocObject.has("humanReadableValues") ? jsonDocObject.getJSONArray("humanReadableValues") : null;
+        JSONArray humanReadableValues = jsonDocObject.has("humanReadableValues") ? jsonDocObject
+                .getJSONArray("humanReadableValues") : null;
 
-        if (jsonDocObject == null || humanReadableValues == null || humanReadableValues.length() == 0) {
-            String humanReadableValue = org.smartregister.Context.getInstance().customHumanReadableConceptResponse().get(value);
+        if (jsonDocObject == null || humanReadableValues == null
+                || humanReadableValues.length() == 0) {
+            String humanReadableValue = org.smartregister.Context.getInstance().
+                    customHumanReadableConceptResponse().get(value);
+
             if (StringUtils.isNotBlank(humanReadableValue)) {
                 return humanReadableValue;
             }
+
             return value;
         }
 
-        String humanReadableValue = humanReadableValues.length() == 1 ? humanReadableValues.get(0).toString() : humanReadableValues.toString();
+        String humanReadableValue =
+                humanReadableValues.length() == 1 ? humanReadableValues.get(0).toString()
+                        : humanReadableValues.toString();
 
         return humanReadableValue;
     }
@@ -715,11 +794,15 @@ public class ClientProcessor {
 
             if (client.has(addressesKey)) {
                 JSONArray addressJsonArray = client.getJSONArray(addressesKey);
+
                 if (addressJsonArray != null && addressJsonArray.length() > 0) {
-                    JSONObject addressJson = addressJsonArray.getJSONObject(0);// Need to handle multiple addresses as well
+                    JSONObject addressJson = addressJsonArray.getJSONObject(0);
+
+                    // Need to handle multiple addresses as well
                     if (addressJson.has(addressFieldsKey)) {
                         JSONObject addressFields = addressJson.getJSONObject(addressFieldsKey);
                         Iterator<String> it = addressFields.keys();
+
                         while (it.hasNext()) {
                             String key = it.next();
                             String value = addressFields.getString(key);
@@ -729,9 +812,13 @@ public class ClientProcessor {
 
                     //retrieve the other fields as well
                     Iterator<String> it = addressJson.keys();
+
                     while (it.hasNext()) {
                         String key = it.next();
-                        boolean shouldSkipNode = addressJson.get(key) instanceof JSONArray || addressJson.get(key) instanceof JSONObject;
+                        boolean shouldSkipNode =
+                                addressJson.get(key) instanceof JSONArray || addressJson
+                                        .get(key) instanceof JSONObject;
+
                         if (!shouldSkipNode) {
                             String value = addressJson.getString(key);
                             addressMap.put(key, value);
@@ -767,9 +854,16 @@ public class ClientProcessor {
 
     public void executeInsertAlert(ContentValues contentValues) {
         if (!contentValues.getAsString(AlertRepository.ALERTS_STATUS_COLUMN).isEmpty()) {
-            Alert alert = new Alert(contentValues.getAsString(AlertRepository.ALERTS_CASEID_COLUMN), contentValues.getAsString(AlertRepository.ALERTS_SCHEDULE_NAME_COLUMN), contentValues.getAsString(AlertRepository.ALERTS_VISIT_CODE_COLUMN), AlertStatus.from(contentValues.getAsString(AlertRepository.ALERTS_STATUS_COLUMN)), contentValues.getAsString(AlertRepository.ALERTS_STARTDATE_COLUMN), contentValues.getAsString(AlertRepository.ALERTS_EXPIRYDATE_COLUMN));
+            Alert alert = new Alert(contentValues.getAsString(AlertRepository.ALERTS_CASEID_COLUMN),
+                    contentValues.getAsString(AlertRepository.ALERTS_SCHEDULE_NAME_COLUMN),
+                    contentValues.getAsString(AlertRepository.ALERTS_VISIT_CODE_COLUMN), AlertStatus
+                    .from(contentValues.getAsString(AlertRepository.ALERTS_STATUS_COLUMN)),
+                    contentValues.getAsString(AlertRepository.ALERTS_STARTDATE_COLUMN),
+                    contentValues.getAsString(AlertRepository.ALERTS_EXPIRYDATE_COLUMN));
             AlertService alertService = org.smartregister.Context.getInstance().alertService();
-            List<Alert> alerts = alertService.findByEntityIdAndAlertNames(alert.caseId(), alert.visitCode());
+            List<Alert> alerts = alertService
+                    .findByEntityIdAndAlertNames(alert.caseId(), alert.visitCode());
+
             if (alerts.isEmpty()) {
                 alertService.create(alert);
             }
@@ -779,6 +873,7 @@ public class ClientProcessor {
     private Cursor queryTable(String sql, String tableName) {
         CommonRepository cr = org.smartregister.Context.getInstance().commonrepository(tableName);
         Cursor c = cr.queryTable(sql);
+
         return c;
     }
 
@@ -790,8 +885,8 @@ public class ClientProcessor {
             JSONArray bindObjects = clientClassificationJson.getJSONArray("bindobjects");
 
             for (int i = 0; i < bindObjects.length(); i++) {
-
                 JSONObject bindObject = bindObjects.getJSONObject(i);
+
                 if (bindObject.getString("name").equalsIgnoreCase(registerName)) {
                     return bindObject;
                 }
@@ -826,19 +921,23 @@ public class ClientProcessor {
             return (Long) eventDate;
         } else {
             Date date = DateUtil.toDate(eventDate);
-            if (date != null)
+            if (date != null) {
                 return date.getTime();
+            }
         }
         return new Date().getTime();
     }
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
         Log.i(TAG, "Starting updateFTSsearch table: " + tableName);
-        AllCommonsRepository allCommonsRepository = org.smartregister.Context.getInstance().allCommonsRepositoryobjects(tableName);
+        AllCommonsRepository allCommonsRepository = org.smartregister.Context.getInstance().
+                allCommonsRepositoryobjects(tableName);
+
         if (allCommonsRepository != null) {
             allCommonsRepository.updateSearch(entityId);
             updateRegisterCount(entityId);
         }
+
         Log.i(TAG, "Finished updateFTSsearch table: " + tableName);
     }
 
@@ -847,6 +946,7 @@ public class ClientProcessor {
             return mCloudantDataHandler.getClientByBaseEntityId(baseEntityId);
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
+
             return null;
         }
     }
@@ -874,7 +974,7 @@ public class ClientProcessor {
      */
     private void updateIdenitifier(ContentValues values) {
         try {
-            for(String identifier: openmrs_gen_ids) {
+            for (String identifier : openmrs_gen_ids) {
                 Object value = values.get(identifier);
                 if (value != null && value instanceof String) {
                     String sValue = value.toString();

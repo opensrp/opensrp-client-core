@@ -3,6 +3,7 @@ package org.smartregister.view.viewholder;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.*;
 
@@ -15,9 +16,9 @@ public class NativeECSmartRegisterViewHolder {
     private final ClientStatusView statusView;
     private final ImageButton editButton;
 
-
     public NativeECSmartRegisterViewHolder(ViewGroup itemView) {
-        this.profileInfoLayout = (ClientProfileView) itemView.findViewById(R.id.profile_info_layout);
+        this.profileInfoLayout = (ClientProfileView) itemView
+                .findViewById(R.id.profile_info_layout);
         this.profileInfoLayout.initialize();
 
         this.txtECNumberView = (TextView) itemView.findViewById(R.id.txt_ec_number);
@@ -27,7 +28,6 @@ public class NativeECSmartRegisterViewHolder {
 
         fpMethodview = (ClientFpMethodView) itemView.findViewById(R.id.fp_method_layout);
         fpMethodview.initialize();
-
 
         childrenView = (ClientChildrenView) itemView.findViewById(R.id.children_layout);
         childrenView.initialize();
@@ -57,6 +57,7 @@ public class NativeECSmartRegisterViewHolder {
     public ClientChildrenView childrenView() {
         return childrenView;
     }
+
     public ImageButton editButton() {
         return editButton;
     }

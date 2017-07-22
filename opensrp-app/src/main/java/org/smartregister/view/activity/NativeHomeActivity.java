@@ -4,6 +4,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.event.Listener;
@@ -31,7 +32,11 @@ public class NativeHomeActivity extends SecuredActivity {
             }
         }
     };
-
+    private TextView ecRegisterClientCountView;
+    private TextView ancRegisterClientCountView;
+    private TextView pncRegisterClientCountView;
+    private TextView fpRegisterClientCountView;
+    private TextView childRegisterClientCountView;
     private Listener<Boolean> onSyncCompleteListener = new Listener<Boolean>() {
         @Override
         public void onEvent(Boolean data) {
@@ -43,26 +48,55 @@ public class NativeHomeActivity extends SecuredActivity {
             updateRegisterCounts();
         }
     };
-
     private Listener<String> onFormSubmittedListener = new Listener<String>() {
         @Override
         public void onEvent(String instanceId) {
             updateRegisterCounts();
         }
     };
-
     private Listener<String> updateANMDetailsListener = new Listener<String>() {
         @Override
         public void onEvent(String data) {
             updateRegisterCounts();
         }
     };
+    private View.OnClickListener onRegisterStartListener = new View.OnClickListener() {
 
-    private TextView ecRegisterClientCountView;
-    private TextView ancRegisterClientCountView;
-    private TextView pncRegisterClientCountView;
-    private TextView fpRegisterClientCountView;
-    private TextView childRegisterClientCountView;
+        @Override
+        public void onClick(View view) {
+            int i = view.getId();
+            if (i == R.id.btn_ec_register) {
+                navigationController.startECSmartRegistry();
+
+            } else if (i == R.id.btn_anc_register) {
+                navigationController.startANCSmartRegistry();
+
+            } else if (i == R.id.btn_pnc_register) {
+                navigationController.startPNCSmartRegistry();
+
+            } else if (i == R.id.btn_child_register) {
+                navigationController.startChildSmartRegistry();
+
+            } else if (i == R.id.btn_fp_register) {
+                navigationController.startFPSmartRegistry();
+
+            }
+        }
+    };
+    private View.OnClickListener onButtonsClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            int i = view.getId();
+            if (i == R.id.btn_reporting) {
+                navigationController.startReports();
+
+            } else if (i == R.id.btn_videos) {
+                navigationController.startVideos();
+
+            }
+        }
+    };
 
     @Override
     protected void onCreation() {
@@ -85,7 +119,8 @@ public class NativeHomeActivity extends SecuredActivity {
         pncRegisterClientCountView = (TextView) findViewById(R.id.txt_pnc_register_client_count);
         ancRegisterClientCountView = (TextView) findViewById(R.id.txt_anc_register_client_count);
         fpRegisterClientCountView = (TextView) findViewById(R.id.txt_fp_register_client_count);
-        childRegisterClientCountView = (TextView) findViewById(R.id.txt_child_register_client_count);
+        childRegisterClientCountView = (TextView) findViewById(
+                R.id.txt_child_register_client_count);
     }
 
     private void initialize() {
@@ -104,7 +139,8 @@ public class NativeHomeActivity extends SecuredActivity {
     }
 
     private void updateRegisterCounts() {
-        NativeUpdateANMDetailsTask task = new NativeUpdateANMDetailsTask(Context.getInstance().anmController());
+        NativeUpdateANMDetailsTask task = new NativeUpdateANMDetailsTask(
+                Context.getInstance().anmController());
         task.fetch(new NativeAfterANMDetailsFetchListener() {
             @Override
             public void afterFetch(HomeContext anmDetails) {
@@ -144,9 +180,9 @@ public class NativeHomeActivity extends SecuredActivity {
     }
 
     public void updateFromServer() {
-        UpdateActionsTask updateActionsTask = new UpdateActionsTask(
-                this, context().actionService(), context().formSubmissionSyncService(),
-                new SyncProgressIndicator(), context().allFormVersionSyncService());
+        UpdateActionsTask updateActionsTask = new UpdateActionsTask(this, context().actionService(),
+                context().formSubmissionSyncService(), new SyncProgressIndicator(),
+                context().allFormVersionSyncService());
         updateActionsTask.updateFromServer(new SyncAfterFetchListener());
     }
 
@@ -164,8 +200,9 @@ public class NativeHomeActivity extends SecuredActivity {
         if (updateMenuItem != null) {
             if (context().allSharedPreferences().fetchIsSyncInProgress()) {
                 updateMenuItem.setActionView(R.layout.progress);
-            } else
+            } else {
                 updateMenuItem.setActionView(null);
+            }
         }
     }
 
@@ -176,49 +213,11 @@ public class NativeHomeActivity extends SecuredActivity {
 
         long size = pendingFormSubmissionService.pendingFormSubmissionCount();
         if (size > 0) {
-            remainingFormsToSyncMenuItem.setTitle(valueOf(size) + " " + getString(R.string.unsynced_forms_count_message));
+            remainingFormsToSyncMenuItem.setTitle(
+                    valueOf(size) + " " + getString(R.string.unsynced_forms_count_message));
             remainingFormsToSyncMenuItem.setVisible(true);
         } else {
             remainingFormsToSyncMenuItem.setVisible(false);
         }
     }
-
-    private View.OnClickListener onRegisterStartListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            int i = view.getId();
-            if (i == R.id.btn_ec_register) {
-                navigationController.startECSmartRegistry();
-
-            } else if (i == R.id.btn_anc_register) {
-                navigationController.startANCSmartRegistry();
-
-            } else if (i == R.id.btn_pnc_register) {
-                navigationController.startPNCSmartRegistry();
-
-            } else if (i == R.id.btn_child_register) {
-                navigationController.startChildSmartRegistry();
-
-            } else if (i == R.id.btn_fp_register) {
-                navigationController.startFPSmartRegistry();
-
-            }
-        }
-    };
-
-    private View.OnClickListener onButtonsClickListener = new View.OnClickListener() {
-
-        @Override
-        public void onClick(View view) {
-            int i = view.getId();
-            if (i == R.id.btn_reporting) {
-                navigationController.startReports();
-
-            } else if (i == R.id.btn_videos) {
-                navigationController.startVideos();
-
-            }
-        }
-    };
 }

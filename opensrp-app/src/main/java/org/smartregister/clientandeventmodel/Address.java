@@ -9,7 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class Address{
+public class Address {
 
     @JsonProperty
     private Boolean preferred;
@@ -44,11 +44,12 @@ public class Address{
     @JsonProperty
     private String country;
 
+    public Address() {
+    }
 
-    public Address() {	}
-
-    public Address(String addressType, Date startDate, Date endDate, Map<String, String> addressFields,
-                   String latitude, String longitude, String postalCode, String stateProvince, String country) {
+    public Address(String addressType, Date startDate, Date endDate, Map<String, String>
+            addressFields, String latitude, String longitude, String postalCode, String
+            stateProvince, String country) {
         this.addressType = addressType;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -88,6 +89,16 @@ public class Address{
         return addressFields;
     }
 
+    /**
+     * WARNING: Overrides all existing fields
+     *
+     * @param addressFields
+     * @return
+     */
+    public void setAddressFields(Map<String, String> addressFields) {
+        this.addressFields = addressFields;
+    }
+
     public String getAddressField(String addressField) {
         return addressFields.get(addressField);
     }
@@ -99,29 +110,21 @@ public class Address{
     /**
      * Returns field matching the regex. Note that incase of multiple fields matching criteria
      * function would return first match. The must be well formed to find out a single value
+     *
      * @param regex
      * @return
      */
     public String getAddressFieldMatchingRegex(String regex) {
         for (Entry<String, String> a : addressFields.entrySet()) {
-            if(a.getKey().matches(regex)){
+            if (a.getKey().matches(regex)) {
                 return a.getValue();
             }
         }
         return null;
     }
 
-    /**
-     * WARNING: Overrides all existing fields
-     * @param addressFields
-     * @return
-     */
-    public void setAddressFields(Map<String, String> addressFields) {
-        this.addressFields = addressFields;
-    }
-
     public void addAddressField(String field, String value) {
-        if(addressFields == null){
+        if (addressFields == null) {
             addressFields = new HashMap<>();
         }
         addressFields.put(field, value);
@@ -129,11 +132,12 @@ public class Address{
 
     /**
      * Add field name from a list of predefined options from enum {@link AddressField}
+     *
      * @param field
      * @param value
      */
     public void addAddressField(AddressField field, String value) {
-        if(addressFields == null){
+        if (addressFields == null) {
             addressFields = new HashMap<>();
         }
         addressFields.put(field.name(), value);
@@ -235,63 +239,77 @@ public class Address{
         this.country = country;
     }
 
-
-
     /**
      * True if endDate is null or endDate is in future
+     *
      * @return
      */
     @JsonIgnore
     public boolean isActive() {
-        return endDate==null||endDate.after(new Date());
+        return endDate == null || endDate.after(new Date());
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
+     *
      * @return
      */
     private long durationInMillis() {
-        if(startDate == null){
+        if (startDate == null) {
             return -1;
         }
-        if(endDate == null){
-            return new Date().getTime()-startDate.getTime();
+        if (endDate == null) {
+            return new Date().getTime() - startDate.getTime();
         }
 
-        return endDate.getTime()-startDate.getTime();
+        return endDate.getTime() - startDate.getTime();
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
+     *
      * @return
      */
     public int durationInDays() {
-        return (int) (durationInMillis()==-1?durationInMillis():(durationInMillis()/(1000*60*60*24)));
+        return (int) (durationInMillis() == -1 ? durationInMillis()
+                : (durationInMillis() / (1000 * 60 * 60 * 24)));
     }
+
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
+     *
      * @return
      */
     public int durationInWeeks() {
-        return durationInDays()==-1?durationInDays():(durationInDays()/7);
+        return durationInDays() == -1 ? durationInDays() : (durationInDays() / 7);
     }
+
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
+     *
      * @return
      */
     public int durationInMonths() {
-        return durationInDays()==-1?durationInDays(): durationInDays()/30;
+        return durationInDays() == -1 ? durationInDays() : durationInDays() / 30;
     }
+
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
+     *
      * @return
      */
     public int durationInYears() {
-        return durationInDays()==-1?durationInDays():(durationInDays()/365);
+        return durationInDays() == -1 ? durationInDays() : (durationInDays() / 365);
     }
 
     /**
      * The type address represents
+     *
      * @param addressType
      * @return
      */
@@ -302,6 +320,7 @@ public class Address{
 
     /**
      * The date when address was started or owned
+     *
      * @param endDate
      * @return
      */
@@ -312,6 +331,7 @@ public class Address{
 
     /**
      * The date when address was outdated or abandoned
+     *
      * @param endDate
      * @return
      */
@@ -322,6 +342,7 @@ public class Address{
 
     /**
      * WARNING: Overrides all existing fields
+     *
      * @param addressFields
      * @return
      */
@@ -331,7 +352,7 @@ public class Address{
     }
 
     public Address withAddressField(String field, String value) {
-        if(addressFields == null){
+        if (addressFields == null) {
             addressFields = new HashMap<>();
         }
         addressFields.put(field, value);
@@ -339,7 +360,7 @@ public class Address{
     }
 
     public Address withAddressField(AddressField field, String value) {
-        if(addressFields == null){
+        if (addressFields == null) {
             addressFields = new HashMap<>();
         }
         addressFields.put(field.name(), value);

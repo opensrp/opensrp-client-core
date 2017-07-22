@@ -8,10 +8,20 @@ import java.util.Map;
 /**
  * Created by Raihan Ahmed on 2/12/15.
  */
-public class CommonPersonObjectClient implements SmartRegisterClient,Serializable {
+public class CommonPersonObjectClient implements SmartRegisterClient, Serializable {
+    public String name = "";
     private String caseId;
     private Map<String, String> details;
-    public String name = "";
+    private Map<String, String> columnmaps;
+
+    public CommonPersonObjectClient(String caseId, Map<String, String> details, String name) {
+        this.caseId = caseId;
+        this.details = details;
+        if (name != null) {
+            this.name = name;
+        }
+//        this.name =  details.get(name)!=null?details.get(name):"";
+    }
 
     public Map<String, String> getColumnmaps() {
         return columnmaps;
@@ -19,17 +29,6 @@ public class CommonPersonObjectClient implements SmartRegisterClient,Serializabl
 
     public void setColumnmaps(Map<String, String> columnmaps) {
         this.columnmaps = columnmaps;
-    }
-
-    private Map<String, String> columnmaps;
-
-    public CommonPersonObjectClient(String caseId, Map<String, String> details, String name) {
-        this.caseId = caseId;
-        this.details = details;
-        if(name != null) {
-            this.name = name;
-        }
-//        this.name =  details.get(name)!=null?details.get(name):"";
     }
 
     public String getCaseId() {

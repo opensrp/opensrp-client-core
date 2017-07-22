@@ -6,6 +6,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.ANCClientIdDetailsView;
 import org.smartregister.view.customcontrols.ANCStatusView;
@@ -125,26 +126,35 @@ public class NativeANCSmartRegisterViewHolder {
         profileInfoLayout = (ClientProfileView) itemView.findViewById(R.id.profile_info_layout);
         profileInfoLayout.initialize();
 
-        ancClientIdDetailsView = (ANCClientIdDetailsView) itemView.findViewById(R.id.client_id_details_layout);
+        ancClientIdDetailsView = (ANCClientIdDetailsView) itemView
+                .findViewById(R.id.client_id_details_layout);
         ancClientIdDetailsView.initialize();
 
         ancStatusView = (ANCStatusView) itemView.findViewById(R.id.client_status_layout);
         ancStatusView.initialize();
 
-        serviceModeViewsHolder = (ViewGroup) itemView.findViewById(R.id.anc_register_service_mode_options_view);
-        serviceModeOverviewView = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.overview_service_mode_views);
-        serviceModeANCVisitsView = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.anc_visit_service_mode_views);
-        serviceModeTTView = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.tt_service_mode_views);
-        serviceModeHbIFAViewsHolder = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.hb_ifa_service_mode_views);
-        serviceModeDeliveryPlanViewsHolder = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.delivery_plan_service_mode_views);
+        serviceModeViewsHolder = (ViewGroup) itemView
+                .findViewById(R.id.anc_register_service_mode_options_view);
+        serviceModeOverviewView = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.overview_service_mode_views);
+        serviceModeANCVisitsView = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.anc_visit_service_mode_views);
+        serviceModeTTView = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.tt_service_mode_views);
+        serviceModeHbIFAViewsHolder = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.hb_ifa_service_mode_views);
+        serviceModeDeliveryPlanViewsHolder = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.delivery_plan_service_mode_views);
 
         txtRiskFactors = (TextView) serviceModeOverviewView.findViewById(R.id.txt_risk_factors);
 
         btnAncVisitView = (TextView) serviceModeOverviewView.findViewById(R.id.btn_anc_visit);
         layoutANCVisitAlert = serviceModeOverviewView.findViewById(R.id.layout_anc_visit_alert);
         txtANCVisitDoneOn = (TextView) serviceModeOverviewView.findViewById(R.id.txt_anc_visit_on);
-        txtANCVisitDueType = (TextView) serviceModeOverviewView.findViewById(R.id.txt_anc_visit_due_type);
-        txtANCVisitAlertDueOn = (TextView) serviceModeOverviewView.findViewById(R.id.txt_anc_visit_due_on);
+        txtANCVisitDueType = (TextView) serviceModeOverviewView
+                .findViewById(R.id.txt_anc_visit_due_type);
+        txtANCVisitAlertDueOn = (TextView) serviceModeOverviewView
+                .findViewById(R.id.txt_anc_visit_due_on);
 
         btnTTView = (TextView) serviceModeOverviewView.findViewById(R.id.btn_tt);
         layoutTTAlert = serviceModeOverviewView.findViewById(R.id.layout_tt_alert);
@@ -161,46 +171,75 @@ public class NativeANCSmartRegisterViewHolder {
         btnEditView = (ImageButton) serviceModeOverviewView.findViewById(R.id.btn_edit);
 
         layoutANCVisit1Alert = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_1_alert);
-        layoutANCVisit1ServiceProvided = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_1_service_provided);
-        txtANCVisit1DueType = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_1_due_type);
-        txtANCVisit1DueOn = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_1_due_on);
-        txtANCVisit1DoneDate = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_1_done_date);
+        layoutANCVisit1ServiceProvided = serviceModeANCVisitsView
+                .findViewById(R.id.layout_anc_visit_1_service_provided);
+        txtANCVisit1DueType = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_1_due_type);
+        txtANCVisit1DueOn = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_1_due_on);
+        txtANCVisit1DoneDate = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_1_done_date);
         lblANCVisit1Bp = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_1_bp);
-        lblANCVisit1Weight = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_1_weight);
-        txtANCVisit1BpValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_1_bp_value);
-        txtANCVisit1WeightValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_1_weight_value);
+        lblANCVisit1Weight = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.lbl_anc_visit_1_weight);
+        txtANCVisit1BpValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_1_bp_value);
+        txtANCVisit1WeightValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_1_weight_value);
 
         layoutANCVisit2Alert = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_2_alert);
-        layoutANCVisit2ServiceProvided = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_2_service_provided);
-        txtANCVisit2DueType = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_2_due_type);
-        txtANCVisit2DueOn = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_2_due_on);
-        txtANCVisit2DoneDate = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_2_done_date);
+        layoutANCVisit2ServiceProvided = serviceModeANCVisitsView
+                .findViewById(R.id.layout_anc_visit_2_service_provided);
+        txtANCVisit2DueType = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_2_due_type);
+        txtANCVisit2DueOn = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_2_due_on);
+        txtANCVisit2DoneDate = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_2_done_date);
         lblANCVisit2Bp = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_2_bp);
-        lblANCVisit2Weight = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_2_weight);
-        txtANCVisit2BpValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_2_bp_value);
-        txtANCVisit2WeightValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_2_weight_value);
+        lblANCVisit2Weight = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.lbl_anc_visit_2_weight);
+        txtANCVisit2BpValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_2_bp_value);
+        txtANCVisit2WeightValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_2_weight_value);
 
         layoutANCVisit3Alert = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_3_alert);
-        layoutANCVisit3ServiceProvided = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_3_service_provided);
-        txtANCVisit3DueType = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_3_due_type);
-        txtANCVisit3DueOn = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_3_due_on);
-        txtANCVisit3DoneDate = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_3_done_date);
+        layoutANCVisit3ServiceProvided = serviceModeANCVisitsView
+                .findViewById(R.id.layout_anc_visit_3_service_provided);
+        txtANCVisit3DueType = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_3_due_type);
+        txtANCVisit3DueOn = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_3_due_on);
+        txtANCVisit3DoneDate = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_3_done_date);
         lblANCVisit3Bp = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_3_bp);
-        lblANCVisit3Weight = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_3_weight);
-        txtANCVisit3BpValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_3_bp_value);
-        txtANCVisit3WeightValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_3_weight_value);
+        lblANCVisit3Weight = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.lbl_anc_visit_3_weight);
+        txtANCVisit3BpValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_3_bp_value);
+        txtANCVisit3WeightValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_3_weight_value);
 
         layoutANCVisit4Alert = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_4_alert);
-        layoutANCVisit4ServiceProvided = serviceModeANCVisitsView.findViewById(R.id.layout_anc_visit_4_service_provided);
-        txtANCVisit4DueType = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_4_due_type);
-        txtANCVisit4DueOn = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_4_due_on);
-        txtANCVisit4DoneDate = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_4_done_date);
+        layoutANCVisit4ServiceProvided = serviceModeANCVisitsView
+                .findViewById(R.id.layout_anc_visit_4_service_provided);
+        txtANCVisit4DueType = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_4_due_type);
+        txtANCVisit4DueOn = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_4_due_on);
+        txtANCVisit4DoneDate = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_4_done_date);
         lblANCVisit4Bp = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_4_bp);
-        lblANCVisit4Weight = (TextView) serviceModeANCVisitsView.findViewById(R.id.lbl_anc_visit_4_weight);
-        txtANCVisit4BpValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_4_bp_value);
-        txtANCVisit4WeightValue = (TextView) serviceModeANCVisitsView.findViewById(R.id.txt_anc_visit_4_weight_value);
+        lblANCVisit4Weight = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.lbl_anc_visit_4_weight);
+        txtANCVisit4BpValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_4_bp_value);
+        txtANCVisit4WeightValue = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.txt_anc_visit_4_weight_value);
 
-        btnOtherANCVisit = (TextView) serviceModeANCVisitsView.findViewById(R.id.btn_other_anc_visit);
+        btnOtherANCVisit = (TextView) serviceModeANCVisitsView
+                .findViewById(R.id.btn_other_anc_visit);
 
         layoutTT1Alert = serviceModeTTView.findViewById(R.id.layout_tt_1);
         txtTT1DoneTick = (TextView) serviceModeTTView.findViewById(R.id.txt_tt_1_done);
@@ -217,42 +256,67 @@ public class NativeANCSmartRegisterViewHolder {
         txtTTBoosterType = (TextView) serviceModeTTView.findViewById(R.id.txt_tt_booster_type);
         txtTTBoosterDate = (TextView) serviceModeTTView.findViewById(R.id.txt_tt_booster_date);
 
-        layoutHbDetailsViewHolder = (LinearLayout) serviceModeHbIFAViewsHolder.findViewById(R.id.layout_hb_details_holder);
+        layoutHbDetailsViewHolder = (LinearLayout) serviceModeHbIFAViewsHolder
+                .findViewById(R.id.layout_hb_details_holder);
 
         layoutHbAlert = serviceModeHbIFAViewsHolder.findViewById(R.id.layout_hb_alert);
         btnHbView = (TextView) serviceModeHbIFAViewsHolder.findViewById(R.id.btn_hb);
         txtHbDueType = (TextView) serviceModeHbIFAViewsHolder.findViewById(R.id.txt_hb_due_type);
         txtHbDueOn = (TextView) serviceModeHbIFAViewsHolder.findViewById(R.id.txt_hb_due_on);
 
-        layoutIFADetailsViewHolder = (LinearLayout) serviceModeHbIFAViewsHolder.findViewById(R.id.layout_ifa_details_holder);
+        layoutIFADetailsViewHolder = (LinearLayout) serviceModeHbIFAViewsHolder
+                .findViewById(R.id.layout_ifa_details_holder);
 
-        layoutIFAAlertInHbIFAServiceMode = serviceModeHbIFAViewsHolder.findViewById(R.id.layout_ifa);
+        layoutIFAAlertInHbIFAServiceMode = serviceModeHbIFAViewsHolder
+                .findViewById(R.id.layout_ifa);
         txtIFADoneTick = (TextView) serviceModeHbIFAViewsHolder.findViewById(R.id.txt_ifa_done);
         txtIFAType = (TextView) serviceModeHbIFAViewsHolder.findViewById(R.id.txt_ifa_type);
         txtIFADate = (TextView) serviceModeHbIFAViewsHolder.findViewById(R.id.txt_ifa_date);
 
-        layoutDeliveryPlanAlert = serviceModeDeliveryPlanViewsHolder.findViewById(R.id.layout_delivery_plan_alert);
-        layoutDeliveryPlanServiceProvided = serviceModeDeliveryPlanViewsHolder.findViewById(R.id.layout_delivery_plan_service_provided);
-        txtDeliveryPlanDueType = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_delivery_plan_due_type);
-        txtDeliveryPlanDueOn = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_delivery_plan_due_on);
-        imgDeliveryPlaceStatus = (ImageView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.img_delivery_place_status);
-        lblDeliveryPlace = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.lbl_delivery_place);
-        txtDeliveryPlace = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_delivery_place);
-        imgTransportStatus = (ImageView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.img_transport_status);
-        lblTransport = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.lbl_transport);
-        txtTransport = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_transport);
-        imgHasCompanionStatus = (ImageView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.img_has_companion_status);
-        lblHasCompanion = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.lbl_has_companion);
-        txtHasCompanion = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_has_companion);
-        imgAshaPhoneNumberStatus = (ImageView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.img_asha_phone_number_status);
-        lblAshaPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.lbl_asha_phone_number);
-        txtAshaPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_asha_phone_number);
-        imgContactPhoneNumberStatus = (ImageView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.img_contact_phone_number_status);
-        lblContactPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.lbl_contact_phone_number);
-        txtContactPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_contact_phone_number);
-        imgRisksReviewedStatus = (ImageView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.img_risk_reviewed_status);
-        lblRisksReviewed = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.lbl_risks_reviewed);
-        txtRisksReviewed = (TextView) serviceModeDeliveryPlanViewsHolder.findViewById(R.id.txt_risks_reviewed);
+        layoutDeliveryPlanAlert = serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.layout_delivery_plan_alert);
+        layoutDeliveryPlanServiceProvided = serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.layout_delivery_plan_service_provided);
+        txtDeliveryPlanDueType = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_delivery_plan_due_type);
+        txtDeliveryPlanDueOn = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_delivery_plan_due_on);
+        imgDeliveryPlaceStatus = (ImageView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.img_delivery_place_status);
+        lblDeliveryPlace = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.lbl_delivery_place);
+        txtDeliveryPlace = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_delivery_place);
+        imgTransportStatus = (ImageView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.img_transport_status);
+        lblTransport = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.lbl_transport);
+        txtTransport = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_transport);
+        imgHasCompanionStatus = (ImageView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.img_has_companion_status);
+        lblHasCompanion = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.lbl_has_companion);
+        txtHasCompanion = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_has_companion);
+        imgAshaPhoneNumberStatus = (ImageView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.img_asha_phone_number_status);
+        lblAshaPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.lbl_asha_phone_number);
+        txtAshaPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_asha_phone_number);
+        imgContactPhoneNumberStatus = (ImageView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.img_contact_phone_number_status);
+        lblContactPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.lbl_contact_phone_number);
+        txtContactPhoneNumber = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_contact_phone_number);
+        imgRisksReviewedStatus = (ImageView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.img_risk_reviewed_status);
+        lblRisksReviewed = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.lbl_risks_reviewed);
+        txtRisksReviewed = (TextView) serviceModeDeliveryPlanViewsHolder
+                .findViewById(R.id.txt_risks_reviewed);
     }
 
     public ClientProfileView profileInfoLayout() {
@@ -530,7 +594,6 @@ public class NativeANCSmartRegisterViewHolder {
         txtANCVisit4BpValue().setVisibility(View.GONE);
         txtANCVisit4WeightValue().setVisibility(View.GONE);
     }
-
 
     public View layoutANCVisit1ServiceProvided() {
         return layoutANCVisit1ServiceProvided;

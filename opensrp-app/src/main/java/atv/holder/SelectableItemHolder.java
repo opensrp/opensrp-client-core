@@ -24,7 +24,8 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
     private String level;
     private com.github.johnkil.print.PrintView arrowView;
     private Context context;
-    public SelectableItemHolder(Context context,String Level) {
+
+    public SelectableItemHolder(Context context, String Level) {
         super(context);
         level = Level;
         this.context = context;
@@ -36,7 +37,7 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         final View view = inflater.inflate(R.layout.layout_selectable_item, null, false);
 
         tvValue = (TextView) view.findViewById(R.id.node_value);
-        tvValue.setText(level+" "+value);
+        tvValue.setText(level + " " + value);
         arrowView = (com.github.johnkil.print.PrintView) view.findViewById(R.id.arrowview);
 //        levelValue = (TextView) view.findViewById(R.id.treenodetext);
 //        levelValue.setText("\\u2605");
@@ -46,7 +47,7 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 node.setSelected(isChecked);
-                if(isChecked){
+                if (isChecked) {
                     node.setExpanded(isChecked);
                 }
             }
@@ -55,7 +56,8 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         view.findViewById(R.id.top_line).setVisibility(View.INVISIBLE);
         view.findViewById(R.id.bot_line).setVisibility(View.INVISIBLE);
         if (node.isLeaf()) {
-            ((PrintView) view.findViewById(R.id.arrowview)).setIconText(R.string.ic_check_circle_blank);
+            ((PrintView) view.findViewById(R.id.arrowview))
+                    .setIconText(R.string.ic_check_circle_blank);
         }
 //        if(node.isFirstChild()){
 //            view.findViewById(R.id.top_line).setVisibility(View.INVISIBLE);
@@ -64,23 +66,24 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
 //            }
 //        }
 
-        if(node.isFirstChild()){
+        if (node.isFirstChild()) {
             view.findViewById(R.id.top_line).setVisibility(View.INVISIBLE);
         }
 
         return view;
     }
 
-
     @Override
     public void toggleSelectionMode(boolean editModeEnabled) {
         nodeSelector.setVisibility(editModeEnabled ? View.VISIBLE : View.GONE);
         nodeSelector.setChecked(mNode.isSelected());
     }
+
     @Override
     public void toggle(boolean active) {
-        if(!mNode.isLeaf()) {
-            arrowView.setIconText(context.getResources().getString(active ? R.string.ic_keyboard_arrow_down : R.string.ic_keyboard_arrow_right));
+        if (!mNode.isLeaf()) {
+            arrowView.setIconText(context.getResources().getString(
+                    active ? R.string.ic_keyboard_arrow_down : R.string.ic_keyboard_arrow_right));
         }
     }
 }

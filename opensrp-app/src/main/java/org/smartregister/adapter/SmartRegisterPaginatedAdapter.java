@@ -3,6 +3,7 @@ package org.smartregister.adapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
@@ -12,21 +13,19 @@ import org.smartregister.view.dialog.SortOption;
 
 public class SmartRegisterPaginatedAdapter extends BaseAdapter {
     private static final int CLIENTS_PER_PAGE = 20;
-
+    private final int clientsPerPage;
+    private final SmartRegisterClientsProvider listItemProvider;
     private int clientCount;
     private int pageCount;
     private int currentPage = 0;
     private SmartRegisterClients filteredClients;
 
-    private final int clientsPerPage;
-    private final SmartRegisterClientsProvider listItemProvider;
-
     public SmartRegisterPaginatedAdapter(SmartRegisterClientsProvider listItemProvider) {
         this(CLIENTS_PER_PAGE, listItemProvider);
     }
 
-    public SmartRegisterPaginatedAdapter(
-            int clientsPerPage, SmartRegisterClientsProvider listItemProvider) {
+    public SmartRegisterPaginatedAdapter(int clientsPerPage, SmartRegisterClientsProvider
+            listItemProvider) {
         this.clientsPerPage = clientsPerPage;
         this.listItemProvider = listItemProvider;
         refreshClients(listItemProvider.getClients());
@@ -61,7 +60,8 @@ public class SmartRegisterPaginatedAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View parentView, ViewGroup viewGroup) {
-        return listItemProvider.getView((SmartRegisterClient) getItem(actualPosition(i)), parentView, viewGroup);
+        return listItemProvider
+                .getView((SmartRegisterClient) getItem(actualPosition(i)), parentView, viewGroup);
     }
 
     private int actualPosition(int i) {

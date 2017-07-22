@@ -20,16 +20,45 @@ import java.util.Locale;
 
 import static org.smartregister.util.Log.logError;
 
-
 public abstract class DrishtiApplication extends Application {
     private static final String TAG = "DrishtiApplication";
-
+    protected static DrishtiApplication mInstance;
+    private static BitmapImageCache memoryImageCache;
+    private static OpenSRPImageLoader cachedImageLoader;
     protected Locale locale = null;
     protected Context context;
-    private static BitmapImageCache memoryImageCache;
-    protected static DrishtiApplication mInstance;
-    private static OpenSRPImageLoader cachedImageLoader;
+    protected Repository repository;
     private String password;
+
+    public static synchronized DrishtiApplication getInstance() {
+        return mInstance;
+    }
+
+    public static BitmapImageCache getMemoryCacheInstance() {
+        if (memoryImageCache == null) {
+            memoryImageCache = new BitmapImageCache(BitmapImageCache
+                    .calculateMemCacheSize(AllConstants.ImageCache.MEM_CACHE_PERCENT));
+        }
+
+        return memoryImageCache;
+    }
+
+    public static String getAppDir() {
+        File appDir = DrishtiApplication.getInstance().getApplicationContext()
+                .getDir("opensrp", android.content.Context.MODE_PRIVATE); //Creating an internal
+        // dir;
+        return appDir.getAbsolutePath();
+    }
+
+    public static OpenSRPImageLoader getCachedImageLoaderInstance() {
+        if (cachedImageLoader == null) {
+            cachedImageLoader = new OpenSRPImageLoader(
+                    DrishtiApplication.getInstance().getApplicationContext(),
+                    R.drawable.woman_placeholder).setFadeInImage((Build.VERSION.SDK_INT >= 12));
+        }
+
+        return cachedImageLoader;
+    }
 
     @Override
     public void onCreate() {
@@ -43,12 +72,7 @@ public abstract class DrishtiApplication extends Application {
         }
     }
 
-    public static synchronized DrishtiApplication getInstance() {
-        return mInstance;
-    }
-
     public abstract void logoutCurrentUser();
-
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -56,43 +80,16 @@ public abstract class DrishtiApplication extends Application {
         MultiDex.install(this);
     }
 
-    protected Repository repository;
-
     public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance().sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist.toArray(new DrishtiRepository[drishtireposotorylist.size()]);
+        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance()
+                .sharedRepositories();
+        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
+                .toArray(new DrishtiRepository[drishtireposotorylist.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null, drishtireposotoryarray);
+            repository = new Repository(getInstance().getApplicationContext(), null,
+                    drishtireposotoryarray);
         }
         return repository;
-    }
-
-
-    public static BitmapImageCache getMemoryCacheInstance() {
-        if (memoryImageCache == null) {
-            memoryImageCache = new BitmapImageCache(BitmapImageCache.calculateMemCacheSize(AllConstants.ImageCache.MEM_CACHE_PERCENT));
-        }
-
-        return memoryImageCache;
-    }
-
-    public static String getAppDir() {
-        File appDir = DrishtiApplication.getInstance().getApplicationContext().getDir("opensrp", android.content.Context.MODE_PRIVATE); //Creating an internal dir;
-        return appDir.getAbsolutePath();
-    }
-
-    public static OpenSRPImageLoader getCachedImageLoaderInstance() {
-        if (cachedImageLoader == null) {
-            cachedImageLoader = new OpenSRPImageLoader(DrishtiApplication.getInstance().getApplicationContext(), R.drawable.woman_placeholder)
-                    .setFadeInImage((Build.VERSION.SDK_INT >= 12));
-        }
-
-        return cachedImageLoader;
-    }
-
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getPassword() {
@@ -101,5 +98,9 @@ public abstract class DrishtiApplication extends Application {
             password = context.userService().getGroupId(username);
         }
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

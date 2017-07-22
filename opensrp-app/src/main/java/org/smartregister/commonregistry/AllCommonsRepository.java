@@ -1,6 +1,5 @@
 package org.smartregister.commonregistry;
 
-
 import android.content.ContentValues;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,11 +15,12 @@ import java.util.Map;
  * Created by Raihan Ahmed on 2/12/15.
  */
 public class AllCommonsRepository {
-    private CommonRepository personRepository;
     private final TimelineEventRepository timelineEventRepository;
     private final AlertRepository alertRepository;
+    private CommonRepository personRepository;
 
-    public AllCommonsRepository(CommonRepository personRepository, AlertRepository alertRepository, TimelineEventRepository timelineEventRepository) {
+    public AllCommonsRepository(CommonRepository personRepository, AlertRepository
+            alertRepository, TimelineEventRepository timelineEventRepository) {
         this.personRepository = personRepository;
         this.timelineEventRepository = timelineEventRepository;
         this.alertRepository = alertRepository;
@@ -42,19 +42,18 @@ public class AllCommonsRepository {
         return personRepository.count();
     }
 
-
-
-
     public List<CommonPersonObject> findByCaseIDs(List<String> caseIds) {
         return personRepository.findByCaseIDs(caseIds.toArray(new String[caseIds.size()]));
     }
 
     public List<CommonPersonObject> findByRelationalIDs(List<String> RelationalID) {
-        return personRepository.findByRelationalIDs(RelationalID.toArray(new String[RelationalID.size()]));
+        return personRepository
+                .findByRelationalIDs(RelationalID.toArray(new String[RelationalID.size()]));
     }
 
     public List<CommonPersonObject> findByRelational_IDs(List<String> RelationalID) {
-        return personRepository.findByRelational_IDs(RelationalID.toArray(new String[RelationalID.size()]));
+        return personRepository
+                .findByRelational_IDs(RelationalID.toArray(new String[RelationalID.size()]));
     }
 
     public void close(String entityId) {
@@ -67,34 +66,35 @@ public class AllCommonsRepository {
         personRepository.mergeDetails(entityId, details);
     }
 
-    public void update(String tableName,ContentValues contentValues,String caseId){
+    public void update(String tableName, ContentValues contentValues, String caseId) {
         personRepository.updateColumn(tableName, contentValues, caseId);
     }
 
-    public List<CommonPersonObject> customQuery(String sql , String[] selections , String tableName){
-        return personRepository.customQuery(sql,selections,tableName);
+    public List<CommonPersonObject> customQuery(String sql, String[] selections, String tableName) {
+        return personRepository.customQuery(sql, selections, tableName);
     }
 
-    public List<CommonPersonObject> customQueryForCompleteRow(String sql , String[] selections , String tableName){
+    public List<CommonPersonObject> customQueryForCompleteRow(String sql, String[] selections,
+                                                              String tableName) {
         return personRepository.customQueryForCompleteRow(sql, selections, tableName);
     }
 
     public List<String> updateSearch(List<String> caseIds) {
         List<String> remainingIds = new ArrayList<>();
-        if(caseIds == null || caseIds.isEmpty()){
+        if (caseIds == null || caseIds.isEmpty()) {
             return remainingIds;
         }
         Map<String, ContentValues> searchMap = new HashMap<String, ContentValues>();
-        for(String caseId: caseIds){
+        for (String caseId : caseIds) {
             ContentValues contentValues = personRepository.populateSearchValues(caseId);
-            if(contentValues != null){
+            if (contentValues != null) {
                 searchMap.put(caseId, contentValues);
-            }else{
+            } else {
                 remainingIds.add(caseId);
             }
         }
 
-        if(!searchMap.isEmpty()){
+        if (!searchMap.isEmpty()) {
             personRepository.searchBatchInserts(searchMap);
         }
 
@@ -102,18 +102,18 @@ public class AllCommonsRepository {
     }
 
     public boolean updateSearch(String caseId) {
-        if(StringUtils.isBlank(caseId)){
+        if (StringUtils.isBlank(caseId)) {
             return false;
         }
         Map<String, ContentValues> searchMap = new HashMap<String, ContentValues>();
         ContentValues contentValues = personRepository.populateSearchValues(caseId);
-        if(contentValues != null){
+        if (contentValues != null) {
             searchMap.put(caseId, contentValues);
-        }else{
+        } else {
             return false;
         }
 
-        if(!searchMap.isEmpty()){
+        if (!searchMap.isEmpty()) {
             personRepository.searchBatchInserts(searchMap);
         }
 
@@ -121,7 +121,7 @@ public class AllCommonsRepository {
     }
 
     public boolean updateSearch(String caseId, String field, String value, String[] listToRemove) {
-        if(StringUtils.isBlank(caseId)){
+        if (StringUtils.isBlank(caseId)) {
             return false;
         }
 
@@ -130,7 +130,7 @@ public class AllCommonsRepository {
     }
 
     public boolean deleteSearchRecord(String caseId) {
-        if(StringUtils.isBlank(caseId)){
+        if (StringUtils.isBlank(caseId)) {
             return false;
         }
 

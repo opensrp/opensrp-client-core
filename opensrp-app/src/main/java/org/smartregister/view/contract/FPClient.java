@@ -38,11 +38,8 @@ public class FPClient implements FPSmartRegisterClient {
     private static final String[] refillTypes = {CONDOM_REFILL, DPMA_INJECTABLE_REFILL, OCP_REFILL};
 
     private static final String[] followUpTypes = {MALE_STERILIZATION_FOLLOW_UP_1,
-            MALE_STERILIZATION_FOLLOW_UP_2,
-            FEMALE_STERILIZATION_FOLLOW_UP_1,
-            FEMALE_STERILIZATION_FOLLOW_UP_2,
-            FEMALE_STERILIZATION_FOLLOW_UP_3,
-            IUD_FOLLOW_UP_1,
+            MALE_STERILIZATION_FOLLOW_UP_2, FEMALE_STERILIZATION_FOLLOW_UP_1,
+            FEMALE_STERILIZATION_FOLLOW_UP_2, FEMALE_STERILIZATION_FOLLOW_UP_3, IUD_FOLLOW_UP_1,
             IUD_FOLLOW_UP_2};
 
     private static Map<String, String> alertNameToFPMethodMap = new HashMap<String, String>();
@@ -98,8 +95,8 @@ public class FPClient implements FPSmartRegisterClient {
     private String highPriorityReason;
     private RefillFollowUps refillFollowUps;
 
-
-    public FPClient(String entityId, String name, String husbandName, String village, String ecNumber) {
+    public FPClient(String entityId, String name, String husbandName, String village, String
+            ecNumber) {
         this.entityId = entityId;
         this.entityIdToSavePhoto = entityId;
         this.name = name;
@@ -107,7 +104,6 @@ public class FPClient implements FPSmartRegisterClient {
         this.village = village;
         this.ec_number = ecNumber;
     }
-
 
     public FPClient preprocess() {
         return setRefillFollowUp();
@@ -118,9 +114,12 @@ public class FPClient implements FPSmartRegisterClient {
         AlertDTO fpReferralFollowUpAlert = getFPReferralFollowUpAlert(alerts);
         AlertDTO fpFollowUpAlert = getFPFollowUpAlert(alerts);
         if (fpReferralFollowUpAlert != null) {
-            this.withRefillFollowUps(new RefillFollowUps(REFERRAL_FOLLOW_UP, fpReferralFollowUpAlert, getInstance().getStringResource(R.string.str_referral)));
+            this.withRefillFollowUps(
+                    new RefillFollowUps(REFERRAL_FOLLOW_UP, fpReferralFollowUpAlert,
+                            getInstance().getStringResource(R.string.str_referral)));
         } else if (fpFollowUpAlert != null) {
-            this.withRefillFollowUps(new RefillFollowUps(FP_FOLLOW_UP, fpFollowUpAlert, getInstance().getStringResource(R.string.str_follow_up)));
+            this.withRefillFollowUps(new RefillFollowUps(FP_FOLLOW_UP, fpFollowUpAlert,
+                    getInstance().getStringResource(R.string.str_follow_up)));
         } else {
             this.withRefillFollowUps(getOtherFPMethod(alerts));
         }
@@ -130,14 +129,15 @@ public class FPClient implements FPSmartRegisterClient {
     private RefillFollowUps getOtherFPMethod(List<AlertDTO> alerts) {
         for (AlertDTO alert : alerts) {
             if (isOtherFPMethodAlert(alert) && isAlertBelongsTo(alert, followUpTypes)) {
-                return new RefillFollowUps(alert.name(), alert, getInstance().getStringResource(R.string.str_follow_up));
+                return new RefillFollowUps(alert.name(), alert,
+                        getInstance().getStringResource(R.string.str_follow_up));
             } else if (isOtherFPMethodAlert(alert) && isAlertBelongsTo(alert, refillTypes)) {
-                return new RefillFollowUps(alert.name(), alert, getInstance().getStringResource(R.string.str_refill));
+                return new RefillFollowUps(alert.name(), alert,
+                        getInstance().getStringResource(R.string.str_refill));
             }
         }
         return null;
     }
-
 
     private AlertDTO getFPFollowUpAlert(List<AlertDTO> alerts) {
         for (AlertDTO alert : alerts) {
@@ -187,7 +187,6 @@ public class FPClient implements FPSmartRegisterClient {
         this.refillFollowUps = refillFollowUps;
         return this;
     }
-
 
     @Override
     public String entityId() {
@@ -270,10 +269,9 @@ public class FPClient implements FPSmartRegisterClient {
 
     @Override
     public boolean satisfiesFilter(String filter) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase())
-                || String.valueOf(ec_number).startsWith(filter);
+        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase()) || String
+                .valueOf(ec_number).startsWith(filter);
     }
-
 
     @Override
     public int compareName(SmartRegisterClient client) {
@@ -431,7 +429,7 @@ public class FPClient implements FPSmartRegisterClient {
     }
 
     public String numberOfPregnancies() {
-        return  num_pregnancies;
+        return num_pregnancies;
     }
 
     public String parity() {
@@ -549,6 +547,5 @@ public class FPClient implements FPSmartRegisterClient {
     public List<AlertDTO> alerts() {
         return alerts;
     }
-
 
 }

@@ -33,16 +33,15 @@ import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 
 public abstract class SecuredActivity extends ActionBarActivity {
+    public static final String LOG_TAG = "SecuredActivity";
+    protected final int MENU_ITEM_LOGOUT = 2312;
     protected Listener<Boolean> logoutListener;
     protected FormController formController;
     protected ANMController anmController;
     protected NavigationController navigationController;
-    protected final int MENU_ITEM_LOGOUT = 2312;
+    protected ZiggyService ziggyService;
     private String metaData;
     private OpenSRPClientBroadCastReceiver openSRPClientBroadCastReceiver;
-    protected ZiggyService ziggyService;
-
-    public static final String LOG_TAG = "SecuredActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
         ON_LOGOUT.addListener(logoutListener);
 
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication)getApplication();
+            DrishtiApplication application = (DrishtiApplication) getApplication();
             application.logoutCurrentUser();
             return;
         }
@@ -67,9 +66,8 @@ public abstract class SecuredActivity extends ActionBarActivity {
         anmController = context().anmController();
         navigationController = new NavigationController(this, anmController);
         onCreation();
-        
 
-       // Intent replicationServiceIntent = new Intent(this, ReplicationIntentService.class);
+        // Intent replicationServiceIntent = new Intent(this, ReplicationIntentService.class);
         //startService(replicationServiceIntent);
     }
 
@@ -77,7 +75,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication)getApplication();
+            DrishtiApplication application = (DrishtiApplication) getApplication();
             application.logoutCurrentUser();
             return;
         }
@@ -91,11 +89,12 @@ public abstract class SecuredActivity extends ActionBarActivity {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(this, "Language preference set to " + newLanguagePreference + ". Please restart the application.", LENGTH_SHORT).show();
+            Toast.makeText(this, "Language preference set to " + newLanguagePreference + ". "
+                    + "Please restart the application.", LENGTH_SHORT).show();
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
-            DrishtiApplication application = (DrishtiApplication)getApplication();
+            DrishtiApplication application = (DrishtiApplication) getApplication();
             application.logoutCurrentUser();
 
             return super.onOptionsItemSelected(item);
@@ -107,7 +106,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
     /**
      * Attaches a logout menu item to the provided menu
      *
-     * @param menu      The menu to attach the logout menu item
+     * @param menu The menu to attach the logout menu item
      */
     protected void attachLogoutMenuItem(Menu menu) {
         menu.add(0, MENU_ITEM_LOGOUT, menu.size(), R.string.logout_text);
@@ -152,8 +151,8 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
     private void addFieldOverridesIfExist(Intent intent) {
         if (hasMetadata()) {
-            Map<String, String> metaDataMap = new Gson().fromJson(
-                    this.metaData, new TypeToken<Map<String, String>>() {
+            Map<String, String> metaDataMap = new Gson()
+                    .fromJson(this.metaData, new TypeToken<Map<String, String>>() {
                     }.getType());
             if (metaDataMap.containsKey(FIELD_OVERRIDES_PARAM)) {
                 intent.putExtra(FIELD_OVERRIDES_PARAM, metaDataMap.get(FIELD_OVERRIDES_PARAM));
@@ -167,10 +166,14 @@ public abstract class SecuredActivity extends ActionBarActivity {
         if (isSuccessfulFormSubmission(resultCode)) {
             logInfo("Form successfully saved. MetaData: " + metaData);
             if (hasMetadata()) {
-                Map<String, String> metaDataMap = new Gson().fromJson(metaData, new TypeToken<Map<String, String>>() {
-                }.getType());
-                if (metaDataMap.containsKey(ENTITY_ID) && metaDataMap.containsKey(ALERT_NAME_PARAM)) {
-                    Context.getInstance().alertService().changeAlertStatusToInProcess(metaDataMap.get(ENTITY_ID), metaDataMap.get(ALERT_NAME_PARAM));
+                Map<String, String> metaDataMap = new Gson()
+                        .fromJson(metaData, new TypeToken<Map<String, String>>() {
+                        }.getType());
+                if (metaDataMap.containsKey(ENTITY_ID) && metaDataMap
+                        .containsKey(ALERT_NAME_PARAM)) {
+                    Context.getInstance().alertService()
+                            .changeAlertStatusToInProcess(metaDataMap.get(ENTITY_ID),
+                                    metaDataMap.get(ALERT_NAME_PARAM));
                 }
             }
         }
@@ -203,7 +206,8 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
     private void setupReplicationBroadcastReceiver() {
         // The filter's action is BROADCAST_ACTION
-        IntentFilter opensrpClientIntentFilter = new IntentFilter(CloudantSync.ACTION_DATABASE_CREATED);
+        IntentFilter opensrpClientIntentFilter = new IntentFilter(
+                CloudantSync.ACTION_DATABASE_CREATED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_COMPLETED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_ERROR);
         opensrpClientIntentFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
@@ -211,9 +215,9 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
         openSRPClientBroadCastReceiver = new OpenSRPClientBroadCastReceiver(this);
         // Registers the OpenSRPClientBroadCastReceiver and its intent filters
-        LocalBroadcastManager.getInstance(this).registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
     }
-
 
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();

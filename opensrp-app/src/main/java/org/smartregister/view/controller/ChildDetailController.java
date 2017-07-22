@@ -2,7 +2,9 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.gson.Gson;
+
 import org.smartregister.AllConstants;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -17,7 +19,9 @@ import org.smartregister.view.contract.*;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import com.ocpsoft.pretty.time.PrettyTime;
+
 import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
@@ -36,7 +40,9 @@ public class ChildDetailController {
     private final AllBeneficiaries allBeneficiaries;
     private final AllTimelineEvents allTimelineEvents;
 
-    public ChildDetailController(Context context, String caseId, AllEligibleCouples allEligibleCouples, AllBeneficiaries allBeneficiaries, AllTimelineEvents allTimelineEvents) {
+    public ChildDetailController(Context context, String caseId, AllEligibleCouples
+            allEligibleCouples, AllBeneficiaries allBeneficiaries, AllTimelineEvents
+            allTimelineEvents) {
         this.context = context;
         this.caseId = caseId;
         this.allEligibleCouples = allEligibleCouples;
@@ -51,17 +57,18 @@ public class ChildDetailController {
         EligibleCouple couple = allEligibleCouples.findByCaseID(mother.ecCaseId());
 
         LocalDate deliveryDate = LocalDate.parse(child.dateOfBirth());
-        String photoPath = isBlank(child.photoPath()) ?
-                (AllConstants.FEMALE_GENDER.equalsIgnoreCase(child.gender())
+        String photoPath = isBlank(child.photoPath()) ? (
+                AllConstants.FEMALE_GENDER.equalsIgnoreCase(child.gender())
                         ? AllConstants.DEFAULT_GIRL_INFANT_IMAGE_PLACEHOLDER_PATH
                         : AllConstants.DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH)
                 : child.photoPath();
 
         ChildDetail detail = new ChildDetail(caseId, mother.thayiCardNumber(),
-                new CoupleDetails(couple.wifeName(), couple.husbandName(), couple.ecNumber(), couple.isOutOfArea()),
+                new CoupleDetails(couple.wifeName(), couple.husbandName(), couple.ecNumber(),
+                        couple.isOutOfArea()),
                 new LocationDetails(couple.village(), couple.subCenter()),
-                new BirthDetails(deliveryDate.toString(), calculateAge(deliveryDate), child.gender()), photoPath)
-                .addTimelineEvents(getEvents())
+                new BirthDetails(deliveryDate.toString(), calculateAge(deliveryDate),
+                        child.gender()), photoPath).addTimelineEvents(getEvents())
                 .addExtraDetails(child.details());
 
         return new Gson().toJson(detail);
@@ -84,7 +91,9 @@ public class ChildDetailController {
 
         for (org.smartregister.domain.TimelineEvent event : events) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd-MM-YYYY");
-            timelineEvents.add(new TimelineEvent(event.type(), event.title(), new String[]{event.detail1(), event.detail2()}, event.referenceDate().toString(dateTimeFormatter)));
+            timelineEvents.add(new TimelineEvent(event.type(), event.title(),
+                    new String[]{event.detail1(), event.detail2()},
+                    event.referenceDate().toString(dateTimeFormatter)));
         }
 
         return timelineEvents;

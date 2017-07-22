@@ -53,8 +53,7 @@ public class UserService {
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(
-            "yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private final Repository repository;
     private final AllSettings allSettings;
@@ -66,14 +65,10 @@ public class UserService {
     private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
-    public UserService(Repository repositoryArg,
-                       AllSettings allSettingsArg,
-                       AllSharedPreferences allSharedPreferencesArg,
-                       HTTPAgent httpAgentArg,
-                       Session sessionArg,
-                       DristhiConfiguration configurationArg,
-                       SaveANMLocationTask saveANMLocationTaskArg,
-                       SaveUserInfoTask saveUserInfoTaskArg) {
+    public UserService(Repository repositoryArg, AllSettings allSettingsArg, AllSharedPreferences
+            allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
+                       DristhiConfiguration configurationArg, SaveANMLocationTask
+                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg) {
         repository = repositoryArg;
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;
@@ -85,12 +80,49 @@ public class UserService {
         initKeyStore();
     }
 
+    private static TimeZone getDeviceTimeZone() {
+        return TimeZone.getDefault();
+    }
+
+    private static Date getDeviceTime() {
+        Calendar.getInstance().getTime();
+        return Calendar.getInstance().getTime();
+    }
+
+    public static TimeZone getServerTimeZone(String userInfo) {
+        if (userInfo != null) {
+            try {
+                JSONObject userInfoData = new JSONObject(userInfo);
+                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject(TIME).
+                        getString("timeZone"));
+                return timeZone;
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        return null;
+    }
+
+    private static Date getServerTime(String userInfo) {
+        if (userInfo != null) {
+            try {
+                JSONObject userInfoData = new JSONObject(userInfo);
+                return DATE_FORMAT.parse(userInfoData.getJSONObject(TIME).getString(TIME));
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        return null;
+    }
+
     public void initKeyStore() {
         try {
             this.keyStore = KeyStore.getInstance(KEYSTORE);
             this.keyStore.load(null);
-        } catch (KeyStoreException
-                | IOException | NoSuchAlgorithmException | CertificateException e) {
+        } catch (KeyStoreException | IOException | NoSuchAlgorithmException |
+                CertificateException e) {
             e.printStackTrace();
         }
     }
@@ -136,8 +168,8 @@ public class UserService {
         Date serverTime = getServerTime(userInfo);
         Date deviceTime = getDeviceTime();
 
-        if (serverTimeZone != null && deviceTimeZone != null
-                && serverTime != null && deviceTime != null) {
+        if (serverTimeZone != null && deviceTimeZone != null && serverTime != null
+                && deviceTime != null) {
             if (serverTimeZone.getRawOffset() == deviceTimeZone.getRawOffset()) {
                 long timeDiff = Math.abs(serverTime.getTime() - deviceTime.getTime());
                 if (timeDiff <= serverTimeThreshold) {
@@ -153,53 +185,15 @@ public class UserService {
         return TimeStatus.ERROR;
     }
 
-    private static TimeZone getDeviceTimeZone() {
-        return TimeZone.getDefault();
-    }
-
-    private static Date getDeviceTime() {
-        Calendar.getInstance().getTime();
-        return Calendar.getInstance().getTime();
-    }
-
-    public static TimeZone getServerTimeZone(String userInfo) {
-        if (userInfo != null) {
-            try {
-                JSONObject userInfoData = new JSONObject(userInfo);
-                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject(TIME).
-                        getString("timeZone"));
-                return timeZone;
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-
-        return null;
-    }
-
-    private static Date getServerTime(String userInfo) {
-        if (userInfo != null) {
-            try {
-                JSONObject userInfoData = new JSONObject(userInfo);
-                return DATE_FORMAT.parse(userInfoData.getJSONObject(TIME).getString(TIME));
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-
-        return null;
-    }
-
     public boolean isValidLocalLogin(String userName, String password) {
-        return allSharedPreferences.fetchRegisteredANM().equals(userName)
-                && repository.canUseThisPassword(password)
-                && !allSharedPreferences.fetchForceRemoteLogin();
+        return allSharedPreferences.fetchRegisteredANM().equals(userName) && repository
+                .canUseThisPassword(password) && !allSharedPreferences.fetchForceRemoteLogin();
     }
 
     public boolean isUserInValidGroup(final String userName, final String password) {
         // Check if everything OK for local login
-        if (keyStore != null && userName != null && password != null
-                && !allSharedPreferences.fetchForceRemoteLogin()) {
+        if (keyStore != null && userName != null && password != null && !allSharedPreferences
+                .fetchForceRemoteLogin()) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 if (privateKeyEntry != null) {
@@ -281,8 +275,8 @@ public class UserService {
 
         requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
 
-        LoginResponse loginResponse = httpAgent.urlCanBeAccessWithGivenCredentials(
-                requestURL, userName, password);
+        LoginResponse loginResponse = httpAgent
+                .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
         saveUserGroup(userName, password, loginResponse.payload());
 
         return loginResponse;
@@ -423,17 +417,17 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
                 if (privateKeyEntry != null) {
                     JSONObject userInfoObject = new JSONObject(userInfo);
-                    if (userInfoObject.has("team")
-                            && userInfoObject.getJSONObject("team").has("team")
-                            && userInfoObject.getJSONObject("team").getJSONObject("team").
-                            has("uuid")) {
+                    if (userInfoObject.has("team") && userInfoObject.getJSONObject("team")
+                            .has("team") && userInfoObject.getJSONObject("team")
+                            .getJSONObject("team").
+                                    has("uuid")) {
                         // First save the encrypted password
                         String encryptedPassword = encryptString(privateKeyEntry, password);
                         allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
 
                         // Then save the encrypted group
-                        String groupId = userInfoObject.getJSONObject("team")
-                                .getJSONObject("team").getString("uuid");
+                        String groupId = userInfoObject.getJSONObject("team").getJSONObject("team")
+                                .getString("uuid");
                         String encryptedGroupId = encryptString(privateKeyEntry, groupId);
                         allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 
@@ -518,13 +512,10 @@ public class UserService {
                 int serialNumber = Math.abs(0 + (int) (Math.random() * (Integer.MAX_VALUE + 1)));
 
                 KeyPairGeneratorSpec generatorSpec = new KeyPairGeneratorSpec.Builder(
-                        DrishtiApplication.getInstance())
-                        .setAlias(username)
+                        DrishtiApplication.getInstance()).setAlias(username)
                         .setSubject(new X500Principal("CN=" + username + ", O=OpenSRP"))
-                        .setStartDate(now.getTime())
-                        .setEndDate(expiry.getTime())
-                        .setSerialNumber(BigInteger.valueOf((long) serialNumber))
-                        .build();
+                        .setStartDate(now.getTime()).setEndDate(expiry.getTime())
+                        .setSerialNumber(BigInteger.valueOf((long) serialNumber)).build();
 
                 KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA", KEYSTORE);
                 generator.initialize(generatorSpec);
@@ -594,8 +585,7 @@ public class UserService {
         input.init(Cipher.ENCRYPT_MODE, publicKey);
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        CipherOutputStream cipherOutputStream = new CipherOutputStream(
-                outputStream, input);
+        CipherOutputStream cipherOutputStream = new CipherOutputStream(outputStream, input);
         cipherOutputStream.write(plainText.getBytes(CIPHER_TEXT_CHARACTER_CODE));
         cipherOutputStream.close();
 

@@ -1,6 +1,7 @@
 package org.smartregister.domain.form;
 
 import com.google.gson.Gson;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -17,12 +18,16 @@ public class FormSubmission {
     private SyncStatus syncStatus;
     private FormInstance formInstance;
 
-    public FormSubmission(String instanceId, String entityId, String formName, String instance, String clientVersion, SyncStatus syncStatus, String formDataDefinitionVersion) {
-        this(instanceId, entityId, formName, instance, clientVersion, syncStatus, formDataDefinitionVersion, null);
+    public FormSubmission(String instanceId, String entityId, String formName, String instance,
+                          String clientVersion, SyncStatus syncStatus, String
+                                  formDataDefinitionVersion) {
+        this(instanceId, entityId, formName, instance, clientVersion, syncStatus,
+                formDataDefinitionVersion, null);
     }
 
-    public FormSubmission(String instanceId, String entityId, String formName, String instance, String clientVersion, SyncStatus syncStatus, String formDataDefinitionVersion,
-                          String serverVersion) {
+    public FormSubmission(String instanceId, String entityId, String formName, String instance,
+                          String clientVersion, SyncStatus syncStatus, String
+                                  formDataDefinitionVersion, String serverVersion) {
         this.instanceId = instanceId;
         this.entityId = entityId;
         this.formName = formName;
@@ -107,7 +112,7 @@ public class FormSubmission {
         this.formInstance = formInstance;
     }
 
-    public FormData getForm(){
+    public FormData getForm() {
         return formInstance.form();
     }
 

@@ -12,7 +12,6 @@ import java.util.Properties;
 
 public class DristhiConfiguration {
 
-
     public static final String TAG = "DristhiConfiguration";
     protected static final String DRISHTI_BASE_URL = "DRISHTI_BASE_URL";
 
@@ -27,7 +26,7 @@ public class DristhiConfiguration {
     protected String dummyData = null;
 
     public DristhiConfiguration(AssetManager assetManager) {
-        preferences=Context.getInstance().allSharedPreferences();
+        preferences = Context.getInstance().allSharedPreferences();
         try {
             properties.load(assetManager.open("app.properties"));
         } catch (IOException e) {
@@ -35,7 +34,9 @@ public class DristhiConfiguration {
         }
     }
 
-    public String getDummyData() { return this.dummyData; }
+    public String getDummyData() {
+        return this.dummyData;
+    }
 
     private String get(String key) {
         return properties.getProperty(key);
@@ -48,7 +49,6 @@ public class DristhiConfiguration {
     }
 
     public int port() {
-
 
         return preferences.fetchPort(Integer.parseInt(this.get(PORT)));
     }

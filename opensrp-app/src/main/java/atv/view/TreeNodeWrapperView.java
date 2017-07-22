@@ -9,14 +9,13 @@ import android.widget.RelativeLayout;
 
 import org.smartregister.R;
 
-
 /**
  * Created by Bogdan Melnychuk on 2/10/15.
  */
 public class TreeNodeWrapperView extends LinearLayout {
+    private final int containerStyle;
     private LinearLayout nodeItemsContainer;
     private ViewGroup nodeContainer;
-    private final int containerStyle;
 
     public TreeNodeWrapperView(Context context, int containerStyle) {
         super(context);
@@ -28,12 +27,14 @@ public class TreeNodeWrapperView extends LinearLayout {
         setOrientation(LinearLayout.VERTICAL);
 
         nodeContainer = new RelativeLayout(getContext());
-        nodeContainer.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        nodeContainer.setLayoutParams(
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         nodeContainer.setId(R.id.node_header);
 
         ContextThemeWrapper newContext = new ContextThemeWrapper(getContext(), containerStyle);
         nodeItemsContainer = new LinearLayout(newContext, null, containerStyle);
-        nodeItemsContainer.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        nodeItemsContainer.setLayoutParams(
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
         nodeItemsContainer.setId(R.id.node_items);
         nodeItemsContainer.setOrientation(LinearLayout.VERTICAL);
         nodeItemsContainer.setVisibility(View.GONE);
@@ -41,7 +42,6 @@ public class TreeNodeWrapperView extends LinearLayout {
         addView(nodeContainer);
         addView(nodeItemsContainer);
     }
-
 
     public void insertNodeView(View nodeView) {
         nodeContainer.addView(nodeView);

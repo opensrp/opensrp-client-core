@@ -2,6 +2,7 @@ package org.smartregister.view.dialog;
 
 import android.view.View;
 import android.widget.TextView;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.domain.ChildServiceType;
@@ -11,7 +12,8 @@ import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 import org.smartregister.view.viewholder.*;
 
 import static org.smartregister.AllConstants.FormNames.CHILD_IMMUNIZATIONS;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
+        .ClientsHeaderProvider;
 import static org.smartregister.view.contract.AlertDTO.emptyAlert;
 
 public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
@@ -22,7 +24,8 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.child_service_mode_immunization_0_to_9);
+        return Context.getInstance()
+                .getStringResource(R.string.child_service_mode_immunization_0_to_9);
     }
 
     @Override
@@ -45,18 +48,17 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
 
             @Override
             public int[] headerTextResourceIds() {
-                return new int[]{
-                        R.string.header_name, R.string.header_id_no, R.string.header_bcg,
-                        R.string.header_hep_b_birth, R.string.header_opv, R.string.header_pentavalent};
+                return new int[]{R.string.header_name, R.string.header_id_no, R.string
+                        .header_bcg, R.string.header_hep_b_birth, R.string.header_opv, R.string
+                        .header_pentavalent};
             }
         };
 
     }
 
     @Override
-    public void setupListView(ChildSmartRegisterClient client,
-                              NativeChildSmartRegisterViewHolder viewHolder,
-                              View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
         viewHolder.serviceModeImmunization0to9View().setVisibility(View.VISIBLE);
 
         setupBcgLayout(client, viewHolder);
@@ -66,17 +68,20 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
     }
 
     @Override
-    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
@@ -106,11 +111,10 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
         if (hepBAlert != emptyAlert) {
             viewHolder.addHepBView().setVisibility(View.INVISIBLE);
             viewHolder.layoutHepBAlertView().setVisibility(View.VISIBLE);
-            viewHolder.layoutHepBAlertView().setOnClickListener(launchChildImmunizationForm(client));
-            setAlertLayout(viewHolder.layoutHepBAlertView(),
-                    viewHolder.hepBAlertDueTypeView(),
-                    viewHolder.hepBAlertDueOnView(),
-                    hepBAlert);
+            viewHolder.layoutHepBAlertView()
+                    .setOnClickListener(launchChildImmunizationForm(client));
+            setAlertLayout(viewHolder.layoutHepBAlertView(), viewHolder.hepBAlertDueTypeView(),
+                    viewHolder.hepBAlertDueOnView(), hepBAlert);
         } else {
             viewHolder.layoutHepBAlertView().setVisibility(View.INVISIBLE);
             viewHolder.addHepBView().setVisibility(View.VISIBLE);
@@ -132,10 +136,8 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
             viewHolder.addOpvView().setVisibility(View.INVISIBLE);
             viewHolder.layoutOpvAlertView().setVisibility(View.VISIBLE);
             viewHolder.layoutOpvAlertView().setOnClickListener(launchChildImmunizationForm(client));
-            setAlertLayout(viewHolder.layoutOpvAlertView(),
-                    viewHolder.opvAlertDueTypeView(),
-                    viewHolder.opvAlertDueOnView(),
-                    opvAlert);
+            setAlertLayout(viewHolder.layoutOpvAlertView(), viewHolder.opvAlertDueTypeView(),
+                    viewHolder.opvAlertDueOnView(), opvAlert);
         } else {
             viewHolder.layoutOpvAlertView().setVisibility(View.INVISIBLE);
             viewHolder.addOpvView().setVisibility(View.VISIBLE);
@@ -156,22 +158,22 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
         if (pentavAlert != emptyAlert) {
             viewHolder.addPentavView().setVisibility(View.INVISIBLE);
             viewHolder.layoutPentavAlertView().setVisibility(View.VISIBLE);
-            viewHolder.layoutPentavAlertView().setOnClickListener(launchChildImmunizationForm(client));
-            setAlertLayout(viewHolder.layoutPentavAlertView(),
-                    viewHolder.pentavAlertDueTypeView(),
-                    viewHolder.pentavAlertDueOnView(),
-                    pentavAlert);
+            viewHolder.layoutPentavAlertView()
+                    .setOnClickListener(launchChildImmunizationForm(client));
+            setAlertLayout(viewHolder.layoutPentavAlertView(), viewHolder.pentavAlertDueTypeView(),
+                    viewHolder.pentavAlertDueOnView(), pentavAlert);
         } else {
             viewHolder.layoutPentavAlertView().setVisibility(View.INVISIBLE);
             viewHolder.addPentavView().setVisibility(View.VISIBLE);
             viewHolder.addPentavView().setOnClickListener(launchChildImmunizationForm(client));
         }
     }
+
     private OnClickFormLauncher launchChildImmunizationForm(ChildSmartRegisterClient client) {
         return provider().newFormLauncher(CHILD_IMMUNIZATIONS, client.entityId(), null);
     }
-    private void setAlertLayout(View layout, TextView typeView,
-                                TextView dateView, AlertDTO alert) {
+
+    private void setAlertLayout(View layout, TextView typeView, TextView dateView, AlertDTO alert) {
         typeView.setText(alert.type().shortName());
         dateView.setText("due " + alert.shortDate());
 

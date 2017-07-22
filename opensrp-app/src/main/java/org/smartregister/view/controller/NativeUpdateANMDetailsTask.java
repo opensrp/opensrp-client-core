@@ -1,6 +1,7 @@
 package org.smartregister.view.controller;
 
 import android.os.AsyncTask;
+
 import org.smartregister.view.contract.HomeContext;
 
 import java.util.concurrent.locks.ReentrantLock;
@@ -9,8 +10,8 @@ import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 import static org.smartregister.util.Log.logWarn;
 
 public class NativeUpdateANMDetailsTask {
-    private final ANMController anmController;
     private static final ReentrantLock lock = new ReentrantLock();
+    private final ANMController anmController;
 
     public NativeUpdateANMDetailsTask(ANMController anmController) {
         this.anmController = anmController;

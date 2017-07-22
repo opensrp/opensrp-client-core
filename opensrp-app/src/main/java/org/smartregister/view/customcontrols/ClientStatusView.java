@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.R;
 import org.smartregister.view.contract.ECSmartRegisterClient;
@@ -38,18 +39,17 @@ public class ClientStatusView extends FrameLayout {
 
     public void initialize() {
         this.statusLayouts = new HashMap<String, ViewStubInflater>();
-        ViewStubInflater commonECAndFPLayout = new ViewStubInflater((ViewStub) findViewById(R.id.ec_and_fp_status_layout));
+        ViewStubInflater commonECAndFPLayout = new ViewStubInflater(
+                (ViewStub) findViewById(R.id.ec_and_fp_status_layout));
 
-        this.statusLayouts
-                .put(EC_STATUS, commonECAndFPLayout);
-        this.statusLayouts
-                .put(FP_STATUS, commonECAndFPLayout);
-        this.statusLayouts
-                .put(ANC_STATUS, new ViewStubInflater((ViewStub) findViewById(R.id.anc_status_layout)));
-        this.statusLayouts
-                .put(PNC_STATUS, new ViewStubInflater((ViewStub) findViewById(R.id.pnc_status_layout)));
-        this.statusLayouts
-                .put(PNC_FP_STATUS, new ViewStubInflater((ViewStub) findViewById(R.id.pnc_and_fp_status_layout)));
+        this.statusLayouts.put(EC_STATUS, commonECAndFPLayout);
+        this.statusLayouts.put(FP_STATUS, commonECAndFPLayout);
+        this.statusLayouts.put(ANC_STATUS,
+                new ViewStubInflater((ViewStub) findViewById(R.id.anc_status_layout)));
+        this.statusLayouts.put(PNC_STATUS,
+                new ViewStubInflater((ViewStub) findViewById(R.id.pnc_status_layout)));
+        this.statusLayouts.put(PNC_FP_STATUS,
+                new ViewStubInflater((ViewStub) findViewById(R.id.pnc_and_fp_status_layout)));
     }
 
     public void bindData(ECSmartRegisterClient client) {
@@ -64,8 +64,7 @@ public class ClientStatusView extends FrameLayout {
             dateView(statusViewGroup).setText(statusDate);
 
             if (EC_STATUS.equalsIgnoreCase(statusType) || FP_STATUS.equalsIgnoreCase(statusType)) {
-                typeView(statusViewGroup)
-                        .setText(StringUtils.upperCase(statusType));
+                typeView(statusViewGroup).setText(StringUtils.upperCase(statusType));
             } else if (ANC_STATUS.equalsIgnoreCase(statusType)) {
                 eddDateView(statusViewGroup)
                         .setText(formatDate(client.status().get(STATUS_EDD_FIELD)));

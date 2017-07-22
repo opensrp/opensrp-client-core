@@ -9,7 +9,8 @@ import java.util.List;
 
 public class Event<CallbackType> {
     public static final Event<FetchStatus> ON_DATA_FETCHED = new Event<FetchStatus>();
-    public static final Event<CapturedPhotoInformation> ON_PHOTO_CAPTURED = new Event<CapturedPhotoInformation>();
+    public static final Event<CapturedPhotoInformation> ON_PHOTO_CAPTURED = new
+            Event<CapturedPhotoInformation>();
     public static final Event<Boolean> ON_LOGOUT = new Event<Boolean>();
     public static final Event<Boolean> SYNC_STARTED = new Event<Boolean>();
     public static final Event<Boolean> SYNC_COMPLETED = new Event<Boolean>();

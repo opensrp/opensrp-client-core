@@ -2,9 +2,12 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -23,8 +26,12 @@ import static org.smartregister.repository.MotherRepository.MOTHER_TABLE_COLUMNS
 import static org.smartregister.repository.MotherRepository.MOTHER_TABLE_NAME;
 
 public class ChildRepository extends DrishtiRepository {
-    private static final String CHILD_SQL = "CREATE TABLE child(id VARCHAR PRIMARY KEY, motherCaseId VARCHAR, thayiCardNumber VARCHAR, dateOfBirth VARCHAR, gender VARCHAR, details VARCHAR, isClosed VARCHAR, photoPath VARCHAR)";
     public static final String CHILD_TABLE_NAME = "child";
+    public static final String PHOTO_PATH_COLUMN = "photoPath";
+    public static final String NOT_CLOSED = "false";
+    private static final String CHILD_SQL = "CREATE TABLE child(id VARCHAR PRIMARY KEY, "
+            + "motherCaseId VARCHAR, thayiCardNumber VARCHAR, dateOfBirth VARCHAR, gender VARCHAR, "
+            + "" + "" + "details VARCHAR, isClosed VARCHAR, photoPath VARCHAR)";
     private static final String ID_COLUMN = "id";
     private static final String MOTHER_ID_COLUMN = "motherCaseId";
     private static final String THAYI_CARD_COLUMN = "thayiCardNumber";
@@ -32,9 +39,9 @@ public class ChildRepository extends DrishtiRepository {
     private static final String GENDER_COLUMN = "gender";
     private static final String DETAILS_COLUMN = "details";
     private static final String IS_CLOSED_COLUMN = "isClosed";
-    public static final String PHOTO_PATH_COLUMN = "photoPath";
-    public static final String[] CHILD_TABLE_COLUMNS = {ID_COLUMN, MOTHER_ID_COLUMN, THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
-    public static final String NOT_CLOSED = "false";
+    public static final String[] CHILD_TABLE_COLUMNS = {ID_COLUMN, MOTHER_ID_COLUMN,
+            THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN,
+            IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -48,18 +55,22 @@ public class ChildRepository extends DrishtiRepository {
 
     public void update(Child child) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
-        database.update(CHILD_TABLE_NAME, createValuesFor(child), ID_COLUMN + " = ?", new String[]{child.caseId()});
+        database.update(CHILD_TABLE_NAME, createValuesFor(child), ID_COLUMN + " = ?",
+                new String[]{child.caseId()});
     }
 
     public List<Child> all() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS, IS_CLOSED_COLUMN + " = ?", new String[]{NOT_CLOSED}, null, null, null, null);
+        Cursor cursor = database
+                .query(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS, IS_CLOSED_COLUMN + " = ?",
+                        new String[]{NOT_CLOSED}, null, null, null, null);
         return readAll(cursor);
     }
 
     public Child find(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS, ID_COLUMN + " = ?", new String[]{caseId}, null, null, null, null);
+        Cursor cursor = database.query(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS, ID_COLUMN + " = ?",
+                new String[]{caseId}, null, null, null, null);
         List<Child> children = readAll(cursor);
 
         if (children.isEmpty()) {
@@ -70,7 +81,9 @@ public class ChildRepository extends DrishtiRepository {
 
     public List<Child> findChildrenByCaseIds(String... caseIds) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(String.format("SELECT * FROM %s WHERE %s IN (%s)", CHILD_TABLE_NAME, ID_COLUMN, insertPlaceholdersForInClause(caseIds.length)), caseIds);
+        Cursor cursor = database.rawQuery(
+                String.format("SELECT * FROM %s WHERE %s IN (%s)", CHILD_TABLE_NAME, ID_COLUMN,
+                        insertPlaceholdersForInClause(caseIds.length)), caseIds);
         return readAll(cursor);
     }
 
@@ -83,12 +96,16 @@ public class ChildRepository extends DrishtiRepository {
 
     public List<Child> findByMotherCaseId(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS, MOTHER_ID_COLUMN + " = ?", new String[]{caseId}, null, null, null, null);
+        Cursor cursor = database
+                .query(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS, MOTHER_ID_COLUMN + " = ?",
+                        new String[]{caseId}, null, null, null, null);
         return readAll(cursor);
     }
 
     public long count() {
-        return longForQuery(masterRepository.getReadableDatabase(), "SELECT COUNT(1) FROM " + CHILD_TABLE_NAME + " WHERE " + IS_CLOSED_COLUMN + " = '" + NOT_CLOSED + "'", new String[0]);
+        return longForQuery(masterRepository.getReadableDatabase(),
+                "SELECT COUNT(1) FROM " + CHILD_TABLE_NAME + " WHERE " + IS_CLOSED_COLUMN + " = '"
+                        + NOT_CLOSED + "'", new String[0]);
     }
 
     public void close(String caseId) {
@@ -97,15 +114,16 @@ public class ChildRepository extends DrishtiRepository {
 
     public List<Child> allChildrenWithMotherAndEC() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " +
-                tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) + ", " +
-                tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", " +
-                tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) +
-                " FROM " + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME +
-                " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED + "' AND " +
-                CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = " + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN
-                + " AND " + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN,
-                null);
+        Cursor cursor = database.rawQuery(
+                "SELECT " + tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) + ", "
+                        + tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", "
+                        + tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) + " FROM "
+                        + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME + " "
+                        + "WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED
+                        + "' AND " + CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = "
+                        + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN + " AND "
+                        + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = "
+                        + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, null);
         return readAllChildrenWithMotherAndEC(cursor);
     }
 
@@ -125,7 +143,8 @@ public class ChildRepository extends DrishtiRepository {
     private void markAsClosed(String caseId) {
         ContentValues values = new ContentValues();
         values.put(IS_CLOSED_COLUMN, TRUE.toString());
-        masterRepository.getWritableDatabase().update(CHILD_TABLE_NAME, values, ID_COLUMN + " = ?", new String[]{caseId});
+        masterRepository.getWritableDatabase()
+                .update(CHILD_TABLE_NAME, values, ID_COLUMN + " = " + "?", new String[]{caseId});
     }
 
     private ContentValues createValuesFor(Child child) {
@@ -145,12 +164,12 @@ public class ChildRepository extends DrishtiRepository {
         cursor.moveToFirst();
         List<Child> children = new ArrayList<Child>();
         while (!cursor.isAfterLast()) {
-            children.add(new Child(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4),
-                    new Gson().<Map<String, String>>fromJson(cursor.getString(5), new TypeToken<Map<String, String>>() {
-                    }.getType()))
-                    .setIsClosed(Boolean.valueOf(cursor.getString(6)))
-                    .withPhotoPath(cursor.getString(cursor.getColumnIndex(PHOTO_PATH_COLUMN)))
-            );
+            children.add(new Child(cursor.getString(0), cursor.getString(1), cursor.getString(2),
+                    cursor.getString(3), cursor.getString(4),
+                    new Gson().<Map<String, String>>fromJson(cursor.getString(5),
+                            new TypeToken<Map<String, String>>() {
+                            }.getType())).setIsClosed(Boolean.valueOf(cursor.getString(6)))
+                    .withPhotoPath(cursor.getString(cursor.getColumnIndex(PHOTO_PATH_COLUMN))));
             cursor.moveToNext();
         }
         cursor.close();
@@ -161,8 +180,7 @@ public class ChildRepository extends DrishtiRepository {
         cursor.moveToFirst();
         List<Child> children = new ArrayList<Child>();
         while (!cursor.isAfterLast()) {
-            children.add(childFromCursor(cursor)
-                    .withMother(motherFromCursor(cursor))
+            children.add(childFromCursor(cursor).withMother(motherFromCursor(cursor))
                     .withEC(ecFromCursor(cursor)));
             cursor.moveToNext();
         }
@@ -173,25 +191,38 @@ public class ChildRepository extends DrishtiRepository {
     private EligibleCouple ecFromCursor(Cursor cursor) {
         return new EligibleCouple(
                 getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.ID_COLUMN),
-                getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.WIFE_NAME_COLUMN),
-                getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.HUSBAND_NAME_COLUMN),
-                getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.EC_NUMBER_COLUMN),
-                getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.VILLAGE_NAME_COLUMN),
-                getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.SUBCENTER_NAME_COLUMN),
-                new Gson().<Map<String, String>>fromJson(getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.DETAILS_COLUMN), new TypeToken<Map<String, String>>() {
-                }.getType()))
-                .withPhotoPath(getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.PHOTO_PATH_COLUMN))
-                .withOutOfArea(getColumnValueByAlias(cursor, EC_TABLE_NAME, EligibleCoupleRepository.IS_OUT_OF_AREA_COLUMN));
+                getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                        EligibleCoupleRepository.WIFE_NAME_COLUMN),
+                getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                        EligibleCoupleRepository.HUSBAND_NAME_COLUMN),
+                getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                        EligibleCoupleRepository.EC_NUMBER_COLUMN),
+                getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                        EligibleCoupleRepository.VILLAGE_NAME_COLUMN),
+                getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                        EligibleCoupleRepository.SUBCENTER_NAME_COLUMN),
+                new Gson().<Map<String, String>>fromJson(
+                        getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                                EligibleCoupleRepository.DETAILS_COLUMN),
+                        new TypeToken<Map<String, String>>() {
+                        }.getType())).withPhotoPath(getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                EligibleCoupleRepository.PHOTO_PATH_COLUMN)).withOutOfArea(
+                getColumnValueByAlias(cursor, EC_TABLE_NAME,
+                        EligibleCoupleRepository.IS_OUT_OF_AREA_COLUMN));
     }
 
     private Mother motherFromCursor(Cursor cursor) {
         return new Mother(
                 getColumnValueByAlias(cursor, MOTHER_TABLE_NAME, MotherRepository.ID_COLUMN),
                 getColumnValueByAlias(cursor, MOTHER_TABLE_NAME, MotherRepository.EC_CASEID_COLUMN),
-                getColumnValueByAlias(cursor, MOTHER_TABLE_NAME, MotherRepository.THAYI_CARD_NUMBER_COLUMN),
+                getColumnValueByAlias(cursor, MOTHER_TABLE_NAME,
+                        MotherRepository.THAYI_CARD_NUMBER_COLUMN),
                 getColumnValueByAlias(cursor, MOTHER_TABLE_NAME, MotherRepository.REF_DATE_COLUMN))
-                .withDetails(new Gson().<Map<String, String>>fromJson(getColumnValueByAlias(cursor, MOTHER_TABLE_NAME, MotherRepository.DETAILS_COLUMN), new TypeToken<Map<String, String>>() {
-                }.getType()));
+                .withDetails(new Gson().<Map<String, String>>fromJson(
+                        getColumnValueByAlias(cursor, MOTHER_TABLE_NAME,
+                                MotherRepository.DETAILS_COLUMN),
+                        new TypeToken<Map<String, String>>() {
+                        }.getType()));
     }
 
     private List<Child> readAllChildren(Cursor cursor) {
@@ -206,15 +237,16 @@ public class ChildRepository extends DrishtiRepository {
     }
 
     private Child childFromCursor(Cursor cursor) {
-        return new Child(
-                getColumnValueByAlias(cursor, CHILD_TABLE_NAME, ID_COLUMN),
+        return new Child(getColumnValueByAlias(cursor, CHILD_TABLE_NAME, ID_COLUMN),
                 getColumnValueByAlias(cursor, CHILD_TABLE_NAME, MOTHER_ID_COLUMN),
                 getColumnValueByAlias(cursor, CHILD_TABLE_NAME, THAYI_CARD_COLUMN),
                 getColumnValueByAlias(cursor, CHILD_TABLE_NAME, DATE_OF_BIRTH_COLUMN),
                 getColumnValueByAlias(cursor, CHILD_TABLE_NAME, GENDER_COLUMN),
-                new Gson().<Map<String, String>>fromJson(getColumnValueByAlias(cursor, CHILD_TABLE_NAME, DETAILS_COLUMN), new TypeToken<Map<String, String>>() {
-                }.getType()))
-                .setIsClosed(Boolean.valueOf(getColumnValueByAlias(cursor, CHILD_TABLE_NAME, IS_CLOSED_COLUMN)))
+                new Gson().<Map<String, String>>fromJson(
+                        getColumnValueByAlias(cursor, CHILD_TABLE_NAME, DETAILS_COLUMN),
+                        new TypeToken<Map<String, String>>() {
+                        }.getType())).setIsClosed(
+                Boolean.valueOf(getColumnValueByAlias(cursor, CHILD_TABLE_NAME, IS_CLOSED_COLUMN)))
                 .withPhotoPath(getColumnValueByAlias(cursor, CHILD_TABLE_NAME, PHOTO_PATH_COLUMN));
     }
 
@@ -235,14 +267,16 @@ public class ChildRepository extends DrishtiRepository {
 
     public List<Child> findAllChildrenByECId(String ecId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " +
-                tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) +
-                " FROM " + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME +
-                " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED + "' AND " +
-                CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = " + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN
-                + " AND " + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = " + EC_TABLE_NAME + "." +
-                EligibleCoupleRepository.ID_COLUMN + " AND " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN +
-                "= ? ", new String[]{ecId});
+        Cursor cursor = database.rawQuery(
+                "SELECT " + tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) + " FROM "
+                        + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME
+                        + " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "=" + " '"
+                        + NOT_CLOSED + "' AND " + CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = "
+                        + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN + " AND "
+                        + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = "
+                        + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN + " AND "
+                        + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN + "= ? ",
+                new String[]{ecId});
         return readAllChildren(cursor);
     }
 

@@ -14,7 +14,8 @@ public class BeneficiaryService {
     private final AllEligibleCouples allEligibleCouples;
     private final AllBeneficiaries allBeneficiaries;
 
-    public BeneficiaryService(AllEligibleCouples allEligibleCouples, AllBeneficiaries allBeneficiaries) {
+    public BeneficiaryService(AllEligibleCouples allEligibleCouples, AllBeneficiaries
+            allBeneficiaries) {
         this.allEligibleCouples = allEligibleCouples;
         this.allBeneficiaries = allBeneficiaries;
     }
@@ -23,7 +24,8 @@ public class BeneficiaryService {
         List<Beneficiary> beneficiaries = new ArrayList<Beneficiary>();
         List<EligibleCouple> eligibleCouples = allEligibleCouples.findByCaseIDs(caseIds);
         for (EligibleCouple ec : eligibleCouples) {
-            beneficiaries.add(new Beneficiary(ec.caseId(), ec.wifeName(), ec.husbandName(), "", ec.ecNumber(), ec.village(), ec.isHighPriority()));
+            beneficiaries.add(new Beneficiary(ec.caseId(), ec.wifeName(), ec.husbandName(), "",
+                    ec.ecNumber(), ec.village(), ec.isHighPriority()));
         }
         return beneficiaries;
     }
@@ -34,7 +36,10 @@ public class BeneficiaryService {
         for (Child child : children) {
             Mother mother = allBeneficiaries.findMother(child.motherCaseId());
             EligibleCouple parents = allEligibleCouples.findByCaseID(mother.ecCaseId());
-            beneficiaries.add(new Beneficiary(child.caseId(), parents.wifeName(), parents.husbandName(), child.thayiCardNumber(), parents.ecNumber(), parents.village(), child.isHighRisk()));
+            beneficiaries
+                    .add(new Beneficiary(child.caseId(), parents.wifeName(), parents.husbandName(),
+                            child.thayiCardNumber(), parents.ecNumber(), parents.village(),
+                            child.isHighRisk()));
         }
         return beneficiaries;
     }
@@ -44,7 +49,8 @@ public class BeneficiaryService {
         List<Mother> mothers = allBeneficiaries.findAllMothersByCaseIDs(caseIds);
         for (Mother mother : mothers) {
             EligibleCouple ec = allEligibleCouples.findByCaseID(mother.ecCaseId());
-            beneficiaries.add(new Beneficiary(mother.caseId(), ec.wifeName(), ec.husbandName(), mother.thayiCardNumber(), ec.ecNumber(), ec.village(), mother.isHighRisk()));
+            beneficiaries.add(new Beneficiary(mother.caseId(), ec.wifeName(), ec.husbandName(),
+                    mother.thayiCardNumber(), ec.ecNumber(), ec.village(), mother.isHighRisk()));
         }
         return beneficiaries;
     }

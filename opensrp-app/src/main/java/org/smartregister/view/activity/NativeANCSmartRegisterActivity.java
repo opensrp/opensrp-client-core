@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.view.View;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
@@ -21,14 +22,13 @@ import static org.smartregister.AllConstants.FormNames.*;
 
 public class NativeANCSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
+    public static final List<? extends DialogOption> DEFAULT_ANC_FILTER_OPTIONS = asList(
+            new OutOfAreaFilter());
+    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
     private SmartRegisterClientsProvider clientProvider = null;
     private ANCSmartRegisterController controller;
     private VillageController villageController;
     private DialogOptionMapper dialogOptionMapper;
-    public static final List<? extends DialogOption> DEFAULT_ANC_FILTER_OPTIONS =
-            asList(new OutOfAreaFilter());
-
-    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
 
     @Override
     protected SmartRegisterPaginatedAdapter adapter() {
@@ -38,8 +38,8 @@ public class NativeANCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
         if (clientProvider == null) {
-            clientProvider = new ANCSmartRegisterClientsProvider(
-                    this, clientActionHandler, controller);
+            clientProvider = new ANCSmartRegisterClientsProvider(this, clientActionHandler,
+                    controller);
         }
         return clientProvider;
     }
@@ -76,27 +76,25 @@ public class NativeANCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
             @Override
             public DialogOption[] filterOptions() {
-                Iterable<? extends DialogOption> villageFilterOptions =
-                        dialogOptionMapper.mapToVillageFilterOptions(villageController.getVillages());
-                return toArray(concat(DEFAULT_FILTER_OPTIONS, DEFAULT_ANC_FILTER_OPTIONS, villageFilterOptions), DialogOption.class);
+                Iterable<? extends DialogOption> villageFilterOptions = dialogOptionMapper
+                        .mapToVillageFilterOptions(villageController.getVillages());
+                return toArray(concat(DEFAULT_FILTER_OPTIONS, DEFAULT_ANC_FILTER_OPTIONS,
+                        villageFilterOptions), DialogOption.class);
             }
 
             @Override
             public DialogOption[] serviceModeOptions() {
-                return new DialogOption[]{
-                        new ANCOverviewServiceMode(clientsProvider()),
-                        new ANCVisitsServiceMode(clientsProvider()),
-                        new HbIFAServiceMode(clientsProvider()),
-                        new TTServiceMode(clientsProvider()),
-                        new DeliveryPlanServiceMode(clientsProvider())
-                };
+                return new DialogOption[]{new ANCOverviewServiceMode(
+                        clientsProvider()), new ANCVisitsServiceMode(
+                        clientsProvider()), new HbIFAServiceMode(
+                        clientsProvider()), new TTServiceMode(
+                        clientsProvider()), new DeliveryPlanServiceMode(clientsProvider())};
             }
 
             @Override
             public DialogOption[] sortingOptions() {
-                return new DialogOption[]{new NameSort(), new EstimatedDateOfDeliverySort(),
-                        new HRPSort(), new BPLSort(),
-                        new SCSort(), new STSort()};
+                return new DialogOption[]{new NameSort(), new EstimatedDateOfDeliverySort(), new
+                        HRPSort(), new BPLSort(), new SCSort(), new STSort()};
             }
 
             @Override
@@ -107,31 +105,29 @@ public class NativeANCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
     }
 
     private DialogOption[] getEditOptions() {
-        return new DialogOption[]{
-                new OpenFormOption(getString(R.string.str_register_anc_visit_form), ANC_VISIT, formController),
-                new OpenFormOption(getString(R.string.str_register_hb_test_form), HB_TEST, formController),
-                new OpenFormOption(getString(R.string.str_register_ifa_form), IFA, formController),
-                new OpenFormOption(getString(R.string.str_register_tt_form), TT, formController),
-                new OpenFormOption(getString(R.string.str_register_delivery_plan_form), DELIVERY_PLAN, formController),
-                new OpenFormOption(getString(R.string.str_register_pnc_registration_form), DELIVERY_OUTCOME, formController),
-                new OpenFormOption(getString(R.string.str_register_anc_investigations_form), ANC_INVESTIGATIONS, formController),
-                new OpenFormOption(getString(R.string.str_register_anc_close_form), ANC_CLOSE, formController)
-        };
+        return new DialogOption[]{new OpenFormOption(
+                getString(R.string.str_register_anc_visit_form), ANC_VISIT,
+                formController), new OpenFormOption(getString(R.string.str_register_hb_test_form),
+                HB_TEST, formController), new OpenFormOption(
+                getString(R.string.str_register_ifa_form), IFA, formController), new OpenFormOption(
+                getString(R.string.str_register_tt_form), TT, formController), new OpenFormOption(
+                getString(R.string.str_register_delivery_plan_form), DELIVERY_PLAN,
+                formController), new OpenFormOption(
+                getString(R.string.str_register_pnc_registration_form), DELIVERY_OUTCOME,
+                formController), new OpenFormOption(
+                getString(R.string.str_register_anc_investigations_form), ANC_INVESTIGATIONS,
+                formController), new OpenFormOption(getString(R.string.str_register_anc_close_form),
+                ANC_CLOSE, formController)};
     }
 
     @Override
     protected void onInitialization() {
-        controller = new ANCSmartRegisterController(
-                context().serviceProvidedService(),
-                context().alertService(),
-                context().allBeneficiaries(),
-                context().listCache(),
+        controller = new ANCSmartRegisterController(context().serviceProvidedService(),
+                context().alertService(), context().allBeneficiaries(), context().listCache(),
                 context().ancClientsCache());
 
-        villageController = new VillageController(
-                context().allEligibleCouples(),
-                context().listCache(),
-                context().villagesCache());
+        villageController = new VillageController(context().allEligibleCouples(),
+                context().listCache(), context().villagesCache());
 
         dialogOptionMapper = new DialogOptionMapper();
 
@@ -140,9 +136,10 @@ public class NativeANCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
     @Override
     public void startRegistration() {
-        FieldOverrides fieldOverrides = new FieldOverrides(context().anmLocationController()
-                .getLocationJSON());
-        startFormActivity(AllConstants.FormNames.ANC_REGISTRATION_OA, null, fieldOverrides.getJSONString());
+        FieldOverrides fieldOverrides = new FieldOverrides(
+                context().anmLocationController().getLocationJSON());
+        startFormActivity(AllConstants.FormNames.ANC_REGISTRATION_OA, null,
+                fieldOverrides.getJSONString());
     }
 
     private class ClientActionHandler implements View.OnClickListener {

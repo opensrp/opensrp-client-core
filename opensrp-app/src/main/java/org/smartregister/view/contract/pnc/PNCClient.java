@@ -1,6 +1,7 @@
 package org.smartregister.view.contract.pnc;
 
 import com.google.gson.annotations.SerializedName;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,7 +27,8 @@ import static org.smartregister.view.contract.ServiceProvidedDTO.emptyService;
 public class PNCClient implements PNCSmartRegisterClient {
     private static final String CATEGORY_PNC = "pnc";
     private static final String[] SERVICE_CATEGORIES = {CATEGORY_PNC};
-    private static Map<String, List<ANCServiceType>> categoriesToServiceTypeMap = new HashMap<String, List<ANCServiceType>>();
+    private static Map<String, List<ANCServiceType>> categoriesToServiceTypeMap = new
+            HashMap<String, List<ANCServiceType>>();
 
     static {
         categoriesToServiceTypeMap.put(CATEGORY_PNC, Arrays.asList(PNC));
@@ -69,12 +71,14 @@ public class PNCClient implements PNCSmartRegisterClient {
     private List<ServiceProvidedDTO> recentlyProvidedServices;
     private Map<String, Visits> serviceToVisitsMap;
 
-    public PNCClient(String entityId, String village, String name, String thayi, String deliveryDate) {
+    public PNCClient(String entityId, String village, String name, String thayi, String
+            deliveryDate) {
         this.entityId = entityId;
         this.village = village;
         this.name = name;
         this.thayi = thayi;
-        this.deliveryDate = LocalDateTime.parse(deliveryDate).toString(ISODateTimeFormat.dateTime());
+        this.deliveryDate = LocalDateTime.parse(deliveryDate)
+                .toString(ISODateTimeFormat.dateTime());
         this.serviceToVisitsMap = new HashMap<String, Visits>();
     }
 
@@ -159,9 +163,8 @@ public class PNCClient implements PNCSmartRegisterClient {
 
     @Override
     public boolean satisfiesFilter(String filter) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase())
-                || String.valueOf(ec_number).startsWith(filter)
-                || String.valueOf(thayi).startsWith(filter);
+        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase()) || String
+                .valueOf(ec_number).startsWith(filter) || String.valueOf(thayi).startsWith(filter);
     }
 
     @Override
@@ -228,7 +231,6 @@ public class PNCClient implements PNCSmartRegisterClient {
     public String numberOfCentchromanPillsDelivered() {
         return numberOfCentchromanPillsDelivered;
     }
-
 
     @Override
     public String iudPerson() {
@@ -389,7 +391,8 @@ public class PNCClient implements PNCSmartRegisterClient {
         return this;
     }
 
-    public PNCClient withRecentlyProvidedServices(List<ServiceProvidedDTO> recentlyProvidedServices) {
+    public PNCClient withRecentlyProvidedServices(List<ServiceProvidedDTO>
+                                                          recentlyProvidedServices) {
         this.recentlyProvidedServices = recentlyProvidedServices;
         return this;
     }
@@ -507,7 +510,8 @@ public class PNCClient implements PNCSmartRegisterClient {
         }
     }
 
-    private void initializeAllServiceToProvideAndProvided(Map<String, List<ANCServiceType>> categoriesToServiceTypeMap) {
+    private void initializeAllServiceToProvideAndProvided(Map<String, List<ANCServiceType>>
+                                                                  categoriesToServiceTypeMap) {
         Set<String> keys = categoriesToServiceTypeMap.keySet();
         for (String key : keys) {
             initializeServiceToProvideAndProvided(categoriesToServiceTypeMap.get(key));
@@ -544,8 +548,10 @@ public class PNCClient implements PNCSmartRegisterClient {
 
     @Override
     public String pncComplications() {
-        if (StringUtils.isNotEmpty(pncComplications))
-            return replaceAndHumanizeWithInitCapText(pncComplications.trim(), SPACE, COMMA_WITH_SPACE);
+        if (StringUtils.isNotEmpty(pncComplications)) {
+            return replaceAndHumanizeWithInitCapText(pncComplications.trim(), SPACE,
+                    COMMA_WITH_SPACE);
+        }
         return null;
     }
 }

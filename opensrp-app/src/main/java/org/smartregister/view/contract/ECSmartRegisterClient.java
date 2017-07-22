@@ -1,13 +1,13 @@
 package org.smartregister.view.contract;
 
-
 import org.smartregister.domain.FPMethod;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-public interface ECSmartRegisterClient extends BaseFPSmartRegisterClient, ECSmartRegisterBaseClient {
+public interface ECSmartRegisterClient extends BaseFPSmartRegisterClient,
+        ECSmartRegisterBaseClient {
 
     Comparator<SmartRegisterClient> EC_NUMBER_COMPARATOR = new Comparator<SmartRegisterClient>() {
         @Override

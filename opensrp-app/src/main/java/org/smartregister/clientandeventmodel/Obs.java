@@ -19,8 +19,6 @@ public class Obs {
     @JsonProperty
     private List<Object> values;
 
-
-
     @JsonProperty
     private List<Object> humanReadableValues;
     @JsonProperty
@@ -28,16 +26,18 @@ public class Obs {
     @JsonProperty
     private String formSubmissionField;
 
-    public Obs() { }
+    public Obs() {
+    }
 
     public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode,
-               List<Object> values,List<Object> humanReadableValues, String comments, String formSubmissionField) {
+               List<Object> values, List<Object> humanReadableValues, String comments, String
+                       formSubmissionField) {
         this.setFieldType(fieldType);
         this.fieldDataType = fieldDataType;
         this.fieldCode = fieldCode;
         this.parentCode = parentCode;
         this.values = values;
-        this.humanReadableValues=humanReadableValues;
+        this.humanReadableValues = humanReadableValues;
         this.comments = comments;
         this.formSubmissionField = formSubmissionField;
     }
@@ -76,17 +76,17 @@ public class Obs {
 
     @JsonIgnore
     public Object getValue() {
-        if(values.size() > 1){
-//            throw new RuntimeException("Multiset values can not be handled like single valued fields. Use function getValues");
+        if (values.size() > 1) {
+//            throw new RuntimeException("Multiset values can not be handled like single valued
+// fields. Use function getValues");
             return getValues();
         }
-        if(values == null || values.size() == 0){
+        if (values == null || values.size() == 0) {
             return null;
         }
 
         return values.get(0);
     }
-
 
     @JsonIgnore
     public void setValue(Object value) {
@@ -108,7 +108,6 @@ public class Obs {
     public void setValues(List<Object> values) {
         this.values = values;
     }
-
 
     public String getComments() {
         return comments;
@@ -156,7 +155,7 @@ public class Obs {
     }
 
     public Obs addToValueList(Object value) {
-        if(values == null){
+        if (values == null) {
             values = new ArrayList<>();
         }
         values.add(value);
@@ -172,6 +171,7 @@ public class Obs {
         this.formSubmissionField = formSubmissionField;
         return this;
     }
+
     public Obs withHumanReadableValues(List<Object> humanReadableValues) {
         this.humanReadableValues = humanReadableValues;
         return this;

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;
@@ -26,10 +27,12 @@ public class CustomFontTextView extends TextView {
     public CustomFontTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, 0);
         cache = org.smartregister.Context.getInstance().typefaceCache();
-        TypedArray attributes = context.obtainStyledAttributes(
-                attrs, R.styleable.org_ei_drishti_view_customControls_CustomFontTextView, 0, defStyle);
-        int variant = attributes.getInt(
-                R.styleable.org_ei_drishti_view_customControls_CustomFontTextView_fontVariant, 0);
+        TypedArray attributes = context.obtainStyledAttributes(attrs,
+                R.styleable.org_ei_drishti_view_customControls_CustomFontTextView, 0, defStyle);
+        int variant = attributes
+                .getInt(R.styleable
+                                .org_ei_drishti_view_customControls_CustomFontTextView_fontVariant,
+                        0);
         attributes.recycle();
 
         setFontVariant(variant);

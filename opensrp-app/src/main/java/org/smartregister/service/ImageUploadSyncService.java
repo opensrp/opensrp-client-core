@@ -17,11 +17,12 @@ import static org.smartregister.util.Log.logInfo;
  * Created by Raihan Ahmed on 10/14/15.
  */
 public class ImageUploadSyncService extends IntentService {
-    private static final String TAG=ImageUploadSyncService.class.getCanonicalName();
+    private static final String TAG = ImageUploadSyncService.class.getCanonicalName();
     private ImageRepository imageRepo = null;
+
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
+     * <p>
      * name Used to name the worker thread, important only for debugging.
      */
     public ImageUploadSyncService() {
@@ -42,12 +43,13 @@ public class ImageUploadSyncService extends IntentService {
                 }
             }
         } catch (Exception e) {
-            logError(TAG,e.getMessage());
+            logError(TAG, e.getMessage());
         }
     }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         logInfo("Started image upload sync service");
-        return super.onStartCommand(intent,flags,startId);
+        return super.onStartCommand(intent, flags, startId);
     }
 }

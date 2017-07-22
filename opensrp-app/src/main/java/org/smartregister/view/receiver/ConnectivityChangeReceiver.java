@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import org.smartregister.sync.DrishtiSyncScheduler;
 
 import static org.smartregister.util.Log.logInfo;
@@ -31,7 +32,8 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
     }
 
     private boolean isDeviceConnectedToNetwork(Intent intent) {
-        NetworkInfo networkInfo = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
+        NetworkInfo networkInfo = (NetworkInfo) intent.getExtras()
+                .get(ConnectivityManager.EXTRA_NETWORK_INFO);
         return networkInfo != null && networkInfo.isConnected();
     }
 }

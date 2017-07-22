@@ -1,6 +1,5 @@
 package org.smartregister.view.contract.pnc;
 
-
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.view.contract.*;
 import org.joda.time.LocalDate;
@@ -10,10 +9,12 @@ import java.util.List;
 
 public interface PNCSmartRegisterClient extends BaseFPSmartRegisterClient {
 
-    Comparator<SmartRegisterClient> DATE_OF_DELIVERY_COMPARATOR = new Comparator<SmartRegisterClient>() {
+    Comparator<SmartRegisterClient> DATE_OF_DELIVERY_COMPARATOR = new
+            Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient lhs, SmartRegisterClient rhs) {
-            return ((PNCSmartRegisterClient) rhs).deliveryDate().compareTo(((PNCSmartRegisterClient) lhs).deliveryDate());
+            return ((PNCSmartRegisterClient) rhs).deliveryDate()
+                    .compareTo(((PNCSmartRegisterClient) lhs).deliveryDate());
         }
     };
 

@@ -16,28 +16,27 @@ public class OpenFormOption implements EditOption {
     private final String formName;
     private final FormController formController;
     FieldOverrides fieldOverrides = null;
-    HashMap<String,String> overrideStringmap = null;
+    HashMap<String, String> overrideStringmap = null;
     ByColumnAndByDetails byColumnAndByDetails;
 
-    public enum ByColumnAndByDetails{
-        byColumn,byDetails,bydefault
-    }
-
-    public String getFormName(){
-        return formName;
-    }
-
-    public OpenFormOption(String name, String formName, FormController formController,   HashMap<String,String> overrideStringmap,ByColumnAndByDetails byColumnAndByDetails) {
+    public OpenFormOption(String name, String formName, FormController formController,
+                          HashMap<String, String> overrideStringmap, ByColumnAndByDetails
+                                  byColumnAndByDetails) {
         this.name = name;
         this.formName = formName;
         this.formController = formController;
         this.overrideStringmap = overrideStringmap;
         this.byColumnAndByDetails = byColumnAndByDetails;
     }
+
     public OpenFormOption(String name, String formName, FormController formController) {
         this.name = name;
         this.formName = formName;
         this.formController = formController;
+    }
+
+    public String getFormName() {
+        return formName;
     }
 
     @Override
@@ -48,36 +47,45 @@ public class OpenFormOption implements EditOption {
     @Override
     public void doEdit(SmartRegisterClient client) {
 
-        if(overrideStringmap == null) {
+        if (overrideStringmap == null) {
             formController.startFormActivity(formName, client.entityId(), null);
-        }else{
+        } else {
             JSONObject overridejsonobject = new JSONObject();
             try {
                 for (Map.Entry<String, String> entry : overrideStringmap.entrySet()) {
-                    switch (byColumnAndByDetails){
+                    switch (byColumnAndByDetails) {
                         case byDetails:
-                            overridejsonobject.put(entry.getKey() , ((CommonPersonObjectClient)client).getDetails().get(entry.getValue()));
+                            overridejsonobject.put(entry.getKey(),
+                                    ((CommonPersonObjectClient) client).getDetails()
+                                            .get(entry.getValue()));
                             break;
                         case byColumn:
-                            overridejsonobject.put(entry.getKey() , ((CommonPersonObjectClient)client).getColumnmaps().get(entry.getValue()));
+                            overridejsonobject.put(entry.getKey(),
+                                    ((CommonPersonObjectClient) client).getColumnmaps()
+                                            .get(entry.getValue()));
                             break;
                         case bydefault:
-                            overridejsonobject.put(entry.getKey() ,entry.getValue());
+                            overridejsonobject.put(entry.getKey(), entry.getValue());
                             break;
                     }
                 }
 //                overridejsonobject.put("existing_MWRA", );
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
             FieldOverrides fieldOverrides = new FieldOverrides(overridejsonobject.toString());
-            Log.v("in edit form optopn",overridejsonobject.toString());
-            formController.startFormActivity(formName, client.entityId(), fieldOverrides.getJSONString());
+            Log.v("in edit form optopn", overridejsonobject.toString());
+            formController
+                    .startFormActivity(formName, client.entityId(), fieldOverrides.getJSONString());
         }
     }
 
     @Override
     public void doEditWithMetadata(SmartRegisterClient client, String metadata) {
         formController.startFormActivity(formName, client.entityId(), metadata);
+    }
+
+    public enum ByColumnAndByDetails {
+        byColumn, byDetails, bydefault
     }
 }

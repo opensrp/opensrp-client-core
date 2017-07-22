@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
 import org.smartregister.view.contract.*;
@@ -22,15 +23,12 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     private final SecuredActivity activity;
     private final View.OnClickListener onClickListener;
     private final ProfilePhotoLoader photoLoader;
-
-    private ServiceModeOption currentServiceModeOption;
     private final AbsListView.LayoutParams clientViewLayoutParams;
-
     protected PNCSmartRegisterController controller;
+    private ServiceModeOption currentServiceModeOption;
 
-    public PNCSmartRegisterClientsProvider(SecuredActivity activity,
-                                           View.OnClickListener onClickListener,
-                                           PNCSmartRegisterController controller) {
+    public PNCSmartRegisterClientsProvider(SecuredActivity activity, View.OnClickListener
+            onClickListener, PNCSmartRegisterController controller) {
         this.onClickListener = onClickListener;
         this.controller = controller;
         this.activity = activity;
@@ -44,7 +42,8 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     }
 
     @Override
-    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup viewGroup) {
+    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup
+            viewGroup) {
         ViewGroup itemView;
         NativePNCSmartRegisterViewHolder viewHolder;
         if (convertView == null) {
@@ -68,13 +67,15 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
         return itemView;
     }
 
-    private void setupClientProfileView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder) {
+    private void setupClientProfileView(PNCSmartRegisterClient client,
+                                        NativePNCSmartRegisterViewHolder viewHolder) {
         viewHolder.profileInfoLayout().bindData(client, photoLoader);
         viewHolder.profileInfoLayout().setOnClickListener(onClickListener);
         viewHolder.profileInfoLayout().setTag(client);
     }
 
-    private void setupThayiNumberView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder) {
+    private void setupThayiNumberView(PNCSmartRegisterClient client,
+                                      NativePNCSmartRegisterViewHolder viewHolder) {
         viewHolder.txtThayiNumberView().setText(client.thayiNumber());
     }
 
@@ -86,8 +87,8 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     }
 
     @Override
-    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
-                                              FilterOption searchFilter, SortOption sortOption) {
+    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
+            serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
 
         return getClients().applyFilter(villageFilter, serviceModeOption, searchFilter, sortOption);
     }

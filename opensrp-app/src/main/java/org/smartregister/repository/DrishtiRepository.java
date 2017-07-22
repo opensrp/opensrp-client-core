@@ -11,5 +11,4 @@ public abstract class DrishtiRepository {
 
     abstract protected void onCreate(SQLiteDatabase database);
 
-
 }

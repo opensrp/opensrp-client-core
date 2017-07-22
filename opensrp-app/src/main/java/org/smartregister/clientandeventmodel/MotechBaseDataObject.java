@@ -4,7 +4,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public abstract class MotechBaseDataObject {
 
-
+    private static final long serialVersionUID = 1L;
     @JsonProperty
     protected String type;
 
@@ -19,7 +19,5 @@ public abstract class MotechBaseDataObject {
     public void setType(String type) {
         this.type = type;
     }
-
-    private static final long serialVersionUID = 1L;
 
 }

@@ -53,28 +53,37 @@ import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
 /**
  * Created by koros on 10/12/15.
  */
-public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends SecuredNativeSmartRegisterFragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
-
+public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
+        SecuredNativeSmartRegisterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String DIALOG_TAG = "dialog";
-    public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(new AllClientsFilter());
-
+    public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(
+            new AllClientsFilter());
+    protected static final int LOADER_ID = 0;
+    private static final String INIT_LOADER = "init";
     public static int totalcount = 0;
     public static int currentlimit = 20;
     public static int currentoffset = 0;
+    public final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
+    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
+    private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
     public String mainSelect;
     public String filters = "";
     public String mainCondition = "";
     public String Sortqueries;
-    private String currentquery;
     public String tablename;
     public String countSelect;
-    public String joinTable="";
-
-    protected static final int LOADER_ID = 0;
-    private static final String INIT_LOADER = "init";
-
+    public String joinTable = "";
+    public SmartRegisterPaginatedCursorAdapter clientAdapter;
+    public View mView;
+    private String currentquery;
+    private FilterOption currentVillageFilter;
+    private SortOption currentSortOption;
+    private FilterOption currentSearchFilter;
+    private ServiceModeOption currentServiceModeOption;
+    private TextView pageInfoView;
+    private Button nextPageView;
+    private Button previousPageView;
 
     public String getTablename() {
         return tablename;
@@ -100,6 +109,10 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         return currentSearchFilter;
     }
 
+    public void setCurrentSearchFilter(FilterOption currentSearchFilter) {
+        this.currentSearchFilter = currentSearchFilter;
+    }
+
     public SortOption getCurrentSortOption() {
         return currentSortOption;
     }
@@ -116,29 +129,13 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         this.clientAdapter = clientsAdapter;
     }
 
-    public SmartRegisterPaginatedCursorAdapter clientAdapter;
-
-    private FilterOption currentVillageFilter;
-    private SortOption currentSortOption;
-
-    public View mView;
-
-    public void setCurrentSearchFilter(FilterOption currentSearchFilter) {
-        this.currentSearchFilter = currentSearchFilter;
-    }
-
-    private FilterOption currentSearchFilter;
-    private ServiceModeOption currentServiceModeOption;
-
-    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
-    private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
-    public final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         // Inflate the layout for this fragment
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        this.getActivity().getWindow()
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         View view = inflater.inflate(R.layout.smart_register_activity, container, false);
         mView = view;
@@ -150,8 +147,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
 
     protected void setupViews(View view) {
         setupNavBarViews(view);
-        if(getDefaultOptionsProvider() != null) {
-            populateClientListHeaderView(getDefaultOptionsProvider().serviceMode().getHeaderProvider(), view);
+        if (getDefaultOptionsProvider() != null) {
+            populateClientListHeaderView(
+                    getDefaultOptionsProvider().serviceMode().getHeaderProvider(), view);
         }
 
         clientsProgressView = (ProgressBar) view.findViewById(R.id.client_list_progress);
@@ -163,7 +161,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         updateDefaultOptions();
     }
 
-    public void refreshListView(){
+    public void refreshListView() {
         super.setRefreshList(true);
         this.onResumption();
         super.setRefreshList(false);
@@ -215,7 +213,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         View sortView = view.findViewById(R.id.sort_selection);
         sortView.setOnClickListener(navBarActionsHandler);
 
-        serviceModeView = (TextView)view.findViewById(R.id.service_mode_selection);
+        serviceModeView = (TextView) view.findViewById(R.id.service_mode_selection);
         serviceModeView.setOnClickListener(navBarActionsHandler);
 
         view.findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
@@ -260,14 +258,15 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
 
     private void setReportDates(TextView titleView) {
         ReportMonth report = new ReportMonth();
-        titleView.setText(report.startOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT)
-                + " - "
-                + report.endOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT));
+        titleView.setText(
+                report.startOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT)
+                        + " - " + report.endOfCurrentReportMonth(LocalDate.now())
+                        .toString(SHORT_DATE_FORMAT));
     }
 
     private void updateDefaultOptions() {
         currentSearchFilter = new ECSearchOption(null);
-        if(getDefaultOptionsProvider() != null) {
+        if (getDefaultOptionsProvider() != null) {
             currentVillageFilter = getDefaultOptionsProvider().villageFilter();
             currentServiceModeOption = getDefaultOptionsProvider().serviceMode();
             currentSortOption = getDefaultOptionsProvider().sortOption();
@@ -279,8 +278,11 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         }
     }
 
-    private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity.ClientsHeaderProvider headerProvider, View view) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) view.findViewById(R.id.clients_header_layout);
+    private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
+                                                      .ClientsHeaderProvider headerProvider, View
+            view) {
+        LinearLayout clientsHeaderLayout = (LinearLayout) view
+                .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
         int[] weights = headerProvider.weights();
@@ -293,32 +295,30 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     }
 
     private View getColumnHeaderView(int i, int[] weights, int[] headerTxtResIds) {
-        CustomFontTextView header = new CustomFontTextView(getActivity(), null, R.style.CustomFontTextViewStyle_Header_Black);
+        CustomFontTextView header = new CustomFontTextView(getActivity(), null,
+                R.style.CustomFontTextViewStyle_Header_Black);
         header.setFontVariant(FontVariant.BLACK);
         header.setTextSize(16);
         header.setTextColor(getResources().getColor(R.color.client_list_header_text_color));
-        LinearLayout.LayoutParams lp =
-                new LinearLayout.LayoutParams(
-                        0,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        weights[i]);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
+                ViewGroup.LayoutParams.MATCH_PARENT, weights[i]);
 
         header.setLayoutParams(lp);
         header.setText(headerTxtResIds[i]);
         return header;
     }
 
-
     @Override
     public void onSortSelection(SortOption sortBy) {
         appliedSortView.setText(sortBy.name());
-        Sortqueries = ((CursorSortOption)sortBy).sort();
+        Sortqueries = ((CursorSortOption) sortBy).sort();
         filterandSortExecute();
     }
+
     @Override
     public void onFilterSelection(FilterOption filter) {
         appliedVillageFilterView.setText(filter.name());
-        filters = ((CursorFilterOption)filter).filter() ;
+        filters = ((CursorFilterOption) filter).filter();
         CountExecute();
         filterandSortExecute();
     }
@@ -326,7 +326,6 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     protected void onEditSelection(EditOption editOption, SmartRegisterClient client) {
         editOption.doEdit(client);
     }
-
 
     protected void goBack() {
         getActivity().finish();
@@ -337,18 +336,227 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     }
 
     protected void showFragmentDialog(DialogOptionModel dialogOptionModel, Object tag) {
-        ((SecuredNativeSmartRegisterActivity)getActivity()).showFragmentDialog(dialogOptionModel, tag);
+        ((SecuredNativeSmartRegisterActivity) getActivity())
+                .showFragmentDialog(dialogOptionModel, tag);
     }
 
-    protected abstract SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider();
+    protected abstract SecuredNativeSmartRegisterActivity.DefaultOptionsProvider
+    getDefaultOptionsProvider();
 
-    protected abstract SecuredNativeSmartRegisterActivity.NavBarOptionsProvider getNavBarOptionsProvider();
+    protected abstract SecuredNativeSmartRegisterActivity.NavBarOptionsProvider
+    getNavBarOptionsProvider();
 
     protected abstract SmartRegisterClientsProvider clientsProvider();
 
     protected abstract void onInitialization();
 
     protected abstract void startRegistration();
+
+    private int getCurrentPageCount() {
+        if (currentoffset != 0) {
+            if ((currentoffset / currentlimit) != 0) {
+                return ((currentoffset / currentlimit) + 1);
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
+        }
+    }
+
+    private int getTotalcount() {
+        if (totalcount % currentlimit == 0) {
+            return (totalcount / currentlimit);
+        } else {
+            return ((totalcount / currentlimit) + 1);
+        }
+    }
+
+    public void refresh() {
+        pageInfoView.setText(
+                format(getResources().getString(R.string.str_page_info), (getCurrentPageCount()),
+                        getTotalcount()));
+        nextPageView.setVisibility(hasNextPage() ? VISIBLE : INVISIBLE);
+        previousPageView.setVisibility(hasPreviousPage() ? VISIBLE : INVISIBLE);
+    }
+
+    private boolean hasNextPage() {
+
+        return ((totalcount > (currentoffset + currentlimit)));
+    }
+
+    private boolean hasPreviousPage() {
+        return currentoffset != 0;
+    }
+
+    public void gotoNextPage() {
+        if (!(currentoffset + currentlimit > totalcount)) {
+            currentoffset = currentoffset + currentlimit;
+            filterandSortExecute();
+        }
+    }
+
+    public void goBackToPreviousPage() {
+        if (currentoffset > 0) {
+            currentoffset = currentoffset - currentlimit;
+            filterandSortExecute();
+        }
+    }
+
+    public void filterandSortInInitializeQueries() {
+        if (isPausedOrRefreshList()) {
+            this.showProgressView();
+            this.filterandSortExecute();
+        } else {
+            this.initialFilterandSortExecute();
+        }
+    }
+
+    public void initialFilterandSortExecute() {
+        Loader<Cursor> loader = getLoaderManager().getLoader(LOADER_ID);
+        showProgressView();
+        if (loader != null) {
+            filterandSortExecute();
+        } else {
+            getLoaderManager().initLoader(LOADER_ID, null, this);
+        }
+    }
+
+    public void filterandSortExecute() {
+        refresh();
+
+        getLoaderManager().restartLoader(LOADER_ID, null, this);
+    }
+
+    public void showProgressView() {
+        if (clientsProgressView.getVisibility() == INVISIBLE) {
+            clientsProgressView.setVisibility(View.VISIBLE);
+        }
+
+        if (clientsView.getVisibility() == VISIBLE) {
+            clientsView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    public void hideProgressView() {
+        if (clientsProgressView.getVisibility() == VISIBLE) {
+            clientsProgressView.setVisibility(INVISIBLE);
+        }
+        if (clientsView.getVisibility() == INVISIBLE) {
+            clientsView.setVisibility(VISIBLE);
+        }
+    }
+
+    private String filterandSortQuery() {
+        SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(mainSelect);
+
+        String query = "";
+        try {
+            if (isValidFilterForFts(commonRepository())) {
+                String sql = sqb
+                        .searchQueryFts(tablename, joinTable, mainCondition, filters, Sortqueries,
+                                currentlimit, currentoffset);
+                List<String> ids = commonRepository().findSearchIds(sql);
+                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN,
+                        Sortqueries);
+                query = sqb.Endquery(query);
+            } else {
+                sqb.addCondition(filters);
+                query = sqb.orderbyCondition(Sortqueries);
+                query = sqb.Endquery(sqb.addlimitandOffset(query, currentlimit, currentoffset));
+
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.toString(), e);
+        }
+
+        return query;
+    }
+
+    public void CountExecute() {
+        Cursor c = null;
+
+        try {
+            SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(countSelect);
+            String query = "";
+            if (isValidFilterForFts(commonRepository())) {
+                String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
+                List<String> ids = commonRepository().findSearchIds(sql);
+                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN);
+                query = sqb.Endquery(query);
+            } else {
+                sqb.addCondition(filters);
+                query = sqb.orderbyCondition(Sortqueries);
+                query = sqb.Endquery(query);
+            }
+
+            Log.i(getClass().getName(), query);
+            c = commonRepository().rawCustomQueryForAdapter(query);
+            c.moveToFirst();
+            totalcount = c.getInt(0);
+            Log.v("total count here", "" + totalcount);
+            currentlimit = 20;
+            currentoffset = 0;
+
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.toString(), e);
+        } finally {
+            if (c != null) {
+                c.close();
+            }
+        }
+    }
+
+    protected boolean isValidFilterForFts(CommonRepository commonRepository) {
+        return commonRepository.isFts() && filters != null && !StringUtils
+                .containsIgnoreCase(filters, "like") && !StringUtils
+                .startsWithIgnoreCase(filters.trim(), "and ");
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
+        switch (id) {
+            case LOADER_ID:
+                // Returns a new CursorLoader
+                return new CursorLoader(getActivity()) {
+                    @Override
+                    public Cursor loadInBackground() {
+                        String query = filterandSortQuery();
+                        Cursor cursor = commonRepository().rawCustomQueryForAdapter(query);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                hideProgressView();
+                            }
+                        });
+
+                        return cursor;
+                    }
+                };
+            default:
+                // An invalid id was passed in
+                return null;
+        }
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        clientAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        clientAdapter.swapCursor(null);
+    }
+
+    public CommonRepository commonRepository() {
+        return context().commonrepository(tablename);
+    }
+
+    public boolean isPausedOrRefreshList() {
+        return isPaused() || isRefreshList();
+    }
 
     private class FilterDialogOptionModel implements DialogOptionModel {
         @Override
@@ -385,13 +593,8 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
             onServiceModeSelection((ServiceModeOption) option, mView);
         }
     }
-    private TextView pageInfoView;
-    private Button nextPageView;
-    private Button previousPageView;
 
     private class PaginationViewHandler implements View.OnClickListener {
-
-
 
         private void addPagination(ListView clientsView) {
             ViewGroup footerView = getPaginationView();
@@ -402,21 +605,18 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
             nextPageView.setOnClickListener(this);
             previousPageView.setOnClickListener(this);
 
-            footerView.setLayoutParams(new AbsListView.LayoutParams(
-                    AbsListView.LayoutParams.MATCH_PARENT,
-                    (int) getResources().getDimension(R.dimen.pagination_bar_height)));
+            footerView.setLayoutParams(
+                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
 
             clientsView.addFooterView(footerView);
             refresh();
         }
 
         private ViewGroup getPaginationView() {
-            return (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.smart_register_pagination, null);
+            return (ViewGroup) getActivity().getLayoutInflater()
+                    .inflate(R.layout.smart_register_pagination, null);
         }
-
-
-
-
 
         @Override
         public void onClick(View view) {
@@ -430,163 +630,6 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
             }
         }
 
-    }
-    private int getCurrentPageCount() {
-        if(currentoffset != 0) {
-            if((currentoffset/currentlimit) != 0) {
-                return  ((currentoffset / currentlimit)+1);
-            }else {
-                return 1;
-            }
-        }else{
-            return 1;
-        }
-    }
-    private int getTotalcount(){
-        if(totalcount%currentlimit == 0){
-           return (totalcount/currentlimit);
-        }else {
-            return ((totalcount / currentlimit)+1);
-        }
-    }
-    public void refresh() {
-        pageInfoView.setText(
-                format(getResources().getString(R.string.str_page_info),
-                        (getCurrentPageCount()),
-                        getTotalcount()));
-        nextPageView.setVisibility(hasNextPage() ? VISIBLE : INVISIBLE);
-        previousPageView.setVisibility(hasPreviousPage() ? VISIBLE : INVISIBLE);
-    }
-
-    private boolean hasNextPage() {
-
-        return ((totalcount>(currentoffset+currentlimit)));
-    }
-
-    private boolean hasPreviousPage() {
-        return currentoffset!=0;
-    }
-
-    public void gotoNextPage() {
-        if(!(currentoffset+currentlimit>totalcount)){
-            currentoffset = currentoffset+currentlimit;
-            filterandSortExecute();
-        }
-    }
-
-    public void goBackToPreviousPage() {
-        if(currentoffset>0){
-            currentoffset = currentoffset-currentlimit;
-            filterandSortExecute();
-        }
-    }
-
-    public void filterandSortInInitializeQueries(){
-        if(isPausedOrRefreshList()){
-            this.showProgressView();
-            this.filterandSortExecute();
-        } else {
-            this.initialFilterandSortExecute();
-        }
-    }
-
-
-    public void initialFilterandSortExecute() {
-        Loader<Cursor> loader = getLoaderManager().getLoader(LOADER_ID);
-        showProgressView();
-        if(loader != null) {
-            filterandSortExecute();
-        }else {
-            getLoaderManager().initLoader(LOADER_ID, null, this);
-        }
-    }
-
-    public void filterandSortExecute() {
-        refresh();
-
-        getLoaderManager().restartLoader(LOADER_ID, null, this);
-    }
-
-    public void showProgressView(){
-        if(clientsProgressView.getVisibility() == INVISIBLE) {
-            clientsProgressView.setVisibility(View.VISIBLE);
-        }
-
-        if(clientsView.getVisibility() == VISIBLE) {
-            clientsView.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public void hideProgressView(){
-        if(clientsProgressView.getVisibility() == VISIBLE) {
-            clientsProgressView.setVisibility(INVISIBLE);
-        }
-        if(clientsView.getVisibility() == INVISIBLE) {
-            clientsView.setVisibility(VISIBLE);
-        }
-    }
-
-    private String filterandSortQuery(){
-        SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(mainSelect);
-
-        String query = "";
-        try{
-            if(isValidFilterForFts(commonRepository())){
-                String sql = sqb.searchQueryFts(tablename, joinTable, mainCondition, filters, Sortqueries, currentlimit, currentoffset);
-                List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN, Sortqueries);
-                query = sqb.Endquery(query);
-            } else {
-                sqb.addCondition(filters);
-                query = sqb.orderbyCondition(Sortqueries);
-                query = sqb.Endquery(sqb.addlimitandOffset(query,currentlimit,currentoffset));
-
-            }
-        }catch (Exception e){
-            Log.e(getClass().getName(), e.toString(), e);
-        }
-
-        return query;
-    }
-
-    public void CountExecute(){
-        Cursor c = null;
-
-        try {
-            SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(countSelect);
-            String query = "";
-            if (isValidFilterForFts(commonRepository())) {
-                String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
-                List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN);
-                query = sqb.Endquery(query);
-            } else {
-                sqb.addCondition(filters);
-                query = sqb.orderbyCondition(Sortqueries);
-                query = sqb.Endquery(query);
-            }
-
-            Log.i(getClass().getName(), query);
-            c = commonRepository().rawCustomQueryForAdapter(query);
-            c.moveToFirst();
-            totalcount = c.getInt(0);
-            Log.v("total count here", "" + totalcount);
-            currentlimit = 20;
-            currentoffset = 0;
-
-        }catch (Exception e){
-            Log.e(getClass().getName(), e.toString(), e);
-        } finally {
-            if(c != null) {
-                c.close();
-            }
-        }
-    }
-
-    protected boolean isValidFilterForFts(CommonRepository commonRepository){
-        return commonRepository.isFts() && filters != null
-                && !StringUtils.containsIgnoreCase(filters, "like")
-                && !StringUtils.startsWithIgnoreCase(filters.trim(), "and ");
     }
 
     public class NavBarActionsHandler implements View.OnClickListener {
@@ -623,51 +666,5 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         private void clearSearchText() {
             searchView.setText("");
         }
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
-        switch (id) {
-            case LOADER_ID:
-                // Returns a new CursorLoader
-                return new CursorLoader(getActivity()){
-                    @Override
-                    public Cursor loadInBackground() {
-                        String query = filterandSortQuery();
-                        Cursor cursor = commonRepository().rawCustomQueryForAdapter(query);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                hideProgressView();
-                            }
-                        });
-
-                         return cursor;
-                    }
-                };
-            default:
-                // An invalid id was passed in
-                return null;
-        }
-
-    }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
-        clientAdapter.swapCursor(cursor);
-    }
-
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-        clientAdapter.swapCursor(null);
-    }
-
-    public CommonRepository commonRepository(){
-        return context().commonrepository(tablename);
-    }
-
-    public boolean isPausedOrRefreshList(){
-        return isPaused() || isRefreshList();
     }
 }

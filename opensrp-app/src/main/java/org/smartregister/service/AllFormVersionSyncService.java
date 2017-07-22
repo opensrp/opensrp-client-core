@@ -1,4 +1,5 @@
 package org.smartregister.service;
+
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -35,15 +36,14 @@ import static org.smartregister.util.Log.logError;
 public class AllFormVersionSyncService {
 
     public static final String TAG = "AllFormVersionSyncServ";
+    private static final String FORM_DEF_VERSION_FIELD = "form_data_definition_version";
+    private static final String FORM_DEF_JSON_FILENAME = "form_definition.json";
     private final HTTPAgent httpAgent;
     private final DristhiConfiguration configuration;
     private final FormsVersionRepository formsVersionRepository;
-    private static final String FORM_DEF_VERSION_FIELD = "form_data_definition_version";
-    private static final String FORM_DEF_JSON_FILENAME = "form_definition.json";
 
-    public AllFormVersionSyncService(HTTPAgent httpAgentArg,
-                                     DristhiConfiguration configurationArg,
-                                     FormsVersionRepository formsVersionRepositoryArg) {
+    public AllFormVersionSyncService(HTTPAgent httpAgentArg, DristhiConfiguration
+            configurationArg, FormsVersionRepository formsVersionRepositoryArg) {
         formsVersionRepository = formsVersionRepositoryArg;
         httpAgent = httpAgentArg;
         configuration = configurationArg;
@@ -70,10 +70,11 @@ public class AllFormVersionSyncService {
             return status;
         }
 
-        List<FormDefinitionVersion> forms = new Gson().fromJson(formVersions,
-                new TypeToken<List<FormDefinitionVersion>>(){}.getType());
+        List<FormDefinitionVersion> forms = new Gson()
+                .fromJson(formVersions, new TypeToken<List<FormDefinitionVersion>>() {
+                }.getType());
 
-        if(forms.size() > 0) {
+        if (forms.size() > 0) {
             for (FormDefinitionVersion form : forms) {
                 try {
                     if (!formsVersionRepository.formExists(form.getFormDirName())) {
@@ -82,27 +83,28 @@ public class AllFormVersionSyncService {
                         formsVersionRepository.addFormVersionFromObject(form);
                     } else {
                         /* Form is exist, update it */
-                        FormDefinitionVersion formDefinitionVersion =
-                                formsVersionRepository.getFormByFormDirName(form.getFormDirName());
+                        FormDefinitionVersion formDefinitionVersion = formsVersionRepository
+                                .getFormByFormDirName(form.getFormDirName());
 
                         /* If form name is not equal, then update it */
                         if (!formDefinitionVersion.getFormName().equals(form.getFormName())) {
-                            formsVersionRepository.updateFormName(form.getFormDirName(),
-                                    form.getFormName());
+                            formsVersionRepository
+                                    .updateFormName(form.getFormDirName(), form.getFormName());
                         }
 
                         int repoVersion = Integer.parseInt(formDefinitionVersion.getVersion());
                         int pulledVersion = Integer.parseInt(form.getVersion());
 
                         if (pulledVersion > repoVersion) {
-                            formsVersionRepository.updateServerVersion(form.getFormDirName(),
-                                    form.getVersion());
-                            formsVersionRepository.updateSyncStatus(form.getFormDirName(),
-                                    SyncStatus.PENDING);
+                            formsVersionRepository
+                                    .updateServerVersion(form.getFormDirName(), form.getVersion());
+                            formsVersionRepository
+                                    .updateSyncStatus(form.getFormDirName(), SyncStatus.PENDING);
                             status = FetchStatus.fetched;
                         }
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
         }
 
@@ -117,14 +119,15 @@ public class AllFormVersionSyncService {
         if (pendingFormList.isEmpty()) {
             return status;
         } else {
-            for(FormDefinitionVersion l : pendingFormList) {
-                String downloadLink = configuration.dristhiBaseURL()
-                        + AllConstants.FORM_DOWNLOAD_URL
-                        + l.getFormDirName();
+            for (FormDefinitionVersion l : pendingFormList) {
+                String downloadLink =
+                        configuration.dristhiBaseURL() + AllConstants.FORM_DOWNLOAD_URL + l
+                                .getFormDirName();
 
                 status = httpAgent.downloadFromUrl(downloadLink, l.getFormDirName() + ".zip");
-                if(status == DownloadStatus.downloaded)
+                if (status == DownloadStatus.downloaded) {
                     formsVersionRepository.updateSyncStatus(l.getFormDirName(), SyncStatus.SYNCED);
+                }
             }
         }
         return status;
@@ -142,9 +145,10 @@ public class AllFormVersionSyncService {
 
         File[] zipFiles = dir.listFiles(filter);
 
-        for(File f : zipFiles) {
-            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(), FormPathService.sdcardPath
-                    + f.getName().replaceAll(".zip", "") + File.separator);
+        for (File f : zipFiles) {
+            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(),
+                    FormPathService.sdcardPath + f.getName().replaceAll(".zip", "")
+                            + File.separator);
             zipUtil.unzip();
         }
     }
@@ -154,36 +158,36 @@ public class AllFormVersionSyncService {
 
         File[] formFiles = listFormFiles();
 
-        if(formFiles == null) {
+        if (formFiles == null) {
             formsVersionRepository.deleteAll();
             return;
         }
 
         List<File> formStoragelist = new LinkedList<File>(Arrays.asList(formFiles));
-        List<Map<String,String>> formRepoList =
-                formsVersionRepository.getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED);
+        List<Map<String, String>> formRepoList = formsVersionRepository
+                .getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED);
 
         /* verify file in repo */
-        if(!formRepoList.isEmpty()) {
-            for(Map<String,String> form : formRepoList) {
+        if (!formRepoList.isEmpty()) {
+            for (Map<String, String> form : formRepoList) {
                 boolean formFound = false;
-                for(File f:formStoragelist) {
-                    if(form.containsValue(f.getName())) {
+                for (File f : formStoragelist) {
+                    if (form.containsValue(f.getName())) {
                         formFound = true;
                         formStoragelist.remove(f);
                         break;
                     }
                 }
-                if(!formFound) {
-                    formsVersionRepository.updateSyncStatus(
-                            form.get(FormsVersionRepository.FORM_DIR_NAME_COLUMN),
-                            SyncStatus.PENDING);
+                if (!formFound) {
+                    formsVersionRepository
+                            .updateSyncStatus(form.get(FormsVersionRepository.FORM_DIR_NAME_COLUMN),
+                                    SyncStatus.PENDING);
                 }
             }
         }
         /* verify file in storage */
-        for(File f:formStoragelist) {
-            if(!formsVersionRepository.formExists(f.getName())) {
+        for (File f : formStoragelist) {
+            if (!formsVersionRepository.formExists(f.getName())) {
                 /* Add to Repository */
                 try {
                     FormDefinitionVersion form = getFormDefinitionFromFile(f);
@@ -215,8 +219,8 @@ public class AllFormVersionSyncService {
             Log.e(TAG, e.toString(), e);
         }
 
-        return new FormDefinitionVersion(f.getName(),
-                f.getName(), version).withSyncStatus(SyncStatus.SYNCED);
+        return new FormDefinitionVersion(f.getName(), f.getName(), version)
+                .withSyncStatus(SyncStatus.SYNCED);
     }
 
     protected File[] listFormFiles() {

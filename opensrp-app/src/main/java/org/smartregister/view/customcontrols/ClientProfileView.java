@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -61,7 +62,8 @@ public class ClientProfileView extends RelativeLayout {
         txtVillageNameView.setText(client.village());
         txtAgeView.setText(client.ageInString());
         txtOutOfArea.setText(getOutOfAreaText(client.locationStatus()));
-        badgeHPView.setVisibility(!isAnANCClient(client) && client.isHighPriority() ? View.VISIBLE : View.GONE);
+        badgeHPView.setVisibility(
+                !isAnANCClient(client) && client.isHighPriority() ? View.VISIBLE : View.GONE);
         setHROrHRPBadge(client);
         badgeHRView.setVisibility(client.isHighRisk() ? View.VISIBLE : View.GONE);
         badgeBPLView.setVisibility(client.isBPL() ? View.VISIBLE : View.GONE);
@@ -70,7 +72,8 @@ public class ClientProfileView extends RelativeLayout {
     }
 
     private void setHROrHRPBadge(SmartRegisterClient client) {
-        badgeHRView.setImageResource(isAnANCClient(client) ? R.drawable.flag_hrp : R.drawable.flag_hr);
+        badgeHRView
+                .setImageResource(isAnANCClient(client) ? R.drawable.flag_hrp : R.drawable.flag_hr);
     }
 
     private boolean isAnANCClient(SmartRegisterClient client) {
@@ -78,7 +81,8 @@ public class ClientProfileView extends RelativeLayout {
     }
 
     private String getOutOfAreaText(String locationStatus) {
-        return isOutOfArea(locationStatus) ? org.smartregister.Context.getInstance().getStringResource(R.string.str_out_of_area) : "";
+        return isOutOfArea(locationStatus) ? org.smartregister.Context.getInstance()
+                .getStringResource(R.string.str_out_of_area) : "";
     }
 
     private boolean isOutOfArea(String locationStatus) {

@@ -12,11 +12,13 @@ public class StringUtil {
         return capitalize(replace(getValue(value), "_", " "));
     }
 
-    public static String replaceAndHumanize(String value, String oldCharacter, String newCharacter) {
+    public static String replaceAndHumanize(String value, String oldCharacter, String
+            newCharacter) {
         return humanize(replace(getValue(value), oldCharacter, newCharacter));
     }
 
-    public static String replaceAndHumanizeWithInitCapText(String value, String oldCharacter, String newCharacter) {
+    public static String replaceAndHumanizeWithInitCapText(String value, String oldCharacter,
+                                                           String newCharacter) {
         return humanize(WordUtils.capitalize(replace(getValue(value), oldCharacter, newCharacter)));
     }
 
@@ -24,15 +26,16 @@ public class StringUtil {
         return upperCase(humanize(getValue(value)));
     }
 
-    public static String humanizeAndUppercase(String value, String... skipTokens){
+    public static String humanizeAndUppercase(String value, String... skipTokens) {
         String res = humanizeAndDoUPPERCASE(value);
-        for (String s: skipTokens) {
-            res = res.replaceAll("(?i)"+s, s);
+        for (String s : skipTokens) {
+            res = res.replaceAll("(?i)" + s, s);
         }
 
         return res;
     }
+
     public static String getValue(String value) {
-        return isBlank(value)? "" : value;
+        return isBlank(value) ? "" : value;
     }
 }

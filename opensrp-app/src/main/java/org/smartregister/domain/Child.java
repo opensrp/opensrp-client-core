@@ -17,16 +17,17 @@ import static org.smartregister.AllConstants.SPACE;
 public class Child {
     private final String caseId;
     private final String motherCaseId;
-    private String thayiCardNumber;
-    private String dateOfBirth;
     private final String gender;
     private final Map<String, String> details;
+    private String thayiCardNumber;
+    private String dateOfBirth;
     private boolean isClosed;
     private Mother mother;
     private EligibleCouple eligibleCouple;
     private String photoPath;
 
-    public Child(String caseId, String motherCaseId, String thayiCardNumber, String dateOfBirth, String gender, Map<String, String> details) {
+    public Child(String caseId, String motherCaseId, String thayiCardNumber, String dateOfBirth,
+                 String gender, Map<String, String> details) {
         this.caseId = caseId;
         this.motherCaseId = motherCaseId;
         this.thayiCardNumber = thayiCardNumber;
@@ -89,8 +90,11 @@ public class Child {
     }
 
     public String highRiskReason() {
-        String highRiskReason = details.get(HIGH_RISK_REASON) == null ? "" : details.get(HIGH_RISK_REASON);
-        return StringUtils.join(new HashSet<String>(Arrays.asList(highRiskReason.split(SPACE))).toArray(), SPACE);
+        String highRiskReason =
+                details.get(HIGH_RISK_REASON) == null ? "" : details.get(HIGH_RISK_REASON);
+        return StringUtils
+                .join(new HashSet<String>(Arrays.asList(highRiskReason.split(SPACE))).toArray(),
+                        SPACE);
     }
 
     public Child setThayiCardNumber(String thayiCardNumber) {

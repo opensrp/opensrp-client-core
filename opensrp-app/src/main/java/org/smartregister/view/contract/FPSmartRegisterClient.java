@@ -4,7 +4,8 @@ import org.smartregister.domain.FPMethod;
 
 import java.util.List;
 
-public interface FPSmartRegisterClient extends BaseFPSmartRegisterClient, ECSmartRegisterBaseClient {
+public interface FPSmartRegisterClient extends BaseFPSmartRegisterClient,
+        ECSmartRegisterBaseClient {
 
     String numberOfPregnancies();
 

@@ -2,7 +2,9 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.gson.Gson;
+
 import org.smartregister.AllConstants;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.repository.AllEligibleCouples;
@@ -15,6 +17,7 @@ import org.smartregister.view.contract.ECDetail;
 import org.smartregister.view.contract.TimelineEvent;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
@@ -26,12 +29,12 @@ import static org.smartregister.AllConstants.WOMAN_TYPE;
 
 public class EligibleCoupleDetailController {
     private final Context context;
-    private String caseId;
     private final AllEligibleCouples allEligibleCouples;
     private final AllTimelineEvents allTimelineEvents;
+    private String caseId;
 
-    public EligibleCoupleDetailController(Context context, String caseId, AllEligibleCouples allEligibleCouples,
-                                          AllTimelineEvents allTimelineEvents) {
+    public EligibleCoupleDetailController(Context context, String caseId, AllEligibleCouples
+            allEligibleCouples, AllTimelineEvents allTimelineEvents) {
         this.context = context;
         this.caseId = caseId;
         this.allEligibleCouples = allEligibleCouples;
@@ -42,9 +45,12 @@ public class EligibleCoupleDetailController {
     public String get() {
         EligibleCouple eligibleCouple = allEligibleCouples.findByCaseID(caseId);
 
-        ECDetail ecContext = new ECDetail(caseId, eligibleCouple.village(), eligibleCouple.subCenter(), eligibleCouple.ecNumber(),
-                eligibleCouple.isHighPriority(), null, eligibleCouple.photoPath(), new ArrayList<Child>(), new CoupleDetails(eligibleCouple.wifeName(),
-                eligibleCouple.husbandName(), eligibleCouple.ecNumber(), eligibleCouple.isOutOfArea()),
+        ECDetail ecContext = new ECDetail(caseId, eligibleCouple.village(),
+                eligibleCouple.subCenter(), eligibleCouple.ecNumber(),
+                eligibleCouple.isHighPriority(), null, eligibleCouple.photoPath(),
+                new ArrayList<Child>(),
+                new CoupleDetails(eligibleCouple.wifeName(), eligibleCouple.husbandName(),
+                        eligibleCouple.ecNumber(), eligibleCouple.isOutOfArea()),
                 eligibleCouple.details()).
                 addTimelineEvents(getEvents());
 
@@ -67,7 +73,9 @@ public class EligibleCoupleDetailController {
 
         for (org.smartregister.domain.TimelineEvent event : events) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd-MM-YYYY");
-            timelineEvents.add(new TimelineEvent(event.type(), event.title(), new String[]{event.detail1(), event.detail2()}, event.referenceDate().toString(dateTimeFormatter)));
+            timelineEvents.add(new TimelineEvent(event.type(), event.title(),
+                    new String[]{event.detail1(), event.detail2()},
+                    event.referenceDate().toString(dateTimeFormatter)));
         }
 
         return timelineEvents;

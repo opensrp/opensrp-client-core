@@ -1,6 +1,7 @@
 package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
+
 import org.smartregister.repository.AllSettings;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;
@@ -30,7 +31,8 @@ public class ANMLocationController {
         return cache.get(ANM_LOCATION_JSON, new CacheableData<String>() {
             @Override
             public String fetch() {
-                return new Gson().fromJson(allSettings.fetchANMLocation(), ANMLocation.class).asJSONString();
+                return new Gson().fromJson(allSettings.fetchANMLocation(), ANMLocation.class)
+                        .asJSONString();
             }
         });
     }

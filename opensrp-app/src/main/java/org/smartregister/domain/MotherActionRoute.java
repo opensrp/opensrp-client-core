@@ -8,7 +8,8 @@ public enum MotherActionRoute {
     CLOSE("close") {
         @Override
         public void direct(Action action) {
-            Context.getInstance().motherService().close(action.caseID(), action.get("reasonForClose"));
+            Context.getInstance().motherService()
+                    .close(action.caseID(), action.get("reasonForClose"));
             Event.ACTION_HANDLED.notifyListeners("Mother closed");
         }
     };

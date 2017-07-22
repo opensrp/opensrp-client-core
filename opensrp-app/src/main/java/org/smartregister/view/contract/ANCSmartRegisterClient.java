@@ -1,6 +1,5 @@
 package org.smartregister.view.contract;
 
-
 import org.smartregister.domain.ANCServiceType;
 import org.joda.time.LocalDateTime;
 

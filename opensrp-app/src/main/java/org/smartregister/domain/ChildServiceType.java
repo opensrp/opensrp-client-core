@@ -13,34 +13,36 @@ public enum ChildServiceType {
     MEASLES {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_measles);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_measles);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_MEASLES;
         }
-    },
-    MEASLESBOOSTER {
+    }, MEASLESBOOSTER {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_measles_booster);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_measles_booster);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_measles_booster_short);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_measles_booster_short);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_MEASLES;
         }
-    },
-    OPV_BOOSTER {
+    }, OPV_BOOSTER {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_opv_booster);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_opv_booster);
         }
 
         @Override
@@ -52,72 +54,75 @@ public enum ChildServiceType {
     DPTBOOSTER_1 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_dpt_booster_1);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_dpt_booster_1);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_dpt_booster_1_short);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_dpt_booster_1_short);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_DPT;
         }
-    },
-    DPTBOOSTER_2 {
+    }, DPTBOOSTER_2 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_dpt_booster_2);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_dpt_booster_2);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_dpt_booster_2_short);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_dpt_booster_2_short);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_DPT;
         }
-    },
-    OPV_0 {
+    }, OPV_0 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_opv_0);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_opv_0);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_OPV;
         }
-    },
-    OPV_1 {
+    }, OPV_1 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_opv_1);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_opv_1);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_OPV;
         }
-    },
-    OPV_2 {
+    }, OPV_2 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_opv_2);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_opv_2);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_OPV;
         }
-    },
-    OPV_3 {
+    }, OPV_3 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_opv_3);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_opv_3);
         }
 
         @Override
@@ -129,52 +134,55 @@ public enum ChildServiceType {
     PENTAVALENT_1 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pentavalent_1);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_pentavalent_1);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pentavalent_1_short);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_pentavalent_1_short);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_PENTAVALENT;
         }
-    },
-    PENTAVALENT_2 {
+    }, PENTAVALENT_2 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pentavalent_2);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_pentavalent_2);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pentavalent_2_short);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_pentavalent_2_short);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_PENTAVALENT;
         }
-    },
-    PENTAVALENT_3 {
+    }, PENTAVALENT_3 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pentavalent_3);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_pentavalent_3);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pentavalent_3_short);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_pentavalent_3_short);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_PENTAVALENT;
         }
-    },
-    BCG {
+    }, BCG {
         @Override
         public String displayName() {
             return Context.getInstance().applicationContext().getString(R.string.service_type_bcg);
@@ -184,8 +192,7 @@ public enum ChildServiceType {
         public String category() {
             return ChildClient.CATEGORY_BCG;
         }
-    },
-    PNC {
+    }, PNC {
         @Override
         public String displayName() {
             return Context.getInstance().applicationContext().getString(R.string.service_type_pnc);
@@ -195,8 +202,7 @@ public enum ChildServiceType {
         public String category() {
             return "";
         }
-    },
-    JE {
+    }, JE {
         @Override
         public String displayName() {
             return Context.getInstance().applicationContext().getString(R.string.service_type_je);
@@ -206,8 +212,7 @@ public enum ChildServiceType {
         public String category() {
             return "";
         }
-    },
-    MMR {
+    }, MMR {
         @Override
         public String displayName() {
             return Context.getInstance().applicationContext().getString(R.string.service_type_mmr);
@@ -217,50 +222,69 @@ public enum ChildServiceType {
         public String category() {
             return "";
         }
-    },
-    VITAMIN_A {
+    }, VITAMIN_A {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_vitamin_a);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_vitamin_a);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_VITAMIN_A;
         }
-    },
-    ILLNESS_VISIT {
+    }, ILLNESS_VISIT {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_illness_visit);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_illness_visit);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_CHILD_ILLNESS;
         }
-    },
-    HEPB_0 {
+    }, HEPB_0 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_hepb_0);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_hepb_0);
         }
 
         @Override
         public String category() {
             return ChildClient.CATEGORY_HEPB;
         }
-    },
-    EMPTY {
+    }, EMPTY {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_empty);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_empty);
         }
+
         @Override
         public String category() {
             return "";
         }
     };
+
+    public static ChildServiceType tryParse(String type, ChildServiceType defaultType) {
+        try {
+            if (type.equalsIgnoreCase("Illness Visit")) {
+                return ChildServiceType.valueOf("ILLNESS_VISIT");
+            } else if (type.equalsIgnoreCase("Vitamin A")) {
+                return ChildServiceType.valueOf("VITAMIN_A");
+            } else if (type.equalsIgnoreCase("opvbooster")) {
+                return ChildServiceType.valueOf("OPV_BOOSTER");
+            } else {
+                return StringUtils.isBlank(type) ? defaultType
+                        : ChildServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
+            }
+        } catch (IllegalArgumentException e) {
+            logWarn("Unknown current Service Type : " + type + " Exception : " + e);
+            return defaultType;
+        }
+    }
 
     public abstract String displayName();
 
@@ -269,21 +293,4 @@ public enum ChildServiceType {
     }
 
     public abstract String category();
-
-    public static ChildServiceType tryParse(String type, ChildServiceType defaultType) {
-        try {
-            if (type.equalsIgnoreCase("Illness Visit")) {
-                return ChildServiceType.valueOf("ILLNESS_VISIT");
-            } else if (type.equalsIgnoreCase("Vitamin A")) {
-                return ChildServiceType.valueOf("VITAMIN_A");
-            }  else if (type.equalsIgnoreCase("opvbooster")) {
-                return ChildServiceType.valueOf("OPV_BOOSTER");
-            } else {
-                return StringUtils.isBlank(type) ? defaultType : ChildServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
-            }
-        } catch (IllegalArgumentException e) {
-            logWarn("Unknown current Service Type : " + type + " Exception : " + e);
-            return defaultType;
-        }
-    }
 }

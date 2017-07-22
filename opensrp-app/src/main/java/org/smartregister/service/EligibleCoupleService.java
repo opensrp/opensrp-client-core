@@ -18,7 +18,8 @@ public class EligibleCoupleService {
     private final AllTimelineEvents allTimelineEvents;
     private final AllBeneficiaries allBeneficiaries;
 
-    public EligibleCoupleService(AllEligibleCouples allEligibleCouples, AllTimelineEvents allTimelineEvents, AllBeneficiaries allBeneficiaries) {
+    public EligibleCoupleService(AllEligibleCouples allEligibleCouples, AllTimelineEvents
+            allTimelineEvents, AllBeneficiaries allBeneficiaries) {
         this.allEligibleCouples = allEligibleCouples;
         this.allTimelineEvents = allTimelineEvents;
         this.allBeneficiaries = allBeneficiaries;
@@ -26,7 +27,8 @@ public class EligibleCoupleService {
 
     public void register(FormSubmission submission) {
         if (isNotBlank(submission.getFieldValue(AllConstants.CommonFormFields.SUBMISSION_DATE))) {
-            allTimelineEvents.add(TimelineEvent.forECRegistered(submission.entityId(), submission.getFieldValue(AllConstants.CommonFormFields.SUBMISSION_DATE)));
+            allTimelineEvents.add(TimelineEvent.forECRegistered(submission.entityId(),
+                    submission.getFieldValue(AllConstants.CommonFormFields.SUBMISSION_DATE)));
         }
     }
 
@@ -34,13 +36,18 @@ public class EligibleCoupleService {
     }
 
     public void fpChange(FormSubmission submission) {
-        String fpMethodChangeDate = submission.getFieldValue(AllConstants.ECRegistrationFields.FAMILY_PLANNING_METHOD_CHANGE_DATE);
+        String fpMethodChangeDate = submission.getFieldValue(
+                AllConstants.ECRegistrationFields.FAMILY_PLANNING_METHOD_CHANGE_DATE);
         if (isBlank(fpMethodChangeDate)) {
-            fpMethodChangeDate = submission.getFieldValue(AllConstants.CommonFormFields.SUBMISSION_DATE);
+            fpMethodChangeDate = submission
+                    .getFieldValue(AllConstants.CommonFormFields.SUBMISSION_DATE);
         }
-        allTimelineEvents.add(forChangeOfFPMethod(submission.entityId(), submission.getFieldValue(AllConstants.ECRegistrationFields.CURRENT_FP_METHOD),
+        allTimelineEvents.add(forChangeOfFPMethod(submission.entityId(),
+                submission.getFieldValue(AllConstants.ECRegistrationFields.CURRENT_FP_METHOD),
                 submission.getFieldValue(NEW_FP_METHOD_FIELD_NAME), fpMethodChangeDate));
-        allEligibleCouples.mergeDetails(submission.entityId(), mapOf(AllConstants.ECRegistrationFields.CURRENT_FP_METHOD, submission.getFieldValue(NEW_FP_METHOD_FIELD_NAME)));
+        allEligibleCouples.mergeDetails(submission.entityId(),
+                mapOf(AllConstants.ECRegistrationFields.CURRENT_FP_METHOD,
+                        submission.getFieldValue(NEW_FP_METHOD_FIELD_NAME)));
     }
 
     public void renewFPProduct(FormSubmission submission) {

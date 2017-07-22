@@ -1,7 +1,9 @@
 package org.smartregister.view.activity;
 
 import android.app.Activity;
+
 import org.smartregister.util.Log;
+
 import android.webkit.JavascriptInterface;
 
 import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
@@ -39,7 +41,7 @@ public class FormWebInterface {
     }
 
     @JavascriptInterface
-    public void onLoadFinished(){
-        ((SecuredWebActivity)activity).closeDialog();
+    public void onLoadFinished() {
+        ((SecuredWebActivity) activity).closeDialog();
     }
 }

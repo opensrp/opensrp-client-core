@@ -19,18 +19,30 @@ import java.util.List;
  */
 public class TreeNode {
     public static final String NODES_ID_SEPARATOR = ":";
-
+    private final List<TreeNode> children;
     private int mId;
     private TreeNode mParent;
     private boolean mSelected;
     private boolean mSelectable = true;
-    private final List<TreeNode> children;
     private BaseNodeViewHolder mViewHolder;
     private TreeNodeClickListener mListener;
     private Object mValue;
     private boolean mExpanded;
     private String locationlevel;
     private String name;
+
+    public TreeNode(Object value, String level) {
+        children = new ArrayList<>();
+        mValue = value;
+        name = (String) value;
+        locationlevel = level;
+    }
+
+    public static atv.model.TreeNode root() {
+        TreeNode root = new TreeNode(null, null);
+        root.setSelectable(false);
+        return root;
+    }
 
     public String getName() {
         return name;
@@ -48,19 +60,6 @@ public class TreeNode {
         this.locationlevel = level;
     }
 
-    public static atv.model.TreeNode root() {
-        TreeNode root = new TreeNode(null,null);
-        root.setSelectable(false);
-        return root;
-    }
-
-    public TreeNode(Object value,String level) {
-        children = new ArrayList<>();
-        mValue = value;
-        name = (String)value;
-        locationlevel = level;
-    }
-
     public TreeNode addChild(TreeNode childNode) {
         childNode.mParent = this;
         //TODO think about id generation
@@ -70,20 +69,20 @@ public class TreeNode {
     }
 
     public TreeNode addChildren(TreeNode... nodes) {
-        for ( TreeNode n : nodes) {
+        for (TreeNode n : nodes) {
             addChild(n);
         }
         return this;
     }
 
-    public  TreeNode addChildren(Collection< TreeNode> nodes) {
-        for ( TreeNode n : nodes) {
+    public TreeNode addChildren(Collection<TreeNode> nodes) {
+        for (TreeNode n : nodes) {
             addChild(n);
         }
         return this;
     }
 
-    public int deleteChild( TreeNode child) {
+    public int deleteChild(TreeNode child) {
         for (int i = 0; i < children.size(); i++) {
             if (child.mId == children.get(i).mId) {
                 children.remove(i);
@@ -93,7 +92,7 @@ public class TreeNode {
         return -1;
     }
 
-    public List< TreeNode> getChildren() {
+    public List<TreeNode> getChildren() {
         return Collections.unmodifiableList(children);
     }
 
@@ -101,7 +100,7 @@ public class TreeNode {
         return children.size();
     }
 
-    public  TreeNode getParent() {
+    public TreeNode getParent() {
         return mParent;
     }
 
@@ -121,13 +120,9 @@ public class TreeNode {
         return mExpanded;
     }
 
-    public  TreeNode setExpanded(boolean expanded) {
+    public TreeNode setExpanded(boolean expanded) {
         mExpanded = expanded;
         return this;
-    }
-
-    public void setSelected(boolean selected) {
-        mSelected = selected;
     }
 
     public boolean isSelected() {
@@ -138,17 +133,21 @@ public class TreeNode {
         }
     }
 
-    public void setSelectable(boolean selectable) {
-        mSelectable = selectable;
+    public void setSelected(boolean selected) {
+        mSelected = selected;
     }
 
     public boolean isSelectable() {
         return mSelectable;
     }
 
+    public void setSelectable(boolean selectable) {
+        mSelectable = selectable;
+    }
+
     public String getPath() {
         final StringBuilder path = new StringBuilder();
-         TreeNode node = this;
+        TreeNode node = this;
         while (node.mParent != null) {
             path.append(node.getId());
             node = node.mParent;
@@ -159,10 +158,9 @@ public class TreeNode {
         return path.toString();
     }
 
-
     public int getLevel() {
         int level = 0;
-         TreeNode root = this;
+        TreeNode root = this;
         while (root.mParent != null) {
             root = root.mParent;
             level++;
@@ -174,14 +172,27 @@ public class TreeNode {
         if (!isRoot()) {
             int parentSize = mParent.children.size();
             if (parentSize > 0) {
-                final List< TreeNode> parentChildren = mParent.children;
+                final List<TreeNode> parentChildren = mParent.children;
                 return parentChildren.get(parentSize - 1).mId == mId;
             }
         }
         return false;
     }
 
-    public  TreeNode setViewHolder(BaseNodeViewHolder viewHolder) {
+    public TreeNodeClickListener getClickListener() {
+        return this.mListener;
+    }
+
+    public TreeNode setClickListener(TreeNodeClickListener listener) {
+        mListener = listener;
+        return this;
+    }
+
+    public BaseNodeViewHolder getViewHolder() {
+        return mViewHolder;
+    }
+
+    public TreeNode setViewHolder(BaseNodeViewHolder viewHolder) {
         mViewHolder = viewHolder;
         if (viewHolder != null) {
             viewHolder.mNode = this;
@@ -189,23 +200,9 @@ public class TreeNode {
         return this;
     }
 
-    public  TreeNode setClickListener(TreeNodeClickListener listener) {
-        mListener = listener;
-        return this;
-    }
-
-
-    public TreeNodeClickListener getClickListener() {
-        return this.mListener;
-    }
-
-    public BaseNodeViewHolder getViewHolder() {
-        return mViewHolder;
-    }
-
     public boolean isFirstChild() {
         if (!isRoot()) {
-            List< TreeNode> parentChildren = mParent.children;
+            List<TreeNode> parentChildren = mParent.children;
             return parentChildren.get(0).mId == mId;
         }
         return false;
@@ -215,8 +212,8 @@ public class TreeNode {
         return mParent == null;
     }
 
-    public  TreeNode getRoot() {
-         TreeNode root = this;
+    public TreeNode getRoot() {
+        TreeNode root = this;
         while (root.mParent != null) {
             root = root.mParent;
         }
@@ -224,15 +221,15 @@ public class TreeNode {
     }
 
     public interface TreeNodeClickListener {
-        void onClick( TreeNode node, Object value);
+        void onClick(TreeNode node, Object value);
     }
 
     public static abstract class BaseNodeViewHolder<E> {
         protected AndroidTreeView tView;
-        protected  TreeNode mNode;
-        private View mView;
+        protected TreeNode mNode;
         protected int containerStyle;
         protected Context context;
+        private View mView;
 
         public BaseNodeViewHolder(Context context) {
             this.context = context;
@@ -243,7 +240,8 @@ public class TreeNode {
                 return mView;
             }
             final View nodeView = getNodeView();
-            final TreeNodeWrapperView nodeWrapperView = new TreeNodeWrapperView(nodeView.getContext(), getContainerStyle());
+            final TreeNodeWrapperView nodeWrapperView = new TreeNodeWrapperView(
+                    nodeView.getContext(), getContainerStyle());
             nodeWrapperView.insertNodeView(nodeView);
             mView = nodeWrapperView;
 
@@ -256,10 +254,6 @@ public class TreeNode {
 
         public AndroidTreeView getTreeView() {
             return tView;
-        }
-
-        public void setContainerStyle(int style) {
-            containerStyle = style;
         }
 
         public View getNodeView() {
@@ -278,8 +272,11 @@ public class TreeNode {
             return containerStyle;
         }
 
+        public void setContainerStyle(int style) {
+            containerStyle = style;
+        }
 
-        public abstract View createNodeView( TreeNode node, E value);
+        public abstract View createNodeView(TreeNode node, E value);
 
         public void toggle(boolean active) {
             // empty

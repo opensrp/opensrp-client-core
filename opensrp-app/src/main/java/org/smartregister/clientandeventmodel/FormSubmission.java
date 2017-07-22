@@ -32,7 +32,9 @@ public class FormSubmission extends MotechBaseDataObject {
     public FormSubmission() {
     }
 
-    public FormSubmission(String anmId, String instanceId, String formName, String entityId, long clientVersion, String formDataDefinitionVersion, FormInstance formInstance, long serverVersion) {
+    public FormSubmission(String anmId, String instanceId, String formName, String entityId, long
+            clientVersion, String formDataDefinitionVersion, FormInstance formInstance, long
+            serverVersion) {
         this.instanceId = instanceId;
         this.formName = formName;
         this.anmId = anmId;
@@ -43,8 +45,11 @@ public class FormSubmission extends MotechBaseDataObject {
         this.formDataDefinitionVersion = formDataDefinitionVersion;
     }
 
-    public FormSubmission(String anmId, String instanceId, String formName, String entityId, String formDataDefinitionVersion, long clientVersion, FormInstance formInstance) {
-        this(anmId, instanceId, formName, entityId, clientVersion, formDataDefinitionVersion, formInstance, 0L);
+    public FormSubmission(String anmId, String instanceId, String formName, String entityId,
+                          String formDataDefinitionVersion, long clientVersion, FormInstance
+                                  formInstance) {
+        this(anmId, instanceId, formName, entityId, clientVersion, formDataDefinitionVersion,
+                formInstance, 0L);
     }
 
     public String anmId() {
@@ -79,7 +84,7 @@ public class FormSubmission extends MotechBaseDataObject {
         return this.clientVersion;
     }
 
-    public String  formDataDefinitionVersion() {
+    public String formDataDefinitionVersion() {
         return this.formDataDefinitionVersion;
     }
 
@@ -119,22 +124,22 @@ public class FormSubmission extends MotechBaseDataObject {
         return metadata;
     }
 
+    void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
     public Object getMetadata(String key) {
-        if(metadata == null){
+        if (metadata == null) {
             return null;
         }
         return metadata.get(key);
     }
 
     void addMetadata(String key, Object value) {
-        if(metadata == null){
+        if (metadata == null) {
             metadata = new HashMap<>();
         }
         metadata.put(key, value);
-    }
-
-    void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
     }
 
     @Override

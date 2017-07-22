@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.view.View;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
@@ -20,14 +21,13 @@ import static java.util.Arrays.asList;
 
 public class NativeChildSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
+    public static final List<? extends DialogOption> DEFAULT_CHILD_FILTER_OPTIONS = asList(
+            new OutOfAreaFilter());
+    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
     private SmartRegisterClientsProvider clientProvider = null;
     private ChildSmartRegisterController controller;
     private VillageController villageController;
     private DialogOptionMapper dialogOptionMapper;
-    public static final List<? extends DialogOption> DEFAULT_CHILD_FILTER_OPTIONS =
-            asList(new OutOfAreaFilter());
-
-    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
 
     @Override
     protected SmartRegisterPaginatedAdapter adapter() {
@@ -37,8 +37,8 @@ public class NativeChildSmartRegisterActivity extends SecuredNativeSmartRegister
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
         if (clientProvider == null) {
-            clientProvider = new ChildSmartRegisterClientsProvider(
-                    this, clientActionHandler, controller);
+            clientProvider = new ChildSmartRegisterClientsProvider(this, clientActionHandler,
+                    controller);
         }
         return clientProvider;
     }
@@ -75,25 +75,24 @@ public class NativeChildSmartRegisterActivity extends SecuredNativeSmartRegister
 
             @Override
             public DialogOption[] filterOptions() {
-                Iterable<? extends DialogOption> villageFilterOptions =
-                        dialogOptionMapper.mapToVillageFilterOptions(villageController.getVillages());
-                return toArray(concat(DEFAULT_FILTER_OPTIONS, DEFAULT_CHILD_FILTER_OPTIONS, villageFilterOptions), DialogOption.class);
+                Iterable<? extends DialogOption> villageFilterOptions = dialogOptionMapper
+                        .mapToVillageFilterOptions(villageController.getVillages());
+                return toArray(concat(DEFAULT_FILTER_OPTIONS, DEFAULT_CHILD_FILTER_OPTIONS,
+                        villageFilterOptions), DialogOption.class);
             }
 
             @Override
             public DialogOption[] serviceModeOptions() {
-                return new DialogOption[]{
-                        new ChildOverviewServiceMode(clientsProvider()),
-                        new ChildImmunization0to9ServiceMode(clientsProvider()),
-                        new ChildImmunization9PlusServiceMode(clientsProvider())
-                };
+                return new DialogOption[]{new ChildOverviewServiceMode(
+                        clientsProvider()), new ChildImmunization0to9ServiceMode(
+                        clientsProvider()), new ChildImmunization9PlusServiceMode(
+                        clientsProvider())};
             }
 
             @Override
             public DialogOption[] sortingOptions() {
-                return new DialogOption[]{new NameSort(), new ChildAgeSort(),
-                        new ChildHighRiskSort(), new BPLSort(),
-                        new SCSort(), new STSort()};
+                return new DialogOption[]{new NameSort(), new ChildAgeSort(), new
+                        ChildHighRiskSort(), new BPLSort(), new SCSort(), new STSort()};
             }
 
             @Override
@@ -104,27 +103,23 @@ public class NativeChildSmartRegisterActivity extends SecuredNativeSmartRegister
     }
 
     private DialogOption[] getEditOptions() {
-        return new DialogOption[]{
-                new OpenFormOption(getString(R.string.str_child_immunizations), AllConstants.FormNames.CHILD_IMMUNIZATIONS, formController),
-                new OpenFormOption(getString(R.string.str_child_illness), AllConstants.FormNames.CHILD_ILLNESS, formController),
-                new OpenFormOption(getString(R.string.str_child_close), AllConstants.FormNames.CHILD_CLOSE, formController),
-                new OpenFormOption(getString(R.string.str_vitamin_a), AllConstants.FormNames.VITAMIN_A, formController)
-        };
+        return new DialogOption[]{new OpenFormOption(getString(R.string.str_child_immunizations),
+                AllConstants.FormNames.CHILD_IMMUNIZATIONS, formController), new OpenFormOption(
+                getString(R.string.str_child_illness), AllConstants.FormNames.CHILD_ILLNESS,
+                formController), new OpenFormOption(getString(R.string.str_child_close),
+                AllConstants.FormNames.CHILD_CLOSE, formController), new OpenFormOption(
+                getString(R.string.str_vitamin_a), AllConstants.FormNames.VITAMIN_A,
+                formController)};
     }
 
     @Override
     protected void onInitialization() {
-        controller = new ChildSmartRegisterController(
-                context().serviceProvidedService(),
-                context().alertService(),
-                context().allBeneficiaries(),
-                context().listCache(),
+        controller = new ChildSmartRegisterController(context().serviceProvidedService(),
+                context().alertService(), context().allBeneficiaries(), context().listCache(),
                 context().smartRegisterClientsCache());
 
-        villageController = new VillageController(
-                context().allEligibleCouples(),
-                context().listCache(),
-                context().villagesCache());
+        villageController = new VillageController(context().allEligibleCouples(),
+                context().listCache(), context().villagesCache());
 
         dialogOptionMapper = new DialogOptionMapper();
 
@@ -133,9 +128,10 @@ public class NativeChildSmartRegisterActivity extends SecuredNativeSmartRegister
 
     @Override
     public void startRegistration() {
-        FieldOverrides fieldOverrides = new FieldOverrides(context().anmLocationController()
-                .getLocationJSON());
-        startFormActivity(AllConstants.FormNames.CHILD_REGISTRATION_OA, null, fieldOverrides.getJSONString());
+        FieldOverrides fieldOverrides = new FieldOverrides(
+                context().anmLocationController().getLocationJSON());
+        startFormActivity(AllConstants.FormNames.CHILD_REGISTRATION_OA, null,
+                fieldOverrides.getJSONString());
     }
 
     private class ClientActionHandler implements View.OnClickListener {

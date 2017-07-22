@@ -18,120 +18,120 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_condom);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_condom);
         }
-    },
-    IUD {
+    }, IUD {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return forFPIUDRenew(caseId, details);
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_iucd);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_iucd);
         }
-    },
-    OCP {
+    }, OCP {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return forFPOCPRenew(caseId, details);
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_ocp);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_ocp);
         }
-    },
-    DMPA_INJECTABLE {
+    }, DMPA_INJECTABLE {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return forFPDMPARenew(caseId, details);
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_dmpa);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_dmpa);
         }
-    },
-    MALE_STERILIZATION {
+    }, MALE_STERILIZATION {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_male_sterilization);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_male_sterilization);
         }
-    },
-    FEMALE_STERILIZATION {
+    }, FEMALE_STERILIZATION {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_female_sterilization);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_female_sterilization);
         }
-    },
-    ECP {
+    }, ECP {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_ecp);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_ecp);
         }
-    },
-    TRADITIONAL_METHODS {
+    }, TRADITIONAL_METHODS {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_traditional);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_traditional);
         }
-    },
-    LAM {
+    }, LAM {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_lam);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_lam);
         }
-    },
-    CENTCHROMAN {
+    }, CENTCHROMAN {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_centchroman);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_centchroman);
         }
-    },
-    NONE_PS {
+    }, NONE_PS {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_none_ps);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_none_ps);
         }
-    },
-    NONE_SS {
+    }, NONE_SS {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.fp_register_service_mode_none_ss);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.fp_register_service_mode_none_ss);
         }
-    },
-    NONE {
+    }, NONE {
         public TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details) {
             return null;
         }
@@ -142,16 +142,18 @@ public enum FPMethod {
         }
     };
 
-    public abstract TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details);
-
-    public abstract String displayName();
-
     public static FPMethod tryParse(String method, FPMethod defaultMethod) {
         try {
-            return StringUtils.isBlank(method) ? defaultMethod : FPMethod.valueOf(method.toUpperCase(Locale.getDefault()));
+            return StringUtils.isBlank(method) ? defaultMethod
+                    : FPMethod.valueOf(method.toUpperCase(Locale.getDefault()));
         } catch (IllegalArgumentException e) {
             logWarn("Unknown current FP method : " + method + " Exception : " + e);
             return defaultMethod;
         }
     }
+
+    public abstract TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String>
+            details);
+
+    public abstract String displayName();
 }

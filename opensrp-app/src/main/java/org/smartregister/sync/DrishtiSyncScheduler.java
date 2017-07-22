@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+
 import org.smartregister.event.Listener;
 
 import static java.text.MessageFormat.format;
@@ -29,14 +30,12 @@ public class DrishtiSyncScheduler {
             return;
         }
 
-        PendingIntent syncBroadcastReceiverIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, (Class)ReceiverClass), 0);
+        PendingIntent syncBroadcastReceiverIntent = PendingIntent
+                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        alarmManager.setRepeating(
-                AlarmManager.RTC,
-                System.currentTimeMillis() + SYNC_START_DELAY,
-                SYNC_INTERVAL,
-                syncBroadcastReceiverIntent);
+        alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis() + SYNC_START_DELAY,
+                SYNC_INTERVAL, syncBroadcastReceiverIntent);
 
         logInfo(format("Scheduled to sync from server every {0} seconds.", SYNC_INTERVAL / 1000));
 
@@ -55,7 +54,8 @@ public class DrishtiSyncScheduler {
     }
 
     public static void startOnlyIfConnectedToNetwork(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         if (networkInfo != null && networkInfo.isConnected()) {
             start(context);
@@ -65,7 +65,8 @@ public class DrishtiSyncScheduler {
     }
 
     public static void stop(Context context) {
-        PendingIntent syncBroadcastReceiverIntent = PendingIntent.getBroadcast(context, 0, new Intent(context, (Class)ReceiverClass), 0);
+        PendingIntent syncBroadcastReceiverIntent = PendingIntent
+                .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
 
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.cancel(syncBroadcastReceiverIntent);

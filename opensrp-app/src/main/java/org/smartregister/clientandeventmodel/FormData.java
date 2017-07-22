@@ -26,7 +26,8 @@ public class FormData {
     public FormData() {
     }
 
-    public FormData(String bind_type, String default_bind_path, List<FormField> fields, List<SubFormData> sub_forms) {
+    public FormData(String bind_type, String default_bind_path, List<FormField> fields,
+                    List<SubFormData> sub_forms) {
         this.bind_type = bind_type;
         this.default_bind_path = default_bind_path;
         this.fields = fields;
@@ -68,10 +69,12 @@ public class FormData {
 
     public SubFormData getSubFormByName(String name) {
         for (SubFormData sub_form : sub_forms) {
-            if (StringUtils.equalsIgnoreCase(name, sub_form.name()))
+            if (StringUtils.equalsIgnoreCase(name, sub_form.name())) {
                 return sub_form;
+            }
         }
-        throw new RuntimeException(MessageFormat.format("No sub form with the given name: {0}, in formData: {1}", name, this));
+        throw new RuntimeException(MessageFormat
+                .format("No sub form with the given name: {0}, in" + " formData: {1}", name, this));
     }
 
     public List<SubFormData> subForms() {

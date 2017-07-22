@@ -1,6 +1,7 @@
 package org.smartregister.view.contract;
 
 import android.graphics.Color;
+
 import org.smartregister.R;
 
 public enum FPAlertStatus {
@@ -12,8 +13,7 @@ public enum FPAlertStatus {
         public int fontColor() {
             return Color.BLACK;
         }
-    },
-    UPCOMING {
+    }, UPCOMING {
         public int backgroundColorResourceId() {
             return R.color.alert_upcoming_light_blue;
         }
@@ -21,8 +21,7 @@ public enum FPAlertStatus {
         public int fontColor() {
             return Color.BLACK;
         }
-    },
-    NORMAL {
+    }, NORMAL {
         public int backgroundColorResourceId() {
             return R.color.alert_in_progress_blue;
         }
@@ -30,8 +29,7 @@ public enum FPAlertStatus {
         public int fontColor() {
             return Color.WHITE;
         }
-    },
-    URGENT {
+    }, URGENT {
         public int backgroundColorResourceId() {
             return R.color.alert_urgent_red;
         }
@@ -39,8 +37,7 @@ public enum FPAlertStatus {
         public int fontColor() {
             return Color.WHITE;
         }
-    },
-    COMPLETE {
+    }, COMPLETE {
         public int backgroundColorResourceId() {
             return R.color.alert_complete_green;
         }
@@ -50,13 +47,12 @@ public enum FPAlertStatus {
         }
     };
 
+    public static FPAlertStatus from(String value) {
+        return valueOf(value.toUpperCase());
+    }
 
     public abstract int backgroundColorResourceId();
 
     public abstract int fontColor();
-
-    public static FPAlertStatus from(String value) {
-        return valueOf(value.toUpperCase());
-    }
 
 }

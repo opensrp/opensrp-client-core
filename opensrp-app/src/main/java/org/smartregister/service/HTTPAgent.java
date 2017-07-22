@@ -59,15 +59,15 @@ import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
-    private static final String TAG=HTTPAgent.class.getCanonicalName();
+    private static final String TAG = HTTPAgent.class.getCanonicalName();
     private final GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
 
-
-    public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences allSharedPreferences, DristhiConfiguration configuration) {
+    public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
+            allSharedPreferences, DristhiConfiguration configuration) {
         this.context = context;
         this.settings = settings;
         this.allSharedPreferences = allSharedPreferences;
@@ -81,14 +81,17 @@ public class HTTPAgent {
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         registry.register(new Scheme("https", sslSocketFactoryWithopensrpCertificate(), 443));
 
-        SingleClientConnManager connectionManager = new SingleClientConnManager(basicHttpParams, registry);
-        httpClient = new GZipEncodingHttpClient(new DefaultHttpClient(connectionManager, basicHttpParams));
+        SingleClientConnManager connectionManager = new SingleClientConnManager(basicHttpParams,
+                registry);
+        httpClient = new GZipEncodingHttpClient(
+                new DefaultHttpClient(connectionManager, basicHttpParams));
     }
 
     public Response<String> fetch(String requestURLPath) {
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            String responseContent = IOUtils.toString(httpClient.fetchContent(new HttpGet(requestURLPath)));
+            String responseContent = IOUtils
+                    .toString(httpClient.fetchContent(new HttpGet(requestURLPath)));
             return new Response<String>(ResponseStatus.success, responseContent);
         } catch (Exception e) {
             logWarn(e.toString());
@@ -110,7 +113,9 @@ public class HTTPAgent {
 
             HttpResponse response = httpClient.postContent(httpPost);
 
-            ResponseStatus responseStatus = response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED ? ResponseStatus.success : ResponseStatus.failure;
+            ResponseStatus responseStatus =
+                    response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
+                            ? ResponseStatus.success : ResponseStatus.failure;
             response.getEntity().consumeContent();
             return new Response<String>(responseStatus, null);
         } catch (Exception e) {
@@ -119,10 +124,11 @@ public class HTTPAgent {
         }
     }
 
-    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
+    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
+                                                            String password) {
         setCredentials(userName, password);
         try {
-            requestURL=requestURL.replaceAll("\\s+","");
+            requestURL = requestURL.replaceAll("\\s+", "");
             HttpResponse response = httpClient.execute(new HttpGet(requestURL));
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
@@ -131,13 +137,15 @@ public class HTTPAgent {
                 logError("Invalid credentials for: " + userName + " using " + requestURL);
                 return UNAUTHORIZED;
             } else {
-                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: " + userName + " using " + requestURL);
+                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
+                        + userName + " using " + requestURL);
                 return UNKNOWN_RESPONSE;
             }
-        }catch (IOException e) {
-            logError("Failed to check credentials of: " + userName + " using " + requestURL + ". Error: " + e.toString());
+        } catch (IOException e) {
+            logError("Failed to check credentials of: " + userName + " using " + requestURL + ". "
+                    + "" + "" + "Error: " + e.toString());
             return NO_INTERNET_CONNECTIVITY;
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logError(e.getMessage());
             return MALFORMED_URL;
 
@@ -151,8 +159,9 @@ public class HTTPAgent {
     }
 
     private void setCredentials(String userName, String password) {
-        httpClient.getCredentialsProvider().setCredentials(new AuthScope(configuration.host(), configuration.port(), REALM),
-                new UsernamePasswordCredentials(userName, password));
+        httpClient.getCredentialsProvider()
+                .setCredentials(new AuthScope(configuration.host(), configuration.port(), REALM),
+                        new UsernamePasswordCredentials(userName, password));
     }
 
     private SocketFactory sslSocketFactoryWithopensrpCertificate() {
@@ -168,7 +177,8 @@ public class HTTPAgent {
             final X509HostnameVerifier oldVerifier = socketFactory.getHostnameVerifier();
             socketFactory.setHostnameVerifier(new AbstractVerifier() {
                 @Override
-                public void verify(String host, String[] cns, String[] subjectAlts) throws SSLException {
+                public void verify(String host, String[] cns, String[] subjectAlts) throws
+                        SSLException {
                     for (String cn : cns) {
                         if (!configuration.shouldVerifyCertificate() || host.equals(cn)) {
                             return;
@@ -182,6 +192,7 @@ public class HTTPAgent {
             throw new AssertionError(e);
         }
     }
+
     public Response<String> fetchWithCredentials(String uri, String username, String password) {
         setCredentials(username, password);
         try {
@@ -193,13 +204,14 @@ public class HTTPAgent {
         }
     }
 
-    public String httpImagePost(String url,ProfileImage image){
+    public String httpImagePost(String url, ProfileImage image) {
 
         String responseString = "";
         try {
             File uploadFile = new File(image.getFilepath());
-            if(uploadFile.exists()) {
-                setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
+            if (uploadFile.exists()) {
+                setCredentials(allSharedPreferences.fetchRegisteredANM(),
+                        settings.fetchANMPassword());
 
                 HttpPost httpost = new HttpPost(url);
 
@@ -209,9 +221,11 @@ public class HTTPAgent {
                 MultipartEntity entity = new MultipartEntity();
                 entity.addPart("anm-id", new StringBody(image.getAnmId()));
                 entity.addPart("entity-id", new StringBody(image.getEntityID()));
-                entity.addPart("content-type", new StringBody(image.getContenttype() != null ? image.getContenttype() : "jpeg"));
-                entity.addPart("file-category", new StringBody(image.getFilecategory() != null ? image.getFilecategory() : "profilepic"));
-                ContentBody cbFile = new FileBody(uploadFile,"image/jpeg");
+                entity.addPart("content-type", new StringBody(
+                        image.getContenttype() != null ? image.getContenttype() : "jpeg"));
+                entity.addPart("file-category", new StringBody(
+                        image.getFilecategory() != null ? image.getFilecategory() : "profilepic"));
+                ContentBody cbFile = new FileBody(uploadFile, "image/jpeg");
                 entity.addPart("file", cbFile);
                 httpost.setEntity(entity);
                 String authToken = null;
@@ -221,18 +235,20 @@ public class HTTPAgent {
                 int RESPONSE_OK = 200;
                 int RESPONSE_OK_ = 201;
 
-                if (response.getStatusLine().getStatusCode() != RESPONSE_OK_ && response.getStatusLine().getStatusCode() != RESPONSE_OK) {
+                if (response.getStatusLine().getStatusCode() != RESPONSE_OK_
+                        && response.getStatusLine().getStatusCode() != RESPONSE_OK) {
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return responseString;
     }
 
-    private String nullToLiteral(String s){
-        if(s == null)
+    private String nullToLiteral(String s) {
+        if (s == null) {
             return "";
+        }
         return s;
 
     }

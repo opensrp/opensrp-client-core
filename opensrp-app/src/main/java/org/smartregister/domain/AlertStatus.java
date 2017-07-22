@@ -4,12 +4,8 @@ package org.smartregister.domain;
  * Created by keyman on 07/04/2017.
  */
 public enum AlertStatus {
-    upcoming("upcoming"),
-    normal("normal"),
-    urgent("urgent"),
-    inProcess("inProcess"),
-    complete("complete"),
-    expired("expired");
+    upcoming("upcoming"), normal("normal"), urgent("urgent"), inProcess("inProcess"), complete(
+            "complete"), expired("expired");
 
     private String value;
 

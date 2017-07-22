@@ -40,7 +40,8 @@ public class ANCClient implements ANCSmartRegisterClient {
     private static final String[] SERVICE_CATEGORIES = {CATEGORY_ANC, CATEGORY_TT, CATEGORY_IFA,
             CATEGORY_HB, CATEGORY_DELIVERY_PLAN, CATEGORY_PNC};
 
-    private static Map<String, List<ANCServiceType>> categoriesToServiceTypeMap = new HashMap<String, List<ANCServiceType>>();
+    private static Map<String, List<ANCServiceType>> categoriesToServiceTypeMap = new
+            HashMap<String, List<ANCServiceType>>();
 
     static {
         categoriesToServiceTypeMap.put(CATEGORY_ANC, Arrays.asList(ANC_1, ANC_2, ANC_3, ANC_4));
@@ -74,13 +75,14 @@ public class ANCClient implements ANCSmartRegisterClient {
     private String ashaPhoneNumber;
     private Map<String, Visits> serviceToVisitsMap;
 
-
-    public ANCClient(String entityId, String village, String name, String thayi, String edd, String lmp) {
+    public ANCClient(String entityId, String village, String name, String thayi, String edd,
+                     String lmp) {
         this.entityId = entityId;
         this.village = village;
         this.name = name;
         this.thayi = thayi;
-        this.edd = parse(edd, DateTimeFormat.forPattern(FORM_DATE_TIME_FORMAT)).toString(ISODateTimeFormat.dateTime());
+        this.edd = parse(edd, DateTimeFormat.forPattern(FORM_DATE_TIME_FORMAT))
+                .toString(ISODateTimeFormat.dateTime());
         this.lmp = lmp;
         this.serviceToVisitsMap = new HashMap<String, Visits>();
     }
@@ -167,8 +169,8 @@ public class ANCClient implements ANCSmartRegisterClient {
     @Override
     public boolean satisfiesFilter(String filterCriterion) {
         return name.toLowerCase(Locale.getDefault()).startsWith(filterCriterion.toLowerCase())
-                || String.valueOf(ec_number).startsWith(filterCriterion)
-                || String.valueOf(thayi).startsWith(filterCriterion);
+                || String.valueOf(ec_number).startsWith(filterCriterion) || String.valueOf(thayi)
+                .startsWith(filterCriterion);
     }
 
     @Override
@@ -260,8 +262,9 @@ public class ANCClient implements ANCSmartRegisterClient {
     public List<ServiceProvidedDTO> allServicesProvidedForAServiceType(String serviceType) {
         List<ServiceProvidedDTO> servicesProvided = new ArrayList<ServiceProvidedDTO>();
         for (ServiceProvidedDTO serviceProvided : services_provided) {
-            if (serviceProvided.name().equalsIgnoreCase(serviceType))
+            if (serviceProvided.name().equalsIgnoreCase(serviceType)) {
                 servicesProvided.add(serviceProvided);
+            }
         }
         return servicesProvided;
     }
@@ -270,7 +273,6 @@ public class ANCClient implements ANCSmartRegisterClient {
     public String ashaPhoneNumber() {
         return ashaPhoneNumber;
     }
-
 
     public Map<String, Visits> serviceToVisitsMap() {
         return serviceToVisitsMap;
@@ -368,7 +370,8 @@ public class ANCClient implements ANCSmartRegisterClient {
         }
     }
 
-    private void initializeAllServiceToProvideAndProvided(Map<String, List<ANCServiceType>> categoriesToServiceTypeMap) {
+    private void initializeAllServiceToProvideAndProvided(Map<String, List<ANCServiceType>>
+                                                                  categoriesToServiceTypeMap) {
         Set<String> keys = categoriesToServiceTypeMap.keySet();
         for (String key : keys) {
             initializeServiceToProvideAndProvided(categoriesToServiceTypeMap.get(key));
@@ -435,7 +438,6 @@ public class ANCClient implements ANCSmartRegisterClient {
         }
         return null;
     }
-
 
     @Override
     public boolean equals(Object o) {

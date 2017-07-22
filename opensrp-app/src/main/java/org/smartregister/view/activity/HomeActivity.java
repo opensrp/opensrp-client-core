@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
 import org.smartregister.R;
 import org.smartregister.event.Listener;
 import org.smartregister.service.PendingFormSubmissionService;
@@ -87,8 +88,9 @@ public class HomeActivity extends SecuredWebActivity {
         if (updateMenuItem != null) {
             if (context().allSharedPreferences().fetchIsSyncInProgress()) {
                 updateMenuItem.setActionView(R.layout.progress);
-            } else
+            } else {
                 updateMenuItem.setActionView(null);
+            }
         }
     }
 
@@ -99,7 +101,8 @@ public class HomeActivity extends SecuredWebActivity {
 
         long size = pendingFormSubmissionService.pendingFormSubmissionCount();
         if (size > 0) {
-            remainingFormsToSyncMenuItem.setTitle(String.valueOf(size) + " " + getString(R.string.unsynced_forms_count_message));
+            remainingFormsToSyncMenuItem.setTitle(
+                    String.valueOf(size) + " " + getString(R.string.unsynced_forms_count_message));
             remainingFormsToSyncMenuItem.setVisible(true);
         } else {
             remainingFormsToSyncMenuItem.setVisible(false);

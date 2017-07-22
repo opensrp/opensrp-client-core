@@ -3,6 +3,7 @@ package org.smartregister.view.viewholder;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
 import org.smartregister.view.contract.SmartRegisterClient;
 
 import java.io.File;
@@ -28,9 +29,8 @@ public class ECProfilePhotoLoader implements ProfilePhotoLoader {
         }
 
         String photoPath = client.profilePhotoPath();
-        if (isBlank(photoPath)
-                || isThisDefaultProfilePhoto(photoPath)
-                || !isFileExists(photoPath)) {
+        if (isBlank(photoPath) || isThisDefaultProfilePhoto(photoPath) || !isFileExists(
+                photoPath)) {
             return defaultPlaceHolder;
         }
 

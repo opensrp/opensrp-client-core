@@ -9,7 +9,6 @@ public class PNCStatusDatum {
     private int day;
     private PNCVisitStatus status;
 
-
     public PNCStatusDatum(int day, PNCVisitStatus status) {
         this.day = day;
         this.status = status;

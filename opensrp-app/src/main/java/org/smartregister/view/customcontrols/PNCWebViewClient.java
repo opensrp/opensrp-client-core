@@ -1,6 +1,5 @@
 package org.smartregister.view.customcontrols;
 
-
 import android.net.http.SslError;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
@@ -13,7 +12,8 @@ public class PNCWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+    public void onReceivedError(WebView view, int errorCode, String description, String
+            failingUrl) {
         view.loadUrl("file:///android_asset/www/pnc_graph/pnc_visit_graph_error.html");
     }
 

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Event extends BaseDataObject{
+public class Event extends BaseDataObject {
 
     @JsonProperty
     private String eventId;
@@ -36,7 +36,7 @@ public class Event extends BaseDataObject{
     @JsonProperty
     private String priority;
     @JsonProperty
-    private List<String>  episodeOfCare;
+    private List<String> episodeOfCare;
     @JsonProperty
     private List<String> referrals;
     @JsonProperty
@@ -61,8 +61,8 @@ public class Event extends BaseDataObject{
         this.version = System.currentTimeMillis();
     }
 
-    public Event(String baseEntityId, String eventId, String eventType, Date eventDate, String entityType,
-                 String providerId, String locationId, String formSubmissionId) {
+    public Event(String baseEntityId, String eventId, String eventType, Date eventDate, String
+            entityType, String providerId, String locationId, String formSubmissionId) {
         this.baseEntityId = baseEntityId;
         this.identifiers = new HashMap<>();
         this.eventId = eventId;
@@ -75,8 +75,9 @@ public class Event extends BaseDataObject{
         this.version = System.currentTimeMillis();
     }
 
-    public Event(String baseEntityId, HashMap<String, String> identifiers, String eventId, String eventType, Date eventDate, String entityType,
-                 String providerId, String locationId, String formSubmissionId) {
+    public Event(String baseEntityId, HashMap<String, String> identifiers, String eventId, String
+            eventType, Date eventDate, String entityType, String providerId, String locationId,
+                 String formSubmissionId) {
         this.baseEntityId = baseEntityId;
         this.identifiers = identifiers;
         this.eventId = eventId;
@@ -95,6 +96,7 @@ public class Event extends BaseDataObject{
 
     /**
      * WARNING: Overrides all existing obs
+     *
      * @param obs
      * @return
      */
@@ -103,7 +105,7 @@ public class Event extends BaseDataObject{
     }
 
     public void addObs(Obs observation) {
-        if(obs == null){
+        if (obs == null) {
             obs = new ArrayList<>();
         }
 
@@ -191,7 +193,7 @@ public class Event extends BaseDataObject{
     }
 
     public void addDetails(String key, String val) {
-        if(details == null){
+        if (details == null) {
             details = new HashMap<>();
         }
         details.put(key, val);
@@ -247,6 +249,7 @@ public class Event extends BaseDataObject{
 
     /**
      * WARNING: Overrides all existing obs
+     *
      * @param obs
      * @return
      */
@@ -256,7 +259,7 @@ public class Event extends BaseDataObject{
     }
 
     public Event withObs(Obs observation) {
-        if(obs == null){
+        if (obs == null) {
             obs = new ArrayList<>();
         }
         obs.add(observation);

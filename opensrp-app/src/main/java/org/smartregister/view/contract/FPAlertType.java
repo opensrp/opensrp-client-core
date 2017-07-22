@@ -16,8 +16,7 @@ public enum FPAlertType {
         public String getFormName() {
             return FP_FOLLOWUP;
         }
-    },
-    REFERRAL("referral") {
+    }, REFERRAL("referral") {
         @Override
         public String getAlertType() {
             return "Referral Follow Up";
@@ -27,8 +26,7 @@ public enum FPAlertType {
         public String getFormName() {
             return FP_REFERRAL_FOLLOWUP;
         }
-    },
-    REFILL("refill") {
+    }, REFILL("refill") {
         @Override
         public String getAlertType() {
             return "Refill";
@@ -46,15 +44,6 @@ public enum FPAlertType {
         this.alertType = alertType;
     }
 
-    @Override
-    public String toString() {
-        return this.alertType;
-    }
-
-    public abstract String getAlertType();
-
-    public abstract String getFormName();
-
     public static FPAlertType from(String value) {
         if (value != null) {
             for (FPAlertType type : FPAlertType.values()) {
@@ -66,5 +55,14 @@ public enum FPAlertType {
         return null;
 
     }
+
+    @Override
+    public String toString() {
+        return this.alertType;
+    }
+
+    public abstract String getAlertType();
+
+    public abstract String getFormName();
 
 }

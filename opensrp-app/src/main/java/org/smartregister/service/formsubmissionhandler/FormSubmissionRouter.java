@@ -13,34 +13,29 @@ import static org.smartregister.AllConstants.FormNames.*;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 import static org.smartregister.util.Log.logWarn;
 
-
 public class FormSubmissionRouter {
     private final Map<String, FormSubmissionHandler> handlerMap;
     private FormDataRepository formDataRepository;
 
-    public FormSubmissionRouter(FormDataRepository formDataRepository,
-                                ECRegistrationHandler ecRegistrationHandler,
-                                FPComplicationsHandler fpComplicationsHandler,
-                                FPChangeHandler fpChangeHandler,
-                                RenewFPProductHandler renewFPProductHandler,
-                                ECCloseHandler ecCloseHandler,
-                                ANCRegistrationHandler ancRegistrationHandler,
+    public FormSubmissionRouter(FormDataRepository formDataRepository, ECRegistrationHandler
+            ecRegistrationHandler, FPComplicationsHandler fpComplicationsHandler, FPChangeHandler
+            fpChangeHandler, RenewFPProductHandler renewFPProductHandler, ECCloseHandler
+            ecCloseHandler, ANCRegistrationHandler ancRegistrationHandler,
                                 ANCRegistrationOAHandler ancRegistrationOAHandler,
-                                ANCVisitHandler ancVisitHandler,
-                                ANCCloseHandler ancCloseHandler,
-                                TTHandler ttHandler,
-                                IFAHandler ifaHandler,
-                                HBTestHandler hbTestHandler,
-                                DeliveryOutcomeHandler deliveryOutcomeHandler,
-                                PNCRegistrationOAHandler pncRegistrationOAHandler,
-                                PNCCloseHandler pncCloseHandler,
-                                PNCVisitHandler pncVisitHandler,
+                                ANCVisitHandler ancVisitHandler, ANCCloseHandler ancCloseHandler,
+                                TTHandler ttHandler, IFAHandler ifaHandler, HBTestHandler
+                                        hbTestHandler, DeliveryOutcomeHandler
+                                        deliveryOutcomeHandler, PNCRegistrationOAHandler
+                                        pncRegistrationOAHandler, PNCCloseHandler
+                                        pncCloseHandler, PNCVisitHandler pncVisitHandler,
                                 ChildImmunizationsHandler childImmunizationsHandler,
                                 ChildRegistrationECHandler childRegistrationECHandler,
                                 ChildRegistrationOAHandler childRegistrationOAHandler,
-                                ChildCloseHandler childCloseHandler, ChildIllnessHandler childIllnessHandler,
-                                VitaminAHandler vitaminAHandler, DeliveryPlanHandler deliveryPlanHandler,
-                                ECEditHandler ecEditHandler, ANCInvestigationsHandler ancInvestigationsHandler) {
+                                ChildCloseHandler childCloseHandler, ChildIllnessHandler
+                                        childIllnessHandler, VitaminAHandler vitaminAHandler,
+                                DeliveryPlanHandler deliveryPlanHandler, ECEditHandler
+                                        ecEditHandler, ANCInvestigationsHandler
+                                        ancInvestigationsHandler) {
         this.formDataRepository = formDataRepository;
         handlerMap = new HashMap<String, FormSubmissionHandler>();
         handlerMap.put(EC_REGISTRATION, ecRegistrationHandler);
@@ -73,7 +68,6 @@ public class FormSubmissionRouter {
         handlerMap.put(ANC_INVESTIGATIONS, ancInvestigationsHandler);
     }
 
-
     public void route(String instanceId) throws Exception {
         FormSubmission submission = formDataRepository.fetchFromSubmission(instanceId);
         FormSubmissionHandler handler = handlerMap.get(submission.formName());
@@ -83,8 +77,10 @@ public class FormSubmissionRouter {
             try {
                 handler.handle(submission);
             } catch (Exception e) {
-                Log.logError(format("Handling {0} form submission with instance Id: {1} for entity: {2} failed with exception : {3}",
-                        submission.formName(), submission.instanceId(), submission.entityId(), ExceptionUtils.getStackTrace(e)));
+                Log.logError(format("Handling {0} form submission with instance Id: {1} for "
+                                + "entity: {2} failed with exception : {3}", submission.formName(),
+                        submission.instanceId(), submission.entityId(),
+                        ExceptionUtils.getStackTrace(e)));
                 throw e;
             }
         }
@@ -95,13 +91,13 @@ public class FormSubmissionRouter {
         return handlerMap;
     }
 
-    public void handleSubmission(FormSubmission submission, String formName){
-        if(getHandlerMap().isEmpty()){
+    public void handleSubmission(FormSubmission submission, String formName) {
+        if (getHandlerMap().isEmpty()) {
             return;
         }
 
         FormSubmissionHandler handler = getHandlerMap().get(formName);
-        if(handler != null){
+        if (handler != null) {
             handler.handle(submission);
         }
     }

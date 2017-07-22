@@ -1,12 +1,14 @@
 package org.smartregister.service;
 
 import android.content.res.AssetManager;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
 import android.webkit.JavascriptInterface;
 
 import static java.text.MessageFormat.format;
@@ -17,7 +19,8 @@ public class ZiggyFileLoader {
     private String formDirectoryPath;
     private AssetManager assetManager;
 
-    public ZiggyFileLoader(String ziggyDirectoryPath, String formDirectoryPath, AssetManager assetManager) {
+    public ZiggyFileLoader(String ziggyDirectoryPath, String formDirectoryPath, AssetManager
+            assetManager) {
         this.ziggyDirectoryPath = ziggyDirectoryPath;
         this.formDirectoryPath = formDirectoryPath;
         this.assetManager = assetManager;
@@ -28,7 +31,9 @@ public class ZiggyFileLoader {
         String[] fileNames = assetManager.list(ziggyDirectoryPath);
         for (String fileName : fileNames) {
             if (fileName.endsWith(".js")) {
-                builder.append(IOUtils.toString(assetManager.open(ziggyDirectoryPath + "/" + fileName), "UTF-8"));
+                builder.append(
+                        IOUtils.toString(assetManager.open(ziggyDirectoryPath + "/" + fileName),
+                                "UTF-8"));
             }
         }
         return builder.toString();
@@ -40,7 +45,8 @@ public class ZiggyFileLoader {
             FormPathService fps = new FormPathService(assetManager);
             return fps.getForms(fileName, "UTF-8");
         } catch (IOException e) {
-            logError(format("Error while loading app data file: {0}, with exception: {1}", fileName, e));
+            logError(format("Error while loading app data file: {0}, with exception: {1}", fileName,
+                    e));
         }
         return null;
     }

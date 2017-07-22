@@ -15,41 +15,15 @@ import java.util.Map;
  */
 class CommonObjectSort implements SortOption {
 
-
     private String field;
     private ByColumnAndByDetails byColumnAndByDetails;
     private boolean isInteger;
     private String sortOptionName;
-    public enum ByColumnAndByDetails{
-        byColumn, byDetails
-    }
-
-    CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg,
-                     boolean isIntegerArg,
-                     String fieldArg,
-                     String sortOptionNameArg) {
-        byColumnAndByDetails = byColumnAndByDetailsArg;
-        isInteger = isIntegerArg;
-        field = fieldArg;
-        sortOptionName = sortOptionNameArg;
-    }
-
-    @Override
-    public String name() {
-        return sortOptionName;
-    }
-
-    @Override
-    public SmartRegisterClients sort(SmartRegisterClients allClients) {
-        Collections.sort(allClients, commonComparator);
-        return allClients;
-    }
-
-    private Comparator<SmartRegisterClient> commonComparator =
-            new Comparator<SmartRegisterClient>() {
+    private Comparator<SmartRegisterClient> commonComparator = new
+            Comparator<SmartRegisterClient>() {
         @Override
-        public int compare(SmartRegisterClient smartRegisterClient,
-                           SmartRegisterClient smartRegisterClient2) {
+        public int compare(SmartRegisterClient smartRegisterClient, SmartRegisterClient
+                smartRegisterClient2) {
             CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
             CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
             boolean isDetails;
@@ -68,19 +42,42 @@ class CommonObjectSort implements SortOption {
             String fieldValue = getFieldValue(client, isDetails);
             String fieldValue2 = getFieldValue(client2, isDetails);
 
-            return isInteger ? Integer.valueOf(fieldValue).compareTo(
-                    Integer.valueOf(fieldValue2)) : fieldValue.compareTo(fieldValue2);
+            return isInteger ? Integer.valueOf(fieldValue).compareTo(Integer.valueOf(fieldValue2))
+                    : fieldValue.compareTo(fieldValue2);
         }
     };
 
+    CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg, boolean isIntegerArg, String
+            fieldArg, String sortOptionNameArg) {
+        byColumnAndByDetails = byColumnAndByDetailsArg;
+        isInteger = isIntegerArg;
+        field = fieldArg;
+        sortOptionName = sortOptionNameArg;
+    }
+
+    @Override
+    public String name() {
+        return sortOptionName;
+    }
+
+    @Override
+    public SmartRegisterClients sort(SmartRegisterClients allClients) {
+        Collections.sort(allClients, commonComparator);
+        return allClients;
+    }
+
     @NonNull
-    private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient,
-                                 boolean isDetails) {
+    private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient, boolean
+            isDetails) {
         String defaultValue = isInteger ? "0" : "";
         Map<String, String> valueMap = isDetails ? commonPersonObjectClient.getDetails()
                 : commonPersonObjectClient.getColumnmaps();
         String detailsFieldValue = valueMap.get(field);
 
         return (detailsFieldValue != null ? detailsFieldValue : defaultValue).trim().toLowerCase();
+    }
+
+    public enum ByColumnAndByDetails {
+        byColumn, byDetails
     }
 }

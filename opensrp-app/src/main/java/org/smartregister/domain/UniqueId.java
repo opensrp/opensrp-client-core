@@ -13,16 +13,16 @@ public class UniqueId {
     Date createdAt;
     Date updatedAt;
 
-    public UniqueId(){}
-
-    public UniqueId(String id, String openmrsId, String status, String usedBy, Date createdAt){
-        this.id=id;
-        this.openmrsId=openmrsId;
-        this.status=status;
-        this.usedBy=usedBy;
-        this.createdAt=createdAt;
+    public UniqueId() {
     }
 
+    public UniqueId(String id, String openmrsId, String status, String usedBy, Date createdAt) {
+        this.id = id;
+        this.openmrsId = openmrsId;
+        this.status = status;
+        this.usedBy = usedBy;
+        this.createdAt = createdAt;
+    }
 
     public String getId() {
         return id;
@@ -71,6 +71,5 @@ public class UniqueId {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
 }

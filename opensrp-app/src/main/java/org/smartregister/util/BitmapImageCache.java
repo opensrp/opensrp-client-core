@@ -26,13 +26,53 @@ public class BitmapImageCache implements ImageLoader.ImageCache {
     }
 
     /**
+     * Sets the memory cache size based on a percentage of the max available VM memory. Eg.
+     * setting percent to 0.2 would set the memory cache to one fifth of
+     * the available memory. Throws {@link IllegalArgumentException} if percent is < 0.05 or >
+     * .8. memCacheSize is stored in kilobytes instead of bytes as this
+     * will eventually be passed to construct a LruCache which takes an int in its constructor.
+     * <p>
+     * This value should be chosen carefully based on a number of factors Refer to the
+     * corresponding Android Training class for more discussion:
+     * http://developer.android.com/training/displaying-bitmaps/
+     *
+     * @param percent Percent of memory class to use to size memory cache
+     * @return Memory cache size in KB
+     */
+    public static int calculateMemCacheSize(float percent) {
+        if (percent < 0.05f || percent > 0.8f) {
+            throw new IllegalArgumentException("setMemCacheSizePercent - percent must be "
+                    + "between 0.05 and 0.8 (inclusive)");
+        }
+
+        int calculatedCacacity = Math.round(percent * Runtime.getRuntime().maxMemory() / 1024);
+
+        calculatedCacacity = calculatedCacacity > AllConstants.ImageCache.MEM_CACHE_MAX_SIZE
+                ? AllConstants.ImageCache.MEM_CACHE_MAX_SIZE : calculatedCacacity;
+        return calculatedCacacity;
+    }
+
+    /**
+     * Get the size in bytes of a bitmap.
+     */
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
+    public static int getBitmapSize(Bitmap bitmap) {
+        if (Build.VERSION.SDK_INT >= 12) {
+            return bitmap.getByteCount();
+        }
+        // Pre HC-MR1
+        return bitmap.getRowBytes() * bitmap.getHeight();
+    }
+
+    /**
      * Initialize the cache.
      */
     private void init(int memCacheSize) {
         // Set up memory cache
         mMemoryCache = new LruCache<String, Bitmap>(memCacheSize) {
             /**
-             * Measure item size in kilobytes rather than units which is more practical for a bitmap cache
+             * Measure item size in kilobytes rather than units which is more practical for a
+             * bitmap cache
              */
             @Override
             protected int sizeOf(String key, Bitmap bitmap) {
@@ -44,11 +84,9 @@ public class BitmapImageCache implements ImageLoader.ImageCache {
 
     /**
      * Adds a bitmap to both memory and disk cache.
-     * 
-     * @param data
-     *            Unique identifier for the bitmap to store
-     * @param bitmap
-     *            The bitmap to store
+     *
+     * @param data   Unique identifier for the bitmap to store
+     * @param bitmap The bitmap to store
      */
     public void addBitmapToCache(String data, Bitmap bitmap) {
         if (data == null || bitmap == null) {
@@ -65,9 +103,8 @@ public class BitmapImageCache implements ImageLoader.ImageCache {
 
     /**
      * Get from memory cache.
-     * 
-     * @param data
-     *            Unique identifier for which item to get
+     *
+     * @param data Unique identifier for which item to get
      * @return The bitmap if found in cache, null otherwise
      */
     public Bitmap getBitmapFromMemCache(String data) {
@@ -89,41 +126,6 @@ public class BitmapImageCache implements ImageLoader.ImageCache {
         if (mMemoryCache != null) {
             mMemoryCache.evictAll();
         }
-    }
-
-    /**
-     * Sets the memory cache size based on a percentage of the max available VM memory. Eg. setting percent to 0.2 would set the memory cache to one fifth of
-     * the available memory. Throws {@link IllegalArgumentException} if percent is < 0.05 or > .8. memCacheSize is stored in kilobytes instead of bytes as this
-     * will eventually be passed to construct a LruCache which takes an int in its constructor.
-     * 
-     * This value should be chosen carefully based on a number of factors Refer to the corresponding Android Training class for more discussion:
-     * http://developer.android.com/training/displaying-bitmaps/
-     * 
-     * @param percent
-     *            Percent of memory class to use to size memory cache
-     * @return Memory cache size in KB
-     */
-    public static int calculateMemCacheSize(float percent) {
-        if (percent < 0.05f || percent > 0.8f) {
-            throw new IllegalArgumentException("setMemCacheSizePercent - percent must be " + "between 0.05 and 0.8 (inclusive)");
-        }
-
-        int calculatedCacacity = Math.round(percent * Runtime.getRuntime().maxMemory() / 1024);
-
-        calculatedCacacity = calculatedCacacity > AllConstants.ImageCache.MEM_CACHE_MAX_SIZE ? AllConstants.ImageCache.MEM_CACHE_MAX_SIZE : calculatedCacacity;
-        return calculatedCacacity;
-    }
-
-    /**
-     * Get the size in bytes of a bitmap.
-     */
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    public static int getBitmapSize(Bitmap bitmap) {
-        if (Build.VERSION.SDK_INT >= 12) {
-            return bitmap.getByteCount();
-        }
-        // Pre HC-MR1
-        return bitmap.getRowBytes() * bitmap.getHeight();
     }
 
     @Override

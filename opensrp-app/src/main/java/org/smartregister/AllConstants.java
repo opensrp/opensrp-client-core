@@ -5,7 +5,6 @@ public class AllConstants {
     public static final String PROFILE_IMAGES_DOWNLOAD_PATH = "/multimedia/profileimage";
     public static final String PROFILE_IMAGES_UPLOAD_PATH = "/multimedia/upload";
 
-
     public static final String REPORT_CATEGORY = "reportCategory";
     public static final String INDICATOR_DETAIL = "indicatorDetail";
     public static final String CATEGORY_DESCRIPTION = "categoryDescription";
@@ -14,8 +13,8 @@ public class AllConstants {
     public static final String INDICATOR = "indicator";
     public static final String CASE_ID = "caseId";
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
-    public static final String DATABASE_NAME="drishti.db";
-    public static final int DATABASE_VERSION=1;
+    public static final String DATABASE_NAME = "drishti.db";
+    public static final int DATABASE_VERSION = 1;
 
     // Maximum time difference between server and client time in milliseconds
     public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
@@ -56,7 +55,6 @@ public class AllConstants {
 
     public static final String REPOSITORY = "formDataRepositoryContext";
 
-
     public static final String NEW_FP_METHOD_FIELD_NAME = "newMethod";
 
     public static final String ENTITY_ID = "entityId";
@@ -66,9 +64,12 @@ public class AllConstants {
     public static final String BOOLEAN_FALSE = "no";
     public static final String SPACE = " ";
     public static final String COMMA_WITH_SPACE = ", ";
-    public static final String DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH = "../../img/woman-placeholder.png";
-    public static final String DEFAULT_GIRL_INFANT_IMAGE_PLACEHOLDER_PATH = "../../img/icons/child-girlinfant@3x.png";
-    public static final String DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH = "../../img/icons/child-infant@3x.png";
+    public static final String DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH =
+            "../../img/woman-placeholder.png";
+    public static final String DEFAULT_GIRL_INFANT_IMAGE_PLACEHOLDER_PATH =
+            "../../img/icons/child-girlinfant@3x.png";
+    public static final String DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH =
+            "../../img/icons/child-infant@3x.png";
     public static final String FEMALE_GENDER = "female";
     public static final String FORM_DATE_TIME_FORMAT = "EEE, dd MMM yyyy HH:mm:ss ZZZ";
     public static final String SHORT_DATE_FORMAT = "dd/MM";
@@ -78,6 +79,65 @@ public class AllConstants {
 
     public static final String OUT_OF_AREA = "out_of_area";
     public static final String IN_AREA = "in_area";
+    public static final String DATASTORE_MANAGER_DIR = "data";
+    public static final int ANIMATION_FADE_IN_TIME = 250;
+
+    public static class Immunizations {
+        public static final String BCG = "bcg";
+
+        public static final String MEASLES = "measles";
+        public static final String MEASLES_BOOSTER = "measlesbooster";
+
+        public static final String OPV_0 = "opv_0";
+        public static final String OPV_1 = "opv_1";
+        public static final String OPV_2 = "opv_2";
+        public static final String OPV_3 = "opv_3";
+        public static final String OPV_BOOSTER = "opvbooster";
+
+        public static final String DPT_BOOSTER_1 = "dptbooster_1";
+        public static final String DPT_BOOSTER_2 = "dptbooster_2";
+
+        public static final String PENTAVALENT_1 = "pentavalent_1";
+        public static final String PENTAVALENT_2 = "pentavalent_2";
+        public static final String PENTAVALENT_3 = "pentavalent_3";
+
+        public static final String HEPATITIS_BIRTH_DOSE = "hepb_0";
+        public static final String MMR = "mmr";
+        public static final String JE = "je";
+
+        public static final String[] ALL = new String[]{BCG, MEASLES, MEASLES_BOOSTER, OPV_0,
+                OPV_1, OPV_2, OPV_3, OPV_BOOSTER, DPT_BOOSTER_1, DPT_BOOSTER_2, PENTAVALENT_1,
+                PENTAVALENT_2, PENTAVALENT_3, HEPATITIS_BIRTH_DOSE, JE, MMR};
+    }
+
+    public static class CloudantSync {
+
+        public static final String ACTION_DATABASE_CREATED =
+                "org.smartregister" + "" + "" + "" + ".DATABASE_CREATED_ACTION";
+        public static final String ACTION_REPLICATION_ERROR =
+                "org.smartregister" + "" + "" + "" + ".REPLICATION_ERROR_ACTION";
+        public static final String ACTION_REPLICATION_COMPLETED =
+                "org.smartregister" + "" + "" + ".REPLICATION_COMPLETED_ACTION";
+        public static final String REPLICATION_ERROR = "REPLICATION_ERROR";
+        public static final String DOCUMENTS_REPLICATED = "DOCUMENTS_REPLICATED";
+        public static final String BATCHES_REPLICATED = "BATCHES_REPLICATED";
+        public static final String COUCHDB_PORT = "5984";
+        public static final String COUCH_DATABASE_NAME = "opensrp";
+        public static final String COUCH_DATABASE_USER = "rootuser";
+        public static final String COUCH_DATABASE_PASS = "adminpass";
+
+    }
+
+    public static class SyncFilters {
+        // These pull filters must be defined in your couchDB server for them to work
+        // Filters
+        public static final String FILTER_LOCATION_ID = "locationId";
+        public static final String FILTER_PROVIDER = "providerId";
+
+        //filter by team e.g. team = user1,user2,user3
+        public static final String FILTER_TEAM = "team";
+
+    }
 
     public class FormNames {
         public static final String EC_REGISTRATION = "ec_registration";
@@ -117,11 +177,13 @@ public class AllConstants {
     public class ECRegistrationFields {
         public static final String CURRENT_FP_METHOD = "currentMethod";
         public static final String WOMAN_DOB = "womanDOB";
-        public static final String FAMILY_PLANNING_METHOD_CHANGE_DATE = "familyPlanningMethodChangeDate";
+        public static final String FAMILY_PLANNING_METHOD_CHANGE_DATE =
+                "familyPlanningMethodChangeDate";
         public static final String IUD_PLACE = "iudPlace";
         public static final String IUD_PERSON = "iudPerson";
         public static final String NUMBER_OF_CONDOMS_SUPPLIED = "numberOfCondomsSupplied";
-        public static final String NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED = "numberOfCentchromanPillsDelivered";
+        public static final String NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED =
+                "numberOfCentchromanPillsDelivered";
         public static final String NUMBER_OF_OCP_DELIVERED = "numberOfOCPDelivered";
         public static final String CASTE = "caste";
         public static final String ECONOMIC_STATUS = "economicStatus";
@@ -268,40 +330,6 @@ public class AllConstants {
         public static final String IMMUNIZATION_DATE = "immunizationDate";
     }
 
-    public static class Immunizations {
-        public static final String BCG = "bcg";
-
-        public static final String MEASLES = "measles";
-        public static final String MEASLES_BOOSTER = "measlesbooster";
-
-        public static final String OPV_0 = "opv_0";
-        public static final String OPV_1 = "opv_1";
-        public static final String OPV_2 = "opv_2";
-        public static final String OPV_3 = "opv_3";
-        public static final String OPV_BOOSTER = "opvbooster";
-
-        public static final String DPT_BOOSTER_1 = "dptbooster_1";
-        public static final String DPT_BOOSTER_2 = "dptbooster_2";
-
-        public static final String PENTAVALENT_1 = "pentavalent_1";
-        public static final String PENTAVALENT_2 = "pentavalent_2";
-        public static final String PENTAVALENT_3 = "pentavalent_3";
-
-        public static final String HEPATITIS_BIRTH_DOSE = "hepb_0";
-        public static final String MMR = "mmr";
-        public static final String JE = "je";
-
-        public static final String[] ALL = new String[]{
-                BCG,
-                MEASLES, MEASLES_BOOSTER,
-                OPV_0, OPV_1, OPV_2, OPV_3, OPV_BOOSTER,
-                DPT_BOOSTER_1, DPT_BOOSTER_2,
-                PENTAVALENT_1, PENTAVALENT_2, PENTAVALENT_3,
-                HEPATITIS_BIRTH_DOSE,
-                JE,
-                MMR};
-    }
-
     public class ChildIllnessFields {
         public static final String CHILD_SIGNS = "childSigns";
         public static final String CHILD_SIGNS_OTHER = "childSignsOther";
@@ -335,41 +363,12 @@ public class AllConstants {
         public static final String DELIVERY_FACILITY_DH_VALUE = "dh";
     }
 
-    public static final String DATASTORE_MANAGER_DIR = "data";
-
-    public static class CloudantSync {
-
-        public static final String ACTION_DATABASE_CREATED = "org.smartregister.DATABASE_CREATED_ACTION";
-        public static final String ACTION_REPLICATION_ERROR = "org.smartregister.REPLICATION_ERROR_ACTION";
-        public static final String ACTION_REPLICATION_COMPLETED = "org.smartregister.REPLICATION_COMPLETED_ACTION";
-        public static final String REPLICATION_ERROR = "REPLICATION_ERROR";
-        public static final String DOCUMENTS_REPLICATED = "DOCUMENTS_REPLICATED";
-        public static final String BATCHES_REPLICATED = "BATCHES_REPLICATED";
-        public static final String COUCHDB_PORT = "5984";
-        public static final String COUCH_DATABASE_NAME = "opensrp";
-        public static final String COUCH_DATABASE_USER = "rootuser";
-        public static final String COUCH_DATABASE_PASS = "adminpass";
-
-
-
-    }
-    public static class SyncFilters {
-        // These pull filters must be defined in your couchDB server for them to work
-        // Filters
-        public static final String FILTER_LOCATION_ID = "locationId";
-        public static final String FILTER_PROVIDER = "providerId";
-
-        //filter by team e.g. team = user1,user2,user3
-        public static final String FILTER_TEAM = "team";
-
-    }
-
-    public static final int ANIMATION_FADE_IN_TIME = 250;
-
-    public  final class ImageCache {
+    public final class ImageCache {
         public static final int DISK_CACHE_MAX_SIZE = 250 * 1024 * 1024; // in bytes totalling 250MB
-        public static final float MEM_CACHE_PERCENT = 0.05f; // Default memory cache size as a percent of device memory class
-        public static final int MEM_CACHE_MAX_SIZE = 10 * 1024; // in kilobytes (value calculated using MEM_CACHE_PERCENT should not exceed this maximum 10MB)
+        public static final float MEM_CACHE_PERCENT = 0.05f; // Default memory cache size as a
+        // percent of device memory class
+        public static final int MEM_CACHE_MAX_SIZE = 10 * 1024; // in kilobytes (value calculated
+        // using MEM_CACHE_PERCENT should not exceed this maximum 10MB)
         public static final String DISK_CACHE_DIR = "opensrp-images";
 
     }

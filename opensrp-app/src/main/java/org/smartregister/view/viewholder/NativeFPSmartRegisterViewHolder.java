@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.ClientFpMethodView;
 import org.smartregister.view.customcontrols.ClientGplsaChildView;
@@ -28,26 +29,31 @@ public class NativeFPSmartRegisterViewHolder {
     private final LinearLayout lytAddFPView;
     private final LinearLayout lytFPVideosView;
 
-
     public NativeFPSmartRegisterViewHolder(ViewGroup itemView) {
-        this.profileInfoLayout = (ClientProfileView) itemView.findViewById(R.id.profile_info_layout);
+        this.profileInfoLayout = (ClientProfileView) itemView
+                .findViewById(R.id.profile_info_layout);
         this.profileInfoLayout.initialize();
 
         this.txtECNumberView = (TextView) itemView.findViewById(R.id.txt_ec_number);
 
-        this.gplsaChildLayout = (ClientGplsaChildView) itemView.findViewById(R.id.gplsa_child_layout);
+        this.gplsaChildLayout = (ClientGplsaChildView) itemView
+                .findViewById(R.id.gplsa_child_layout);
         this.gplsaChildLayout.initialize();
 
-        this.serviceModeFPMethodView = ((ViewGroup) itemView.findViewById(R.id.fp_method_service_mode_views));
-        this.serviceModeFPPrioritizationView = ((ViewGroup) itemView.findViewById(R.id.fp_prioritization_service_mode_views));
+        this.serviceModeFPMethodView = ((ViewGroup) itemView
+                .findViewById(R.id.fp_method_service_mode_views));
+        this.serviceModeFPPrioritizationView = ((ViewGroup) itemView
+                .findViewById(R.id.fp_prioritization_service_mode_views));
 
-        fpMethodview = (ClientFpMethodView) serviceModeFPMethodView.findViewById(R.id.fp_method_layout);
+        fpMethodview = (ClientFpMethodView) serviceModeFPMethodView
+                .findViewById(R.id.fp_method_layout);
         fpMethodview.initialize();
         fpMethodview.setLayoutParams();
 
         btnUpdateView = (Button) serviceModeFPMethodView.findViewById(R.id.btn_fp_method_update);
 
-        clientSideEffectsView = (ClientSideEffectsView) serviceModeFPMethodView.findViewById(R.id.side_effects_layout);
+        clientSideEffectsView = (ClientSideEffectsView) serviceModeFPMethodView
+                .findViewById(R.id.side_effects_layout);
 
         clientSideEffectsView.initialize();
 
@@ -59,11 +65,13 @@ public class NativeFPSmartRegisterViewHolder {
 
         txtAlertDateView = (TextView) serviceModeFPMethodView.findViewById(R.id.txt_fp_alert_date);
 
-        txtPrioritizationRisksView = (TextView) serviceModeFPPrioritizationView.findViewById(R.id.txt_fp_prioritization_risks);
+        txtPrioritizationRisksView = (TextView) serviceModeFPPrioritizationView
+                .findViewById(R.id.txt_fp_prioritization_risks);
 
         lytAddFPView = (LinearLayout) serviceModeFPPrioritizationView.findViewById(R.id.lyt_fp_add);
 
-        lytFPVideosView = (LinearLayout) serviceModeFPPrioritizationView.findViewById(R.id.lyt_fp_videos);
+        lytFPVideosView = (LinearLayout) serviceModeFPPrioritizationView
+                .findViewById(R.id.lyt_fp_videos);
     }
 
     public void hideAllServiceModeOptions() {
@@ -87,7 +95,9 @@ public class NativeFPSmartRegisterViewHolder {
         return serviceModeFPMethodView;
     }
 
-    public ViewGroup serviceModeFPPrioritization() { return serviceModeFPPrioritizationView; }
+    public ViewGroup serviceModeFPPrioritization() {
+        return serviceModeFPPrioritizationView;
+    }
 
     public ClientFpMethodView fpMethodView() {
         return fpMethodview;

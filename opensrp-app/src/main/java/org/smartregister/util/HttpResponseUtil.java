@@ -30,8 +30,8 @@ public class HttpResponseUtil {
             InputStream responseStream = getResponseStream(response);
             return IOUtils.toString(responseStream);
         } catch (IOException e) {
-            logError(format("Cannot read anm location from response due to exception: {0}. Stack trace: {1}",
-                    e.getMessage(), ExceptionUtils.getStackTrace(e)));
+            logError(format("Cannot read anm location from response due to exception: {0}. Stack "
+                    + "" + "" + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
         }
         return "";
     }

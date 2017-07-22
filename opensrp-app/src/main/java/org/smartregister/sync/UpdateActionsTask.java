@@ -24,8 +24,10 @@ public class UpdateActionsTask {
     private AllFormVersionSyncService allFormVersionSyncService;
     private AdditionalSyncService additionalSyncService;
 
-    public UpdateActionsTask(Context context, ActionService actionService, FormSubmissionSyncService formSubmissionSyncService, ProgressIndicator progressIndicator,
-                             AllFormVersionSyncService allFormVersionSyncService) {
+    public UpdateActionsTask(Context context, ActionService actionService,
+                             FormSubmissionSyncService formSubmissionSyncService,
+                             ProgressIndicator progressIndicator, AllFormVersionSyncService
+                                     allFormVersionSyncService) {
         this.actionService = actionService;
         this.context = context;
         this.formSubmissionSyncService = formSubmissionSyncService;
@@ -49,26 +51,31 @@ public class UpdateActionsTask {
 
                 FetchStatus fetchStatusForForms = formSubmissionSyncService.sync();
                 FetchStatus fetchStatusForActions = actionService.fetchNewActions();
-                FetchStatus fetchStatusAdditional = additionalSyncService == null ? nothingFetched : additionalSyncService.sync();
+                FetchStatus fetchStatusAdditional = additionalSyncService == null ? nothingFetched
+                        : additionalSyncService.sync();
 
-                if(org.smartregister.Context.getInstance().configuration().shouldSyncForm()) {
+                if (org.smartregister.Context.getInstance().configuration().shouldSyncForm()) {
 
                     allFormVersionSyncService.verifyFormsInFolder();
-                    FetchStatus fetchVersionStatus = allFormVersionSyncService.pullFormDefinitionFromServer();
-                    DownloadStatus downloadStatus = allFormVersionSyncService.downloadAllPendingFormFromServer();
+                    FetchStatus fetchVersionStatus = allFormVersionSyncService
+                            .pullFormDefinitionFromServer();
+                    DownloadStatus downloadStatus = allFormVersionSyncService
+                            .downloadAllPendingFormFromServer();
 
-                    if(downloadStatus == DownloadStatus.downloaded) {
+                    if (downloadStatus == DownloadStatus.downloaded) {
                         allFormVersionSyncService.unzipAllDownloadedFormFile();
                     }
 
-                    if(fetchVersionStatus == fetched || downloadStatus == DownloadStatus.downloaded) {
+                    if (fetchVersionStatus == fetched
+                            || downloadStatus == DownloadStatus.downloaded) {
                         return fetched;
                     }
                 }
 
-
-                if(fetchStatusForActions == fetched || fetchStatusForForms == fetched || fetchStatusAdditional == fetched)
+                if (fetchStatusForActions == fetched || fetchStatusForForms == fetched
+                        || fetchStatusAdditional == fetched) {
                     return fetched;
+                }
 
                 return fetchStatusForForms;
             }

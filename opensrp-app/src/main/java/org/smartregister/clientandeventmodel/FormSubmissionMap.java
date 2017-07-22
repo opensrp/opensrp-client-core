@@ -4,8 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class FormSubmissionMap {
+    private Map<String, String> formAttributes;
+    private List<FormFieldMap> fields = new ArrayList<>();
+    private List<SubformMap> subforms = new ArrayList<SubformMap>();
+    private FormSubmission fs;
+
+    public FormSubmissionMap(FormSubmission fs, Map<String, String> formAttributes,
+                             List<FormFieldMap> fields, List<SubformMap> subforms) {
+        this.fs = fs;
+        this.formAttributes = formAttributes;
+        this.fields = fields;
+        this.subforms = subforms;
+    }
+
     public String providerId() {
         return fs.anmId();
     }
@@ -74,7 +86,8 @@ public class FormSubmissionMap {
 
     public SubformMap getSubform(String entityId, String subformName) {
         for (SubformMap sf : subforms) {
-            if (sf.name().equalsIgnoreCase(subformName) && sf.entityId().equalsIgnoreCase(entityId)) {
+            if (sf.name().equalsIgnoreCase(subformName) && sf.entityId()
+                    .equalsIgnoreCase(entityId)) {
                 return sf;
             }
         }
@@ -91,19 +104,6 @@ public class FormSubmissionMap {
     }
 
     void setSubforms(List<SubformMap> subforms) {
-        this.subforms = subforms;
-    }
-
-    private Map<String, String> formAttributes;
-    private List<FormFieldMap> fields = new ArrayList<>();
-    private List<SubformMap> subforms = new ArrayList<SubformMap>();
-    private FormSubmission fs;
-
-    public FormSubmissionMap(FormSubmission fs, Map<String, String> formAttributes,
-                             List<FormFieldMap> fields, List<SubformMap> subforms) {
-        this.fs = fs;
-        this.formAttributes = formAttributes;
-        this.fields = fields;
         this.subforms = subforms;
     }
 }

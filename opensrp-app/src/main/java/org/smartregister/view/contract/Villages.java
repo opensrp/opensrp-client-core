@@ -2,6 +2,7 @@ package org.smartregister.view.contract;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+
 import org.smartregister.util.StringUtil;
 
 import java.util.ArrayList;

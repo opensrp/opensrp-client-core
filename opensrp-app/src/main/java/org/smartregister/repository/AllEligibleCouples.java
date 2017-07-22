@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Map;
 
 public class AllEligibleCouples {
-    private EligibleCoupleRepository eligibleCoupleRepository;
     private final TimelineEventRepository timelineEventRepository;
     private final AlertRepository alertRepository;
+    private EligibleCoupleRepository eligibleCoupleRepository;
 
-    public AllEligibleCouples(EligibleCoupleRepository eligibleCoupleRepository, AlertRepository alertRepository, TimelineEventRepository timelineEventRepository) {
+    public AllEligibleCouples(EligibleCoupleRepository eligibleCoupleRepository, AlertRepository
+            alertRepository, TimelineEventRepository timelineEventRepository) {
         this.eligibleCoupleRepository = eligibleCoupleRepository;
         this.timelineEventRepository = timelineEventRepository;
         this.alertRepository = alertRepository;

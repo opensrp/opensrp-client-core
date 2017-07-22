@@ -8,6 +8,10 @@ import org.joda.time.Weeks;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+interface DateUtility {
+    LocalDate today();
+}
+
 public class DateUtil {
     private static String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
     private static String DATE_FORMAT_FOR_TIMELINE_EVENT = "dd-MM-yyyy";
@@ -93,7 +97,7 @@ public class DateUtil {
     }
 
     public static boolean isValidDate(String dateString) {
-        if(dateString==null||dateString.length() != "yyyy-MM-dd".length()) {
+        if (dateString == null || dateString.length() != "yyyy-MM-dd".length()) {
             return false;
         }
 
@@ -101,10 +105,6 @@ public class DateUtil {
 
     }
 
-}
-
-interface DateUtility {
-    LocalDate today();
 }
 
 class RealDate implements DateUtility {

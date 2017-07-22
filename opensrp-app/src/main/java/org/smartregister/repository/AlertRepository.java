@@ -19,7 +19,6 @@ import static org.smartregister.domain.AlertStatus.from;
 import static org.smartregister.domain.AlertStatus.inProcess;
 
 public class AlertRepository extends DrishtiRepository {
-    private static final String ALERTS_SQL = "CREATE TABLE alerts (caseID VARCHAR, scheduleName VARCHAR, visitCode VARCHAR, status VARCHAR, startDate VARCHAR, expiryDate VARCHAR, completionDate VARCHAR)";
     public static final String ALERTS_TABLE_NAME = "alerts";
     public static final String ALERTS_CASEID_COLUMN = "caseID";
     public static final String ALERTS_SCHEDULE_NAME_COLUMN = "scheduleName";
@@ -29,23 +28,33 @@ public class AlertRepository extends DrishtiRepository {
     public static final String ALERTS_EXPIRYDATE_COLUMN = "expiryDate";
     public static final String ALERTS_COMPLETIONDATE_COLUMN = "completionDate";
     public static final String ALERTS_OFFLINE_COLUMN = "offline";
-    private static final String[] ALERTS_TABLE_COLUMNS = new String[]{
-            ALERTS_CASEID_COLUMN,
-            ALERTS_SCHEDULE_NAME_COLUMN,
-            ALERTS_VISIT_CODE_COLUMN,
-            ALERTS_STATUS_COLUMN,
-            ALERTS_STARTDATE_COLUMN,
-            ALERTS_EXPIRYDATE_COLUMN,
-            ALERTS_COMPLETIONDATE_COLUMN,
-            ALERTS_OFFLINE_COLUMN
-    };
-    public static final String CASE_AND_VISIT_CODE_COLUMN_SELECTIONS = ALERTS_CASEID_COLUMN + " = ? AND " + ALERTS_VISIT_CODE_COLUMN + " = ?";
-    private static final String CASE_ID_INDEX = "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_CASEID_COLUMN + "_index ON " + ALERTS_TABLE_NAME + "(" + ALERTS_CASEID_COLUMN + " COLLATE NOCASE);";
-    private static final String SCHEDULE_NAME_INDEX = "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_SCHEDULE_NAME_COLUMN + "_index ON " + ALERTS_TABLE_NAME + "(" + ALERTS_SCHEDULE_NAME_COLUMN + " COLLATE NOCASE);";
-    private static final String STATUS_NAME_INDEX = "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_STATUS_COLUMN + "_index ON " + ALERTS_TABLE_NAME + "(" + ALERTS_STATUS_COLUMN + " COLLATE NOCASE);";
-    private static final String VISIT_CODE_INDEX = "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_VISIT_CODE_COLUMN + "_index ON " + ALERTS_TABLE_NAME + "(" + ALERTS_VISIT_CODE_COLUMN + " COLLATE NOCASE);";
-    public static final String OFFLINE_INDEX = "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_OFFLINE_COLUMN + "_index ON " + ALERTS_TABLE_NAME + "(" + ALERTS_OFFLINE_COLUMN + " COLLATE NOCASE);";
-    public static final String ALTER_ADD_OFFLINE_COLUMN = "ALTER TABLE " + ALERTS_TABLE_NAME + " ADD COLUMN " + ALERTS_OFFLINE_COLUMN + " INTEGER NOT NULL DEFAULT 0";
+    public static final String CASE_AND_VISIT_CODE_COLUMN_SELECTIONS =
+            ALERTS_CASEID_COLUMN + " " + "=" + " ? AND " + ALERTS_VISIT_CODE_COLUMN + " = ?";
+    public static final String OFFLINE_INDEX =
+            "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_OFFLINE_COLUMN + "_index ON "
+                    + ALERTS_TABLE_NAME + "(" + ALERTS_OFFLINE_COLUMN + " COLLATE NOCASE);";
+    public static final String ALTER_ADD_OFFLINE_COLUMN =
+            "ALTER TABLE " + ALERTS_TABLE_NAME + " " + "" + "" + "ADD COLUMN "
+                    + ALERTS_OFFLINE_COLUMN + " INTEGER NOT NULL DEFAULT 0";
+    private static final String ALERTS_SQL = "CREATE TABLE alerts (caseID VARCHAR, scheduleName "
+            + "VARCHAR, visitCode VARCHAR, status VARCHAR, startDate VARCHAR, expiryDate VARCHAR,"
+            + "" + " " + "completionDate VARCHAR)";
+    private static final String[] ALERTS_TABLE_COLUMNS = new String[]{ALERTS_CASEID_COLUMN,
+            ALERTS_SCHEDULE_NAME_COLUMN, ALERTS_VISIT_CODE_COLUMN, ALERTS_STATUS_COLUMN,
+            ALERTS_STARTDATE_COLUMN, ALERTS_EXPIRYDATE_COLUMN, ALERTS_COMPLETIONDATE_COLUMN,
+            ALERTS_OFFLINE_COLUMN};
+    private static final String CASE_ID_INDEX =
+            "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_CASEID_COLUMN + "_index ON "
+                    + ALERTS_TABLE_NAME + "(" + ALERTS_CASEID_COLUMN + " COLLATE NOCASE);";
+    private static final String SCHEDULE_NAME_INDEX =
+            "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_SCHEDULE_NAME_COLUMN + "_index ON "
+                    + ALERTS_TABLE_NAME + "(" + ALERTS_SCHEDULE_NAME_COLUMN + " COLLATE NOCASE);";
+    private static final String STATUS_NAME_INDEX =
+            "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_STATUS_COLUMN + "_index ON "
+                    + ALERTS_TABLE_NAME + "(" + ALERTS_STATUS_COLUMN + " COLLATE NOCASE);";
+    private static final String VISIT_CODE_INDEX =
+            "CREATE INDEX " + ALERTS_TABLE_NAME + "_" + ALERTS_VISIT_CODE_COLUMN + "_index ON "
+                    + ALERTS_TABLE_NAME + "(" + ALERTS_VISIT_CODE_COLUMN + " COLLATE NOCASE);";
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -58,13 +67,16 @@ public class AlertRepository extends DrishtiRepository {
 
     public List<Alert> allAlerts() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, null, null, null, null, null, null);
+        Cursor cursor = database
+                .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, null, null, null, null, null, null);
         return readAllAlerts(cursor);
     }
 
     public List<Alert> allActiveAlertsForCase(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, ALERTS_CASEID_COLUMN + " = ?  COLLATE NOCASE ", new String[]{caseId}, null, null, null, null);
+        Cursor cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS,
+                ALERTS_CASEID_COLUMN + " = ?  " + "COLLATE NOCASE ", new String[]{caseId}, null,
+                null, null, null);
         return filterActiveAlerts(readAllAlerts(cursor));
     }
 
@@ -72,15 +84,20 @@ public class AlertRepository extends DrishtiRepository {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         String[] caseAndScheduleNameColumnValues = {alert.caseId(), alert.scheduleName()};
 
-        String caseAndScheduleNameColumnSelections = ALERTS_CASEID_COLUMN + " = ?  COLLATE NOCASE AND " + ALERTS_SCHEDULE_NAME_COLUMN + " = ?";
-        Cursor cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections, caseAndScheduleNameColumnValues, null, null, null, null);
+        String caseAndScheduleNameColumnSelections =
+                ALERTS_CASEID_COLUMN + " = ?  COLLATE " + "NOCASE" + " AND "
+                        + ALERTS_SCHEDULE_NAME_COLUMN + " = ?";
+        Cursor cursor = database
+                .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
+                        caseAndScheduleNameColumnValues, null, null, null, null);
         List<Alert> existingAlerts = readAllAlerts(cursor);
 
         ContentValues values = createValuesFor(alert);
         if (existingAlerts.isEmpty()) {
             database.insert(ALERTS_TABLE_NAME, null, values);
         } else {
-            database.update(ALERTS_TABLE_NAME, values, caseAndScheduleNameColumnSelections, caseAndScheduleNameColumnValues);
+            database.update(ALERTS_TABLE_NAME, values, caseAndScheduleNameColumnSelections,
+                    caseAndScheduleNameColumnValues);
         }
     }
 
@@ -91,17 +108,21 @@ public class AlertRepository extends DrishtiRepository {
         ContentValues valuesToBeUpdated = new ContentValues();
         valuesToBeUpdated.put(ALERTS_STATUS_COLUMN, complete.value());
         valuesToBeUpdated.put(ALERTS_COMPLETIONDATE_COLUMN, completionDate);
-        database.update(ALERTS_TABLE_NAME, valuesToBeUpdated, CASE_AND_VISIT_CODE_COLUMN_SELECTIONS, caseAndVisitCodeColumnValues);
+        database.update(ALERTS_TABLE_NAME, valuesToBeUpdated, CASE_AND_VISIT_CODE_COLUMN_SELECTIONS,
+                caseAndVisitCodeColumnValues);
     }
 
     public void deleteAllAlertsForEntity(String caseId) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
-        database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE ", new String[]{caseId});
+        database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE ",
+                new String[]{caseId});
     }
 
     public void deleteOfflineAlertsForEntity(String caseId) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
-        database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE AND " + ALERTS_OFFLINE_COLUMN + " = 1", new String[]{caseId});
+        database.delete(ALERTS_TABLE_NAME,
+                ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE AND " + ALERTS_OFFLINE_COLUMN + " = 1",
+                new String[]{caseId});
     }
 
     public void deleteOfflineAlertsForEntity(String caseId, String... names) {
@@ -121,15 +142,15 @@ public class AlertRepository extends DrishtiRepository {
         cursor.moveToFirst();
         List<Alert> alerts = new ArrayList<Alert>();
         while (!cursor.isAfterLast()) {
-            alerts.add(
-                    new Alert(cursor.getString(cursor.getColumnIndex(ALERTS_CASEID_COLUMN)),
-                            cursor.getString(cursor.getColumnIndex(ALERTS_SCHEDULE_NAME_COLUMN)), cursor.getString(cursor.getColumnIndex(ALERTS_VISIT_CODE_COLUMN)),
-                            from(cursor.getString(cursor.getColumnIndex(ALERTS_STATUS_COLUMN))),
-                            cursor.getString(cursor.getColumnIndex(ALERTS_STARTDATE_COLUMN)),
-                            cursor.getString(cursor.getColumnIndex(ALERTS_EXPIRYDATE_COLUMN)),
-                            cursor.getInt(cursor.getColumnIndex(ALERTS_OFFLINE_COLUMN)) == 1
-                    )
-                            .withCompletionDate(cursor.getString(cursor.getColumnIndex(ALERTS_COMPLETIONDATE_COLUMN))));
+            alerts.add(new Alert(cursor.getString(cursor.getColumnIndex(ALERTS_CASEID_COLUMN)),
+                    cursor.getString(cursor.getColumnIndex(ALERTS_SCHEDULE_NAME_COLUMN)),
+                    cursor.getString(cursor.getColumnIndex(ALERTS_VISIT_CODE_COLUMN)),
+                    from(cursor.getString(cursor.getColumnIndex(ALERTS_STATUS_COLUMN))),
+                    cursor.getString(cursor.getColumnIndex(ALERTS_STARTDATE_COLUMN)),
+                    cursor.getString(cursor.getColumnIndex(ALERTS_EXPIRYDATE_COLUMN)),
+                    cursor.getInt(cursor.getColumnIndex(ALERTS_OFFLINE_COLUMN)) == 1)
+                    .withCompletionDate(
+                            cursor.getString(cursor.getColumnIndex(ALERTS_COMPLETIONDATE_COLUMN))));
             cursor.moveToNext();
         }
         cursor.close();
@@ -140,7 +161,9 @@ public class AlertRepository extends DrishtiRepository {
         List<Alert> activeAlerts = new ArrayList<Alert>();
         for (Alert alert : alerts) {
             LocalDate today = LocalDate.now();
-            if (LocalDate.parse(alert.expiryDate()).isAfter(today) || (complete.equals(alert.status()) && LocalDate.parse(alert.completionDate()).isAfter(today.minusDays(3)))) {
+            if (LocalDate.parse(alert.expiryDate()).isAfter(today) || (
+                    complete.equals(alert.status()) && LocalDate.parse(alert.completionDate())
+                            .isAfter(today.minusDays(3)))) {
                 activeAlerts.add(alert);
             }
         }
@@ -162,36 +185,45 @@ public class AlertRepository extends DrishtiRepository {
 
     public List<Alert> findByEntityId(String entityId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE ORDER BY DATE(%s)",
-                ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_STARTDATE_COLUMN), new String[]{entityId});
+        Cursor cursor = database.rawQuery(
+                format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "ORDER BY " + "DATE"
+                        + "(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_STARTDATE_COLUMN),
+                new String[]{entityId});
         return readAllAlerts(cursor);
     }
 
     public List<Alert> findByEntityIdAndAlertNames(String entityId, String... names) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE AND %s IN (%s) ORDER BY DATE(%s)",
-                ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_VISIT_CODE_COLUMN,
-                insertPlaceholdersForInClause(names.length), ALERTS_STARTDATE_COLUMN), addAll(new String[]{entityId}, names));
+        Cursor cursor = database.rawQuery(
+                format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s IN "
+                                + "(%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN,
+                        ALERTS_VISIT_CODE_COLUMN, insertPlaceholdersForInClause(names.length),
+                        ALERTS_STARTDATE_COLUMN), addAll(new String[]{entityId}, names));
         return readAllAlerts(cursor);
     }
 
     public List<Alert> findOfflineByEntityIdAndName(String entityId, String... names) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE AND %s = 1 AND %s IN (%s) ORDER BY DATE(%s)",
-                ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN,
-                ALERTS_VISIT_CODE_COLUMN, insertPlaceholdersForInClause(names.length), ALERTS_STARTDATE_COLUMN),
+        Cursor cursor = database.rawQuery(
+                format("SELECT * FROM %s WHERE %s = ? COLLATE NOCASE " + "AND %s = 1 "
+                                + "AND %s IN (%s) ORDER BY DATE(%s)", ALERTS_TABLE_NAME,
+                        ALERTS_CASEID_COLUMN, ALERTS_OFFLINE_COLUMN, ALERTS_VISIT_CODE_COLUMN,
+                        insertPlaceholdersForInClause(names.length), ALERTS_STARTDATE_COLUMN),
                 addAll(new String[]{entityId}, names));
         return readAllAlerts(cursor);
     }
-
 
     public Alert findByEntityIdAndScheduleName(String entityId, String scheduleName) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         String[] caseAndScheduleNameColumnValues = {entityId, scheduleName};
 
-        String caseAndScheduleNameColumnSelections = ALERTS_CASEID_COLUMN + " = ? COLLATE NOCASE AND " + ALERTS_SCHEDULE_NAME_COLUMN + " = ? ";
+        String caseAndScheduleNameColumnSelections =
+                ALERTS_CASEID_COLUMN + " = ? COLLATE NOCASE " + "" + "" + "AND "
+                        + ALERTS_SCHEDULE_NAME_COLUMN + " = ? ";
 
-        Cursor cursor = database.query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections, caseAndScheduleNameColumnValues, null, null, null, null);
+        Cursor cursor = database
+                .query(ALERTS_TABLE_NAME, ALERTS_TABLE_COLUMNS, caseAndScheduleNameColumnSelections,
+                        caseAndScheduleNameColumnValues, null, null, null, null);
         List<Alert> alertList = readAllAlerts(cursor);
         if (!alertList.isEmpty()) {
             return alertList.get(0);
@@ -209,7 +241,8 @@ public class AlertRepository extends DrishtiRepository {
 
         ContentValues valuesToBeUpdated = new ContentValues();
         valuesToBeUpdated.put(ALERTS_STATUS_COLUMN, inProcess.value());
-        database.update(ALERTS_TABLE_NAME, valuesToBeUpdated, CASE_AND_VISIT_CODE_COLUMN_SELECTIONS, caseAndVisitCodeColumnValues);
+        database.update(ALERTS_TABLE_NAME, valuesToBeUpdated, CASE_AND_VISIT_CODE_COLUMN_SELECTIONS,
+                caseAndVisitCodeColumnValues);
     }
 
     public void changeAlertStatusToComplete(String entityId, String alertName) {
@@ -218,8 +251,8 @@ public class AlertRepository extends DrishtiRepository {
 
         ContentValues valuesToBeUpdated = new ContentValues();
         valuesToBeUpdated.put(ALERTS_STATUS_COLUMN, complete.value());
-        database.update(ALERTS_TABLE_NAME, valuesToBeUpdated, CASE_AND_VISIT_CODE_COLUMN_SELECTIONS, caseAndVisitCodeColumnValues);
+        database.update(ALERTS_TABLE_NAME, valuesToBeUpdated, CASE_AND_VISIT_CODE_COLUMN_SELECTIONS,
+                caseAndVisitCodeColumnValues);
     }
-
 
 }

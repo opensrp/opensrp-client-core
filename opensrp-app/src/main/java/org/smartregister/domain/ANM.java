@@ -12,7 +12,8 @@ public class ANM {
     private final long pncCount;
     private final long childCount;
 
-    public ANM(String name, long eligibleCoupleCount, long fpCount, long ancCount, long pncCount, long childCount) {
+    public ANM(String name, long eligibleCoupleCount, long fpCount, long ancCount, long pncCount,
+               long childCount) {
         this.name = name;
         this.eligibleCoupleCount = eligibleCoupleCount;
         this.fpCount = fpCount;

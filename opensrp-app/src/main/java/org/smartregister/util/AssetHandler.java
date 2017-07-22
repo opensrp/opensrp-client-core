@@ -12,7 +12,7 @@ public class AssetHandler {
 
     public static final String TAG = "AssetHandler";
 
-    public static String readFileFromAssetsFolder(String fileName, Context context){
+    public static String readFileFromAssetsFolder(String fileName, Context context) {
         String fileContents = null;
         try {
             InputStream is = context.getAssets().open(fileName);

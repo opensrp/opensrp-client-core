@@ -38,11 +38,12 @@ public class ChildClient implements ChildSmartRegisterClient {
     public static final String CATEGORY_VITAMIN_A = "vitamin_a";
     public static final String CATEGORY_CHILD_ILLNESS = "child_illness";
 
-    private static final String[] SERVICE_CATEGORIES = {CATEGORY_BCG, CATEGORY_MEASLES, CATEGORY_OPV,
-            CATEGORY_OPVBOOSTER, CATEGORY_DPT, CATEGORY_PENTAVALENT,
-            CATEGORY_HEPB, CATEGORY_VITAMIN_A, CATEGORY_CHILD_ILLNESS};
+    private static final String[] SERVICE_CATEGORIES = {CATEGORY_BCG, CATEGORY_MEASLES,
+            CATEGORY_OPV, CATEGORY_OPVBOOSTER, CATEGORY_DPT, CATEGORY_PENTAVALENT, CATEGORY_HEPB,
+            CATEGORY_VITAMIN_A, CATEGORY_CHILD_ILLNESS};
 
-    private static  Map<String, List<ChildServiceType>> categoriesToServiceTypeMap = new HashMap<String, List<ChildServiceType>>();
+    private static Map<String, List<ChildServiceType>> categoriesToServiceTypeMap = new
+            HashMap<String, List<ChildServiceType>>();
 
     static {
         categoriesToServiceTypeMap.put(CATEGORY_BCG, Arrays.asList(BCG));
@@ -50,18 +51,18 @@ public class ChildClient implements ChildSmartRegisterClient {
         categoriesToServiceTypeMap.put(CATEGORY_OPV, Arrays.asList(OPV_0, OPV_1, OPV_2, OPV_3));
         categoriesToServiceTypeMap.put(CATEGORY_OPVBOOSTER, Arrays.asList(OPV_BOOSTER));
         categoriesToServiceTypeMap.put(CATEGORY_DPT, Arrays.asList(DPTBOOSTER_1, DPTBOOSTER_2));
-        categoriesToServiceTypeMap.put(CATEGORY_PENTAVALENT, Arrays.asList(PENTAVALENT_1, PENTAVALENT_2, PENTAVALENT_3));
+        categoriesToServiceTypeMap.put(CATEGORY_PENTAVALENT,
+                Arrays.asList(PENTAVALENT_1, PENTAVALENT_2, PENTAVALENT_3));
         categoriesToServiceTypeMap.put(CATEGORY_HEPB, Arrays.asList(HEPB_0));
         categoriesToServiceTypeMap.put(CATEGORY_VITAMIN_A, Arrays.asList(VITAMIN_A));
         categoriesToServiceTypeMap.put(CATEGORY_CHILD_ILLNESS, Arrays.asList(ILLNESS_VISIT));
     }
 
-    Map<String, Treatments> serviceToTreatmentMap = new HashMap<String, Treatments>();
-
     private final String entityId;
+    private final String thayiCardNumber;
+    Map<String, Treatments> serviceToTreatmentMap = new HashMap<String, Treatments>();
     private String gender;
     private String weight;
-    private final String thayiCardNumber;
     private String name;
     private String motherName;
     private String dob;
@@ -80,11 +81,6 @@ public class ChildClient implements ChildSmartRegisterClient {
 
     private ServiceProvidedDTO lastService;
     private ServiceProvidedDTO illnessVisitServiceProvided;
-
-    private class Treatments {
-        public ServiceProvidedDTO provided = emptyService;
-        public AlertDTO toProvide = emptyAlert;
-    }
 
     public ChildClient(String entityId, String gender, String weight, String thayiCardNumber) {
         this.entityId = entityId;
@@ -130,7 +126,8 @@ public class ChildClient implements ChildSmartRegisterClient {
 
     @Override
     public int age() {
-        return isBlank(dob) ? 0 : Years.yearsBetween(LocalDate.parse(dob), LocalDate.now()).getYears();
+        return isBlank(dob) ? 0
+                : Years.yearsBetween(LocalDate.parse(dob), LocalDate.now()).getYears();
     }
 
     @Override
@@ -194,15 +191,17 @@ public class ChildClient implements ChildSmartRegisterClient {
 
     @Override
     public boolean satisfiesFilter(String filterCriterion) {
-        return (!isBlank(name) && name.toLowerCase().startsWith(filterCriterion.toLowerCase()))
-                || (!isBlank(motherName) && motherName.toLowerCase().startsWith(filterCriterion.toLowerCase()))
-                || String.valueOf(ecNumber).startsWith(filterCriterion)
-                || String.valueOf(thayiCardNumber).startsWith(filterCriterion);
+        return (!isBlank(name) && name.toLowerCase().startsWith(filterCriterion.toLowerCase())) || (
+                !isBlank(motherName) && motherName.toLowerCase()
+                        .startsWith(filterCriterion.toLowerCase())) || String.valueOf(ecNumber)
+                .startsWith(filterCriterion) || String.valueOf(thayiCardNumber)
+                .startsWith(filterCriterion);
     }
 
     @Override
     public int ageInDays() {
-        return isBlank(dob) ? 0 : Days.daysBetween(LocalDate.parse(dob), DateUtil.today()).getDays();
+        return isBlank(dob) ? 0
+                : Days.daysBetween(LocalDate.parse(dob), DateUtil.today()).getDays();
     }
 
     @Override
@@ -249,9 +248,8 @@ public class ChildClient implements ChildSmartRegisterClient {
     @Override
     public ServiceProvidedDTO lastServiceProvided() {
         if (lastService == null) {
-            lastService = serviceProvided().size() > 0
-                    ? serviceProvided().get(serviceProvided().size() - 1)
-                    : emptyService;
+            lastService = serviceProvided().size() > 0 ? serviceProvided()
+                    .get(serviceProvided().size() - 1) : emptyService;
         }
         return lastService;
     }
@@ -394,7 +392,8 @@ public class ChildClient implements ChildSmartRegisterClient {
         return this;
     }
 
-    private void initializeAllServiceToProvideAndProvided(Map<String, List<ChildServiceType>> categoriesToServiceTypeMap) {
+    private void initializeAllServiceToProvideAndProvided(Map<String, List<ChildServiceType>>
+                                                                  categoriesToServiceTypeMap) {
         Set<String> keys = categoriesToServiceTypeMap.keySet();
         for (String key : keys) {
             initializeServiceToProvideAndProvided(categoriesToServiceTypeMap.get(key));
@@ -538,11 +537,22 @@ public class ChildClient implements ChildSmartRegisterClient {
         return alerts;
     }
 
+    @Override
+    public boolean isDataError() {
+        // only important data
+        return (Strings.isNullOrEmpty(motherName) || Strings.isNullOrEmpty(fatherName));
+    }
 
-    class DateComparator implements Comparator<ServiceProvidedDTO>{
+    private class Treatments {
+        public ServiceProvidedDTO provided = emptyService;
+        public AlertDTO toProvide = emptyAlert;
+    }
+
+    class DateComparator implements Comparator<ServiceProvidedDTO> {
 
         @Override
-        public int compare(ServiceProvidedDTO serviceProvidedDTO1, ServiceProvidedDTO serviceProvidedDTO2) {
+        public int compare(ServiceProvidedDTO serviceProvidedDTO1, ServiceProvidedDTO
+                serviceProvidedDTO2) {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
             Date date1;
             Date date2;
@@ -558,11 +568,5 @@ public class ChildClient implements ChildSmartRegisterClient {
             }
             return -1;
         }
-    }
-
-    @Override
-    public boolean isDataError() {
-        // only important data
-        return (Strings.isNullOrEmpty(motherName) || Strings.isNullOrEmpty(fatherName));
     }
 }

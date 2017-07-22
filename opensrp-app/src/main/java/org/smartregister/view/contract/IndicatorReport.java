@@ -13,8 +13,9 @@ public class IndicatorReport {
     private String year;
     private String aggregatedProgress;
 
-    public IndicatorReport(String indicatorIdentifier, String description, String annualTarget, String currentProgress, String currentMonth,
-                           String year, String aggregatedProgress) {
+    public IndicatorReport(String indicatorIdentifier, String description, String annualTarget,
+                           String currentProgress, String currentMonth, String year, String
+                                   aggregatedProgress) {
         this.indicatorIdentifier = indicatorIdentifier;
         this.description = description;
         this.annualTarget = annualTarget;

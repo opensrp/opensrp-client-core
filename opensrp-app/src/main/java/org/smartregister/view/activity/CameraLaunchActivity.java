@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.widget.Toast;
+
 import org.smartregister.AllConstants;
 import org.smartregister.event.CapturedPhotoInformation;
 import org.smartregister.util.Log;
@@ -57,7 +58,8 @@ public class CameraLaunchActivity extends SecuredActivity {
 
     private File createImageFile() throws IOException {
         String imageFileName = UUID.randomUUID().toString();
-        File directory = new File(getExternalStoragePublicDirectory(DIRECTORY_PICTURES), DRISTHI_DIRECTORY_NAME);
+        File directory = new File(getExternalStoragePublicDirectory(DIRECTORY_PICTURES),
+                DRISTHI_DIRECTORY_NAME);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -67,8 +69,9 @@ public class CameraLaunchActivity extends SecuredActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != TAKE_PHOTO_REQUEST_CODE)
+        if (requestCode != TAKE_PHOTO_REQUEST_CODE) {
             return;
+        }
         if (imageFile.exists()) {
             String imageFilePath = imageFile.getAbsolutePath();
             setPic(imageFilePath);
@@ -101,7 +104,7 @@ public class CameraLaunchActivity extends SecuredActivity {
         if (WOMAN_TYPE.equals(entityType)) {
             context().allEligibleCouples().updatePhotoPath(entityId, imagePath);
         }
-        if(CHILD_TYPE.equals(entityType)) {
+        if (CHILD_TYPE.equals(entityType)) {
             context().childService().updatePhotoPath(entityId, imagePath);
         }
         ON_PHOTO_CAPTURED.notifyListeners(new CapturedPhotoInformation(entityId, imagePath));

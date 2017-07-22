@@ -9,14 +9,12 @@ public enum AlertActionRoute {
         public void direct(Action action) {
             Context.getInstance().alertService().create(action);
         }
-    },
-    CLOSE_ALERT("closeAlert") {
+    }, CLOSE_ALERT("closeAlert") {
         @Override
         public void direct(Action action) {
             Context.getInstance().alertService().close(action);
         }
-    },
-    DELETE_ALL_ALERTS("deleteAllAlerts") {
+    }, DELETE_ALL_ALERTS("deleteAllAlerts") {
         @Override
         public void direct(Action action) {
             Context.getInstance().alertService().deleteAll(action);

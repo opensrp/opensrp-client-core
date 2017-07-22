@@ -10,7 +10,6 @@ public class PendingFormSubmissionService {
         this.formDataRepository = formDataRepository;
     }
 
-
     public long pendingFormSubmissionCount() {
         return formDataRepository.getPendingFormSubmissionsCount();
     }

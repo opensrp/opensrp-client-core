@@ -23,7 +23,7 @@ public class User extends BaseEntity {
     @JsonProperty
     private List<String> permissions;
 
-    protected User(){
+    protected User() {
 
     }
 
@@ -38,8 +38,8 @@ public class User extends BaseEntity {
         this.salt = salt;
     }
 
-    public User(String baseEntityId, String username, String password, String salt, String status,
-                List<String> roles, List<String> permissions) {
+    public User(String baseEntityId, String username, String password, String salt, String
+            status, List<String> roles, List<String> permissions) {
         super(baseEntityId);
         this.username = username;
         this.password = password;
@@ -87,19 +87,22 @@ public class User extends BaseEntity {
 
     /**
      * WARNING: Overrides all existing roles
+     *
      * @param roles
      * @return
      */
     public void setRoles(List<String> roles) {
         this.roles = roles;
     }
+
     @JsonIgnore
     public void addRole(String role) {
-        if(roles == null){
+        if (roles == null) {
             roles = new ArrayList<>();
         }
         roles.add(role);
     }
+
     @JsonIgnore
     public boolean removeRole(String role) {
         return roles.remove(role);
@@ -107,19 +110,22 @@ public class User extends BaseEntity {
 
     @JsonIgnore
     public boolean hasRole(String role) {
-        if(roles != null)
+        if (roles != null) {
             for (String r : roles) {
-                if(role.equalsIgnoreCase(r)){
+                if (role.equalsIgnoreCase(r)) {
                     return true;
                 }
             }
+        }
         return false;
     }
+
     @JsonIgnore
     public boolean isDefaultAdmin() {
         return (username.equalsIgnoreCase("admin") || username.equalsIgnoreCase("administrator"))
                 && (hasRole("admin") || hasRole("administrator"));
     }
+
     @JsonIgnore
     public boolean hasAdminRights() {
         return isDefaultAdmin() || hasRole("admin") || hasRole("administrator");
@@ -131,6 +137,7 @@ public class User extends BaseEntity {
 
     /**
      * WARNING: Overrides all existing permissions
+     *
      * @param permissions
      * @return
      */
@@ -140,7 +147,7 @@ public class User extends BaseEntity {
 
     @JsonIgnore
     public void addPermission(String permission) {
-        if(permissions == null){
+        if (permissions == null) {
             permissions = new ArrayList<>();
         }
         permissions.add(permission);
@@ -149,14 +156,16 @@ public class User extends BaseEntity {
     public boolean removePermission(String permission) {
         return permissions.remove(permission);
     }
+
     @JsonIgnore
     public boolean hasPermission(String permission) {
-        if(permissions != null)
+        if (permissions != null) {
             for (String p : permissions) {
-                if(permission.equalsIgnoreCase(p)){
+                if (permission.equalsIgnoreCase(p)) {
                     return true;
                 }
             }
+        }
         return false;
     }
 
@@ -182,8 +191,8 @@ public class User extends BaseEntity {
 
     /**
      * WARNING: Overrides all existing roles
+     *
      * @param roles
-     * @return
      * @return
      */
     public User withRoles(List<String> roles) {
@@ -192,7 +201,7 @@ public class User extends BaseEntity {
     }
 
     public User withRole(String role) {
-        if(roles == null){
+        if (roles == null) {
             roles = new ArrayList<>();
         }
         roles.add(role);
@@ -201,8 +210,8 @@ public class User extends BaseEntity {
 
     /**
      * WARNING: Overrides all existing permissions
+     *
      * @param permissions
-     * @return
      * @return
      */
     public User withPermissions(List<String> permissions) {
@@ -211,7 +220,7 @@ public class User extends BaseEntity {
     }
 
     public User withPermission(String permission) {
-        if(permissions == null){
+        if (permissions == null) {
             permissions = new ArrayList<>();
         }
         permissions.add(permission);
