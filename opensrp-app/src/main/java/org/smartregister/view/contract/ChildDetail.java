@@ -20,7 +20,8 @@ public class ChildDetail {
     private List<TimelineEvent> timelineEvents;
     private Map<String, String> details;
 
-    public ChildDetail(String caseId, String thayiCardNumber, CoupleDetails coupleDetails, LocationDetails location, BirthDetails childDetails, String photoPath) {
+    public ChildDetail(String caseId, String thayiCardNumber, CoupleDetails coupleDetails,
+                       LocationDetails location, BirthDetails childDetails, String photoPath) {
         this.caseId = caseId;
         this.thayiCardNumber = thayiCardNumber;
         this.photo_path = photoPath;

@@ -34,7 +34,8 @@ public class Session {
     }
 
     public Session start(long numberOfMillisecondsAfterNowThatThisSessionEnds) {
-        setSessionExpiryTimeTo(new Date().getTime() + numberOfMillisecondsAfterNowThatThisSessionEnds);
+        setSessionExpiryTimeTo(
+                new Date().getTime() + numberOfMillisecondsAfterNowThatThisSessionEnds);
         return this;
     }
 

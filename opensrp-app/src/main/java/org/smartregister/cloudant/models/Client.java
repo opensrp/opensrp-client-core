@@ -42,8 +42,10 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
     static final String DOC_TYPE = "Client";
     // this is the revision in the database representing this task
     private DocumentRevision rev;
+
     public Client() {
     }
+
     public Client(org.smartregister.clientandeventmodel.Client client) {
 
         setAddresses(client.getAddresses());
@@ -78,65 +80,86 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         Map<String, Object> map = rev.asMap();
         if (map.containsKey(type_key) && map.get(type_key).equals(Client.DOC_TYPE)) {
             //client.setType((String) map.get(type_key));
-            if (map.get(addresses_key) != null)
+            if (map.get(addresses_key) != null) {
                 client.setAddresses((List<Address>) map.get(addresses_key));
-            if (map.get(attributes_key) != null)
+            }
+            if (map.get(attributes_key) != null) {
                 client.setAttributes((Map<String, Object>) map.get(attributes_key));
+            }
 
-            if (map.get(base_entity_id_key) != null)
+            if (map.get(base_entity_id_key) != null) {
                 client.setBaseEntityId((String) map.get(base_entity_id_key));
+            }
             //the date is being saved as long
             if (map.get(birth_date_key) != null) {
                 Date birthDate = DateUtil.toDate(map.get(birth_date_key));
-                if (birthDate != null)
+                if (birthDate != null) {
                     client.setBirthdate(birthDate);
+                }
             }
-            if (map.get(birth_date_approx_key) != null)
+            if (map.get(birth_date_approx_key) != null) {
                 client.setBirthdateApprox((Boolean) map.get(birth_date_approx_key));
-            if (map.get(creator_key) != null)
+            }
+            if (map.get(creator_key) != null) {
                 client.setCreator((User) map.get(creator_key));
+            }
             if (map.get(date_created_key) != null) {
                 Date dateCreated = DateUtil.toDate(map.get(date_created_key));
-                if (dateCreated != null)
+                if (dateCreated != null) {
                     client.setDateCreated(dateCreated);
+                }
             }
             if (map.get(date_voided_key) != null) {
                 Date dateVoided = DateUtil.toDate(map.get(date_voided_key));
-                if (dateVoided != null)
+                if (dateVoided != null) {
                     client.setDateVoided(dateVoided);
+                }
             }
             if (map.get(date_edited_key) != null) {
                 Date dateEdited = DateUtil.toDate(map.get(date_edited_key));
-                if (dateEdited != null)
+                if (dateEdited != null) {
                     client.setDateEdited(dateEdited);
+                }
             }
             if (map.get(death_date_key) != null) {
                 Date deathDate = DateUtil.toDate(map.get(death_date_key));
-                if (deathDate != null)
+                if (deathDate != null) {
                     client.setDeathdate(deathDate);
+                }
             }
-            if (map.get(firstname_key) != null)
+            if (map.get(firstname_key) != null) {
                 client.setFirstName((String) map.get(firstname_key));
-            if (map.get(identifiers_key) != null)
+            }
+            if (map.get(identifiers_key) != null) {
                 client.setIdentifiers((Map<String, String>) map.get(identifiers_key));
-            if (map.get(gender_key) != null)
+            }
+            if (map.get(gender_key) != null) {
                 client.setGender((String) map.get(gender_key));
-            if (map.get(lastname_key) != null)
+            }
+            if (map.get(lastname_key) != null) {
                 client.setLastName((String) map.get(lastname_key));
-            if (map.get(middlename_key) != null)
+            }
+            if (map.get(middlename_key) != null) {
                 client.setMiddleName((String) map.get(middlename_key));
-            if (map.get(voider_key) != null)
+            }
+            if (map.get(voider_key) != null) {
                 client.setVoider((User) map.get(voider_key));
-            if (map.get(void_reason_key) != null)
+            }
+            if (map.get(void_reason_key) != null) {
                 client.setVoidReason((String) map.get(void_reason_key));
-            if (map.get(editor_key) != null)
+            }
+            if (map.get(editor_key) != null) {
                 client.setEditor((User) map.get(editor_key));
-            if (map.get(death_date_approx_key) != null)
+            }
+            if (map.get(death_date_approx_key) != null) {
                 client.setDeathdateApprox((Boolean) map.get(death_date_approx_key));
-            if (map.get(voided_key) != null)
+            }
+            if (map.get(voided_key) != null) {
                 client.setVoided((Boolean) map.get(voided_key));
-            if (map.get(relationships_key) != null)
+            }
+            if (map.get(relationships_key) != null) {
                 client.setRelationships((Map<String, List<String>>) map.get(relationships_key));
+            }
             return client;
         }
         return null;
@@ -154,19 +177,24 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         // this could also be done by a fancy object mapper
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put(type_key, type);
-        if (getAddresses() != null)
+        if (getAddresses() != null) {
             map.put(addresses_key, getAddresses());
-        if (getAttributes() != null)
+        }
+        if (getAttributes() != null) {
             map.put(attributes_key, getAttributes());
-        if (getBaseEntityId() != null)
+        }
+        if (getBaseEntityId() != null) {
             map.put(base_entity_id_key, getBaseEntityId());
+        }
         if (getBirthdate() != null) {
             map.put(birth_date_key, DateUtil.fromDate(getBirthdate()));
         }
-        if (getBirthdateApprox() != null)
+        if (getBirthdateApprox() != null) {
             map.put(birth_date_approx_key, getBirthdateApprox());
-        if (getCreator() != null)
+        }
+        if (getCreator() != null) {
             map.put(creator_key, getCreator());
+        }
         if (getDateCreated() != null) {
             map.put(date_created_key, DateUtil.fromDate(getDateCreated()));
         }
@@ -179,28 +207,39 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         if (getDeathdate() != null) {
             map.put(death_date_key, DateUtil.fromDate(getDeathdate()));
         }
-        if (getFirstName() != null)
+        if (getFirstName() != null) {
             map.put(firstname_key, getFirstName());
-        if (getIdentifiers() != null)
+        }
+        if (getIdentifiers() != null) {
             map.put(identifiers_key, getIdentifiers());
-        if (getGender() != null)
+        }
+        if (getGender() != null) {
             map.put(gender_key, getGender());
-        if (getLastName() != null)
+        }
+        if (getLastName() != null) {
             map.put(lastname_key, getLastName());
-        if (getMiddleName() != null)
+        }
+        if (getMiddleName() != null) {
             map.put(middlename_key, getMiddleName());
-        if (getVoider() != null)
+        }
+        if (getVoider() != null) {
             map.put(voider_key, getVoider());
-        if (getVoidReason() != null)
+        }
+        if (getVoidReason() != null) {
             map.put(void_reason_key, getVoidReason());
-        if (getEditor() != null)
+        }
+        if (getEditor() != null) {
             map.put(editor_key, getEditor());
-        if (getDeathdateApprox() != null)
+        }
+        if (getDeathdateApprox() != null) {
             map.put(death_date_approx_key, getDeathdateApprox());
-        if (getVoided() != null)
+        }
+        if (getVoided() != null) {
             map.put(voided_key, getVoided());
-        if (getRelationships() != null)
+        }
+        if (getRelationships() != null) {
             map.put(relationships_key, getRelationships());
+        }
         return map;
     }
 

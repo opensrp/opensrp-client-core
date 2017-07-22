@@ -46,12 +46,14 @@ public class ClientSideEffectsView extends LinearLayout {
         sideEffectsView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
         complicationsDateView.setText(client.complicationDate());
-        if (client.refillFollowUps() != null &&
-                getInstance().getStringResource(R.string.str_referral).equalsIgnoreCase(client.refillFollowUps().type())) {
+        if (client.refillFollowUps() != null && getInstance()
+                .getStringResource(R.string.str_referral)
+                .equalsIgnoreCase(client.refillFollowUps().type())) {
             sideEffectsView.setVisibility(View.VISIBLE);
             sideEffectsView.setText(getInstance().getStringResource(R.string.str_referred));
             sideEffectsView.setTextColor(getInstance().getColorResource(R.color.alert_urgent_red));
-            sideEffectsView.setCompoundDrawablesWithIntrinsicBounds(getResources().getDrawable(R.drawable.icon_referral_warning), null, null, null);
+            sideEffectsView.setCompoundDrawablesWithIntrinsicBounds(
+                    getResources().getDrawable(R.drawable.icon_referral_warning), null, null, null);
 
         } else if (fpMethod == FPMethod.NONE) {
             sideEffectsView.setVisibility(View.GONE);
@@ -63,14 +65,14 @@ public class ClientSideEffectsView extends LinearLayout {
             sideEffectsView.setText(client.condomSideEffect());
         } else if (fpMethod == FPMethod.IUD) {
             sideEffectsView.setText(client.iudSidEffect());
-        } else if (fpMethod == FPMethod.FEMALE_STERILIZATION || fpMethod == FPMethod.MALE_STERILIZATION) {
+        } else if (fpMethod == FPMethod.FEMALE_STERILIZATION
+                || fpMethod == FPMethod.MALE_STERILIZATION) {
             sideEffectsView.setText(client.sterilizationSideEffect());
         } else if (fpMethod == FPMethod.DMPA_INJECTABLE) {
             sideEffectsView.setText(client.injectableSideEffect());
         } else {
             sideEffectsView.setText(client.otherSideEffect());
         }
-
 
     }
 

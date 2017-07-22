@@ -17,7 +17,8 @@ public class FPPrioritizationMethodFilter implements FilterOption {
     public FPPrioritizationMethodFilter(String filter) {
 
         this.filter = filter;
-        this.allECIdentifier = Context.getInstance().getStringResource(R.string.fp_prioritization_all_ec_service_mode);
+        this.allECIdentifier = Context.getInstance()
+                .getStringResource(R.string.fp_prioritization_all_ec_service_mode);
     }
 
     @Override
@@ -32,7 +33,8 @@ public class FPPrioritizationMethodFilter implements FilterOption {
     }
 
     private boolean applyStringLiteralFiler(FPSmartRegisterClient fpSmartRegisterClient) {
-        FPPrioritizationServiceModes serviceMode = FPPrioritizationServiceModes.valueOfIdentifier(filter);
+        FPPrioritizationServiceModes serviceMode = FPPrioritizationServiceModes
+                .valueOfIdentifier(filter);
         if (hasAnFPMethod(fpSmartRegisterClient)) {
             return false;
         }
@@ -51,7 +53,8 @@ public class FPPrioritizationMethodFilter implements FilterOption {
     }
 
     private boolean hasAnFPMethod(FPSmartRegisterClient fpSmartRegisterClient) {
-        return !(FPMethod.NONE.displayName().equalsIgnoreCase(fpSmartRegisterClient.fpMethod().displayName()));
+        return !(FPMethod.NONE.displayName()
+                .equalsIgnoreCase(fpSmartRegisterClient.fpMethod().displayName()));
     }
 
     private int getIntFromString(String value) {

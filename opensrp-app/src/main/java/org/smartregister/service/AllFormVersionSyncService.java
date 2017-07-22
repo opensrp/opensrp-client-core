@@ -42,9 +42,8 @@ public class AllFormVersionSyncService {
     private final DristhiConfiguration configuration;
     private final FormsVersionRepository formsVersionRepository;
 
-    public AllFormVersionSyncService(HTTPAgent httpAgentArg,
-                                     DristhiConfiguration configurationArg,
-                                     FormsVersionRepository formsVersionRepositoryArg) {
+    public AllFormVersionSyncService(HTTPAgent httpAgentArg, DristhiConfiguration
+            configurationArg, FormsVersionRepository formsVersionRepositoryArg) {
         formsVersionRepository = formsVersionRepositoryArg;
         httpAgent = httpAgentArg;
         configuration = configurationArg;
@@ -71,8 +70,8 @@ public class AllFormVersionSyncService {
             return status;
         }
 
-        List<FormDefinitionVersion> forms = new Gson().fromJson(formVersions,
-                new TypeToken<List<FormDefinitionVersion>>() {
+        List<FormDefinitionVersion> forms = new Gson()
+                .fromJson(formVersions, new TypeToken<List<FormDefinitionVersion>>() {
                 }.getType());
 
         if (forms.size() > 0) {
@@ -84,23 +83,23 @@ public class AllFormVersionSyncService {
                         formsVersionRepository.addFormVersionFromObject(form);
                     } else {
                         /* Form is exist, update it */
-                        FormDefinitionVersion formDefinitionVersion =
-                                formsVersionRepository.getFormByFormDirName(form.getFormDirName());
+                        FormDefinitionVersion formDefinitionVersion = formsVersionRepository
+                                .getFormByFormDirName(form.getFormDirName());
 
                         /* If form name is not equal, then update it */
                         if (!formDefinitionVersion.getFormName().equals(form.getFormName())) {
-                            formsVersionRepository.updateFormName(form.getFormDirName(),
-                                    form.getFormName());
+                            formsVersionRepository
+                                    .updateFormName(form.getFormDirName(), form.getFormName());
                         }
 
                         int repoVersion = Integer.parseInt(formDefinitionVersion.getVersion());
                         int pulledVersion = Integer.parseInt(form.getVersion());
 
                         if (pulledVersion > repoVersion) {
-                            formsVersionRepository.updateServerVersion(form.getFormDirName(),
-                                    form.getVersion());
-                            formsVersionRepository.updateSyncStatus(form.getFormDirName(),
-                                    SyncStatus.PENDING);
+                            formsVersionRepository
+                                    .updateServerVersion(form.getFormDirName(), form.getVersion());
+                            formsVersionRepository
+                                    .updateSyncStatus(form.getFormDirName(), SyncStatus.PENDING);
                             status = FetchStatus.fetched;
                         }
                     }
@@ -121,13 +120,14 @@ public class AllFormVersionSyncService {
             return status;
         } else {
             for (FormDefinitionVersion l : pendingFormList) {
-                String downloadLink = configuration.dristhiBaseURL()
-                        + AllConstants.FORM_DOWNLOAD_URL
-                        + l.getFormDirName();
+                String downloadLink =
+                        configuration.dristhiBaseURL() + AllConstants.FORM_DOWNLOAD_URL + l
+                                .getFormDirName();
 
                 status = httpAgent.downloadFromUrl(downloadLink, l.getFormDirName() + ".zip");
-                if (status == DownloadStatus.downloaded)
+                if (status == DownloadStatus.downloaded) {
                     formsVersionRepository.updateSyncStatus(l.getFormDirName(), SyncStatus.SYNCED);
+                }
             }
         }
         return status;
@@ -146,8 +146,9 @@ public class AllFormVersionSyncService {
         File[] zipFiles = dir.listFiles(filter);
 
         for (File f : zipFiles) {
-            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(), FormPathService.sdcardPath
-                    + f.getName().replaceAll(".zip", "") + File.separator);
+            ZipUtil zipUtil = new ZipUtil(f.getAbsolutePath(),
+                    FormPathService.sdcardPath + f.getName().replaceAll(".zip", "")
+                            + File.separator);
             zipUtil.unzip();
         }
     }
@@ -163,8 +164,8 @@ public class AllFormVersionSyncService {
         }
 
         List<File> formStoragelist = new LinkedList<File>(Arrays.asList(formFiles));
-        List<Map<String, String>> formRepoList =
-                formsVersionRepository.getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED);
+        List<Map<String, String>> formRepoList = formsVersionRepository
+                .getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED);
 
         /* verify file in repo */
         if (!formRepoList.isEmpty()) {
@@ -178,9 +179,9 @@ public class AllFormVersionSyncService {
                     }
                 }
                 if (!formFound) {
-                    formsVersionRepository.updateSyncStatus(
-                            form.get(FormsVersionRepository.FORM_DIR_NAME_COLUMN),
-                            SyncStatus.PENDING);
+                    formsVersionRepository
+                            .updateSyncStatus(form.get(FormsVersionRepository.FORM_DIR_NAME_COLUMN),
+                                    SyncStatus.PENDING);
                 }
             }
         }
@@ -218,8 +219,8 @@ public class AllFormVersionSyncService {
             Log.e(TAG, e.toString(), e);
         }
 
-        return new FormDefinitionVersion(f.getName(),
-                f.getName(), version).withSyncStatus(SyncStatus.SYNCED);
+        return new FormDefinitionVersion(f.getName(), f.getName(), version)
+                .withSyncStatus(SyncStatus.SYNCED);
     }
 
     protected File[] listFormFiles() {

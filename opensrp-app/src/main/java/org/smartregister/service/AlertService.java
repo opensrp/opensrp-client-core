@@ -1,6 +1,5 @@
 package org.smartregister.service;
 
-
 import org.apache.commons.lang3.StringUtils;
 import org.ei.drishti.dto.Action;
 import org.smartregister.commonregistry.AllCommonsRepository;
@@ -22,17 +21,18 @@ public class AlertService {
         this.repository = repository;
     }
 
-    public AlertService(AlertRepository repository, CommonFtsObject commonFtsObject, Map<String, AllCommonsRepository> allCommonsRepositoryMap) {
+    public AlertService(AlertRepository repository, CommonFtsObject commonFtsObject, Map<String,
+            AllCommonsRepository> allCommonsRepositoryMap) {
         this.repository = repository;
         this.commonFtsObject = commonFtsObject;
         this.allCommonsRepositoryMap = allCommonsRepositoryMap;
     }
 
-
     public void create(Action action) {
         if (action.isActionActive() == null || action.isActionActive()) {
-            Alert alert = new Alert(action.caseID(), action.get("scheduleName"), action.get("visitCode"),
-                    AlertStatus.from(action.get("alertStatus")), action.get("startDate"), action.get("expiryDate"));
+            Alert alert = new Alert(action.caseID(), action.get("scheduleName"),
+                    action.get("visitCode"), AlertStatus.from(action.get("alertStatus")),
+                    action.get("startDate"), action.get("expiryDate"));
             repository.createAlert(alert);
 
             updateFtsSearch(alert, false);
@@ -46,7 +46,8 @@ public class AlertService {
     }
 
     public void close(Action action) {
-        repository.markAlertAsClosed(action.caseID(), action.get("visitCode"), action.get("completionDate"));
+        repository.markAlertAsClosed(action.caseID(), action.get("visitCode"),
+                action.get("completionDate"));
         updateFtsSearchAfterStatusChange(action.caseID(), action.get("visitCode"));
     }
 
@@ -116,13 +117,16 @@ public class AlertService {
 
                 String bindType = commonFtsObject.getAlertBindType(scheduleName);
 
-                if (StringUtils.isNotBlank(bindType) && status != null && StringUtils.isNotBlank(scheduleName) && StringUtils.isNotBlank(entityId)) {
+                if (StringUtils.isNotBlank(bindType) && status != null && StringUtils
+                        .isNotBlank(scheduleName) && StringUtils.isNotBlank(entityId)) {
                     String field = scheduleName.replace(" ", "_");
                     // update alert status
                     updateFtsSearchInACR(bindType, entityId, field, status.value());
-                    if (!statusChange && StringUtils.isNotBlank(visitCode) && commonFtsObject.alertUpdateVisitCode(scheduleName)) {
+                    if (!statusChange && StringUtils.isNotBlank(visitCode) && commonFtsObject
+                            .alertUpdateVisitCode(scheduleName)) {
                         // update alert visit code
-                        updateFtsSearchInACR(bindType, entityId, CommonFtsObject.phraseColumn, visitCode);
+                        updateFtsSearchInACR(bindType, entityId, CommonFtsObject.phraseColumn,
+                                visitCode);
                     }
                 }
 
@@ -132,11 +136,12 @@ public class AlertService {
         }
     }
 
-
-    public boolean updateFtsSearchInACR(String bindType, String entityId, String field, String value) {
+    public boolean updateFtsSearchInACR(String bindType, String entityId, String field, String
+            value) {
         AllCommonsRepository allCommonsRepository = getAllCommonRepository(bindType);
         if (allCommonsRepository != null) {
-            return allCommonsRepository.updateSearch(entityId, field, value, commonFtsObject.getAlertFilterVisitCodes());
+            return allCommonsRepository.updateSearch(entityId, field, value,
+                    commonFtsObject.getAlertFilterVisitCodes());
         }
         return false;
     }

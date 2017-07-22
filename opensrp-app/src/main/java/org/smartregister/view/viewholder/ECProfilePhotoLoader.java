@@ -29,9 +29,8 @@ public class ECProfilePhotoLoader implements ProfilePhotoLoader {
         }
 
         String photoPath = client.profilePhotoPath();
-        if (isBlank(photoPath)
-                || isThisDefaultProfilePhoto(photoPath)
-                || !isFileExists(photoPath)) {
+        if (isBlank(photoPath) || isThisDefaultProfilePhoto(photoPath) || !isFileExists(
+                photoPath)) {
             return defaultPlaceHolder;
         }
 

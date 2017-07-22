@@ -12,7 +12,9 @@ public class Client {
     private Map<String, String> propertyColumnMap;
     private Map<String, String> propertyDetailsMap;
 
-    public Client(String baseEntityID, Map<String, String> attributesDetailsMap, Map<String, String> attributesColumnsMap, Map<String, String> propertyColumnsMap, Map<String, String> propertyDetailMap) {
+    public Client(String baseEntityID, Map<String, String> attributesDetailsMap, Map<String,
+            String> attributesColumnsMap, Map<String, String> propertyColumnsMap, Map<String,
+            String> propertyDetailMap) {
         this.baseEntityID = baseEntityID;
         this.attributesDetailsMap = attributesDetailsMap;
         this.attributesColumnsMap = attributesColumnsMap;

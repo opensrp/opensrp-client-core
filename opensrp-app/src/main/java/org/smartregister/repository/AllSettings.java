@@ -37,7 +37,8 @@ public class AllSettings {
     }
 
     public String appliedVillageFilter(String defaultFilterValue) {
-        return settingsRepository.querySetting(APPLIED_VILLAGE_FILTER_SETTING_KEY, defaultFilterValue);
+        return settingsRepository
+                .querySetting(APPLIED_VILLAGE_FILTER_SETTING_KEY, defaultFilterValue);
     }
 
     public String fetchANMPassword() {

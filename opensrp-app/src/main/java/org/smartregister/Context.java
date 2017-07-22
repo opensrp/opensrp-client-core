@@ -234,7 +234,8 @@ public class Context {
 
     public ActionService actionService() {
         if (actionService == null) {
-            actionService = new ActionService(drishtiService(), allSettings(), allSharedPreferences(), allReports());
+            actionService = new ActionService(drishtiService(), allSettings(),
+                    allSharedPreferences(), allReports());
         }
         return actionService;
     }
@@ -243,9 +244,11 @@ public class Context {
         initRepository();
         if (formSubmissionService == null) {
             if (commonFtsObject != null) {
-                formSubmissionService = new FormSubmissionService(ziggyService(), formDataRepository(), allSettings(), allCommonsRepositoryMap());
+                formSubmissionService = new FormSubmissionService(ziggyService(),
+                        formDataRepository(), allSettings(), allCommonsRepositoryMap());
             } else {
-                formSubmissionService = new FormSubmissionService(ziggyService(), formDataRepository(), allSettings());
+                formSubmissionService = new FormSubmissionService(ziggyService(),
+                        formDataRepository(), allSettings());
             }
         }
         return formSubmissionService;
@@ -253,8 +256,8 @@ public class Context {
 
     public AllFormVersionSyncService allFormVersionSyncService() {
         if (allFormVersionSyncService == null) {
-            allFormVersionSyncService = new AllFormVersionSyncService(httpAgent(),
-                    configuration(), formsVersionRepository());
+            allFormVersionSyncService = new AllFormVersionSyncService(httpAgent(), configuration(),
+                    formsVersionRepository());
         }
         return allFormVersionSyncService;
     }
@@ -262,13 +265,16 @@ public class Context {
     public FormSubmissionRouter formSubmissionRouter() {
         initRepository();
         if (formSubmissionRouter == null) {
-            formSubmissionRouter = new FormSubmissionRouter(formDataRepository(), ecRegistrationHandler(),
-                    fpComplicationsHandler(), fpChangeHandler(), renewFPProductHandler(), ecCloseHandler(),
-                    ancRegistrationHandler(), ancRegistrationOAHandler(), ancVisitHandler(), ancCloseHandler(),
-                    ttHandler(), ifaHandler(), hbTestHandler(), deliveryOutcomeHandler(), pncRegistrationOAHandler(),
-                    pncCloseHandler(), pncVisitHandler(), childImmunizationsHandler(), childRegistrationECHandler(),
-                    childRegistrationOAHandler(), childCloseHandler(), childIllnessHandler(), vitaminAHandler(),
-                    deliveryPlanHandler(), ecEditHandler(), ancInvestigationsHandler());
+            formSubmissionRouter = new FormSubmissionRouter(formDataRepository(),
+                    ecRegistrationHandler(), fpComplicationsHandler(), fpChangeHandler(),
+                    renewFPProductHandler(), ecCloseHandler(), ancRegistrationHandler(),
+                    ancRegistrationOAHandler(), ancVisitHandler(), ancCloseHandler(), ttHandler(),
+                    ifaHandler(), hbTestHandler(), deliveryOutcomeHandler(),
+                    pncRegistrationOAHandler(), pncCloseHandler(), pncVisitHandler(),
+                    childImmunizationsHandler(), childRegistrationECHandler(),
+                    childRegistrationOAHandler(), childCloseHandler(), childIllnessHandler(),
+                    vitaminAHandler(), deliveryPlanHandler(), ecEditHandler(),
+                    ancInvestigationsHandler());
         }
         return formSubmissionRouter;
     }
@@ -451,28 +457,33 @@ public class Context {
     public ZiggyService ziggyService() {
         initRepository();
         if (ziggyService == null) {
-            ziggyService = new ZiggyService(ziggyFileLoader(), formDataRepository(), formSubmissionRouter());
+            ziggyService = new ZiggyService(ziggyFileLoader(), formDataRepository(),
+                    formSubmissionRouter());
         }
         return ziggyService;
     }
 
     public ZiggyFileLoader ziggyFileLoader() {
         if (ziggyFileLoader == null) {
-            ziggyFileLoader = new ZiggyFileLoader("www/ziggy", "www/form", applicationContext().getAssets());
+            ziggyFileLoader = new ZiggyFileLoader("www/ziggy", "www/form",
+                    applicationContext().getAssets());
         }
         return ziggyFileLoader;
     }
 
     public FormSubmissionSyncService formSubmissionSyncService() {
         if (formSubmissionSyncService == null) {
-            formSubmissionSyncService = new FormSubmissionSyncService(formSubmissionService(), httpAgent(), formDataRepository(), allSettings(), allSharedPreferences(), configuration());
+            formSubmissionSyncService = new FormSubmissionSyncService(formSubmissionService(),
+                    httpAgent(), formDataRepository(), allSettings(), allSharedPreferences(),
+                    configuration());
         }
         return formSubmissionSyncService;
     }
 
     protected HTTPAgent httpAgent() {
         if (httpAgent == null) {
-            httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(), configuration());
+            httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
+                    configuration());
         }
         return httpAgent;
     }
@@ -511,14 +522,16 @@ public class Context {
 
     public DrishtiRepository[] sharedRepositoriesArray() {
         ArrayList<DrishtiRepository> drishtiRepositories = sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtiRepositories.toArray(new DrishtiRepository[drishtiRepositories.size()]);
+        DrishtiRepository[] drishtireposotoryarray = drishtiRepositories
+                .toArray(new DrishtiRepository[drishtiRepositories.size()]);
         return drishtireposotoryarray;
     }
 
     public AllEligibleCouples allEligibleCouples() {
         initRepository();
         if (allEligibleCouples == null) {
-            allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository(), alertRepository(), timelineEventRepository());
+            allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository(),
+                    alertRepository(), timelineEventRepository());
         }
         return allEligibleCouples;
     }
@@ -542,7 +555,8 @@ public class Context {
     public AllSharedPreferences allSharedPreferences() {
         if (allSharedPreferences == null) {
             setDefaultValues(this.applicationContext, R.xml.preferences, false);
-            allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(this.applicationContext));
+            allSharedPreferences = new AllSharedPreferences(
+                    getDefaultSharedPreferences(this.applicationContext));
         }
         return allSharedPreferences;
     }
@@ -550,7 +564,8 @@ public class Context {
     public AllBeneficiaries allBeneficiaries() {
         initRepository();
         if (allBeneficiaries == null) {
-            allBeneficiaries = new AllBeneficiaries(motherRepository(), childRepository(), alertRepository(), timelineEventRepository());
+            allBeneficiaries = new AllBeneficiaries(motherRepository(), childRepository(),
+                    alertRepository(), timelineEventRepository());
         }
         return allBeneficiaries;
     }
@@ -666,7 +681,9 @@ public class Context {
     public UserService userService() {
         if (userService == null) {
             repository = initRepository();
-            userService = new UserService(repository, allSettings(), allSharedPreferences(), httpAgent(), session(), configuration(), saveANMLocationTask(), saveUserInfoTask());
+            userService = new UserService(repository, allSettings(), allSharedPreferences(),
+                    httpAgent(), session(), configuration(), saveANMLocationTask(),
+                    saveUserInfoTask());
         }
         return userService;
     }
@@ -688,7 +705,8 @@ public class Context {
     public AlertService alertService() {
         if (alertService == null) {
             if (commonFtsObject() != null) {
-                alertService = new AlertService(alertRepository(), commonFtsObject(), allCommonsRepositoryMap());
+                alertService = new AlertService(alertRepository(), commonFtsObject(),
+                        allCommonsRepositoryMap());
             } else {
                 alertService = new AlertService(alertRepository());
             }
@@ -705,21 +723,24 @@ public class Context {
 
     public EligibleCoupleService eligibleCoupleService() {
         if (eligibleCoupleService == null) {
-            eligibleCoupleService = new EligibleCoupleService(allEligibleCouples(), allTimelineEvents(), allBeneficiaries());
+            eligibleCoupleService = new EligibleCoupleService(allEligibleCouples(),
+                    allTimelineEvents(), allBeneficiaries());
         }
         return eligibleCoupleService;
     }
 
     public MotherService motherService() {
         if (motherService == null) {
-            motherService = new MotherService(allBeneficiaries(), allEligibleCouples(), allTimelineEvents(), serviceProvidedService());
+            motherService = new MotherService(allBeneficiaries(), allEligibleCouples(),
+                    allTimelineEvents(), serviceProvidedService());
         }
         return motherService;
     }
 
     public ChildService childService() {
         if (childService == null) {
-            childService = new ChildService(allBeneficiaries(), motherRepository(), childRepository(), allTimelineEvents(), serviceProvidedService(), allAlerts());
+            childService = new ChildService(allBeneficiaries(), motherRepository(),
+                    childRepository(), allTimelineEvents(), serviceProvidedService(), allAlerts());
         }
         return childService;
     }
@@ -733,7 +754,8 @@ public class Context {
 
     public ANMService anmService() {
         if (anmService == null) {
-            anmService = new ANMService(allSharedPreferences(), allBeneficiaries(), allEligibleCouples());
+            anmService = new ANMService(allSharedPreferences(), allBeneficiaries(),
+                    allEligibleCouples());
         }
         return anmService;
     }
@@ -765,7 +787,8 @@ public class Context {
 
     public DristhiConfiguration configuration() {
         if (configuration == null) {
-            configuration = new DristhiConfiguration(getInstance().applicationContext().getAssets());
+            configuration = new DristhiConfiguration(
+                    getInstance().applicationContext().getAssets());
         }
         return configuration;
     }
@@ -864,7 +887,8 @@ public class Context {
 
     public AllCommonsRepository allCommonsRepositoryobjects(String tablename) {
         initRepository();
-        allCommonPersonObjectsRepository = new AllCommonsRepository(commonrepository(tablename), alertRepository(), timelineEventRepository());
+        allCommonPersonObjectsRepository = new AllCommonsRepository(commonrepository(tablename),
+                alertRepository(), timelineEventRepository());
         return allCommonPersonObjectsRepository;
     }
 
@@ -880,10 +904,14 @@ public class Context {
             for (CommonRepositoryInformationHolder bindType : bindtypes) {
                 if (bindType.getBindtypename().equalsIgnoreCase(tablename)) {
                     if (commonFtsObject != null && commonFtsObject.containsTable(tablename)) {
-                        MapOfCommonRepository.put(bindType.getBindtypename(), new CommonRepository(commonFtsObject, bindType.getBindtypename(), bindType.getColumnNames()));
+                        MapOfCommonRepository.put(bindType.getBindtypename(),
+                                new CommonRepository(commonFtsObject, bindType.getBindtypename(),
+                                        bindType.getColumnNames()));
                         break;
                     } else {
-                        MapOfCommonRepository.put(bindType.getBindtypename(), new CommonRepository(bindType.getBindtypename(), bindType.getColumnNames()));
+                        MapOfCommonRepository.put(bindType.getBindtypename(),
+                                new CommonRepository(bindType.getBindtypename(),
+                                        bindType.getColumnNames()));
                         break;
                     }
                 }
@@ -905,9 +933,11 @@ public class Context {
 
             for (int i = 0; i < bindtypeObjects.length(); i++) {
                 String bindname = bindtypeObjects.getJSONObject(i).getString("name");
-                String[] columNames = new String[bindtypeObjects.getJSONObject(i).getJSONArray("columns").length()];
+                String[] columNames = new String[bindtypeObjects.getJSONObject(i)
+                        .getJSONArray("columns").length()];
                 for (int j = 0; j < columNames.length; j++) {
-                    columNames[j] = bindtypeObjects.getJSONObject(i).getJSONArray("columns").getJSONObject(j).getString("name");
+                    columNames[j] = bindtypeObjects.getJSONObject(i).getJSONArray("columns")
+                            .getJSONObject(j).getString("name");
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columNames));
                 Log.v("bind type logs", bindtypeObjects.getJSONObject(i).getString("name"));
@@ -960,12 +990,15 @@ public class Context {
             e.getMessage();
         } finally {
             try {
-                if (isr != null)
+                if (isr != null) {
                     isr.close();
-                if (fIn != null)
+                }
+                if (fIn != null) {
                     fIn.close();
-                if (input != null)
+                }
+                if (input != null) {
                     input.close();
+                }
             } catch (Exception e2) {
                 e2.getMessage();
             }
@@ -1009,7 +1042,8 @@ public class Context {
      * @param customHumanReadableConceptResponse
      * @return
      */
-    public Context updateCustomHumanReadableConceptResponse(Map<String, String> customHumanReadableConceptResponse) {
+    public Context updateCustomHumanReadableConceptResponse(Map<String, String>
+                                                                    customHumanReadableConceptResponse) {
         this.customHumanReadableConceptResponse = customHumanReadableConceptResponse;
         return this;
     }
@@ -1022,7 +1056,8 @@ public class Context {
     }
 
     public Map<String, AllCommonsRepository> allCommonsRepositoryMap() {
-        Map<String, AllCommonsRepository> allCommonsRepositoryMap = new HashMap<String, AllCommonsRepository>();
+        Map<String, AllCommonsRepository> allCommonsRepositoryMap = new HashMap<String,
+                AllCommonsRepository>();
         for (String ftsTable : commonFtsObject.getTables()) {
             AllCommonsRepository allCommonsRepository = allCommonsRepositoryobjects(ftsTable);
             allCommonsRepositoryMap.put(ftsTable, allCommonsRepository);

@@ -58,7 +58,8 @@ public class CameraLaunchActivity extends SecuredActivity {
 
     private File createImageFile() throws IOException {
         String imageFileName = UUID.randomUUID().toString();
-        File directory = new File(getExternalStoragePublicDirectory(DIRECTORY_PICTURES), DRISTHI_DIRECTORY_NAME);
+        File directory = new File(getExternalStoragePublicDirectory(DIRECTORY_PICTURES),
+                DRISTHI_DIRECTORY_NAME);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -68,8 +69,9 @@ public class CameraLaunchActivity extends SecuredActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode != TAKE_PHOTO_REQUEST_CODE)
+        if (requestCode != TAKE_PHOTO_REQUEST_CODE) {
             return;
+        }
         if (imageFile.exists()) {
             String imageFilePath = imageFile.getAbsolutePath();
             setPic(imageFilePath);

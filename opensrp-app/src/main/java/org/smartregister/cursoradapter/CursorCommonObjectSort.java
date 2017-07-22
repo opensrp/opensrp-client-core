@@ -13,7 +13,6 @@ import java.util.Comparator;
  */
 public class CursorCommonObjectSort implements CursorSortOption {
 
-
     String sortOptionName;
     String query;
 
@@ -31,7 +30,6 @@ public class CursorCommonObjectSort implements CursorSortOption {
     public String sort() {
         return query;
     }
-
 
     @Override
     public SmartRegisterClients sort(SmartRegisterClients allClients) {

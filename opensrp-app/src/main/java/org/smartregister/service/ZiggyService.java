@@ -16,9 +16,9 @@ import static org.mozilla.javascript.Context.*;
 
 public class ZiggyService {
     private static final String SAVE_METHOD_NAME = "save";
-    private static final String JS_INIT_SCRIPT = "require([\"ziggy/FormDataController\"], function (FormDataController) {\n" +
-            "    controller = FormDataController;\n" +
-            "});";
+    private static final String JS_INIT_SCRIPT =
+            "require([\"ziggy/FormDataController\"], " + "function (FormDataController) {\n"
+                    + "    controller = FormDataController;\n" + "});";
 
     private ZiggyFileLoader ziggyFileLoader;
     private FormDataRepository dataRepository;
@@ -26,7 +26,8 @@ public class ZiggyService {
     private Context context;
     private Function saveFunction;
 
-    public ZiggyService(ZiggyFileLoader ziggyFileLoader, FormDataRepository dataRepository, FormSubmissionRouter formSubmissionRouter) {
+    public ZiggyService(ZiggyFileLoader ziggyFileLoader, FormDataRepository dataRepository,
+                        FormSubmissionRouter formSubmissionRouter) {
         this.ziggyFileLoader = ziggyFileLoader;
         this.dataRepository = dataRepository;
         this.formSubmissionRouter = formSubmissionRouter;
@@ -36,7 +37,8 @@ public class ZiggyService {
     public void saveForm(String params, String formInstance) throws Exception {
         //context = enter();
         //saveFunction.call(context, scope, scope, new Object[]{params, formInstance});
-        logInfo(format("Saving form successful, with params: {0}, with instance {1}.", params, formInstance));
+        logInfo(format("Saving form successful, with params: {0}, with instance {1}.", params,
+                formInstance));
         //exit();
     }
 
@@ -50,7 +52,8 @@ public class ZiggyService {
             scope.put(ZIGGY_FILE_LOADER, scope, toObject(ziggyFileLoader, scope));
             scope.put(FORM_SUBMISSION_ROUTER, scope, toObject(formSubmissionRouter, scope));
             context.evaluateString(scope, jsFiles + JS_INIT_SCRIPT, "code", 1, null);
-            saveFunction = ((Function) ((Map) scope.get("controller", scope)).get(SAVE_METHOD_NAME));
+            saveFunction = ((Function) ((Map) scope.get("controller", scope))
+                    .get(SAVE_METHOD_NAME));
         } catch (Exception e) {
             logError("Rhino initialization failed. We are screwed. EOW!!!. Evil: " + e);
         } finally {

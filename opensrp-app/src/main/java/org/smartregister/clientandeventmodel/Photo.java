@@ -1,6 +1,5 @@
 package org.smartregister.clientandeventmodel;
 
-
 import java.util.Date;
 
 public class Photo {
@@ -71,6 +70,5 @@ public class Photo {
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-
 
 }

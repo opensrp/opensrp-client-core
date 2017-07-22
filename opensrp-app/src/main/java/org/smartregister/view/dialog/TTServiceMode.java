@@ -14,7 +14,8 @@ import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.TT;
 import static org.smartregister.Context.getInstance;
 import static org.smartregister.domain.ANCServiceType.*;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
+        .ClientsHeaderProvider;
 import static org.smartregister.view.contract.AlertDTO.emptyAlert;
 
 public class TTServiceMode extends ServiceModeOption {
@@ -48,22 +49,22 @@ public class TTServiceMode extends ServiceModeOption {
 
             @Override
             public int[] headerTextResourceIds() {
-                return new int[]{
-                        R.string.header_name, R.string.header_id, R.string.header_anc_status,
-                        R.string.header_tt_1, R.string.header_tt_2, R.string.header_tt_booster};
+                return new int[]{R.string.header_name, R.string.header_id, R.string
+                        .header_anc_status, R.string.header_tt_1, R.string.header_tt_2, R.string
+                        .header_tt_booster};
             }
         };
     }
 
     @Override
-    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(ANCSmartRegisterClient client,
-                              NativeANCSmartRegisterViewHolder viewHolder,
-                              View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
         viewHolder.serviceModeTTView().setVisibility(VISIBLE);
 
         setupTT1Layout(client, viewHolder);
@@ -72,68 +73,66 @@ public class TTServiceMode extends ServiceModeOption {
     }
 
     @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
-    public void setupTT1Layout(ANCSmartRegisterClient client,
-                               NativeANCSmartRegisterViewHolder viewHolder) {
+    public void setupTT1Layout(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder) {
         AlertDTO ttAlert = client.getAlert(ANCServiceType.TT_1);
-        ServiceProvidedDTO ttServiceProvided = client.getServiceProvidedDTO(ANCServiceType.TT_1.serviceName());
+        ServiceProvidedDTO ttServiceProvided = client
+                .getServiceProvidedDTO(ANCServiceType.TT_1.serviceName());
         viewHolder.hideViewsInTT1Layout();
         if (ttServiceProvided != null) {
-            setServiceProvidedLayout(ttServiceProvided,
-                    viewHolder.layoutTT1Alert(), viewHolder.txtTT1DoneTick(),
-                    viewHolder.txtTT1Type(), viewHolder.txtTT1Date());
+            setServiceProvidedLayout(ttServiceProvided, viewHolder.layoutTT1Alert(),
+                    viewHolder.txtTT1DoneTick(), viewHolder.txtTT1Type(), viewHolder.txtTT1Date());
         } else if (ttAlert != emptyAlert && ttAlert.name().equalsIgnoreCase(TT_1.serviceName())) {
-            setAlertLayout(viewHolder.layoutTT1Alert(),
-                    viewHolder.txtTT1Type(),
-                    viewHolder.txtTT1Date(), client
-                    , ttAlert);
+            setAlertLayout(viewHolder.layoutTT1Alert(), viewHolder.txtTT1Type(),
+                    viewHolder.txtTT1Date(), client, ttAlert);
         }
     }
 
-    public void setupTT2Layout(ANCSmartRegisterClient client,
-                               NativeANCSmartRegisterViewHolder viewHolder) {
+    public void setupTT2Layout(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder) {
         AlertDTO ttAlert = client.getAlert(ANCServiceType.TT_2);
-        ServiceProvidedDTO ttServiceProvided = client.getServiceProvidedDTO(ANCServiceType.TT_2.serviceName());
+        ServiceProvidedDTO ttServiceProvided = client
+                .getServiceProvidedDTO(ANCServiceType.TT_2.serviceName());
         viewHolder.hideViewsInTT2Layout();
         if (ttServiceProvided != null) {
-            setServiceProvidedLayout(ttServiceProvided,
-                    viewHolder.layoutTT2Alert(), viewHolder.txtTT2DoneTick(),
-                    viewHolder.txtTT2Type(), viewHolder.txtTT2Date());
+            setServiceProvidedLayout(ttServiceProvided, viewHolder.layoutTT2Alert(),
+                    viewHolder.txtTT2DoneTick(), viewHolder.txtTT2Type(), viewHolder.txtTT2Date());
         } else if (ttAlert != emptyAlert && ttAlert.name().equalsIgnoreCase(TT_2.serviceName())) {
-            setAlertLayout(viewHolder.layoutTT2Alert(),
-                    viewHolder.txtTT2Type(),
-                    viewHolder.txtTT2Date(), client
-                    , ttAlert);
+            setAlertLayout(viewHolder.layoutTT2Alert(), viewHolder.txtTT2Type(),
+                    viewHolder.txtTT2Date(), client, ttAlert);
         }
     }
 
     public void setupTTBoosterLayout(ANCSmartRegisterClient client,
                                      NativeANCSmartRegisterViewHolder viewHolder) {
         AlertDTO ttAlert = client.getAlert(ANCServiceType.TT_BOOSTER);
-        ServiceProvidedDTO ttServiceProvided = client.getServiceProvidedDTO(ANCServiceType.TT_BOOSTER.serviceName());
+        ServiceProvidedDTO ttServiceProvided = client
+                .getServiceProvidedDTO(ANCServiceType.TT_BOOSTER.serviceName());
         viewHolder.hideViewsInTTBoosterLayout();
         if (ttServiceProvided != null) {
-            setServiceProvidedLayout(ttServiceProvided,
-                    viewHolder.layoutTTBoosterAlert(), viewHolder.txtTTBoosterDoneTick(),
-                    viewHolder.txtTTBoosterType(), viewHolder.txtTTBoosterDate());
-        } else if (ttAlert != emptyAlert && ttAlert.name().equalsIgnoreCase(TT_BOOSTER.serviceName())) {
-            setAlertLayout(viewHolder.layoutTTBoosterAlert(),
-                    viewHolder.txtTTBoosterType(),
-                    viewHolder.txtTTBoosterDate(), client
-                    , ttAlert);
+            setServiceProvidedLayout(ttServiceProvided, viewHolder.layoutTTBoosterAlert(),
+                    viewHolder.txtTTBoosterDoneTick(), viewHolder.txtTTBoosterType(),
+                    viewHolder.txtTTBoosterDate());
+        } else if (ttAlert != emptyAlert && ttAlert.name()
+                .equalsIgnoreCase(TT_BOOSTER.serviceName())) {
+            setAlertLayout(viewHolder.layoutTTBoosterAlert(), viewHolder.txtTTBoosterType(),
+                    viewHolder.txtTTBoosterDate(), client, ttAlert);
         }
     }
 
-    private void setServiceProvidedLayout(ServiceProvidedDTO ttServiceProvided, View serviceProvidedLayout,
-                                          TextView txtDoneTick, TextView txtTTType, TextView txtTTDate) {
+    private void setServiceProvidedLayout(ServiceProvidedDTO ttServiceProvided, View
+            serviceProvidedLayout, TextView txtDoneTick, TextView txtTTType, TextView txtTTDate) {
         serviceProvidedLayout.setVisibility(View.VISIBLE);
         serviceProvidedLayout.setBackgroundResource(R.color.status_bar_text_almost_white);
 
@@ -148,12 +147,15 @@ public class TTServiceMode extends ServiceModeOption {
         txtTTDate.setTextColor(getInstance().getColorResource(R.color.text_black));
     }
 
-    private OnClickFormLauncher launchForm(String formName, ANCSmartRegisterClient client, AlertDTO alert) {
-        return provider().newFormLauncher(formName, client.entityId(), "{\"entityId\":\"" + client.entityId() + "\",\"alertName\":\"" + alert.name() + "\"}");
+    private OnClickFormLauncher launchForm(String formName, ANCSmartRegisterClient client,
+                                           AlertDTO alert) {
+        return provider().newFormLauncher(formName, client.entityId(),
+                "{\"entityId\":\"" + client.entityId() + "\",\"alertName\":\"" + alert.name()
+                        + "\"}");
     }
 
-    private void setAlertLayout(View layout, TextView typeView,
-                                TextView dateView, ANCSmartRegisterClient client, AlertDTO alert) {
+    private void setAlertLayout(View layout, TextView typeView, TextView dateView,
+                                ANCSmartRegisterClient client, AlertDTO alert) {
         layout.setVisibility(View.VISIBLE);
         layout.setOnClickListener(launchForm(TT, client, alert));
         typeView.setVisibility(View.VISIBLE);

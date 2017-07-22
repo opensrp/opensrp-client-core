@@ -9,7 +9,6 @@ import android.util.Log;
 import org.smartregister.AllConstants;
 import org.smartregister.view.activity.SecuredActivity;
 
-
 /**
  * Created by onamacuser on 16/03/2016.
  */

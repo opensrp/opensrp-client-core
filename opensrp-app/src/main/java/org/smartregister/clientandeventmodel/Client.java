@@ -43,8 +43,9 @@ public class Client extends BaseEntity {
         super(baseEntityId);
     }
 
-    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date birthdate,
-                  Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String gender) {
+    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
+            birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
+            gender) {
         super(baseEntityId);
         this.firstName = firstName;
         this.middleName = middleName;
@@ -56,9 +57,9 @@ public class Client extends BaseEntity {
         this.gender = gender;
     }
 
-    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date birthdate,
-                  Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String gender,
-                  String identifierType, String identifier) {
+    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
+            birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
+            gender, String identifierType, String identifier) {
         super(baseEntityId);
         this.firstName = firstName;
         this.middleName = middleName;
@@ -71,9 +72,10 @@ public class Client extends BaseEntity {
         addIdentifier(identifierType, identifier);
     }
 
-    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date birthdate, Date deathdate,
-                  Boolean birthdateApprox, Boolean deathdateApprox, String gender, List<Address> addresses,
-                  Map<String, String> identifiers, Map<String, Object> attributes) {
+    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
+            birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
+            gender, List<Address> addresses, Map<String, String> identifiers, Map<String, Object>
+            attributes) {
         super(baseEntityId);
         this.firstName = firstName;
         this.middleName = middleName;
@@ -183,8 +185,7 @@ public class Client extends BaseEntity {
         return this;
     }
 
-    public Client withName(String firstName, String middleName,
-                           String lastName) {
+    public Client withName(String firstName, String middleName, String lastName) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;

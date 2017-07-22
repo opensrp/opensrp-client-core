@@ -16,8 +16,7 @@ public enum FPAlertType {
         public String getFormName() {
             return FP_FOLLOWUP;
         }
-    },
-    REFERRAL("referral") {
+    }, REFERRAL("referral") {
         @Override
         public String getAlertType() {
             return "Referral Follow Up";
@@ -27,8 +26,7 @@ public enum FPAlertType {
         public String getFormName() {
             return FP_REFERRAL_FOLLOWUP;
         }
-    },
-    REFILL("refill") {
+    }, REFILL("refill") {
         @Override
         public String getAlertType() {
             return "Refill";

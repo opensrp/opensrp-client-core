@@ -24,7 +24,6 @@ public class UniqueId {
         this.createdAt = createdAt;
     }
 
-
     public String getId() {
         return id;
     }
@@ -72,6 +71,5 @@ public class UniqueId {
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 
 }

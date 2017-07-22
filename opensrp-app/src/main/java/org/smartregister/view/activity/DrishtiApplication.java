@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import static org.smartregister.util.Log.logError;
 
-
 public abstract class DrishtiApplication extends Application {
     private static final String TAG = "DrishtiApplication";
     protected static DrishtiApplication mInstance;
@@ -37,21 +36,25 @@ public abstract class DrishtiApplication extends Application {
 
     public static BitmapImageCache getMemoryCacheInstance() {
         if (memoryImageCache == null) {
-            memoryImageCache = new BitmapImageCache(BitmapImageCache.calculateMemCacheSize(AllConstants.ImageCache.MEM_CACHE_PERCENT));
+            memoryImageCache = new BitmapImageCache(BitmapImageCache
+                    .calculateMemCacheSize(AllConstants.ImageCache.MEM_CACHE_PERCENT));
         }
 
         return memoryImageCache;
     }
 
     public static String getAppDir() {
-        File appDir = DrishtiApplication.getInstance().getApplicationContext().getDir("opensrp", android.content.Context.MODE_PRIVATE); //Creating an internal dir;
+        File appDir = DrishtiApplication.getInstance().getApplicationContext()
+                .getDir("opensrp", android.content.Context.MODE_PRIVATE); //Creating an internal
+        // dir;
         return appDir.getAbsolutePath();
     }
 
     public static OpenSRPImageLoader getCachedImageLoaderInstance() {
         if (cachedImageLoader == null) {
-            cachedImageLoader = new OpenSRPImageLoader(DrishtiApplication.getInstance().getApplicationContext(), R.drawable.woman_placeholder)
-                    .setFadeInImage((Build.VERSION.SDK_INT >= 12));
+            cachedImageLoader = new OpenSRPImageLoader(
+                    DrishtiApplication.getInstance().getApplicationContext(),
+                    R.drawable.woman_placeholder).setFadeInImage((Build.VERSION.SDK_INT >= 12));
         }
 
         return cachedImageLoader;
@@ -78,10 +81,13 @@ public abstract class DrishtiApplication extends Application {
     }
 
     public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance().sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist.toArray(new DrishtiRepository[drishtireposotorylist.size()]);
+        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance()
+                .sharedRepositories();
+        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
+                .toArray(new DrishtiRepository[drishtireposotorylist.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null, drishtireposotoryarray);
+            repository = new Repository(getInstance().getApplicationContext(), null,
+                    drishtireposotoryarray);
         }
         return repository;
     }

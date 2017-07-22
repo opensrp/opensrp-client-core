@@ -20,7 +20,8 @@ public class FormSubmissionBuilder {
     }
 
     public FormSubmission build() {
-        return new FormSubmission(instanceId, entityId, formName, formInstance, version, syncStatus, formDataDefinitionVersion, serverVersion);
+        return new FormSubmission(instanceId, entityId, formName, formInstance, version, syncStatus,
+                formDataDefinitionVersion, serverVersion);
     }
 
     public FormSubmissionBuilder withInstanceId(String instanceId) {

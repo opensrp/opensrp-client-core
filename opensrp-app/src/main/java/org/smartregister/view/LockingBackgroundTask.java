@@ -51,8 +51,7 @@ public class LockingBackgroundTask {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     protected <T> void startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
         if (params == null) {
-            @SuppressWarnings("unchecked")
-            T[] arr = (T[]) new Void[0];
+            @SuppressWarnings("unchecked") T[] arr = (T[]) new Void[0];
             params = arr;
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {

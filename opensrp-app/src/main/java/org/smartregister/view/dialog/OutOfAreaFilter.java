@@ -6,7 +6,6 @@ import org.smartregister.view.contract.SmartRegisterClient;
 
 import static org.smartregister.AllConstants.OUT_OF_AREA;
 
-
 public class OutOfAreaFilter implements FilterOption {
     @Override
     public String name() {

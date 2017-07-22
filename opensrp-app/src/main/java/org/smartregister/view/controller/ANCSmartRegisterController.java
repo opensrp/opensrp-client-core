@@ -46,9 +46,9 @@ public class ANCSmartRegisterController {
     private Cache<String> cache;
     private Cache<ANCClients> ancClientsCache;
 
-    public ANCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService alertService,
-                                      AllBeneficiaries allBeneficiaries,
-                                      Cache<String> cache, Cache<ANCClients> ancClientsCache) {
+    public ANCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService
+            alertService, AllBeneficiaries allBeneficiaries, Cache<String> cache,
+                                      Cache<ANCClients> ancClientsCache) {
         this.allBeneficiaries = allBeneficiaries;
         this.alertService = alertService;
         this.serviceProvidedService = serviceProvidedService;
@@ -56,46 +56,34 @@ public class ANCSmartRegisterController {
         this.ancClientsCache = ancClientsCache;
     }
 
-
     private List<ServiceProvidedDTO> getServicesProvided(String entityId) {
-        List<ServiceProvided> servicesProvided = serviceProvidedService.findByEntityIdAndServiceNames(entityId,
-                IFA_SERVICE_PROVIDED_NAME,
-                TT_1_SERVICE_PROVIDED_NAME,
-                TT_2_SERVICE_PROVIDED_NAME,
-                TT_BOOSTER_SERVICE_PROVIDED_NAME,
-                HB_TEST_SERVICE_PROVIDED_NAME,
-                ANC_1_SERVICE_PROVIDED_NAME,
-                ANC_2_SERVICE_PROVIDED_NAME,
-                ANC_3_SERVICE_PROVIDED_NAME,
-                ANC_4_SERVICE_PROVIDED_NAME,
-                DELIVERY_PLAN_SERVICE_PROVIDED_NAME);
+        List<ServiceProvided> servicesProvided = serviceProvidedService
+                .findByEntityIdAndServiceNames(entityId, IFA_SERVICE_PROVIDED_NAME,
+                        TT_1_SERVICE_PROVIDED_NAME, TT_2_SERVICE_PROVIDED_NAME,
+                        TT_BOOSTER_SERVICE_PROVIDED_NAME, HB_TEST_SERVICE_PROVIDED_NAME,
+                        ANC_1_SERVICE_PROVIDED_NAME, ANC_2_SERVICE_PROVIDED_NAME,
+                        ANC_3_SERVICE_PROVIDED_NAME, ANC_4_SERVICE_PROVIDED_NAME,
+                        DELIVERY_PLAN_SERVICE_PROVIDED_NAME);
         List<ServiceProvidedDTO> serviceProvidedDTOs = new ArrayList<ServiceProvidedDTO>();
         for (ServiceProvided serviceProvided : servicesProvided) {
-            serviceProvidedDTOs.add(new ServiceProvidedDTO(serviceProvided.name(), serviceProvided.date(), serviceProvided.data()));
+            serviceProvidedDTOs
+                    .add(new ServiceProvidedDTO(serviceProvided.name(), serviceProvided.date(),
+                            serviceProvided.data()));
         }
         return serviceProvidedDTOs;
     }
 
     private List<AlertDTO> getAlerts(String entityId) {
-        List<Alert> alerts = alertService.findByEntityIdAndAlertNames(entityId,
-                ANC_1_ALERT_NAME,
-                ANC_2_ALERT_NAME,
-                ANC_3_ALERT_NAME,
-                ANC_4_ALERT_NAME,
-                IFA_1_ALERT_NAME,
-                IFA_2_ALERT_NAME,
-                IFA_3_ALERT_NAME,
-                LAB_REMINDER_ALERT_NAME,
-                TT_1_ALERT_NAME,
-                TT_2_ALERT_NAME,
-                HB_TEST_1_ALERT_NAME,
-                HB_FOLLOWUP_TEST_ALERT_NAME,
-                HB_TEST_2_ALERT_NAME,
-                DELIVERY_PLAN_ALERT_NAME
-        );
+        List<Alert> alerts = alertService
+                .findByEntityIdAndAlertNames(entityId, ANC_1_ALERT_NAME, ANC_2_ALERT_NAME,
+                        ANC_3_ALERT_NAME, ANC_4_ALERT_NAME, IFA_1_ALERT_NAME, IFA_2_ALERT_NAME,
+                        IFA_3_ALERT_NAME, LAB_REMINDER_ALERT_NAME, TT_1_ALERT_NAME, TT_2_ALERT_NAME,
+                        HB_TEST_1_ALERT_NAME, HB_FOLLOWUP_TEST_ALERT_NAME, HB_TEST_2_ALERT_NAME,
+                        DELIVERY_PLAN_ALERT_NAME);
         List<AlertDTO> alertDTOs = new ArrayList<AlertDTO>();
         for (Alert alert : alerts) {
-            alertDTOs.add(new AlertDTO(alert.visitCode(), valueOf(alert.status()), alert.startDate()));
+            alertDTOs.add(new AlertDTO(alert.visitCode(), valueOf(alert.status()),
+                    alert.startDate()));
         }
         return alertDTOs;
     }
@@ -110,27 +98,28 @@ public class ANCSmartRegisterController {
                 for (Pair<Mother, EligibleCouple> ancWithEc : ancsWithEcs) {
                     Mother anc = ancWithEc.getLeft();
                     EligibleCouple ec = ancWithEc.getRight();
-                    String photoPath = isBlank(ec.photoPath()) ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH : ec.photoPath();
+                    String photoPath =
+                            isBlank(ec.photoPath()) ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH
+                                    : ec.photoPath();
 
                     List<ServiceProvidedDTO> servicesProvided = getServicesProvided(anc.caseId());
                     List<AlertDTO> alerts = getAlerts(anc.caseId());
-                    ANCClient ancClient = new ANCClient(anc.caseId(), ec.village(), ec.wifeName(), anc.thayiCardNumber(), anc.getDetail(AllConstants.ANCRegistrationFields.EDD), anc.referenceDate())
-                            .withHusbandName(ec.husbandName())
-                            .withAge(ec.age())
-                            .withECNumber(ec.ecNumber())
-                            .withANCNumber(anc.getDetail(AllConstants.ANCRegistrationFields.ANC_NUMBER))
+                    ANCClient ancClient = new ANCClient(anc.caseId(), ec.village(), ec.wifeName(),
+                            anc.thayiCardNumber(),
+                            anc.getDetail(AllConstants.ANCRegistrationFields.EDD),
+                            anc.referenceDate()).withHusbandName(ec.husbandName()).withAge(ec.age())
+                            .withECNumber(ec.ecNumber()).withANCNumber(
+                                    anc.getDetail(AllConstants.ANCRegistrationFields.ANC_NUMBER))
                             .withIsHighPriority(ec.isHighPriority())
-                            .withIsHighRisk(anc.isHighRisk())
-                            .withIsOutOfArea(ec.isOutOfArea())
+                            .withIsHighRisk(anc.isHighRisk()).withIsOutOfArea(ec.isOutOfArea())
                             .withHighRiskReason(anc.highRiskReason())
                             .withCaste(ec.getDetail(AllConstants.ECRegistrationFields.CASTE))
-                            .withEconomicStatus(ec.getDetail(AllConstants.ECRegistrationFields.ECONOMIC_STATUS))
-                            .withPhotoPath(photoPath)
-                            .withEntityIdToSavePhoto(ec.caseId())
-                            .withAlerts(alerts)
-                            .withAshaPhoneNumber(anc.getDetail(AllConstants.ANCRegistrationFields.ASHA_PHONE_NUMBER))
-                            .withServicesProvided(servicesProvided)
-                            .withPreProcess();
+                            .withEconomicStatus(
+                                    ec.getDetail(AllConstants.ECRegistrationFields.ECONOMIC_STATUS))
+                            .withPhotoPath(photoPath).withEntityIdToSavePhoto(ec.caseId())
+                            .withAlerts(alerts).withAshaPhoneNumber(anc.getDetail(
+                                    AllConstants.ANCRegistrationFields.ASHA_PHONE_NUMBER))
+                            .withServicesProvided(servicesProvided).withPreProcess();
                     ancClients.add(ancClient);
                 }
                 sortByName(ancClients);
@@ -142,7 +131,8 @@ public class ANCSmartRegisterController {
     private void sortByName(ANCClients ancClients) {
         sort(ancClients, new Comparator<SmartRegisterClient>() {
             @Override
-            public int compare(SmartRegisterClient oneANCClient, SmartRegisterClient anotherANCClient) {
+            public int compare(SmartRegisterClient oneANCClient, SmartRegisterClient
+                    anotherANCClient) {
                 return oneANCClient.wifeName().compareToIgnoreCase(anotherANCClient.wifeName());
             }
         });

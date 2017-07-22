@@ -13,6 +13,7 @@ public class FPPrioritizationHighPriorityServiceMode extends FPPrioritizationAll
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.fp_prioritization_high_priority_service_mode);
+        return getInstance()
+                .getStringResource(R.string.fp_prioritization_high_priority_service_mode);
     }
 }

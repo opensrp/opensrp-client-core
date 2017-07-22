@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
-
 public class Alert implements Serializable {
     private final String scheduleName;
     private String caseID;
@@ -17,7 +16,8 @@ public class Alert implements Serializable {
     private String completionDate;
     private boolean offline;
 
-    public Alert(String caseID, String scheduleName, String visitCode, AlertStatus status, String startDate, String expiryDate) {
+    public Alert(String caseID, String scheduleName, String visitCode, AlertStatus status, String
+            startDate, String expiryDate) {
         this.caseID = caseID;
         this.visitCode = visitCode;
         this.status = status;
@@ -27,7 +27,8 @@ public class Alert implements Serializable {
         this.offline = false;
     }
 
-    public Alert(String caseID, String scheduleName, String visitCode, AlertStatus status, String startDate, String expiryDate, boolean offline) {
+    public Alert(String caseID, String scheduleName, String visitCode, AlertStatus status, String
+            startDate, String expiryDate, boolean offline) {
         this.caseID = caseID;
         this.visitCode = visitCode;
         this.status = status;

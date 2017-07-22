@@ -25,8 +25,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_ANC;
         }
-    },
-    ANC_2 {
+    }, ANC_2 {
         @Override
         public String displayName() {
             return "ANC 2";
@@ -41,8 +40,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_ANC;
         }
-    },
-    ANC_3 {
+    }, ANC_3 {
         @Override
         public String displayName() {
             return "ANC 3";
@@ -57,8 +55,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_ANC;
         }
-    },
-    ANC_4 {
+    }, ANC_4 {
         @Override
         public String displayName() {
             return "ANC 4";
@@ -73,8 +70,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_ANC;
         }
-    },
-    TT_1 {
+    }, TT_1 {
         @Override
         public String displayName() {
             return "TT";
@@ -94,8 +90,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_TT;
         }
-    },
-    TT_2 {
+    }, TT_2 {
         @Override
         public String serviceDisplayName() {
             return "TT 2";
@@ -115,8 +110,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_TT;
         }
-    },
-    TT_BOOSTER {
+    }, TT_BOOSTER {
         @Override
         public String serviceDisplayName() {
             return "TT B";
@@ -136,8 +130,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_TT;
         }
-    },
-    IFA {
+    }, IFA {
         @Override
         public String displayName() {
             return "IFA Tablets";
@@ -152,8 +145,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_IFA;
         }
-    },
-    HB_TEST {
+    }, HB_TEST {
         @Override
         public String displayName() {
             return "Hb Test";
@@ -168,8 +160,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_HB;
         }
-    },
-    DELIVERY_PLAN {
+    }, DELIVERY_PLAN {
         @Override
         public String displayName() {
             return "Delivery Plan";
@@ -184,8 +175,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_DELIVERY_PLAN;
         }
-    },
-    PNC {
+    }, PNC {
         @Override
         public String displayName() {
             return "PNC";
@@ -200,8 +190,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_PNC;
         }
-    },
-    PNC_1 {
+    }, PNC_1 {
         @Override
         public String displayName() {
             return "PNC 1";
@@ -216,8 +205,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_PNC;
         }
-    },
-    PNC_2 {
+    }, PNC_2 {
         @Override
         public String displayName() {
             return "PNC 2";
@@ -232,8 +220,7 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_PNC;
         }
-    },
-    PNC_3 {
+    }, PNC_3 {
         @Override
         public String displayName() {
             return "PNC 3";
@@ -248,11 +235,11 @@ public enum ANCServiceType {
         public String category() {
             return ANCClient.CATEGORY_PNC;
         }
-    },
-    EMPTY {
+    }, EMPTY {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_empty);
+            return Context.getInstance().applicationContext()
+                    .getString(R.string.service_type_empty);
         }
 
         @Override
@@ -264,8 +251,7 @@ public enum ANCServiceType {
         public String category() {
             return "";
         }
-    },
-    KB_IUD {
+    }, KB_IUD {
         @Override
         public String displayName() {
             return "KB IUD";
@@ -280,8 +266,7 @@ public enum ANCServiceType {
         public String category() {
             return "kb";
         }
-    },
-    KB_Implant {
+    }, KB_Implant {
         @Override
         public String displayName() {
             return "KB Implant";
@@ -296,8 +281,7 @@ public enum ANCServiceType {
         public String category() {
             return "kb";
         }
-    },
-    KB_Injection_Cyclofem {
+    }, KB_Injection_Cyclofem {
         @Override
         public String displayName() {
             return "KB Injection Cyclofem";
@@ -312,8 +296,7 @@ public enum ANCServiceType {
         public String category() {
             return "kb";
         }
-    },
-    KB_Injection_Depoprovera {
+    }, KB_Injection_Depoprovera {
         @Override
         public String displayName() {
             return "KB Injection Depoprovera";
@@ -375,7 +358,8 @@ public enum ANCServiceType {
             } else if (type.equalsIgnoreCase("KB Injection Depoprovera")) {
                 return ANCServiceType.valueOf("KB_Injection_Depoprovera");
             } else {
-                return StringUtils.isBlank(type) || type.equalsIgnoreCase("REMINDER") ? defaultType : ANCServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
+                return StringUtils.isBlank(type) || type.equalsIgnoreCase("REMINDER") ? defaultType
+                        : ANCServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
             }
         } catch (IllegalArgumentException e) {
             logWarn("Unknown current Service Type : " + type + " Exception : " + e);

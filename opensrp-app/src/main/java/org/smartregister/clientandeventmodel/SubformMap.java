@@ -11,7 +11,8 @@ public class SubformMap {
     private Map<String, String> formAttributes;
     private List<FormFieldMap> fields;
 
-    public SubformMap(String entityId, String subformName, String bindType, String defaultBindPath, Map<String, String> formAttributes, List<FormFieldMap> fields) {
+    public SubformMap(String entityId, String subformName, String bindType, String
+            defaultBindPath, Map<String, String> formAttributes, List<FormFieldMap> fields) {
         this.name = subformName;
         this.entityId = entityId;
         this.bindType = bindType;

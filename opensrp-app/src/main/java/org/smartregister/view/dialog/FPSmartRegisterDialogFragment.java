@@ -21,18 +21,18 @@ public class FPSmartRegisterDialogFragment extends DialogFragment {
     private onSelectedListener selectedListener;
 
     private FPSmartRegisterDialogFragment(SecuredNativeSmartRegisterActivity activity,
-                                          DialogOptionModel dialogOptionModel,
-                                          Object tag) {
+                                          DialogOptionModel dialogOptionModel, Object tag) {
         this.parentActivity = activity;
         this.options = dialogOptionModel.getDialogOptions();
-        this.prioritizationOptions = ((FPDialogOptionModel) dialogOptionModel).getPrioritizationDialogOptions();
+        this.prioritizationOptions = ((FPDialogOptionModel) dialogOptionModel)
+                .getPrioritizationDialogOptions();
         this.dialogOptionModel = dialogOptionModel;
         this.tag = tag;
     }
 
-    public static FPSmartRegisterDialogFragment newInstance(
-            SecuredNativeSmartRegisterActivity activity,
-            DialogOptionModel dialogOptionModel, Object tag) {
+    public static FPSmartRegisterDialogFragment newInstance(SecuredNativeSmartRegisterActivity
+                                                                    activity, DialogOptionModel
+            dialogOptionModel, Object tag) {
         return new FPSmartRegisterDialogFragment(activity, dialogOptionModel, tag);
     }
 
@@ -43,9 +43,10 @@ public class FPSmartRegisterDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.fp_smart_register_dialog_view, container, false);
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle
+            savedInstanceState) {
+        ViewGroup dialogView = (ViewGroup) inflater
+                .inflate(R.layout.fp_smart_register_dialog_view, container, false);
         listView = (ListView) dialogView.findViewById(R.id.dialog_list);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
@@ -53,7 +54,9 @@ public class FPSmartRegisterDialogFragment extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 dismiss();
-                dialogOptionModel.onDialogOptionSelection(((DialogOption) adapterView.getItemAtPosition(i)), tag);
+                dialogOptionModel
+                        .onDialogOptionSelection(((DialogOption) adapterView.getItemAtPosition(i)),
+                                tag);
             }
         });
 
@@ -62,13 +65,14 @@ public class FPSmartRegisterDialogFragment extends DialogFragment {
 
     private ArrayAdapter<DialogOption> getDialogOptionArrayAdapter(DialogOption[] options) {
         final LayoutInflater inflater = LayoutInflater.from(parentActivity);
-        return new ArrayAdapter<DialogOption>(
-                parentActivity, R.layout.smart_register_dialog_list_item, options) {
+        return new ArrayAdapter<DialogOption>(parentActivity,
+                R.layout.smart_register_dialog_list_item, options) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 ViewGroup itemView;
                 if (convertView == null) {
-                    itemView = (ViewGroup) inflater.inflate(R.layout.smart_register_dialog_list_item, parent, false);
+                    itemView = (ViewGroup) inflater
+                            .inflate(R.layout.smart_register_dialog_list_item, parent, false);
                 } else {
                     itemView = (ViewGroup) convertView;
                 }

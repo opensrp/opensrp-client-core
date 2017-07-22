@@ -16,7 +16,8 @@ import org.smartregister.view.viewholder.*;
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.*;
 import static org.smartregister.Context.getInstance;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
+        .ClientsHeaderProvider;
 import static org.smartregister.view.contract.AlertDTO.emptyAlert;
 import static org.smartregister.view.contract.AlertStatus.COMPLETE;
 import static org.smartregister.view.contract.AlertStatus.INPROCESS;
@@ -24,7 +25,6 @@ import static org.smartregister.view.contract.AlertStatus.INPROCESS;
 public class ANCOverviewServiceMode extends ServiceModeOption {
 
     private Drawable iconPencilDrawable;
-
 
     public ANCOverviewServiceMode(SmartRegisterClientsProvider provider) {
         super(provider);
@@ -55,22 +55,22 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
 
             @Override
             public int[] headerTextResourceIds() {
-                return new int[]{
-                        R.string.header_name, R.string.header_id, R.string.header_anc_status,
-                        R.string.header_risk_factors, R.string.header_visits, R.string.header_tt, R.string.header_ifa};
+                return new int[]{R.string.header_name, R.string.header_id, R.string
+                        .header_anc_status, R.string.header_risk_factors, R.string.header_visits,
+                        R.string.header_tt, R.string.header_ifa};
             }
         };
     }
 
     @Override
-    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(ANCSmartRegisterClient client,
-                              NativeANCSmartRegisterViewHolder viewHolder,
-                              View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
         viewHolder.serviceModeOverviewView().setVisibility(VISIBLE);
 
         setupRiskFactorsView(client, viewHolder);
@@ -80,17 +80,20 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
         setupEditView(client, viewHolder, clientSectionClickListener);
     }
 
-    private void setupRiskFactorsView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder viewHolder) {
+    private void setupRiskFactorsView(ANCSmartRegisterClient client,
+                                      NativeANCSmartRegisterViewHolder viewHolder) {
         viewHolder.txtRiskFactors().setText(client.riskFactors());
     }
 
     @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
@@ -107,33 +110,36 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
         if (ancVisitAlert != emptyAlert) {
             viewHolder.btnAncVisitView().setVisibility(View.INVISIBLE);
             viewHolder.layoutANCVisitAlert().setVisibility(VISIBLE);
-            viewHolder.layoutANCVisitAlert().setOnClickListener(launchForm(client, ancVisitAlert, ANC_VISIT));
-            setAlertLayout(viewHolder.layoutANCVisitAlert(),
-                    viewHolder.txtANCVisitDueType(),
+            viewHolder.layoutANCVisitAlert()
+                    .setOnClickListener(launchForm(client, ancVisitAlert, ANC_VISIT));
+            setAlertLayout(viewHolder.layoutANCVisitAlert(), viewHolder.txtANCVisitDueType(),
                     ancVisitAlert);
             setAlertDateDetails(client, ancVisitAlert, viewHolder.txtANCVisitAlertDueOn());
         } else {
             viewHolder.layoutANCVisitAlert().setVisibility(View.INVISIBLE);
             viewHolder.btnAncVisitView().setVisibility(View.INVISIBLE);
-            viewHolder.btnAncVisitView().setOnClickListener(launchForm(client, ancVisitAlert, ANC_VISIT));
+            viewHolder.btnAncVisitView()
+                    .setOnClickListener(launchForm(client, ancVisitAlert, ANC_VISIT));
         }
     }
 
-    private void setAlertDateDetails(ANCSmartRegisterClient client, AlertDTO alert, TextView dateView) {
+    private void setAlertDateDetails(ANCSmartRegisterClient client, AlertDTO alert, TextView
+            dateView) {
         ServiceProvidedDTO servicesProvided = client.getServiceProvidedDTO(alert.name());
         if (isAlertStatusCompleteOrInProcess(alert) && servicesProvided != null) {
             setAlertDate(dateView, alert, servicesProvided.ancServicedOn());
-        } else
+        } else {
             setAlertDate(dateView, alert, null);
+        }
     }
 
     private boolean isAlertStatusCompleteOrInProcess(AlertDTO ancVisitAlert) {
-        return ancVisitAlert.status().equalsIgnoreCase(INPROCESS.name())
-                || ancVisitAlert.status().equalsIgnoreCase(COMPLETE.name());
+        return ancVisitAlert.status().equalsIgnoreCase(INPROCESS.name()) || ancVisitAlert.status()
+                .equalsIgnoreCase(COMPLETE.name());
     }
 
-    public void setupTTLayout(ANCSmartRegisterClient client,
-                              NativeANCSmartRegisterViewHolder viewHolder) {
+    public void setupTTLayout(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder) {
         if (client.isTTDone()) {
             viewHolder.txtTTDoneOn().setVisibility(VISIBLE);
             viewHolder.txtTTDoneOn().setText(client.ttDoneDate());
@@ -146,9 +152,7 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
             viewHolder.btnTTView().setVisibility(View.INVISIBLE);
             viewHolder.layoutTTAlert().setVisibility(VISIBLE);
             viewHolder.layoutTTAlert().setOnClickListener(launchForm(client, ttAlert, TT));
-            setAlertLayout(viewHolder.layoutTTAlert(),
-                    viewHolder.txtTTDueType(),
-                    ttAlert);
+            setAlertLayout(viewHolder.layoutTTAlert(), viewHolder.txtTTDueType(), ttAlert);
             setAlertDateDetails(client, ttAlert, viewHolder.txtTTDueOn());
         } else {
             viewHolder.layoutTTAlert().setVisibility(View.INVISIBLE);
@@ -157,8 +161,8 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
         }
     }
 
-    public void setupIFALayout(ANCSmartRegisterClient client,
-                               NativeANCSmartRegisterViewHolder viewHolder) {
+    public void setupIFALayout(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder) {
         if (client.isIFADone()) {
             viewHolder.txtIFADoneOn().setVisibility(VISIBLE);
             viewHolder.txtIFADoneOn().setText(client.ifaDoneDate());
@@ -171,9 +175,7 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
             viewHolder.btnIFAView().setVisibility(View.INVISIBLE);
             viewHolder.layoutIFAAlert().setVisibility(VISIBLE);
             viewHolder.layoutIFAAlert().setOnClickListener(launchForm(client, ifaAlert, IFA));
-            setAlertLayout(viewHolder.layoutIFAAlert(),
-                    viewHolder.txtIFADueType(),
-                    ifaAlert);
+            setAlertLayout(viewHolder.layoutIFAAlert(), viewHolder.txtIFADueType(), ifaAlert);
             viewHolder.txtIFADueType().setText(ifaAlert.name());
             setAlertDateDetails(client, ifaAlert, viewHolder.txtIFADueOn());
         } else {
@@ -183,7 +185,8 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
         }
     }
 
-    private void setupEditView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder viewHolder, View.OnClickListener onClickListener) {
+    private void setupEditView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener onClickListener) {
         if (iconPencilDrawable == null) {
             iconPencilDrawable = Context.getInstance().getDrawableResource(R.drawable.ic_pencil);
         }
@@ -192,12 +195,14 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
         viewHolder.btnEditView().setTag(client);
     }
 
-    private OnClickFormLauncher launchForm(ANCSmartRegisterClient client, AlertDTO alert, String formName) {
-        return provider().newFormLauncher(formName, client.entityId(), "{\"entityId\":\"" + client.entityId() + "\",\"alertName\":\"" + alert.name() + "\"}");
+    private OnClickFormLauncher launchForm(ANCSmartRegisterClient client, AlertDTO alert, String
+            formName) {
+        return provider().newFormLauncher(formName, client.entityId(),
+                "{\"entityId\":\"" + client.entityId() + "\",\"alertName\":\"" + alert.name()
+                        + "\"}");
     }
 
-    private void setAlertLayout(View layout, TextView typeView,
-                                AlertDTO alert) {
+    private void setAlertLayout(View layout, TextView typeView, AlertDTO alert) {
 
         typeView.setText(alert.ancServiceType().shortName());
 
@@ -207,10 +212,11 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
     }
 
     private void setAlertDate(TextView dateView, AlertDTO alert, String serviceDate) {
-        if (StringUtils.isNotEmpty(serviceDate))
+        if (StringUtils.isNotEmpty(serviceDate)) {
             dateView.setText(serviceDate);
-        else
+        } else {
             dateView.setText(getInstance().getStringResource(R.string.str_due) + alert.shortDate());
+        }
         dateView.setTextColor(alert.alertStatus().fontColor());
     }
 

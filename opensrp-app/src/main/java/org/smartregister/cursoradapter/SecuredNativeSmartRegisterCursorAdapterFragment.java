@@ -53,12 +53,12 @@ import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
 /**
  * Created by koros on 10/12/15.
  */
-public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends SecuredNativeSmartRegisterFragment implements
-        LoaderManager.LoaderCallbacks<Cursor> {
-
+public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
+        SecuredNativeSmartRegisterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     public static final String DIALOG_TAG = "dialog";
-    public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(new AllClientsFilter());
+    public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(
+            new AllClientsFilter());
     protected static final int LOADER_ID = 0;
     private static final String INIT_LOADER = "init";
     public static int totalcount = 0;
@@ -130,10 +130,12 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         // Inflate the layout for this fragment
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-        this.getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        this.getActivity().getWindow()
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         View view = inflater.inflate(R.layout.smart_register_activity, container, false);
         mView = view;
@@ -146,7 +148,8 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     protected void setupViews(View view) {
         setupNavBarViews(view);
         if (getDefaultOptionsProvider() != null) {
-            populateClientListHeaderView(getDefaultOptionsProvider().serviceMode().getHeaderProvider(), view);
+            populateClientListHeaderView(
+                    getDefaultOptionsProvider().serviceMode().getHeaderProvider(), view);
         }
 
         clientsProgressView = (ProgressBar) view.findViewById(R.id.client_list_progress);
@@ -255,9 +258,10 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
 
     private void setReportDates(TextView titleView) {
         ReportMonth report = new ReportMonth();
-        titleView.setText(report.startOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT)
-                + " - "
-                + report.endOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT));
+        titleView.setText(
+                report.startOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT)
+                        + " - " + report.endOfCurrentReportMonth(LocalDate.now())
+                        .toString(SHORT_DATE_FORMAT));
     }
 
     private void updateDefaultOptions() {
@@ -274,8 +278,11 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         }
     }
 
-    private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity.ClientsHeaderProvider headerProvider, View view) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) view.findViewById(R.id.clients_header_layout);
+    private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
+                                                      .ClientsHeaderProvider headerProvider, View
+            view) {
+        LinearLayout clientsHeaderLayout = (LinearLayout) view
+                .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
         int[] weights = headerProvider.weights();
@@ -288,15 +295,13 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     }
 
     private View getColumnHeaderView(int i, int[] weights, int[] headerTxtResIds) {
-        CustomFontTextView header = new CustomFontTextView(getActivity(), null, R.style.CustomFontTextViewStyle_Header_Black);
+        CustomFontTextView header = new CustomFontTextView(getActivity(), null,
+                R.style.CustomFontTextViewStyle_Header_Black);
         header.setFontVariant(FontVariant.BLACK);
         header.setTextSize(16);
         header.setTextColor(getResources().getColor(R.color.client_list_header_text_color));
-        LinearLayout.LayoutParams lp =
-                new LinearLayout.LayoutParams(
-                        0,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        weights[i]);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
+                ViewGroup.LayoutParams.MATCH_PARENT, weights[i]);
 
         header.setLayoutParams(lp);
         header.setText(headerTxtResIds[i]);
@@ -331,12 +336,15 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     }
 
     protected void showFragmentDialog(DialogOptionModel dialogOptionModel, Object tag) {
-        ((SecuredNativeSmartRegisterActivity) getActivity()).showFragmentDialog(dialogOptionModel, tag);
+        ((SecuredNativeSmartRegisterActivity) getActivity())
+                .showFragmentDialog(dialogOptionModel, tag);
     }
 
-    protected abstract SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider();
+    protected abstract SecuredNativeSmartRegisterActivity.DefaultOptionsProvider
+    getDefaultOptionsProvider();
 
-    protected abstract SecuredNativeSmartRegisterActivity.NavBarOptionsProvider getNavBarOptionsProvider();
+    protected abstract SecuredNativeSmartRegisterActivity.NavBarOptionsProvider
+    getNavBarOptionsProvider();
 
     protected abstract SmartRegisterClientsProvider clientsProvider();
 
@@ -366,8 +374,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
 
     public void refresh() {
         pageInfoView.setText(
-                format(getResources().getString(R.string.str_page_info),
-                        (getCurrentPageCount()),
+                format(getResources().getString(R.string.str_page_info), (getCurrentPageCount()),
                         getTotalcount()));
         nextPageView.setVisibility(hasNextPage() ? VISIBLE : INVISIBLE);
         previousPageView.setVisibility(hasPreviousPage() ? VISIBLE : INVISIBLE);
@@ -446,9 +453,12 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
         String query = "";
         try {
             if (isValidFilterForFts(commonRepository())) {
-                String sql = sqb.searchQueryFts(tablename, joinTable, mainCondition, filters, Sortqueries, currentlimit, currentoffset);
+                String sql = sqb
+                        .searchQueryFts(tablename, joinTable, mainCondition, filters, Sortqueries,
+                                currentlimit, currentoffset);
                 List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN, Sortqueries);
+                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN,
+                        Sortqueries);
                 query = sqb.Endquery(query);
             } else {
                 sqb.addCondition(filters);
@@ -498,9 +508,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
     }
 
     protected boolean isValidFilterForFts(CommonRepository commonRepository) {
-        return commonRepository.isFts() && filters != null
-                && !StringUtils.containsIgnoreCase(filters, "like")
-                && !StringUtils.startsWithIgnoreCase(filters.trim(), "and ");
+        return commonRepository.isFts() && filters != null && !StringUtils
+                .containsIgnoreCase(filters, "like") && !StringUtils
+                .startsWithIgnoreCase(filters.trim(), "and ");
     }
 
     @Override
@@ -586,7 +596,6 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
 
     private class PaginationViewHandler implements View.OnClickListener {
 
-
         private void addPagination(ListView clientsView) {
             ViewGroup footerView = getPaginationView();
             nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
@@ -596,18 +605,18 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends Se
             nextPageView.setOnClickListener(this);
             previousPageView.setOnClickListener(this);
 
-            footerView.setLayoutParams(new AbsListView.LayoutParams(
-                    AbsListView.LayoutParams.MATCH_PARENT,
-                    (int) getResources().getDimension(R.dimen.pagination_bar_height)));
+            footerView.setLayoutParams(
+                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
 
             clientsView.addFooterView(footerView);
             refresh();
         }
 
         private ViewGroup getPaginationView() {
-            return (ViewGroup) getActivity().getLayoutInflater().inflate(R.layout.smart_register_pagination, null);
+            return (ViewGroup) getActivity().getLayoutInflater()
+                    .inflate(R.layout.smart_register_pagination, null);
         }
-
 
         @Override
         public void onClick(View view) {

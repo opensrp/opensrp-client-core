@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-
 public class FormSubmissionMap {
     private Map<String, String> formAttributes;
     private List<FormFieldMap> fields = new ArrayList<>();
@@ -87,7 +86,8 @@ public class FormSubmissionMap {
 
     public SubformMap getSubform(String entityId, String subformName) {
         for (SubformMap sf : subforms) {
-            if (sf.name().equalsIgnoreCase(subformName) && sf.entityId().equalsIgnoreCase(entityId)) {
+            if (sf.name().equalsIgnoreCase(subformName) && sf.entityId()
+                    .equalsIgnoreCase(entityId)) {
                 return sf;
             }
         }

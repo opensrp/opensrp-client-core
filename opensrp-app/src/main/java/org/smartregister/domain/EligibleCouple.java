@@ -26,7 +26,8 @@ public class EligibleCouple {
     private Boolean isClosed;
     private String photoPath;
 
-    public EligibleCouple(String caseId, String wifeName, String husbandName, String ecNumber, String village, String subcenter, Map<String, String> details) {
+    public EligibleCouple(String caseId, String wifeName, String husbandName, String ecNumber,
+                          String village, String subcenter, Map<String, String> details) {
         this.caseId = caseId;
         this.wifeName = wifeName;
         this.husbandName = husbandName;
@@ -89,8 +90,11 @@ public class EligibleCouple {
     }
 
     public String highPriorityReason() {
-        String highRiskReason = details.get(HIGH_PRIORITY_REASON) == null ? "" : details.get(HIGH_PRIORITY_REASON);
-        return StringUtils.join(new HashSet<String>(Arrays.asList(highRiskReason.split(SPACE))).toArray(), SPACE);
+        String highRiskReason =
+                details.get(HIGH_PRIORITY_REASON) == null ? "" : details.get(HIGH_PRIORITY_REASON);
+        return StringUtils
+                .join(new HashSet<String>(Arrays.asList(highRiskReason.split(SPACE))).toArray(),
+                        SPACE);
     }
 
     public boolean isYoungestChildUnderTwo() {

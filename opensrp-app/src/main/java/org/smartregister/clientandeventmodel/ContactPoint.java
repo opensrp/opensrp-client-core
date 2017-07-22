@@ -15,8 +15,8 @@ public class ContactPoint {
 
     }
 
-
-    public ContactPoint(String type, String use, String number, int preference, Date startDate, Date endDate) {
+    public ContactPoint(String type, String use, String number, int preference, Date startDate,
+                        Date endDate) {
         this.type = type;
         this.use = use;
         this.number = number;
@@ -24,7 +24,6 @@ public class ContactPoint {
         this.startDate = startDate;
         this.endDate = endDate;
     }
-
 
     public String getType() {
         return type;
@@ -73,6 +72,5 @@ public class ContactPoint {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
-
 
 }

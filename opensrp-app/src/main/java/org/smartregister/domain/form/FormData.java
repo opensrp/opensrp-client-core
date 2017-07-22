@@ -17,7 +17,8 @@ public class FormData {
     private List<SubForm> sub_forms;
     private Map<String, String> mapOfFieldsByName;
 
-    public FormData(String bind_type, String default_bind_path, List<FormField> fields, List<SubForm> subForms) {
+    public FormData(String bind_type, String default_bind_path, List<FormField> fields,
+                    List<SubForm> subForms) {
         this.bind_type = bind_type;
         this.default_bind_path = default_bind_path;
         this.fields = fields;
@@ -37,10 +38,12 @@ public class FormData {
 
     public SubForm getSubFormByName(String name) {
         for (SubForm sub_form : sub_forms) {
-            if (StringUtils.equalsIgnoreCase(name, sub_form.name()))
+            if (StringUtils.equalsIgnoreCase(name, sub_form.name())) {
                 return sub_form;
+            }
         }
-        throw new RuntimeException(MessageFormat.format("No sub form with the given name: {0}, in formData: {1}", name, this));
+        throw new RuntimeException(MessageFormat
+                .format("No sub form with the given name: {0}, in" + " formData: {1}", name, this));
     }
 
     private void createFieldMapByName() {

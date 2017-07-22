@@ -13,6 +13,7 @@ public class FPPrioritizationTwoPlusChildrenServiceMode extends FPPrioritization
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.fp_prioritization_two_plus_children_service_mode);
+        return getInstance()
+                .getStringResource(R.string.fp_prioritization_two_plus_children_service_mode);
     }
 }

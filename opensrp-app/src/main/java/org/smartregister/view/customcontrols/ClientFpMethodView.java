@@ -73,7 +73,8 @@ public class ClientFpMethodView extends LinearLayout {
             fpMethodQuantityView.setText(client.numberOfOCPDelivered());
         } else if (fpMethod == FPMethod.CONDOM) {
             fpMethodQuantityLabelView.setVisibility(View.VISIBLE);
-            fpMethodQuantityLabelView.setText(getInstance().getStringResource(R.string.str_number_given));
+            fpMethodQuantityLabelView
+                    .setText(getInstance().getStringResource(R.string.str_number_given));
             fpMethodQuantityView.setVisibility(View.VISIBLE);
             fpMethodQuantityView.setText(client.numberOfCondomsSupplied());
         } else if (fpMethod == FPMethod.CENTCHROMAN) {

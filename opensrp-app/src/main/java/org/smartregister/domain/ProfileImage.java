@@ -14,7 +14,8 @@ public class ProfileImage {
     private String syncStatus;
     private String filecategory;
 
-    public ProfileImage(String imageid, String anmId, String entityID, String contenttype, String filepath, String syncStatus, String filecategory) {
+    public ProfileImage(String imageid, String anmId, String entityID, String contenttype, String
+            filepath, String syncStatus, String filecategory) {
         this.imageid = imageid;
         this.entityID = entityID;
         this.anmId = anmId;

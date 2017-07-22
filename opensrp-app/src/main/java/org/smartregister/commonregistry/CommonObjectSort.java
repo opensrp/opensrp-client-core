@@ -15,43 +15,40 @@ import java.util.Map;
  */
 class CommonObjectSort implements SortOption {
 
-
     private String field;
     private ByColumnAndByDetails byColumnAndByDetails;
     private boolean isInteger;
     private String sortOptionName;
-    private Comparator<SmartRegisterClient> commonComparator =
-            new Comparator<SmartRegisterClient>() {
-                @Override
-                public int compare(SmartRegisterClient smartRegisterClient,
-                                   SmartRegisterClient smartRegisterClient2) {
-                    CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
-                    CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
-                    boolean isDetails;
+    private Comparator<SmartRegisterClient> commonComparator = new
+            Comparator<SmartRegisterClient>() {
+        @Override
+        public int compare(SmartRegisterClient smartRegisterClient, SmartRegisterClient
+                smartRegisterClient2) {
+            CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
+            CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
+            boolean isDetails;
 
-                    switch (byColumnAndByDetails) {
-                        case byColumn:
-                            isDetails = false;
-                            break;
-                        case byDetails:
-                            isDetails = true;
-                            break;
-                        default:
-                            return 0;
-                    }
+            switch (byColumnAndByDetails) {
+                case byColumn:
+                    isDetails = false;
+                    break;
+                case byDetails:
+                    isDetails = true;
+                    break;
+                default:
+                    return 0;
+            }
 
-                    String fieldValue = getFieldValue(client, isDetails);
-                    String fieldValue2 = getFieldValue(client2, isDetails);
+            String fieldValue = getFieldValue(client, isDetails);
+            String fieldValue2 = getFieldValue(client2, isDetails);
 
-                    return isInteger ? Integer.valueOf(fieldValue).compareTo(
-                            Integer.valueOf(fieldValue2)) : fieldValue.compareTo(fieldValue2);
-                }
-            };
+            return isInteger ? Integer.valueOf(fieldValue).compareTo(Integer.valueOf(fieldValue2))
+                    : fieldValue.compareTo(fieldValue2);
+        }
+    };
 
-    CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg,
-                     boolean isIntegerArg,
-                     String fieldArg,
-                     String sortOptionNameArg) {
+    CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg, boolean isIntegerArg, String
+            fieldArg, String sortOptionNameArg) {
         byColumnAndByDetails = byColumnAndByDetailsArg;
         isInteger = isIntegerArg;
         field = fieldArg;
@@ -70,8 +67,8 @@ class CommonObjectSort implements SortOption {
     }
 
     @NonNull
-    private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient,
-                                 boolean isDetails) {
+    private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient, boolean
+            isDetails) {
         String defaultValue = isInteger ? "0" : "";
         Map<String, String> valueMap = isDetails ? commonPersonObjectClient.getDetails()
                 : commonPersonObjectClient.getColumnmaps();

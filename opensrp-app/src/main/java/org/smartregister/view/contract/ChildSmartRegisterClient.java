@@ -94,18 +94,16 @@ public interface ChildSmartRegisterClient extends SmartRegisterClient {
         }
 
         public String diseases() {
-            return getDiseasesCapitalizeIfAcronymsOrHumanize() + (
-                    isBlank(otherDiseases) ? "" : (", "
-                            + StringUtil.replaceAndHumanizeWithInitCapText(otherDiseases,
-                            AllConstants.SPACE,
-                            AllConstants.COMMA_WITH_SPACE)));
+            return getDiseasesCapitalizeIfAcronymsOrHumanize() + (isBlank(otherDiseases) ? ""
+                    : (", " + StringUtil
+                            .replaceAndHumanizeWithInitCapText(otherDiseases, AllConstants.SPACE,
+                                    AllConstants.COMMA_WITH_SPACE)));
         }
 
         private String getDiseasesCapitalizeIfAcronymsOrHumanize() {
             return StringUtil.replaceAndHumanizeWithInitCapText(
                     illnessAcronyms.contains(diseases) ? diseases.toUpperCase() : diseases,
-                    AllConstants.SPACE,
-                    AllConstants.COMMA_WITH_SPACE);
+                    AllConstants.SPACE, AllConstants.COMMA_WITH_SPACE);
         }
 
         public String date() {

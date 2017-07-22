@@ -26,33 +26,27 @@ public class VideosController {
             videoPlayerIntent.putExtra(VIDEO_NAME_PARAMETER, videoName);
             context.startActivity(videoPlayerIntent);
         } catch (ActivityNotFoundException e) {
-            Log.logError(MessageFormat.format("Could not play video: {0}. Exception: {1}", videoName, e));
+            Log.logError(MessageFormat
+                    .format("Could not play video: {0}. Exception: {1}", videoName, e));
             new AlertDialog.Builder(context)
                     .setMessage(R.string.videos_IEC_not_installed_dialog_message)
-                    .setTitle(R.string.videos_cannot_play_video_dialog_title)
-                    .setCancelable(true)
-                    .setNeutralButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            })
-                    .show();
+                    .setTitle(R.string.videos_cannot_play_video_dialog_title).setCancelable(true)
+                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
+                        }
+                    }).show();
         } catch (Exception e) {
-            Log.logError(MessageFormat.format("Could not play video: {0}. Exception: {1}", videoName, e));
+            Log.logError(MessageFormat
+                    .format("Could not play video: {0}. Exception: {1}", videoName, e));
             new AlertDialog.Builder(context)
                     .setMessage(R.string.videos_unknown_error_dialog_message)
-                    .setTitle(R.string.videos_cannot_play_video_dialog_title)
-                    .setCancelable(true)
-                    .setNeutralButton(android.R.string.ok,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,
-                                                    int whichButton) {
-                                    dialog.dismiss();
-                                }
-                            })
-                    .show();
+                    .setTitle(R.string.videos_cannot_play_video_dialog_title).setCancelable(true)
+                    .setNeutralButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.dismiss();
+                        }
+                    }).show();
         }
     }
 }

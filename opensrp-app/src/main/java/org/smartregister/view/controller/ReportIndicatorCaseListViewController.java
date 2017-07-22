@@ -18,7 +18,8 @@ public class ReportIndicatorCaseListViewController {
     private final String month;
     private String indicator;
 
-    public ReportIndicatorCaseListViewController(Context context, String indicator, List<String> caseIds, String month) {
+    public ReportIndicatorCaseListViewController(Context context, String indicator, List<String>
+            caseIds, String month) {
         this.context = context;
         this.indicator = indicator;
         this.caseIds = caseIds;

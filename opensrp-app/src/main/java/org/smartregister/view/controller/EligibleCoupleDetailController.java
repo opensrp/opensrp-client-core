@@ -33,8 +33,8 @@ public class EligibleCoupleDetailController {
     private final AllTimelineEvents allTimelineEvents;
     private String caseId;
 
-    public EligibleCoupleDetailController(Context context, String caseId, AllEligibleCouples allEligibleCouples,
-                                          AllTimelineEvents allTimelineEvents) {
+    public EligibleCoupleDetailController(Context context, String caseId, AllEligibleCouples
+            allEligibleCouples, AllTimelineEvents allTimelineEvents) {
         this.context = context;
         this.caseId = caseId;
         this.allEligibleCouples = allEligibleCouples;
@@ -45,9 +45,12 @@ public class EligibleCoupleDetailController {
     public String get() {
         EligibleCouple eligibleCouple = allEligibleCouples.findByCaseID(caseId);
 
-        ECDetail ecContext = new ECDetail(caseId, eligibleCouple.village(), eligibleCouple.subCenter(), eligibleCouple.ecNumber(),
-                eligibleCouple.isHighPriority(), null, eligibleCouple.photoPath(), new ArrayList<Child>(), new CoupleDetails(eligibleCouple.wifeName(),
-                eligibleCouple.husbandName(), eligibleCouple.ecNumber(), eligibleCouple.isOutOfArea()),
+        ECDetail ecContext = new ECDetail(caseId, eligibleCouple.village(),
+                eligibleCouple.subCenter(), eligibleCouple.ecNumber(),
+                eligibleCouple.isHighPriority(), null, eligibleCouple.photoPath(),
+                new ArrayList<Child>(),
+                new CoupleDetails(eligibleCouple.wifeName(), eligibleCouple.husbandName(),
+                        eligibleCouple.ecNumber(), eligibleCouple.isOutOfArea()),
                 eligibleCouple.details()).
                 addTimelineEvents(getEvents());
 
@@ -70,7 +73,9 @@ public class EligibleCoupleDetailController {
 
         for (org.smartregister.domain.TimelineEvent event : events) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd-MM-YYYY");
-            timelineEvents.add(new TimelineEvent(event.type(), event.title(), new String[]{event.detail1(), event.detail2()}, event.referenceDate().toString(dateTimeFormatter)));
+            timelineEvents.add(new TimelineEvent(event.type(), event.title(),
+                    new String[]{event.detail1(), event.detail2()},
+                    event.referenceDate().toString(dateTimeFormatter)));
         }
 
         return timelineEvents;

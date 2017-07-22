@@ -9,10 +9,8 @@ public class CommonObjectFilterOption implements FilterOption {
     private final String filterOptionName;
     ByColumnAndByDetails byColumnAndByDetails;
 
-    public CommonObjectFilterOption(String criteriaArg,
-                                    String fieldnameArg,
-                                    ByColumnAndByDetails byColumnAndByDetailsArg,
-                                    String filteroptionnameArg) {
+    public CommonObjectFilterOption(String criteriaArg, String fieldnameArg, ByColumnAndByDetails
+            byColumnAndByDetailsArg, String filteroptionnameArg) {
         criteria = criteriaArg;
         fieldname = fieldnameArg;
         byColumnAndByDetails = byColumnAndByDetailsArg;

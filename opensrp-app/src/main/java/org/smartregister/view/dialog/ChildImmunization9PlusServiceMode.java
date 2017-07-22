@@ -15,7 +15,8 @@ import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.CHILD_IMMUNIZATIONS;
 import static org.smartregister.AllConstants.FormNames.VITAMIN_A;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
+        .ClientsHeaderProvider;
 import static org.smartregister.view.contract.AlertDTO.emptyAlert;
 
 public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
@@ -26,7 +27,8 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.child_service_mode_immunization_9_plus);
+        return Context.getInstance()
+                .getStringResource(R.string.child_service_mode_immunization_9_plus);
     }
 
     @Override
@@ -49,18 +51,17 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
 
             @Override
             public int[] headerTextResourceIds() {
-                return new int[]{
-                        R.string.header_name, R.string.header_id_no, R.string.header_measles,
-                        R.string.header_opv_booster, R.string.header_dpt_booster, R.string.header_vitamin_a};
+                return new int[]{R.string.header_name, R.string.header_id_no, R.string
+                        .header_measles, R.string.header_opv_booster, R.string
+                        .header_dpt_booster, R.string.header_vitamin_a};
             }
         };
 
     }
 
     @Override
-    public void setupListView(ChildSmartRegisterClient client,
-                              NativeChildSmartRegisterViewHolder viewHolder,
-                              View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
         viewHolder.serviceModeImmunization9PlusView().setVisibility(VISIBLE);
 
         setupMeaslesLayout(client, viewHolder);
@@ -70,17 +71,20 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
     }
 
     @Override
-    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
@@ -97,10 +101,10 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
         if (measlesAlert != emptyAlert) {
             viewHolder.addMeaslesView().setVisibility(INVISIBLE);
             viewHolder.layoutMeaslesAlertView().setVisibility(VISIBLE);
-            viewHolder.layoutMeaslesAlertView().setOnClickListener(launchChildImmunizationForm(client));
+            viewHolder.layoutMeaslesAlertView()
+                    .setOnClickListener(launchChildImmunizationForm(client));
             setAlertLayout(viewHolder.layoutMeaslesAlertView(),
-                    viewHolder.measlesAlertDueTypeView(),
-                    viewHolder.measlesAlertDueOnView(),
+                    viewHolder.measlesAlertDueTypeView(), viewHolder.measlesAlertDueOnView(),
                     measlesAlert);
         } else {
             viewHolder.layoutMeaslesAlertView().setVisibility(INVISIBLE);
@@ -122,10 +126,10 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
         if (opvBoosterAlert != emptyAlert) {
             viewHolder.addOpvBoosterView().setVisibility(INVISIBLE);
             viewHolder.layoutOpvBoosterAlertView().setVisibility(VISIBLE);
-            viewHolder.layoutOpvBoosterAlertView().setOnClickListener(launchChildImmunizationForm(client));
+            viewHolder.layoutOpvBoosterAlertView()
+                    .setOnClickListener(launchChildImmunizationForm(client));
             setAlertLayout(viewHolder.layoutOpvBoosterAlertView(),
-                    viewHolder.opvBoosterAlertDueTypeView(),
-                    viewHolder.opvBoosterAlertDueOnView(),
+                    viewHolder.opvBoosterAlertDueTypeView(), viewHolder.opvBoosterAlertDueOnView(),
                     opvBoosterAlert);
         } else {
             viewHolder.layoutOpvBoosterAlertView().setVisibility(INVISIBLE);
@@ -147,16 +151,15 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
         if (dptBoosterAlert != emptyAlert) {
             viewHolder.addDptBoosterView().setVisibility(INVISIBLE);
             viewHolder.layoutDptBoosterAlertView().setVisibility(VISIBLE);
-            viewHolder.layoutDptBoosterAlertView().setOnClickListener(launchChildImmunizationForm(client));
+            viewHolder.layoutDptBoosterAlertView()
+                    .setOnClickListener(launchChildImmunizationForm(client));
             setAlertLayout(viewHolder.layoutDptBoosterAlertView(),
-                    viewHolder.dptBoosterAlertDueTypeView(),
-                    viewHolder.dptBoosterAlertDueOnView(),
+                    viewHolder.dptBoosterAlertDueTypeView(), viewHolder.dptBoosterAlertDueOnView(),
                     dptBoosterAlert);
         } else {
             viewHolder.layoutDptBoosterAlertView().setVisibility(INVISIBLE);
             viewHolder.addDptBoosterView().setVisibility(VISIBLE);
-            viewHolder.addDptBoosterView().setOnClickListener(
-                    launchChildImmunizationForm(client));
+            viewHolder.addDptBoosterView().setOnClickListener(launchChildImmunizationForm(client));
         }
     }
 
@@ -173,10 +176,10 @@ public class ChildImmunization9PlusServiceMode extends ServiceModeOption {
         if (vitaminAAlert != emptyAlert) {
             viewHolder.addVitaminAView().setVisibility(INVISIBLE);
             viewHolder.layoutVitaminAAlertView().setVisibility(VISIBLE);
-            viewHolder.layoutVitaminAAlertView().setOnClickListener(launchChildImmunizationForm(client));
+            viewHolder.layoutVitaminAAlertView()
+                    .setOnClickListener(launchChildImmunizationForm(client));
             setAlertLayout(viewHolder.layoutVitaminAAlertView(),
-                    viewHolder.vitaminAAlertDueTypeView(),
-                    viewHolder.vitaminAAlertDueOnView(),
+                    viewHolder.vitaminAAlertDueTypeView(), viewHolder.vitaminAAlertDueOnView(),
                     vitaminAAlert);
         } else {
             viewHolder.layoutVitaminAAlertView().setVisibility(INVISIBLE);

@@ -4,17 +4,13 @@ package org.smartregister.clientandeventmodel;
  * Gender or Sex
  */
 public enum Gender {
-    MALE,
-    FEMALE,
-    /**
+    MALE, FEMALE, /**
      * Male-to-Female
      */
-    MTF,
-    /**
+    MTF, /**
      * Female-to-Male
      */
-    FTM,
-    /**
+    FTM, /**
      * Unknown or Unspecified Gender
      */
     UNKNOWN

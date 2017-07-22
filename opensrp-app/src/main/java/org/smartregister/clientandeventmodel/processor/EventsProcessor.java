@@ -27,7 +27,6 @@ public class EventsProcessor {
             JSONArray attributes = EventMapConfig.getJSONArray("attributes");
             JSONArray obs = EventMapConfig.getJSONArray("obs");
 
-
             Iterator<?> keys = EventJson.keys();
 
             while (keys.hasNext()) {
@@ -48,14 +47,14 @@ public class EventsProcessor {
                 }
             }
 
-
         } catch (JSONException e) {
             Log.e(TAG, e.toString(), e);
         }
     }
 
     public Event createEventObject() {
-        Event event = new Event(baseEntityID, attributesDetailsMap, attributesColumnsMap, ObsColumnsMap, ObsDetailsMap);
+        Event event = new Event(baseEntityID, attributesDetailsMap, attributesColumnsMap,
+                ObsColumnsMap, ObsDetailsMap);
         return event;
     }
 
@@ -63,10 +62,13 @@ public class EventsProcessor {
         try {
             for (int i = 0; i < observationsInForm.length(); i++) {
                 JSONObject observationObject = observationsInForm.getJSONObject(i);
-                if (isInObservationColumn(observationObject.getString("formSubmissionField"), obsColumns)) {
-                    ObsColumnsMap.put(observationObject.getString("formSubmissionField"), observationObject.getString("values"));
+                if (isInObservationColumn(observationObject.getString("formSubmissionField"),
+                        obsColumns)) {
+                    ObsColumnsMap.put(observationObject.getString("formSubmissionField"),
+                            observationObject.getString("values"));
                 } else {
-                    ObsDetailsMap.put(observationObject.getString("formSubmissionField"), observationObject.getString("values"));
+                    ObsDetailsMap.put(observationObject.getString("formSubmissionField"),
+                            observationObject.getString("values"));
 
                 }
             }
@@ -94,7 +96,6 @@ public class EventsProcessor {
         }
         return returnboolean;
     }
-
 
     private boolean isAttributeColumn(String key, JSONArray attributes) {
         boolean returnboolean = false;

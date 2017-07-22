@@ -38,7 +38,8 @@ public class SettingsRepository extends DrishtiRepository {
         String value = defaultValue;
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
-            cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN}, SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
+            cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN},
+                    SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 value = cursor.getString(0);
             }
@@ -57,7 +58,8 @@ public class SettingsRepository extends DrishtiRepository {
         Cursor cursor = null;
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
-            cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN}, SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
+            cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN},
+                    SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 value = cursor.getBlob(0);
             }

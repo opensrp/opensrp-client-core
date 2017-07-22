@@ -11,16 +11,13 @@ import android.webkit.WebView;
  */
 public class OpenSRPWebView extends WebView {
 
-
     public OpenSRPWebView(Context context) {
         super(context, null);
     }
 
-
     public OpenSRPWebView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
-
 
     public OpenSRPWebView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);

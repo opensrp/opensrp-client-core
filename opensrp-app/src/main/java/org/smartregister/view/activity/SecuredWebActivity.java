@@ -65,16 +65,19 @@ public abstract class SecuredWebActivity extends SecuredActivity {
     }
 
     protected void closeDialog() {
-        if (progressDialog.isShowing())
+        if (progressDialog.isShowing()) {
             progressDialog.dismiss();
+        }
     }
 
     @Override
     protected void onResumption() {
     }
 
-    //    Added to fix the memory leak caused due to bug in android which stops activities with webview to be GCed.
-    //    Refer to this link for more details - http://code.google.com/p/android/issues/detail?id=9375
+    //    Added to fix the memory leak caused due to bug in android which stops activities with
+    // webview to be GCed.
+    //    Refer to this link for more details - http://code.google
+    // .com/p/android/issues/detail?id=9375
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -84,8 +87,9 @@ public abstract class SecuredWebActivity extends SecuredActivity {
             webView = null;
         }
 
-        if (updateController != null)
+        if (updateController != null) {
             updateController.destroy();
+        }
     }
 
     private void progressDialogInitialization() {
@@ -106,8 +110,10 @@ public abstract class SecuredWebActivity extends SecuredActivity {
 
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-                String message = format("Javascript Log. Message: {0}, lineNumber: {1}, sourceId, {2}", consoleMessage.message(),
-                        consoleMessage.lineNumber(), consoleMessage.sourceId());
+                String message = format(
+                        "Javascript Log. Message: {0}, lineNumber: {1}, sourceId," + "" + ""
+                                + " {2}", consoleMessage.message(), consoleMessage.lineNumber(),
+                        consoleMessage.sourceId());
 
                 if (consoleMessage.messageLevel() == ERROR) {
                     logError(message);
@@ -126,15 +132,17 @@ public abstract class SecuredWebActivity extends SecuredActivity {
         webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         webView.addJavascriptInterface(formController, "formContext");
         webView.addJavascriptInterface(navigationController, "navigationContext");
-        webView.addJavascriptInterface(new InternationalizationContext(getResources()), "internationalizationContext");
+        webView.addJavascriptInterface(new InternationalizationContext(getResources()),
+                "internationalizationContext");
     }
 
     private void dismissProgressBarOnProgressComplete(int progress, Activity activity) {
         if (shouldDismissProgressBarOnProgressComplete) {
             activity.setProgress(progress * 1000);
 
-            if (progress == 100 && progressDialog.isShowing())
+            if (progress == 100 && progressDialog.isShowing()) {
                 progressDialog.dismiss();
+            }
         }
     }
 

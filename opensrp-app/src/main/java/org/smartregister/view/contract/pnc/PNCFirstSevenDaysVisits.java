@@ -18,9 +18,10 @@ public class PNCFirstSevenDaysVisits {
     @SerializedName("day_nos")
     private List<PNCVisitDaysDatum> visitDaysData;
 
-    public PNCFirstSevenDaysVisits(List<PNCCircleDatum> pncCircleData, List<PNCStatusDatum> pncStatusData,
-                                   PNCStatusColor pncVisitStatusColor, List<PNCTickDatum> pncTickData,
-                                   List<PNCLineDatum> pncLineData, List<PNCVisitDaysDatum> visitDaysData) {
+    public PNCFirstSevenDaysVisits(List<PNCCircleDatum> pncCircleData, List<PNCStatusDatum>
+            pncStatusData, PNCStatusColor pncVisitStatusColor, List<PNCTickDatum> pncTickData,
+                                   List<PNCLineDatum> pncLineData, List<PNCVisitDaysDatum>
+                                           visitDaysData) {
         this.pncCircleData = pncCircleData;
         this.pncStatusData = pncStatusData;
         this.pncVisitStatusColor = pncVisitStatusColor;

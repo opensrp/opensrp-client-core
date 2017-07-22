@@ -25,8 +25,9 @@ public class UpdateController {
     private void flushUrlLoads() {
         if (pageHasFinishedLoading) {
             for (String url : urlsToLoad) {
-                if (webView != null)
+                if (webView != null) {
                     webView.loadUrl(url);
+                }
             }
         }
     }
@@ -40,8 +41,9 @@ public class UpdateController {
         task.fetch(new AfterANMDetailsFetchListener() {
             @Override
             public void afterFetch(String anmDetails) {
-                if (webView != null)
+                if (webView != null) {
                     webView.loadUrl("javascript:pageView.updateANMDetails('" + anmDetails + "')");
+                }
             }
         });
     }

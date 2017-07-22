@@ -14,8 +14,8 @@ public class ANMController {
     private final Cache<String> cache;
     private final Cache<HomeContext> nativeCache;
 
-
-    public ANMController(ANMService anmService, Cache<String> cache, Cache<HomeContext> homeContextCache) {
+    public ANMController(ANMService anmService, Cache<String> cache, Cache<HomeContext>
+            homeContextCache) {
         this.anmService = anmService;
         this.cache = cache;
         this.nativeCache = homeContextCache;

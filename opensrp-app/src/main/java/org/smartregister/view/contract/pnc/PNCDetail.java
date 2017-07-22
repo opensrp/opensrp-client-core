@@ -21,7 +21,8 @@ public class PNCDetail {
     private List<TimelineEvent> timelineEvents;
     private Map<String, String> details;
 
-    public PNCDetail(String caseId, String thayiCardNumber, CoupleDetails coupleDetails, LocationDetails location, PregnancyOutcomeDetails pncDetails) {
+    public PNCDetail(String caseId, String thayiCardNumber, CoupleDetails coupleDetails,
+                     LocationDetails location, PregnancyOutcomeDetails pncDetails) {
         this.caseId = caseId;
         this.thayiCardNumber = thayiCardNumber;
 

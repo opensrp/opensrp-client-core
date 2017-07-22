@@ -9,7 +9,6 @@ public class PNCTickDatum {
     private int day;
     private PNCVisitType type;
 
-
     public PNCTickDatum(int day, PNCVisitType type) {
         this.day = day;
         this.type = type;

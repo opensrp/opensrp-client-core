@@ -63,23 +63,20 @@ public class FormAttributeParser {
     }
 
     public FormSubmissionMap createFormSubmissionMap(FormSubmission fs) throws JsonIOException,
-            JsonSyntaxException,
-            ParserConfigurationException,
-            SAXException,
-            IOException,
+            JsonSyntaxException, ParserConfigurationException, SAXException, IOException,
             XPathExpressionException {
         JsonObject formDefinitionData = getFormDefinitionData(fs.formName());
         Document modelXml = getModelXmlData(fs.formName());
         JsonObject jsonForm = getJSONFormData(fs.formName());
 
-        Map<String, String> formAttributes = getAttributesForBindPath(
-                fs.defaultBindPath(), modelXml);
+        Map<String, String> formAttributes = getAttributesForBindPath(fs.defaultBindPath(),
+                modelXml);
         List<FormFieldMap> fields = new ArrayList<FormFieldMap>();
         for (FormField fsf : fs.instance().form().fields()) {
             String bindPath = getPropertyBindFromFormDefinition(fsf.name(), formDefinitionData);
             String type = bindPath == null ? null : getFieldType(bindPath, jsonForm);
-            Map<String, String> fieldAttributes = bindPath == null
-                    ? new HashMap<String, String>() : getAttributesForBindPath(bindPath, modelXml);
+            Map<String, String> fieldAttributes = bindPath == null ? new HashMap<String, String>()
+                    : getAttributesForBindPath(bindPath, modelXml);
 
             boolean isMultiSelect = bindPath != null && isMultiselect(bindPath, jsonForm);
             if (!StringUtils.isEmpty(fsf.value())) {
@@ -88,28 +85,19 @@ public class FormAttributeParser {
                     Map<String, Map<String, String>> valCods = new HashMap<>();
 
                     for (String v : vals) {
-                        valCods.put(v, getInstanceAttributesForFormFieldAndValue(
-                                bindPath, v, jsonForm));
+                        valCods.put(v,
+                                getInstanceAttributesForFormFieldAndValue(bindPath, v, jsonForm));
                     }
 
-                    fields.add(new FormFieldMap(fsf.name(),
-                            Arrays.asList(vals),
-                            fsf.source(),
-                            bindPath,
-                            type,
-                            fieldAttributes,
-                            valCods));
+                    fields.add(new FormFieldMap(fsf.name(), Arrays.asList(vals), fsf.source(),
+                            bindPath, type, fieldAttributes, valCods));
                 } else {
                     Map<String, String> valueCodes = bindPath == null ? null
-                            : getInstanceAttributesForFormFieldAndValue(
-                            bindPath, fsf.value(), jsonForm);
-                    fields.add(new FormFieldMap(fsf.name(),
-                            fsf.value(),
-                            fsf.source(),
-                            bindPath,
-                            type,
-                            fieldAttributes,
-                            valueCodes));
+                            : getInstanceAttributesForFormFieldAndValue(bindPath, fsf.value(),
+                                    jsonForm);
+                    fields.add(
+                            new FormFieldMap(fsf.name(), fsf.value(), fsf.source(), bindPath, type,
+                                    fieldAttributes, valueCodes));
                 }
             }
         }
@@ -123,53 +111,40 @@ public class FormAttributeParser {
                     List<FormFieldMap> sfFields = new ArrayList<>();
 
                     for (Entry<String, String> sffl : flvl.entrySet()) {
-                        String source = getSourceFromSubformDefinition(
-                                sf.name(), sffl.getKey(), formDefinitionData);
-                        String bindPath = getPathFromSubformDefinition(
-                                sf.name(), sffl.getKey(), formDefinitionData);
+                        String source = getSourceFromSubformDefinition(sf.name(), sffl.getKey(),
+                                formDefinitionData);
+                        String bindPath = getPathFromSubformDefinition(sf.name(), sffl.getKey(),
+                                formDefinitionData);
                         String type = bindPath == null ? null : getFieldType(bindPath, jsonForm);
-                        Map<String, String> attributes = bindPath == null
-                                ? new HashMap<String, String>()
-                                : getAttributesForBindPath(bindPath, modelXml);
-                        boolean isMultiSelect = bindPath != null
-                                && isMultiselect(bindPath, jsonForm);
+                        Map<String, String> attributes =
+                                bindPath == null ? new HashMap<String, String>()
+                                        : getAttributesForBindPath(bindPath, modelXml);
+                        boolean isMultiSelect =
+                                bindPath != null && isMultiselect(bindPath, jsonForm);
 
                         if (isMultiSelect) {
                             String[] vals = sffl.getValue().split(" ");
                             Map<String, Map<String, String>> valCods = new HashMap<>();
 
                             for (String v : vals) {
-                                valCods.put(v, getInstanceAttributesForFormFieldAndValue(
-                                        bindPath, v, jsonForm));
+                                valCods.put(v,
+                                        getInstanceAttributesForFormFieldAndValue(bindPath, v,
+                                                jsonForm));
                             }
 
-                            sfFields.add(new FormFieldMap(sffl.getKey(),
-                                    Arrays.asList(vals),
-                                    source,
-                                    bindPath,
-                                    type,
-                                    attributes,
-                                    valCods));
+                            sfFields.add(
+                                    new FormFieldMap(sffl.getKey(), Arrays.asList(vals), source,
+                                            bindPath, type, attributes, valCods));
                         } else {
                             Map<String, String> valueCodes = bindPath == null ? null
-                                    : getInstanceAttributesForFormFieldAndValue(
-                                    bindPath, sffl.getValue(), jsonForm);
-                            sfFields.add(new FormFieldMap(
-                                    sffl.getKey(),
-                                    sffl.getValue(),
-                                    source,
-                                    bindPath,
-                                    type,
-                                    attributes,
-                                    valueCodes));
+                                    : getInstanceAttributesForFormFieldAndValue(bindPath,
+                                            sffl.getValue(), jsonForm);
+                            sfFields.add(new FormFieldMap(sffl.getKey(), sffl.getValue(), source,
+                                    bindPath, type, attributes, valueCodes));
                         }
                     }
-                    subforms.add(new SubformMap(flvl.get("id"),
-                            sf.name(),
-                            sf.bindType(),
-                            sf.defaultBindPath(),
-                            subformAttributes,
-                            sfFields));
+                    subforms.add(new SubformMap(flvl.get("id"), sf.name(), sf.bindType(),
+                            sf.defaultBindPath(), subformAttributes, sfFields));
                 }
             }
         }
@@ -177,10 +152,9 @@ public class FormAttributeParser {
     }
 
     public JsonObject getFormDefinitionData(String formName) throws JsonIOException,
-            JsonSyntaxException,
-            FileNotFoundException {
+            JsonSyntaxException, FileNotFoundException {
         String fileContents = readFileFromAssetsFolder(
-                "www/form/" + formName + "/form_definition.json").
+                "www/form/" + formName + "/form_definition" + ".json").
                 replaceAll("\n", " ").replaceAll("\r", " ");
         JsonParser parser = new JsonParser();
         Object obj = parser.parse(fileContents);
@@ -188,8 +162,7 @@ public class FormAttributeParser {
     }
 
     public JsonObject getJSONFormData(String formName) throws JsonIOException,
-            JsonSyntaxException,
-            FileNotFoundException {
+            JsonSyntaxException, FileNotFoundException {
         String fileContents = readFileFromAssetsFolder("www/form/" + formName + "/form.json").
                 replaceAll("\n", " ").replaceAll("\r", " ");
         JsonParser parser = new JsonParser();
@@ -198,8 +171,7 @@ public class FormAttributeParser {
     }
 
     public Document getModelXmlData(String formName) throws ParserConfigurationException,
-            SAXException,
-            IOException {
+            SAXException, IOException {
         String fileContents = readFileFromAssetsFolder("www/form/" + formName + "/model.xml").
                 replaceAll("\n", " ").replaceAll("\r", " ");
         InputStream is = new ByteArrayInputStream(fileContents.getBytes());
@@ -226,11 +198,8 @@ public class FormAttributeParser {
      * @throws XPathExpressionException
      */
     public String getFieldName(Map<String, String> attributeMap, FormSubmission formSubmission)
-            throws JsonSyntaxException,
-            IOException,
-            XPathExpressionException,
-            ParserConfigurationException,
-            SAXException {
+            throws JsonSyntaxException, IOException, XPathExpressionException,
+            ParserConfigurationException, SAXException {
         String fieldName = "";
         Node fieldTag = getFieldTagFromModel(attributeMap, formSubmission);
         String bind = getXPath(fieldTag);
@@ -239,7 +208,8 @@ public class FormAttributeParser {
     }
 
     /**
-     * The method returns the field name in form submission in given subform(repeat group) mapped with custom attributes given as attributeMap.
+     * The method returns the field name in form submission in given subform(repeat group) mapped
+     * with custom attributes given as attributeMap.
      * Ex: What is the field name in given form submission in subform=child_born that is
      * mapped with entity=person and entity_id=first_name
      *
@@ -252,12 +222,9 @@ public class FormAttributeParser {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    public String getFieldName(Map<String, String> attributeMap,
-                               String subform,
-                               FormSubmission formSubmission) throws XPathExpressionException,
-            ParserConfigurationException,
-            SAXException,
-            IOException {
+    public String getFieldName(Map<String, String> attributeMap, String subform, FormSubmission
+            formSubmission) throws XPathExpressionException, ParserConfigurationException,
+            SAXException, IOException {
         Node fieldTag = getFieldTagFromModel(attributeMap, subform, formSubmission);
         String bind = getXPath(fieldTag);
 
@@ -274,8 +241,8 @@ public class FormAttributeParser {
      * @throws IOException
      * @throws JsonSyntaxException
      */
-    String getFieldNameFromFormDefinition(String bind, String formName) throws JsonSyntaxException,
-            IOException {
+    String getFieldNameFromFormDefinition(String bind, String formName) throws
+            JsonSyntaxException, IOException {
         String fieldAttribute;
         JsonObject jsonObject = getFormDefinitionData(formName);
         JsonElement formElement = jsonObject.get("form");
@@ -327,7 +294,6 @@ public class FormAttributeParser {
             }
         }
 
-
         return null;
     }
 
@@ -341,10 +307,8 @@ public class FormAttributeParser {
      * @throws IOException
      * @throws JsonSyntaxException
      */
-    String getFieldNameFromFormDefinition(String bind,
-                                          String subform,
-                                          FormSubmission formSubmission)
-            throws JsonSyntaxException, IOException {
+    String getFieldNameFromFormDefinition(String bind, String subform, FormSubmission
+            formSubmission) throws JsonSyntaxException, IOException {
         String formName = formSubmission.formName();
         JsonObject jsonObject = getFormDefinitionData(formName);
         JsonArray subforms = jsonObject.get("form").getAsJsonObject().get("sub_forms").
@@ -355,9 +319,9 @@ public class FormAttributeParser {
                 JsonArray flarr = jsonElement.getAsJsonObject().get("fields").getAsJsonArray();
 
                 for (JsonElement fl : flarr) {
-                    if (fl.getAsJsonObject().has("bind")
-                            && fl.getAsJsonObject().get("bind").getAsString().
-                            equalsIgnoreCase(bind)) {
+                    if (fl.getAsJsonObject().has("bind") && fl.getAsJsonObject().get("bind")
+                            .getAsString().
+                                    equalsIgnoreCase(bind)) {
                         return fl.getAsJsonObject().get("name").getAsString();
                     }
                 }
@@ -378,11 +342,9 @@ public class FormAttributeParser {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    Node getFieldTagFromModel(Map<String, String> attributeMapForm,
-                              FormSubmission formSubmission) throws IOException,
-            XPathExpressionException,
-            ParserConfigurationException,
-            SAXException {
+    Node getFieldTagFromModel(Map<String, String> attributeMapForm, FormSubmission
+            formSubmission) throws IOException, XPathExpressionException,
+            ParserConfigurationException, SAXException {
         Node lastNode;
         String formName = formSubmission.formName();
         Document document = getModelXmlData(formName);
@@ -418,8 +380,7 @@ public class FormAttributeParser {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    public Node getFieldTagFromModel(Map<String, String> attributeMapForm,
-                                     String subForm,
+    public Node getFieldTagFromModel(Map<String, String> attributeMapForm, String subForm,
                                      FormSubmission formSubmission) throws
             ParserConfigurationException, SAXException, IOException, XPathExpressionException {
         Node lastNode;
@@ -427,8 +388,8 @@ public class FormAttributeParser {
         Document document = getModelXmlData(formName);
         XPathFactory xPathFactory = XPathFactory.newInstance();
         XPath xpath = xPathFactory.newXPath();
-        String expression = getDefaultBindPathFromSubformDefinition(subForm, formSubmission)
-                + "/node()[";
+        String expression =
+                getDefaultBindPathFromSubformDefinition(subForm, formSubmission) + "/node()[";
         String expressionQuery = "";
         NodeList nodeList;
         for (String key : attributeMapForm.keySet()) {
@@ -458,11 +419,8 @@ public class FormAttributeParser {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    public Map<String, String> getUniqueAttributeValue(List<String> attributeName,
-                                                       FormSubmission formSubmission)
-            throws ParserConfigurationException,
-            SAXException,
-            IOException,
+    public Map<String, String> getUniqueAttributeValue(List<String> attributeName, FormSubmission
+            formSubmission) throws ParserConfigurationException, SAXException, IOException,
             XPathExpressionException {
         Map<String, String> map = new HashMap<>();
         Node lastNode;
@@ -507,38 +465,30 @@ public class FormAttributeParser {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    public Map<String, String> getAttributesForField(String fieldName, String formName)
-            throws JsonSyntaxException,
-            IOException,
-            XPathExpressionException,
-            ParserConfigurationException,
-            SAXException {
+    public Map<String, String> getAttributesForField(String fieldName, String formName) throws
+            JsonSyntaxException, IOException, XPathExpressionException,
+            ParserConfigurationException, SAXException {
 
         String formBindForField = getPropertyBindFromFormDefinition(fieldName, formName);
         Node tagAndAttributes = null;
         if (formBindForField != null) {
-            tagAndAttributes = getFormPropertyNameForAttribute(
-                    formBindForField, getModelXmlData(formName));
+            tagAndAttributes = getFormPropertyNameForAttribute(formBindForField,
+                    getModelXmlData(formName));
         }
 
         return convertToMap(tagAndAttributes);
 
     }
 
-    public Map<String, String> getAttributesForField(String fieldName,
-                                                     String subform,
-                                                     String formName)
-            throws JsonSyntaxException,
-            IOException,
-            XPathExpressionException,
-            ParserConfigurationException,
-            SAXException {
-        String formBindForField = getPathFromSubformDefinition(
-                subform, fieldName, getFormDefinitionData(formName));
+    public Map<String, String> getAttributesForField(String fieldName, String subform, String
+            formName) throws JsonSyntaxException, IOException, XPathExpressionException,
+            ParserConfigurationException, SAXException {
+        String formBindForField = getPathFromSubformDefinition(subform, fieldName,
+                getFormDefinitionData(formName));
         Node tagAndAttributes = null;
         if (formBindForField != null) {
-            tagAndAttributes = getFormPropertyNameForAttribute(
-                    formBindForField, getModelXmlData(formName));
+            tagAndAttributes = getFormPropertyNameForAttribute(formBindForField,
+                    getModelXmlData(formName));
         }
 
         return convertToMap(tagAndAttributes);
@@ -546,18 +496,13 @@ public class FormAttributeParser {
     }
 
     public Map<String, String> getAttributesForBindPath(String bindPath, Document xmlModel)
-            throws XPathExpressionException,
-            ParserConfigurationException,
-            SAXException,
+            throws XPathExpressionException, ParserConfigurationException, SAXException,
             IOException {
         return convertToMap(getFormPropertyNameForAttribute(bindPath, xmlModel));
     }
 
-    public Map<String, String> getAttributesForBindPath(String bindPath, String formName)
-            throws XPathExpressionException,
-            ParserConfigurationException,
-            SAXException,
-            IOException {
+    public Map<String, String> getAttributesForBindPath(String bindPath, String formName) throws
+            XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         Document xmlModel = getModelXmlData(formName);
 
         return convertToMap(getFormPropertyNameForAttribute(bindPath, xmlModel));
@@ -578,7 +523,6 @@ public class FormAttributeParser {
 
         return attributeMap;
     }
-
 
     public Map<String, String> convertToMap(JsonElement element) {
         if (element == null) {
@@ -611,23 +555,19 @@ public class FormAttributeParser {
      * @throws ParserConfigurationException
      * @throws XPathExpressionException
      */
-    public Map<String, String> getAttributesForSubform(String subFormName,
-                                                       FormSubmission formSubmission)
-            throws JsonSyntaxException,
-            IOException,
-            XPathExpressionException,
-            ParserConfigurationException,
-            SAXException {
+    public Map<String, String> getAttributesForSubform(String subFormName, FormSubmission
+            formSubmission) throws JsonSyntaxException, IOException, XPathExpressionException,
+            ParserConfigurationException, SAXException {
         String formBindForField;
         Node tagAndAttributes = null;
         // From form_definition.json
         formBindForField = getDefaultBindPathFromSubformDefinition(subFormName, formSubmission);
         // xpath in model.xml
 
-        if (formBindForField != null
-                && !formBindForField.equals("null") && formBindForField.length() > 0) {
-            tagAndAttributes = getFormPropertyNameForAttribute(
-                    formBindForField, getModelXmlData(formSubmission.formName()));
+        if (formBindForField != null && !formBindForField.equals("null")
+                && formBindForField.length() > 0) {
+            tagAndAttributes = getFormPropertyNameForAttribute(formBindForField,
+                    getModelXmlData(formSubmission.formName()));
         }
 
         return convertToMap(tagAndAttributes);
@@ -647,13 +587,9 @@ public class FormAttributeParser {
      * @throws IOException
      * @throws JsonSyntaxException
      */
-    public Map<String, String> getInstanceAttributesForFormFieldAndValue(String fieldName,
-                                                                         String fieldVal,
-                                                                         String subForm,
-                                                                         String formName,
-                                                                         JsonObject formDefinition,
-                                                                         JsonObject jsonForm)
-            throws JsonSyntaxException, IOException {
+    public Map<String, String> getInstanceAttributesForFormFieldAndValue(String fieldName, String
+            fieldVal, String subForm, String formName, JsonObject formDefinition, JsonObject
+            jsonForm) throws JsonSyntaxException, IOException {
         String bindPath = null;
         if (StringUtils.isEmpty(subForm)) {
             bindPath = getPropertyBindFromFormDefinition(fieldName, formDefinition);
@@ -664,22 +600,19 @@ public class FormAttributeParser {
         return getInstanceAttributesForFormFieldAndValue(bindPath, fieldVal, jsonForm);
     }
 
-    public Map<String, String> getInstanceAttributesForFormFieldAndValue(String fieldName,
-                                                                         String fieldVal,
-                                                                         String subForm,
-                                                                         FormSubmission fs)
-            throws JsonSyntaxException, IOException {
+    public Map<String, String> getInstanceAttributesForFormFieldAndValue(String fieldName, String
+            fieldVal, String subForm, FormSubmission fs) throws JsonSyntaxException, IOException {
         String bindPath = null;
         if (StringUtils.isEmpty(subForm)) {
-            bindPath = getPropertyBindFromFormDefinition(
-                    fieldName, getFormDefinitionData(fs.formName()));
+            bindPath = getPropertyBindFromFormDefinition(fieldName,
+                    getFormDefinitionData(fs.formName()));
         } else {
-            bindPath = getPathFromSubformDefinition(
-                    subForm, fieldName, getFormDefinitionData(fs.formName()));
+            bindPath = getPathFromSubformDefinition(subForm, fieldName,
+                    getFormDefinitionData(fs.formName()));
         }
 
-        return getInstanceAttributesForFormFieldAndValue(
-                bindPath, fieldVal, getJSONFormData(fs.formName()));
+        return getInstanceAttributesForFormFieldAndValue(bindPath, fieldVal,
+                getJSONFormData(fs.formName()));
     }
 
     public Map<String, String> getInstanceAttributesForFormFieldAndValue(String fieldBindPath,
@@ -724,10 +657,9 @@ public class FormAttributeParser {
         String nodeNameToFind = sps[sps.length - 1];
         JsonObject node = getChildrenOfLevel(level, jsonForm, nodeNameToFind);
 
-        return node != null && node.getAsJsonObject().has("children")
-                && node.has("type")
-                && (node.get("type").getAsString().startsWith("select all")
-                || node.get("type").getAsString().startsWith("select multiple"));
+        return node != null && node.getAsJsonObject().has("children") && node.has("type") && (
+                node.get("type").getAsString().startsWith("select all") || node.get("type")
+                        .getAsString().startsWith("select multiple"));
 
     }
 
@@ -772,9 +704,8 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    private String getDefaultBindPathFromSubformDefinition(String subformName,
-                                                           FormSubmission formSubmission)
-            throws IOException, JsonSyntaxException {
+    private String getDefaultBindPathFromSubformDefinition(String subformName, FormSubmission
+            formSubmission) throws IOException, JsonSyntaxException {
         JsonObject jsonObject = getFormDefinitionData(formSubmission.formName());
         JsonArray subforms = jsonObject.get("form").getAsJsonObject().get("sub_forms").
                 getAsJsonArray();
@@ -799,10 +730,8 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    private String getPathFromSubformDefinition(String subFormName,
-                                                String field,
-                                                JsonObject formDefinition)
-            throws IOException, JsonSyntaxException {
+    private String getPathFromSubformDefinition(String subFormName, String field, JsonObject
+            formDefinition) throws IOException, JsonSyntaxException {
         JsonArray subforms = formDefinition.get("form").getAsJsonObject().get("sub_forms").
                 getAsJsonArray();
         for (JsonElement jsonElement : subforms) {
@@ -810,8 +739,8 @@ public class FormAttributeParser {
                     equalsIgnoreCase(subFormName)) {
                 JsonArray flarr = jsonElement.getAsJsonObject().get("fields").getAsJsonArray();
                 for (JsonElement fl : flarr) {
-                    if (fl.getAsJsonObject().get("name").getAsString().equalsIgnoreCase(field)
-                            && fl.getAsJsonObject().has("bind")) {
+                    if (fl.getAsJsonObject().get("name").getAsString().equalsIgnoreCase(field) && fl
+                            .getAsJsonObject().has("bind")) {
                         return fl.getAsJsonObject().get("bind").getAsString();
                     }
                 }
@@ -831,10 +760,8 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws IOException
      */
-    private String getSourceFromSubformDefinition(String subformName,
-                                                  String field,
-                                                  JsonObject formDefinition)
-            throws IOException, JsonSyntaxException {
+    private String getSourceFromSubformDefinition(String subformName, String field, JsonObject
+            formDefinition) throws IOException, JsonSyntaxException {
         JsonArray subforms = formDefinition.get("form").getAsJsonObject().get("sub_forms").
                 getAsJsonArray();
 
@@ -844,8 +771,8 @@ public class FormAttributeParser {
                 JsonArray flarr = jsonElement.getAsJsonObject().get("fields").getAsJsonArray();
 
                 for (JsonElement fl : flarr) {
-                    if (fl.getAsJsonObject().get("name").getAsString().equalsIgnoreCase(field)
-                            && fl.getAsJsonObject().has("source")) {
+                    if (fl.getAsJsonObject().get("name").getAsString().equalsIgnoreCase(field) && fl
+                            .getAsJsonObject().has("source")) {
 
                         return fl.getAsJsonObject().get("source").getAsString();
                     }
@@ -862,8 +789,8 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      * @throws JsonIOException
      */
-    private String getPropertyBindFromFormDefinition(String fieldName, String formName)
-            throws JsonSyntaxException, IOException {
+    private String getPropertyBindFromFormDefinition(String fieldName, String formName) throws
+            JsonSyntaxException, IOException {
         JsonObject jsonObject = getFormDefinitionData(formName);
 
         return getPropertyBindFromFormDefinition(fieldName, jsonObject);
@@ -898,11 +825,8 @@ public class FormAttributeParser {
      * @throws SAXException
      * @throws ParserConfigurationException
      */
-    Node getFormPropertyNameForAttribute(String formBindForField, Document xmlModel)
-            throws XPathExpressionException,
-            ParserConfigurationException,
-            SAXException,
-            IOException {
+    Node getFormPropertyNameForAttribute(String formBindForField, Document xmlModel) throws
+            XPathExpressionException, ParserConfigurationException, SAXException, IOException {
         if (formBindForField.endsWith("/")) {
             formBindForField = formBindForField.substring(0, formBindForField.length() - 1);
         }

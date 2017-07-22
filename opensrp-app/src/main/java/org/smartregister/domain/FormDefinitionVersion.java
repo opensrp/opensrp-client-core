@@ -11,7 +11,8 @@ public class FormDefinitionVersion {
     private SyncStatus syncStatus;
     private String entityId;
 
-    public FormDefinitionVersion(String formName, String formDirName, String formDataDefinitionVersion) {
+    public FormDefinitionVersion(String formName, String formDirName, String
+            formDataDefinitionVersion) {
         this.formName = formName;
         this.formDirName = formDirName;
         this.formDataDefinitionVersion = formDataDefinitionVersion;

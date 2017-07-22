@@ -5,6 +5,5 @@ package org.smartregister.commonregistry;
  */
 public abstract class ControllerFilterMap {
 
-
     public abstract boolean filtermapLogic(CommonPersonObject commonPersonObject);
 }

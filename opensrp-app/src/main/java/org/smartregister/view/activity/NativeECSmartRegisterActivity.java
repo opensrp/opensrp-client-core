@@ -64,9 +64,10 @@ public class NativeECSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
             @Override
             public DialogOption[] filterOptions() {
-                Iterable<? extends DialogOption> villageFilterOptions =
-                        dialogOptionMapper.mapToVillageFilterOptions(villageController.getVillages());
-                return toArray(concat(DEFAULT_FILTER_OPTIONS, villageFilterOptions), DialogOption.class);
+                Iterable<? extends DialogOption> villageFilterOptions = dialogOptionMapper
+                        .mapToVillageFilterOptions(villageController.getVillages());
+                return toArray(concat(DEFAULT_FILTER_OPTIONS, villageFilterOptions),
+                        DialogOption.class);
             }
 
             @Override
@@ -76,9 +77,8 @@ public class NativeECSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
             @Override
             public DialogOption[] sortingOptions() {
-                return new DialogOption[]{new NameSort(), new ECNumberSort(),
-                        new HighPrioritySort(), new BPLSort(),
-                        new SCSort(), new STSort()};
+                return new DialogOption[]{new NameSort(), new ECNumberSort(), new
+                        HighPrioritySort(), new BPLSort(), new SCSort(), new STSort()};
             }
 
             @Override
@@ -91,27 +91,26 @@ public class NativeECSmartRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
         if (clientProvider == null) {
-            clientProvider = new ECSmartRegisterClientsProvider(
-                    this, clientActionHandler, controller);
+            clientProvider = new ECSmartRegisterClientsProvider(this, clientActionHandler,
+                    controller);
         }
         return clientProvider;
     }
 
     private DialogOption[] getEditOptions() {
-        return new DialogOption[]{
-                new OpenFormOption(getString(R.string.str_register_anc_form), ANC_REGISTRATION, formController),
-                new OpenFormOption(getString(R.string.str_register_fp_form), FP_CHANGE, formController),
-                new OpenFormOption(getString(R.string.str_register_child_form), CHILD_REGISTRATION_EC, formController),
-                new OpenFormOption(getString(R.string.str_edit_ec_form), EC_EDIT, formController),
-                new OpenFormOption(getString(R.string.str_close_ec_form), EC_CLOSE, formController),
-        };
+        return new DialogOption[]{new OpenFormOption(getString(R.string.str_register_anc_form),
+                ANC_REGISTRATION, formController), new OpenFormOption(
+                getString(R.string.str_register_fp_form), FP_CHANGE,
+                formController), new OpenFormOption(getString(R.string.str_register_child_form),
+                CHILD_REGISTRATION_EC, formController), new OpenFormOption(
+                getString(R.string.str_edit_ec_form), EC_EDIT, formController), new OpenFormOption(
+                getString(R.string.str_close_ec_form), EC_CLOSE, formController),};
     }
 
     @Override
     protected void onInitialization() {
         controller = new ECSmartRegisterController(context().allEligibleCouples(),
-                context().allBeneficiaries(), context().listCache(),
-                context().ecClientsCache());
+                context().allBeneficiaries(), context().listCache(), context().ecClientsCache());
         villageController = new VillageController(context().allEligibleCouples(),
                 context().listCache(), context().villagesCache());
         dialogOptionMapper = new DialogOptionMapper();
@@ -133,9 +132,8 @@ public class NativeECSmartRegisterActivity extends SecuredNativeSmartRegisterAct
             ft.remove(prev);
         }
         ft.addToBackStack(null);
-        LocationSelectorDialogFragment
-                .newInstance(this, new EditDialogOptionModel(),
-                        context().anmLocationController().get(), EC_REGISTRATION)
+        LocationSelectorDialogFragment.newInstance(this, new EditDialogOptionModel(),
+                context().anmLocationController().get(), EC_REGISTRATION)
                 .show(ft, locationDialogTAG);
     }
 

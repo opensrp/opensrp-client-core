@@ -5,7 +5,6 @@ public class AllConstants {
     public static final String PROFILE_IMAGES_DOWNLOAD_PATH = "/multimedia/profileimage";
     public static final String PROFILE_IMAGES_UPLOAD_PATH = "/multimedia/upload";
 
-
     public static final String REPORT_CATEGORY = "reportCategory";
     public static final String INDICATOR_DETAIL = "indicatorDetail";
     public static final String CATEGORY_DESCRIPTION = "categoryDescription";
@@ -56,7 +55,6 @@ public class AllConstants {
 
     public static final String REPOSITORY = "formDataRepositoryContext";
 
-
     public static final String NEW_FP_METHOD_FIELD_NAME = "newMethod";
 
     public static final String ENTITY_ID = "entityId";
@@ -66,9 +64,12 @@ public class AllConstants {
     public static final String BOOLEAN_FALSE = "no";
     public static final String SPACE = " ";
     public static final String COMMA_WITH_SPACE = ", ";
-    public static final String DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH = "../../img/woman-placeholder.png";
-    public static final String DEFAULT_GIRL_INFANT_IMAGE_PLACEHOLDER_PATH = "../../img/icons/child-girlinfant@3x.png";
-    public static final String DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH = "../../img/icons/child-infant@3x.png";
+    public static final String DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH =
+            "../../img/woman-placeholder.png";
+    public static final String DEFAULT_GIRL_INFANT_IMAGE_PLACEHOLDER_PATH =
+            "../../img/icons/child-girlinfant@3x.png";
+    public static final String DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH =
+            "../../img/icons/child-infant@3x.png";
     public static final String FEMALE_GENDER = "female";
     public static final String FORM_DATE_TIME_FORMAT = "EEE, dd MMM yyyy HH:mm:ss ZZZ";
     public static final String SHORT_DATE_FORMAT = "dd/MM";
@@ -104,22 +105,19 @@ public class AllConstants {
         public static final String MMR = "mmr";
         public static final String JE = "je";
 
-        public static final String[] ALL = new String[]{
-                BCG,
-                MEASLES, MEASLES_BOOSTER,
-                OPV_0, OPV_1, OPV_2, OPV_3, OPV_BOOSTER,
-                DPT_BOOSTER_1, DPT_BOOSTER_2,
-                PENTAVALENT_1, PENTAVALENT_2, PENTAVALENT_3,
-                HEPATITIS_BIRTH_DOSE,
-                JE,
-                MMR};
+        public static final String[] ALL = new String[]{BCG, MEASLES, MEASLES_BOOSTER, OPV_0,
+                OPV_1, OPV_2, OPV_3, OPV_BOOSTER, DPT_BOOSTER_1, DPT_BOOSTER_2, PENTAVALENT_1,
+                PENTAVALENT_2, PENTAVALENT_3, HEPATITIS_BIRTH_DOSE, JE, MMR};
     }
 
     public static class CloudantSync {
 
-        public static final String ACTION_DATABASE_CREATED = "org.smartregister.DATABASE_CREATED_ACTION";
-        public static final String ACTION_REPLICATION_ERROR = "org.smartregister.REPLICATION_ERROR_ACTION";
-        public static final String ACTION_REPLICATION_COMPLETED = "org.smartregister.REPLICATION_COMPLETED_ACTION";
+        public static final String ACTION_DATABASE_CREATED =
+                "org.smartregister" + "" + "" + "" + ".DATABASE_CREATED_ACTION";
+        public static final String ACTION_REPLICATION_ERROR =
+                "org.smartregister" + "" + "" + "" + ".REPLICATION_ERROR_ACTION";
+        public static final String ACTION_REPLICATION_COMPLETED =
+                "org.smartregister" + "" + "" + ".REPLICATION_COMPLETED_ACTION";
         public static final String REPLICATION_ERROR = "REPLICATION_ERROR";
         public static final String DOCUMENTS_REPLICATED = "DOCUMENTS_REPLICATED";
         public static final String BATCHES_REPLICATED = "BATCHES_REPLICATED";
@@ -127,7 +125,6 @@ public class AllConstants {
         public static final String COUCH_DATABASE_NAME = "opensrp";
         public static final String COUCH_DATABASE_USER = "rootuser";
         public static final String COUCH_DATABASE_PASS = "adminpass";
-
 
     }
 
@@ -180,11 +177,13 @@ public class AllConstants {
     public class ECRegistrationFields {
         public static final String CURRENT_FP_METHOD = "currentMethod";
         public static final String WOMAN_DOB = "womanDOB";
-        public static final String FAMILY_PLANNING_METHOD_CHANGE_DATE = "familyPlanningMethodChangeDate";
+        public static final String FAMILY_PLANNING_METHOD_CHANGE_DATE =
+                "familyPlanningMethodChangeDate";
         public static final String IUD_PLACE = "iudPlace";
         public static final String IUD_PERSON = "iudPerson";
         public static final String NUMBER_OF_CONDOMS_SUPPLIED = "numberOfCondomsSupplied";
-        public static final String NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED = "numberOfCentchromanPillsDelivered";
+        public static final String NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED =
+                "numberOfCentchromanPillsDelivered";
         public static final String NUMBER_OF_OCP_DELIVERED = "numberOfOCPDelivered";
         public static final String CASTE = "caste";
         public static final String ECONOMIC_STATUS = "economicStatus";
@@ -366,8 +365,10 @@ public class AllConstants {
 
     public final class ImageCache {
         public static final int DISK_CACHE_MAX_SIZE = 250 * 1024 * 1024; // in bytes totalling 250MB
-        public static final float MEM_CACHE_PERCENT = 0.05f; // Default memory cache size as a percent of device memory class
-        public static final int MEM_CACHE_MAX_SIZE = 10 * 1024; // in kilobytes (value calculated using MEM_CACHE_PERCENT should not exceed this maximum 10MB)
+        public static final float MEM_CACHE_PERCENT = 0.05f; // Default memory cache size as a
+        // percent of device memory class
+        public static final int MEM_CACHE_MAX_SIZE = 10 * 1024; // in kilobytes (value calculated
+        // using MEM_CACHE_PERCENT should not exceed this maximum 10MB)
         public static final String DISK_CACHE_DIR = "opensrp-images";
 
     }

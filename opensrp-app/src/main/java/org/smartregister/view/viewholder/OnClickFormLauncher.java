@@ -14,7 +14,8 @@ public class OnClickFormLauncher implements View.OnClickListener {
         this(activity, formName, entityId, null);
     }
 
-    public OnClickFormLauncher(SecuredActivity activity, String formName, String entityId, String metaData) {
+    public OnClickFormLauncher(SecuredActivity activity, String formName, String entityId, String
+            metaData) {
         this.activity = activity;
         this.formName = formName;
         this.entityId = entityId;

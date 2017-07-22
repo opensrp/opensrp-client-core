@@ -19,10 +19,10 @@ import java.io.InputStream;
  */
 public class FormPathService {
 
-    public static String sdcardPath = Environment.getExternalStorageDirectory().getPath()
-            + "/Download/OpenSRP/form/";
-    public static String sdcardPathDownload = Environment.getExternalStorageDirectory().getPath()
-            + "/Download/OpenSRP/zip/";
+    public static String sdcardPath =
+            Environment.getExternalStorageDirectory().getPath() + "/Download/OpenSRP/form/";
+    public static String sdcardPathDownload =
+            Environment.getExternalStorageDirectory().getPath() + "/Download/OpenSRP/zip/";
     public static String appPath = "www/form/";
     private AssetManager assetManager;
 

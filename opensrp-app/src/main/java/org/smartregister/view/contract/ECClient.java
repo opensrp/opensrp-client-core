@@ -51,7 +51,8 @@ public class ECClient implements ECSmartRegisterClient {
     private List<ECChildClient> children;
     private Map<String, String> status = new HashMap<String, String>();
 
-    public ECClient(String entityId, String name, String husbandName, String village, Integer ecNumber) {
+    public ECClient(String entityId, String name, String husbandName, String village, Integer
+            ecNumber) {
         this.entityId = entityId;
         this.entityIdToSavePhoto = entityId;
         this.name = name;
@@ -87,12 +88,14 @@ public class ECClient implements ECSmartRegisterClient {
 
     @Override
     public int age() {
-        return StringUtils.isBlank(dateOfBirth) ? 0 : Years.yearsBetween(LocalDate.parse(dateOfBirth), LocalDate.now()).getYears();
+        return StringUtils.isBlank(dateOfBirth) ? 0
+                : Years.yearsBetween(LocalDate.parse(dateOfBirth), LocalDate.now()).getYears();
     }
 
     @Override
     public int ageInDays() {
-        return StringUtils.isBlank(dateOfBirth) ? 0 : Days.daysBetween(LocalDate.parse(dateOfBirth), DateUtil.today()).getDays();
+        return StringUtils.isBlank(dateOfBirth) ? 0
+                : Days.daysBetween(LocalDate.parse(dateOfBirth), DateUtil.today()).getDays();
     }
 
     @Override
@@ -213,7 +216,6 @@ public class ECClient implements ECSmartRegisterClient {
         return this;
     }
 
-
     public ECClient withFPMethod(String fp_method) {
         this.fpMethod = fp_method;
         return this;
@@ -315,8 +317,8 @@ public class ECClient implements ECSmartRegisterClient {
     }
 
     public boolean satisfiesFilter(String filter) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase())
-                || String.valueOf(ecNumber).startsWith(filter);
+        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase()) || String
+                .valueOf(ecNumber).startsWith(filter);
     }
 
     @Override

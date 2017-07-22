@@ -26,7 +26,8 @@ public class GZipEncodingHttpClient {
 
         HttpResponse response = httpClient.execute(request);
         if (response.getStatusLine().getStatusCode() != SC_OK) {
-            throw new IOException("Invalid status code: " + response.getStatusLine().getStatusCode());
+            throw new IOException(
+                    "Invalid status code: " + response.getStatusLine().getStatusCode());
         }
 
         return HttpResponseUtil.getResponseStream(response);

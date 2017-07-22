@@ -49,13 +49,16 @@ public abstract class SecuredFragment extends Fragment {
 
         logoutListener = new Listener<Boolean>() {
             public void onEvent(Boolean data) {
-                if (getActivity() != null && !getActivity().isFinishing()) getActivity().finish();
+                if (getActivity() != null && !getActivity().isFinishing()) {
+                    getActivity().finish();
+                }
             }
         };
         ON_LOGOUT.addListener(logoutListener);
 
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication) this.getActivity().getApplication();
+            DrishtiApplication application = (DrishtiApplication) this.getActivity()
+                    .getApplication();
             application.logoutCurrentUser();
             return;
         }
@@ -69,7 +72,8 @@ public abstract class SecuredFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication) this.getActivity().getApplication();
+            DrishtiApplication application = (DrishtiApplication) this.getActivity()
+                    .getApplication();
             application.logoutCurrentUser();
             return;
         }
@@ -89,7 +93,8 @@ public abstract class SecuredFragment extends Fragment {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(getActivity(), "Language preference set to " + newLanguagePreference + ". Please restart the application.", LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Language preference set to " + newLanguagePreference
+                    + ". Please restart the application.", LENGTH_SHORT).show();
 
             return super.onOptionsItemSelected(item);
         } else {
@@ -126,8 +131,8 @@ public abstract class SecuredFragment extends Fragment {
 
     private void addFieldOverridesIfExist(Intent intent) {
         if (hasMetadata()) {
-            Map<String, String> metaDataMap = new Gson().fromJson(
-                    this.metaData, new TypeToken<Map<String, String>>() {
+            Map<String, String> metaDataMap = new Gson()
+                    .fromJson(this.metaData, new TypeToken<Map<String, String>>() {
                     }.getType());
             if (metaDataMap.containsKey(FIELD_OVERRIDES_PARAM)) {
                 intent.putExtra(FIELD_OVERRIDES_PARAM, metaDataMap.get(FIELD_OVERRIDES_PARAM));
@@ -144,7 +149,8 @@ public abstract class SecuredFragment extends Fragment {
     }
 
     protected Context context() {
-        return Context.getInstance().updateApplicationContext(this.getActivity().getApplicationContext());
+        return Context.getInstance()
+                .updateApplicationContext(this.getActivity().getApplicationContext());
     }
 
     public boolean isPaused() {

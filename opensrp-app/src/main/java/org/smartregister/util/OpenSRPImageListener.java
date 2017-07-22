@@ -26,12 +26,14 @@ public abstract class OpenSRPImageListener implements ImageListener {
         this.imageViewId = 0;
     }
 
-    public OpenSRPImageListener(ImageView imageView, String entityId, int defaultImageResId, int errorImageResId) {
+    public OpenSRPImageListener(ImageView imageView, String entityId, int defaultImageResId, int
+            errorImageResId) {
         this(imageView, defaultImageResId, errorImageResId);
         this.entityId = entityId;
     }
 
-    public OpenSRPImageListener(RemoteViews remoteView, int imageViewId, int defaultImageResId, int errorImageResId) {
+    public OpenSRPImageListener(RemoteViews remoteView, int imageViewId, int defaultImageResId,
+                                int errorImageResId) {
         this.remoteView = remoteView;
         this.defaultImageResId = defaultImageResId;
         this.errorImageResId = errorImageResId;

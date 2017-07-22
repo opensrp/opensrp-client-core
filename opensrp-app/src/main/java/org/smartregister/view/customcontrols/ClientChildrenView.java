@@ -37,25 +37,29 @@ public class ClientChildrenView extends LinearLayout {
         ageView2 = (TextView) findViewById(R.id.txt_children_age_right);
     }
 
-    public void bindData(ECSmartRegisterClient client, String maleChildAgeFormatString, String femaleChildAgeFormatString) {
+    public void bindData(ECSmartRegisterClient client, String maleChildAgeFormatString, String
+            femaleChildAgeFormatString) {
         List<ECChildClient> children = client.children();
         if (children.size() == 0) {
             ageView1.setVisibility(GONE);
             ageView2.setVisibility(GONE);
         } else if (children.size() == 1) {
-            setupChildView(children.get(0), ageView1, maleChildAgeFormatString, femaleChildAgeFormatString);
+            setupChildView(children.get(0), ageView1, maleChildAgeFormatString,
+                    femaleChildAgeFormatString);
             ((LinearLayout.LayoutParams) ageView1.getLayoutParams()).weight = 100;
             ageView2.setVisibility(GONE);
         } else {
-            setupChildView(children.get(0), ageView1, maleChildAgeFormatString, femaleChildAgeFormatString);
-            setupChildView(children.get(1), ageView2, maleChildAgeFormatString, femaleChildAgeFormatString);
+            setupChildView(children.get(0), ageView1, maleChildAgeFormatString,
+                    femaleChildAgeFormatString);
+            setupChildView(children.get(1), ageView2, maleChildAgeFormatString,
+                    femaleChildAgeFormatString);
             ((LinearLayout.LayoutParams) ageView1.getLayoutParams()).weight = 50;
             ((LinearLayout.LayoutParams) ageView2.getLayoutParams()).weight = 50;
         }
     }
 
-    private void setupChildView(ECChildClient child, TextView ageView,
-                                String maleChildAgeFormatString, String femaleChildAgeFormatString) {
+    private void setupChildView(ECChildClient child, TextView ageView, String
+            maleChildAgeFormatString, String femaleChildAgeFormatString) {
         ageView.setVisibility(VISIBLE);
         ageView.setText(
                 format(child.isMale() ? maleChildAgeFormatString : femaleChildAgeFormatString,

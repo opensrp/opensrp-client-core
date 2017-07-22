@@ -28,7 +28,8 @@ public class ECChildClient {
     }
 
     public int getAgeInDays() {
-        return StringUtils.isBlank(dateOfBirth) ? 0 : Days.daysBetween(LocalDate.parse(dateOfBirth), DateUtil.today()).getDays();
+        return StringUtils.isBlank(dateOfBirth) ? 0
+                : Days.daysBetween(LocalDate.parse(dateOfBirth), DateUtil.today()).getDays();
     }
 
     public String getAgeInString() {

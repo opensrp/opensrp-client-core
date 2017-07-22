@@ -13,7 +13,8 @@ public class Child {
     private String villageName;
     private boolean isHighRisk;
 
-    public Child(String caseId, String thayiCardNumber, String motherName, String fatherName, String ecNumber, String villageName, boolean highRisk) {
+    public Child(String caseId, String thayiCardNumber, String motherName, String fatherName,
+                 String ecNumber, String villageName, boolean highRisk) {
         this.caseId = caseId;
         this.motherName = motherName;
         this.fatherName = fatherName;

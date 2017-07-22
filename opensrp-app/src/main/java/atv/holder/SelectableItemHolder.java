@@ -56,7 +56,8 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         view.findViewById(R.id.top_line).setVisibility(View.INVISIBLE);
         view.findViewById(R.id.bot_line).setVisibility(View.INVISIBLE);
         if (node.isLeaf()) {
-            ((PrintView) view.findViewById(R.id.arrowview)).setIconText(R.string.ic_check_circle_blank);
+            ((PrintView) view.findViewById(R.id.arrowview))
+                    .setIconText(R.string.ic_check_circle_blank);
         }
 //        if(node.isFirstChild()){
 //            view.findViewById(R.id.top_line).setVisibility(View.INVISIBLE);
@@ -72,7 +73,6 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         return view;
     }
 
-
     @Override
     public void toggleSelectionMode(boolean editModeEnabled) {
         nodeSelector.setVisibility(editModeEnabled ? View.VISIBLE : View.GONE);
@@ -82,7 +82,8 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
     @Override
     public void toggle(boolean active) {
         if (!mNode.isLeaf()) {
-            arrowView.setIconText(context.getResources().getString(active ? R.string.ic_keyboard_arrow_down : R.string.ic_keyboard_arrow_right));
+            arrowView.setIconText(context.getResources().getString(
+                    active ? R.string.ic_keyboard_arrow_down : R.string.ic_keyboard_arrow_right));
         }
     }
 }

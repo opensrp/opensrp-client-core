@@ -37,7 +37,9 @@ public class PNCDetailController {
     private final AllBeneficiaries allBeneficiaries;
     private final AllTimelineEvents allTimelineEvents;
 
-    public PNCDetailController(Context context, String caseId, AllEligibleCouples allEligibleCouples, AllBeneficiaries allBeneficiaries, AllTimelineEvents allTimelineEvents) {
+    public PNCDetailController(Context context, String caseId, AllEligibleCouples
+            allEligibleCouples, AllBeneficiaries allBeneficiaries, AllTimelineEvents
+            allTimelineEvents) {
         this.context = context;
         this.caseId = caseId;
         this.allEligibleCouples = allEligibleCouples;
@@ -54,14 +56,13 @@ public class PNCDetailController {
         Days postPartumDuration = Days.daysBetween(deliveryDate, DateUtil.today());
 
         PNCDetail detail = new PNCDetail(caseId, mother.thayiCardNumber(),
-                new CoupleDetails(couple.wifeName(), couple.husbandName(), couple.ecNumber(), couple.isOutOfArea())
-                        .withCaste(couple.getDetail("caste"))
+                new CoupleDetails(couple.wifeName(), couple.husbandName(), couple.ecNumber(),
+                        couple.isOutOfArea()).withCaste(couple.getDetail("caste"))
                         .withEconomicStatus(couple.getDetail("economicStatus"))
                         .withPhotoPath(couple.photoPath()),
                 new LocationDetails(couple.village(), couple.subCenter()),
                 new PregnancyOutcomeDetails(deliveryDate.toString(), postPartumDuration.getDays()))
-                .addTimelineEvents(getEvents())
-                .addExtraDetails(mother.details());
+                .addTimelineEvents(getEvents()).addExtraDetails(mother.details());
 
         return new Gson().toJson(detail);
     }
@@ -84,7 +85,9 @@ public class PNCDetailController {
 
         for (org.smartregister.domain.TimelineEvent event : events) {
             DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("dd-MM-YYYY");
-            timelineEvents.add(new TimelineEvent(event.type(), event.title(), new String[]{event.detail1(), event.detail2()}, event.referenceDate().toString(dateTimeFormatter)));
+            timelineEvents.add(new TimelineEvent(event.type(), event.title(),
+                    new String[]{event.detail1(), event.detail2()},
+                    event.referenceDate().toString(dateTimeFormatter)));
         }
 
         return timelineEvents;

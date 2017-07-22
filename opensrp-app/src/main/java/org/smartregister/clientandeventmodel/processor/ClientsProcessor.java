@@ -27,7 +27,6 @@ public class ClientsProcessor {
             JSONArray attributes = EventMapConfig.getJSONArray("attributes");
             JSONArray property = EventMapConfig.getJSONArray("property");
 
-
             Iterator<?> keys = ClientJson.keys();
 
             while (keys.hasNext()) {
@@ -48,14 +47,14 @@ public class ClientsProcessor {
                 }
             }
 
-
         } catch (JSONException e) {
             Log.e(TAG, e.toString(), e);
         }
     }
 
     public Client createClientObject() {
-        Client client = new Client(baseEntityID, attributesDetailsMap, attributesColumnsMap, propertyColumnsMap, propertyDetailsMap);
+        Client client = new Client(baseEntityID, attributesDetailsMap, attributesColumnsMap,
+                propertyColumnsMap, propertyDetailsMap);
         return client;
     }
 
@@ -73,7 +72,6 @@ public class ClientsProcessor {
         } catch (Exception e) {
 
         }
-
 
     }
 
@@ -96,7 +94,6 @@ public class ClientsProcessor {
         }
         return returnboolean;
     }
-
 
     private boolean isPropertyColumn(String key, JSONArray properties) {
         boolean returnboolean = false;

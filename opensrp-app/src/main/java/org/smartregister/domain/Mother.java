@@ -59,8 +59,11 @@ public class Mother {
     }
 
     public String highRiskReason() {
-        String highRiskReason = details.get(HIGH_RISK_REASON) == null ? "" : details.get(HIGH_RISK_REASON).trim();
-        return StringUtils.join(new HashSet<String>(Arrays.asList(highRiskReason.split(SPACE))).toArray(), SPACE);
+        String highRiskReason =
+                details.get(HIGH_RISK_REASON) == null ? "" : details.get(HIGH_RISK_REASON).trim();
+        return StringUtils
+                .join(new HashSet<String>(Arrays.asList(highRiskReason.split(SPACE))).toArray(),
+                        SPACE);
     }
 
     public Map<String, String> details() {

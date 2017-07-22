@@ -13,16 +13,18 @@ public class ChildDetailActivity extends SecuredWebActivity {
     protected void onInitialization() {
         String caseId = (String) getIntent().getExtras().get("caseId");
 
-        webView.addJavascriptInterface(new ChildDetailController(this, caseId,
-                context().allEligibleCouples(), context().allBeneficiaries(),
-                context().allTimelineEvents()), "context");
+        webView.addJavascriptInterface(
+                new ChildDetailController(this, caseId, context().allEligibleCouples(),
+                        context().allBeneficiaries(), context().allTimelineEvents()), "context");
         webView.loadUrl("file:///android_asset/www/child_detail.html");
 
         photoCaptureListener = new Listener<CapturedPhotoInformation>() {
             @Override
             public void onEvent(CapturedPhotoInformation data) {
                 if (webView != null) {
-                    webView.loadUrl("javascript:pageView.reloadPhoto('" + data.entityId() + "', '" + data.photoPath() + "')");
+                    webView.loadUrl(
+                            "javascript:pageView.reloadPhoto('" + data.entityId() + "', " + "'"
+                                    + data.photoPath() + "')");
                 }
             }
         };

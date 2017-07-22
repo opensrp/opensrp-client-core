@@ -12,7 +12,8 @@ import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
+        .ClientsHeaderProvider;
 
 public abstract class ServiceModeOption implements DialogOption {
 
@@ -33,19 +34,19 @@ public abstract class ServiceModeOption implements DialogOption {
     public abstract ClientsHeaderProvider getHeaderProvider();
 
     public abstract void setupListView(ChildSmartRegisterClient client,
-                                       NativeChildSmartRegisterViewHolder viewHolder,
-                                       View.OnClickListener clientSectionClickListener);
+                                       NativeChildSmartRegisterViewHolder viewHolder, View
+                                               .OnClickListener clientSectionClickListener);
 
     public abstract void setupListView(ANCSmartRegisterClient client,
-                                       NativeANCSmartRegisterViewHolder viewHolder,
-                                       View.OnClickListener clientSectionClickListener);
+                                       NativeANCSmartRegisterViewHolder viewHolder, View
+                                               .OnClickListener clientSectionClickListener);
 
     public abstract void setupListView(FPSmartRegisterClient client,
-                                       NativeFPSmartRegisterViewHolder viewHolder,
-                                       View.OnClickListener clientSectionClickListener);
+                                       NativeFPSmartRegisterViewHolder viewHolder, View
+                                               .OnClickListener clientSectionClickListener);
 
     public abstract void setupListView(PNCSmartRegisterClient client,
-                                       NativePNCSmartRegisterViewHolder viewHolder,
-                                       View.OnClickListener clientSectionClickListener);
+                                       NativePNCSmartRegisterViewHolder viewHolder, View
+                                               .OnClickListener clientSectionClickListener);
 
 }

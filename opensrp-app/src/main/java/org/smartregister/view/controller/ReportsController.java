@@ -14,7 +14,8 @@ public class ReportsController {
     }
 
     public void startIndicatorListViewFor(String reportCategory) {
-        Intent intent = new Intent(context.getApplicationContext(), ReportIndicatorListViewActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(),
+                ReportIndicatorListViewActivity.class);
         intent.putExtra(AllConstants.REPORT_CATEGORY, reportCategory);
         context.startActivity(intent);
     }

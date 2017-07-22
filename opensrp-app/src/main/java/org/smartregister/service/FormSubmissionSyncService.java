@@ -35,9 +35,10 @@ public class FormSubmissionSyncService {
     private FormSubmissionService formSubmissionService;
     private DristhiConfiguration configuration;
 
-    public FormSubmissionSyncService(FormSubmissionService formSubmissionService, HTTPAgent httpAgent,
-                                     FormDataRepository formDataRepository, AllSettings allSettings,
-                                     AllSharedPreferences allSharedPreferences, DristhiConfiguration configuration) {
+    public FormSubmissionSyncService(FormSubmissionService formSubmissionService, HTTPAgent
+            httpAgent, FormDataRepository formDataRepository, AllSettings allSettings,
+                                     AllSharedPreferences allSharedPreferences,
+                                     DristhiConfiguration configuration) {
         this.formSubmissionService = formSubmissionService;
         this.httpAgent = httpAgent;
         this.formDataRepository = formDataRepository;
@@ -48,7 +49,8 @@ public class FormSubmissionSyncService {
 
     public FetchStatus sync() {
         try {
-//            CloudantSyncHandler mCloudantSyncHandler = CloudantSyncHandler.getInstance(Context.getInstance().applicationContext());
+//            CloudantSyncHandler mCloudantSyncHandler = CloudantSyncHandler.getInstance(Context
+// .getInstance().applicationContext());
 //            CountDownLatch mCountDownLatch = new CountDownLatch(2);
 //            mCloudantSyncHandler.setCountDownLatch(mCountDownLatch);
 //            mCloudantSyncHandler.startPullReplication();
@@ -56,7 +58,8 @@ public class FormSubmissionSyncService {
 
             //          mCountDownLatch.await();
             //pushToServer();
-            Intent intent = new Intent(DrishtiApplication.getInstance().getApplicationContext(), ImageUploadSyncService.class);
+            Intent intent = new Intent(DrishtiApplication.getInstance().getApplicationContext(),
+                    ImageUploadSyncService.class);
             DrishtiApplication.getInstance().getApplicationContext().startService(intent);
             return FetchStatus.fetched;
         } catch (Exception e) {
@@ -66,22 +69,23 @@ public class FormSubmissionSyncService {
     }
 
     public void pushToServer() {
-        List<FormSubmission> pendingFormSubmissions = formDataRepository.getPendingFormSubmissions();
+        List<FormSubmission> pendingFormSubmissions = formDataRepository
+                .getPendingFormSubmissions();
         if (pendingFormSubmissions.isEmpty()) {
             return;
         }
         String jsonPayload = mapToFormSubmissionDTO(pendingFormSubmissions);
-        Response<String> response = httpAgent.post(
-                format("{0}/{1}",
-                        configuration.dristhiBaseURL(),
-                        FORM_SUBMISSIONS_PATH),
-                jsonPayload);
+        Response<String> response = httpAgent
+                .post(format("{0}/{1}", configuration.dristhiBaseURL(), FORM_SUBMISSIONS_PATH),
+                        jsonPayload);
         if (response.isFailure()) {
-            logError(format("Form submissions sync failed. Submissions:  {0}", pendingFormSubmissions));
+            logError(format("Form submissions sync failed. Submissions:  {0}",
+                    pendingFormSubmissions));
             return;
         }
         formDataRepository.markFormSubmissionsAsSynced(pendingFormSubmissions);
-        logInfo(format("Form submissions sync successfully. Submissions:  {0}", pendingFormSubmissions));
+        logInfo(format("Form submissions sync successfully. Submissions:  {0}",
+                pendingFormSubmissions));
     }
 
     public FetchStatus pullFromServer() {
@@ -90,19 +94,16 @@ public class FormSubmissionSyncService {
         int downloadBatchSize = configuration.syncDownloadBatchSize();
         String baseURL = configuration.dristhiBaseURL();
         while (true) {
-            String uri = format("{0}/{1}?anm-id={2}&timestamp={3}&batch-size={4}",
-                    baseURL,
-                    FORM_SUBMISSIONS_PATH,
-                    anmId,
-                    allSettings.fetchPreviousFormSyncIndex(),
+            String uri = format("{0}/{1}?anm-id={2}&timestamp={3}&batch-size={4}", baseURL,
+                    FORM_SUBMISSIONS_PATH, anmId, allSettings.fetchPreviousFormSyncIndex(),
                     downloadBatchSize);
             Response<String> response = httpAgent.fetch(uri);
             if (response.isFailure()) {
                 logError(format("Form submissions pull failed."));
                 return fetchedFailed;
             }
-            List<FormSubmissionDTO> formSubmissions = new Gson().fromJson(response.payload(),
-                    new TypeToken<List<FormSubmissionDTO>>() {
+            List<FormSubmissionDTO> formSubmissions = new Gson()
+                    .fromJson(response.payload(), new TypeToken<List<FormSubmissionDTO>>() {
                     }.getType());
             if (formSubmissions.isEmpty()) {
                 return dataStatus;
@@ -114,10 +115,13 @@ public class FormSubmissionSyncService {
     }
 
     private String mapToFormSubmissionDTO(List<FormSubmission> pendingFormSubmissions) {
-        List<org.ei.drishti.dto.form.FormSubmissionDTO> formSubmissions = new ArrayList<org.ei.drishti.dto.form.FormSubmissionDTO>();
+        List<org.ei.drishti.dto.form.FormSubmissionDTO> formSubmissions = new ArrayList<org.ei
+                .drishti.dto.form.FormSubmissionDTO>();
         for (FormSubmission pendingFormSubmission : pendingFormSubmissions) {
-            formSubmissions.add(new org.ei.drishti.dto.form.FormSubmissionDTO(allSharedPreferences.fetchRegisteredANM(), pendingFormSubmission.instanceId(),
-                    pendingFormSubmission.entityId(), pendingFormSubmission.formName(), pendingFormSubmission.instance(), pendingFormSubmission.version(),
+            formSubmissions.add(new org.ei.drishti.dto.form.FormSubmissionDTO(
+                    allSharedPreferences.fetchRegisteredANM(), pendingFormSubmission.instanceId(),
+                    pendingFormSubmission.entityId(), pendingFormSubmission.formName(),
+                    pendingFormSubmission.instance(), pendingFormSubmission.version(),
                     pendingFormSubmission.formDataDefinitionVersion()));
         }
         return new Gson().toJson(formSubmissions);

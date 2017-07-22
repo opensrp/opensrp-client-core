@@ -28,7 +28,6 @@ public class CommonFtsObject {
     private Map<String, String> customRelationalIdMap;
     private Map<String, Pair<String, Boolean>> alertsScheduleMap;
 
-
     public CommonFtsObject(String[] tables) {
         this.tables = tables;
         this.searchMap = new HashMap<String, String[]>();

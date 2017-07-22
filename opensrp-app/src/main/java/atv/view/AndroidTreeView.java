@@ -31,11 +31,11 @@ public class AndroidTreeView {
     private Context mContext;
     private boolean applyForRoot;
     private int containerStyle = 0;
-    private Class<? extends TreeNode.BaseNodeViewHolder> defaultViewHolderClass = SimpleViewHolder.class;
+    private Class<? extends TreeNode.BaseNodeViewHolder> defaultViewHolderClass =
+            SimpleViewHolder.class;
     private TreeNode.TreeNodeClickListener nodeClickListener;
     private boolean mSelectionModeEnabled;
     private boolean mUseDefaultAnimation = false;
-
 
     public AndroidTreeView(Context context, TreeNode root) {
         mRoot = root;
@@ -51,9 +51,9 @@ public class AndroidTreeView {
         Animation a = new Animation() {
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? LinearLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
+                v.getLayoutParams().height =
+                        interpolatedTime == 1 ? LinearLayout.LayoutParams.WRAP_CONTENT
+                                : (int) (targetHeight * interpolatedTime);
                 v.requestLayout();
             }
 
@@ -64,7 +64,8 @@ public class AndroidTreeView {
         };
 
         // 1dp/ms
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration(
+                (int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
     }
 
@@ -77,7 +78,8 @@ public class AndroidTreeView {
                 if (interpolatedTime == 1) {
                     v.setVisibility(View.GONE);
                 } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                    v.getLayoutParams().height =
+                            initialHeight - (int) (initialHeight * interpolatedTime);
                     v.requestLayout();
                 }
             }
@@ -89,7 +91,8 @@ public class AndroidTreeView {
         };
 
         // 1dp/ms
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration(
+                (int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
         v.startAnimation(a);
     }
 
@@ -249,7 +252,6 @@ public class AndroidTreeView {
         }
     }
 
-
     //------------------------------------------------------------
     //  Selection methods
 
@@ -257,7 +259,6 @@ public class AndroidTreeView {
         node.setExpanded(true);
         final TreeNode.BaseNodeViewHolder parentViewHolder = getViewHolderForNode(node);
         parentViewHolder.getNodeItemsView().removeAllViews();
-
 
         parentViewHolder.toggle(true);
 
@@ -344,7 +345,8 @@ public class AndroidTreeView {
         }
     }
 
-    // TODO Do we need to go through whole tree? Save references or consider collapsed nodes as not selected
+    // TODO Do we need to go through whole tree? Save references or consider collapsed nodes as
+    // not selected
     private List<TreeNode> getSelected(TreeNode parent) {
         List<TreeNode> result = new ArrayList<>();
         for (TreeNode n : parent.getChildren()) {
@@ -401,7 +403,8 @@ public class AndroidTreeView {
         TreeNode.BaseNodeViewHolder viewHolder = node.getViewHolder();
         if (viewHolder == null) {
             try {
-                final Object object = defaultViewHolderClass.getConstructor(Context.class).newInstance(mContext);
+                final Object object = defaultViewHolderClass.getConstructor(Context.class)
+                        .newInstance(mContext);
                 viewHolder = (TreeNode.BaseNodeViewHolder) object;
                 node.setViewHolder(viewHolder);
             } catch (Exception e) {

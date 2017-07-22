@@ -16,8 +16,8 @@ public interface SmartRegisterClientsProvider {
 
     SmartRegisterClients getClients();
 
-    SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
-                                       FilterOption searchFilter, SortOption sortOption);
+    SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
+            serviceModeOption, FilterOption searchFilter, SortOption sortOption);
 
     void onServiceModeSelected(ServiceModeOption serviceModeOption);
 

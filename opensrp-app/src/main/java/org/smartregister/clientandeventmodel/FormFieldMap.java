@@ -14,13 +14,8 @@ public class FormFieldMap {
     private Map<String, String> fieldAttributes;
     private Map<String, Map<String, String>> valuesCodes;
 
-    public FormFieldMap(String name,
-                        List<String> values,
-                        String source,
-                        String bindPath,
-                        String type,
-                        Map<String, String> attributes,
-                        Map<String, Map<String, String>> valuesCodes) {
+    public FormFieldMap(String name, List<String> values, String source, String bindPath, String
+            type, Map<String, String> attributes, Map<String, Map<String, String>> valuesCodes) {
         this.name = name;
         this.values = values;
         this.source = source;
@@ -30,13 +25,8 @@ public class FormFieldMap {
         this.valuesCodes = valuesCodes;
     }
 
-    public FormFieldMap(String name,
-                        String value,
-                        String source,
-                        String bindPath,
-                        String type,
-                        Map<String, String> attributes,
-                        Map<String, String> valueCodes) {
+    public FormFieldMap(String name, String value, String source, String bindPath, String type,
+                        Map<String, String> attributes, Map<String, String> valueCodes) {
         this.name = name;
         addToValueList(value);
         this.source = source;
@@ -74,8 +64,7 @@ public class FormFieldMap {
         values.add(value);
     }
 
-    private void addToValueCodeList(String value,
-                                    Map<String, String> valueCodes) {
+    private void addToValueCodeList(String value, Map<String, String> valueCodes) {
         if (valuesCodes == null) {
             valuesCodes = new HashMap<>();
         }

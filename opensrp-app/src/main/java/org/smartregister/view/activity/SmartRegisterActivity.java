@@ -27,7 +27,9 @@ public abstract class SmartRegisterActivity extends SecuredWebActivity {
             @Override
             public void onEvent(CapturedPhotoInformation data) {
                 if (webView != null) {
-                    webView.loadUrl("javascript:pageView.reloadPhoto('" + data.entityId() + "', '" + data.photoPath() + "')");
+                    webView.loadUrl(
+                            "javascript:pageView.reloadPhoto('" + data.entityId() + "', " + "'"
+                                    + data.photoPath() + "')");
                 }
             }
         };

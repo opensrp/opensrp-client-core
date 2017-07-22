@@ -38,8 +38,8 @@ public class User extends BaseEntity {
         this.salt = salt;
     }
 
-    public User(String baseEntityId, String username, String password, String salt, String status,
-                List<String> roles, List<String> permissions) {
+    public User(String baseEntityId, String username, String password, String salt, String
+            status, List<String> roles, List<String> permissions) {
         super(baseEntityId);
         this.username = username;
         this.password = password;
@@ -110,12 +110,13 @@ public class User extends BaseEntity {
 
     @JsonIgnore
     public boolean hasRole(String role) {
-        if (roles != null)
+        if (roles != null) {
             for (String r : roles) {
                 if (role.equalsIgnoreCase(r)) {
                     return true;
                 }
             }
+        }
         return false;
     }
 
@@ -158,12 +159,13 @@ public class User extends BaseEntity {
 
     @JsonIgnore
     public boolean hasPermission(String permission) {
-        if (permissions != null)
+        if (permissions != null) {
             for (String p : permissions) {
                 if (permission.equalsIgnoreCase(p)) {
                     return true;
                 }
             }
+        }
         return false;
     }
 

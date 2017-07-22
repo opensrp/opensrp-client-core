@@ -11,7 +11,8 @@ public class IndicatorReportDetail {
     private final String annualTarget;
     private final List<MonthSummaryDatum> monthlySummaries;
 
-    public IndicatorReportDetail(String categoryDescription, String description, String identifier, String annualTarget, List<MonthSummaryDatum> monthlySummaries) {
+    public IndicatorReportDetail(String categoryDescription, String description, String
+            identifier, String annualTarget, List<MonthSummaryDatum> monthlySummaries) {
         this.categoryDescription = categoryDescription;
         this.description = description;
         this.identifier = identifier;

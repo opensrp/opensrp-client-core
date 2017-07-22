@@ -13,11 +13,12 @@ public interface SmartRegisterClient {
         }
     };
 
-    Comparator<SmartRegisterClient> HIGH_PRIORITY_COMPARATOR = new Comparator<SmartRegisterClient>() {
+    Comparator<SmartRegisterClient> HIGH_PRIORITY_COMPARATOR = new
+            Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient client, SmartRegisterClient anotherClient) {
-            return client.isHighPriority() == anotherClient.isHighPriority()
-                    ? client.name().compareToIgnoreCase(anotherClient.name())
+            return client.isHighPriority() == anotherClient.isHighPriority() ? client.name()
+                    .compareToIgnoreCase(anotherClient.name())
                     : anotherClient.isHighPriority() ? 1 : -1;
         }
     };
@@ -25,8 +26,8 @@ public interface SmartRegisterClient {
     Comparator<SmartRegisterClient> HIGH_RISK_COMPARATOR = new Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient client, SmartRegisterClient anotherClient) {
-            return client.isHighRisk() == anotherClient.isHighRisk()
-                    ? client.name().compareToIgnoreCase(anotherClient.name())
+            return client.isHighRisk() == anotherClient.isHighRisk() ? client.name()
+                    .compareToIgnoreCase(anotherClient.name())
                     : anotherClient.isHighRisk() ? 1 : -1;
         }
     };
@@ -34,8 +35,8 @@ public interface SmartRegisterClient {
     Comparator<SmartRegisterClient> BPL_COMPARATOR = new Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient client, SmartRegisterClient anotherClient) {
-            if ((client.isBPL() && anotherClient.isBPL())
-                    || (!client.isBPL() && !anotherClient.isBPL())) {
+            if ((client.isBPL() && anotherClient.isBPL()) || (!client.isBPL() && !anotherClient
+                    .isBPL())) {
                 return client.compareName(anotherClient);
             } else {
                 return anotherClient.isBPL() ? 1 : -1;
@@ -46,8 +47,8 @@ public interface SmartRegisterClient {
     Comparator<SmartRegisterClient> SC_COMPARATOR = new Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient client, SmartRegisterClient anotherClient) {
-            if ((client.isSC() && anotherClient.isSC())
-                    || (!client.isSC() && !anotherClient.isSC())) {
+            if ((client.isSC() && anotherClient.isSC()) || (!client.isSC() && !anotherClient
+                    .isSC())) {
                 return client.compareName(anotherClient);
             } else {
                 return anotherClient.isSC() ? 1 : -1;
@@ -58,8 +59,8 @@ public interface SmartRegisterClient {
     Comparator<SmartRegisterClient> ST_COMPARATOR = new Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient client, SmartRegisterClient anotherClient) {
-            if ((client.isST() && anotherClient.isST())
-                    || (!client.isST() && !anotherClient.isST())) {
+            if ((client.isST() && anotherClient.isST()) || (!client.isST() && !anotherClient
+                    .isST())) {
                 return client.compareName(anotherClient);
             } else {
                 return anotherClient.isST() ? 1 : -1;
@@ -77,8 +78,8 @@ public interface SmartRegisterClient {
     Comparator<SmartRegisterClient> HR_COMPARATOR = new Comparator<SmartRegisterClient>() {
         @Override
         public int compare(SmartRegisterClient client, SmartRegisterClient anotherClient) {
-            if ((client.isHighRisk() && anotherClient.isHighRisk())
-                    || (!client.isHighRisk() && !anotherClient.isHighRisk())) {
+            if ((client.isHighRisk() && anotherClient.isHighRisk()) || (!client.isHighRisk()
+                    && !anotherClient.isHighRisk())) {
                 return client.compareName(anotherClient);
             } else {
                 return anotherClient.isHighRisk() ? 1 : -1;

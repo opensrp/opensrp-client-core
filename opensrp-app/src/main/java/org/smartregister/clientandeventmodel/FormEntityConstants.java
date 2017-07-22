@@ -10,11 +10,7 @@ public class FormEntityConstants {
     public static final SimpleDateFormat FORM_DATE = new SimpleDateFormat("yyyy-MM-dd");
 
     public enum FieldType {
-        concept,
-        person,
-        person_address,
-        person_attribute,
-        person_identifier,
+        concept, person, person_address, person_attribute, person_identifier,
     }
 
     public enum FieldDataType {
@@ -22,15 +18,8 @@ public class FormEntityConstants {
     }
 
     public enum Person implements FormEntity {
-        first_name,
-        middle_name,
-        last_name,
-        gender,
-        birthdate,
-        birthdate_estimated,
-        dead,
-        deathdate,
-        deathdate_estimated;
+        first_name, middle_name, last_name, gender, birthdate, birthdate_estimated, dead,
+        deathdate, deathdate_estimated;
 
         public String entity() {
             return "person";
@@ -54,10 +43,7 @@ public class FormEntityConstants {
     }
 
     public enum Encounter implements FormEntity {
-        encounter_date,
-        location_id,
-        encounter_start,
-        encounter_end;
+        encounter_date, location_id, encounter_start, encounter_end;
 
         public String entity() {
             return "encounter";

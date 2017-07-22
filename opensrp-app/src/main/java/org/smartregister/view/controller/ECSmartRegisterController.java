@@ -47,9 +47,8 @@ public class ECSmartRegisterController {
     private final Cache<String> cache;
     private final Cache<ECClients> ecClientsCache;
 
-    public ECSmartRegisterController(AllEligibleCouples allEligibleCouples,
-                                     AllBeneficiaries allBeneficiaries, Cache<String> cache,
-                                     Cache<ECClients> ecClientsCache) {
+    public ECSmartRegisterController(AllEligibleCouples allEligibleCouples, AllBeneficiaries
+            allBeneficiaries, Cache<String> cache, Cache<ECClients> ecClientsCache) {
         this.allEligibleCouples = allEligibleCouples;
         this.allBeneficiaries = allBeneficiaries;
         this.cache = cache;
@@ -64,22 +63,20 @@ public class ECSmartRegisterController {
                 List<ECClient> ecClients = new ArrayList<ECClient>();
 
                 for (EligibleCouple ec : ecs) {
-                    String photoPath = isBlank(ec.photoPath())
-                            ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH : ec.photoPath();
-                    ECClient ecClient = new ECClient(ec.caseId(),
-                            ec.wifeName(),
-                            ec.husbandName(),
-                            ec.village(),
-                            IntegerUtil.tryParse(ec.ecNumber(), 0))
+                    String photoPath =
+                            isBlank(ec.photoPath()) ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH
+                                    : ec.photoPath();
+                    ECClient ecClient = new ECClient(ec.caseId(), ec.wifeName(), ec.husbandName(),
+                            ec.village(), IntegerUtil.tryParse(ec.ecNumber(), 0))
                             .withDateOfBirth(ec.getDetail(WOMAN_DOB))
                             .withFPMethod(ec.getDetail(CURRENT_FP_METHOD))
-                            .withFamilyPlanningMethodChangeDate(ec.getDetail(
-                                    FAMILY_PLANNING_METHOD_CHANGE_DATE))
+                            .withFamilyPlanningMethodChangeDate(
+                                    ec.getDetail(FAMILY_PLANNING_METHOD_CHANGE_DATE))
                             .withIUDPlace(ec.getDetail(IUD_PLACE))
                             .withIUDPerson(ec.getDetail(IUD_PERSON))
                             .withNumberOfCondomsSupplied(ec.getDetail(NUMBER_OF_CONDOMS_SUPPLIED))
-                            .withNumberOfCentchromanPillsDelivered(ec.getDetail(
-                                    NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED))
+                            .withNumberOfCentchromanPillsDelivered(
+                                    ec.getDetail(NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED))
                             .withNumberOfOCPDelivered(ec.getDetail(NUMBER_OF_OCP_DELIVERED))
                             .withCaste(ec.getDetail(CASTE))
                             .withEconomicStatus(ec.getDetail(ECONOMIC_STATUS))
@@ -88,8 +85,7 @@ public class ECSmartRegisterController {
                             .withNumberOfLivingChildren(ec.getDetail(NUMBER_OF_LIVING_CHILDREN))
                             .withNumberOfStillBirths(ec.getDetail(NUMBER_OF_STILL_BIRTHS))
                             .withNumberOfAbortions(ec.getDetail(NUMBER_OF_ABORTIONS))
-                            .withIsHighPriority(ec.isHighPriority())
-                            .withPhotoPath(photoPath)
+                            .withIsHighPriority(ec.isHighPriority()).withPhotoPath(photoPath)
                             .withHighPriorityReason(ec.getDetail(HIGH_PRIORITY_REASON))
                             .withIsOutOfArea(ec.isOutOfArea());
                     updateStatusInformation(ec, ecClient);
@@ -111,22 +107,20 @@ public class ECSmartRegisterController {
                 ECClients ecClients = new ECClients();
 
                 for (EligibleCouple ec : ecs) {
-                    String photoPath = isBlank(ec.photoPath())
-                            ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH : ec.photoPath();
-                    ECClient ecClient = new ECClient(ec.caseId(),
-                            ec.wifeName(),
-                            ec.husbandName(),
-                            ec.village(),
-                            IntegerUtil.tryParse(ec.ecNumber(), 0))
+                    String photoPath =
+                            isBlank(ec.photoPath()) ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH
+                                    : ec.photoPath();
+                    ECClient ecClient = new ECClient(ec.caseId(), ec.wifeName(), ec.husbandName(),
+                            ec.village(), IntegerUtil.tryParse(ec.ecNumber(), 0))
                             .withDateOfBirth(ec.getDetail(WOMAN_DOB))
                             .withFPMethod(ec.getDetail(CURRENT_FP_METHOD))
-                            .withFamilyPlanningMethodChangeDate(ec.getDetail(
-                                    FAMILY_PLANNING_METHOD_CHANGE_DATE))
+                            .withFamilyPlanningMethodChangeDate(
+                                    ec.getDetail(FAMILY_PLANNING_METHOD_CHANGE_DATE))
                             .withIUDPlace(ec.getDetail(IUD_PLACE))
                             .withIUDPerson(ec.getDetail(IUD_PERSON))
                             .withNumberOfCondomsSupplied(ec.getDetail(NUMBER_OF_CONDOMS_SUPPLIED))
-                            .withNumberOfCentchromanPillsDelivered(ec.getDetail(
-                                    NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED))
+                            .withNumberOfCentchromanPillsDelivered(
+                                    ec.getDetail(NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED))
                             .withNumberOfOCPDelivered(ec.getDetail(NUMBER_OF_OCP_DELIVERED))
                             .withCaste(ec.getDetail(CASTE))
                             .withEconomicStatus(ec.getDetail(ECONOMIC_STATUS))
@@ -135,8 +129,7 @@ public class ECSmartRegisterController {
                             .withNumberOfLivingChildren(ec.getDetail(NUMBER_OF_LIVING_CHILDREN))
                             .withNumberOfStillBirths(ec.getDetail(NUMBER_OF_STILL_BIRTHS))
                             .withNumberOfAbortions(ec.getDetail(NUMBER_OF_ABORTIONS))
-                            .withIsHighPriority(ec.isHighPriority())
-                            .withPhotoPath(photoPath)
+                            .withIsHighPriority(ec.isHighPriority()).withPhotoPath(photoPath)
                             .withHighPriorityReason(ec.getDetail(HIGH_PRIORITY_REASON))
                             .withIsOutOfArea(ec.isOutOfArea());
                     updateStatusInformation(ec, ecClient);
@@ -152,11 +145,11 @@ public class ECSmartRegisterController {
     private void updateChildrenInformation(ECClient ecClient) {
         List<Child> children = allBeneficiaries.findAllChildrenByECId(ecClient.entityId());
         sortByDateOfBirth(children);
-        Iterable<Child> youngestTwoChildren = Iterables.skip(
-                children, children.size() < 2 ? 0 : children.size() - 2);
+        Iterable<Child> youngestTwoChildren = Iterables
+                .skip(children, children.size() < 2 ? 0 : children.size() - 2);
         for (Child child : youngestTwoChildren) {
-            ecClient.addChild(new ECChildClient(
-                    child.caseId(), child.gender(), child.dateOfBirth()));
+            ecClient.addChild(
+                    new ECChildClient(child.caseId(), child.gender(), child.dateOfBirth()));
         }
     }
 
@@ -164,8 +157,8 @@ public class ECSmartRegisterController {
         sort(children, new Comparator<Child>() {
             @Override
             public int compare(Child child, Child anotherChild) {
-                return LocalDate.parse(child.dateOfBirth()).compareTo(LocalDate.parse(
-                        anotherChild.dateOfBirth()));
+                return LocalDate.parse(child.dateOfBirth())
+                        .compareTo(LocalDate.parse(anotherChild.dateOfBirth()));
             }
         });
     }
@@ -173,7 +166,8 @@ public class ECSmartRegisterController {
     private void sortByName(List<? extends SmartRegisterClient> ecClients) {
         sort(ecClients, new Comparator<SmartRegisterClient>() {
             @Override
-            public int compare(SmartRegisterClient oneECClient, SmartRegisterClient anotherECClient) {
+            public int compare(SmartRegisterClient oneECClient, SmartRegisterClient
+                    anotherECClient) {
                 return oneECClient.wifeName().compareToIgnoreCase(anotherECClient.wifeName());
             }
         });
@@ -191,19 +185,18 @@ public class ECSmartRegisterController {
         }
 
         if (mother == null && eligibleCouple.hasFPMethod()) {
-            ecClient.withStatus(EasyMap.create(STATUS_TYPE_FIELD, FP_STATUS)
-                    .put(STATUS_DATE_FIELD, eligibleCouple.getDetail(
-                            FAMILY_PLANNING_METHOD_CHANGE_DATE)).map());
+            ecClient.withStatus(EasyMap.create(STATUS_TYPE_FIELD, FP_STATUS).put(STATUS_DATE_FIELD,
+                    eligibleCouple.getDetail(FAMILY_PLANNING_METHOD_CHANGE_DATE)).map());
 
             return;
         }
 
         if (mother != null && mother.isANC()) {
             ecClient.withStatus(EasyMap.create(STATUS_TYPE_FIELD, ANC_STATUS)
-                    .put(STATUS_DATE_FIELD, mother.referenceDate())
-                    .put(STATUS_EDD_FIELD,
-                            LocalDate.parse(mother.getDetail(EDD), DateTimeFormat.forPattern(
-                                    AllConstants.FORM_DATE_TIME_FORMAT)).toString()).map());
+                    .put(STATUS_DATE_FIELD, mother.referenceDate()).put(STATUS_EDD_FIELD, LocalDate
+                            .parse(mother.getDetail(EDD),
+                                    DateTimeFormat.forPattern(AllConstants.FORM_DATE_TIME_FORMAT))
+                            .toString()).map());
 
             return;
         }
@@ -217,9 +210,8 @@ public class ECSmartRegisterController {
 
         if (mother != null && mother.isPNC() && eligibleCouple.hasFPMethod()) {
             ecClient.withStatus(EasyMap.create(STATUS_TYPE_FIELD, PNC_FP_STATUS)
-                    .put(STATUS_DATE_FIELD, mother.referenceDate())
-                    .put(FP_METHOD_DATE_FIELD, eligibleCouple.getDetail(
-                            FAMILY_PLANNING_METHOD_CHANGE_DATE)).map());
+                    .put(STATUS_DATE_FIELD, mother.referenceDate()).put(FP_METHOD_DATE_FIELD,
+                            eligibleCouple.getDetail(FAMILY_PLANNING_METHOD_CHANGE_DATE)).map());
         }
     }
 }

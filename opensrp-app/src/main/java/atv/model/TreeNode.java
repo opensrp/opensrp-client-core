@@ -158,7 +158,6 @@ public class TreeNode {
         return path.toString();
     }
 
-
     public int getLevel() {
         int level = 0;
         TreeNode root = this;
@@ -241,7 +240,8 @@ public class TreeNode {
                 return mView;
             }
             final View nodeView = getNodeView();
-            final TreeNodeWrapperView nodeWrapperView = new TreeNodeWrapperView(nodeView.getContext(), getContainerStyle());
+            final TreeNodeWrapperView nodeWrapperView = new TreeNodeWrapperView(
+                    nodeView.getContext(), getContainerStyle());
             nodeWrapperView.insertNodeView(nodeView);
             mView = nodeWrapperView;
 

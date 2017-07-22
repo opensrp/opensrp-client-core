@@ -19,7 +19,9 @@ public class OpenFormOption implements EditOption {
     HashMap<String, String> overrideStringmap = null;
     ByColumnAndByDetails byColumnAndByDetails;
 
-    public OpenFormOption(String name, String formName, FormController formController, HashMap<String, String> overrideStringmap, ByColumnAndByDetails byColumnAndByDetails) {
+    public OpenFormOption(String name, String formName, FormController formController,
+                          HashMap<String, String> overrideStringmap, ByColumnAndByDetails
+                                  byColumnAndByDetails) {
         this.name = name;
         this.formName = formName;
         this.formController = formController;
@@ -53,10 +55,14 @@ public class OpenFormOption implements EditOption {
                 for (Map.Entry<String, String> entry : overrideStringmap.entrySet()) {
                     switch (byColumnAndByDetails) {
                         case byDetails:
-                            overridejsonobject.put(entry.getKey(), ((CommonPersonObjectClient) client).getDetails().get(entry.getValue()));
+                            overridejsonobject.put(entry.getKey(),
+                                    ((CommonPersonObjectClient) client).getDetails()
+                                            .get(entry.getValue()));
                             break;
                         case byColumn:
-                            overridejsonobject.put(entry.getKey(), ((CommonPersonObjectClient) client).getColumnmaps().get(entry.getValue()));
+                            overridejsonobject.put(entry.getKey(),
+                                    ((CommonPersonObjectClient) client).getColumnmaps()
+                                            .get(entry.getValue()));
                             break;
                         case bydefault:
                             overridejsonobject.put(entry.getKey(), entry.getValue());
@@ -69,7 +75,8 @@ public class OpenFormOption implements EditOption {
             }
             FieldOverrides fieldOverrides = new FieldOverrides(overridejsonobject.toString());
             Log.v("in edit form optopn", overridejsonobject.toString());
-            formController.startFormActivity(formName, client.entityId(), fieldOverrides.getJSONString());
+            formController
+                    .startFormActivity(formName, client.entityId(), fieldOverrides.getJSONString());
         }
     }
 

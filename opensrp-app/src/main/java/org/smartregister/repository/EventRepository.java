@@ -21,13 +21,15 @@ public class EventRepository extends SQLiteOpenHelper {
     public static final String attributeDETAILS_COLUMN = "attributedetails";
     public String TABLE_NAME = "common";
     public String[] additionalcolumns;
-    private String common_SQL = "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT,details VARCHAR)";
+    private String common_SQL =
+            "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT," + "details VARCHAR)";
 
     public EventRepository(Context context, String tablename, String[] columns) {
         super(context, "test_convert", null, 1);
         additionalcolumns = columns;
         TABLE_NAME = tablename;
-        common_SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(_id INTEGER PRIMARY KEY AUTOINCREMENT,baseEntityId VARCHAR,";
+        common_SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(_id INTEGER PRIMARY KEY "
+                + "AUTOINCREMENT,baseEntityId VARCHAR,";
         for (String column : columns) {
             common_SQL = common_SQL + column + " VARCHAR,";
         }
@@ -73,6 +75,5 @@ public class EventRepository extends SQLiteOpenHelper {
     public void insertValues(ContentValues values) {
         getWritableDatabase().insert("Event", null, values);
     }
-
 
 }

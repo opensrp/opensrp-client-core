@@ -119,7 +119,8 @@ public class NativeHomeActivity extends SecuredActivity {
         pncRegisterClientCountView = (TextView) findViewById(R.id.txt_pnc_register_client_count);
         ancRegisterClientCountView = (TextView) findViewById(R.id.txt_anc_register_client_count);
         fpRegisterClientCountView = (TextView) findViewById(R.id.txt_fp_register_client_count);
-        childRegisterClientCountView = (TextView) findViewById(R.id.txt_child_register_client_count);
+        childRegisterClientCountView = (TextView) findViewById(
+                R.id.txt_child_register_client_count);
     }
 
     private void initialize() {
@@ -138,7 +139,8 @@ public class NativeHomeActivity extends SecuredActivity {
     }
 
     private void updateRegisterCounts() {
-        NativeUpdateANMDetailsTask task = new NativeUpdateANMDetailsTask(Context.getInstance().anmController());
+        NativeUpdateANMDetailsTask task = new NativeUpdateANMDetailsTask(
+                Context.getInstance().anmController());
         task.fetch(new NativeAfterANMDetailsFetchListener() {
             @Override
             public void afterFetch(HomeContext anmDetails) {
@@ -178,9 +180,9 @@ public class NativeHomeActivity extends SecuredActivity {
     }
 
     public void updateFromServer() {
-        UpdateActionsTask updateActionsTask = new UpdateActionsTask(
-                this, context().actionService(), context().formSubmissionSyncService(),
-                new SyncProgressIndicator(), context().allFormVersionSyncService());
+        UpdateActionsTask updateActionsTask = new UpdateActionsTask(this, context().actionService(),
+                context().formSubmissionSyncService(), new SyncProgressIndicator(),
+                context().allFormVersionSyncService());
         updateActionsTask.updateFromServer(new SyncAfterFetchListener());
     }
 
@@ -198,8 +200,9 @@ public class NativeHomeActivity extends SecuredActivity {
         if (updateMenuItem != null) {
             if (context().allSharedPreferences().fetchIsSyncInProgress()) {
                 updateMenuItem.setActionView(R.layout.progress);
-            } else
+            } else {
                 updateMenuItem.setActionView(null);
+            }
         }
     }
 
@@ -210,7 +213,8 @@ public class NativeHomeActivity extends SecuredActivity {
 
         long size = pendingFormSubmissionService.pendingFormSubmissionCount();
         if (size > 0) {
-            remainingFormsToSyncMenuItem.setTitle(valueOf(size) + " " + getString(R.string.unsynced_forms_count_message));
+            remainingFormsToSyncMenuItem.setTitle(
+                    valueOf(size) + " " + getString(R.string.unsynced_forms_count_message));
             remainingFormsToSyncMenuItem.setVisible(true);
         } else {
             remainingFormsToSyncMenuItem.setVisible(false);

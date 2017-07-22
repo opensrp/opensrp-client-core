@@ -1,6 +1,5 @@
 package org.smartregister.commonregistry;
 
-
 import android.content.ContentValues;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +19,8 @@ public class AllCommonsRepository {
     private final AlertRepository alertRepository;
     private CommonRepository personRepository;
 
-    public AllCommonsRepository(CommonRepository personRepository, AlertRepository alertRepository, TimelineEventRepository timelineEventRepository) {
+    public AllCommonsRepository(CommonRepository personRepository, AlertRepository
+            alertRepository, TimelineEventRepository timelineEventRepository) {
         this.personRepository = personRepository;
         this.timelineEventRepository = timelineEventRepository;
         this.alertRepository = alertRepository;
@@ -42,17 +42,18 @@ public class AllCommonsRepository {
         return personRepository.count();
     }
 
-
     public List<CommonPersonObject> findByCaseIDs(List<String> caseIds) {
         return personRepository.findByCaseIDs(caseIds.toArray(new String[caseIds.size()]));
     }
 
     public List<CommonPersonObject> findByRelationalIDs(List<String> RelationalID) {
-        return personRepository.findByRelationalIDs(RelationalID.toArray(new String[RelationalID.size()]));
+        return personRepository
+                .findByRelationalIDs(RelationalID.toArray(new String[RelationalID.size()]));
     }
 
     public List<CommonPersonObject> findByRelational_IDs(List<String> RelationalID) {
-        return personRepository.findByRelational_IDs(RelationalID.toArray(new String[RelationalID.size()]));
+        return personRepository
+                .findByRelational_IDs(RelationalID.toArray(new String[RelationalID.size()]));
     }
 
     public void close(String entityId) {
@@ -73,7 +74,8 @@ public class AllCommonsRepository {
         return personRepository.customQuery(sql, selections, tableName);
     }
 
-    public List<CommonPersonObject> customQueryForCompleteRow(String sql, String[] selections, String tableName) {
+    public List<CommonPersonObject> customQueryForCompleteRow(String sql, String[] selections,
+                                                              String tableName) {
         return personRepository.customQueryForCompleteRow(sql, selections, tableName);
     }
 

@@ -14,7 +14,8 @@ import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
+        .ClientsHeaderProvider;
 
 public class AllEligibleCoupleServiceMode extends ServiceModeOption {
 
@@ -47,33 +48,34 @@ public class AllEligibleCoupleServiceMode extends ServiceModeOption {
 
             @Override
             public int[] headerTextResourceIds() {
-                return new int[]{
-                        R.string.header_name, R.string.header_ec_no, R.string.header_gplsa,
-                        R.string.header_fp, R.string.header_children, R.string.header_status,
-                        R.string.header_edit};
+                return new int[]{R.string.header_name, R.string.header_ec_no, R.string
+                        .header_gplsa, R.string.header_fp, R.string.header_children, R.string
+                        .header_status, R.string.header_edit};
             }
         };
     }
 
     @Override
-    public void setupListView(ChildSmartRegisterClient client,
-                              NativeChildSmartRegisterViewHolder viewHolder,
-                              View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
+            viewHolder, View.OnClickListener clientSectionClickListener) {
 
     }
 }

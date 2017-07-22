@@ -25,9 +25,9 @@ public class SettingsActivity extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new MyPreferenceFragment()).commit();
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new MyPreferenceFragment()).commit();
     }
-
 
     public static class MyPreferenceFragment extends PreferenceFragment {
         @Override
@@ -37,22 +37,26 @@ public class SettingsActivity extends PreferenceActivity {
 
             Preference baseUrlPreference = findPreference("DRISHTI_BASE_URL");
             if (baseUrlPreference != null) {
-                EditTextPreference baseUrlEditTextPreference = (EditTextPreference) baseUrlPreference;
-                baseUrlEditTextPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                    @Override
-                    public boolean onPreferenceChange(Preference preference, Object newValue) {
-                        if (newValue != null) {
-                            updateUrl(newValue.toString());
-                        }
-                        return true;
-                    }
-                });
+                EditTextPreference baseUrlEditTextPreference = (EditTextPreference)
+                        baseUrlPreference;
+                baseUrlEditTextPreference
+                        .setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                            @Override
+                            public boolean onPreferenceChange(Preference preference, Object
+                                    newValue) {
+                                if (newValue != null) {
+                                    updateUrl(newValue.toString());
+                                }
+                                return true;
+                            }
+                        });
             }
         }
 
         private void updateUrl(String baseUrl) {
             try {
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                SharedPreferences preferences = PreferenceManager
+                        .getDefaultSharedPreferences(getActivity());
                 AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
                 URL url = new URL(baseUrl);

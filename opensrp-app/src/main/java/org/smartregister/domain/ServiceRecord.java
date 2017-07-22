@@ -27,7 +27,9 @@ public class ServiceRecord {
     public ServiceRecord() {
     }
 
-    public ServiceRecord(Long id, String baseEntityId, Long recurringServiceId, String value, Date date, String anmId, String locationId, String syncStatus, String eventId, String formSubmissionId, Long updatedAt) {
+    public ServiceRecord(Long id, String baseEntityId, Long recurringServiceId, String value,
+                         Date date, String anmId, String locationId, String syncStatus, String
+                                 eventId, String formSubmissionId, Long updatedAt) {
         this.id = id;
         this.baseEntityId = baseEntityId;
         this.recurringServiceId = recurringServiceId;
@@ -41,7 +43,9 @@ public class ServiceRecord {
         this.updatedAt = updatedAt;
     }
 
-    public ServiceRecord(Long id, String baseEntityId, String programClientId, Long recurringServiceId, String value, Date date, String anmId, String locationId, String syncStatus, String eventId, String formSubmissionId, Long updatedAt) {
+    public ServiceRecord(Long id, String baseEntityId, String programClientId, Long
+            recurringServiceId, String value, Date date, String anmId, String locationId, String
+            syncStatus, String eventId, String formSubmissionId, Long updatedAt) {
         this.id = id;
         this.baseEntityId = baseEntityId;
         this.programClientId = programClientId;

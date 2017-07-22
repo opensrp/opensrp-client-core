@@ -67,7 +67,6 @@ public abstract class SecuredActivity extends ActionBarActivity {
         navigationController = new NavigationController(this, anmController);
         onCreation();
 
-
         // Intent replicationServiceIntent = new Intent(this, ReplicationIntentService.class);
         //startService(replicationServiceIntent);
     }
@@ -90,7 +89,8 @@ public abstract class SecuredActivity extends ActionBarActivity {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(this, "Language preference set to " + newLanguagePreference + ". Please restart the application.", LENGTH_SHORT).show();
+            Toast.makeText(this, "Language preference set to " + newLanguagePreference + ". "
+                    + "Please restart the application.", LENGTH_SHORT).show();
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
@@ -151,8 +151,8 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
     private void addFieldOverridesIfExist(Intent intent) {
         if (hasMetadata()) {
-            Map<String, String> metaDataMap = new Gson().fromJson(
-                    this.metaData, new TypeToken<Map<String, String>>() {
+            Map<String, String> metaDataMap = new Gson()
+                    .fromJson(this.metaData, new TypeToken<Map<String, String>>() {
                     }.getType());
             if (metaDataMap.containsKey(FIELD_OVERRIDES_PARAM)) {
                 intent.putExtra(FIELD_OVERRIDES_PARAM, metaDataMap.get(FIELD_OVERRIDES_PARAM));
@@ -166,10 +166,14 @@ public abstract class SecuredActivity extends ActionBarActivity {
         if (isSuccessfulFormSubmission(resultCode)) {
             logInfo("Form successfully saved. MetaData: " + metaData);
             if (hasMetadata()) {
-                Map<String, String> metaDataMap = new Gson().fromJson(metaData, new TypeToken<Map<String, String>>() {
-                }.getType());
-                if (metaDataMap.containsKey(ENTITY_ID) && metaDataMap.containsKey(ALERT_NAME_PARAM)) {
-                    Context.getInstance().alertService().changeAlertStatusToInProcess(metaDataMap.get(ENTITY_ID), metaDataMap.get(ALERT_NAME_PARAM));
+                Map<String, String> metaDataMap = new Gson()
+                        .fromJson(metaData, new TypeToken<Map<String, String>>() {
+                        }.getType());
+                if (metaDataMap.containsKey(ENTITY_ID) && metaDataMap
+                        .containsKey(ALERT_NAME_PARAM)) {
+                    Context.getInstance().alertService()
+                            .changeAlertStatusToInProcess(metaDataMap.get(ENTITY_ID),
+                                    metaDataMap.get(ALERT_NAME_PARAM));
                 }
             }
         }
@@ -202,7 +206,8 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
     private void setupReplicationBroadcastReceiver() {
         // The filter's action is BROADCAST_ACTION
-        IntentFilter opensrpClientIntentFilter = new IntentFilter(CloudantSync.ACTION_DATABASE_CREATED);
+        IntentFilter opensrpClientIntentFilter = new IntentFilter(
+                CloudantSync.ACTION_DATABASE_CREATED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_COMPLETED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_ERROR);
         opensrpClientIntentFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
@@ -210,9 +215,9 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
         openSRPClientBroadCastReceiver = new OpenSRPClientBroadCastReceiver(this);
         // Registers the OpenSRPClientBroadCastReceiver and its intent filters
-        LocalBroadcastManager.getInstance(this).registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
+        LocalBroadcastManager.getInstance(this)
+                .registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
     }
-
 
     public void showToast(String msg) {
         Toast.makeText(this, msg, Toast.LENGTH_LONG).show();

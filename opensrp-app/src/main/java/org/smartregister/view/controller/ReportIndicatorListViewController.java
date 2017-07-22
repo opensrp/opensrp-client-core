@@ -33,7 +33,8 @@ public class ReportIndicatorListViewController {
     private List<Report> reports;
     private ReportsCategory reportsCategory;
 
-    public ReportIndicatorListViewController(Context context, AllReports allReports, String category) {
+    public ReportIndicatorListViewController(Context context, AllReports allReports, String
+            category) {
         this.context = context;
         this.allReports = allReports;
         this.category = category;
@@ -48,28 +49,36 @@ public class ReportIndicatorListViewController {
         for (Report report : reports) {
             ReportIndicator indicator = report.reportIndicator();
             List<MonthSummaryDatum> monthSummaryData = report.monthlySummaries();
-            if (monthSummaryData.size() == 0) continue;
+            if (monthSummaryData.size() == 0) {
+                continue;
+            }
             sortMonthlySummaries(monthSummaryData);
             MonthSummaryDatum currentMonthSummary = monthSummaryData.get(0);
 
             String currentMonth = today().monthOfYear().getAsString();
-            String currentProgress = currentMonthSummary.month().equals(currentMonth) ? currentMonthSummary.currentProgress() : "0";
+            String currentProgress =
+                    currentMonthSummary.month().equals(currentMonth) ? currentMonthSummary
+                            .currentProgress() : "0";
             String annualTarget = (isBlank(report.annualTarget())) ? "NA" : report.annualTarget();
 
-            indicatorReports.add(new IndicatorReport(indicator.name(), indicator.description(), annualTarget,
-                    currentProgress, currentMonth, currentMonthSummary.year(), currentMonthSummary.aggregatedProgress()
-            ));
+            indicatorReports.add(new IndicatorReport(indicator.name(), indicator.description(),
+                    annualTarget, currentProgress, currentMonth, currentMonthSummary.year(),
+                    currentMonthSummary.aggregatedProgress()));
         }
 
-        return new Gson().toJson(new CategoryReports(reportsCategory.description(), indicatorReports));
+        return new Gson()
+                .toJson(new CategoryReports(reportsCategory.description(), indicatorReports));
     }
 
     public void sortMonthlySummaries(List<MonthSummaryDatum> monthSummaryData) {
         Collections.sort(monthSummaryData, new Comparator<MonthSummaryDatum>() {
             @Override
-            public int compare(MonthSummaryDatum monthSummaryDatum, MonthSummaryDatum anotherMonthSummaryDatum) {
-                LocalDate date = new LocalDate().withYear(parseInt(anotherMonthSummaryDatum.year())).withMonthOfYear(parseInt(anotherMonthSummaryDatum.month()));
-                LocalDate anotherDate = new LocalDate().withYear(parseInt(monthSummaryDatum.year())).withMonthOfYear(parseInt(monthSummaryDatum.month()));
+            public int compare(MonthSummaryDatum monthSummaryDatum, MonthSummaryDatum
+                    anotherMonthSummaryDatum) {
+                LocalDate date = new LocalDate().withYear(parseInt(anotherMonthSummaryDatum.year()))
+                        .withMonthOfYear(parseInt(anotherMonthSummaryDatum.month()));
+                LocalDate anotherDate = new LocalDate().withYear(parseInt(monthSummaryDatum.year()))
+                        .withMonthOfYear(parseInt(monthSummaryDatum.month()));
                 return date.compareTo(anotherDate);
             }
         });
@@ -78,7 +87,8 @@ public class ReportIndicatorListViewController {
     public void startReportIndicatorDetail(String indicator) {
         for (Report report : reports) {
             if (report.reportIndicator().name().equals(indicator)) {
-                Intent intent = new Intent(context.getApplicationContext(), ReportIndicatorDetailActivity.class);
+                Intent intent = new Intent(context.getApplicationContext(),
+                        ReportIndicatorDetailActivity.class);
                 intent.putExtra(INDICATOR_DETAIL, report);
                 intent.putExtra(CATEGORY_DESCRIPTION, reportsCategory.description());
                 context.startActivity(intent);

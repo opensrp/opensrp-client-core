@@ -32,7 +32,8 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
     }
 
     private boolean isDeviceConnectedToNetwork(Intent intent) {
-        NetworkInfo networkInfo = (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
+        NetworkInfo networkInfo = (NetworkInfo) intent.getExtras()
+                .get(ConnectivityManager.EXTRA_NETWORK_INFO);
         return networkInfo != null && networkInfo.isConnected();
     }
 }

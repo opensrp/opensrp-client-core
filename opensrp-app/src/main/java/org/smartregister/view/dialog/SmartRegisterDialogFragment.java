@@ -20,17 +20,16 @@ public class SmartRegisterDialogFragment extends DialogFragment {
     private final Object tag;
 
     private SmartRegisterDialogFragment(SecuredNativeSmartRegisterActivity activity,
-                                        DialogOptionModel dialogOptionModel,
-                                        Object tag) {
+                                        DialogOptionModel dialogOptionModel, Object tag) {
         this.parentActivity = activity;
         this.options = dialogOptionModel.getDialogOptions();
         this.dialogOptionModel = dialogOptionModel;
         this.tag = tag;
     }
 
-    public static SmartRegisterDialogFragment newInstance(
-            SecuredNativeSmartRegisterActivity activity,
-            DialogOptionModel dialogOptionModel, Object tag) {
+    public static SmartRegisterDialogFragment newInstance(SecuredNativeSmartRegisterActivity
+                                                                  activity, DialogOptionModel
+            dialogOptionModel, Object tag) {
         return new SmartRegisterDialogFragment(activity, dialogOptionModel, tag);
     }
 
@@ -41,19 +40,21 @@ public class SmartRegisterDialogFragment extends DialogFragment {
     }
 
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup dialogView = (ViewGroup) inflater.inflate(R.layout.smart_register_dialog_view, container, false);
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container, Bundle
+            savedInstanceState) {
+        ViewGroup dialogView = (ViewGroup) inflater
+                .inflate(R.layout.smart_register_dialog_view, container, false);
         ListView listView = (ListView) dialogView.findViewById(R.id.dialog_list);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
-        final ArrayAdapter<DialogOption> adapter = new ArrayAdapter<DialogOption>(
-                parentActivity, R.layout.smart_register_dialog_list_item, options) {
+        final ArrayAdapter<DialogOption> adapter = new ArrayAdapter<DialogOption>(parentActivity,
+                R.layout.smart_register_dialog_list_item, options) {
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
                 ViewGroup itemView;
                 if (convertView == null) {
-                    itemView = (ViewGroup) inflater.inflate(R.layout.smart_register_dialog_list_item, parent, false);
+                    itemView = (ViewGroup) inflater
+                            .inflate(R.layout.smart_register_dialog_list_item, parent, false);
                 } else {
                     itemView = (ViewGroup) convertView;
                 }

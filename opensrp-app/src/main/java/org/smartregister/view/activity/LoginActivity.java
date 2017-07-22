@@ -78,7 +78,8 @@ public class LoginActivity extends Activity {
     private void initializeBuildDetails() {
         TextView buildDetailsTextView = (TextView) findViewById(R.id.login_build);
         try {
-            buildDetailsTextView.setText("Version " + getVersion() + ", Built on: " + getBuildDate());
+            buildDetailsTextView
+                    .setText("Version " + getVersion() + ", Built on: " + getBuildDate());
         } catch (Exception e) {
             logError("Error fetching build details: " + e);
         }
@@ -161,14 +162,12 @@ public class LoginActivity extends Activity {
 
     private void showErrorDialog(String message) {
         AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.login_failed_dialog_title))
-                .setMessage(message)
+                .setTitle(getString(R.string.login_failed_dialog_title)).setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
-                })
-                .create();
+                }).create();
         dialog.show();
     }
 
@@ -208,7 +207,8 @@ public class LoginActivity extends Activity {
         });
     }
 
-    private void tryRemoteLogin(final String userName, final String password, final Listener<LoginResponse> afterLoginCheck) {
+    private void tryRemoteLogin(final String userName, final String password, final
+    Listener<LoginResponse> afterLoginCheck) {
         LockingBackgroundTask task = new LockingBackgroundTask(new ProgressIndicator() {
             @Override
             public void setVisible() {
@@ -240,7 +240,8 @@ public class LoginActivity extends Activity {
     }
 
     private void hideKeyboard() {
-        InputMethodManager inputManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(
+                INPUT_METHOD_SERVICE);
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
     }
 
@@ -267,10 +268,12 @@ public class LoginActivity extends Activity {
     }
 
     private String getBuildDate() throws PackageManager.NameNotFoundException, IOException {
-        ApplicationInfo applicationInfo = getPackageManager().getApplicationInfo(getPackageName(), 0);
+        ApplicationInfo applicationInfo = getPackageManager()
+                .getApplicationInfo(getPackageName(), 0);
         ZipFile zf = new ZipFile(applicationInfo.sourceDir);
         ZipEntry ze = zf.getEntry("classes.dex");
-        return new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new java.util.Date(ze.getTime()));
+        return new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                .format(new java.util.Date(ze.getTime()));
     }
 
 }

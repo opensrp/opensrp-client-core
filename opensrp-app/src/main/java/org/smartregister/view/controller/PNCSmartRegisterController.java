@@ -40,15 +40,17 @@ public class PNCSmartRegisterController {
     private Cache<PNCClients> pncClientsCache;
     private PNCClientPreProcessor pncClientPreProcessor;
 
-    public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService alertService,
-                                      AllEligibleCouples allEligibleCouples, AllBeneficiaries allBeneficiaries,
-                                      Cache<String> cache, Cache<PNCClients> pncClientsCache) {
-        this(serviceProvidedService, alertService, allEligibleCouples, allBeneficiaries, cache, pncClientsCache, new PNCClientPreProcessor());
+    public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService
+            alertService, AllEligibleCouples allEligibleCouples, AllBeneficiaries
+            allBeneficiaries, Cache<String> cache, Cache<PNCClients> pncClientsCache) {
+        this(serviceProvidedService, alertService, allEligibleCouples, allBeneficiaries, cache,
+                pncClientsCache, new PNCClientPreProcessor());
     }
 
-    public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService alertService,
-                                      AllEligibleCouples allEligibleCouples, AllBeneficiaries allBeneficiaries,
-                                      Cache<String> cache, Cache<PNCClients> pncClientsCache, PNCClientPreProcessor pncClientPreProcessor) {
+    public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService
+            alertService, AllEligibleCouples allEligibleCouples, AllBeneficiaries
+            allBeneficiaries, Cache<String> cache, Cache<PNCClients> pncClientsCache,
+                                      PNCClientPreProcessor pncClientPreProcessor) {
         this.allEligibleCouples = allEligibleCouples;
         this.allBeneficiaries = allBeneficiaries;
         this.alertService = alertService;
@@ -68,37 +70,37 @@ public class PNCSmartRegisterController {
                 for (Pair<Mother, EligibleCouple> pncWithEc : pncsWithEcs) {
                     Mother pnc = pncWithEc.getLeft();
                     EligibleCouple ec = pncWithEc.getRight();
-                    String photoPath = isBlank(ec.photoPath()) ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH : ec.photoPath();
+                    String photoPath =
+                            isBlank(ec.photoPath()) ? DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH
+                                    : ec.photoPath();
 
                     List<ServiceProvidedDTO> servicesProvided = getServicesProvided(pnc.caseId());
                     List<AlertDTO> alerts = getAlerts(pnc.caseId());
-                    PNCClient client = new PNCClient(pnc.caseId(), ec.village(), ec.wifeName(), pnc.thayiCardNumber(), pnc.referenceDate())
-                            .withHusbandName(ec.husbandName())
-                            .withAge(ec.age())
-                            .withWomanDOB(ec.getDetail(WOMAN_DOB))
-                            .withECNumber(ec.ecNumber())
+                    PNCClient client = new PNCClient(pnc.caseId(), ec.village(), ec.wifeName(),
+                            pnc.thayiCardNumber(), pnc.referenceDate())
+                            .withHusbandName(ec.husbandName()).withAge(ec.age())
+                            .withWomanDOB(ec.getDetail(WOMAN_DOB)).withECNumber(ec.ecNumber())
                             .withIsHighPriority(ec.isHighPriority())
                             .withIsHighRisk(pnc.isHighRisk())
                             .withEconomicStatus(ec.getDetail(ECONOMIC_STATUS))
-                            .withIsOutOfArea(ec.isOutOfArea())
-                            .withCaste(ec.getDetail(CASTE))
-                            .withPhotoPath(photoPath)
-                            .withFPMethod(ec.getDetail(CURRENT_FP_METHOD))
+                            .withIsOutOfArea(ec.isOutOfArea()).withCaste(ec.getDetail(CASTE))
+                            .withPhotoPath(photoPath).withFPMethod(ec.getDetail(CURRENT_FP_METHOD))
                             .withIUDPlace(ec.getDetail(IUD_PLACE))
                             .withIUDPerson(ec.getDetail(IUD_PERSON))
                             .withNumberOfCondomsSupplied(ec.getDetail(NUMBER_OF_CONDOMS_SUPPLIED))
-                            .withFamilyPlanningMethodChangeDate(ec.getDetail(FAMILY_PLANNING_METHOD_CHANGE_DATE))
+                            .withFamilyPlanningMethodChangeDate(
+                                    ec.getDetail(FAMILY_PLANNING_METHOD_CHANGE_DATE))
                             .withNumberOfOCPDelivered(ec.getDetail(NUMBER_OF_OCP_DELIVERED))
-                            .withNumberOfCentchromanPillsDelivered(ec.getDetail(NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED))
+                            .withNumberOfCentchromanPillsDelivered(
+                                    ec.getDetail(NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED))
                             .withDeliveryPlace(pnc.getDetail(DELIVERY_PLACE))
                             .withDeliveryType(pnc.getDetail(DELIVERY_TYPE))
                             .withDeliveryComplications(pnc.getDetail(DELIVERY_COMPLICATIONS))
                             .withPNCComplications(pnc.getDetail(IMMEDIATE_REFERRAL_REASON))
-                            .withOtherDeliveryComplications(pnc.getDetail(OTHER_DELIVERY_COMPLICATIONS))
-                            .withEntityIdToSavePhoto(ec.caseId())
-                            .withAlerts(alerts)
-                            .withServicesProvided(servicesProvided)
-                            .withChildren(findChildren(pnc))
+                            .withOtherDeliveryComplications(
+                                    pnc.getDetail(OTHER_DELIVERY_COMPLICATIONS))
+                            .withEntityIdToSavePhoto(ec.caseId()).withAlerts(alerts)
+                            .withServicesProvided(servicesProvided).withChildren(findChildren(pnc))
                             .withPreProcess();
                     pncClients.add(pncClientPreProcessor.preProcess(client));
                 }
@@ -118,22 +120,23 @@ public class PNCSmartRegisterController {
     }
 
     private List<ServiceProvidedDTO> getServicesProvided(String entityId) {
-        List<ServiceProvided> servicesProvided = serviceProvidedService.findByEntityIdAndServiceNames(entityId,
-                PNC_SERVICE_PROVIDED_NAME);
+        List<ServiceProvided> servicesProvided = serviceProvidedService
+                .findByEntityIdAndServiceNames(entityId, PNC_SERVICE_PROVIDED_NAME);
         List<ServiceProvidedDTO> serviceProvidedDTOs = new ArrayList<ServiceProvidedDTO>();
         for (ServiceProvided serviceProvided : servicesProvided) {
-            serviceProvidedDTOs.add(new ServiceProvidedDTO(serviceProvided.name(), serviceProvided.date(), serviceProvided.data()));
+            serviceProvidedDTOs
+                    .add(new ServiceProvidedDTO(serviceProvided.name(), serviceProvided.date(),
+                            serviceProvided.data()));
         }
         return serviceProvidedDTOs;
     }
 
     private List<AlertDTO> getAlerts(String entityId) {
-        List<Alert> alerts = alertService.findByEntityIdAndAlertNames(entityId,
-                PNC_1_ALERT_NAME
-        );
+        List<Alert> alerts = alertService.findByEntityIdAndAlertNames(entityId, PNC_1_ALERT_NAME);
         List<AlertDTO> alertDTOs = new ArrayList<AlertDTO>();
         for (Alert alert : alerts) {
-            alertDTOs.add(new AlertDTO(alert.visitCode(), valueOf(alert.status()), alert.startDate()));
+            alertDTOs.add(new AlertDTO(alert.visitCode(), valueOf(alert.status()),
+                    alert.startDate()));
         }
         return alertDTOs;
     }
@@ -141,7 +144,8 @@ public class PNCSmartRegisterController {
     private void sortByName(List<? extends SmartRegisterClient> pncClients) {
         sort(pncClients, new Comparator<SmartRegisterClient>() {
             @Override
-            public int compare(SmartRegisterClient onePNCClient, SmartRegisterClient anotherPNCClient) {
+            public int compare(SmartRegisterClient onePNCClient, SmartRegisterClient
+                    anotherPNCClient) {
                 return onePNCClient.wifeName().compareToIgnoreCase(anotherPNCClient.wifeName());
             }
         });
@@ -151,7 +155,9 @@ public class PNCSmartRegisterController {
         List<Child> children = allBeneficiaries.findAllChildrenByMotherId(mother.caseId());
         List<ChildClient> childClientList = new ArrayList<ChildClient>();
         for (Child child : children) {
-            childClientList.add(new ChildClient(child.caseId(), child.gender(), child.getDetail("weight"), mother.thayiCardNumber()));
+            childClientList
+                    .add(new ChildClient(child.caseId(), child.gender(), child.getDetail("weight"),
+                            mother.thayiCardNumber()));
         }
         return childClientList;
     }

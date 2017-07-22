@@ -27,12 +27,14 @@ public class FormsVersionRepository extends DrishtiRepository {
     public static final String VERSION_COLUMN = "formDataDefinitionVersion";
     public static final String FORM_DIR_NAME_COLUMN = "formDirName";
     public static final String SYNC_STATUS_COLUMN = "syncStatus";
-    private static final String FORM_VERSION_SQL = "CREATE TABLE all_forms_version(id INTEGER PRIMARY KEY," +
-            "formName VARCHAR, formDirName VARCHAR, formDataDefinitionVersion VARCHAR, syncStatus VARCHAR)";
+    private static final String FORM_VERSION_SQL =
+            "CREATE TABLE all_forms_version(id INTEGER " + "PRIMARY KEY,"
+                    + "formName VARCHAR, formDirName VARCHAR, formDataDefinitionVersion "
+                    + "VARCHAR, syncStatus VARCHAR)";
     private static final String FORM_VERSION_TABLE_NAME = "all_forms_version";
     private static final String ID_COLUMN = "id";
-    public static final String[] FORM_VERSION_TABLE_COLUMNS = new String[]{ID_COLUMN, FORM_NAME_COLUMN,
-            FORM_DIR_NAME_COLUMN, VERSION_COLUMN, SYNC_STATUS_COLUMN};
+    public static final String[] FORM_VERSION_TABLE_COLUMNS = new String[]{ID_COLUMN,
+            FORM_NAME_COLUMN, FORM_DIR_NAME_COLUMN, VERSION_COLUMN, SYNC_STATUS_COLUMN};
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -41,44 +43,43 @@ public class FormsVersionRepository extends DrishtiRepository {
 
     public FormDefinitionVersion fetchVersionByFormName(String formName) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS, FORM_NAME_COLUMN + " = ?",
-                new String[]{formName}, null, null, null);
+        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS,
+                FORM_NAME_COLUMN + " " + "" + "= ?", new String[]{formName}, null, null, null);
         return readFormVersion(cursor).get(0);
     }
 
     public FormDefinitionVersion fetchVersionByFormDirName(String formDirName) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS, FORM_DIR_NAME_COLUMN + " = ?",
-                new String[]{formDirName}, null, null, null);
+        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS,
+                FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName}, null, null, null);
         return readFormVersion(cursor).get(0);
     }
 
     public String getVersion(String formDirName) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS, FORM_DIR_NAME_COLUMN + " = ?",
-                new String[]{formDirName}, null, null, null);
+        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS,
+                FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName}, null, null, null);
         return (readFormVersion(cursor).get(0)).getVersion();
     }
 
     public FormDefinitionVersion getFormByFormDirName(String formDirName) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS, FORM_DIR_NAME_COLUMN + " = ?",
-                new String[]{formDirName}, null, null, null);
+        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS,
+                FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName}, null, null, null);
         return (readFormVersion(cursor).get(0));
     }
 
-
     public List<FormDefinitionVersion> getAllFormWithSyncStatus(SyncStatus status) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS, SYNC_STATUS_COLUMN + " = ?",
-                new String[]{status.value()}, null, null, null);
+        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS,
+                SYNC_STATUS_COLUMN + " = ?", new String[]{status.value()}, null, null, null);
         return readFormVersion(cursor);
     }
 
     public List<Map<String, String>> getAllFormWithSyncStatusAsMap(SyncStatus status) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS, SYNC_STATUS_COLUMN + " = ?",
-                new String[]{status.value()}, null, null, null);
+        Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, FORM_VERSION_TABLE_COLUMNS,
+                SYNC_STATUS_COLUMN + " = ?", new String[]{status.value()}, null, null, null);
         return readFormVersionToMap(cursor);
     }
 
@@ -89,7 +90,8 @@ public class FormsVersionRepository extends DrishtiRepository {
 
     public void addFormVersionFromObject(FormDefinitionVersion formDefinitionVersion) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
-        database.insert(FORM_VERSION_TABLE_NAME, null, createValuesFromObject(formDefinitionVersion));
+        database.insert(FORM_VERSION_TABLE_NAME, null,
+                createValuesFromObject(formDefinitionVersion));
     }
 
     public void deleteAll() {
@@ -101,28 +103,30 @@ public class FormsVersionRepository extends DrishtiRepository {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(VERSION_COLUMN, serverVersion);
-        database.update(FORM_VERSION_TABLE_NAME, values, FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName});
+        database.update(FORM_VERSION_TABLE_NAME, values, FORM_DIR_NAME_COLUMN + " = ?",
+                new String[]{formDirName});
     }
 
     public void updateFormName(String formDirName, String formName) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(FORM_NAME_COLUMN, formName);
-        database.update(FORM_VERSION_TABLE_NAME, values, FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName});
+        database.update(FORM_VERSION_TABLE_NAME, values, FORM_DIR_NAME_COLUMN + " = ?",
+                new String[]{formDirName});
     }
 
     public void updateSyncStatus(String formDirName, SyncStatus status) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(SYNC_STATUS_COLUMN, status.value());
-        database.update(FORM_VERSION_TABLE_NAME, values, FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName});
+        database.update(FORM_VERSION_TABLE_NAME, values, FORM_DIR_NAME_COLUMN + " = ?",
+                new String[]{formDirName});
     }
 
     public boolean formExists(String formDirName) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.query(FORM_VERSION_TABLE_NAME, new String[]{FORM_DIR_NAME_COLUMN},
-                FORM_DIR_NAME_COLUMN
-                        + " = ?", new String[]{formDirName}, null, null, null);
+                FORM_DIR_NAME_COLUMN + " = ?", new String[]{formDirName}, null, null, null);
         boolean isThere = cursor.moveToFirst();
         cursor.close();
         return isThere;
@@ -147,8 +151,9 @@ public class FormsVersionRepository extends DrishtiRepository {
     }
 
     public long count() {
-        return longForQuery(masterRepository.getReadableDatabase(), "SELECT COUNT(1) FROM " + FORM_VERSION_TABLE_NAME
-                + " WHERE " + SYNC_STATUS_COLUMN + " = 'SYNCED'", new String[0]);
+        return longForQuery(masterRepository.getReadableDatabase(),
+                "SELECT COUNT(1) FROM " + FORM_VERSION_TABLE_NAME + " " + "WHERE "
+                        + SYNC_STATUS_COLUMN + " = 'SYNCED'", new String[0]);
     }
 
     private List<FormDefinitionVersion> readFormVersion(Cursor cursor) {
@@ -175,12 +180,14 @@ public class FormsVersionRepository extends DrishtiRepository {
         cursor.moveToFirst();
         List<Map<String, String>> submissions = new ArrayList<Map<String, String>>();
         while (!cursor.isAfterLast()) {
-            Map<String, String> _formDefinitionVersion = EasyMap.create(FORM_NAME_COLUMN, cursor.getString(cursor.getColumnIndex(FORM_NAME_COLUMN)))
-                    .put(FORM_DIR_NAME_COLUMN, cursor.getString(cursor.getColumnIndex(FORM_DIR_NAME_COLUMN)))
+            Map<String, String> _formDefinitionVersion = EasyMap.create(FORM_NAME_COLUMN,
+                    cursor.getString(cursor.getColumnIndex(FORM_NAME_COLUMN)))
+                    .put(FORM_DIR_NAME_COLUMN,
+                            cursor.getString(cursor.getColumnIndex(FORM_DIR_NAME_COLUMN)))
                     .put(VERSION_COLUMN, cursor.getString(cursor.getColumnIndex(VERSION_COLUMN)))
                     .put(ID_COLUMN, cursor.getString(cursor.getColumnIndex(ID_COLUMN)))
-                    .put(SYNC_STATUS_COLUMN, cursor.getString(cursor.getColumnIndex(SYNC_STATUS_COLUMN)))
-                    .map();
+                    .put(SYNC_STATUS_COLUMN,
+                            cursor.getString(cursor.getColumnIndex(SYNC_STATUS_COLUMN))).map();
 
             submissions.add(_formDefinitionVersion);
             cursor.moveToNext();

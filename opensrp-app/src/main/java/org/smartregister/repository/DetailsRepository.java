@@ -12,14 +12,15 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * Created by koros on 4/19/16.
  */
 public class DetailsRepository extends DrishtiRepository {
 
     private static final String TAG = "DetailsRepository";
-    private static final String SQL = "CREATE virtual table ec_details using fts4 (base_entity_id VARCHAR, key VARCHAR, value VARCHAR, event_date datetime)";
+    private static final String SQL =
+            "CREATE virtual table ec_details using fts4 " + "" + "(base_entity_id"
+                    + " VARCHAR, key VARCHAR, value VARCHAR, event_date datetime)";
     private static final String TABLE_NAME = "ec_details";
     private static final String BASE_ENTITY_ID_COLUMN = "base_entity_id";
     private static final String KEY_COLUMN = "key";
@@ -45,7 +46,9 @@ public class DetailsRepository extends DrishtiRepository {
         values.put(EVENT_DATE_COLUMN, timestamp);
 
         if (exists) {
-            int updated = database.update(TABLE_NAME, values, BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ", new String[]{baseEntityId, key});
+            int updated = database.update(TABLE_NAME, values,
+                    BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ",
+                    new String[]{baseEntityId, key});
             //Log.i(getClass().getName(), "Detail Row Updated: " + String.valueOf(updated));
         } else {
             long rowId = database.insert(TABLE_NAME, null, values);
@@ -57,7 +60,9 @@ public class DetailsRepository extends DrishtiRepository {
         Cursor mCursor = null;
         try {
             SQLiteDatabase db = masterRepository.getWritableDatabase();
-            String query = "SELECT " + VALUE_COLUMN + " FROM " + TABLE_NAME + " WHERE " + BASE_ENTITY_ID_COLUMN + " = '" + baseEntityId + "' AND " + KEY_COLUMN + " MATCH '" + key + "' ";
+            String query = "SELECT " + VALUE_COLUMN + " FROM " + TABLE_NAME + " WHERE "
+                    + BASE_ENTITY_ID_COLUMN + " = '" + baseEntityId + "' AND " + KEY_COLUMN + " "
+                    + "MATCH '" + key + "' ";
             mCursor = db.rawQuery(query, null);
             if (mCursor != null && mCursor.moveToFirst()) {
                 if (value != null) {
@@ -71,7 +76,9 @@ public class DetailsRepository extends DrishtiRepository {
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
         } finally {
-            if (mCursor != null) mCursor.close();
+            if (mCursor != null) {
+                mCursor.close();
+            }
         }
         return false;
     }
@@ -81,7 +88,9 @@ public class DetailsRepository extends DrishtiRepository {
         Map<String, String> clientDetails = new HashMap<String, String>();
         try {
             SQLiteDatabase db = masterRepository.getReadableDatabase();
-            String query = "SELECT * FROM " + TABLE_NAME + " WHERE " + BASE_ENTITY_ID_COLUMN + " = '" + baseEntityId + "'";
+            String query =
+                    "SELECT * FROM " + TABLE_NAME + " WHERE " + BASE_ENTITY_ID_COLUMN + " " + ""
+                            + "" + "= '" + baseEntityId + "'";
             cursor = db.rawQuery(query, null);
             if (cursor != null && cursor.moveToFirst()) {
                 do {
@@ -94,7 +103,9 @@ public class DetailsRepository extends DrishtiRepository {
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
         } finally {
-            if (cursor != null) cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return clientDetails;
     }
@@ -126,7 +137,8 @@ public class DetailsRepository extends DrishtiRepository {
     public boolean deleteDetails(String baseEntityId) {
         try {
             SQLiteDatabase db = masterRepository.getWritableDatabase();
-            int afftectedRows = db.delete(TABLE_NAME, BASE_ENTITY_ID_COLUMN + " = ?", new String[]{baseEntityId});
+            int afftectedRows = db
+                    .delete(TABLE_NAME, BASE_ENTITY_ID_COLUMN + " = ?", new String[]{baseEntityId});
             if (afftectedRows > 0) {
                 return true;
             }

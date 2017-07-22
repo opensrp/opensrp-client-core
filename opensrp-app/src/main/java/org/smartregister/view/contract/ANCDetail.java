@@ -19,8 +19,8 @@ public class ANCDetail {
     private List<TimelineEvent> timelineEvents;
     private Map<String, String> details;
 
-    public ANCDetail(String caseId, String thayiCardNumber, CoupleDetails coupleDetails, LocationDetails location,
-                     PregnancyDetails pregnancyDetails) {
+    public ANCDetail(String caseId, String thayiCardNumber, CoupleDetails coupleDetails,
+                     LocationDetails location, PregnancyDetails pregnancyDetails) {
         this.caseId = caseId;
         this.thayiCardNumber = thayiCardNumber;
         this.coupleDetails = coupleDetails;

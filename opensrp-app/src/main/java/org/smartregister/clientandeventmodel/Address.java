@@ -44,12 +44,12 @@ public class Address {
     @JsonProperty
     private String country;
 
-
     public Address() {
     }
 
-    public Address(String addressType, Date startDate, Date endDate, Map<String, String> addressFields,
-                   String latitude, String longitude, String postalCode, String stateProvince, String country) {
+    public Address(String addressType, Date startDate, Date endDate, Map<String, String>
+            addressFields, String latitude, String longitude, String postalCode, String
+            stateProvince, String country) {
         this.addressType = addressType;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -239,7 +239,6 @@ public class Address {
         this.country = country;
     }
 
-
     /**
      * True if endDate is null or endDate is in future
      *
@@ -251,7 +250,8 @@ public class Address {
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
      *
      * @return
      */
@@ -267,16 +267,19 @@ public class Address {
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
      *
      * @return
      */
     public int durationInDays() {
-        return (int) (durationInMillis() == -1 ? durationInMillis() : (durationInMillis() / (1000 * 60 * 60 * 24)));
+        return (int) (durationInMillis() == -1 ? durationInMillis()
+                : (durationInMillis() / (1000 * 60 * 60 * 24)));
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
      *
      * @return
      */
@@ -285,7 +288,8 @@ public class Address {
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
      *
      * @return
      */
@@ -294,7 +298,8 @@ public class Address {
     }
 
     /**
-     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     * If startDate is not specified returns -1. If endDate is not specified duration is from
+     * startDate to current date
      *
      * @return
      */

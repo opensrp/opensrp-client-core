@@ -26,13 +26,16 @@ public class FormSubmissionService {
     private AllSettings allSettings;
     private Map<String, AllCommonsRepository> allCommonsRepositoryMap;
 
-    public FormSubmissionService(ZiggyService ziggyService, FormDataRepository formDataRepository, AllSettings allSettings) {
+    public FormSubmissionService(ZiggyService ziggyService, FormDataRepository
+            formDataRepository, AllSettings allSettings) {
         this.ziggyService = ziggyService;
         this.formDataRepository = formDataRepository;
         this.allSettings = allSettings;
     }
 
-    public FormSubmissionService(ZiggyService ziggyService, FormDataRepository formDataRepository, AllSettings allSettings, Map<String, AllCommonsRepository> allCommonsRepositoryMap) {
+    public FormSubmissionService(ZiggyService ziggyService, FormDataRepository
+            formDataRepository, AllSettings allSettings, Map<String, AllCommonsRepository>
+            allCommonsRepositoryMap) {
         this.ziggyService = ziggyService;
         this.formDataRepository = formDataRepository;
         this.allSettings = allSettings;
@@ -49,23 +52,22 @@ public class FormSubmissionService {
                     updateFTSsearch(submission);
 
                 } catch (Exception e) {
-                    logError(format("Form submission processing failed, with instanceId: {0}. Exception: {1}, StackTrace: {2}",
-                            submission.instanceId(), e.getMessage(), ExceptionUtils.getStackTrace(e)));
+                    logError(format("Form submission processing failed, with instanceId: {0}. "
+                                    + "Exception: {1}, StackTrace: {2}", submission.instanceId(),
+                            e.getMessage(), ExceptionUtils.getStackTrace(e)));
                 }
             }
-            formDataRepository.updateServerVersion(submission.instanceId(), submission.serverVersion());
+            formDataRepository
+                    .updateServerVersion(submission.instanceId(), submission.serverVersion());
             allSettings.savePreviousFormSyncIndex(submission.serverVersion());
         }
     }
 
     private String getParams(FormSubmission submission) {
-        return new Gson().toJson(
-                create(INSTANCE_ID_PARAM, submission.instanceId())
-                        .put(ENTITY_ID_PARAM, submission.entityId())
-                        .put(FORM_NAME_PARAM, submission.formName())
-                        .put(VERSION_PARAM, submission.version())
-                        .put(SYNC_STATUS, SYNCED.value())
-                        .map());
+        return new Gson().toJson(create(INSTANCE_ID_PARAM, submission.instanceId())
+                .put(ENTITY_ID_PARAM, submission.entityId())
+                .put(FORM_NAME_PARAM, submission.formName())
+                .put(VERSION_PARAM, submission.version()).put(SYNC_STATUS, SYNCED.value()).map());
     }
 
     public void updateFTSsearch(FormSubmission formSubmission) {
@@ -84,7 +86,7 @@ public class FormSubmissionService {
 
         List<FormField> fields = form.fields();
 
-        if (fields != null && !fields.isEmpty())
+        if (fields != null && !fields.isEmpty()) {
             for (FormField field : fields) {
                 String source = field.source();
                 if (source != null && source.contains(".id")) {
@@ -96,6 +98,7 @@ public class FormSubmissionService {
                     }
                 }
             }
+        }
 
         List<SubForm> subForms = form.getSub_forms();
         if (subForms != null && !subForms.isEmpty()) {

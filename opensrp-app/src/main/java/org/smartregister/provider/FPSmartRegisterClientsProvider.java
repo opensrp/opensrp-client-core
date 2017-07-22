@@ -30,9 +30,8 @@ public class FPSmartRegisterClientsProvider implements SmartRegisterClientsProvi
     protected FPSmartRegisterController controller;
     private ServiceModeOption currentServiceModeOption;
 
-    public FPSmartRegisterClientsProvider(SecuredActivity activity,
-                                          View.OnClickListener onClickListener,
-                                          FPSmartRegisterController controller) {
+    public FPSmartRegisterClientsProvider(SecuredActivity activity, View.OnClickListener
+            onClickListener, FPSmartRegisterController controller) {
         this.onClickListener = onClickListener;
         this.controller = controller;
         this.activity = activity;
@@ -46,7 +45,8 @@ public class FPSmartRegisterClientsProvider implements SmartRegisterClientsProvi
     }
 
     @Override
-    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup viewGroup) {
+    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup
+            viewGroup) {
         ViewGroup itemView;
         NativeFPSmartRegisterViewHolder viewHolder;
         if (convertView == null) {
@@ -71,33 +71,37 @@ public class FPSmartRegisterClientsProvider implements SmartRegisterClientsProvi
         return itemView;
     }
 
-
-    private void setupClientProfileView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder) {
+    private void setupClientProfileView(FPSmartRegisterClient client,
+                                        NativeFPSmartRegisterViewHolder viewHolder) {
         viewHolder.profileInfoLayout().bindData(client, photoLoader);
         viewHolder.profileInfoLayout().setOnClickListener(onClickListener);
         viewHolder.profileInfoLayout().setTag(client);
     }
 
-    private void setupEcNumberView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder) {
+    private void setupEcNumberView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder) {
         viewHolder.txtECNumberView().setText(String.valueOf(client.ecNumber()));
     }
 
-    private void setupGPLSAView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder) {
+    private void setupGPLSAView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
+            viewHolder) {
         viewHolder.gplsaAndChildLayout().bindData(client);
     }
-
 
     @Override
     public SmartRegisterClients getClients() {
         NameSort nameSortOption = new NameSort();
         FilterOption filterOption = getFPFilterOptionBasedOnDialogTab(currentServiceModeOption);
-        return controller.getClients().applyFilterWithFP(currentServiceModeOption, nameSortOption, filterOption);
+        return controller.getClients()
+                .applyFilterWithFP(currentServiceModeOption, nameSortOption, filterOption);
     }
 
     @Override
-    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
-                                              FilterOption searchFilter, SortOption sortOption) {
-        return controller.getClients().applyFilterWithFP(serviceModeOption, sortOption, villageFilter, searchFilter, getFPFilterOptionBasedOnDialogTab(serviceModeOption));
+    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
+            serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
+        return controller.getClients()
+                .applyFilterWithFP(serviceModeOption, sortOption, villageFilter, searchFilter,
+                        getFPFilterOptionBasedOnDialogTab(serviceModeOption));
     }
 
     private FilterOption getFPFilterOptionBasedOnDialogTab(ServiceModeOption serviceModeOption) {

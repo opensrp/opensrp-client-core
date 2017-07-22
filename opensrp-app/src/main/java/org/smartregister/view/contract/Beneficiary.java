@@ -13,7 +13,8 @@ public class Beneficiary {
     private String villageName;
     private boolean isHighRisk;
 
-    public Beneficiary(String caseId, String womanName, String husbandName, String thayiCardNumber, String ecNumber, String villageName, boolean highRisk) {
+    public Beneficiary(String caseId, String womanName, String husbandName, String
+            thayiCardNumber, String ecNumber, String villageName, boolean highRisk) {
         this.caseId = caseId;
         this.womanName = womanName;
         this.husbandName = husbandName;

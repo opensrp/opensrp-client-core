@@ -24,11 +24,14 @@ public class ActionService {
     private AllSharedPreferences allSharedPreference;
     private AllReports allReports;
 
-    public ActionService(DrishtiService drishtiService, AllSettings allSettings, AllSharedPreferences allSharedPreferences, AllReports allReports) {
+    public ActionService(DrishtiService drishtiService, AllSettings allSettings,
+                         AllSharedPreferences allSharedPreferences, AllReports allReports) {
         this(drishtiService, allSettings, allSharedPreferences, allReports, null);
     }
 
-    public ActionService(DrishtiService drishtiService, AllSettings allSettings, AllSharedPreferences allSharedPreferences, AllReports allReports, ActionRouter actionRouter) {
+    public ActionService(DrishtiService drishtiService, AllSettings allSettings,
+                         AllSharedPreferences allSharedPreferences, AllReports allReports,
+                         ActionRouter actionRouter) {
         this.drishtiService = drishtiService;
         this.allSettings = allSettings;
         this.allSharedPreference = allSharedPreferences;
@@ -38,7 +41,8 @@ public class ActionService {
 
     public FetchStatus fetchNewActions() {
         String previousFetchIndex = allSettings.fetchPreviousFetchIndex();
-        Response<List<Action>> response = drishtiService.fetchNewActions(allSharedPreference.fetchRegisteredANM(), previousFetchIndex);
+        Response<List<Action>> response = drishtiService
+                .fetchNewActions(allSharedPreference.fetchRegisteredANM(), previousFetchIndex);
 
         if (response.isFailure()) {
             return fetchedFailed;
@@ -57,7 +61,9 @@ public class ActionService {
             try {
                 handleAction(actionToUse);
             } catch (Exception e) {
-                Log.logError(format("Failed while handling action with target: {0} and exception: {1}", actionToUse.target(), e));
+                Log.logError(
+                        format("Failed while handling action with target: {0} and " + "exception:"
+                                + " {1}", actionToUse.target(), e));
             }
         }
     }

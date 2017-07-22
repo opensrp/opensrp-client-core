@@ -13,7 +13,8 @@ public class CommonPersonObject {
     private Map<String, String> columnmaps;
     private short closed;
 
-    public CommonPersonObject(String caseId, String relationalid, Map<String, String> details, String type) {
+    public CommonPersonObject(String caseId, String relationalid, Map<String, String> details,
+                              String type) {
         this.details = details;
         this.caseId = caseId;
         this.type = type;

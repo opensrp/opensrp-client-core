@@ -27,9 +27,8 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     protected PNCSmartRegisterController controller;
     private ServiceModeOption currentServiceModeOption;
 
-    public PNCSmartRegisterClientsProvider(SecuredActivity activity,
-                                           View.OnClickListener onClickListener,
-                                           PNCSmartRegisterController controller) {
+    public PNCSmartRegisterClientsProvider(SecuredActivity activity, View.OnClickListener
+            onClickListener, PNCSmartRegisterController controller) {
         this.onClickListener = onClickListener;
         this.controller = controller;
         this.activity = activity;
@@ -43,7 +42,8 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     }
 
     @Override
-    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup viewGroup) {
+    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup
+            viewGroup) {
         ViewGroup itemView;
         NativePNCSmartRegisterViewHolder viewHolder;
         if (convertView == null) {
@@ -67,13 +67,15 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
         return itemView;
     }
 
-    private void setupClientProfileView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder) {
+    private void setupClientProfileView(PNCSmartRegisterClient client,
+                                        NativePNCSmartRegisterViewHolder viewHolder) {
         viewHolder.profileInfoLayout().bindData(client, photoLoader);
         viewHolder.profileInfoLayout().setOnClickListener(onClickListener);
         viewHolder.profileInfoLayout().setTag(client);
     }
 
-    private void setupThayiNumberView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder) {
+    private void setupThayiNumberView(PNCSmartRegisterClient client,
+                                      NativePNCSmartRegisterViewHolder viewHolder) {
         viewHolder.txtThayiNumberView().setText(client.thayiNumber());
     }
 
@@ -85,8 +87,8 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     }
 
     @Override
-    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
-                                              FilterOption searchFilter, SortOption sortOption) {
+    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
+            serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
 
         return getClients().applyFilter(villageFilter, serviceModeOption, searchFilter, sortOption);
     }

@@ -48,54 +48,63 @@ public class ServiceProvided {
     }
 
     public static ServiceProvided forHBTest(String entityId, String hbLevel, String date) {
-        return new ServiceProvided(entityId, HB_TEST_SERVICE_PROVIDED_NAME, date, mapOf("hbLevel", hbLevel));
+        return new ServiceProvided(entityId, HB_TEST_SERVICE_PROVIDED_NAME, date,
+                mapOf("hbLevel", hbLevel));
     }
 
-    public static ServiceProvided forIFATabletsGiven(String entityId, String numberOfIFATabletsGiven, String date) {
-        return new ServiceProvided(entityId, IFA_SERVICE_PROVIDED_NAME, date, mapOf("dose", numberOfIFATabletsGiven));
+    public static ServiceProvided forIFATabletsGiven(String entityId, String
+            numberOfIFATabletsGiven, String date) {
+        return new ServiceProvided(entityId, IFA_SERVICE_PROVIDED_NAME, date,
+                mapOf("dose", numberOfIFATabletsGiven));
     }
 
-    public static ServiceProvided forANCCareProvided(String entityId, String ancVisitNumber, String date, String bpSystolic, String bpDiastolic, String weight) {
+    public static ServiceProvided forANCCareProvided(String entityId, String ancVisitNumber,
+                                                     String date, String bpSystolic, String
+                                                             bpDiastolic, String weight) {
         return new ServiceProvided(entityId, ANC_SERVICE_PREFIX + ancVisitNumber, date,
-                create(BP_SYSTOLIC, bpSystolic)
-                        .put(BP_DIASTOLIC, bpDiastolic)
-                        .put(WEIGHT, weight)
-                        .map()
-        );
+                create(BP_SYSTOLIC, bpSystolic).put(BP_DIASTOLIC, bpDiastolic).put(WEIGHT, weight)
+                        .map());
     }
 
-    public static ServiceProvided forMotherPNCVisit(String entityId, String pncVisitDay, String date) {
+    public static ServiceProvided forMotherPNCVisit(String entityId, String pncVisitDay, String
+            date) {
         return new ServiceProvided(entityId, PNC_SERVICE_PROVIDED_NAME, date,
-                mapOf(PNC_VISIT_DAY, pncVisitDay)
-        );
+                mapOf(PNC_VISIT_DAY, pncVisitDay));
     }
 
-    public static ServiceProvided forDeliveryPlan(String entityId, String deliveryFacilityName, String transportationPlan, String birthCompanion, String ashaPhoneNumber, String familyContactNumber, String highRiskReason, String date) {
+    public static ServiceProvided forDeliveryPlan(String entityId, String deliveryFacilityName,
+                                                  String transportationPlan, String
+                                                          birthCompanion, String ashaPhoneNumber,
+                                                  String familyContactNumber, String
+                                                          highRiskReason, String date) {
         return new ServiceProvided(entityId, DELIVERY_PLAN_SERVICE_PROVIDED_NAME, date,
                 create(DELIVERY_FACILITY_NAME, deliveryFacilityName)
                         .put(TRANSPORTATION_PLAN, transportationPlan)
                         .put(BIRTH_COMPANION, birthCompanion)
                         .put(ASHA_PHONE_NUMBER, ashaPhoneNumber)
                         .put(PHONE_NUMBER, familyContactNumber)
-                        .put(REVIEWED_HRP_STATUS, highRiskReason).map()
-        );
+                        .put(REVIEWED_HRP_STATUS, highRiskReason).map());
     }
 
-    public static ServiceProvided forChildPNCVisit(String entityId, String pncVisitDay, String date) {
+    public static ServiceProvided forChildPNCVisit(String entityId, String pncVisitDay, String
+            date) {
         return new ServiceProvided(entityId, PNC_SERVICE_PROVIDED_NAME, date,
-                mapOf(PNC_VISIT_DAY, pncVisitDay)
-        );
+                mapOf(PNC_VISIT_DAY, pncVisitDay));
     }
 
-    public static ServiceProvided forChildImmunization(String entityId, String immunization, String date) {
+    public static ServiceProvided forChildImmunization(String entityId, String immunization,
+                                                       String date) {
         return new ServiceProvided(entityId, immunization, date, null);
     }
 
-    public static ServiceProvided forChildIllnessVisit(String entityId, String date, Map<String, String> childIllnessMap) {
-        return new ServiceProvided(entityId, CHILD_ILLNESS_SERVICE_PROVIDED_NAME, date, childIllnessMap);
+    public static ServiceProvided forChildIllnessVisit(String entityId, String date, Map<String,
+            String> childIllnessMap) {
+        return new ServiceProvided(entityId, CHILD_ILLNESS_SERVICE_PROVIDED_NAME, date,
+                childIllnessMap);
     }
 
-    public static ServiceProvided forVitaminAProvided(String entityId, String date, String vitaminADose, String vitaminAPlace) {
+    public static ServiceProvided forVitaminAProvided(String entityId, String date, String
+            vitaminADose, String vitaminAPlace) {
         return new ServiceProvided(entityId, VITAMIN_A_SERVICE_PROVIDED_NAME, date,
                 create(VITAMIN_A_DOSE, vitaminADose).put(VITAMIN_A_PLACE, vitaminAPlace).map());
     }

@@ -24,8 +24,8 @@ public class SmartRegisterPaginatedAdapter extends BaseAdapter {
         this(CLIENTS_PER_PAGE, listItemProvider);
     }
 
-    public SmartRegisterPaginatedAdapter(
-            int clientsPerPage, SmartRegisterClientsProvider listItemProvider) {
+    public SmartRegisterPaginatedAdapter(int clientsPerPage, SmartRegisterClientsProvider
+            listItemProvider) {
         this.clientsPerPage = clientsPerPage;
         this.listItemProvider = listItemProvider;
         refreshClients(listItemProvider.getClients());
@@ -60,7 +60,8 @@ public class SmartRegisterPaginatedAdapter extends BaseAdapter {
 
     @Override
     public View getView(int i, View parentView, ViewGroup viewGroup) {
-        return listItemProvider.getView((SmartRegisterClient) getItem(actualPosition(i)), parentView, viewGroup);
+        return listItemProvider
+                .getView((SmartRegisterClient) getItem(actualPosition(i)), parentView, viewGroup);
     }
 
     private int actualPosition(int i) {

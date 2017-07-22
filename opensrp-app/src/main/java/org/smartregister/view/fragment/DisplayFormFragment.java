@@ -42,7 +42,8 @@ public class DisplayFormFragment extends Fragment {
     private static final String headerTemplate = "web/forms/header";
     private static final String footerTemplate = "web/forms/footer";
     private static final String scriptFile = "web/forms/js_include.js";
-    public static String formInputErrorMessage = "Form contains errors please try again";// externalize this
+    public static String formInputErrorMessage = "Form contains errors please try again";//
+    // externalize this
     public static String okMessage = "ok";
     String formData = "";
     WebView webView;
@@ -97,7 +98,8 @@ public class DisplayFormFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle
+            savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.display_form_fragment, container, false);
         webView = (WebView) view.findViewById(R.id.webview);
@@ -117,7 +119,8 @@ public class DisplayFormFragment extends Fragment {
 
         webView.setWebViewClient(new AppWebViewClient(progressBar));
         webView.setWebChromeClient(new WebChromeClient() {
-            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
+            public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions
+                    .Callback callback) {
                 callback.invoke(origin, true, false);
             }
         });
@@ -125,7 +128,8 @@ public class DisplayFormFragment extends Fragment {
         webView.getSettings().setGeolocationDatabasePath(getActivity().getFilesDir().getPath());
         webView.getSettings().setDefaultTextEncodingName("utf-8");
 
-        final MyJavaScriptInterface myJavaScriptInterface = new MyJavaScriptInterface(getActivity());
+        final MyJavaScriptInterface myJavaScriptInterface = new MyJavaScriptInterface(
+                getActivity());
         webView.addJavascriptInterface(myJavaScriptInterface, "Android");
     }
 
@@ -154,7 +158,8 @@ public class DisplayFormFragment extends Fragment {
         if (modelString == null) {
             return;
         }
-        modelString = modelString.replaceAll("\"", "\\\\\"").replaceAll("\n", "").replaceAll("\r", "").replaceAll("/", "\\\\/");
+        modelString = modelString.replaceAll("\"", "\\\\\"").replaceAll("\n", "")
+                .replaceAll("\r", "").replaceAll("/", "\\\\/");
         String form = readFileAssets("www/form/" + formName + "/form.xml");
         String footer = readFileAssets(footerTemplate);
 
@@ -164,7 +169,8 @@ public class DisplayFormFragment extends Fragment {
 
         StringBuilder sb = new StringBuilder();
         sb.append(header).append(form).append(footer);
-        webView.loadDataWithBaseURL("file:///android_asset/web/forms/", sb.toString(), "text/html", "utf-8", null);
+        webView.loadDataWithBaseURL("file:///android_asset/web/forms/", sb.toString(), "text/html",
+                "utf-8", null);
         //webView.loadUrl("file:///android_asset/web/template.html");
 
         resizeForm();
@@ -285,8 +291,10 @@ public class DisplayFormFragment extends Fragment {
 
                 if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17) {
                     try {
-                        landWidthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(d);
-                        landHeightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(d);
+                        landWidthPixels = (Integer) Display.class.getMethod("getRawWidth")
+                                .invoke(d);
+                        landHeightPixels = (Integer) Display.class.getMethod("getRawHeight")
+                                .invoke(d);
                     } catch (Exception e) {
                         Log.e(TAG, e.toString(), e);
                     }
@@ -301,7 +309,8 @@ public class DisplayFormFragment extends Fragment {
                     }
                 }
 
-                webView.setLayoutParams(new RelativeLayout.LayoutParams(landHeightPixels, landWidthPixels));
+                webView.setLayoutParams(
+                        new RelativeLayout.LayoutParams(landHeightPixels, landWidthPixels));
             }
         });
     }
@@ -348,8 +357,7 @@ public class DisplayFormFragment extends Fragment {
         public void showFormErrorToast() {
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
 
-            builder.setMessage(formInputErrorMessage)
-                    .setCancelable(false)
+            builder.setMessage(formInputErrorMessage).setCancelable(false)
                     .setPositiveButton(okMessage, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             //do things
@@ -369,7 +377,9 @@ public class DisplayFormFragment extends Fragment {
         @JavascriptInterface
         public void processFormSubmission(String formSubmission) {
             showTranslucentProgressDialog();
-            ((SecuredNativeSmartRegisterActivity) getActivity()).saveFormSubmission(formSubmission, recordId, formName, getFormFieldsOverrides());
+            ((SecuredNativeSmartRegisterActivity) getActivity())
+                    .saveFormSubmission(formSubmission, recordId, formName,
+                            getFormFieldsOverrides());
         }
 
         @JavascriptInterface
@@ -382,7 +392,9 @@ public class DisplayFormFragment extends Fragment {
         public void savePartialFormData(String partialData) {
             //Toast.makeText(mContext, "saving un-submitted form data", Toast.LENGTH_LONG).show();
             if (formPartialSaving) {
-                ((SecuredNativeSmartRegisterActivity) getActivity()).savePartialFormData(partialData, recordId, formName, getFormFieldsOverrides());
+                ((SecuredNativeSmartRegisterActivity) getActivity())
+                        .savePartialFormData(partialData, recordId, formName,
+                                getFormFieldsOverrides());
             }
         }
 
@@ -390,7 +402,8 @@ public class DisplayFormFragment extends Fragment {
         public void log(String message) {
             Log.d(JAVASCRIPT_LOG_TAG, message);
             //Toast.makeText(mContext, message, Toast.LENGTH_LONG).show();
-            //((SecuredNativeSmartRegisterActivity)getActivity()).savePartialFormData(partialData, recordId, formName, getFormFieldsOverrides());
+            //((SecuredNativeSmartRegisterActivity)getActivity()).savePartialFormData
+            // (partialData, recordId, formName, getFormFieldsOverrides());
         }
     }
 }

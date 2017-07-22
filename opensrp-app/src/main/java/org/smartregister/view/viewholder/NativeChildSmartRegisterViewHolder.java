@@ -72,66 +72,99 @@ public class NativeChildSmartRegisterViewHolder {
         idDetailsView = (ClientIdDetailsView) itemView.findViewById(R.id.client_id_details_layout);
         idDetailsView.initialize();
 
-        serviceModeViewsHolder = (ViewGroup) itemView.findViewById(R.id.child_register_service_mode_options_view);
-        serviceModeOverviewView = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.overview_service_mode_views);
-        serviceModeImmunization0to9View = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.immunization0to9_service_mode_views);
-        serviceModeImmunization9PlusView = (ViewGroup) serviceModeViewsHolder.findViewById(R.id.immunization9plus_service_mode_views);
+        serviceModeViewsHolder = (ViewGroup) itemView
+                .findViewById(R.id.child_register_service_mode_options_view);
+        serviceModeOverviewView = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.overview_service_mode_views);
+        serviceModeImmunization0to9View = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.immunization0to9_service_mode_views);
+        serviceModeImmunization9PlusView = (ViewGroup) serviceModeViewsHolder
+                .findViewById(R.id.immunization9plus_service_mode_views);
 
         txtDobView = (TextView) serviceModeOverviewView.findViewById(R.id.child_register_dob);
         editButton = (ImageButton) serviceModeOverviewView.findViewById(R.id.btn_edit);
-        txtLastServiceDate = (TextView) serviceModeOverviewView.findViewById(R.id.last_service_date);
-        txtLastServiceName = (TextView) serviceModeOverviewView.findViewById(R.id.last_service_name);
+        txtLastServiceDate = (TextView) serviceModeOverviewView
+                .findViewById(R.id.last_service_date);
+        txtLastServiceName = (TextView) serviceModeOverviewView
+                .findViewById(R.id.last_service_name);
         txtSickVisit = (TextView) serviceModeOverviewView.findViewById(R.id.btn_sick_visit);
         sicknessDeailLayout = serviceModeOverviewView.findViewById(R.id.sick_details_layout);
         lblIllnessDate = (TextView) sicknessDeailLayout.findViewById(R.id.lbl_illness_date);
         txtIllness = (TextView) sicknessDeailLayout.findViewById(R.id.txt_illness);
         txtIllnessDate = (TextView) sicknessDeailLayout.findViewById(R.id.txt_illness_date);
 
-        txtBcgPendingView = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_bcg_pending);
+        txtBcgPendingView = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_bcg_pending);
         layoutBcgOn = serviceModeImmunization0to9View.findViewById(R.id.layout_bcg_on);
         txtBcgDoneOn = (TextView) layoutBcgOn.findViewById(R.id.txt_bcg_on);
 
         btnOpv = (TextView) serviceModeImmunization0to9View.findViewById(R.id.btn_opv);
         layoutOpvAlert = serviceModeImmunization0to9View.findViewById(R.id.layout_opv_alert);
         txtOpvDoneOn = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_opv_on);
-        txtOpvAlertDueType = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_opv_due_type);
-        txtOpvAlertDueOn = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_opv_due_on);
+        txtOpvAlertDueType = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_opv_due_type);
+        txtOpvAlertDueOn = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_opv_due_on);
 
         btnHepB = (TextView) serviceModeImmunization0to9View.findViewById(R.id.btn_hep_b_birth);
-        layoutHepBAlert = serviceModeImmunization0to9View.findViewById(R.id.layout_hep_b_birth_alert);
+        layoutHepBAlert = serviceModeImmunization0to9View
+                .findViewById(R.id.layout_hep_b_birth_alert);
         txtHepBDoneOn = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_hep_b_on);
-        txtHepBAlertDueType = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_hep_b_birth_due_type);
-        txtHepBAlertDueOn = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_hep_b_birth_due_on);
+        txtHepBAlertDueType = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_hep_b_birth_due_type);
+        txtHepBAlertDueOn = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_hep_b_birth_due_on);
 
-        txtPentavDoneOn = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_pentav_on);
+        txtPentavDoneOn = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_pentav_on);
         btnPentav = (TextView) serviceModeImmunization0to9View.findViewById(R.id.btn_pentav);
         layoutPentavAlert = serviceModeImmunization0to9View.findViewById(R.id.layout_pentav_alert);
-        txtPentavAlertDueType = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_pentav_due_type);
-        txtPentavAlertDueOn = (TextView) serviceModeImmunization0to9View.findViewById(R.id.txt_pentav_due_on);
+        txtPentavAlertDueType = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_pentav_due_type);
+        txtPentavAlertDueOn = (TextView) serviceModeImmunization0to9View
+                .findViewById(R.id.txt_pentav_due_on);
 
-        txtMeaslesDoneOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_measles_on);
+        txtMeaslesDoneOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_measles_on);
         btnMeasles = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.btn_measles);
-        layoutMeaslesAlert = serviceModeImmunization9PlusView.findViewById(R.id.layout_measles_alert);
-        txtMeaslesAlertDueType = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_measles_due_type);
-        txtMeaslesAlertDueOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_measles_due_on);
+        layoutMeaslesAlert = serviceModeImmunization9PlusView
+                .findViewById(R.id.layout_measles_alert);
+        txtMeaslesAlertDueType = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_measles_due_type);
+        txtMeaslesAlertDueOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_measles_due_on);
 
-        txtOpvBoosterDoneOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_opv_booster_on);
-        btnOpvBooster = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.btn_opv_booster);
-        layoutOpvBoosterAlert = serviceModeImmunization9PlusView.findViewById(R.id.layout_opv_booster_alert);
-        txtOpvBoosterAlertDueType = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_opv_booster_due_type);
-        txtOpvBoosterAlertDueOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_opv_booster_due_on);
+        txtOpvBoosterDoneOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_opv_booster_on);
+        btnOpvBooster = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.btn_opv_booster);
+        layoutOpvBoosterAlert = serviceModeImmunization9PlusView
+                .findViewById(R.id.layout_opv_booster_alert);
+        txtOpvBoosterAlertDueType = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_opv_booster_due_type);
+        txtOpvBoosterAlertDueOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_opv_booster_due_on);
 
-        txtDptBoosterDoneOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_dpt_booster_on);
-        btnDptBooster = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.btn_dpt_booster);
-        layoutDptBoosterAlert = serviceModeImmunization9PlusView.findViewById(R.id.layout_dpt_booster_alert);
-        txtDptBoosterAlertDueType = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_dpt_booster_due_type);
-        txtDptBoosterAlertDueOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_dpt_booster_due_on);
+        txtDptBoosterDoneOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_dpt_booster_on);
+        btnDptBooster = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.btn_dpt_booster);
+        layoutDptBoosterAlert = serviceModeImmunization9PlusView
+                .findViewById(R.id.layout_dpt_booster_alert);
+        txtDptBoosterAlertDueType = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_dpt_booster_due_type);
+        txtDptBoosterAlertDueOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_dpt_booster_due_on);
 
-        txtVitaminADoneOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_vitamin_a_on);
+        txtVitaminADoneOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_vitamin_a_on);
         btnVitaminA = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.btn_vitamin_a);
-        layoutVitaminAAlert = serviceModeImmunization9PlusView.findViewById(R.id.layout_vitamin_a_alert);
-        txtVitaminAAlertDueType = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_vitamin_a_due_type);
-        txtVitaminAAlertDueOn = (TextView) serviceModeImmunization9PlusView.findViewById(R.id.txt_vitamin_a_due_on);
+        layoutVitaminAAlert = serviceModeImmunization9PlusView
+                .findViewById(R.id.layout_vitamin_a_alert);
+        txtVitaminAAlertDueType = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_vitamin_a_due_type);
+        txtVitaminAAlertDueOn = (TextView) serviceModeImmunization9PlusView
+                .findViewById(R.id.txt_vitamin_a_due_on);
     }
 
     public ClientProfileView profileInfoLayout() {

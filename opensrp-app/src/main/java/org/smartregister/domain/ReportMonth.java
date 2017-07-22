@@ -15,12 +15,15 @@ public class ReportMonth {
 
     public Date startDateOfReportingYear() {
         int reportingYear = reportingYear();
-        return new LocalDate().withDayOfMonth(REPORTING_MONTH_START_DAY).withMonthOfYear(FIRST_REPORT_MONTH_OF_YEAR).withYear(reportingYear).toDate();
+        return new LocalDate().withDayOfMonth(REPORTING_MONTH_START_DAY)
+                .withMonthOfYear(FIRST_REPORT_MONTH_OF_YEAR).withYear(reportingYear).toDate();
     }
 
     public int reportingYear() {
         LocalDate now = DateUtil.today();
-        LocalDate beginningOfReportingYear = DateUtil.today().withMonthOfYear(FIRST_REPORT_MONTH_OF_YEAR).withDayOfMonth(REPORTING_MONTH_START_DAY);
+        LocalDate beginningOfReportingYear = DateUtil.today()
+                .withMonthOfYear(FIRST_REPORT_MONTH_OF_YEAR)
+                .withDayOfMonth(REPORTING_MONTH_START_DAY);
         return now.isBefore(beginningOfReportingYear) ? previousYear(now) : now.getYear();
     }
 
@@ -31,7 +34,8 @@ public class ReportMonth {
         if (date.getMonthOfYear() == DECEMBER) {
             return new LocalDate(date.plusYears(1).getYear(), JANUARY, REPORTING_MONTH_START_DAY);
         }
-        return new LocalDate(date.getYear(), date.plusMonths(1).getMonthOfYear(), REPORTING_MONTH_START_DAY);
+        return new LocalDate(date.getYear(), date.plusMonths(1).getMonthOfYear(),
+                REPORTING_MONTH_START_DAY);
     }
 
     public LocalDate endDateOfReportingMonthGivenStartDate(LocalDate startDate) {
@@ -61,8 +65,8 @@ public class ReportMonth {
     }
 
     public boolean isDateWithinCurrentReportMonth(LocalDate lastReportedDate) {
-        return !(lastReportedDate.isBefore(startOfCurrentReportMonth(DateUtil.today())) ||
-                lastReportedDate.isAfter(endOfCurrentReportMonth(DateUtil.today())));
+        return !(lastReportedDate.isBefore(startOfCurrentReportMonth(DateUtil.today()))
+                || lastReportedDate.isAfter(endOfCurrentReportMonth(DateUtil.today())));
     }
 
     private int previousMonth(LocalDate today) {

@@ -22,7 +22,8 @@ public class DateUtil {
     private static final String TAG = "DateUtil";
     public static DateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static DateFormat yyyyMMddTHHmmssSSSZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    public static DateFormat yyyyMMddTHHmmssSSSZ = new SimpleDateFormat(
+            "yyyy-MM-dd'T'HH:mm:ss" + ".SSS'Z'");
     private static DateUtility dateUtility = new RealDate();
     //2017-03-01T14:04:20.865Z
 
@@ -38,9 +39,11 @@ public class DateUtil {
         return dateUtility.millis();
     }
 
-    public static boolean isDateWithinGivenPeriodBeforeToday(LocalDate referenceDateForSchedule, Period period) {
+    public static boolean isDateWithinGivenPeriodBeforeToday(LocalDate referenceDateForSchedule,
+                                                             Period period) {
         //TODO:
-        //return inRange(toTime(referenceDateForSchedule), toTime(today().minus(period)), toTime(today()));
+        //return inRange(toTime(referenceDateForSchedule), toTime(today().minus(period)), toTime
+        // (today()));
         return true;
     }
 

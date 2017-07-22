@@ -54,7 +54,8 @@ public class CloudantDataHandler {
         this.mContext = context;
 
         // Set up our datastore within its own folder in the applications data directory.
-        File path = this.mContext.getApplicationContext().getDir(DATASTORE_MANGER_DIR, Context.MODE_PRIVATE);
+        File path = this.mContext.getApplicationContext()
+                .getDir(DATASTORE_MANGER_DIR, Context.MODE_PRIVATE);
         DatastoreManager manager = new DatastoreManager(path.getAbsolutePath());
         this.mDatastore = manager.openDatastore(DATASTORE_NAME);
 
@@ -85,13 +86,16 @@ public class CloudantDataHandler {
 
             if (StringUtils.isNotBlank(documentId)) {
                 SQLiteDatabase db = loadDatabase();
-                String query = "select json from revs r inner join docs d on r.doc_id=d.doc_id where  d.docid='" + documentId + "' and length(json)>2 order by updated_at desc";
+                String query = "select json from revs r inner join docs d on r.doc_id=d.doc_id "
+                        + "where  d.docid='" + documentId + "' and length(json)>2 order by "
+                        + "updated_at desc";
                 Log.i(getClass().getName(), query);
                 Cursor cursor = db.rawQuery(query, null);
                 if (cursor != null && cursor.moveToFirst()) {
                     byte[] json = (cursor.getBlob(0));
                     String jsonEventStr = new String(json, "UTF-8");
-                    if (StringUtils.isNotBlank(jsonEventStr) && !jsonEventStr.equals("{}")) { // Check blank/empty json string
+                    if (StringUtils.isNotBlank(jsonEventStr) && !jsonEventStr.equals("{}")) { //
+                        // Check blank/empty json string
                         JSONObject jsonObectClient = new JSONObject(jsonEventStr);
                         return jsonObectClient;
                     }
@@ -135,7 +139,8 @@ public class CloudantDataHandler {
 
         List<String> fields = Arrays.asList(baseEntityIdJSONKey);
 
-        Iterator<DocumentRevision> iterator = this.mIndexManager.find(query, 0, 0, fields, null).iterator();
+        Iterator<DocumentRevision> iterator = this.mIndexManager.find(query, 0, 0, fields, null)
+                .iterator();
 
         if (iterator != null && iterator.hasNext()) {
             DocumentRevision rev = iterator.next();
@@ -151,7 +156,8 @@ public class CloudantDataHandler {
 
         List<JSONObject> eventAndAlerts = new ArrayList<JSONObject>();
         SQLiteDatabase db = loadDatabase();
-        String query = "select json, updated_at from revs where updated_at > '" + lastSyncString + "'  and length(json)>2 order by updated_at asc ";
+        String query = "select json, updated_at from revs where updated_at > '" + lastSyncString
+                + "'  and length(json)>2 order by updated_at asc ";
         Log.i(getClass().getName(), query);
         Cursor cursor = db.rawQuery(query, null);
 
@@ -159,23 +165,28 @@ public class CloudantDataHandler {
             while (cursor.moveToNext()) {
                 byte[] json = (cursor.getBlob(0));
                 String jsonEventStr = new String(json, "UTF-8");
-                if (StringUtils.isBlank(jsonEventStr) || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                if (StringUtils.isBlank(jsonEventStr) || jsonEventStr.equals("{}")) { // Skip
+                    // blank/empty json string
                     continue;
                 }
 
                 JSONObject jsonObectEventOrAlert = new JSONObject(jsonEventStr);
-                String type = jsonObectEventOrAlert.has("type") ? jsonObectEventOrAlert.getString("type") : null;
+                String type =
+                        jsonObectEventOrAlert.has("type") ? jsonObectEventOrAlert.getString("type")
+                                : null;
                 if (StringUtils.isBlank(type)) { // Skip blank types
                     continue;
                 }
 
-                if (!type.equals("Event") && !type.equals("Action")) { // Skip type that isn't Event or Action
+                if (!type.equals("Event") && !type.equals("Action")) { // Skip type that isn't
+                    // Event or Action
                     continue;
                 }
 
                 eventAndAlerts.add(jsonObectEventOrAlert);
                 try {
-                    lastSyncDate.setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1)).getTime());
+                    lastSyncDate
+                            .setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1)).getTime());
                 } catch (ParseException e) {
                     Log.e(TAG, e.toString(), e);
                 }
@@ -187,7 +198,6 @@ public class CloudantDataHandler {
         if (eventAndAlerts.isEmpty()) {
             return eventAndAlerts;
         }
-
 
         Collections.sort(eventAndAlerts, new Comparator<JSONObject>() {
             @Override
@@ -235,14 +245,12 @@ public class CloudantDataHandler {
         try {
             String dataStoreName = mContext.getString(R.string.datastore_name);
             // data directory.
-            File path = mContext.getDir(
-                    AllConstants.DATASTORE_MANAGER_DIR,
-                    android.content.Context.MODE_PRIVATE
-            );
-            String dbpath = path.getAbsolutePath().concat(File.separator).concat(dataStoreName).concat(File.separator).concat("db.sync");
+            File path = mContext.getDir(AllConstants.DATASTORE_MANAGER_DIR,
+                    android.content.Context.MODE_PRIVATE);
+            String dbpath = path.getAbsolutePath().concat(File.separator).concat(dataStoreName)
+                    .concat(File.separator).concat("db.sync");
             db = SQLiteDatabase.openDatabase(dbpath, null, SQLiteDatabase.CREATE_IF_NECESSARY);
             // ((HelloCloudantApplication) this.getApplication()).setCloudantDB(db);
-
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());

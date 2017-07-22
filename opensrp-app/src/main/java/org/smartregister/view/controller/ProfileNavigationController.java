@@ -12,7 +12,8 @@ import static org.smartregister.AllConstants.CASE_ID;
 public class ProfileNavigationController {
 
     public static void navigateToECProfile(android.content.Context context, String caseId) {
-        Intent intent = new Intent(context.getApplicationContext(), EligibleCoupleDetailActivity.class);
+        Intent intent = new Intent(context.getApplicationContext(),
+                EligibleCoupleDetailActivity.class);
         intent.putExtra(CASE_ID, caseId);
         context.startActivity(intent);
     }

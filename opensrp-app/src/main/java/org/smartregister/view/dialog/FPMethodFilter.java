@@ -40,14 +40,15 @@ public class FPMethodFilter implements FilterOption {
     }
 
     private boolean isWithFPMethodAsNone(FPMethod fpMethod) {
-        return fpMethod == FPMethod.NONE_PS || fpMethod == FPMethod.NONE_SS || fpMethod == FPMethod.NONE;
+        return fpMethod == FPMethod.NONE_PS || fpMethod == FPMethod.NONE_SS
+                || fpMethod == FPMethod.NONE;
     }
 
     private boolean doesClientUseOtherFpMethod(FPSmartRegisterClient fpClient) {
         String currentMethod = fpClient.fpMethod().displayName();
-        return currentMethod.equalsIgnoreCase(FPMethod.LAM.displayName()) ||
-                currentMethod.equalsIgnoreCase(FPMethod.TRADITIONAL_METHODS.displayName()) ||
-                currentMethod.equalsIgnoreCase(FPMethod.CENTCHROMAN.displayName());
+        return currentMethod.equalsIgnoreCase(FPMethod.LAM.displayName()) || currentMethod
+                .equalsIgnoreCase(FPMethod.TRADITIONAL_METHODS.displayName()) || currentMethod
+                .equalsIgnoreCase(FPMethod.CENTCHROMAN.displayName());
     }
 
     private boolean doesClientUseFpMethod(FPSmartRegisterClient fpClient) {

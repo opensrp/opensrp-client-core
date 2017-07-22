@@ -36,14 +36,12 @@ public class ChildSmartRegisterClientsProvider implements SmartRegisterClientsPr
 
     private ServiceModeOption currentServiceModeOption;
 
-    public ChildSmartRegisterClientsProvider(SecuredActivity activity,
-                                             View.OnClickListener onClickListener,
-                                             ChildSmartRegisterController controller) {
+    public ChildSmartRegisterClientsProvider(SecuredActivity activity, View.OnClickListener
+            onClickListener, ChildSmartRegisterController controller) {
         this.onClickListener = onClickListener;
         this.controller = controller;
         this.activity = activity;
         this.inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
 
         photoLoader = new ChildRegisterProfilePhotoLoader(
                 activity.getResources().getDrawable(R.drawable.child_boy_infant),
@@ -54,7 +52,8 @@ public class ChildSmartRegisterClientsProvider implements SmartRegisterClientsPr
     }
 
     @Override
-    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup viewGroup) {
+    public View getView(SmartRegisterClient smartRegisterClient, View convertView, ViewGroup
+            viewGroup) {
         ViewGroup itemView;
         NativeChildSmartRegisterViewHolder viewHolder;
         if (convertView == null) {
@@ -82,13 +81,15 @@ public class ChildSmartRegisterClientsProvider implements SmartRegisterClientsPr
         return itemView;
     }
 
-    private void setupClientProfileView(SmartRegisterClient client, NativeChildSmartRegisterViewHolder viewHolder) {
+    private void setupClientProfileView(SmartRegisterClient client,
+                                        NativeChildSmartRegisterViewHolder viewHolder) {
         viewHolder.profileInfoLayout().bindData(client, photoLoader);
         viewHolder.profileInfoLayout().setOnClickListener(onClickListener);
         viewHolder.profileInfoLayout().setTag(client);
     }
 
-    private void setupIdDetailsView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder viewHolder) {
+    private void setupIdDetailsView(ChildSmartRegisterClient client,
+                                    NativeChildSmartRegisterViewHolder viewHolder) {
         viewHolder.idDetailsView().bindData(client);
     }
 
@@ -98,8 +99,8 @@ public class ChildSmartRegisterClientsProvider implements SmartRegisterClientsPr
     }
 
     @Override
-    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
-                                              FilterOption searchFilter, SortOption sortOption) {
+    public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
+            serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
         return getClients().applyFilter(villageFilter, serviceModeOption, searchFilter, sortOption);
     }
 

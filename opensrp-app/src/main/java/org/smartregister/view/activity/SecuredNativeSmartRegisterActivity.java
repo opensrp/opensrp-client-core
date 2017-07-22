@@ -56,7 +56,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     public static final String TAG = "SecuredNativeSmartRegisterActivity";
     public static final String DIALOG_TAG = "dialog";
-    public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(new AllClientsFilter());
+    public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(
+            new AllClientsFilter());
     private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
     private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
     private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
@@ -116,7 +117,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     protected void onCreation() {
         setContentView(R.layout.smart_register_activity);
 
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        this.getWindow()
+                .setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         onInitialization();
 
@@ -216,9 +218,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             @Override
             public void onTextChanged(CharSequence cs, int start, int before, int count) {
                 currentSearchFilter = new ECSearchOption(cs.toString());
-                clientsAdapter
-                        .refreshList(currentVillageFilter, currentServiceModeOption,
-                                currentSearchFilter, currentSortOption);
+                clientsAdapter.refreshList(currentVillageFilter, currentServiceModeOption,
+                        currentSearchFilter, currentSortOption);
 
                 searchCancelView.setVisibility(isEmpty(cs) ? INVISIBLE : VISIBLE);
             }
@@ -233,9 +234,10 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     private void setReportDates(TextView titleView) {
         ReportMonth report = new ReportMonth();
-        titleView.setText(report.startOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT)
-                + " - "
-                + report.endOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT));
+        titleView.setText(
+                report.startOfCurrentReportMonth(LocalDate.now()).toString(SHORT_DATE_FORMAT)
+                        + " - " + report.endOfCurrentReportMonth(LocalDate.now())
+                        .toString(SHORT_DATE_FORMAT));
     }
 
     private void updateDefaultOptions() {
@@ -264,15 +266,13 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private View getColumnHeaderView(int i, int[] weights, int[] headerTxtResIds) {
-        CustomFontTextView header = new CustomFontTextView(this, null, R.style.CustomFontTextViewStyle_Header_Black);
+        CustomFontTextView header = new CustomFontTextView(this, null,
+                R.style.CustomFontTextViewStyle_Header_Black);
         header.setFontVariant(FontVariant.BLACK);
         header.setTextSize(16);
         header.setTextColor(getResources().getColor(R.color.client_list_header_text_color));
-        LinearLayout.LayoutParams lp =
-                new LinearLayout.LayoutParams(
-                        0,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        weights[i]);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0,
+                ViewGroup.LayoutParams.MATCH_PARENT, weights[i]);
 
         header.setLayoutParams(lp);
         header.setText(headerTxtResIds[i]);
@@ -297,8 +297,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         currentServiceModeOption = serviceModeOption;
         serviceModeView.setText(serviceModeOption.name());
         clientsAdapter
-                .refreshList(currentVillageFilter, currentServiceModeOption,
-                        currentSearchFilter, currentSortOption);
+                .refreshList(currentVillageFilter, currentServiceModeOption, currentSearchFilter,
+                        currentSortOption);
 
         populateClientListHeaderView(serviceModeOption.getHeaderProvider());
     }
@@ -307,23 +307,24 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         currentSortOption = sortBy;
         appliedSortView.setText(sortBy.name());
         clientsAdapter
-                .refreshList(currentVillageFilter, currentServiceModeOption,
-                        currentSearchFilter, currentSortOption);
+                .refreshList(currentVillageFilter, currentServiceModeOption, currentSearchFilter,
+                        currentSortOption);
     }
 
     protected void onFilterSelection(FilterOption filter) {
         currentVillageFilter = filter;
         appliedVillageFilterView.setText(filter.name());
         clientsAdapter
-                .refreshList(currentVillageFilter, currentServiceModeOption,
-                        currentSearchFilter, currentSortOption);
+                .refreshList(currentVillageFilter, currentServiceModeOption, currentSearchFilter,
+                        currentSortOption);
     }
 
     protected void onEditSelection(EditOption editOption, SmartRegisterClient client) {
         editOption.doEdit(client);
     }
 
-    protected void onEditSelectionWithMetadata(EditOption editOption, SmartRegisterClient client, String metadata) {
+    protected void onEditSelectionWithMetadata(EditOption editOption, SmartRegisterClient client,
+                                               String metadata) {
         editOption.doEditWithMetadata(client, metadata);
     }
 
@@ -347,9 +348,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
         ft.addToBackStack(null);
 
-        SmartRegisterDialogFragment
-                .newInstance(this, dialogOptionModel, tag)
-                .show(ft, DIALOG_TAG);
+        SmartRegisterDialogFragment.newInstance(this, dialogOptionModel, tag).show(ft, DIALOG_TAG);
     }
 
     protected abstract DefaultOptionsProvider getDefaultOptionsProvider();
@@ -362,21 +361,20 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     public abstract void startRegistration();
 
-    public void saveFormSubmission(String formSubmision, String id, String formName, JSONObject fieldOverrides) {
+    public void saveFormSubmission(String formSubmision, String id, String formName, JSONObject
+            fieldOverrides) {
         Log.e("saveFormSubmission()", "Override this method in child class");
     }
 
     protected String getParams(FormSubmission submission) {
-        return new Gson().toJson(
-                create(INSTANCE_ID_PARAM, submission.instanceId())
-                        .put(ENTITY_ID_PARAM, submission.entityId())
-                        .put(FORM_NAME_PARAM, submission.formName())
-                        .put(VERSION_PARAM, submission.version())
-                        .put(SYNC_STATUS, PENDING.value())
-                        .map());
+        return new Gson().toJson(create(INSTANCE_ID_PARAM, submission.instanceId())
+                .put(ENTITY_ID_PARAM, submission.entityId())
+                .put(FORM_NAME_PARAM, submission.formName())
+                .put(VERSION_PARAM, submission.version()).put(SYNC_STATUS, PENDING.value()).map());
     }
 
-    public void savePartialFormData(String formData, String id, String formName, JSONObject fieldOverrides) {
+    public void savePartialFormData(String formData, String id, String formName, JSONObject
+            fieldOverrides) {
         try {
             //Save the current form data into shared preferences
             SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -413,15 +411,17 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
                 overrides = new JSONObject(s);
             }
 
-            boolean idIsConsistent = id == null && !sharedPref.contains(idKey) ||
-                    id != null && sharedPref.contains(idKey) && sharedPref.getString(idKey, null).equals(id);
+            boolean idIsConsistent =
+                    id == null && !sharedPref.contains(idKey) || id != null && sharedPref
+                            .contains(idKey) && sharedPref.getString(idKey, null).equals(id);
 
-            if (sharedPref.contains(savedDataKey) && sharedPref.contains(overridesKey) && idIsConsistent) {
+            if (sharedPref.contains(savedDataKey) && sharedPref.contains(overridesKey)
+                    && idIsConsistent) {
                 String savedDataStr = sharedPref.getString(savedDataKey, null);
                 String savedOverridesStr = sharedPref.getString(overridesKey, null);
 
-
-                // the previously saved data is only returned if the overrides and id are the same ones used previously
+                // the previously saved data is only returned if the overrides and id are the
+                // same ones used previously
                 if (savedOverridesStr.equals(overrides.toString())) {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     //after retrieving the value delete it from shared pref.
@@ -557,26 +557,26 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             nextPageView.setOnClickListener(this);
             previousPageView.setOnClickListener(this);
 
-            footerView.setLayoutParams(new AbsListView.LayoutParams(
-                    AbsListView.LayoutParams.MATCH_PARENT,
-                    (int) getResources().getDimension(R.dimen.pagination_bar_height)));
+            footerView.setLayoutParams(
+                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
+                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
 
             clientsView.addFooterView(footerView);
         }
 
         private ViewGroup getPaginationView() {
-            return (ViewGroup) getLayoutInflater().inflate(R.layout.smart_register_pagination, null);
+            return (ViewGroup) getLayoutInflater()
+                    .inflate(R.layout.smart_register_pagination, null);
         }
 
         private int getCurrentPageCount() {
-            return clientsAdapter.currentPage() + 1 > clientsAdapter.pageCount() ? clientsAdapter.pageCount() : clientsAdapter.currentPage() + 1;
+            return clientsAdapter.currentPage() + 1 > clientsAdapter.pageCount() ? clientsAdapter
+                    .pageCount() : clientsAdapter.currentPage() + 1;
         }
 
         public void refresh() {
-            pageInfoView.setText(
-                    format(getResources().getString(R.string.str_page_info),
-                            (getCurrentPageCount()),
-                            (clientsAdapter.pageCount())));
+            pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
+                    (getCurrentPageCount()), (clientsAdapter.pageCount())));
             nextPageView.setVisibility(clientsAdapter.hasNextPage() ? VISIBLE : INVISIBLE);
             previousPageView.setVisibility(clientsAdapter.hasPreviousPage() ? VISIBLE : INVISIBLE);
         }
@@ -639,6 +639,5 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             searchView.setText("");
         }
     }
-
 
 }

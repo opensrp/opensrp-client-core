@@ -12,8 +12,8 @@ import java.util.ArrayList;
 public class SmartRegisterClients extends ArrayList<SmartRegisterClient> {
 
     //#TODO: REMOVE THIS METHOD AND USE BELOW METHOD
-    public SmartRegisterClients applyFilter(final FilterOption villageFilter, final ServiceModeOption serviceModeOption,
-                                            final FilterOption searchFilter, SortOption sortOption) {
+    public SmartRegisterClients applyFilter(final FilterOption villageFilter, final
+    ServiceModeOption serviceModeOption, final FilterOption searchFilter, SortOption sortOption) {
         SmartRegisterClients results = new SmartRegisterClients();
         Iterables.addAll(results, Iterables.filter(this, new Predicate<SmartRegisterClient>() {
             @Override
@@ -26,7 +26,9 @@ public class SmartRegisterClients extends ArrayList<SmartRegisterClient> {
         return sortOption.sort(results);
     }
 
-    public SmartRegisterClients applyFilterWithFP(final ServiceModeOption serviceModeOption, SortOption sortOption, final FilterOption... filterOptions) {
+    public SmartRegisterClients applyFilterWithFP(final ServiceModeOption serviceModeOption,
+                                                  SortOption sortOption, final FilterOption...
+                                                          filterOptions) {
         SmartRegisterClients results = new SmartRegisterClients();
 
         Iterables.addAll(results, Iterables.filter(this, new Predicate<SmartRegisterClient>() {

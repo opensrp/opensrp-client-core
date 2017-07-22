@@ -13,7 +13,6 @@ public class CursorCommonObjectFilterOption implements CursorFilterOption {
     private final String filterOptionName;
     String filterString;
 
-
     public CursorCommonObjectFilterOption(String filteroptionname, String filterString) {
         this.filterString = filterString;
         this.filterOptionName = filteroptionname;

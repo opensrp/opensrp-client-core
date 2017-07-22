@@ -4,7 +4,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public abstract class MotechBaseDataObject {
 
-
     private static final long serialVersionUID = 1L;
     @JsonProperty
     protected String type;

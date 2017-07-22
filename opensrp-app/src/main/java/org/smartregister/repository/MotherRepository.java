@@ -31,12 +31,18 @@ public class MotherRepository extends DrishtiRepository {
     public static final String DETAILS_COLUMN = "details";
     public static final String TYPE_ANC = "ANC";
     public static final String TYPE_PNC = "PNC";
-    private static final String MOTHER_SQL = "CREATE TABLE mother(id VARCHAR PRIMARY KEY, ecCaseId VARCHAR, thayiCardNumber VARCHAR, type VARCHAR, referenceDate VARCHAR, details VARCHAR, isClosed VARCHAR)";
-    private static final String MOTHER_TYPE_INDEX_SQL = "CREATE INDEX mother_type_index ON mother(type);";
-    private static final String MOTHER_REFERENCE_DATE_INDEX_SQL = "CREATE INDEX mother_referenceDate_index ON mother(referenceDate);";
+    private static final String MOTHER_SQL = "CREATE TABLE mother(id VARCHAR PRIMARY KEY, "
+            + "ecCaseId VARCHAR, thayiCardNumber VARCHAR, type VARCHAR, referenceDate VARCHAR, "
+            + "details VARCHAR, isClosed VARCHAR)";
+    private static final String MOTHER_TYPE_INDEX_SQL =
+            "CREATE INDEX mother_type_index ON " + "mother" + "(type);";
+    private static final String MOTHER_REFERENCE_DATE_INDEX_SQL =
+            "CREATE INDEX " + "mother_referenceDate_index ON mother(referenceDate);";
     private static final String TYPE_COLUMN = "type";
     private static final String IS_CLOSED_COLUMN = "isClosed";
-    public static final String[] MOTHER_TABLE_COLUMNS = {ID_COLUMN, EC_CASEID_COLUMN, THAYI_CARD_NUMBER_COLUMN, TYPE_COLUMN, REF_DATE_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN};
+    public static final String[] MOTHER_TABLE_COLUMNS = {ID_COLUMN, EC_CASEID_COLUMN,
+            THAYI_CARD_NUMBER_COLUMN, TYPE_COLUMN, REF_DATE_COLUMN, DETAILS_COLUMN,
+            IS_CLOSED_COLUMN};
     private static final String NOT_CLOSED = "false";
 
     @Override
@@ -57,38 +63,51 @@ public class MotherRepository extends DrishtiRepository {
         ContentValues motherValuesToBeUpdated = new ContentValues();
         motherValuesToBeUpdated.put(TYPE_COLUMN, TYPE_PNC);
 
-        database.update(MOTHER_TABLE_NAME, motherValuesToBeUpdated, ID_COLUMN + " = ?", new String[]{caseId});
+        database.update(MOTHER_TABLE_NAME, motherValuesToBeUpdated, ID_COLUMN + " = ?",
+                new String[]{caseId});
     }
 
     public List<Mother> allANCs() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, TYPE_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?", new String[]{TYPE_ANC, NOT_CLOSED}, null, null, null, null);
+        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS,
+                TYPE_COLUMN + " =" + " ? AND " + IS_CLOSED_COLUMN + " = ?",
+                new String[]{TYPE_ANC, NOT_CLOSED}, null, null, null, null);
         return readAll(cursor);
     }
 
     public Mother findById(String entityId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, ID_COLUMN + " = ?", new String[]{entityId}, null, null, null, null);
+        Cursor cursor = database
+                .query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, ID_COLUMN + " = " + "?",
+                        new String[]{entityId}, null, null, null, null);
         return readAll(cursor).get(0);
     }
 
     public List<Mother> allPNCs() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, TYPE_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?", new String[]{TYPE_PNC, NOT_CLOSED}, null, null, null, null);
+        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS,
+                TYPE_COLUMN + " =" + " ? AND " + IS_CLOSED_COLUMN + " = ?",
+                new String[]{TYPE_PNC, NOT_CLOSED}, null, null, null, null);
         return readAll(cursor);
     }
 
     public long ancCount() {
-        return longForQuery(masterRepository.getReadableDatabase(), "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME + " WHERE " + TYPE_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?", new String[]{TYPE_ANC, NOT_CLOSED});
+        return longForQuery(masterRepository.getReadableDatabase(),
+                "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME + " WHERE " + TYPE_COLUMN + " = ? AND "
+                        + IS_CLOSED_COLUMN + " " + "= ?", new String[]{TYPE_ANC, NOT_CLOSED});
     }
 
     public long pncCount() {
-        return longForQuery(masterRepository.getReadableDatabase(), "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME + " WHERE " + TYPE_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?", new String[]{TYPE_PNC, NOT_CLOSED});
+        return longForQuery(masterRepository.getReadableDatabase(),
+                "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME + " WHERE " + TYPE_COLUMN + " = ? AND "
+                        + IS_CLOSED_COLUMN + " " + "= ?", new String[]{TYPE_PNC, NOT_CLOSED});
     }
 
     public Mother findOpenCaseByCaseID(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, ID_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?", new String[]{caseId, NOT_CLOSED}, null, null, null, null);
+        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS,
+                ID_COLUMN + " = ?" + " AND " + IS_CLOSED_COLUMN + " = ?",
+                new String[]{caseId, NOT_CLOSED}, null, null, null, null);
         List<Mother> mothers = readAll(cursor);
 
         if (mothers.isEmpty()) {
@@ -99,23 +118,29 @@ public class MotherRepository extends DrishtiRepository {
 
     public List<Mother> findAllCasesForEC(String ecCaseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, EC_CASEID_COLUMN + " = ?", new String[]{ecCaseId}, null, null, null, null);
+        Cursor cursor = database
+                .query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, EC_CASEID_COLUMN + " = ?",
+                        new String[]{ecCaseId}, null, null, null, null);
         return readAll(cursor);
     }
 
     public List<Mother> findByCaseIds(String... caseIds) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(String.format("SELECT * FROM %s WHERE %s IN (%s)", MOTHER_TABLE_NAME, ID_COLUMN, insertPlaceholdersForInClause(caseIds.length)), caseIds);
+        Cursor cursor = database.rawQuery(
+                String.format("SELECT * FROM %s WHERE %s IN (%s)", MOTHER_TABLE_NAME, ID_COLUMN,
+                        insertPlaceholdersForInClause(caseIds.length)), caseIds);
         return readAll(cursor);
     }
 
     public List<Pair<Mother, EligibleCouple>> allMothersOfATypeWithEC(String type) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery("SELECT " + tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", " + tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) +
-                " FROM " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME +
-                " WHERE " + TYPE_COLUMN + "='" + type +
-                "' AND " + MOTHER_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED + "' AND " +
-                MOTHER_TABLE_NAME + "." + EC_CASEID_COLUMN + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, null);
+        Cursor cursor = database.rawQuery(
+                "SELECT " + tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", "
+                        + tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) + " FROM "
+                        + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME + " WHERE" + " " + TYPE_COLUMN
+                        + "='" + type + "' AND " + MOTHER_TABLE_NAME + "." + IS_CLOSED_COLUMN
+                        + "= '" + NOT_CLOSED + "' AND " + MOTHER_TABLE_NAME + "." + EC_CASEID_COLUMN
+                        + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, null);
         return readAllMothersWithEC(cursor);
     }
 
@@ -129,7 +154,8 @@ public class MotherRepository extends DrishtiRepository {
     public void close(String caseId) {
         ContentValues values = new ContentValues();
         values.put(IS_CLOSED_COLUMN, TRUE.toString());
-        masterRepository.getWritableDatabase().update(MOTHER_TABLE_NAME, values, ID_COLUMN + " = ?", new String[]{caseId});
+        masterRepository.getWritableDatabase()
+                .update(MOTHER_TABLE_NAME, values, ID_COLUMN + " = " + "?", new String[]{caseId});
     }
 
     private ContentValues createValuesFor(Mother mother, String type) {
@@ -148,11 +174,12 @@ public class MotherRepository extends DrishtiRepository {
         cursor.moveToFirst();
         List<Mother> mothers = new ArrayList<Mother>();
         while (!cursor.isAfterLast()) {
-            Map<String, String> details = new Gson().fromJson(cursor.getString(5), new TypeToken<Map<String, String>>() {
-            }.getType());
+            Map<String, String> details = new Gson()
+                    .fromJson(cursor.getString(5), new TypeToken<Map<String, String>>() {
+                    }.getType());
 
-            mothers.add(new Mother(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(4))
-                    .withDetails(details)
+            mothers.add(new Mother(cursor.getString(0), cursor.getString(1), cursor.getString(2),
+                    cursor.getString(4)).withDetails(details)
                     .setIsClosed(Boolean.valueOf(cursor.getString(6)))
                     .withType(cursor.getString(cursor.getColumnIndex(TYPE_COLUMN))));
             cursor.moveToNext();
@@ -163,15 +190,22 @@ public class MotherRepository extends DrishtiRepository {
 
     private List<Pair<Mother, EligibleCouple>> readAllMothersWithEC(Cursor cursor) {
         cursor.moveToFirst();
-        List<Pair<Mother, EligibleCouple>> ancsWithEC = new ArrayList<Pair<Mother, EligibleCouple>>();
+        List<Pair<Mother, EligibleCouple>> ancsWithEC = new ArrayList<Pair<Mother,
+                EligibleCouple>>();
         while (!cursor.isAfterLast()) {
-            Mother mother = new Mother(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(4))
-                    .withType(cursor.getString(cursor.getColumnIndex(TYPE_COLUMN)))
-                    .withDetails(new Gson().<Map<String, String>>fromJson(cursor.getString(5), new TypeToken<Map<String, String>>() {
-                    }.getType()));
-            EligibleCouple eligibleCouple = new EligibleCouple(cursor.getString(7), cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12),
-                    new Gson().<Map<String, String>>fromJson(cursor.getString(14), new TypeToken<Map<String, String>>() {
-                    }.getType())).withPhotoPath(cursor.getString(cursor.getColumnIndex(EligibleCoupleRepository.PHOTO_PATH_COLUMN)));
+            Mother mother = new Mother(cursor.getString(0), cursor.getString(1),
+                    cursor.getString(2), cursor.getString(4))
+                    .withType(cursor.getString(cursor.getColumnIndex(TYPE_COLUMN))).withDetails(
+                            new Gson().<Map<String, String>>fromJson(cursor.getString(5),
+                                    new TypeToken<Map<String, String>>() {
+                                    }.getType()));
+            EligibleCouple eligibleCouple = new EligibleCouple(cursor.getString(7),
+                    cursor.getString(8), cursor.getString(9), cursor.getString(10),
+                    cursor.getString(11), cursor.getString(12),
+                    new Gson().<Map<String, String>>fromJson(cursor.getString(14),
+                            new TypeToken<Map<String, String>>() {
+                            }.getType())).withPhotoPath(cursor.getString(
+                    cursor.getColumnIndex(EligibleCoupleRepository.PHOTO_PATH_COLUMN)));
             if (Boolean.valueOf(cursor.getString(cursor.getColumnIndex(IS_OUT_OF_AREA_COLUMN)))) {
                 eligibleCouple.asOutOfArea();
             }
@@ -202,19 +236,23 @@ public class MotherRepository extends DrishtiRepository {
 
     public Mother findMotherWithOpenStatusByECId(String ecId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, EC_CASEID_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?", new String[]{ecId, NOT_CLOSED}, null, null, null, null);
+        Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS,
+                EC_CASEID_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?",
+                new String[]{ecId, NOT_CLOSED}, null, null, null, null);
         List<Mother> mothers = readAll(cursor);
         return mothers.isEmpty() ? null : mothers.get(0);
     }
 
     public boolean isPregnant(String ecId) {
-        return longForQuery(masterRepository.getReadableDatabase(), "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME
-                        + " WHERE " + EC_CASEID_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ? AND " + TYPE_COLUMN + " = ?",
+        return longForQuery(masterRepository.getReadableDatabase(),
+                "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME + " WHERE " + EC_CASEID_COLUMN
+                        + " = ? AND " + IS_CLOSED_COLUMN + " = ? AND " + TYPE_COLUMN + "" + " = ?",
                 new String[]{ecId, NOT_CLOSED, TYPE_ANC}) > 0;
     }
 
     public void update(Mother mother) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
-        database.update(MOTHER_TABLE_NAME, createValuesFor(mother, TYPE_ANC), ID_COLUMN + " = ?", new String[]{mother.caseId()});
+        database.update(MOTHER_TABLE_NAME, createValuesFor(mother, TYPE_ANC), ID_COLUMN + " = ?",
+                new String[]{mother.caseId()});
     }
 }

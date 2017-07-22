@@ -61,8 +61,8 @@ public class Event extends BaseDataObject {
         this.version = System.currentTimeMillis();
     }
 
-    public Event(String baseEntityId, String eventId, String eventType, Date eventDate, String entityType,
-                 String providerId, String locationId, String formSubmissionId) {
+    public Event(String baseEntityId, String eventId, String eventType, Date eventDate, String
+            entityType, String providerId, String locationId, String formSubmissionId) {
         this.baseEntityId = baseEntityId;
         this.identifiers = new HashMap<>();
         this.eventId = eventId;
@@ -75,8 +75,9 @@ public class Event extends BaseDataObject {
         this.version = System.currentTimeMillis();
     }
 
-    public Event(String baseEntityId, HashMap<String, String> identifiers, String eventId, String eventType, Date eventDate, String entityType,
-                 String providerId, String locationId, String formSubmissionId) {
+    public Event(String baseEntityId, HashMap<String, String> identifiers, String eventId, String
+            eventType, Date eventDate, String entityType, String providerId, String locationId,
+                 String formSubmissionId) {
         this.baseEntityId = baseEntityId;
         this.identifiers = identifiers;
         this.eventId = eventId;

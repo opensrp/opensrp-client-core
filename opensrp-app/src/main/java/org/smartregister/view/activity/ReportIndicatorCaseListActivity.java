@@ -18,7 +18,9 @@ public class ReportIndicatorCaseListActivity extends SecuredWebActivity {
         String month = extras.getString(MONTH);
         String indicator = extras.getString(INDICATOR);
 
-        webView.addJavascriptInterface(new ReportIndicatorCaseListViewController(this, indicator, caseIds, month), "context");
+        webView.addJavascriptInterface(
+                new ReportIndicatorCaseListViewController(this, indicator, caseIds, month),
+                "context");
         webView.loadUrl("file:///android_asset/www/report_indicator_case_list.html");
     }
 }

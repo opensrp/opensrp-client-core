@@ -13,6 +13,7 @@ public class FPMaleSterilizationServiceMode extends FPAllMethodsServiceMode {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.fp_register_service_mode_male_sterilization);
+        return getInstance()
+                .getStringResource(R.string.fp_register_service_mode_male_sterilization);
     }
 }

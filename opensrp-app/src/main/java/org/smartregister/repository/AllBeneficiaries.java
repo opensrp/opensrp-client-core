@@ -17,7 +17,8 @@ public class AllBeneficiaries {
     private MotherRepository motherRepository;
 
     public AllBeneficiaries(MotherRepository motherRepository, ChildRepository childRepository,
-                            AlertRepository alertRepository, TimelineEventRepository timelineEventRepository) {
+                            AlertRepository alertRepository, TimelineEventRepository
+                                    timelineEventRepository) {
         this.childRepository = childRepository;
         this.motherRepository = motherRepository;
         this.alertRepository = alertRepository;
@@ -31,8 +32,9 @@ public class AllBeneficiaries {
 
     public Mother findMother(String caseId) {
         List<Mother> mothers = motherRepository.findByCaseIds(caseId);
-        if (mothers.isEmpty())
+        if (mothers.isEmpty()) {
             return null;
+        }
         return mothers.get(0);
     }
 
@@ -62,8 +64,9 @@ public class AllBeneficiaries {
 
     public Mother findMotherByECCaseId(String ecCaseId) {
         List<Mother> mothers = motherRepository.findAllCasesForEC(ecCaseId);
-        if (mothers.isEmpty())
+        if (mothers.isEmpty()) {
             return null;
+        }
         return mothers.get(0);
     }
 
@@ -97,8 +100,9 @@ public class AllBeneficiaries {
 
     public void closeAllMothersForEC(String ecId) {
         List<Mother> mothers = motherRepository.findAllCasesForEC(ecId);
-        if (mothers == null || mothers.isEmpty())
+        if (mothers == null || mothers.isEmpty()) {
             return;
+        }
         for (Mother mother : mothers) {
             closeMother(mother.caseId());
         }

@@ -25,8 +25,12 @@ public class ServiceProvidedRepository extends DrishtiRepository {
     public static final String NAME_ID_COLUMN = "name";
     public static final String DATE_ID_COLUMN = "date";
     public static final String DATA_ID_COLUMN = "data";
-    public static final String[] SERVICE_PROVIDED_TABLE_COLUMNS = new String[]{ENTITY_ID_COLUMN, NAME_ID_COLUMN, DATE_ID_COLUMN, DATA_ID_COLUMN};
-    private static final String SERVICE_PROVIDED_SQL = "CREATE TABLE service_provided(id INTEGER PRIMARY KEY AUTOINCREMENT, entityId VARCHAR, name VARCHAR, date VARCHAR, data VARCHAR)";
+    public static final String[] SERVICE_PROVIDED_TABLE_COLUMNS = new String[]{ENTITY_ID_COLUMN,
+            NAME_ID_COLUMN, DATE_ID_COLUMN, DATA_ID_COLUMN};
+    private static final String SERVICE_PROVIDED_SQL =
+            "CREATE TABLE service_provided(id INTEGER " + "" + ""
+                    + "PRIMARY KEY AUTOINCREMENT, entityId VARCHAR, name VARCHAR, date VARCHAR, "
+                    + "data " + "VARCHAR)";
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -41,8 +45,9 @@ public class ServiceProvidedRepository extends DrishtiRepository {
     public List<ServiceProvided> findByEntityIdAndServiceNames(String entityId, String... names) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.rawQuery(
-                format("SELECT * FROM %s WHERE %s = ? AND %s IN (%s) ORDER BY DATE(%s)",
-                        SERVICE_PROVIDED_TABLE_NAME, ENTITY_ID_COLUMN, NAME_ID_COLUMN,
+                format("SELECT * FROM %s WHERE %s = ? AND %s IN (%s) " + "ORDER BY " + "DATE"
+                                + "(%s)", SERVICE_PROVIDED_TABLE_NAME, ENTITY_ID_COLUMN,
+                        NAME_ID_COLUMN,
                         insertPlaceholdersForInClause(names.length), DATE_ID_COLUMN),
                 addAll(new String[]{entityId}, names));
         return readAllServicesProvided(cursor);
@@ -50,7 +55,9 @@ public class ServiceProvidedRepository extends DrishtiRepository {
 
     public List<ServiceProvided> all() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.query(SERVICE_PROVIDED_TABLE_NAME, SERVICE_PROVIDED_TABLE_COLUMNS, null, null, null, null, DATE_ID_COLUMN);
+        Cursor cursor = database
+                .query(SERVICE_PROVIDED_TABLE_NAME, SERVICE_PROVIDED_TABLE_COLUMNS, null, null,
+                        null, null, DATE_ID_COLUMN);
         return readAllServicesProvided(cursor);
     }
 
@@ -71,8 +78,10 @@ public class ServiceProvidedRepository extends DrishtiRepository {
                     cursor.getString(cursor.getColumnIndex(ENTITY_ID_COLUMN)),
                     cursor.getString(cursor.getColumnIndex(NAME_ID_COLUMN)),
                     cursor.getString(cursor.getColumnIndex(DATE_ID_COLUMN)),
-                    new Gson().<Map<String, String>>fromJson(cursor.getString(cursor.getColumnIndex(DATA_ID_COLUMN)), new TypeToken<Map<String, String>>() {
-                    }.getType()));
+                    new Gson().<Map<String, String>>fromJson(
+                            cursor.getString(cursor.getColumnIndex(DATA_ID_COLUMN)),
+                            new TypeToken<Map<String, String>>() {
+                            }.getType()));
             servicesProvided.add(serviceProvided);
             cursor.moveToNext();
         }

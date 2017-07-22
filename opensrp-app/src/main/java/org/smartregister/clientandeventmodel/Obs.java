@@ -19,7 +19,6 @@ public class Obs {
     @JsonProperty
     private List<Object> values;
 
-
     @JsonProperty
     private List<Object> humanReadableValues;
     @JsonProperty
@@ -31,7 +30,8 @@ public class Obs {
     }
 
     public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode,
-               List<Object> values, List<Object> humanReadableValues, String comments, String formSubmissionField) {
+               List<Object> values, List<Object> humanReadableValues, String comments, String
+                       formSubmissionField) {
         this.setFieldType(fieldType);
         this.fieldDataType = fieldDataType;
         this.fieldCode = fieldCode;
@@ -77,7 +77,8 @@ public class Obs {
     @JsonIgnore
     public Object getValue() {
         if (values.size() > 1) {
-//            throw new RuntimeException("Multiset values can not be handled like single valued fields. Use function getValues");
+//            throw new RuntimeException("Multiset values can not be handled like single valued
+// fields. Use function getValues");
             return getValues();
         }
         if (values == null || values.size() == 0) {
@@ -86,7 +87,6 @@ public class Obs {
 
         return values.get(0);
     }
-
 
     @JsonIgnore
     public void setValue(Object value) {
@@ -108,7 +108,6 @@ public class Obs {
     public void setValues(List<Object> values) {
         this.values = values;
     }
-
 
     public String getComments() {
         return comments;

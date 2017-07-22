@@ -1,6 +1,5 @@
 package org.smartregister.util;
 
-
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -30,7 +29,6 @@ public class FileUtilities {
     private static String mUserAgent = null;
     private Writer writer;
     private String absolutePath;
-
 
     public FileUtilities() {
         super();
@@ -62,7 +60,8 @@ public class FileUtilities {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    Log.e(TAG, "Failed to close static images input stream after attempting to retrieve image");
+                    Log.e(TAG, "Failed to close static images input stream after attempting to "
+                            + "retrieve image");
                 }
             }
             System.gc();
@@ -85,7 +84,8 @@ public class FileUtilities {
             mUserAgent = "OpenSRP";
             try {
                 String packageName = mContext.getPackageName();
-                String version = mContext.getPackageManager().getPackageInfo(packageName, 0).versionName;
+                String version = mContext.getPackageManager()
+                        .getPackageInfo(packageName, 0).versionName;
                 mUserAgent = mUserAgent + " (" + packageName + "/" + version + ")";
             } catch (PackageManager.NameNotFoundException e) {
                 Log.e(TAG, "Unable to find self by package name", e);
@@ -109,8 +109,8 @@ public class FileUtilities {
         }
         try {
             if (!outDir.isDirectory()) {
-                throw new IOException(
-                        "Unable to create directory EZ_time_tracker. Maybe the SD card is mounted?");
+                throw new IOException("Unable to create directory EZ_time_tracker. Maybe the SD "
+                        + "card is mounted?");
             }
             File outputFile = new File(outDir, fileName);
             writer = new BufferedWriter(new FileWriter(outputFile));

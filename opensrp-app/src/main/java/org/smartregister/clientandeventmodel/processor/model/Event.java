@@ -12,7 +12,9 @@ public class Event {
     Map<String, String> ObsColumnsMap;
     Map<String, String> ObsDetailsMap;
 
-    public Event(String baseEntityID, Map<String, String> attributesDetailsMap, Map<String, String> attributesColumnsMap, Map<String, String> obsColumnsMap, Map<String, String> obsDetailsMap) {
+    public Event(String baseEntityID, Map<String, String> attributesDetailsMap, Map<String,
+            String> attributesColumnsMap, Map<String, String> obsColumnsMap, Map<String, String>
+            obsDetailsMap) {
         this.baseEntityID = baseEntityID;
         this.attributesDetailsMap = attributesDetailsMap;
         this.attributesColumnsMap = attributesColumnsMap;

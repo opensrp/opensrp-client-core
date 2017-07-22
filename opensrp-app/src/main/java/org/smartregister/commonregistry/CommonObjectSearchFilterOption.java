@@ -14,8 +14,8 @@ public class CommonObjectSearchFilterOption implements FilterOption {
     private final String criteria;
     ArrayList<FilterOptionsForSearch> filterOptions;
 
-    public CommonObjectSearchFilterOption(String criteria,
-                                          ArrayList<FilterOptionsForSearch> filterMaps) {
+    public CommonObjectSearchFilterOption(String criteria, ArrayList<FilterOptionsForSearch>
+            filterMaps) {
         this.criteria = criteria;
         this.filterOptions = filterMaps;
 
@@ -32,14 +32,14 @@ public class CommonObjectSearchFilterOption implements FilterOption {
 
             switch (filterOptions.get(i).byColumnAndByDetails) {
                 case byColumn:
-                    return ((CommonPersonObjectClient) client).getColumnmaps().get(
-                            filterOptions.get(i).fieldName).trim().toLowerCase().contains(
-                            criteria.trim().toLowerCase());
+                    return ((CommonPersonObjectClient) client).getColumnmaps()
+                            .get(filterOptions.get(i).fieldName).trim().toLowerCase()
+                            .contains(criteria.trim().toLowerCase());
                 case byDetails:
-                    return (((CommonPersonObjectClient) client).getDetails().get(
-                            filterOptions.get(i).fieldName) != null
-                            ? ((CommonPersonObjectClient) client).getDetails().get(
-                            filterOptions.get(i).fieldName) : "").trim().toLowerCase().
+                    return (((CommonPersonObjectClient) client).getDetails()
+                            .get(filterOptions.get(i).fieldName) != null
+                            ? ((CommonPersonObjectClient) client).getDetails()
+                            .get(filterOptions.get(i).fieldName) : "").trim().toLowerCase().
                             contains(criteria.toLowerCase());
                 case byChildren:
                     CommonPersonObjectClient currentclient = (CommonPersonObjectClient) client;
@@ -53,21 +53,23 @@ public class CommonObjectSearchFilterOption implements FilterOption {
                     for (int j = 0; j < allchild.size(); j++) {
                         switch (filterOptions.get(i).byChildColumnAndByDetails) {
                             case byDetails:
-                                if (allchild.get(j).getDetails().get(
-                                        filterOptions.get(i).fieldName) != null) {
-                                    if (allchild.get(i).getDetails().get(
-                                            filterOptions.get(i).fieldName).toLowerCase().trim().
-                                            contains(criteria.toLowerCase().trim())) {
+                                if (allchild.get(j).getDetails().get(filterOptions.get(i).fieldName)
+                                        != null) {
+                                    if (allchild.get(i).getDetails()
+                                            .get(filterOptions.get(i).fieldName).toLowerCase()
+                                            .trim().
+                                                    contains(criteria.toLowerCase().trim())) {
                                         return true;
                                     }
                                 }
                                 break;
                             case byColumn:
-                                if (allchild.get(j).getColumnmaps().get(
-                                        filterOptions.get(i).fieldName) != null) {
-                                    if (allchild.get(i).getColumnmaps().get(
-                                            filterOptions.get(i).fieldName).toLowerCase().trim().
-                                            contains(criteria.toLowerCase().trim())) {
+                                if (allchild.get(j).getColumnmaps()
+                                        .get(filterOptions.get(i).fieldName) != null) {
+                                    if (allchild.get(i).getColumnmaps()
+                                            .get(filterOptions.get(i).fieldName).toLowerCase()
+                                            .trim().
+                                                    contains(criteria.toLowerCase().trim())) {
                                         return true;
                                     }
                                 }
@@ -95,10 +97,9 @@ public class CommonObjectSearchFilterOption implements FilterOption {
             fieldName = fieldNameArg;
         }
 
-        FilterOptionsForSearch(String childNameArg,
-                               ByColumnAndByDetails byColumnAndByDetailsArg,
-                               String fieldNameArg,
-                               ByColumnAndByDetails byChildColumnAndByDetailsArg) {
+        FilterOptionsForSearch(String childNameArg, ByColumnAndByDetails byColumnAndByDetailsArg,
+                               String fieldNameArg, ByColumnAndByDetails
+                                       byChildColumnAndByDetailsArg) {
             childName = childNameArg;
             byColumnAndByDetails = byColumnAndByDetailsArg;
             fieldName = fieldNameArg;

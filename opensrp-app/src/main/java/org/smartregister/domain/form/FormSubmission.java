@@ -18,12 +18,16 @@ public class FormSubmission {
     private SyncStatus syncStatus;
     private FormInstance formInstance;
 
-    public FormSubmission(String instanceId, String entityId, String formName, String instance, String clientVersion, SyncStatus syncStatus, String formDataDefinitionVersion) {
-        this(instanceId, entityId, formName, instance, clientVersion, syncStatus, formDataDefinitionVersion, null);
+    public FormSubmission(String instanceId, String entityId, String formName, String instance,
+                          String clientVersion, SyncStatus syncStatus, String
+                                  formDataDefinitionVersion) {
+        this(instanceId, entityId, formName, instance, clientVersion, syncStatus,
+                formDataDefinitionVersion, null);
     }
 
-    public FormSubmission(String instanceId, String entityId, String formName, String instance, String clientVersion, SyncStatus syncStatus, String formDataDefinitionVersion,
-                          String serverVersion) {
+    public FormSubmission(String instanceId, String entityId, String formName, String instance,
+                          String clientVersion, SyncStatus syncStatus, String
+                                  formDataDefinitionVersion, String serverVersion) {
         this.instanceId = instanceId;
         this.entityId = entityId;
         this.formName = formName;

@@ -12,7 +12,6 @@ import java.util.Properties;
 
 public class DristhiConfiguration {
 
-
     public static final String TAG = "DristhiConfiguration";
     protected static final String DRISHTI_BASE_URL = "DRISHTI_BASE_URL";
 
@@ -50,7 +49,6 @@ public class DristhiConfiguration {
     }
 
     public int port() {
-
 
         return preferences.fetchPort(Integer.parseInt(this.get(PORT)));
     }

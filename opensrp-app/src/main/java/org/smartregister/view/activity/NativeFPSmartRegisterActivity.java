@@ -26,7 +26,8 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
     private static final String DIALOG_TAG = "dialog";
     private static int CHECKED_TAB_ID = R.id.rb_fp_method;
     private final ClientActionHandler clientActionHandler = new ClientActionHandler();
-    FPSmartRegisterDialogFragment.onSelectedListener listener = new FPSmartRegisterDialogFragment.onSelectedListener() {
+    FPSmartRegisterDialogFragment.onSelectedListener listener = new FPSmartRegisterDialogFragment
+            .onSelectedListener() {
         @Override
         public void onSelected(int id) {
             CHECKED_TAB_ID = id;
@@ -74,31 +75,29 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
             @Override
             public DialogOption[] filterOptions() {
-                Iterable<? extends DialogOption> villageFilterOptions =
-                        dialogOptionMapper.mapToVillageFilterOptions(villageController.getVillages());
-                return toArray(concat(DEFAULT_FILTER_OPTIONS, villageFilterOptions), DialogOption.class);
+                Iterable<? extends DialogOption> villageFilterOptions = dialogOptionMapper
+                        .mapToVillageFilterOptions(villageController.getVillages());
+                return toArray(concat(DEFAULT_FILTER_OPTIONS, villageFilterOptions),
+                        DialogOption.class);
             }
 
             @Override
             public DialogOption[] serviceModeOptions() {
 
-                return new DialogOption[]{
-                        new FPAllMethodsServiceMode(clientsProvider()),
-                        new FPCondomServiceMode(clientsProvider()),
-                        new FPDMPAServiceMode(clientsProvider()),
-                        new FPIUCDServiceMode(clientsProvider()),
-                        new FPOCPServiceMode(clientsProvider()),
-                        new FPFemaleSterilizationServiceMode(clientsProvider()),
-                        new FPMaleSterilizationServiceMode(clientsProvider()),
-                        new FPOthersServiceMode(clientsProvider())
-                };
+                return new DialogOption[]{new FPAllMethodsServiceMode(
+                        clientsProvider()), new FPCondomServiceMode(
+                        clientsProvider()), new FPDMPAServiceMode(
+                        clientsProvider()), new FPIUCDServiceMode(
+                        clientsProvider()), new FPOCPServiceMode(
+                        clientsProvider()), new FPFemaleSterilizationServiceMode(
+                        clientsProvider()), new FPMaleSterilizationServiceMode(
+                        clientsProvider()), new FPOthersServiceMode(clientsProvider())};
             }
 
             @Override
             public DialogOption[] sortingOptions() {
-                return new DialogOption[]{new NameSort(), new ECNumberSort(),
-                        new HighPrioritySort(), new BPLSort(),
-                        new SCSort(), new STSort()};
+                return new DialogOption[]{new NameSort(), new ECNumberSort(), new
+                        HighPrioritySort(), new BPLSort(), new SCSort(), new STSort()};
             }
 
             @Override
@@ -111,24 +110,23 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
         if (clientProvider == null) {
-            clientProvider = new FPSmartRegisterClientsProvider(
-                    this, clientActionHandler, controller);
+            clientProvider = new FPSmartRegisterClientsProvider(this, clientActionHandler,
+                    controller);
         }
         return clientProvider;
     }
 
     private DialogOption[] getUpdateOptions() {
-        return new DialogOption[]{
-                new OpenFormOption(getString(R.string.str_fp_change_form), FP_CHANGE, formController),
-                new OpenFormOption(getString(R.string.str_record_ecp_form), RECORD_ECPS, formController),
-        };
+        return new DialogOption[]{new OpenFormOption(getString(R.string.str_fp_change_form),
+                FP_CHANGE, formController), new OpenFormOption(
+                getString(R.string.str_record_ecp_form), RECORD_ECPS, formController),};
     }
 
     @Override
     protected void onInitialization() {
         controller = new FPSmartRegisterController(context().allEligibleCouples(),
-                context().allBeneficiaries(), context().alertService(),
-                context().listCache(), context().fpClientsCache());
+                context().allBeneficiaries(), context().alertService(), context().listCache(),
+                context().fpClientsCache());
         villageController = new VillageController(context().allEligibleCouples(),
                 context().listCache(), context().villagesCache());
         dialogOptionMapper = new DialogOptionMapper();
@@ -143,8 +141,8 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void startRegistration() {
-        FieldOverrides fieldOverrides = new FieldOverrides(context().anmLocationController()
-                .getLocationJSON());
+        FieldOverrides fieldOverrides = new FieldOverrides(
+                context().anmLocationController().getLocationJSON());
         startFormActivity(EC_REGISTRATION, null, fieldOverrides.getJSONString());
     }
 
@@ -166,7 +164,8 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
         }
         ft.addToBackStack(null);
 
-        dialogOptionModel = new FPServiceModeDialogOptionModel().cloneDialogOptionsWith(dialogOptionModel);
+        dialogOptionModel = new FPServiceModeDialogOptionModel()
+                .cloneDialogOptionsWith(dialogOptionModel);
         FPSmartRegisterDialogFragment fpSmartRegisterDialogFragment = FPSmartRegisterDialogFragment
                 .newInstance(this, dialogOptionModel, tag);
         fpSmartRegisterDialogFragment.setSelectedListener(listener);
@@ -189,14 +188,16 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
                 showProfileView((FPClient) view.getTag());
 
             } else if (i == R.id.btn_fp_method_update) {
-                NativeFPSmartRegisterActivity.super.showFragmentDialog(new UpdateDialogOptionModel(), view.getTag());
+                NativeFPSmartRegisterActivity.super
+                        .showFragmentDialog(new UpdateDialogOptionModel(), view.getTag());
 
             } else if (i == R.id.btn_side_effects) {
                 SmartRegisterClient fpClient = (SmartRegisterClient) view.getTag();
                 startFormActivity(FP_COMPLICATIONS, fpClient.entityId(), null);
 
             } else if (i == R.id.lyt_fp_add) {
-                NativeFPSmartRegisterActivity.super.showFragmentDialog(new UpdateDialogOptionModel(), view.getTag());
+                NativeFPSmartRegisterActivity.super
+                        .showFragmentDialog(new UpdateDialogOptionModel(), view.getTag());
 
             } else if (i == R.id.lyt_fp_videos) {
                 navigationController.startVideos();
@@ -226,12 +227,11 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
         @Override
         public DialogOption[] getPrioritizationDialogOptions() {
-            return new DialogOption[]{
-                    new FPPrioritizationAllECServiceMode(clientsProvider()),
-                    new FPPrioritizationHighPriorityServiceMode(clientsProvider()),
-                    new FPPrioritizationTwoPlusChildrenServiceMode(clientsProvider()),
-                    new FPPrioritizationOneChildrenServiceMode(clientsProvider()),
-            };
+            return new DialogOption[]{new FPPrioritizationAllECServiceMode(
+                    clientsProvider()), new FPPrioritizationHighPriorityServiceMode(
+                    clientsProvider()), new FPPrioritizationTwoPlusChildrenServiceMode(
+                    clientsProvider()), new FPPrioritizationOneChildrenServiceMode(
+                    clientsProvider()),};
         }
 
         @Override

@@ -16,9 +16,9 @@ public class NativeECSmartRegisterViewHolder {
     private final ClientStatusView statusView;
     private final ImageButton editButton;
 
-
     public NativeECSmartRegisterViewHolder(ViewGroup itemView) {
-        this.profileInfoLayout = (ClientProfileView) itemView.findViewById(R.id.profile_info_layout);
+        this.profileInfoLayout = (ClientProfileView) itemView
+                .findViewById(R.id.profile_info_layout);
         this.profileInfoLayout.initialize();
 
         this.txtECNumberView = (TextView) itemView.findViewById(R.id.txt_ec_number);
@@ -28,7 +28,6 @@ public class NativeECSmartRegisterViewHolder {
 
         fpMethodview = (ClientFpMethodView) itemView.findViewById(R.id.fp_method_layout);
         fpMethodview.initialize();
-
 
         childrenView = (ClientChildrenView) itemView.findViewById(R.id.children_layout);
         childrenView.initialize();

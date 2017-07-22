@@ -29,39 +29,54 @@ public class ChildService {
     private ServiceProvidedService serviceProvidedService;
     private AllAlerts allAlerts;
 
-    public ChildService(AllBeneficiaries allBeneficiaries, MotherRepository motherRepository, ChildRepository childRepository,
-                        AllTimelineEvents allTimelineEvents, ServiceProvidedService serviceProvidedService, AllAlerts allAlerts) {
-        this.allBeneficiaries = allBeneficiaries;
-        this.childRepository = childRepository;
-        this.motherRepository = motherRepository;
-        this.allTimelines = allTimelineEvents;
-        this.serviceProvidedService = serviceProvidedService;
-        this.allAlerts = allAlerts;
+    public ChildService(AllBeneficiaries allBeneficiariesArg, MotherRepository
+            motherRepositoryArg, ChildRepository childRepositoryArg, AllTimelineEvents
+            allTimelineEventsArg, ServiceProvidedService serviceProvidedServiceArg, AllAlerts
+            allAlertsArg) {
+        allBeneficiaries = allBeneficiariesArg;
+        childRepository = childRepositoryArg;
+        motherRepository = motherRepositoryArg;
+        allTimelines = allTimelineEventsArg;
+        serviceProvidedService = serviceProvidedServiceArg;
+        allAlerts = allAlertsArg;
     }
 
     public void register(FormSubmission submission) {
-        SubForm subForm = submission.getSubFormByName(AllConstants.DeliveryOutcomeFields.CHILD_REGISTRATION_SUB_FORM_NAME);
-        if (handleStillBirth(submission, subForm)) return;
-        String referenceDate = submission.getFieldValue(AllConstants.DeliveryOutcomeFields.REFERENCE_DATE);
-        String deliveryPlace = submission.getFieldValue(AllConstants.DeliveryOutcomeFields.DELIVERY_PLACE);
+        SubForm subForm = submission.getSubFormByName(
+                AllConstants.DeliveryOutcomeFields.CHILD_REGISTRATION_SUB_FORM_NAME);
+        if (handleStillBirth(submission, subForm)) {
+            return;
+        }
+        String referenceDate = submission
+                .getFieldValue(AllConstants.DeliveryOutcomeFields.REFERENCE_DATE);
+        String deliveryPlace = submission
+                .getFieldValue(AllConstants.DeliveryOutcomeFields.DELIVERY_PLACE);
         Mother mother = motherRepository.findById(submission.entityId());
         for (Map<String, String> childInstance : subForm.instances()) {
             Child child = childRepository.find(childInstance.get(ENTITY_ID_FIELD_NAME));
-            childRepository.update(child.setIsClosed(false).setThayiCardNumber(mother.thayiCardNumber()).setDateOfBirth(referenceDate));
+            childRepository
+                    .update(child.setIsClosed(false).setThayiCardNumber(mother.thayiCardNumber())
+                            .setDateOfBirth(referenceDate));
             allTimelines.add(forChildBirthInChildProfile(child.caseId(), referenceDate,
-                    child.getDetail(AllConstants.ChildRegistrationFields.WEIGHT), child.getDetail(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN)));
-            allTimelines.add(forChildBirthInMotherProfile(mother.caseId(), referenceDate, child.gender(), referenceDate, deliveryPlace));
-            allTimelines.add(forChildBirthInECProfile(mother.ecCaseId(), referenceDate, child.gender(), referenceDate));
-            String immunizationsGiven = child.getDetail(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN);
+                    child.getDetail(AllConstants.ChildRegistrationFields.WEIGHT),
+                    child.getDetail(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN)));
+            allTimelines.add(forChildBirthInMotherProfile(mother.caseId(), referenceDate,
+                    child.gender(), referenceDate, deliveryPlace));
+            allTimelines
+                    .add(forChildBirthInECProfile(mother.ecCaseId(), referenceDate, child.gender(),
+                            referenceDate));
+            String immunizationsGiven = child
+                    .getDetail(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN);
             for (String immunization : immunizationsGiven.split(SPACE)) {
-                serviceProvidedService.add(ServiceProvided.forChildImmunization(child.caseId(), immunization, referenceDate));
+                serviceProvidedService.add(ServiceProvided
+                        .forChildImmunization(child.caseId(), immunization, referenceDate));
             }
         }
     }
 
     private boolean isDeliveryOutcomeStillBirth(FormSubmission submission) {
-        return AllConstants.DeliveryOutcomeFields.STILL_BIRTH_VALUE
-                .equalsIgnoreCase(submission.getFieldValue(AllConstants.DeliveryOutcomeFields.DELIVERY_OUTCOME));
+        return AllConstants.DeliveryOutcomeFields.STILL_BIRTH_VALUE.equalsIgnoreCase(
+                submission.getFieldValue(AllConstants.DeliveryOutcomeFields.DELIVERY_OUTCOME));
     }
 
     public void registerForEC(FormSubmission submission) {
@@ -73,18 +88,17 @@ public class ChildService {
         allTimelines.add(forChildBirthInChildProfile(
                 submission.getFieldValue(AllConstants.ChildRegistrationFields.CHILD_ID),
                 submission.getFieldValue(AllConstants.ChildRegistrationFields.DATE_OF_BIRTH),
-                submission.getFieldValue(AllConstants.ChildRegistrationFields.WEIGHT),
-                submission.getFieldValue(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN)));
+                submission.getFieldValue(AllConstants.ChildRegistrationFields.WEIGHT), submission
+                        .getFieldValue(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN)));
         allTimelines.add(forChildBirthInMotherProfile(
                 submission.getFieldValue(AllConstants.ChildRegistrationFields.MOTHER_ID),
                 submission.getFieldValue(AllConstants.ChildRegistrationFields.DATE_OF_BIRTH),
-                submission.getFieldValue(AllConstants.ChildRegistrationFields.GENDER),
-                null, null));
-        allTimelines.add(forChildBirthInECProfile(
-                submission.entityId(),
+                submission.getFieldValue(AllConstants.ChildRegistrationFields.GENDER), null, null));
+        allTimelines.add(forChildBirthInECProfile(submission.entityId(),
                 submission.getFieldValue(AllConstants.ChildRegistrationFields.DATE_OF_BIRTH),
                 submission.getFieldValue(AllConstants.ChildRegistrationFields.GENDER), null));
-        String immunizationsGiven = submission.getFieldValue(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN);
+        String immunizationsGiven = submission
+                .getFieldValue(AllConstants.ChildRegistrationFields.IMMUNIZATIONS_GIVEN);
         for (String immunization : immunizationsGiven.split(SPACE)) {
             serviceProvidedService.add(ServiceProvided.forChildImmunization(
                     submission.getFieldValue(AllConstants.ChildRegistrationFields.CHILD_ID),
@@ -132,25 +146,36 @@ public class ChildService {
     }
 
     public void pncRegistrationOA(FormSubmission submission) {
-        SubForm subForm = submission.getSubFormByName(AllConstants.PNCRegistrationOAFields.CHILD_REGISTRATION_OA_SUB_FORM_NAME);
-        if (handleStillBirth(submission, subForm)) return;
+        SubForm subForm = submission.getSubFormByName(
+                AllConstants.PNCRegistrationOAFields.CHILD_REGISTRATION_OA_SUB_FORM_NAME);
+        if (handleStillBirth(submission, subForm)) {
+            return;
+        }
 
-        String referenceDate = submission.getFieldValue(AllConstants.DeliveryOutcomeFields.REFERENCE_DATE);
-        String deliveryPlace = submission.getFieldValue(AllConstants.DeliveryOutcomeFields.DELIVERY_PLACE);
+        String referenceDate = submission
+                .getFieldValue(AllConstants.DeliveryOutcomeFields.REFERENCE_DATE);
+        String deliveryPlace = submission
+                .getFieldValue(AllConstants.DeliveryOutcomeFields.DELIVERY_PLACE);
         Mother mother = motherRepository.findAllCasesForEC(submission.entityId()).get(0);
 
         for (Map<String, String> childInstances : subForm.instances()) {
             Child child = childRepository.find(childInstances.get(ENTITY_ID_FIELD_NAME));
-            childRepository.update(child.setIsClosed(false).setThayiCardNumber(mother.thayiCardNumber()).setDateOfBirth(referenceDate));
+            childRepository
+                    .update(child.setIsClosed(false).setThayiCardNumber(mother.thayiCardNumber())
+                            .setDateOfBirth(referenceDate));
             allTimelines.add(forChildBirthInChildProfile(child.caseId(), referenceDate,
-                    child.getDetail(AllConstants.PNCRegistrationOAFields.WEIGHT), child.getDetail(AllConstants.PNCRegistrationOAFields.IMMUNIZATIONS_GIVEN)));
-            allTimelines.add(forChildBirthInMotherProfile(mother.caseId(), referenceDate, child.gender(),
-                    referenceDate, deliveryPlace));
-            allTimelines.add(forChildBirthInECProfile(mother.ecCaseId(), referenceDate, child.gender(),
-                    referenceDate));
-            String immunizationsGiven = child.getDetail(AllConstants.PNCRegistrationOAFields.IMMUNIZATIONS_GIVEN);
+                    child.getDetail(AllConstants.PNCRegistrationOAFields.WEIGHT),
+                    child.getDetail(AllConstants.PNCRegistrationOAFields.IMMUNIZATIONS_GIVEN)));
+            allTimelines.add(forChildBirthInMotherProfile(mother.caseId(), referenceDate,
+                    child.gender(), referenceDate, deliveryPlace));
+            allTimelines
+                    .add(forChildBirthInECProfile(mother.ecCaseId(), referenceDate, child.gender(),
+                            referenceDate));
+            String immunizationsGiven = child
+                    .getDetail(AllConstants.PNCRegistrationOAFields.IMMUNIZATIONS_GIVEN);
             for (String immunization : immunizationsGiven.split(SPACE)) {
-                serviceProvidedService.add(ServiceProvided.forChildImmunization(child.caseId(), immunization, referenceDate));
+                serviceProvidedService.add(ServiceProvided
+                        .forChildImmunization(child.caseId(), immunization, referenceDate));
             }
         }
     }
@@ -167,32 +192,44 @@ public class ChildService {
     }
 
     public void updateImmunizations(FormSubmission submission) {
-        String immunizationDate = submission.getFieldValue(AllConstants.ChildImmunizationsFields.IMMUNIZATION_DATE);
-        List<String> immunizationsGivenList = splitFieldValueBySpace(submission, AllConstants.ChildImmunizationsFields.IMMUNIZATIONS_GIVEN);
-        List<String> previousImmunizationsList = splitFieldValueBySpace(submission, AllConstants.ChildImmunizationsFields.PREVIOUS_IMMUNIZATIONS_GIVEN);
+        String immunizationDate = submission
+                .getFieldValue(AllConstants.ChildImmunizationsFields.IMMUNIZATION_DATE);
+        List<String> immunizationsGivenList = splitFieldValueBySpace(submission,
+                AllConstants.ChildImmunizationsFields.IMMUNIZATIONS_GIVEN);
+        List<String> previousImmunizationsList = splitFieldValueBySpace(submission,
+                AllConstants.ChildImmunizationsFields.PREVIOUS_IMMUNIZATIONS_GIVEN);
         immunizationsGivenList.removeAll(previousImmunizationsList);
         for (String immunization : immunizationsGivenList) {
-            allTimelines.add(forChildImmunization(submission.entityId(), immunization, immunizationDate));
-            serviceProvidedService.add(ServiceProvided.forChildImmunization(submission.entityId(), immunization, immunizationDate));
+            allTimelines.add(forChildImmunization(submission.entityId(), immunization,
+                    immunizationDate));
+            serviceProvidedService.add(ServiceProvided
+                    .forChildImmunization(submission.entityId(), immunization, immunizationDate));
             allAlerts.changeAlertStatusToInProcess(submission.entityId(), immunization);
         }
     }
 
     private ArrayList<String> splitFieldValueBySpace(FormSubmission submission, String fieldName) {
-        return new ArrayList<String>(Arrays.asList(submission.getFieldValue(fieldName).split(SPACE)));
+        return new ArrayList<String>(
+                Arrays.asList(submission.getFieldValue(fieldName).split(SPACE)));
     }
 
     public void pncVisitHappened(FormSubmission submission) {
         String pncVisitDate = submission.getFieldValue(AllConstants.PNCVisitFields.PNC_VISIT_DATE);
         String pncVisitDay = submission.getFieldValue(AllConstants.PNCVisitFields.PNC_VISIT_DAY);
-        SubForm subForm = submission.getSubFormByName(AllConstants.PNCVisitFields.CHILD_PNC_VISIT_SUB_FORM_NAME);
+        SubForm subForm = submission
+                .getSubFormByName(AllConstants.PNCVisitFields.CHILD_PNC_VISIT_SUB_FORM_NAME);
 
-        if (handleStillBirth(submission, subForm)) return;
+        if (handleStillBirth(submission, subForm)) {
+            return;
+        }
 
         for (Map<String, String> childInstances : subForm.instances()) {
             allTimelines.add(forChildPNCVisit(childInstances.get(ENTITY_ID_FIELD_NAME), pncVisitDay,
-                    pncVisitDate, childInstances.get(AllConstants.PNCVisitFields.WEIGHT), childInstances.get(AllConstants.PNCVisitFields.TEMPERATURE)));
-            serviceProvidedService.add(ServiceProvided.forChildPNCVisit(childInstances.get(ENTITY_ID_FIELD_NAME), pncVisitDay, pncVisitDate));
+                    pncVisitDate, childInstances.get(AllConstants.PNCVisitFields.WEIGHT),
+                    childInstances.get(AllConstants.PNCVisitFields.TEMPERATURE)));
+            serviceProvidedService.add(ServiceProvided
+                    .forChildPNCVisit(childInstances.get(ENTITY_ID_FIELD_NAME), pncVisitDay,
+                            pncVisitDate));
         }
     }
 
@@ -206,13 +243,10 @@ public class ChildService {
 
     public void updateIllnessStatus(FormSubmission submission) {
         String sickVisitDate = submission.getFieldValue(SICK_VISIT_DATE);
-        String date = sickVisitDate != null ?
-                sickVisitDate : submission.getFieldValue(REPORT_CHILD_DISEASE_DATE);
-        serviceProvidedService.add(
-                ServiceProvided.forChildIllnessVisit(submission.entityId(),
-                        date,
-                        createChildIllnessMap(submission))
-        );
+        String date = sickVisitDate != null ? sickVisitDate
+                : submission.getFieldValue(REPORT_CHILD_DISEASE_DATE);
+        serviceProvidedService.add(ServiceProvided.forChildIllnessVisit(submission.entityId(), date,
+                createChildIllnessMap(submission)));
     }
 
     private Map<String, String> createChildIllnessMap(FormSubmission submission) {
@@ -220,19 +254,19 @@ public class ChildService {
                 .put(CHILD_SIGNS_OTHER, submission.getFieldValue(CHILD_SIGNS_OTHER))
                 .put(SICK_VISIT_DATE, submission.getFieldValue(SICK_VISIT_DATE))
                 .put(REPORT_CHILD_DISEASE, submission.getFieldValue(REPORT_CHILD_DISEASE))
-                .put(REPORT_CHILD_DISEASE_OTHER, submission.getFieldValue(REPORT_CHILD_DISEASE_OTHER))
+                .put(REPORT_CHILD_DISEASE_OTHER,
+                        submission.getFieldValue(REPORT_CHILD_DISEASE_OTHER))
                 .put(REPORT_CHILD_DISEASE_DATE, submission.getFieldValue(REPORT_CHILD_DISEASE_DATE))
-                .put(REPORT_CHILD_DISEASE_PLACE, submission.getFieldValue(REPORT_CHILD_DISEASE_PLACE))
-                .put(CHILD_REFERRAL, submission.getFieldValue(CHILD_REFERRAL))
-                .map();
+                .put(REPORT_CHILD_DISEASE_PLACE,
+                        submission.getFieldValue(REPORT_CHILD_DISEASE_PLACE))
+                .put(CHILD_REFERRAL, submission.getFieldValue(CHILD_REFERRAL)).map();
     }
 
     public void updateVitaminAProvided(FormSubmission submission) {
-        serviceProvidedService.add(
-                ServiceProvided.forVitaminAProvided(submission.entityId(),
-                        submission.getFieldValue(AllConstants.VitaminAFields.VITAMIN_A_DATE),
-                        submission.getFieldValue(AllConstants.VitaminAFields.VITAMIN_A_DOSE),
-                        submission.getFieldValue(AllConstants.VitaminAFields.VITAMIN_A_PLACE)));
+        serviceProvidedService.add(ServiceProvided.forVitaminAProvided(submission.entityId(),
+                submission.getFieldValue(AllConstants.VitaminAFields.VITAMIN_A_DATE),
+                submission.getFieldValue(AllConstants.VitaminAFields.VITAMIN_A_DOSE),
+                submission.getFieldValue(AllConstants.VitaminAFields.VITAMIN_A_PLACE)));
     }
 
     public void registerForOA(FormSubmission submission) {
@@ -242,16 +276,18 @@ public class ChildService {
 
         Map<String, String> immunizationDateFieldMap = createImmunizationDateFieldMap();
 
-        String immunizationsGiven = submission.getFieldValue(AllConstants.ChildRegistrationOAFields.IMMUNIZATIONS_GIVEN);
+        String immunizationsGiven = submission
+                .getFieldValue(AllConstants.ChildRegistrationOAFields.IMMUNIZATIONS_GIVEN);
         immunizationsGiven = isBlank(immunizationsGiven) ? "" : immunizationsGiven;
-        allTimelines.add(forChildBirthInChildProfile(
-                submission.getFieldValue(CHILD_ID),
+        allTimelines.add(forChildBirthInChildProfile(submission.getFieldValue(CHILD_ID),
                 submission.getFieldValue(AllConstants.ChildRegistrationOAFields.DATE_OF_BIRTH),
                 submission.getFieldValue(AllConstants.ChildRegistrationOAFields.WEIGHT),
                 immunizationsGiven));
 
         for (String immunization : immunizationsGiven.split(SPACE)) {
-            serviceProvidedService.add(ServiceProvided.forChildImmunization(submission.entityId(), immunization, submission.getFieldValue(immunizationDateFieldMap.get(immunization))));
+            serviceProvidedService.add(ServiceProvided
+                    .forChildImmunization(submission.entityId(), immunization,
+                            submission.getFieldValue(immunizationDateFieldMap.get(immunization))));
         }
     }
 }

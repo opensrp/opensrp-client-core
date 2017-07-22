@@ -15,7 +15,8 @@ public class AllReports {
     }
 
     public void handleAction(Action action) {
-        repository.update(new Report(action.type(), action.get("annualTarget"), action.get("monthlySummaries")));
+        repository.update(new Report(action.type(), action.get("annualTarget"),
+                action.get("monthlySummaries")));
     }
 
     public List<Report> allFor(List<ReportIndicator> indicators) {

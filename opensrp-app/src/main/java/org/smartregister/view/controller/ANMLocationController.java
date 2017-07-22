@@ -31,7 +31,8 @@ public class ANMLocationController {
         return cache.get(ANM_LOCATION_JSON, new CacheableData<String>() {
             @Override
             public String fetch() {
-                return new Gson().fromJson(allSettings.fetchANMLocation(), ANMLocation.class).asJSONString();
+                return new Gson().fromJson(allSettings.fetchANMLocation(), ANMLocation.class)
+                        .asJSONString();
             }
         });
     }

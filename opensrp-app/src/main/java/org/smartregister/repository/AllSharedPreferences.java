@@ -78,7 +78,8 @@ public class AllSharedPreferences {
 
     public void saveDefaultLocalityId(String username, String localityId) {
         if (username != null) {
-            preferences.edit().putString(DEFAULT_LOCALITY_ID_PREFIX + username, localityId).commit();
+            preferences.edit().putString(DEFAULT_LOCALITY_ID_PREFIX + username, localityId)
+                    .commit();
         }
     }
 
@@ -123,7 +124,8 @@ public class AllSharedPreferences {
     }
 
     public void saveIsSyncInProgress(Boolean isSyncInProgress) {
-        preferences.edit().putBoolean(IS_SYNC_IN_PROGRESS_PREFERENCE_KEY, isSyncInProgress).commit();
+        preferences.edit().putBoolean(IS_SYNC_IN_PROGRESS_PREFERENCE_KEY, isSyncInProgress)
+                .commit();
     }
 
     public String fetchBaseURL(String baseurl) {

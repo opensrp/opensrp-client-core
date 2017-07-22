@@ -89,13 +89,16 @@ public class ANCStatusView extends RelativeLayout {
     }
 
     private void setTextColorForLMP(ANCSmartRegisterClient client) {
-        if (IntegerUtil.tryParse(client.pastDueInDays(), 0) > -30 && IntegerUtil.tryParse(client.pastDueInDays(), 0) < 0) {
+        if (IntegerUtil.tryParse(client.pastDueInDays(), 0) > -30
+                && IntegerUtil.tryParse(client.pastDueInDays(), 0) < 0) {
             txtLmp.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
             txtEdd.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
-            txtANCStatus.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
+            txtANCStatus
+                    .setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
             lblLmp.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
             lblEdd.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
-            lblANCStatus.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
+            lblANCStatus
+                    .setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
         } else {
             txtLmp.setTextColor(getInstance().getColorResource(R.color.text_black));
             txtEdd.setTextColor(getInstance().getColorResource(R.color.text_black));
