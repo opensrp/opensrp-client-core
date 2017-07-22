@@ -16,13 +16,13 @@ import java.util.Map;
  * Created by raihan on 3/15/16.
  */
 public class ClientRepository extends SQLiteOpenHelper {
-    private String common_SQL = "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT,details VARCHAR)";
     public static final String ID_COLUMN = "_id";
     public static final String Relational_ID = "baseEntityId";
     public static final String propertyDETAILS_COLUMN = "propertydetails";
     public static final String attributeDETAILS_COLUMN = "attributedetails";
     public String TABLE_NAME = "Clients";
     public String[] additionalcolumns;
+    private String common_SQL = "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT,details VARCHAR)";
 
     public ClientRepository(Context context, String[] columns) {
         super(context, "test_convert", null, 1);

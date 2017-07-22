@@ -169,9 +169,24 @@ public class TimelineEvent {
         return title;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        return EqualsBuilder.reflectionEquals(o, this);
+    }
+
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
     private static class DetailBuilder {
-        private Map<String, String> details;
         private final StringBuilder stringBuilder;
+        private Map<String, String> details;
 
         private DetailBuilder(Map<String, String> details) {
             this.details = details;
@@ -318,21 +333,6 @@ public class TimelineEvent {
             }
             return builder.toString().replaceAll(", $", "");
         }
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return EqualsBuilder.reflectionEquals(o, this);
-    }
-
-    @Override
-    public int hashCode() {
-        return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
     }
 
 }

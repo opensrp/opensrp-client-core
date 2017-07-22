@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.os.Bundle;
+
 import org.smartregister.domain.Report;
 import org.smartregister.view.controller.ReportIndicatorDetailViewController;
 

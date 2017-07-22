@@ -17,23 +17,33 @@ import java.util.Map;
  */
 public class Client extends org.smartregister.clientandeventmodel.Client {
 
-    public void setRev(DocumentRevision rev) {
-        this.rev = rev;
-    }
-
+    public static final String type_key = "type";
+    public static final String addresses_key = "addresses";
+    public static final String attributes_key = "attributes";
+    public static final String base_entity_id_key = "baseEntityId";
+    public static final String birth_date_key = "birthdate";
+    public static final String birth_date_approx_key = "birthdateApprox";
+    public static final String creator_key = "creator";
+    public static final String date_created_key = "dateCreated";
+    public static final String date_voided_key = "dateVoided";
+    public static final String date_edited_key = "dateEdited";
+    public static final String death_date_key = "deathdate";
+    public static final String firstname_key = "firstName";
+    public static final String identifiers_key = "identifiers";
+    public static final String gender_key = "gender";
+    public static final String lastname_key = "lastName";
+    public static final String middlename_key = "middleName";
+    public static final String voider_key = "voider";
+    public static final String void_reason_key = "voidReason";
+    public static final String editor_key = "editor";
+    public static final String death_date_approx_key = "deathdateApprox";
+    public static final String voided_key = "voided";
+    public static final String relationships_key = "relationships";
+    static final String DOC_TYPE = "Client";
     // this is the revision in the database representing this task
     private DocumentRevision rev;
-
-    public DocumentRevision getDocumentRevision() {
-        return rev;
-    }
-
-    static final String DOC_TYPE = "Client";
-
-
     public Client() {
     }
-
     public Client(org.smartregister.clientandeventmodel.Client client) {
 
         setAddresses(client.getAddresses());
@@ -60,29 +70,6 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         setRelationships(client.getRelationships());
         setType(DOC_TYPE);
     }
-
-    public static final String type_key = "type";
-    public static final String addresses_key = "addresses";
-    public static final String attributes_key = "attributes";
-    public static final String base_entity_id_key = "baseEntityId";
-    public static final String birth_date_key = "birthdate";
-    public static final String birth_date_approx_key = "birthdateApprox";
-    public static final String creator_key = "creator";
-    public static final String date_created_key = "dateCreated";
-    public static final String date_voided_key = "dateVoided";
-    public static final String date_edited_key = "dateEdited";
-    public static final String death_date_key = "deathdate";
-    public static final String firstname_key = "firstName";
-    public static final String identifiers_key = "identifiers";
-    public static final String gender_key = "gender";
-    public static final String lastname_key = "lastName";
-    public static final String middlename_key = "middleName";
-    public static final String voider_key = "voider";
-    public static final String void_reason_key = "voidReason";
-    public static final String editor_key = "editor";
-    public static final String death_date_approx_key = "deathdateApprox";
-    public static final String voided_key = "voided";
-    public static final String relationships_key = "relationships";
 
     public static Client fromRevision(DocumentRevision rev) throws ParseException {
         Client client = new Client();
@@ -118,7 +105,7 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
                 if (dateVoided != null)
                     client.setDateVoided(dateVoided);
             }
-            if (map.get(date_edited_key) != null){
+            if (map.get(date_edited_key) != null) {
                 Date dateEdited = DateUtil.toDate(map.get(date_edited_key));
                 if (dateEdited != null)
                     client.setDateEdited(dateEdited);
@@ -155,6 +142,14 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         return null;
     }
 
+    public void setRev(DocumentRevision rev) {
+        this.rev = rev;
+    }
+
+    public DocumentRevision getDocumentRevision() {
+        return rev;
+    }
+
     public Map<String, Object> asMap() {
         // this could also be done by a fancy object mapper
         HashMap<String, Object> map = new HashMap<String, Object>();
@@ -175,7 +170,7 @@ public class Client extends org.smartregister.clientandeventmodel.Client {
         if (getDateCreated() != null) {
             map.put(date_created_key, DateUtil.fromDate(getDateCreated()));
         }
-        if (getDateVoided() != null){
+        if (getDateVoided() != null) {
             map.put(date_voided_key, DateUtil.fromDate(getDateVoided()));
         }
         if (getDateEdited() != null) {

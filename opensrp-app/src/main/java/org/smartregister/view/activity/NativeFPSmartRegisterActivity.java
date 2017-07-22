@@ -5,6 +5,7 @@ import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
@@ -24,13 +25,17 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
     private static final String DIALOG_TAG = "dialog";
     private static int CHECKED_TAB_ID = R.id.rb_fp_method;
-
+    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
+    FPSmartRegisterDialogFragment.onSelectedListener listener = new FPSmartRegisterDialogFragment.onSelectedListener() {
+        @Override
+        public void onSelected(int id) {
+            CHECKED_TAB_ID = id;
+        }
+    };
     private SmartRegisterClientsProvider clientProvider = null;
     private FPSmartRegisterController controller;
     private VillageController villageController;
     private DialogOptionMapper dialogOptionMapper;
-
-    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
 
     @Override
     protected SmartRegisterPaginatedAdapter adapter() {
@@ -143,6 +148,39 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
         startFormActivity(EC_REGISTRATION, null, fieldOverrides.getJSONString());
     }
 
+    @Override
+    public void showFragmentDialog(DialogOptionModel dialogOptionModel, Object tag) {
+        if (dialogOptionModel.getDialogOptions().length <= 0) {
+            return;
+        }
+
+        if (!(dialogOptionModel instanceof ServiceModeDialogOptionModel)) {
+            NativeFPSmartRegisterActivity.super.showFragmentDialog(dialogOptionModel, tag);
+            return;
+        }
+
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag(DIALOG_TAG);
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        dialogOptionModel = new FPServiceModeDialogOptionModel().cloneDialogOptionsWith(dialogOptionModel);
+        FPSmartRegisterDialogFragment fpSmartRegisterDialogFragment = FPSmartRegisterDialogFragment
+                .newInstance(this, dialogOptionModel, tag);
+        fpSmartRegisterDialogFragment.setSelectedListener(listener);
+        fpSmartRegisterDialogFragment.setArguments(setAndReturnTabSelectionBundle());
+        fpSmartRegisterDialogFragment.show(ft, DIALOG_TAG);
+
+    }
+
+    private Bundle setAndReturnTabSelectionBundle() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(AllConstants.FP_DIALOG_TAB_SELECTION, CHECKED_TAB_ID);
+        return bundle;
+    }
+
     private class ClientActionHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -171,33 +209,6 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
         }
     }
 
-    @Override
-    public void showFragmentDialog(DialogOptionModel dialogOptionModel, Object tag) {
-        if (dialogOptionModel.getDialogOptions().length <= 0) {
-            return;
-        }
-
-        if (!(dialogOptionModel instanceof  ServiceModeDialogOptionModel)) {
-            NativeFPSmartRegisterActivity.super.showFragmentDialog(dialogOptionModel, tag);
-            return;
-        }
-
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        Fragment prev = getFragmentManager().findFragmentByTag(DIALOG_TAG);
-        if (prev != null) {
-            ft.remove(prev);
-        }
-        ft.addToBackStack(null);
-
-        dialogOptionModel = new FPServiceModeDialogOptionModel().cloneDialogOptionsWith(dialogOptionModel);
-        FPSmartRegisterDialogFragment fpSmartRegisterDialogFragment = FPSmartRegisterDialogFragment
-                .newInstance(this, dialogOptionModel, tag);
-        fpSmartRegisterDialogFragment.setSelectedListener(listener);
-        fpSmartRegisterDialogFragment.setArguments(setAndReturnTabSelectionBundle());
-        fpSmartRegisterDialogFragment.show(ft, DIALOG_TAG);
-
-    }
-
     private class UpdateDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
@@ -212,6 +223,7 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
     private class FPServiceModeDialogOptionModel implements FPDialogOptionModel {
         private DialogOption[] parentDialogOption;
+
         @Override
         public DialogOption[] getPrioritizationDialogOptions() {
             return new DialogOption[]{
@@ -237,18 +249,5 @@ public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterAct
             return this;
         }
     }
-
-    private Bundle setAndReturnTabSelectionBundle() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(AllConstants.FP_DIALOG_TAB_SELECTION, CHECKED_TAB_ID);
-        return bundle;
-    }
-
-    FPSmartRegisterDialogFragment.onSelectedListener listener = new FPSmartRegisterDialogFragment.onSelectedListener() {
-        @Override
-        public void onSelected(int id) {
-            CHECKED_TAB_ID = id;
-        }
-    };
 
 }

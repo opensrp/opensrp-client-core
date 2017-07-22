@@ -37,11 +37,16 @@ public class FPPrioritizationMethodFilter implements FilterOption {
             return false;
         }
         switch (serviceMode) {
-            case ALL_EC: return true;
-            case HIGH_PRIORITY: return fpSmartRegisterClient.isHighPriority();
-            case TWO_PLUS_CHILDREN: return getIntFromString(fpSmartRegisterClient.numberOfLivingChildren()) > 2;
-            case ONE_CHILDREN: return getIntFromString(fpSmartRegisterClient.numberOfLivingChildren()) == 1;
-            default: return false;
+            case ALL_EC:
+                return true;
+            case HIGH_PRIORITY:
+                return fpSmartRegisterClient.isHighPriority();
+            case TWO_PLUS_CHILDREN:
+                return getIntFromString(fpSmartRegisterClient.numberOfLivingChildren()) > 2;
+            case ONE_CHILDREN:
+                return getIntFromString(fpSmartRegisterClient.numberOfLivingChildren()) == 1;
+            default:
+                return false;
         }
     }
 
@@ -49,7 +54,7 @@ public class FPPrioritizationMethodFilter implements FilterOption {
         return !(FPMethod.NONE.displayName().equalsIgnoreCase(fpSmartRegisterClient.fpMethod().displayName()));
     }
 
-    private int getIntFromString (String value) {
+    private int getIntFromString(String value) {
         try {
             return Integer.parseInt(value);
         } catch (Exception e) {

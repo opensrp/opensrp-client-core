@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.view.View;
+
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.form.FieldOverrides;
@@ -20,14 +21,13 @@ import static org.smartregister.AllConstants.FormNames.*;
 
 public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
+    public static final List<? extends DialogOption> DEFAULT_PNC_FILTER_OPTIONS =
+            asList(new OutOfAreaFilter());
+    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
     private SmartRegisterClientsProvider clientProvider = null;
     private PNCSmartRegisterController controller;
     private VillageController villageController;
     private DialogOptionMapper dialogOptionMapper;
-    public static final List<? extends DialogOption> DEFAULT_PNC_FILTER_OPTIONS =
-            asList(new OutOfAreaFilter());
-
-    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
 
     @Override
     protected SmartRegisterPaginatedAdapter adapter() {
@@ -152,7 +152,6 @@ public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
             navigationController.startPNC(client.entityId());
         }
     }
-
 
 
     private class UpdateDialogOptionModel implements DialogOptionModel {

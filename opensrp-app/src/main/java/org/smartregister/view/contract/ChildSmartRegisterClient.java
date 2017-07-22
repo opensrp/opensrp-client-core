@@ -15,8 +15,8 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public interface ChildSmartRegisterClient extends SmartRegisterClient {
     List<String> illnessAcronyms = new ArrayList<String>(
-        Arrays.asList(Context.getInstance().getStringResource(R.string.str_child_illness_ari),
-                Context.getInstance().getStringResource(R.string.str_child_illness_sam)));
+            Arrays.asList(Context.getInstance().getStringResource(R.string.str_child_illness_ari),
+                    Context.getInstance().getStringResource(R.string.str_child_illness_sam)));
 
     String gender();
 
@@ -97,8 +97,8 @@ public interface ChildSmartRegisterClient extends SmartRegisterClient {
             return getDiseasesCapitalizeIfAcronymsOrHumanize() + (
                     isBlank(otherDiseases) ? "" : (", "
                             + StringUtil.replaceAndHumanizeWithInitCapText(otherDiseases,
-                                    AllConstants.SPACE,
-                                    AllConstants.COMMA_WITH_SPACE)));
+                            AllConstants.SPACE,
+                            AllConstants.COMMA_WITH_SPACE)));
         }
 
         private String getDiseasesCapitalizeIfAcronymsOrHumanize() {

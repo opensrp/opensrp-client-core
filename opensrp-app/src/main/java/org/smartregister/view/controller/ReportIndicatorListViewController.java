@@ -2,7 +2,9 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.gson.Gson;
+
 import org.smartregister.domain.Report;
 import org.smartregister.domain.ReportIndicator;
 import org.smartregister.domain.ReportsCategory;

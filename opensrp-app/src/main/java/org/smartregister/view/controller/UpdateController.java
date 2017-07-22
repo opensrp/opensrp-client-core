@@ -1,6 +1,7 @@
 package org.smartregister.view.controller;
 
 import android.webkit.WebView;
+
 import org.smartregister.Context;
 
 import java.util.ArrayList;

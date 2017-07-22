@@ -7,10 +7,10 @@ import android.util.Log;
 import net.sqlcipher.database.SQLiteDatabase;
 
 public class SettingsRepository extends DrishtiRepository {
-    static final String SETTINGS_SQL = "CREATE TABLE settings(key VARCHAR PRIMARY KEY, value BLOB)";
     public static final String SETTINGS_TABLE_NAME = "settings";
     public static final String SETTINGS_KEY_COLUMN = "key";
     public static final String SETTINGS_VALUE_COLUMN = "value";
+    static final String SETTINGS_SQL = "CREATE TABLE settings(key VARCHAR PRIMARY KEY, value BLOB)";
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -39,13 +39,13 @@ public class SettingsRepository extends DrishtiRepository {
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
             cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN}, SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
-            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 value = cursor.getString(0);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getName(), e.toString(), e);
-        }finally {
-            if(cursor != null){
+        } finally {
+            if (cursor != null) {
                 cursor.close();
             }
         }
@@ -58,14 +58,13 @@ public class SettingsRepository extends DrishtiRepository {
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
             cursor = database.query(SETTINGS_TABLE_NAME, new String[]{SETTINGS_VALUE_COLUMN}, SETTINGS_KEY_COLUMN + " = ?", new String[]{key}, null, null, null, "1");
-            if(cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
+            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 value = cursor.getBlob(0);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(getClass().getName(), e.toString(), e);
-        }
-        finally {
-            if(cursor != null){
+        } finally {
+            if (cursor != null) {
                 cursor.close();
             }
         }

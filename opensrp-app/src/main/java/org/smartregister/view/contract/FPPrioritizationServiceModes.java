@@ -14,19 +14,21 @@ public enum FPPrioritizationServiceModes {
     ONE_CHILDREN(Context.getInstance().getStringResource(R.string.fp_prioritization_one_child_service_mode));
 
 
-    private String name;
-    /** The map to hold all the objects of this enum. */
+    /**
+     * The map to hold all the objects of this enum.
+     */
     private static final Map<String, FPPrioritizationServiceModes> serviceModeMap = new HashMap<String, FPPrioritizationServiceModes>();
-
-
-    FPPrioritizationServiceModes(String name) {
-        this.name = name;
-    }
 
     // Create a map with all enums
     static {
         for (FPPrioritizationServiceModes serviceMode : EnumSet.allOf(FPPrioritizationServiceModes.class))
             serviceModeMap.put(serviceMode.toString(), serviceMode);
+    }
+
+    private String name;
+
+    FPPrioritizationServiceModes(String name) {
+        this.name = name;
     }
 
     public static FPPrioritizationServiceModes valueOfIdentifier(String value) {

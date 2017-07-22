@@ -1,6 +1,7 @@
 package org.smartregister.view.dialog;
 
 import android.view.View;
+
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
 import org.smartregister.view.contract.ChildSmartRegisterClient;

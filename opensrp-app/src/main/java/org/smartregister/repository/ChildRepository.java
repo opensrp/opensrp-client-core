@@ -2,9 +2,12 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -23,8 +26,10 @@ import static org.smartregister.repository.MotherRepository.MOTHER_TABLE_COLUMNS
 import static org.smartregister.repository.MotherRepository.MOTHER_TABLE_NAME;
 
 public class ChildRepository extends DrishtiRepository {
-    private static final String CHILD_SQL = "CREATE TABLE child(id VARCHAR PRIMARY KEY, motherCaseId VARCHAR, thayiCardNumber VARCHAR, dateOfBirth VARCHAR, gender VARCHAR, details VARCHAR, isClosed VARCHAR, photoPath VARCHAR)";
     public static final String CHILD_TABLE_NAME = "child";
+    public static final String PHOTO_PATH_COLUMN = "photoPath";
+    public static final String NOT_CLOSED = "false";
+    private static final String CHILD_SQL = "CREATE TABLE child(id VARCHAR PRIMARY KEY, motherCaseId VARCHAR, thayiCardNumber VARCHAR, dateOfBirth VARCHAR, gender VARCHAR, details VARCHAR, isClosed VARCHAR, photoPath VARCHAR)";
     private static final String ID_COLUMN = "id";
     private static final String MOTHER_ID_COLUMN = "motherCaseId";
     private static final String THAYI_CARD_COLUMN = "thayiCardNumber";
@@ -32,9 +37,7 @@ public class ChildRepository extends DrishtiRepository {
     private static final String GENDER_COLUMN = "gender";
     private static final String DETAILS_COLUMN = "details";
     private static final String IS_CLOSED_COLUMN = "isClosed";
-    public static final String PHOTO_PATH_COLUMN = "photoPath";
     public static final String[] CHILD_TABLE_COLUMNS = {ID_COLUMN, MOTHER_ID_COLUMN, THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
-    public static final String NOT_CLOSED = "false";
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -98,13 +101,13 @@ public class ChildRepository extends DrishtiRepository {
     public List<Child> allChildrenWithMotherAndEC() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.rawQuery("SELECT " +
-                tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) + ", " +
-                tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", " +
-                tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) +
-                " FROM " + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME +
-                " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED + "' AND " +
-                CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = " + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN
-                + " AND " + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN,
+                        tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) + ", " +
+                        tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", " +
+                        tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) +
+                        " FROM " + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME +
+                        " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED + "' AND " +
+                        CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = " + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN
+                        + " AND " + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN,
                 null);
         return readAllChildrenWithMotherAndEC(cursor);
     }

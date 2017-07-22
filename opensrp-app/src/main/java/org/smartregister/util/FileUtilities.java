@@ -25,50 +25,16 @@ import static java.text.MessageFormat.format;
  * Created by raihan on 5/25/15.
  */
 public class FileUtilities {
-    private Writer writer;
-    private String absolutePath;
     //    private final Context context;
     private final static String TAG = FileUtilities.class.getCanonicalName();
     private static String mUserAgent = null;
+    private Writer writer;
+    private String absolutePath;
 
 
     public FileUtilities() {
         super();
 //        this.context = context;
-    }
-
-    public void write(String fileName, String data) {
-        File root = Environment.getExternalStorageDirectory();
-        File outDir = new File(root.getAbsolutePath() + File.separator + "EZ_time_tracker");
-        if (!outDir.isDirectory()) {
-            outDir.mkdir();
-        }
-        try {
-            if (!outDir.isDirectory()) {
-                throw new IOException(
-                        "Unable to create directory EZ_time_tracker. Maybe the SD card is mounted?");
-            }
-            File outputFile = new File(outDir, fileName);
-            writer = new BufferedWriter(new FileWriter(outputFile));
-            writer.write(data);
-//            Toast.makeText(context.getApplicationContext(),
-//                    "Report successfully saved to: " + outputFile.getAbsolutePath(),
-//                    Toast.LENGTH_LONG).show();
-            writer.close();
-        } catch (IOException e) {
-            Log.w("eztt", e.getMessage(), e);
-//            Toast.makeText(context, e.getMessage() + " Unable to write to external storage.",
-//                    Toast.LENGTH_LONG).show();
-        }
-
-    }
-
-    public Writer getWriter() {
-        return writer;
-    }
-
-    public String getAbsolutePath() {
-        return absolutePath;
     }
 
     public static Bitmap retrieveStaticImageFromDisk(String fileName) {
@@ -133,5 +99,39 @@ public class FileUtilities {
                 org.smartregister.Context.getInstance().allSharedPreferences().fetchBaseURL(""),
                 AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
         return url;
+    }
+
+    public void write(String fileName, String data) {
+        File root = Environment.getExternalStorageDirectory();
+        File outDir = new File(root.getAbsolutePath() + File.separator + "EZ_time_tracker");
+        if (!outDir.isDirectory()) {
+            outDir.mkdir();
+        }
+        try {
+            if (!outDir.isDirectory()) {
+                throw new IOException(
+                        "Unable to create directory EZ_time_tracker. Maybe the SD card is mounted?");
+            }
+            File outputFile = new File(outDir, fileName);
+            writer = new BufferedWriter(new FileWriter(outputFile));
+            writer.write(data);
+//            Toast.makeText(context.getApplicationContext(),
+//                    "Report successfully saved to: " + outputFile.getAbsolutePath(),
+//                    Toast.LENGTH_LONG).show();
+            writer.close();
+        } catch (IOException e) {
+            Log.w("eztt", e.getMessage(), e);
+//            Toast.makeText(context, e.getMessage() + " Unable to write to external storage.",
+//                    Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    public Writer getWriter() {
+        return writer;
+    }
+
+    public String getAbsolutePath() {
+        return absolutePath;
     }
 }

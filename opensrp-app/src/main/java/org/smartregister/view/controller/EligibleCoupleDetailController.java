@@ -2,7 +2,9 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+
 import com.google.gson.Gson;
+
 import org.smartregister.AllConstants;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.repository.AllEligibleCouples;
@@ -15,6 +17,7 @@ import org.smartregister.view.contract.ECDetail;
 import org.smartregister.view.contract.TimelineEvent;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
 import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
@@ -26,9 +29,9 @@ import static org.smartregister.AllConstants.WOMAN_TYPE;
 
 public class EligibleCoupleDetailController {
     private final Context context;
-    private String caseId;
     private final AllEligibleCouples allEligibleCouples;
     private final AllTimelineEvents allTimelineEvents;
+    private String caseId;
 
     public EligibleCoupleDetailController(Context context, String caseId, AllEligibleCouples allEligibleCouples,
                                           AllTimelineEvents allTimelineEvents) {

@@ -7,10 +7,10 @@ import java.util.Map;
  */
 public class Client {
     private String baseEntityID;
-    private Map<String,String> attributesDetailsMap;
-    private Map<String,String> attributesColumnsMap;
-    private Map<String,String> propertyColumnMap;
-    private Map<String,String> propertyDetailsMap;
+    private Map<String, String> attributesDetailsMap;
+    private Map<String, String> attributesColumnsMap;
+    private Map<String, String> propertyColumnMap;
+    private Map<String, String> propertyDetailsMap;
 
     public Client(String baseEntityID, Map<String, String> attributesDetailsMap, Map<String, String> attributesColumnsMap, Map<String, String> propertyColumnsMap, Map<String, String> propertyDetailMap) {
         this.baseEntityID = baseEntityID;

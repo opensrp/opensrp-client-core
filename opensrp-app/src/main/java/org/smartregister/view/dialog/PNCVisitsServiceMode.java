@@ -4,7 +4,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;

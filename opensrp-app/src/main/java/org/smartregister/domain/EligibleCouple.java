@@ -15,12 +15,12 @@ import static org.smartregister.AllConstants.ECRegistrationFields.*;
 import static org.smartregister.AllConstants.SPACE;
 
 public class EligibleCouple {
+    private final String village;
+    private final String subcenter;
     private String caseId;
     private String wifeName;
     private String husbandName;
     private String ecNumber;
-    private final String village;
-    private final String subcenter;
     private Map<String, String> details;
     private Boolean isOutOfArea;
     private Boolean isClosed;

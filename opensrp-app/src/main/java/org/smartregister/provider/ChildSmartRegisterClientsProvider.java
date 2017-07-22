@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
 import org.smartregister.view.contract.ChildSmartRegisterClient;
@@ -65,9 +66,9 @@ public class ChildSmartRegisterClientsProvider implements SmartRegisterClientsPr
             viewHolder = (NativeChildSmartRegisterViewHolder) itemView.getTag();
         }
 
-        ChildSmartRegisterClient client = (ChildSmartRegisterClient)smartRegisterClient;
+        ChildSmartRegisterClient client = (ChildSmartRegisterClient) smartRegisterClient;
 
-        if(client.isDataError()) {
+        if (client.isDataError()) {
             itemView.setBackgroundColor(Color.parseColor("#FDC3C3"));
         }
 

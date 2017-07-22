@@ -142,10 +142,6 @@ public enum FPMethod {
         }
     };
 
-    public abstract TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details);
-
-    public abstract String displayName();
-
     public static FPMethod tryParse(String method, FPMethod defaultMethod) {
         try {
             return StringUtils.isBlank(method) ? defaultMethod : FPMethod.valueOf(method.toUpperCase(Locale.getDefault()));
@@ -154,4 +150,8 @@ public enum FPMethod {
             return defaultMethod;
         }
     }
+
+    public abstract TimelineEvent getTimelineEventForRenew(String caseId, Map<String, String> details);
+
+    public abstract String displayName();
 }

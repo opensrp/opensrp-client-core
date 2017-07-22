@@ -20,9 +20,33 @@ class CommonObjectSort implements SortOption {
     private ByColumnAndByDetails byColumnAndByDetails;
     private boolean isInteger;
     private String sortOptionName;
-    public enum ByColumnAndByDetails{
-        byColumn, byDetails
-    }
+    private Comparator<SmartRegisterClient> commonComparator =
+            new Comparator<SmartRegisterClient>() {
+                @Override
+                public int compare(SmartRegisterClient smartRegisterClient,
+                                   SmartRegisterClient smartRegisterClient2) {
+                    CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
+                    CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
+                    boolean isDetails;
+
+                    switch (byColumnAndByDetails) {
+                        case byColumn:
+                            isDetails = false;
+                            break;
+                        case byDetails:
+                            isDetails = true;
+                            break;
+                        default:
+                            return 0;
+                    }
+
+                    String fieldValue = getFieldValue(client, isDetails);
+                    String fieldValue2 = getFieldValue(client2, isDetails);
+
+                    return isInteger ? Integer.valueOf(fieldValue).compareTo(
+                            Integer.valueOf(fieldValue2)) : fieldValue.compareTo(fieldValue2);
+                }
+            };
 
     CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg,
                      boolean isIntegerArg,
@@ -45,34 +69,6 @@ class CommonObjectSort implements SortOption {
         return allClients;
     }
 
-    private Comparator<SmartRegisterClient> commonComparator =
-            new Comparator<SmartRegisterClient>() {
-        @Override
-        public int compare(SmartRegisterClient smartRegisterClient,
-                           SmartRegisterClient smartRegisterClient2) {
-            CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
-            CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
-            boolean isDetails;
-
-            switch (byColumnAndByDetails) {
-                case byColumn:
-                    isDetails = false;
-                    break;
-                case byDetails:
-                    isDetails = true;
-                    break;
-                default:
-                    return 0;
-            }
-
-            String fieldValue = getFieldValue(client, isDetails);
-            String fieldValue2 = getFieldValue(client2, isDetails);
-
-            return isInteger ? Integer.valueOf(fieldValue).compareTo(
-                    Integer.valueOf(fieldValue2)) : fieldValue.compareTo(fieldValue2);
-        }
-    };
-
     @NonNull
     private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient,
                                  boolean isDetails) {
@@ -82,5 +78,9 @@ class CommonObjectSort implements SortOption {
         String detailsFieldValue = valueMap.get(field);
 
         return (detailsFieldValue != null ? detailsFieldValue : defaultValue).trim().toLowerCase();
+    }
+
+    public enum ByColumnAndByDetails {
+        byColumn, byDetails
     }
 }

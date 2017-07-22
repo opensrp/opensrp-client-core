@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.util.IntegerUtil;
 import org.smartregister.view.contract.ANCSmartRegisterClient;

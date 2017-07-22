@@ -3,6 +3,7 @@ package org.smartregister.view.dialog;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.TextView;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.Context;
 import org.smartregister.R;

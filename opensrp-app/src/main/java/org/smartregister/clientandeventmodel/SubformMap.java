@@ -3,7 +3,7 @@ package org.smartregister.clientandeventmodel;
 import java.util.List;
 import java.util.Map;
 
-public class SubformMap{
+public class SubformMap {
     private String name;
     private String entityId;
     private String bindType;
@@ -23,18 +23,23 @@ public class SubformMap{
     public String entityId() {
         return entityId;
     }
+
     public String name() {
         return name;
     }
+
     public String bindType() {
         return bindType;
     }
+
     public String defaultBindPath() {
         return defaultBindPath;
     }
+
     public Map<String, String> formAttributes() {
         return formAttributes;
     }
+
     public List<FormFieldMap> fields() {
         return fields;
     }

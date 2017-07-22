@@ -55,7 +55,9 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
 
     public static final String DIALOG_TAG = "dialog";
     public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(new AllClientsFilter());
-
+    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
+    private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
+    private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
     public ListView clientsView;
     public ProgressBar clientsProgressView;
     public TextView serviceModeView;
@@ -64,6 +66,13 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     public EditText searchView;
     public View searchCancelView;
     public TextView titleLabelView;
+    public View mView;
+    private SmartRegisterPaginatedAdapter clientsAdapter;
+    private FilterOption currentVillageFilter;
+    private SortOption currentSortOption;
+    private FilterOption currentSearchFilter;
+    private ServiceModeOption currentServiceModeOption;
+    private boolean refreshList;
 
     public EditText getSearchView() {
         return searchView;
@@ -81,6 +90,10 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         return currentSearchFilter;
     }
 
+    public void setCurrentSearchFilter(FilterOption currentSearchFilter) {
+        this.currentSearchFilter = currentSearchFilter;
+    }
+
     public SortOption getCurrentSortOption() {
         return currentSortOption;
     }
@@ -96,26 +109,6 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     public void setClientsAdapter(SmartRegisterPaginatedAdapter clientsAdapter) {
         this.clientsAdapter = clientsAdapter;
     }
-
-    private SmartRegisterPaginatedAdapter clientsAdapter;
-
-    private FilterOption currentVillageFilter;
-    private SortOption currentSortOption;
-
-    public View mView;
-
-    public void setCurrentSearchFilter(FilterOption currentSearchFilter) {
-        this.currentSearchFilter = currentSearchFilter;
-    }
-
-    private FilterOption currentSearchFilter;
-    private ServiceModeOption currentServiceModeOption;
-
-    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
-    private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
-    private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
-
-    private boolean refreshList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -144,7 +137,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         updateDefaultOptions();
     }
 
-    public void refreshListView(){
+    public void refreshListView() {
         this.setRefreshList(true);
         this.onResumption();
         this.setRefreshList(false);
@@ -170,7 +163,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
             @Override
             protected void onPostExecute(Void result) {
                 clientsView.setAdapter(clientsAdapter);
-                if(isAdded()) {
+                if (isAdded()) {
                     paginationViewHandler.refresh();
                     clientsProgressView.setVisibility(View.GONE);
                     clientsView.setVisibility(VISIBLE);
@@ -196,7 +189,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         View sortView = view.findViewById(R.id.sort_selection);
         sortView.setOnClickListener(navBarActionsHandler);
 
-        serviceModeView = (TextView)view.findViewById(R.id.service_mode_selection);
+        serviceModeView = (TextView) view.findViewById(R.id.service_mode_selection);
         serviceModeView.setOnClickListener(navBarActionsHandler);
 
         view.findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
@@ -317,7 +310,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     public void onSortSelection(SortOption sortBy) {
-        Log.v("he pressed this",sortBy.name());
+        Log.v("he pressed this", sortBy.name());
         currentSortOption = sortBy;
         appliedSortView.setText(sortBy.name());
         clientsAdapter
@@ -347,7 +340,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     protected void showFragmentDialog(DialogOptionModel dialogOptionModel, Object tag) {
-        ((SecuredNativeSmartRegisterActivity)getActivity()).showFragmentDialog(dialogOptionModel, tag);
+        ((SecuredNativeSmartRegisterActivity) getActivity()).showFragmentDialog(dialogOptionModel, tag);
     }
 
     protected abstract SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider();
@@ -359,6 +352,24 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     protected abstract void onInitialization();
 
     protected abstract void startRegistration();
+
+    public void gotoNextPage() {
+        clientsAdapter.nextPage();
+        clientsAdapter.notifyDataSetChanged();
+    }
+
+    public void goBackToPreviousPage() {
+        clientsAdapter.previousPage();
+        clientsAdapter.notifyDataSetChanged();
+    }
+
+    public boolean isRefreshList() {
+        return refreshList;
+    }
+
+    public void setRefreshList(boolean refreshList) {
+        this.refreshList = refreshList;
+    }
 
     private class FilterDialogOptionModel implements DialogOptionModel {
         @Override
@@ -448,16 +459,6 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
 
     }
 
-    public void gotoNextPage() {
-        clientsAdapter.nextPage();
-        clientsAdapter.notifyDataSetChanged();
-    }
-
-    public void goBackToPreviousPage() {
-        clientsAdapter.previousPage();
-        clientsAdapter.notifyDataSetChanged();
-    }
-
     public class NavBarActionsHandler implements View.OnClickListener {
 
         @Override
@@ -494,13 +495,5 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         }
 
 
-    }
-
-    public boolean isRefreshList() {
-        return refreshList;
-    }
-
-    public void setRefreshList(boolean refreshList) {
-        this.refreshList = refreshList;
     }
 }

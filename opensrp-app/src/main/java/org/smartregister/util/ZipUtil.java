@@ -28,9 +28,9 @@ public class ZipUtil {
             FileInputStream fin = new FileInputStream(this.zipFile);
             ZipInputStream zin = new ZipInputStream(fin);
             ZipEntry ze = null;
-            while((ze = zin.getNextEntry()) != null) {
+            while ((ze = zin.getNextEntry()) != null) {
                 Log.v("ZipService: ", "Unzipping " + ze.getName());
-                if(ze.isDirectory()) {
+                if (ze.isDirectory()) {
                     checkDir(ze.getName());
                 } else {
                     FileOutputStream fout = new FileOutputStream(this.zipLocation + ze.getName());
@@ -45,21 +45,21 @@ public class ZipUtil {
             /* delete the file */
             deleteFile(this.zipFile);
         } catch (Exception e) {
-            logError(""+e);
+            logError("" + e);
         }
     }
 
     private void checkDir(String location) {
         File f = new File(this.zipLocation + location);
-        if(!f.isDirectory()) {
+        if (!f.isDirectory()) {
             f.mkdirs();
         }
     }
 
     private void deleteFile(String fileToDelete) {
         File f = new File(fileToDelete);
-        if(f.exists()) {
-            if(f.delete()) {
+        if (f.exists()) {
+            if (f.delete()) {
                 Log.v("ZipService: ", "Deleting file " + f.getName());
             } else {
                 Log.v("ZipService: ", "Unable to delete " + f.getName());

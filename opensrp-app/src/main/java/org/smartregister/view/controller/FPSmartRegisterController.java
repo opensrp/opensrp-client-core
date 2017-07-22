@@ -35,9 +35,9 @@ public class FPSmartRegisterController {
 
     private final AllEligibleCouples allEligibleCouples;
     private final AllBeneficiaries allBeneficiaries;
+    private final AlertService alertService;
     private Cache<String> cache;
     private Cache<FPClients> fpClientsCache;
-    private final AlertService alertService;
 
     public FPSmartRegisterController(AllEligibleCouples allEligibleCouples, AllBeneficiaries allBeneficiaries, AlertService alertService, Cache<String> cache, Cache<FPClients> fpClientsCache) {
         this.allEligibleCouples = allEligibleCouples;

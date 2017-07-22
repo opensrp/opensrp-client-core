@@ -24,7 +24,8 @@ public abstract class BaseDataObject extends MotechBaseDataObject {
     @JsonProperty
     private String voidReason;
 
-    public BaseDataObject() {}
+    public BaseDataObject() {
+    }
 
     public User getCreator() {
         return creator;

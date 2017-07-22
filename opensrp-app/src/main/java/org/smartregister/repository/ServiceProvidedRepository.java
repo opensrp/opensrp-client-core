@@ -2,9 +2,12 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.smartregister.domain.ServiceProvided;
 
 import java.util.ArrayList;
@@ -17,16 +20,13 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 
 public class ServiceProvidedRepository extends DrishtiRepository {
 
-    private static final String SERVICE_PROVIDED_SQL = "CREATE TABLE service_provided(id INTEGER PRIMARY KEY AUTOINCREMENT, entityId VARCHAR, name VARCHAR, date VARCHAR, data VARCHAR)";
-
     public static final String SERVICE_PROVIDED_TABLE_NAME = "service_provided";
     public static final String ENTITY_ID_COLUMN = "entityId";
     public static final String NAME_ID_COLUMN = "name";
     public static final String DATE_ID_COLUMN = "date";
     public static final String DATA_ID_COLUMN = "data";
-
     public static final String[] SERVICE_PROVIDED_TABLE_COLUMNS = new String[]{ENTITY_ID_COLUMN, NAME_ID_COLUMN, DATE_ID_COLUMN, DATA_ID_COLUMN};
-
+    private static final String SERVICE_PROVIDED_SQL = "CREATE TABLE service_provided(id INTEGER PRIMARY KEY AUTOINCREMENT, entityId VARCHAR, name VARCHAR, date VARCHAR, data VARCHAR)";
 
     @Override
     protected void onCreate(SQLiteDatabase database) {

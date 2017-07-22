@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
 import org.smartregister.view.contract.*;
@@ -22,11 +23,9 @@ public class PNCSmartRegisterClientsProvider implements SmartRegisterClientsProv
     private final SecuredActivity activity;
     private final View.OnClickListener onClickListener;
     private final ProfilePhotoLoader photoLoader;
-
-    private ServiceModeOption currentServiceModeOption;
     private final AbsListView.LayoutParams clientViewLayoutParams;
-
     protected PNCSmartRegisterController controller;
+    private ServiceModeOption currentServiceModeOption;
 
     public PNCSmartRegisterClientsProvider(SecuredActivity activity,
                                            View.OnClickListener onClickListener,

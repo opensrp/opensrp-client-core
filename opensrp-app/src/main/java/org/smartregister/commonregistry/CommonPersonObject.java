@@ -13,21 +13,19 @@ public class CommonPersonObject {
     private Map<String, String> columnmaps;
     private short closed;
 
+    public CommonPersonObject(String caseId, String relationalid, Map<String, String> details, String type) {
+        this.details = details;
+        this.caseId = caseId;
+        this.type = type;
+        this.relationalid = relationalid;
+    }
+
     public Map<String, String> getColumnmaps() {
         return columnmaps;
     }
 
     public void setColumnmaps(Map<String, String> columnmaps) {
         this.columnmaps = columnmaps;
-    }
-
-
-
-    public CommonPersonObject(String caseId, String relationalid, Map<String, String> details, String type) {
-        this.details = details;
-        this.caseId = caseId;
-        this.type = type;
-        this.relationalid = relationalid;
     }
 
     public String getCaseId() {
@@ -50,11 +48,11 @@ public class CommonPersonObject {
         return relationalid;
     }
 
-    public void setClosed(short closed) {
-        this.closed = closed;
-    }
-
     public short getClosed() {
         return closed;
+    }
+
+    public void setClosed(short closed) {
+        this.closed = closed;
     }
 }

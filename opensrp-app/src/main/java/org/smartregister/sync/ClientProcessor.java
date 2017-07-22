@@ -35,20 +35,15 @@ import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessor {
 
-    private static ClientProcessor instance;
-    private CloudantDataHandler mCloudantDataHandler;
-    private static final String TAG = "ClientProcessor";
     public static final String baseEntityIdJSONKey = "baseEntityId";
     protected static final String providerIdJSONKey = "providerId";
-
-    private static final String detailsUpdated = "detailsUpdated";
-
     protected static final String VALUES_KEY = "values";
-
+    private static final String TAG = "ClientProcessor";
+    private static final String detailsUpdated = "detailsUpdated";
     private static final String[] openmrs_gen_ids = {"zeir_id"};
-
-
+    private static ClientProcessor instance;
     Context mContext;
+    private CloudantDataHandler mCloudantDataHandler;
 
     public ClientProcessor(Context context) {
         mContext = context;
@@ -548,7 +543,7 @@ public class ClientProcessor {
                                 boolean encounterTypeMatches = (encounterType == null) ||
                                         (encounterType != null
                                                 && encounterType.equalsIgnoreCase(
-                                                        expectedEncounterType));
+                                                expectedEncounterType));
 
                                 if (encounterTypeMatches
                                         && expectedFieldValue.equalsIgnoreCase(fieldValue)) {
@@ -770,7 +765,7 @@ public class ClientProcessor {
      * @throws Exception
      */
     protected String getHumanReadableConceptResponse(String value,
-                                                   JSONObject jsonDocObject) throws Exception {
+                                                     JSONObject jsonDocObject) throws Exception {
 
         JSONArray humanReadableValues = jsonDocObject.has("humanReadableValues")
                 ? jsonDocObject.getJSONArray("humanReadableValues") : null;

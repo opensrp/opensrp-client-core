@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import org.smartregister.R;
+
 import atv.holder.SimpleViewHolder;
 import atv.model.TreeNode;
 
@@ -39,6 +40,57 @@ public class AndroidTreeView {
     public AndroidTreeView(Context context, TreeNode root) {
         mRoot = root;
         mContext = context;
+    }
+
+    private static void expand(final View v) {
+        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        final int targetHeight = v.getMeasuredHeight();
+
+        v.getLayoutParams().height = 0;
+        v.setVisibility(View.VISIBLE);
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                v.getLayoutParams().height = interpolatedTime == 1
+                        ? LinearLayout.LayoutParams.WRAP_CONTENT
+                        : (int) (targetHeight * interpolatedTime);
+                v.requestLayout();
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
+    }
+
+    private static void collapse(final View v) {
+        final int initialHeight = v.getMeasuredHeight();
+
+        Animation a = new Animation() {
+            @Override
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                if (interpolatedTime == 1) {
+                    v.setVisibility(View.GONE);
+                } else {
+                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
+                    v.requestLayout();
+                }
+            }
+
+            @Override
+            public boolean willChangeBounds() {
+                return true;
+            }
+        };
+
+        // 1dp/ms
+        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        v.startAnimation(a);
     }
 
     public void setDefaultAnimation(boolean defaultAnimation) {
@@ -71,7 +123,6 @@ public class AndroidTreeView {
             collapseNode(n, true);
         }
     }
-
 
     public View getView(int style) {
         final ScrollView view;
@@ -111,7 +162,6 @@ public class AndroidTreeView {
     public View getView() {
         return getView(-1);
     }
-
 
     public void expandLevel(int level) {
         for (TreeNode n : mRoot.getChildren()) {
@@ -199,6 +249,10 @@ public class AndroidTreeView {
         }
     }
 
+
+    //------------------------------------------------------------
+    //  Selection methods
+
     private void expandNode(final TreeNode node, boolean includeSubnodes) {
         node.setExpanded(true);
         final TreeNode.BaseNodeViewHolder parentViewHolder = getViewHolderForNode(node);
@@ -244,23 +298,6 @@ public class AndroidTreeView {
         });
     }
 
-
-    //------------------------------------------------------------
-    //  Selection methods
-
-    public void setSelectionModeEnabled(boolean selectionModeEnabled) {
-        if (!selectionModeEnabled) {
-            // TODO fix double iteration over tree
-            deselectAll();
-        }
-        mSelectionModeEnabled = selectionModeEnabled;
-
-        for (TreeNode node : mRoot.getChildren()) {
-            toggleSelectionMode(node, selectionModeEnabled);
-        }
-
-    }
-
     public <E> List<E> getSelectedValues(Class<E> clazz) {
         List<E> result = new ArrayList<>();
         List<TreeNode> selected = getSelected();
@@ -275,6 +312,19 @@ public class AndroidTreeView {
 
     public boolean isSelectionModeEnabled() {
         return mSelectionModeEnabled;
+    }
+
+    public void setSelectionModeEnabled(boolean selectionModeEnabled) {
+        if (!selectionModeEnabled) {
+            // TODO fix double iteration over tree
+            deselectAll();
+        }
+        mSelectionModeEnabled = selectionModeEnabled;
+
+        for (TreeNode node : mRoot.getChildren()) {
+            toggleSelectionMode(node, selectionModeEnabled);
+        }
+
     }
 
     private void toggleSelectionMode(TreeNode parent, boolean mSelectionModeEnabled) {
@@ -365,57 +415,6 @@ public class AndroidTreeView {
             viewHolder.setTreeViev(this);
         }
         return viewHolder;
-    }
-
-    private static void expand(final View v) {
-        v.measure(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = 0;
-        v.setVisibility(View.VISIBLE);
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? LinearLayout.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int) (targetHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
-    }
-
-    private static void collapse(final View v) {
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if (interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int) (initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        // 1dp/ms
-        a.setDuration((int) (initialHeight / v.getContext().getResources().getDisplayMetrics().density));
-        v.startAnimation(a);
     }
 
     //-----------------------------------------------------------------

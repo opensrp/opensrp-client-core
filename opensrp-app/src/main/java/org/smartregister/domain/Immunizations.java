@@ -10,16 +10,16 @@ public enum Immunizations implements Displayable {
         this.displayValue = displayValue;
     }
 
-    @Override
-    public String displayValue() {
-        return displayValue;
-    }
-
     public static Immunizations value(String name) {
         try {
             return valueOf(name);
         } catch (Exception e) {
             return null;
         }
+    }
+
+    @Override
+    public String displayValue() {
+        return displayValue;
     }
 }

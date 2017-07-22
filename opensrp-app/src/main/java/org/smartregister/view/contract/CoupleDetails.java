@@ -5,10 +5,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class CoupleDetails {
-    private String wifeName;
-    private String husbandName;
     private final String ecNumber;
     private final boolean isInArea;
+    private String wifeName;
+    private String husbandName;
     private String caste;
     private String economicStatus;
     private String photo_path;

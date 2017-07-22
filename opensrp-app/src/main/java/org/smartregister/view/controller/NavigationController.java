@@ -2,6 +2,7 @@ package org.smartregister.view.controller;
 
 import android.app.Activity;
 import android.content.Intent;
+
 import org.smartregister.view.activity.*;
 
 import static org.smartregister.view.controller.ProfileNavigationController.*;

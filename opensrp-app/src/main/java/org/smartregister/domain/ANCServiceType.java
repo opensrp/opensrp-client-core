@@ -272,10 +272,14 @@ public enum ANCServiceType {
         }
 
         @Override
-        public String serviceName() { return "KB IUD"; }
+        public String serviceName() {
+            return "KB IUD";
+        }
 
         @Override
-        public String category() { return "kb"; }
+        public String category() {
+            return "kb";
+        }
     },
     KB_Implant {
         @Override
@@ -284,10 +288,14 @@ public enum ANCServiceType {
         }
 
         @Override
-        public String serviceName() { return "KB Implant"; }
+        public String serviceName() {
+            return "KB Implant";
+        }
 
         @Override
-        public String category() { return "kb"; }
+        public String category() {
+            return "kb";
+        }
     },
     KB_Injection_Cyclofem {
         @Override
@@ -296,10 +304,14 @@ public enum ANCServiceType {
         }
 
         @Override
-        public String serviceName() { return "KB Injection Cyclofem"; }
+        public String serviceName() {
+            return "KB Injection Cyclofem";
+        }
 
         @Override
-        public String category() { return "kb"; }
+        public String category() {
+            return "kb";
+        }
     },
     KB_Injection_Depoprovera {
         @Override
@@ -308,25 +320,15 @@ public enum ANCServiceType {
         }
 
         @Override
-        public String serviceName() { return "KB Injection Depoprovera"; }
+        public String serviceName() {
+            return "KB Injection Depoprovera";
+        }
 
         @Override
-        public String category() { return "kb"; }
+        public String category() {
+            return "kb";
+        }
     };
-
-    public abstract String displayName();
-
-    public abstract String serviceName();
-
-    public String serviceDisplayName() {
-        return serviceName();
-    }
-
-    public String shortName() {
-        return displayName();
-    }
-
-    public abstract String category();
 
     public static ANCServiceType tryParse(String type, ANCServiceType defaultType) {
         try {
@@ -380,4 +382,18 @@ public enum ANCServiceType {
             return defaultType;
         }
     }
+
+    public abstract String displayName();
+
+    public abstract String serviceName();
+
+    public String serviceDisplayName() {
+        return serviceName();
+    }
+
+    public String shortName() {
+        return displayName();
+    }
+
+    public abstract String category();
 }

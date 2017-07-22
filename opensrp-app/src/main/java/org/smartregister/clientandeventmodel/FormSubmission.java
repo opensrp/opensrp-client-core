@@ -79,7 +79,7 @@ public class FormSubmission extends MotechBaseDataObject {
         return this.clientVersion;
     }
 
-    public String  formDataDefinitionVersion() {
+    public String formDataDefinitionVersion() {
         return this.formDataDefinitionVersion;
     }
 
@@ -119,22 +119,22 @@ public class FormSubmission extends MotechBaseDataObject {
         return metadata;
     }
 
+    void setMetadata(Map<String, Object> metadata) {
+        this.metadata = metadata;
+    }
+
     public Object getMetadata(String key) {
-        if(metadata == null){
+        if (metadata == null) {
             return null;
         }
         return metadata.get(key);
     }
 
     void addMetadata(String key, Object value) {
-        if(metadata == null){
+        if (metadata == null) {
             metadata = new HashMap<>();
         }
         metadata.put(key, value);
-    }
-
-    void setMetadata(Map<String, Object> metadata) {
-        this.metadata = metadata;
     }
 
     @Override

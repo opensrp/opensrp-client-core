@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.ClientFpMethodView;
 import org.smartregister.view.customcontrols.ClientGplsaChildView;
@@ -87,7 +88,9 @@ public class NativeFPSmartRegisterViewHolder {
         return serviceModeFPMethodView;
     }
 
-    public ViewGroup serviceModeFPPrioritization() { return serviceModeFPPrioritizationView; }
+    public ViewGroup serviceModeFPPrioritization() {
+        return serviceModeFPPrioritizationView;
+    }
 
     public ClientFpMethodView fpMethodView() {
         return fpMethodview;

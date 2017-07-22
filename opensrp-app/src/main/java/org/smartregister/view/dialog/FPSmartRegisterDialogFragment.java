@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 
@@ -62,21 +63,21 @@ public class FPSmartRegisterDialogFragment extends DialogFragment {
     private ArrayAdapter<DialogOption> getDialogOptionArrayAdapter(DialogOption[] options) {
         final LayoutInflater inflater = LayoutInflater.from(parentActivity);
         return new ArrayAdapter<DialogOption>(
-                    parentActivity, R.layout.smart_register_dialog_list_item, options) {
-                @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    ViewGroup itemView;
-                    if (convertView == null) {
-                        itemView = (ViewGroup) inflater.inflate(R.layout.smart_register_dialog_list_item, parent, false);
-                    } else {
-                        itemView = (ViewGroup) convertView;
-                    }
-
-                    ((TextView) itemView.findViewById(R.id.dialog_list_option))
-                            .setText(getItem(position).name());
-                    return itemView;
+                parentActivity, R.layout.smart_register_dialog_list_item, options) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                ViewGroup itemView;
+                if (convertView == null) {
+                    itemView = (ViewGroup) inflater.inflate(R.layout.smart_register_dialog_list_item, parent, false);
+                } else {
+                    itemView = (ViewGroup) convertView;
                 }
-            };
+
+                ((TextView) itemView.findViewById(R.id.dialog_list_option))
+                        .setText(getItem(position).name());
+                return itemView;
+            }
+        };
     }
 
     @Override

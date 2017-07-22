@@ -8,8 +8,8 @@ import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 import static org.smartregister.util.Log.logWarn;
 
 public class UpdateANMDetailsTask {
-    private final ANMController anmController;
     private static final ReentrantLock lock = new ReentrantLock();
+    private final ANMController anmController;
 
     public UpdateANMDetailsTask(ANMController anmController) {
         this.anmController = anmController;

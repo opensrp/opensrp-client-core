@@ -1,8 +1,10 @@
 package org.smartregister.view.activity;
 
 import android.content.Intent;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.event.CapturedPhotoInformation;

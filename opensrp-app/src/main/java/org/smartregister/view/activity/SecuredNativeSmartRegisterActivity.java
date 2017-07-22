@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.*;
+
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,7 +57,9 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     public static final String TAG = "SecuredNativeSmartRegisterActivity";
     public static final String DIALOG_TAG = "dialog";
     public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(new AllClientsFilter());
-
+    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
+    private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
+    private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
     private ListView clientsView;
     private ProgressBar clientsProgressView;
     private TextView serviceModeView;
@@ -65,6 +68,13 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     private EditText searchView;
     private View searchCancelView;
     private TextView titleLabelView;
+    private SmartRegisterPaginatedAdapter clientsAdapter;
+    private FilterOption currentVillageFilter;
+    private SortOption currentSortOption;
+    private FilterOption currentSearchFilter;
+    private ServiceModeOption currentServiceModeOption;
+    private DefaultOptionsProvider defaultOptionProvider;
+    private NavBarOptionsProvider navBarOptionsProvider;
 
     public EditText getSearchView() {
         return searchView;
@@ -82,6 +92,10 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         return currentSearchFilter;
     }
 
+    public void setCurrentSearchFilter(FilterOption currentSearchFilter) {
+        this.currentSearchFilter = currentSearchFilter;
+    }
+
     public SortOption getCurrentSortOption() {
         return currentSortOption;
     }
@@ -97,59 +111,6 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     public void setClientsAdapter(SmartRegisterPaginatedAdapter clientsAdapter) {
         this.clientsAdapter = clientsAdapter;
     }
-
-    private SmartRegisterPaginatedAdapter clientsAdapter;
-
-    private FilterOption currentVillageFilter;
-    private SortOption currentSortOption;
-
-    public void setCurrentSearchFilter(FilterOption currentSearchFilter) {
-        this.currentSearchFilter = currentSearchFilter;
-    }
-
-    private FilterOption currentSearchFilter;
-    private ServiceModeOption currentServiceModeOption;
-
-    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
-    private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
-    private final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
-
-    public interface ClientsHeaderProvider {
-
-        int count();
-
-        int weightSum();
-
-        int[] weights();
-
-        int[] headerTextResourceIds();
-    }
-
-    public interface DefaultOptionsProvider {
-
-        ServiceModeOption serviceMode();
-
-        FilterOption villageFilter();
-
-        SortOption sortOption();
-
-        String nameInShortFormForTitle();
-
-    }
-
-    public interface NavBarOptionsProvider {
-
-        DialogOption[] filterOptions();
-
-        DialogOption[] serviceModeOptions();
-
-        DialogOption[] sortingOptions();
-
-        String searchHint();
-    }
-
-    private DefaultOptionsProvider defaultOptionProvider;
-    private NavBarOptionsProvider navBarOptionsProvider;
 
     @Override
     protected void onCreation() {
@@ -401,6 +362,151 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     public abstract void startRegistration();
 
+    public void saveFormSubmission(String formSubmision, String id, String formName, JSONObject fieldOverrides) {
+        Log.e("saveFormSubmission()", "Override this method in child class");
+    }
+
+    protected String getParams(FormSubmission submission) {
+        return new Gson().toJson(
+                create(INSTANCE_ID_PARAM, submission.instanceId())
+                        .put(ENTITY_ID_PARAM, submission.entityId())
+                        .put(FORM_NAME_PARAM, submission.formName())
+                        .put(VERSION_PARAM, submission.version())
+                        .put(SYNC_STATUS, PENDING.value())
+                        .map());
+    }
+
+    public void savePartialFormData(String formData, String id, String formName, JSONObject fieldOverrides) {
+        try {
+            //Save the current form data into shared preferences
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            String savedDataKey = formName + "savedPartialData";
+            editor.putString(savedDataKey, formData);
+
+            String overridesKey = formName + "overrides";
+            editor.putString(overridesKey, fieldOverrides.toString());
+
+            String idKey = formName + "id";
+            if (id != null) {
+                editor.putString(idKey, id);
+            }
+
+            editor.commit();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+    }
+
+    public String getPreviouslySavedDataForForm(String formName, String overridesStr, String id) {
+        try {
+            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+            String savedDataKey = formName + "savedPartialData";
+            String overridesKey = formName + "overrides";
+            String idKey = formName + "id";
+
+            JSONObject overrides = new JSONObject();
+
+            if (overrides != null) {
+                JSONObject json = new JSONObject(overridesStr);
+                String s = json.getString("fieldOverrides");
+                overrides = new JSONObject(s);
+            }
+
+            boolean idIsConsistent = id == null && !sharedPref.contains(idKey) ||
+                    id != null && sharedPref.contains(idKey) && sharedPref.getString(idKey, null).equals(id);
+
+            if (sharedPref.contains(savedDataKey) && sharedPref.contains(overridesKey) && idIsConsistent) {
+                String savedDataStr = sharedPref.getString(savedDataKey, null);
+                String savedOverridesStr = sharedPref.getString(overridesKey, null);
+
+
+                // the previously saved data is only returned if the overrides and id are the same ones used previously
+                if (savedOverridesStr.equals(overrides.toString())) {
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    //after retrieving the value delete it from shared pref.
+                    editor.remove(savedDataKey);
+                    editor.remove(overridesKey);
+                    editor.remove(idKey);
+                    editor.apply();
+                    return updateSavedDataCurrentDate(savedDataStr);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+        return null;
+    }
+
+    private String updateSavedDataCurrentDate(String savedDataStr) {
+        if (StringUtils.isBlank(savedDataStr)) {
+            return savedDataStr;
+        }
+
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+            JSONObject parentJson = JSONML.toJSONObject(savedDataStr);
+            JSONArray jsonArray = parentJson.getJSONArray("childNodes");
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject object = jsonArray.getJSONObject(i);
+                String tagName = object.getString("tagName");
+                if (tagName.equals("today")) {
+                    object.put("childNodes", dateFormat.format(new Date()));
+                }
+                if (tagName.equals("start")) {
+                    object.put("childNodes", dateTimeFormat.format(new Date()));
+                }
+                if (tagName.equals("end")) {
+                    object.put("childNodes", dateTimeFormat.format(new Date()));
+                }
+            }
+
+            return JSONML.toString(parentJson);
+
+        } catch (JSONException e) {
+            Log.e(getClass().getName(), "", e);
+
+        }
+        return savedDataStr;
+    }
+
+    public interface ClientsHeaderProvider {
+
+        int count();
+
+        int weightSum();
+
+        int[] weights();
+
+        int[] headerTextResourceIds();
+    }
+
+    public interface DefaultOptionsProvider {
+
+        ServiceModeOption serviceMode();
+
+        FilterOption villageFilter();
+
+        SortOption sortOption();
+
+        String nameInShortFormForTitle();
+
+    }
+
+    public interface NavBarOptionsProvider {
+
+        DialogOption[] filterOptions();
+
+        DialogOption[] serviceModeOptions();
+
+        DialogOption[] sortingOptions();
+
+        String searchHint();
+    }
+
     private class FilterDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
@@ -532,118 +638,6 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         private void clearSearchText() {
             searchView.setText("");
         }
-    }
-
-    public void saveFormSubmission(String formSubmision, String id, String formName, JSONObject fieldOverrides){
-        Log.e("saveFormSubmission()", "Override this method in child class");
-    }
-
-    protected String getParams(FormSubmission submission) {
-        return new Gson().toJson(
-                create(INSTANCE_ID_PARAM, submission.instanceId())
-                        .put(ENTITY_ID_PARAM, submission.entityId())
-                        .put(FORM_NAME_PARAM, submission.formName())
-                        .put(VERSION_PARAM, submission.version())
-                        .put(SYNC_STATUS, PENDING.value())
-                        .map());
-    }
-
-    public void savePartialFormData(String formData, String id, String formName, JSONObject fieldOverrides){
-        try {
-            //Save the current form data into shared preferences
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sharedPref.edit();
-            String savedDataKey = formName + "savedPartialData";
-            editor.putString(savedDataKey, formData);
-
-            String overridesKey = formName + "overrides";
-            editor.putString(overridesKey, fieldOverrides.toString());
-
-            String idKey = formName + "id";
-            if (id != null){
-                editor.putString(idKey, id);
-            }
-
-            editor.commit();
-        }catch (Exception e){
-            Log.e(TAG, e.toString(), e);
-        }
-    }
-
-    public String getPreviouslySavedDataForForm(String formName, String overridesStr, String id){
-        try {
-            SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-            String savedDataKey = formName + "savedPartialData";
-            String overridesKey = formName + "overrides";
-            String idKey = formName + "id";
-
-            JSONObject overrides = new JSONObject();
-
-            if (overrides != null){
-                JSONObject json = new JSONObject(overridesStr);
-                String s = json.getString("fieldOverrides");
-                overrides = new JSONObject(s);
-            }
-
-            boolean idIsConsistent = id == null && !sharedPref.contains(idKey) ||
-                    id != null && sharedPref.contains(idKey) && sharedPref.getString(idKey, null).equals(id);
-
-            if (sharedPref.contains(savedDataKey) && sharedPref.contains(overridesKey) && idIsConsistent){
-                String savedDataStr = sharedPref.getString(savedDataKey, null);
-                String savedOverridesStr = sharedPref.getString(overridesKey, null);
-
-
-                // the previously saved data is only returned if the overrides and id are the same ones used previously
-                if (savedOverridesStr.equals(overrides.toString())) {
-                    SharedPreferences.Editor editor = sharedPref.edit();
-                    //after retrieving the value delete it from shared pref.
-                    editor.remove(savedDataKey);
-                    editor.remove(overridesKey);
-                    editor.remove(idKey);
-                    editor.apply();
-                    return updateSavedDataCurrentDate(savedDataStr);
-                }
-            }
-        }catch (Exception e){
-            Log.e(TAG, e.toString(), e);
-        }
-        return null;
-    }
-
-    private String updateSavedDataCurrentDate(String savedDataStr){
-        if(StringUtils.isBlank(savedDataStr)){
-            return savedDataStr;
-        }
-
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-
-            JSONObject parentJson= JSONML.toJSONObject(savedDataStr);
-            JSONArray jsonArray = parentJson.getJSONArray("childNodes");
-
-            for(int i = 0; i < jsonArray.length(); i++)
-            {
-                JSONObject object = jsonArray.getJSONObject(i);
-                String tagName = object.getString("tagName");
-                if(tagName.equals("today")){
-                    object.put("childNodes", dateFormat.format(new Date()));
-                }
-                if(tagName.equals("start")){
-                    object.put("childNodes", dateTimeFormat.format(new Date()));
-                }
-                if(tagName.equals("end")){
-                    object.put("childNodes", dateTimeFormat.format(new Date()));
-                }
-            }
-
-            return JSONML.toString(parentJson);
-
-        } catch (JSONException e){
-            Log.e(getClass().getName(), "", e);
-
-        }
-        return savedDataStr;
     }
 
 

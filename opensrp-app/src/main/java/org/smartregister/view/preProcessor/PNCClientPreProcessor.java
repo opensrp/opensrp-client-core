@@ -2,6 +2,7 @@ package org.smartregister.view.preProcessor;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 import org.smartregister.util.DateUtil;
 import org.smartregister.view.contract.ServiceProvidedDTO;
 import org.smartregister.view.contract.pnc.*;
@@ -77,9 +78,9 @@ public class PNCClientPreProcessor {
     }
 
     private void createViewElements(PNCClient client, int numberOfDaysFromDeliveryDate,
-                                           List<ServiceProvidedDTO> first7DaysVisits, List<PNCCircleDatum> circleData,
-                                           List<PNCStatusDatum> statusData, List<PNCTickDatum> tickData,
-                                           List<PNCLineDatum> lineData) {
+                                    List<ServiceProvidedDTO> first7DaysVisits, List<PNCCircleDatum> circleData,
+                                    List<PNCStatusDatum> statusData, List<PNCTickDatum> tickData,
+                                    List<PNCLineDatum> lineData) {
         int currentDay = DateUtil.dayDifference(client.deliveryDate(), DateUtil.today());
         createViewElementsBasedOnExpectedVisits(client, first7DaysVisits, circleData, statusData);
         createViewDataBasedOnServicesProvided(first7DaysVisits, circleData);

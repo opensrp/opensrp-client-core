@@ -19,16 +19,16 @@ public class SmartRegisterPaginatedCursorAdapter extends CursorAdapter {
     Context context;
     CommonRepository commonRepository;
 
-    public SmartRegisterPaginatedCursorAdapter(Context context, Cursor c,SmartRegisterCLientsProviderForCursorAdapter listItemProvider,CommonRepository commonRepository) {
+    public SmartRegisterPaginatedCursorAdapter(Context context, Cursor c, SmartRegisterCLientsProviderForCursorAdapter listItemProvider, CommonRepository commonRepository) {
         super(context, c);
         this.listItemProvider = listItemProvider;
-        this.context= context;
+        this.context = context;
         this.commonRepository = commonRepository;
     }
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-      return  listItemProvider.inflatelayoutForCursorAdapter();
+        return listItemProvider.inflatelayoutForCursorAdapter();
 //        return null;
     }
 
@@ -37,7 +37,7 @@ public class SmartRegisterPaginatedCursorAdapter extends CursorAdapter {
         CommonPersonObject personinlist = commonRepository.readAllcommonforCursorAdapter(cursor);
         CommonPersonObjectClient pClient = new CommonPersonObjectClient(personinlist.getCaseId(), personinlist.getDetails(), personinlist.getDetails().get("FWHOHFNAME"));
         pClient.setColumnmaps(personinlist.getColumnmaps());
-       listItemProvider.getView(pClient,view);
+        listItemProvider.getView(pClient, view);
 
     }
 

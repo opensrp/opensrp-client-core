@@ -46,15 +46,6 @@ public enum FPAlertType {
         this.alertType = alertType;
     }
 
-    @Override
-    public String toString() {
-        return this.alertType;
-    }
-
-    public abstract String getAlertType();
-
-    public abstract String getFormName();
-
     public static FPAlertType from(String value) {
         if (value != null) {
             for (FPAlertType type : FPAlertType.values()) {
@@ -66,5 +57,14 @@ public enum FPAlertType {
         return null;
 
     }
+
+    @Override
+    public String toString() {
+        return this.alertType;
+    }
+
+    public abstract String getAlertType();
+
+    public abstract String getFormName();
 
 }

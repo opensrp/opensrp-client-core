@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.contract.ECChildClient;
 import org.smartregister.view.contract.ECSmartRegisterClient;

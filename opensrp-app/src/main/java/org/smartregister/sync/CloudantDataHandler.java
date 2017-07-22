@@ -41,13 +41,10 @@ import java.util.Map;
 
 public class CloudantDataHandler {
     private static final String TAG = CloudantDataHandler.class.getCanonicalName();
-
-    private static CloudantDataHandler instance;
-
     private static final String baseEntityIdJSONKey = "baseEntityId";
     private static final String DATASTORE_MANGER_DIR = "data";
     private static final String DATASTORE_NAME = "opensrp_clients_events";
-
+    private static CloudantDataHandler instance;
     private final Context mContext;
     private final Datastore mDatastore;
     private final IndexManager mIndexManager;
@@ -94,21 +91,21 @@ public class CloudantDataHandler {
                 if (cursor != null && cursor.moveToFirst()) {
                     byte[] json = (cursor.getBlob(0));
                     String jsonEventStr = new String(json, "UTF-8");
-                    if(StringUtils.isNotBlank(jsonEventStr) && !jsonEventStr.equals("{}")){ // Check blank/empty json string
+                    if (StringUtils.isNotBlank(jsonEventStr) && !jsonEventStr.equals("{}")) { // Check blank/empty json string
                         JSONObject jsonObectClient = new JSONObject(jsonEventStr);
                         return jsonObectClient;
                     }
                 }
             }
         } catch (Exception e) {
-             Log.e(TAG, e.toString(), e);
+            Log.e(TAG, e.toString(), e);
         }
 
         return null;
     }
 
     public Client getClientDocumentByBaseEntityId(String baseEntityId) throws Exception {
-        if(StringUtils.isBlank(baseEntityId)){
+        if (StringUtils.isBlank(baseEntityId)) {
             return null;
         }
 
@@ -128,7 +125,7 @@ public class CloudantDataHandler {
     }
 
     public String getClientDocumentIdByBaseEntityId(String baseEntityId) throws Exception {
-        if(StringUtils.isBlank(baseEntityId)){
+        if (StringUtils.isBlank(baseEntityId)) {
             return null;
         }
 
@@ -162,7 +159,7 @@ public class CloudantDataHandler {
             while (cursor.moveToNext()) {
                 byte[] json = (cursor.getBlob(0));
                 String jsonEventStr = new String(json, "UTF-8");
-                if(StringUtils.isBlank(jsonEventStr) || jsonEventStr.equals("{}")){ // Skip blank/empty json string
+                if (StringUtils.isBlank(jsonEventStr) || jsonEventStr.equals("{}")) { // Skip blank/empty json string
                     continue;
                 }
 
@@ -180,14 +177,14 @@ public class CloudantDataHandler {
                 try {
                     lastSyncDate.setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1)).getTime());
                 } catch (ParseException e) {
-                     Log.e(TAG, e.toString(), e);
+                    Log.e(TAG, e.toString(), e);
                 }
             }
         } finally {
             cursor.close();
         }
 
-        if(eventAndAlerts.isEmpty()){
+        if (eventAndAlerts.isEmpty()) {
             return eventAndAlerts;
         }
 
@@ -198,11 +195,11 @@ public class CloudantDataHandler {
                 try {
                     String lhvar = "version";
                     String rhvar = "version";
-                    if(lhs.getString("type") == "Action"){
+                    if (lhs.getString("type") == "Action") {
                         lhvar = "timeStamp";
                     }
 
-                    if(rhs.getString("type") == "Action"){
+                    if (rhs.getString("type") == "Action") {
                         rhvar = "timeStamp";
                     }
 
@@ -230,7 +227,7 @@ public class CloudantDataHandler {
 
     //load cloudant db
     public SQLiteDatabase loadDatabase() {
-        if(this.mDatabase != null &&  this.mDatabase.isOpen()){
+        if (this.mDatabase != null && this.mDatabase.isOpen()) {
             return mDatabase;
         }
 
@@ -317,8 +314,8 @@ public class CloudantDataHandler {
         rev.setBody(DocumentBodyFactory.create(client.asMap()));
         try {
 
-                DocumentRevision created = this.mDatastore.createDocumentFromRevision(rev);
-                return Client.fromRevision(created);
+            DocumentRevision created = this.mDatastore.createDocumentFromRevision(rev);
+            return Client.fromRevision(created);
 
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
@@ -326,6 +323,7 @@ public class CloudantDataHandler {
 
         return null;
     }
+
     /**
      * Creates a Event, assigning an ID.
      *
@@ -369,7 +367,7 @@ public class CloudantDataHandler {
             try {
                 client = Client.fromRevision(rev);
             } catch (ParseException e) {
-                 Log.e(TAG, e.toString(), e);
+                Log.e(TAG, e.toString(), e);
             }
             if (client != null) {
                 clients.add(client);

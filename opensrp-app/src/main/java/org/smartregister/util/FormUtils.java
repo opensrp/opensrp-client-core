@@ -54,18 +54,16 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * Created by koros on 9/28/15.
  */
 public class FormUtils {
-    
-    public static final String TAG = "FormUtils";
-    private static FormUtils instance;
-    private Context mContext;
-    private org.smartregister.Context theAppContext;
 
+    public static final String TAG = "FormUtils";
+    public static final String ecClientRelationships = "ec_client_relationships.json";
     private static final String shouldLoadValueKey = "shouldLoadValue";
     private static final String relationalIdKey = "relational_id";
     private static final String databaseIdKey = "_id";
     private static final String injectedBaseEntityIdKey = "injectedBaseEntityId";
-    public  static  final String ecClientRelationships="ec_client_relationships.json";
-
+    private static FormUtils instance;
+    private Context mContext;
+    private org.smartregister.Context theAppContext;
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private FormEntityConverter formEntityConverter;
@@ -75,16 +73,72 @@ public class FormUtils {
         mContext = context;
         theAppContext = org.smartregister.Context.getInstance();
         FormAttributeParser formAttributeParser = new FormAttributeParser(context);
-        formEntityConverter = new FormEntityConverter(formAttributeParser,mContext);
+        formEntityConverter = new FormEntityConverter(formAttributeParser, mContext);
         // Protect creation of static variable.
         mCloudantDataHandler = CloudantDataHandler.getInstance(context.getApplicationContext());
     }
 
-    public static FormUtils getInstance(Context ctx) throws Exception{
+    public static FormUtils getInstance(Context ctx) throws Exception {
         if (instance == null) {
             instance = new FormUtils(ctx);
         }
         return instance;
+    }
+
+    /* Checks if the provided node has Child elements
+     * @param element
+     * @return
+     */
+    public static boolean hasChildElements(Node element) {
+        NodeList children = element.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static JSONObject retrieveRelationshipJsonForLink(String link, JSONArray array) throws Exception {
+        for (int i = 0; i < array.length(); i++) {
+            JSONObject object = array.getJSONObject(i);
+            if (relationShipExist(link, object)) {
+                System.out.println("Relationship found ##");
+                return object;
+            }
+        }
+        return null;
+    }
+
+    private static boolean relationShipExist(String link, JSONObject json) {
+        try {
+            String[] path = link.split("\\.");
+            String parentTable = path[0];
+            String childTable = path[1];
+
+            String jsonParentTableString = json.getString("parent");
+            String jsonChildTableString = json.getString("child");
+
+            boolean parentToChildExist = jsonParentTableString.equals(parentTable) && jsonChildTableString.equals(childTable);
+            boolean childToParentExist = jsonParentTableString.equals(childTable) && jsonChildTableString.equals(parentTable);
+
+            if (parentToChildExist || childToParentExist) {
+                return true;
+            }
+
+        } catch (Exception e) {
+            android.util.Log.e(TAG, e.toString(), e);
+        }
+        return false;
+    }
+
+    public static int getIndexForFormName(String formName, String[] formNames) {
+        for (int i = 0; i < formNames.length; i++) {
+            if (formName.equalsIgnoreCase(formNames[i])) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public FormSubmission generateFormSubmisionFromXMLString(String entity_id, String formData, String formName, JSONObject overrides) throws Exception {
@@ -147,7 +201,6 @@ public class FormUtils {
 
         return fs;
     }
-
 
     private void generateClientAndEventModelsForFormSubmission(FormSubmission formSubmission, String formName) {
         org.smartregister.clientandeventmodel.FormSubmission v2FormSubmission;
@@ -279,7 +332,6 @@ public class FormUtils {
         return subForms;
     }
 
-
     public String generateXMLInputForFormWithEntityId(String entityId, String formName, String overrides) {
         try {
             //get the field overrides map
@@ -342,7 +394,7 @@ public class FormUtils {
             return xml;
 
         } catch (Exception e) {
-             android.util.Log.e(TAG, e.toString(), e);
+            android.util.Log.e(TAG, e.toString(), e);
         }
         return "";
     }
@@ -379,7 +431,7 @@ public class FormUtils {
                     String fieldName = child.getNodeName();
 
                     // its a subform element process it
-                    if(!subFormNames.isEmpty() && subFormNames.contains(fieldName)) {
+                    if (!subFormNames.isEmpty() && subFormNames.contains(fieldName)) {
                         // its a subform element process it
                         // get the subform definition
                         JSONArray subForms = formDefinition.getJSONObject("form").getJSONArray("sub_forms");
@@ -407,7 +459,7 @@ public class FormUtils {
 
                             }
                         }
-                    }else {
+                    } else {
                         //its not a sub-form element write its value
                         serializer.startTag("", fieldName);
                         // write the xml attributes
@@ -438,6 +490,7 @@ public class FormUtils {
 
     /**
      * Retrieve additional details for this record from the details Table.
+     *
      * @param entityJson
      * @return
      */
@@ -455,22 +508,9 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-             android.util.Log.e(TAG, e.toString(), e);
+            android.util.Log.e(TAG, e.toString(), e);
         }
         return entityJson;
-    }
-    /* Checks if the provided node has Child elements
-     * @param element
-     * @return
-     */
-    public static boolean hasChildElements(Node element) {
-        NodeList children = element.getChildNodes();
-        for (int i = 0;i < children.getLength();i++) {
-            if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -492,7 +532,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-             android.util.Log.e(TAG, e.toString(), e);
+            android.util.Log.e(TAG, e.toString(), e);
         }
         return null;
     }
@@ -719,7 +759,7 @@ public class FormUtils {
                     }
                     item.put("value", val);
                 } catch (Exception e) {
-                     android.util.Log.e(TAG, e.toString(), e);
+                    android.util.Log.e(TAG, e.toString(), e);
                 }
             }
         }
@@ -764,42 +804,9 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-             android.util.Log.e(TAG, e.toString(), e);
+            android.util.Log.e(TAG, e.toString(), e);
         }
         return null;
-    }
-
-    private static JSONObject retrieveRelationshipJsonForLink(String link, JSONArray array) throws Exception {
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject object = array.getJSONObject(i);
-            if (relationShipExist(link, object)) {
-                System.out.println("Relationship found ##");
-                return object;
-            }
-        }
-        return null;
-    }
-
-    private static boolean relationShipExist(String link, JSONObject json) {
-        try {
-            String[] path = link.split("\\.");
-            String parentTable = path[0];
-            String childTable = path[1];
-
-            String jsonParentTableString = json.getString("parent");
-            String jsonChildTableString = json.getString("child");
-
-            boolean parentToChildExist = jsonParentTableString.equals(parentTable) && jsonChildTableString.equals(childTable);
-            boolean childToParentExist = jsonParentTableString.equals(childTable) && jsonChildTableString.equals(parentTable);
-
-            if (parentToChildExist || childToParentExist) {
-                return true;
-            }
-
-        } catch (Exception e) {
-             android.util.Log.e(TAG, e.toString(), e);
-        }
-        return false;
     }
 
     public JSONArray getFieldsArrayForSubFormDefinition(JSONObject fieldsDefinition) throws Exception {
@@ -877,6 +884,7 @@ public class FormUtils {
 
     /**
      * see if the current field is a client_relationship field, if so set it's value to the relationid since that's the parent base_entity_id
+     *
      * @param fieldItem
      * @param fieldsValues
      * @param relationalId
@@ -890,14 +898,14 @@ public class FormUtils {
                 JSONArray jsonArray = new JSONArray(relationships);
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject rObject = jsonArray.getJSONObject(i);
-                    if (rObject.has("field")&&rObject.getString("field").equalsIgnoreCase(fieldName)) {
+                    if (rObject.has("field") && rObject.getString("field").equalsIgnoreCase(fieldName)) {
                         fieldsValues.put(fieldName, relationalId);
                     }
                 }
             }
 
         } catch (JSONException e) {
-             android.util.Log.e(TAG, e.toString(), e);
+            android.util.Log.e(TAG, e.toString(), e);
         }
     }
 
@@ -968,15 +976,6 @@ public class FormUtils {
         }
 
         return null;
-    }
-
-    public static int getIndexForFormName(String formName, String[] formNames){
-        for (int i = 0; i < formNames.length; i++){
-            if (formName.equalsIgnoreCase(formNames[i])){
-                return i;
-            }
-        }
-        return -1;
     }
 
     private void createNewEventDocument(org.smartregister.cloudant.models.Event event) {

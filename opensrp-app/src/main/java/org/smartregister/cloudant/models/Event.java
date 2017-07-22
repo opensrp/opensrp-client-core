@@ -17,27 +17,33 @@ import java.util.Map;
  */
 public class Event extends org.smartregister.clientandeventmodel.Event {
 
+    public static final String type_key = "type";
+    public static final String date_created_key = "dateCreated";
+    public static final String voided_key = "voided";
+    public static final String base_entity_id_key = "baseEntityId";
+    public static final String identifiers_key = "identifiers";
+    public static final String editor_key = "editor";
+    public static final String creator_key = "creator";
+    public static final String date_edited_key = "dateEdited";
+    public static final String voider_key = "voider";
+    public static final String date_voided_key = "dateVoided";
+    public static final String void_reason_key = "voidReason";
+    public static final String details_key = "voidReason";
+    public static final String entity_type_key = "entityType";
+    public static final String form_submission_id_key = "formSubmissionId";
+    public static final String location_id_key = "locationId";
+    public static final String event_date_key = "eventDate";
+    public static final String event_type_key = "eventType";
+    public static final String event_id_key = "eventId";
+    public static final String obs_key = "obs";
+    public static final String provider_key = "providerId";
+    public static final String version_key = "version";
+    static final String DOC_TYPE = "Event";
     // this is the revision in the database representing this task
     private DocumentRevision rev;
-
-    public DocumentRevision getDocumentRevision() {
-        return rev;
-    }
-
-    static final String DOC_TYPE = "Event";
     private transient String type = DOC_TYPE;
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public Event() {
     }
-
     public Event(org.smartregister.clientandeventmodel.Event event) {
         setType(type);
         setDateCreated(event.getDateCreated());
@@ -61,28 +67,6 @@ public class Event extends org.smartregister.clientandeventmodel.Event {
         setProviderId(event.getProviderId());
         setVersion(event.getVersion());
     }
-
-    public static final String type_key = "type";
-    public static final String date_created_key = "dateCreated";
-    public static final String voided_key = "voided";
-    public static final String base_entity_id_key = "baseEntityId";
-    public static final String identifiers_key = "identifiers";
-    public static final String editor_key = "editor";
-    public static final String creator_key = "creator";
-    public static final String date_edited_key = "dateEdited";
-    public static final String voider_key = "voider";
-    public static final String date_voided_key = "dateVoided";
-    public static final String void_reason_key = "voidReason";
-    public static final String details_key = "voidReason";
-    public static final String entity_type_key = "entityType";
-    public static final String form_submission_id_key = "formSubmissionId";
-    public static final String location_id_key = "locationId";
-    public static final String event_date_key = "eventDate";
-    public static final String event_type_key = "eventType";
-    public static final String event_id_key = "eventId";
-    public static final String obs_key = "obs";
-    public static final String provider_key = "providerId";
-    public static final String version_key = "version";
 
     public static Event fromRevision(DocumentRevision rev) throws ParseException {
         Event event = new Event();
@@ -141,6 +125,17 @@ public class Event extends org.smartregister.clientandeventmodel.Event {
         return null;
     }
 
+    public DocumentRevision getDocumentRevision() {
+        return rev;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public Map<String, Object> asMap() {
         // this could also be done by a fancy object mapper

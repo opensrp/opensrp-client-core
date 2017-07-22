@@ -51,12 +51,12 @@ public abstract class OpenSRPImageListener implements ImageListener {
         return errorImageResId;
     }
 
-    public void setAbsoluteFileName(String absoluteFileName) {
-        this.absoluteFileName = absoluteFileName;
-    }
-
     public String getAbsoluteFileName() {
         return absoluteFileName;
+    }
+
+    public void setAbsoluteFileName(String absoluteFileName) {
+        this.absoluteFileName = absoluteFileName;
     }
 
     public void setHasImageTag(boolean hasTag) {

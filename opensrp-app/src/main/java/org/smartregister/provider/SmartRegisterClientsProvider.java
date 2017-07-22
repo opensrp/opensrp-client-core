@@ -2,6 +2,7 @@ package org.smartregister.provider;
 
 import android.view.View;
 import android.view.ViewGroup;
+
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.dialog.FilterOption;

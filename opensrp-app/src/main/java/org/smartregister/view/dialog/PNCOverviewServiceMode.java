@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -19,9 +20,8 @@ import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
 
 public class PNCOverviewServiceMode extends ServiceModeOption {
 
-    private Drawable iconPencilDrawable;
-
     private final LayoutInflater inflater;
+    private Drawable iconPencilDrawable;
 
     public PNCOverviewServiceMode(SmartRegisterClientsProvider provider) {
         super(provider);

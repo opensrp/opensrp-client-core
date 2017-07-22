@@ -17,12 +17,12 @@ import java.util.Map;
 public class ClientsProcessor {
     public static final String TAG = "ClientsProcessor";
     String baseEntityID;
-    Map<String,String> attributesDetailsMap = new HashMap<String, String>();
-    Map<String,String> attributesColumnsMap = new HashMap<String, String>();
-    Map<String,String> propertyColumnsMap = new HashMap<String, String>();
-    Map<String,String> propertyDetailsMap = new HashMap<String, String>();
+    Map<String, String> attributesDetailsMap = new HashMap<String, String>();
+    Map<String, String> attributesColumnsMap = new HashMap<String, String>();
+    Map<String, String> propertyColumnsMap = new HashMap<String, String>();
+    Map<String, String> propertyDetailsMap = new HashMap<String, String>();
 
-    public ClientsProcessor(JSONObject EventMapConfig, JSONObject ClientJson){
+    public ClientsProcessor(JSONObject EventMapConfig, JSONObject ClientJson) {
         try {
             JSONArray attributes = EventMapConfig.getJSONArray("attributes");
             JSONArray property = EventMapConfig.getJSONArray("property");
@@ -30,15 +30,15 @@ public class ClientsProcessor {
 
             Iterator<?> keys = ClientJson.keys();
 
-            while( keys.hasNext() ) {
-                String key = (String)keys.next();
-                if(key.equalsIgnoreCase("baseEntityID")){
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                if (key.equalsIgnoreCase("baseEntityID")) {
                     baseEntityID = ClientJson.getString(key);
-                }else {
+                } else {
                     if (key.equalsIgnoreCase("attributes")) {
                         Processattributes(property, ClientJson.getJSONObject("attributes"));
 //                    baseEntityID = EventJson.getString(key);
-                    }else {
+                    } else {
                         if (isPropertyColumn(key, property)) {
                             propertyColumnsMap.put(key, ClientJson.getString(key));
                         } else {
@@ -50,13 +50,15 @@ public class ClientsProcessor {
 
 
         } catch (JSONException e) {
-             Log.e(TAG, e.toString(), e);
+            Log.e(TAG, e.toString(), e);
         }
     }
-    public Client createClientObject(){
-        Client client = new Client(baseEntityID,attributesDetailsMap,attributesColumnsMap, propertyColumnsMap, propertyDetailsMap);
+
+    public Client createClientObject() {
+        Client client = new Client(baseEntityID, attributesDetailsMap, attributesColumnsMap, propertyColumnsMap, propertyDetailsMap);
         return client;
     }
+
     private void Processattributes(JSONArray attributeColumns, JSONObject attributesInForm) {
         try {
             Iterator<?> keys = attributesInForm.keys();
@@ -68,7 +70,7 @@ public class ClientsProcessor {
                     attributesDetailsMap.put(key, attributesInForm.getString(key));
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -77,18 +79,18 @@ public class ClientsProcessor {
 
     private boolean isInAttributeColumn(String key, JSONArray attributesColumns) {
         boolean returnboolean = false;
-        if(attributesColumns.length() == 0 ){
+        if (attributesColumns.length() == 0) {
             return returnboolean;
         }
-        for(int i = 0;i<attributesColumns.length();i++){
+        for (int i = 0; i < attributesColumns.length(); i++) {
             try {
                 JSONObject obscolumnsObject = attributesColumns.getJSONObject(i);
-                if(obscolumnsObject.getString("name").equalsIgnoreCase(key)){
+                if (obscolumnsObject.getString("name").equalsIgnoreCase(key)) {
                     returnboolean = true;
                     i = attributesColumns.length();
                 }
             } catch (JSONException e) {
-                 Log.e(TAG, e.toString(), e);
+                Log.e(TAG, e.toString(), e);
             }
 
         }
@@ -98,18 +100,18 @@ public class ClientsProcessor {
 
     private boolean isPropertyColumn(String key, JSONArray properties) {
         boolean returnboolean = false;
-        if(properties.length() == 0 ){
+        if (properties.length() == 0) {
             return returnboolean;
         }
-        for(int i = 0;i<properties.length();i++){
+        for (int i = 0; i < properties.length(); i++) {
             try {
                 JSONObject propertiescolumns = properties.getJSONObject(i);
-               if(propertiescolumns.getString("name").equalsIgnoreCase(key)){
-                   returnboolean = true;
-                   i = propertiescolumns.length();
-               }
+                if (propertiescolumns.getString("name").equalsIgnoreCase(key)) {
+                    returnboolean = true;
+                    i = propertiescolumns.length();
+                }
             } catch (JSONException e) {
-                 Log.e(TAG, e.toString(), e);
+                Log.e(TAG, e.toString(), e);
             }
 
         }

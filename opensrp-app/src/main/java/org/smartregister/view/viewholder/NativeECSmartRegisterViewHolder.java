@@ -3,6 +3,7 @@ package org.smartregister.view.viewholder;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.*;
 
@@ -57,6 +58,7 @@ public class NativeECSmartRegisterViewHolder {
     public ClientChildrenView childrenView() {
         return childrenView;
     }
+
     public ImageButton editButton() {
         return editButton;
     }

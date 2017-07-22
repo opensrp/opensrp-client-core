@@ -1,6 +1,7 @@
 package org.smartregister.view.viewholder;
 
 import android.graphics.drawable.Drawable;
+
 import org.smartregister.view.contract.ChildSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
 

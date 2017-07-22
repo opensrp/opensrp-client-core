@@ -1,6 +1,7 @@
 package org.smartregister.service;
 
 import com.google.gson.Gson;
+
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.ei.drishti.dto.Action;
@@ -24,7 +25,7 @@ public class ActionService {
     private AllReports allReports;
 
     public ActionService(DrishtiService drishtiService, AllSettings allSettings, AllSharedPreferences allSharedPreferences, AllReports allReports) {
-       this(drishtiService, allSettings, allSharedPreferences, allReports, null);
+        this(drishtiService, allSettings, allSharedPreferences, allReports, null);
     }
 
     public ActionService(DrishtiService drishtiService, AllSettings allSettings, AllSharedPreferences allSharedPreferences, AllReports allReports, ActionRouter actionRouter) {

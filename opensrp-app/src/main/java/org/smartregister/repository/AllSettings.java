@@ -64,12 +64,14 @@ public class AllSettings {
         settingsRepository.updateSetting(USER_INFORMATION, userInformation);
     }
 
-    public String fetchUserInformation() { return settingsRepository.querySetting(USER_INFORMATION, "");}
+    public String fetchUserInformation() {
+        return settingsRepository.querySetting(USER_INFORMATION, "");
+    }
 
-    public Map<String,String> getAuthParams(){
-        Map<String,String> authParams= new HashMap<String,String>();
-        authParams.put("username",preferences.fetchRegisteredANM());
-        authParams.put("password",fetchANMPassword());
-        return  authParams;
+    public Map<String, String> getAuthParams() {
+        Map<String, String> authParams = new HashMap<String, String>();
+        authParams.put("username", preferences.fetchRegisteredANM());
+        authParams.put("password", fetchANMPassword());
+        return authParams;
     }
 }

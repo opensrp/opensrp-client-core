@@ -8,8 +8,8 @@ import java.io.Serializable;
 
 
 public class Alert implements Serializable {
-    private String caseID;
     private final String scheduleName;
+    private String caseID;
     private String visitCode;
     private AlertStatus status;
     private String startDate;

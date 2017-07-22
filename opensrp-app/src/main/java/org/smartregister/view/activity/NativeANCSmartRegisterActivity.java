@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.view.View;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
@@ -21,14 +22,13 @@ import static org.smartregister.AllConstants.FormNames.*;
 
 public class NativeANCSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
+    public static final List<? extends DialogOption> DEFAULT_ANC_FILTER_OPTIONS =
+            asList(new OutOfAreaFilter());
+    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
     private SmartRegisterClientsProvider clientProvider = null;
     private ANCSmartRegisterController controller;
     private VillageController villageController;
     private DialogOptionMapper dialogOptionMapper;
-    public static final List<? extends DialogOption> DEFAULT_ANC_FILTER_OPTIONS =
-            asList(new OutOfAreaFilter());
-
-    private final ClientActionHandler clientActionHandler = new ClientActionHandler();
 
     @Override
     protected SmartRegisterPaginatedAdapter adapter() {

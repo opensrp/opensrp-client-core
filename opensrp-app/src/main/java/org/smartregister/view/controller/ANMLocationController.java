@@ -1,6 +1,7 @@
 package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
+
 import org.smartregister.repository.AllSettings;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;

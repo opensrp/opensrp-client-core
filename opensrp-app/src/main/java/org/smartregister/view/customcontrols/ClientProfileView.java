@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.view.contract.ANCSmartRegisterClient;

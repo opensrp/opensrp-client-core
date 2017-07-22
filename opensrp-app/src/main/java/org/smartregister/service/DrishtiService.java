@@ -3,6 +3,7 @@ package org.smartregister.service;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+
 import org.smartregister.domain.Response;
 import org.ei.drishti.dto.Action;
 
@@ -32,7 +33,7 @@ public class DrishtiService {
             actions = new Gson().fromJson(response.payload(), collectionType);
         } catch (JsonSyntaxException e) {
             return new Response<List<Action>>(failure, new ArrayList<Action>());
-        } catch (Exception e){
+        } catch (Exception e) {
             return new Response<List<Action>>(failure, new ArrayList<Action>());
         }
 

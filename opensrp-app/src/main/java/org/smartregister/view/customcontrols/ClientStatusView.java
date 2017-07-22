@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.R;
 import org.smartregister.view.contract.ECSmartRegisterClient;

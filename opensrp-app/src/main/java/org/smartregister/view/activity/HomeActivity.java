@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
 import org.smartregister.R;
 import org.smartregister.event.Listener;
 import org.smartregister.service.PendingFormSubmissionService;

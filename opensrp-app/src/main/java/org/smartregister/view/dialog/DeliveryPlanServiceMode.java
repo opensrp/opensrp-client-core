@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;

@@ -40,11 +40,11 @@ public class ANCSmartRegisterController {
     private static final String DELIVERY_PLAN_ALERT_NAME = "Delivery Plan";
 
     private static final String ANC_CLIENTS_LIST = "ANCClientList";
+    private final ServiceProvidedService serviceProvidedService;
     private AllBeneficiaries allBeneficiaries;
     private AlertService alertService;
     private Cache<String> cache;
     private Cache<ANCClients> ancClientsCache;
-    private final ServiceProvidedService serviceProvidedService;
 
     public ANCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService alertService,
                                       AllBeneficiaries allBeneficiaries,

@@ -5,6 +5,7 @@ import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.widget.RadioButton;
+
 import org.smartregister.R;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;

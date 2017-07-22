@@ -23,50 +23,17 @@ import static org.smartregister.util.Log.logError;
 
 public abstract class DrishtiApplication extends Application {
     private static final String TAG = "DrishtiApplication";
-
+    protected static DrishtiApplication mInstance;
+    private static BitmapImageCache memoryImageCache;
+    private static OpenSRPImageLoader cachedImageLoader;
     protected Locale locale = null;
     protected Context context;
-    private static BitmapImageCache memoryImageCache;
-    protected static DrishtiApplication mInstance;
-    private static OpenSRPImageLoader cachedImageLoader;
+    protected Repository repository;
     private String password;
-
-    @Override
-    public void onCreate() {
-        try {
-            super.onCreate();
-            mInstance = this;
-            context = Context.getInstance();
-            SQLiteDatabase.loadLibs(this);
-        } catch (UnsatisfiedLinkError e) {
-            logError("Error on onCreate: " + e);
-        }
-    }
 
     public static synchronized DrishtiApplication getInstance() {
         return mInstance;
     }
-
-    public abstract void logoutCurrentUser();
-
-
-    @Override
-    protected void attachBaseContext(android.content.Context base) {
-        super.attachBaseContext(base);
-        MultiDex.install(this);
-    }
-
-    protected Repository repository;
-
-    public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance().sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist.toArray(new DrishtiRepository[drishtireposotorylist.size()]);
-        if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null, drishtireposotoryarray);
-        }
-        return repository;
-    }
-
 
     public static BitmapImageCache getMemoryCacheInstance() {
         if (memoryImageCache == null) {
@@ -90,9 +57,33 @@ public abstract class DrishtiApplication extends Application {
         return cachedImageLoader;
     }
 
+    @Override
+    public void onCreate() {
+        try {
+            super.onCreate();
+            mInstance = this;
+            context = Context.getInstance();
+            SQLiteDatabase.loadLibs(this);
+        } catch (UnsatisfiedLinkError e) {
+            logError("Error on onCreate: " + e);
+        }
+    }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public abstract void logoutCurrentUser();
+
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
+    }
+
+    public Repository getRepository() {
+        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance().sharedRepositories();
+        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist.toArray(new DrishtiRepository[drishtireposotorylist.size()]);
+        if (repository == null) {
+            repository = new Repository(getInstance().getApplicationContext(), null, drishtireposotoryarray);
+        }
+        return repository;
     }
 
     public String getPassword() {
@@ -101,5 +92,9 @@ public abstract class DrishtiApplication extends Application {
             password = context.userService().getGroupId(username);
         }
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

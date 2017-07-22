@@ -1,6 +1,7 @@
 package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.smartregister.domain.*;
 import org.smartregister.domain.Child;
@@ -31,12 +32,12 @@ public class PNCSmartRegisterController {
     private static final String PNC_1_ALERT_NAME = "PNC 1";
 
     private static final String PNC_CLIENTS_LIST = "PNCClientList";
+    private final ServiceProvidedService serviceProvidedService;
     private AllEligibleCouples allEligibleCouples;
     private AllBeneficiaries allBeneficiaries;
     private AlertService alertService;
     private Cache<String> cache;
     private Cache<PNCClients> pncClientsCache;
-    private final ServiceProvidedService serviceProvidedService;
     private PNCClientPreProcessor pncClientPreProcessor;
 
     public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService alertService,

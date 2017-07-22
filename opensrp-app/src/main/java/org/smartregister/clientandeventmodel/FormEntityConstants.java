@@ -21,12 +21,6 @@ public class FormEntityConstants {
 
     }
 
-    public interface FormEntity {
-        String entity();
-
-        String entityId();
-    }
-
     public enum Person implements FormEntity {
         first_name,
         middle_name,
@@ -49,6 +43,7 @@ public class FormEntityConstants {
 
     public enum PersonAddress implements FormEntity {
         ;
+
         public String entity() {
             return "person_address";
         }
@@ -71,5 +66,11 @@ public class FormEntityConstants {
         public String entityId() {
             return this.name();
         }
+    }
+
+    public interface FormEntity {
+        String entity();
+
+        String entityId();
     }
 }

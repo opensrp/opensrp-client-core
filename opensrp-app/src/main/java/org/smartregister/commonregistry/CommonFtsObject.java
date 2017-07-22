@@ -15,6 +15,11 @@ import java.util.Map;
  */
 public class CommonFtsObject {
 
+    public static final String idColumn = "object_id";
+    public static final String relationalIdColumn = "object_relational_id";
+    public static final String phraseColumn = "phrase";
+    public static final String isClosedColumn = "is_closed TINYINT DEFAULT 0";
+    public static final String isClosedColumnName = "is_closed";
     private String[] tables;
     private String[] alertFilterVisitCodes;
     private Map<String, String[]> searchMap;
@@ -22,11 +27,6 @@ public class CommonFtsObject {
     private Map<String, String[]> mainConditionMap;
     private Map<String, String> customRelationalIdMap;
     private Map<String, Pair<String, Boolean>> alertsScheduleMap;
-    public static final String idColumn = "object_id";
-    public static final String relationalIdColumn = "object_relational_id";
-    public static final String phraseColumn = "phrase";
-    public static final String isClosedColumn = "is_closed TINYINT DEFAULT 0";
-    public static final String isClosedColumnName = "is_closed";
 
 
     public CommonFtsObject(String[] tables) {
@@ -36,6 +36,10 @@ public class CommonFtsObject {
         this.mainConditionMap = new HashMap<String, String[]>();
         this.customRelationalIdMap = new HashMap<String, String>();
         this.alertsScheduleMap = new HashMap<String, Pair<String, Boolean>>();
+    }
+
+    public static String searchTableName(String table) {
+        return table + "_search";
     }
 
     public void updateSearchFields(String table, String[] searchFields) {
@@ -56,7 +60,7 @@ public class CommonFtsObject {
         }
     }
 
-    public void updateCustomRelationalId(String table, String  customRelationalId) {
+    public void updateCustomRelationalId(String table, String customRelationalId) {
         if (containsTable(table) && StringUtils.isNotBlank(customRelationalId)) {
             customRelationalIdMap.put(table, customRelationalId);
         }
@@ -71,7 +75,7 @@ public class CommonFtsObject {
     }
 
     public String[] getTables() {
-        if(tables == null){
+        if (tables == null) {
             tables = ArrayUtils.EMPTY_STRING_ARRAY;
         }
         return tables;
@@ -85,24 +89,26 @@ public class CommonFtsObject {
         return sortMap.get(table);
     }
 
-    public String[] getMainConditions(String table) { return mainConditionMap.get(table); }
+    public String[] getMainConditions(String table) {
+        return mainConditionMap.get(table);
+    }
 
     public String getCustomRelationalId(String table) {
         return customRelationalIdMap.get(table);
     }
 
     public String getAlertBindType(String schedule) {
-        if(StringUtils.isBlank(schedule)){
+        if (StringUtils.isBlank(schedule)) {
             return null;
         }
 
-        for(String key: alertsScheduleMap.keySet()){
-            if(key.equalsIgnoreCase(schedule)){
+        for (String key : alertsScheduleMap.keySet()) {
+            if (key.equalsIgnoreCase(schedule)) {
                 schedule = key;
             }
         }
-        Pair<String, Boolean> pair =  alertsScheduleMap.get(schedule);
-        if(pair == null){
+        Pair<String, Boolean> pair = alertsScheduleMap.get(schedule);
+        if (pair == null) {
             return null;
         }
 
@@ -110,11 +116,11 @@ public class CommonFtsObject {
     }
 
     public Boolean alertUpdateVisitCode(String schedule) {
-        if(StringUtils.isBlank(schedule)){
+        if (StringUtils.isBlank(schedule)) {
             return null;
         }
-        Pair<String, Boolean> pair =  alertsScheduleMap.get(schedule);
-        if(pair == null){
+        Pair<String, Boolean> pair = alertsScheduleMap.get(schedule);
+        if (pair == null) {
             return null;
         }
 
@@ -135,7 +141,7 @@ public class CommonFtsObject {
         return null;
     }
 
-    public String[] getAlertFilterVisitCodes(){
+    public String[] getAlertFilterVisitCodes() {
         return alertFilterVisitCodes;
     }
 
@@ -146,10 +152,6 @@ public class CommonFtsObject {
 
         List<String> tableList = Arrays.asList(tables);
         return tableList.contains(table);
-    }
-
-    public static String searchTableName(String table) {
-        return table + "_search";
     }
 
 }

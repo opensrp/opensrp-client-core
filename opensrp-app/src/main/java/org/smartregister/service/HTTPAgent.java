@@ -59,7 +59,7 @@ import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
-    private static final String TAG=HTTPAgent.class.getCanonicalName();
+    private static final String TAG = HTTPAgent.class.getCanonicalName();
     private final GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
@@ -122,7 +122,7 @@ public class HTTPAgent {
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
         setCredentials(userName, password);
         try {
-            requestURL=requestURL.replaceAll("\\s+","");
+            requestURL = requestURL.replaceAll("\\s+", "");
             HttpResponse response = httpClient.execute(new HttpGet(requestURL));
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
@@ -134,10 +134,10 @@ public class HTTPAgent {
                 logError("Bad response from Dristhi. Status code:  " + statusCode + " username: " + userName + " using " + requestURL);
                 return UNKNOWN_RESPONSE;
             }
-        }catch (IOException e) {
+        } catch (IOException e) {
             logError("Failed to check credentials of: " + userName + " using " + requestURL + ". Error: " + e.toString());
             return NO_INTERNET_CONNECTIVITY;
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             logError(e.getMessage());
             return MALFORMED_URL;
 
@@ -182,6 +182,7 @@ public class HTTPAgent {
             throw new AssertionError(e);
         }
     }
+
     public Response<String> fetchWithCredentials(String uri, String username, String password) {
         setCredentials(username, password);
         try {
@@ -193,12 +194,12 @@ public class HTTPAgent {
         }
     }
 
-    public String httpImagePost(String url,ProfileImage image){
+    public String httpImagePost(String url, ProfileImage image) {
 
         String responseString = "";
         try {
             File uploadFile = new File(image.getFilepath());
-            if(uploadFile.exists()) {
+            if (uploadFile.exists()) {
                 setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
 
                 HttpPost httpost = new HttpPost(url);
@@ -211,7 +212,7 @@ public class HTTPAgent {
                 entity.addPart("entity-id", new StringBody(image.getEntityID()));
                 entity.addPart("content-type", new StringBody(image.getContenttype() != null ? image.getContenttype() : "jpeg"));
                 entity.addPart("file-category", new StringBody(image.getFilecategory() != null ? image.getFilecategory() : "profilepic"));
-                ContentBody cbFile = new FileBody(uploadFile,"image/jpeg");
+                ContentBody cbFile = new FileBody(uploadFile, "image/jpeg");
                 entity.addPart("file", cbFile);
                 httpost.setEntity(entity);
                 String authToken = null;
@@ -224,14 +225,14 @@ public class HTTPAgent {
                 if (response.getStatusLine().getStatusCode() != RESPONSE_OK_ && response.getStatusLine().getStatusCode() != RESPONSE_OK) {
                 }
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
         return responseString;
     }
 
-    private String nullToLiteral(String s){
-        if(s == null)
+    private String nullToLiteral(String s) {
+        if (s == null)
             return "";
         return s;
 

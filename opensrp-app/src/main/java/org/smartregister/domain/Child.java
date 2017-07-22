@@ -17,10 +17,10 @@ import static org.smartregister.AllConstants.SPACE;
 public class Child {
     private final String caseId;
     private final String motherCaseId;
-    private String thayiCardNumber;
-    private String dateOfBirth;
     private final String gender;
     private final Map<String, String> details;
+    private String thayiCardNumber;
+    private String dateOfBirth;
     private boolean isClosed;
     private Mother mother;
     private EligibleCouple eligibleCouple;

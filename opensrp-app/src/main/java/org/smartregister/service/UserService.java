@@ -85,6 +85,43 @@ public class UserService {
         initKeyStore();
     }
 
+    private static TimeZone getDeviceTimeZone() {
+        return TimeZone.getDefault();
+    }
+
+    private static Date getDeviceTime() {
+        Calendar.getInstance().getTime();
+        return Calendar.getInstance().getTime();
+    }
+
+    public static TimeZone getServerTimeZone(String userInfo) {
+        if (userInfo != null) {
+            try {
+                JSONObject userInfoData = new JSONObject(userInfo);
+                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject(TIME).
+                        getString("timeZone"));
+                return timeZone;
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        return null;
+    }
+
+    private static Date getServerTime(String userInfo) {
+        if (userInfo != null) {
+            try {
+                JSONObject userInfoData = new JSONObject(userInfo);
+                return DATE_FORMAT.parse(userInfoData.getJSONObject(TIME).getString(TIME));
+            } catch (Exception e) {
+                Log.e(TAG, Log.getStackTraceString(e));
+            }
+        }
+
+        return null;
+    }
+
     public void initKeyStore() {
         try {
             this.keyStore = KeyStore.getInstance(KEYSTORE);
@@ -151,43 +188,6 @@ public class UserService {
         }
 
         return TimeStatus.ERROR;
-    }
-
-    private static TimeZone getDeviceTimeZone() {
-        return TimeZone.getDefault();
-    }
-
-    private static Date getDeviceTime() {
-        Calendar.getInstance().getTime();
-        return Calendar.getInstance().getTime();
-    }
-
-    public static TimeZone getServerTimeZone(String userInfo) {
-        if (userInfo != null) {
-            try {
-                JSONObject userInfoData = new JSONObject(userInfo);
-                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject(TIME).
-                        getString("timeZone"));
-                return timeZone;
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-
-        return null;
-    }
-
-    private static Date getServerTime(String userInfo) {
-        if (userInfo != null) {
-            try {
-                JSONObject userInfoData = new JSONObject(userInfo);
-                return DATE_FORMAT.parse(userInfoData.getJSONObject(TIME).getString(TIME));
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-        }
-
-        return null;
     }
 
     public boolean isValidLocalLogin(String userName, String password) {

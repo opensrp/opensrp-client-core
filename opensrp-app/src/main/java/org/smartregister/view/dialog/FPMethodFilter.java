@@ -9,9 +9,9 @@ import org.smartregister.view.contract.FPSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
 
 public class FPMethodFilter implements FilterOption {
-    private final String fpMethodName;
     public final static String ALL_METHODS_SERVICE_OPTION = "All Methods";
     public final static String OTHER_METHODS_SERVICE_OPTION = "Others";
+    private final String fpMethodName;
 
     public FPMethodFilter(String serviceModeOption) {
         this.fpMethodName = serviceModeOption;
@@ -31,11 +31,9 @@ public class FPMethodFilter implements FilterOption {
         boolean shouldFilter;
         if (name().equalsIgnoreCase(ALL_METHODS_SERVICE_OPTION)) {
             shouldFilter = doesClientUseFpMethod(fpSmartRegisterClient);
-        }
-        else if (name().equalsIgnoreCase(OTHER_METHODS_SERVICE_OPTION)){
+        } else if (name().equalsIgnoreCase(OTHER_METHODS_SERVICE_OPTION)) {
             shouldFilter = doesClientUseOtherFpMethod(fpSmartRegisterClient);
-        }
-        else{
+        } else {
             shouldFilter = name().equalsIgnoreCase(fpSmartRegisterClient.fpMethod().displayName());
         }
         return shouldFilter;

@@ -7,10 +7,10 @@ import java.util.Map;
  */
 public class Event {
     String baseEntityID;
-    Map<String,String> attributesDetailsMap;
-    Map<String,String> attributesColumnsMap;
-    Map<String,String> ObsColumnsMap;
-    Map<String,String> ObsDetailsMap;
+    Map<String, String> attributesDetailsMap;
+    Map<String, String> attributesColumnsMap;
+    Map<String, String> ObsColumnsMap;
+    Map<String, String> ObsDetailsMap;
 
     public Event(String baseEntityID, Map<String, String> attributesDetailsMap, Map<String, String> attributesColumnsMap, Map<String, String> obsColumnsMap, Map<String, String> obsDetailsMap) {
         this.baseEntityID = baseEntityID;

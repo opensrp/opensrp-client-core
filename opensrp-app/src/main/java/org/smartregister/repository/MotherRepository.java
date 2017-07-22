@@ -2,9 +2,12 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -20,21 +23,20 @@ import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.smartregister.repository.EligibleCoupleRepository.*;
 
 public class MotherRepository extends DrishtiRepository {
-    private static final String MOTHER_SQL = "CREATE TABLE mother(id VARCHAR PRIMARY KEY, ecCaseId VARCHAR, thayiCardNumber VARCHAR, type VARCHAR, referenceDate VARCHAR, details VARCHAR, isClosed VARCHAR)";
-    private static final String MOTHER_TYPE_INDEX_SQL = "CREATE INDEX mother_type_index ON mother(type);";
-    private static final String MOTHER_REFERENCE_DATE_INDEX_SQL = "CREATE INDEX mother_referenceDate_index ON mother(referenceDate);";
     public static final String MOTHER_TABLE_NAME = "mother";
     public static final String ID_COLUMN = "id";
     public static final String EC_CASEID_COLUMN = "ecCaseId";
     public static final String THAYI_CARD_NUMBER_COLUMN = "thayiCardNumber";
-    private static final String TYPE_COLUMN = "type";
     public static final String REF_DATE_COLUMN = "referenceDate";
     public static final String DETAILS_COLUMN = "details";
-    private static final String IS_CLOSED_COLUMN = "isClosed";
-    public static final String[] MOTHER_TABLE_COLUMNS = {ID_COLUMN, EC_CASEID_COLUMN, THAYI_CARD_NUMBER_COLUMN, TYPE_COLUMN, REF_DATE_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN};
-
     public static final String TYPE_ANC = "ANC";
     public static final String TYPE_PNC = "PNC";
+    private static final String MOTHER_SQL = "CREATE TABLE mother(id VARCHAR PRIMARY KEY, ecCaseId VARCHAR, thayiCardNumber VARCHAR, type VARCHAR, referenceDate VARCHAR, details VARCHAR, isClosed VARCHAR)";
+    private static final String MOTHER_TYPE_INDEX_SQL = "CREATE INDEX mother_type_index ON mother(type);";
+    private static final String MOTHER_REFERENCE_DATE_INDEX_SQL = "CREATE INDEX mother_referenceDate_index ON mother(referenceDate);";
+    private static final String TYPE_COLUMN = "type";
+    private static final String IS_CLOSED_COLUMN = "isClosed";
+    public static final String[] MOTHER_TABLE_COLUMNS = {ID_COLUMN, EC_CASEID_COLUMN, THAYI_CARD_NUMBER_COLUMN, TYPE_COLUMN, REF_DATE_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN};
     private static final String NOT_CLOSED = "false";
 
     @Override

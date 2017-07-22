@@ -51,23 +51,23 @@ public class UpdateActionsTask {
                 FetchStatus fetchStatusForActions = actionService.fetchNewActions();
                 FetchStatus fetchStatusAdditional = additionalSyncService == null ? nothingFetched : additionalSyncService.sync();
 
-                if(org.smartregister.Context.getInstance().configuration().shouldSyncForm()) {
+                if (org.smartregister.Context.getInstance().configuration().shouldSyncForm()) {
 
                     allFormVersionSyncService.verifyFormsInFolder();
                     FetchStatus fetchVersionStatus = allFormVersionSyncService.pullFormDefinitionFromServer();
                     DownloadStatus downloadStatus = allFormVersionSyncService.downloadAllPendingFormFromServer();
 
-                    if(downloadStatus == DownloadStatus.downloaded) {
+                    if (downloadStatus == DownloadStatus.downloaded) {
                         allFormVersionSyncService.unzipAllDownloadedFormFile();
                     }
 
-                    if(fetchVersionStatus == fetched || downloadStatus == DownloadStatus.downloaded) {
+                    if (fetchVersionStatus == fetched || downloadStatus == DownloadStatus.downloaded) {
                         return fetched;
                     }
                 }
 
 
-                if(fetchStatusForActions == fetched || fetchStatusForForms == fetched || fetchStatusAdditional == fetched)
+                if (fetchStatusForActions == fetched || fetchStatusForForms == fetched || fetchStatusAdditional == fetched)
                     return fetched;
 
                 return fetchStatusForForms;

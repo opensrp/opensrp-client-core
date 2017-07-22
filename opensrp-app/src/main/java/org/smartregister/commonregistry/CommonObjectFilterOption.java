@@ -4,14 +4,10 @@ import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.dialog.FilterOption;
 
 public class CommonObjectFilterOption implements FilterOption {
-    private final String criteria;
     public final String fieldname;
+    private final String criteria;
     private final String filterOptionName;
     ByColumnAndByDetails byColumnAndByDetails;
-
-    public enum ByColumnAndByDetails{
-        byColumn, byDetails
-    }
 
     public CommonObjectFilterOption(String criteriaArg,
                                     String fieldnameArg,
@@ -40,5 +36,9 @@ public class CommonObjectFilterOption implements FilterOption {
                         toLowerCase().contains(criteria.toLowerCase());
         }
         return false;
+    }
+
+    public enum ByColumnAndByDetails {
+        byColumn, byDetails
     }
 }

@@ -1,6 +1,7 @@
 package org.smartregister.service;
 
 import com.google.gson.Gson;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.domain.form.FormData;
@@ -67,15 +68,15 @@ public class FormSubmissionService {
                         .map());
     }
 
-    public void updateFTSsearch(FormSubmission formSubmission){
-        if(allCommonsRepositoryMap == null || allCommonsRepositoryMap.isEmpty()){
+    public void updateFTSsearch(FormSubmission formSubmission) {
+        if (allCommonsRepositoryMap == null || allCommonsRepositoryMap.isEmpty()) {
             return;
         }
 
         FormData form = formSubmission.getForm();
         String bindType = form.getBind_type();
-        for(FormField field: form.fields()){
-            if(field.name() != null && field.name().equals("id")){
+        for (FormField field : form.fields()) {
+            if (field.name() != null && field.name().equals("id")) {
                 String entityId = field.value();
                 updateFTSsearch(bindType, entityId);
             }
@@ -83,26 +84,26 @@ public class FormSubmissionService {
 
         List<FormField> fields = form.fields();
 
-        if(fields != null && !fields.isEmpty())
-            for(FormField field: fields){
+        if (fields != null && !fields.isEmpty())
+            for (FormField field : fields) {
                 String source = field.source();
-                if(source != null && source.contains(".id")){
+                if (source != null && source.contains(".id")) {
                     String[] sourceArray = source.split("\\.");
                     String innerBindType = sourceArray[sourceArray.length - 2];
-                    if(!bindType.equals(innerBindType)) {
+                    if (!bindType.equals(innerBindType)) {
                         String innerEntityId = field.value();
                         updateFTSsearch(innerBindType, innerEntityId);
                     }
                 }
             }
 
-        List<SubForm> subForms  =form.getSub_forms();
-        if(subForms != null && !subForms.isEmpty()){
-            for(SubForm subForm: subForms){
+        List<SubForm> subForms = form.getSub_forms();
+        if (subForms != null && !subForms.isEmpty()) {
+            for (SubForm subForm : subForms) {
                 String subBindType = subForm.getBindType();
                 List<Map<String, String>> instances = subForm.instances();
-                if(instances != null && !instances.isEmpty()) {
-                    for(Map<String, String> instance: instances) {
+                if (instances != null && !instances.isEmpty()) {
+                    for (Map<String, String> instance : instances) {
                         String subEntityId = instance.get("id");
                         updateFTSsearch(subBindType, subEntityId);
 
@@ -112,10 +113,10 @@ public class FormSubmissionService {
         }
     }
 
-    private boolean updateFTSsearch(String bindType, String entityId){
-        if(allCommonsRepositoryMap != null && !allCommonsRepositoryMap.isEmpty()) {
+    private boolean updateFTSsearch(String bindType, String entityId) {
+        if (allCommonsRepositoryMap != null && !allCommonsRepositoryMap.isEmpty()) {
             AllCommonsRepository allCommonsRepository = allCommonsRepositoryMap.get(bindType);
-            if(allCommonsRepository != null){
+            if (allCommonsRepository != null) {
                 return allCommonsRepository.updateSearch(entityId);
             }
         }

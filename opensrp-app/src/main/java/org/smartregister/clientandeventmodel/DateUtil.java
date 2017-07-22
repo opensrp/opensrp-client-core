@@ -12,14 +12,19 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+interface DateUtility {
+    LocalDate today();
+
+    long millis();
+}
+
 public class DateUtil {
     private static final String TAG = "DateUtil";
-    private static DateUtility dateUtility = new RealDate();
     public static DateFormat yyyyMMdd = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat yyyyMMddHHmmss = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     public static DateFormat yyyyMMddTHHmmssSSSZ = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    private static DateUtility dateUtility = new RealDate();
     //2017-03-01T14:04:20.865Z
-
 
     public static void fakeIt(LocalDate fakeDayAsToday) {
         dateUtility = new MockDate(fakeDayAsToday);
@@ -48,17 +53,19 @@ public class DateUtil {
      * - yyyy-MM-dd
      * - yyyy-MM-dd HH:mm:ss
      * - yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     *
      * @return
      * @throws ParseException
      */
-    public static Date parseDate(String date) throws ParseException{
-        try{
+    public static Date parseDate(String date) throws ParseException {
+        try {
             return yyyyMMdd.parse(date);
+        } catch (ParseException e) {
         }
-        catch(ParseException e){}
         try {
             return yyyyMMddHHmmss.parse(date);
-        } catch (ParseException e) {}
+        } catch (ParseException e) {
+        }
 
         return yyyyMMddTHHmmssSSSZ.parse(date);
     }
@@ -70,12 +77,11 @@ public class DateUtil {
             return defaultValue;
         }
     }
-    public static Date getDateFromString(String dateString)
-    {
+
+    public static Date getDateFromString(String dateString) {
         Date parsed = null;
         try {
-            if(dateString!=null && !dateString.equals("null") && dateString.length()>0)
-            {
+            if (dateString != null && !dateString.equals("null") && dateString.length() > 0) {
                 parsed = yyyyMMddTHHmmssSSSZ.parse(dateString.trim());
             }
         } catch (ParseException e) {
@@ -84,12 +90,12 @@ public class DateUtil {
         return parsed;
     }
 
-    public static Date toDate(Object dateObject){
-        if(dateObject instanceof Date){
+    public static Date toDate(Object dateObject) {
+        if (dateObject instanceof Date) {
             return (Date) dateObject;
-        }else if(dateObject instanceof  Long){
+        } else if (dateObject instanceof Long) {
             return new Date((Long) dateObject);
-        }else if(dateObject instanceof  String) {
+        } else if (dateObject instanceof String) {
             try {
                 String dateString = (String) dateObject;
                 if (dateString.isEmpty()) {
@@ -105,16 +111,10 @@ public class DateUtil {
         return null;
     }
 
-    public static String fromDate(Date date){
+    public static String fromDate(Date date) {
         return yyyyMMddTHHmmssSSSZ.format(date);
     }
 
-}
-
-interface DateUtility {
-    LocalDate today();
-
-    long millis();
 }
 
 class RealDate implements DateUtility {

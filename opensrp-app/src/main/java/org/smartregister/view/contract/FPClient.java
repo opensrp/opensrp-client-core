@@ -431,7 +431,7 @@ public class FPClient implements FPSmartRegisterClient {
     }
 
     public String numberOfPregnancies() {
-        return  num_pregnancies;
+        return num_pregnancies;
     }
 
     public String parity() {

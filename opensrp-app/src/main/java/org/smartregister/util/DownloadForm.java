@@ -26,14 +26,13 @@ public class DownloadForm {
 
     public static Response<DownloadStatus> DownloadFromURL(String downloadURL,
                                                            String fileName,
-                                                           final GZipEncodingHttpClient httpClient)
-    {
+                                                           final GZipEncodingHttpClient httpClient) {
 
         try {
 
             File dir = new File(FormPathService.sdcardPathDownload);
 
-            if(!dir.exists()) {
+            if (!dir.exists()) {
                 dir.mkdirs();
             }
 
@@ -63,7 +62,7 @@ public class DownloadForm {
             /* This will be for count download percentage */
             long fileLength = entity.getContentLength();
 
-            if(fileLength == 0) {
+            if (fileLength == 0) {
                 return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.nothingDownloaded);
             }
 
@@ -82,7 +81,7 @@ public class DownloadForm {
             fos.flush();
             fos.close();
 
-            Log.d("DownloadFormService", "download finished in " + ((System.currentTimeMillis()-startTime) / 1000) + " sec");
+            Log.d("DownloadFormService", "download finished in " + ((System.currentTimeMillis() - startTime) / 1000) + " sec");
 
         } catch (IOException e) {
             Log.d("DownloadFormService", "download error : " + e);

@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.R;

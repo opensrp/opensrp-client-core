@@ -1,6 +1,7 @@
 package org.smartregister.view.contract;
 
 import android.graphics.Color;
+
 import org.smartregister.R;
 
 public enum FPAlertStatus {
@@ -51,12 +52,12 @@ public enum FPAlertStatus {
     };
 
 
-    public abstract int backgroundColorResourceId();
-
-    public abstract int fontColor();
-
     public static FPAlertStatus from(String value) {
         return valueOf(value.toUpperCase());
     }
+
+    public abstract int backgroundColorResourceId();
+
+    public abstract int fontColor();
 
 }

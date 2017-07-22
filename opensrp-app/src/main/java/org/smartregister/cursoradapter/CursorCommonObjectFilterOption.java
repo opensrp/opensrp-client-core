@@ -14,8 +14,8 @@ public class CursorCommonObjectFilterOption implements CursorFilterOption {
     String filterString;
 
 
-    public CursorCommonObjectFilterOption(String filteroptionname,String filterString) {
-       this.filterString = filterString;
+    public CursorCommonObjectFilterOption(String filteroptionname, String filterString) {
+        this.filterString = filterString;
         this.filterOptionName = filteroptionname;
     }
 

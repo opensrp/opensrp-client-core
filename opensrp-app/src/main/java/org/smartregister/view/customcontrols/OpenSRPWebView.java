@@ -9,7 +9,7 @@ import android.webkit.WebView;
 /**
  * Created by koros on 1/12/16.
  */
-public class OpenSRPWebView extends WebView{
+public class OpenSRPWebView extends WebView {
 
 
     public OpenSRPWebView(Context context) {
@@ -34,7 +34,7 @@ public class OpenSRPWebView extends WebView{
 
     @Override
     public void onWindowFocusChanged(boolean hasWindowFocus) {
-        if (hasWindowFocus){
+        if (hasWindowFocus) {
             post(new Runnable() {
                 @Override
                 public void run() {
@@ -45,7 +45,7 @@ public class OpenSRPWebView extends WebView{
         }
     }
 
-    public void disableLongClick(){
+    public void disableLongClick() {
         this.setOnLongClickListener(new OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {

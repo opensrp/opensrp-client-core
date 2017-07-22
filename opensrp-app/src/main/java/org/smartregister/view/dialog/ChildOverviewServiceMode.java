@@ -2,6 +2,7 @@ package org.smartregister.view.dialog;
 
 import android.graphics.drawable.Drawable;
 import android.view.View;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;

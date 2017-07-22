@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 

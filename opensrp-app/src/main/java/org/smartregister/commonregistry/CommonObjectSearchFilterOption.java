@@ -14,10 +14,6 @@ public class CommonObjectSearchFilterOption implements FilterOption {
     private final String criteria;
     ArrayList<FilterOptionsForSearch> filterOptions;
 
-    public enum ByColumnAndByDetails {
-        byColumn, byDetails, byChildren
-    }
-
     public CommonObjectSearchFilterOption(String criteria,
                                           ArrayList<FilterOptionsForSearch> filterMaps) {
         this.criteria = criteria;
@@ -38,12 +34,12 @@ public class CommonObjectSearchFilterOption implements FilterOption {
                 case byColumn:
                     return ((CommonPersonObjectClient) client).getColumnmaps().get(
                             filterOptions.get(i).fieldName).trim().toLowerCase().contains(
-                                    criteria.trim().toLowerCase());
+                            criteria.trim().toLowerCase());
                 case byDetails:
                     return (((CommonPersonObjectClient) client).getDetails().get(
                             filterOptions.get(i).fieldName) != null
                             ? ((CommonPersonObjectClient) client).getDetails().get(
-                                    filterOptions.get(i).fieldName) : "").trim().toLowerCase().
+                            filterOptions.get(i).fieldName) : "").trim().toLowerCase().
                             contains(criteria.toLowerCase());
                 case byChildren:
                     CommonPersonObjectClient currentclient = (CommonPersonObjectClient) client;
@@ -82,6 +78,10 @@ public class CommonObjectSearchFilterOption implements FilterOption {
             }
         }
         return false;
+    }
+
+    public enum ByColumnAndByDetails {
+        byColumn, byDetails, byChildren
     }
 
     static class FilterOptionsForSearch {

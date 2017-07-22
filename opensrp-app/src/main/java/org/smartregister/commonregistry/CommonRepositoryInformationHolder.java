@@ -5,15 +5,15 @@ package org.smartregister.commonregistry;
  */
 public class CommonRepositoryInformationHolder {
     private String bindtypename;
-    private String [] columnNames;
-
-    public String getBindtypename() {
-        return bindtypename;
-    }
+    private String[] columnNames;
 
     public CommonRepositoryInformationHolder(String bindtypename, String[] columnNames) {
         this.bindtypename = bindtypename;
         this.columnNames = columnNames;
+    }
+
+    public String getBindtypename() {
+        return bindtypename;
     }
 
     public void setBindtypename(String bindtypename) {

@@ -1,6 +1,7 @@
 package org.smartregister.view.contract;
 
 import android.graphics.Color;
+
 import org.smartregister.R;
 
 public enum AlertStatus {
@@ -60,12 +61,12 @@ public enum AlertStatus {
     };
 
 
-    public abstract int backgroundColorResourceId();
-
-    public abstract int fontColor();
-
     public static AlertStatus from(String value) {
         return valueOf(value.toUpperCase());
     }
+
+    public abstract int backgroundColorResourceId();
+
+    public abstract int fontColor();
 
 }

@@ -10,8 +10,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import static org.smartregister.util.Log.logVerbose;
 
 public class LockingBackgroundTask {
-    private ProgressIndicator indicator;
     private static final ReentrantLock lock = new ReentrantLock();
+    private ProgressIndicator indicator;
 
     public LockingBackgroundTask(ProgressIndicator progressIndicator) {
         this.indicator = progressIndicator;
@@ -49,7 +49,7 @@ public class LockingBackgroundTask {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    protected <T> void  startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
+    protected <T> void startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
         if (params == null) {
             @SuppressWarnings("unchecked")
             T[] arr = (T[]) new Void[0];

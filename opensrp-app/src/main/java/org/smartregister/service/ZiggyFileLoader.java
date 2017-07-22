@@ -1,12 +1,14 @@
 package org.smartregister.service;
 
 import android.content.res.AssetManager;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+
 import android.webkit.JavascriptInterface;
 
 import static java.text.MessageFormat.format;

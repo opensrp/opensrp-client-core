@@ -13,11 +13,11 @@ import static org.smartregister.event.Event.*;
 import static org.smartregister.util.Log.logWarn;
 
 public class Cache<T> {
-    private Map<String, T> value = new HashMap<String, T>();
     private final Listener<String> formSubmittedListener;
     private final Listener<FetchStatus> actionsFetchedListener;
     private final Listener<CapturedPhotoInformation> photoCapturedListener;
     private final Listener<String> actionHandledListener;
+    private Map<String, T> value = new HashMap<String, T>();
 
     public Cache() {
         actionsFetchedListener = new Listener<FetchStatus>() {

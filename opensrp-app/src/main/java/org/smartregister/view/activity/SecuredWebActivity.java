@@ -8,6 +8,7 @@ import android.webkit.ConsoleMessage;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+
 import org.acra.ACRA;
 import org.smartregister.R;
 import org.smartregister.sync.SyncAfterFetchListener;
@@ -102,6 +103,7 @@ public abstract class SecuredWebActivity extends SecuredActivity {
             public void onProgressChanged(WebView view, int progress) {
                 dismissProgressBarOnProgressComplete(progress, activity);
             }
+
             @Override
             public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
                 String message = format("Javascript Log. Message: {0}, lineNumber: {1}, sourceId, {2}", consoleMessage.message(),
@@ -128,7 +130,7 @@ public abstract class SecuredWebActivity extends SecuredActivity {
     }
 
     private void dismissProgressBarOnProgressComplete(int progress, Activity activity) {
-        if(shouldDismissProgressBarOnProgressComplete){
+        if (shouldDismissProgressBarOnProgressComplete) {
             activity.setProgress(progress * 1000);
 
             if (progress == 100 && progressDialog.isShowing())

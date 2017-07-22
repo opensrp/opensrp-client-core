@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.*;
 

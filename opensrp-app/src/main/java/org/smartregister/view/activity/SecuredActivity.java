@@ -33,16 +33,15 @@ import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 
 public abstract class SecuredActivity extends ActionBarActivity {
+    public static final String LOG_TAG = "SecuredActivity";
+    protected final int MENU_ITEM_LOGOUT = 2312;
     protected Listener<Boolean> logoutListener;
     protected FormController formController;
     protected ANMController anmController;
     protected NavigationController navigationController;
-    protected final int MENU_ITEM_LOGOUT = 2312;
+    protected ZiggyService ziggyService;
     private String metaData;
     private OpenSRPClientBroadCastReceiver openSRPClientBroadCastReceiver;
-    protected ZiggyService ziggyService;
-
-    public static final String LOG_TAG = "SecuredActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
         ON_LOGOUT.addListener(logoutListener);
 
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication)getApplication();
+            DrishtiApplication application = (DrishtiApplication) getApplication();
             application.logoutCurrentUser();
             return;
         }
@@ -67,9 +66,9 @@ public abstract class SecuredActivity extends ActionBarActivity {
         anmController = context().anmController();
         navigationController = new NavigationController(this, anmController);
         onCreation();
-        
 
-       // Intent replicationServiceIntent = new Intent(this, ReplicationIntentService.class);
+
+        // Intent replicationServiceIntent = new Intent(this, ReplicationIntentService.class);
         //startService(replicationServiceIntent);
     }
 
@@ -77,7 +76,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication)getApplication();
+            DrishtiApplication application = (DrishtiApplication) getApplication();
             application.logoutCurrentUser();
             return;
         }
@@ -95,7 +94,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
-            DrishtiApplication application = (DrishtiApplication)getApplication();
+            DrishtiApplication application = (DrishtiApplication) getApplication();
             application.logoutCurrentUser();
 
             return super.onOptionsItemSelected(item);
@@ -107,7 +106,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
     /**
      * Attaches a logout menu item to the provided menu
      *
-     * @param menu      The menu to attach the logout menu item
+     * @param menu The menu to attach the logout menu item
      */
     protected void attachLogoutMenuItem(Menu menu) {
         menu.add(0, MENU_ITEM_LOGOUT, menu.size(), R.string.logout_text);

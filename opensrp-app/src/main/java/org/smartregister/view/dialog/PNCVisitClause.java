@@ -10,7 +10,7 @@ public class PNCVisitClause implements FilterClause<ServiceProvidedDTO> {
     private String PNC_IDENTIFIER = "PNC";
 //    private String PNC_IDENTIFIER = Context.getInstance().getStringResource(R.string.str_pnc_clause);
 
-    public PNCVisitClause (LocalDate visitEndDate) {
+    public PNCVisitClause(LocalDate visitEndDate) {
         this.visitEndDate = visitEndDate;
     }
 

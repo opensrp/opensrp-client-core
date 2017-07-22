@@ -4,75 +4,75 @@ import java.util.Date;
 
 public class ContactPoint {
 
-	private String type;
-	private String use;
-	private String number;
-	private int preference;
-	private Date startDate;
-	private Date endDate;
-	
-	public ContactPoint() {
-		
-	}
-	
+    private String type;
+    private String use;
+    private String number;
+    private int preference;
+    private Date startDate;
+    private Date endDate;
 
-	public ContactPoint(String type, String use, String number, int preference, Date startDate, Date endDate) {
-		this.type = type;
-		this.use = use;
-		this.number = number;
-		this.preference = preference;
-		this.startDate = startDate;
-		this.endDate = endDate;
-	}
+    public ContactPoint() {
+
+    }
 
 
-	public String getType() {
-		return type;
-	}
+    public ContactPoint(String type, String use, String number, int preference, Date startDate, Date endDate) {
+        this.type = type;
+        this.use = use;
+        this.number = number;
+        this.preference = preference;
+        this.startDate = startDate;
+        this.endDate = endDate;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
 
-	public String getUse() {
-		return use;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setUse(String use) {
-		this.use = use;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getNumber() {
-		return number;
-	}
+    public String getUse() {
+        return use;
+    }
 
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    public void setUse(String use) {
+        this.use = use;
+    }
 
-	public int getPreference() {
-		return preference;
-	}
+    public String getNumber() {
+        return number;
+    }
 
-	public void setPreference(int preference) {
-		this.preference = preference;
-	}
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public int getPreference() {
+        return preference;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public void setPreference(int preference) {
+        this.preference = preference;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-	
-	
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+
 }

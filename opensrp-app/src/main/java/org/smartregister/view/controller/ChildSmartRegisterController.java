@@ -1,6 +1,7 @@
 package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.Alert;

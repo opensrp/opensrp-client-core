@@ -49,17 +49,17 @@ public abstract class SecuredFragment extends Fragment {
 
         logoutListener = new Listener<Boolean>() {
             public void onEvent(Boolean data) {
-                if(getActivity() != null && !getActivity().isFinishing()) getActivity().finish();
+                if (getActivity() != null && !getActivity().isFinishing()) getActivity().finish();
             }
         };
         ON_LOGOUT.addListener(logoutListener);
 
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication)this.getActivity().getApplication();
+            DrishtiApplication application = (DrishtiApplication) this.getActivity().getApplication();
             application.logoutCurrentUser();
             return;
         }
-        formController = new FormController((SecuredActivity)getActivity());
+        formController = new FormController((SecuredActivity) getActivity());
         anmController = context().anmController();
         navigationController = new NavigationController(getActivity(), anmController);
         onCreation();
@@ -69,7 +69,7 @@ public abstract class SecuredFragment extends Fragment {
     public void onResume() {
         super.onResume();
         if (context().IsUserLoggedOut()) {
-            DrishtiApplication application = (DrishtiApplication)this.getActivity().getApplication();
+            DrishtiApplication application = (DrishtiApplication) this.getActivity().getApplication();
             application.logoutCurrentUser();
             return;
         }

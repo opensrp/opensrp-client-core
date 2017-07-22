@@ -25,7 +25,7 @@ public class Weight {
     public Weight() {
     }
 
-    public Weight(Long id, String baseEntityId, Float kg, Date date, String anmId, String locationId, String syncStatus, Long updatedAt,String eventId,String formSubmissionId,Integer outOfCatchment) {
+    public Weight(Long id, String baseEntityId, Float kg, Date date, String anmId, String locationId, String syncStatus, Long updatedAt, String eventId, String formSubmissionId, Integer outOfCatchment) {
         this.id = id;
         this.baseEntityId = baseEntityId;
         this.programClientId = null;
@@ -35,12 +35,12 @@ public class Weight {
         this.locationId = locationId;
         this.syncStatus = syncStatus;
         this.updatedAt = updatedAt;
-        this.eventId=eventId;
-        this.formSubmissionId=formSubmissionId;
-        this.outOfCatchment=outOfCatchment;
+        this.eventId = eventId;
+        this.formSubmissionId = formSubmissionId;
+        this.outOfCatchment = outOfCatchment;
     }
 
-    public Weight(Long id, String baseEntityId, String programClientId, Float kg, Date date, String anmId, String locationId, String syncStatus, Long updatedAt,String eventId,String formSubmissionId, Double zScore,Integer outOfCatchment) {
+    public Weight(Long id, String baseEntityId, String programClientId, Float kg, Date date, String anmId, String locationId, String syncStatus, Long updatedAt, String eventId, String formSubmissionId, Double zScore, Integer outOfCatchment) {
         this.id = id;
         this.baseEntityId = baseEntityId;
         this.programClientId = programClientId;
@@ -50,12 +50,11 @@ public class Weight {
         this.locationId = locationId;
         this.syncStatus = syncStatus;
         this.updatedAt = updatedAt;
-        this.eventId=eventId;
-        this.formSubmissionId=formSubmissionId;
-        this.outOfCatchment=outOfCatchment;
+        this.eventId = eventId;
+        this.formSubmissionId = formSubmissionId;
+        this.outOfCatchment = outOfCatchment;
         this.zScore = zScore;
     }
-
 
 
     public Long getId() {
@@ -135,6 +134,7 @@ public class Weight {
     public void setSyncStatus(String syncStatus) {
         this.syncStatus = syncStatus;
     }
+
     public String getEventId() {
         return eventId;
     }
@@ -150,6 +150,7 @@ public class Weight {
     public void setFormSubmissionId(String formSubmissionId) {
         this.formSubmissionId = formSubmissionId;
     }
+
     public Integer getOutOfCatchment() {
         return outOfCatchment;
     }
@@ -157,6 +158,7 @@ public class Weight {
     public void setOutOfCatchment(Integer outOfCatchment) {
         this.outOfCatchment = outOfCatchment;
     }
+
     public Double getZScore() {
         return zScore;
     }

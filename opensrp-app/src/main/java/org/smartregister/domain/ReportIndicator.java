@@ -946,7 +946,7 @@ public enum ReportIndicator {
             return fetchMotherCaseList(caseIds);
         }
     },
-    IB_1Y("IB_1Y", "Number of children turning one year old in the current reporting month"){
+    IB_1Y("IB_1Y", "Number of children turning one year old in the current reporting month") {
         @Override
         public void startCaseDetailActivity(android.content.Context context, String caseId) {
             navigateToChildProfile(context, caseId);
@@ -967,18 +967,6 @@ public enum ReportIndicator {
         this.description = description;
     }
 
-    public String description() {
-        return description;
-    }
-
-    public String value() {
-        return value;
-    }
-
-    public abstract List<Beneficiary> fetchCaseList(List<String> caseIds);
-
-    public abstract void startCaseDetailActivity(android.content.Context context, String caseId);
-
     private static List<Beneficiary> fetchECCaseList(List<String> caseIds) {
         return Context.getInstance().beneficiaryService().fetchFromEcCaseIds(caseIds);
     }
@@ -998,4 +986,16 @@ public enum ReportIndicator {
         }
         throw new IllegalArgumentException("Could not find ReportIndicator for value: " + indicator);
     }
+
+    public String description() {
+        return description;
+    }
+
+    public String value() {
+        return value;
+    }
+
+    public abstract List<Beneficiary> fetchCaseList(List<String> caseIds);
+
+    public abstract void startCaseDetailActivity(android.content.Context context, String caseId);
 }

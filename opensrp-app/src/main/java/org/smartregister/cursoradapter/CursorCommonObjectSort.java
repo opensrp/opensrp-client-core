@@ -14,11 +14,10 @@ import java.util.Comparator;
 public class CursorCommonObjectSort implements CursorSortOption {
 
 
-
     String sortOptionName;
     String query;
 
-    public CursorCommonObjectSort(String sortOptionName,String sortQuery) {
+    public CursorCommonObjectSort(String sortOptionName, String sortQuery) {
         this.query = sortQuery;
         this.sortOptionName = sortOptionName;
     }
@@ -30,7 +29,7 @@ public class CursorCommonObjectSort implements CursorSortOption {
 
     @Override
     public String sort() {
-      return query;
+        return query;
     }
 
 

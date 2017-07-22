@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
@@ -58,16 +59,17 @@ public class LoginActivity extends Activity {
         setDoneActionHandlerOnPasswordField();
         initializeProgressDialog();
     }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         menu.add("Settings");
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getTitle().toString().equalsIgnoreCase("Settings")){
-            startActivity(new Intent(this,SettingsActivity.class));
+        if (item.getTitle().toString().equalsIgnoreCase("Settings")) {
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -174,7 +176,7 @@ public class LoginActivity extends Activity {
         tryGetLocation(new Listener<Response<String>>() {
             @Override
             public void onEvent(Response<String> data) {
-                if(data.status() == ResponseStatus.success) {
+                if (data.status() == ResponseStatus.success) {
                     context.userService().saveAnmLocation(data.payload());
                 }
             }
@@ -184,10 +186,13 @@ public class LoginActivity extends Activity {
     private void tryGetLocation(final Listener<Response<String>> afterGet) {
         LockingBackgroundTask task = new LockingBackgroundTask(new ProgressIndicator() {
             @Override
-            public void setVisible() { }
+            public void setVisible() {
+            }
 
             @Override
-            public void setInvisible() { Log.logInfo("Successfully get location"); }
+            public void setInvisible() {
+                Log.logInfo("Successfully get location");
+            }
         });
 
         task.doActionInBackground(new BackgroundAction<Response<String>>() {

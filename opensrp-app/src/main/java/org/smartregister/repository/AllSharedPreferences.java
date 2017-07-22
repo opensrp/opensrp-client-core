@@ -126,53 +126,58 @@ public class AllSharedPreferences {
         preferences.edit().putBoolean(IS_SYNC_IN_PROGRESS_PREFERENCE_KEY, isSyncInProgress).commit();
     }
 
-    public String fetchBaseURL(String baseurl){
+    public String fetchBaseURL(String baseurl) {
 
-      return   preferences.getString(DRISHTI_BASE_URL, baseurl);
+        return preferences.getString(DRISHTI_BASE_URL, baseurl);
     }
 
-    public String fetchHost(String host){
-        if((host == null || host.isEmpty()) && preferences.getString(HOST,host).equals(host)){
+    public String fetchHost(String host) {
+        if ((host == null || host.isEmpty()) && preferences.getString(HOST, host).equals(host)) {
             updateUrl(fetchBaseURL(""));
         }
-        return  preferences.getString(HOST,host);
+        return preferences.getString(HOST, host);
     }
 
-    public void saveHost(String host){
-        preferences.edit().putString(HOST,host).commit();
+    public void saveHost(String host) {
+        preferences.edit().putString(HOST, host).commit();
     }
 
-    public Integer fetchPort(Integer port){
+    public Integer fetchPort(Integer port) {
 
-        return  Integer.parseInt(preferences.getString(PORT, "" + port));
+        return Integer.parseInt(preferences.getString(PORT, "" + port));
     }
 
-    public Long fetchLastSyncDate(long lastSyncDate){
+    public Long fetchLastSyncDate(long lastSyncDate) {
 
-        return  preferences.getLong(LAST_SYNC_DATE, lastSyncDate);
+        return preferences.getLong(LAST_SYNC_DATE, lastSyncDate);
     }
 
-    public void saveLastSyncDate(long lastSyncDate){
+    public void saveLastSyncDate(long lastSyncDate) {
         preferences.edit().putLong(LAST_SYNC_DATE, lastSyncDate).commit();
     }
-    public Long fetchLastUpdatedAtDate(long lastSyncDate){
 
-        return  preferences.getLong(LAST_UPDATED_AT_DATE, lastSyncDate);
+    public Long fetchLastUpdatedAtDate(long lastSyncDate) {
+
+        return preferences.getLong(LAST_UPDATED_AT_DATE, lastSyncDate);
     }
 
-    public void saveLastUpdatedAtDate(long lastSyncDate){
+    public void saveLastUpdatedAtDate(long lastSyncDate) {
         preferences.edit().putLong(LAST_UPDATED_AT_DATE, lastSyncDate).commit();
     }
-    public void savePort(Integer port){
+
+    public void savePort(Integer port) {
         preferences.edit().putString(PORT, String.valueOf(port)).commit();
     }
-    public void savePreference(String key, String value){
+
+    public void savePreference(String key, String value) {
         preferences.edit().putString(key, value).commit();
     }
-    public String getPreference(String key){
-        return preferences.getString(key,"");
+
+    public String getPreference(String key) {
+        return preferences.getString(key, "");
     }
-    public void updateUrl(String baseUrl){
+
+    public void updateUrl(String baseUrl) {
         try {
 
             URL url = new URL(baseUrl);
@@ -186,16 +191,17 @@ public class AllSharedPreferences {
             saveHost(base);
             savePort(port);
 
-        }catch (MalformedURLException e){
+        } catch (MalformedURLException e) {
             logError("Malformed Url: " + baseUrl);
         }
     }
-    public void updateANMPreferredName(String userName,String preferredName) {
+
+    public void updateANMPreferredName(String userName, String preferredName) {
         preferences.edit().putString(userName, preferredName).commit();
     }
 
-    public String getANMPreferredName(String userName){
-        return  preferences.getString(userName, "");
+    public String getANMPreferredName(String userName) {
+        return preferences.getString(userName, "");
     }
 
 }

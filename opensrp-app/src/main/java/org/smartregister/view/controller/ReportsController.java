@@ -2,6 +2,7 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+
 import org.smartregister.AllConstants;
 import org.smartregister.view.activity.ReportIndicatorListViewActivity;
 

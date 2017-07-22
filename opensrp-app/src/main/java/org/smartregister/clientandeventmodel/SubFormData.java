@@ -22,7 +22,7 @@ public class SubFormData {
     private List<Map<String, String>> instances;
 
     public SubFormData() {
-        this.instances =  new ArrayList<>();
+        this.instances = new ArrayList<>();
         this.name = "";
     }
 

@@ -95,13 +95,13 @@ public class FormSubmissionRouter {
         return handlerMap;
     }
 
-    public void handleSubmission(FormSubmission submission, String formName){
-        if(getHandlerMap().isEmpty()){
+    public void handleSubmission(FormSubmission submission, String formName) {
+        if (getHandlerMap().isEmpty()) {
             return;
         }
 
         FormSubmissionHandler handler = getHandlerMap().get(formName);
-        if(handler != null){
+        if (handler != null) {
             handler.handle(submission);
         }
     }

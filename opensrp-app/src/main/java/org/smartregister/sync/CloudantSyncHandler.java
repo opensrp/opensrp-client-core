@@ -52,26 +52,14 @@ import java.util.concurrent.CountDownLatch;
  */
 public class CloudantSyncHandler {
     private static final String LOG_TAG = "CloudantSyncHandler";
-
-
-    private Replicator mPushReplicator;
-    private Replicator mPullReplicator;
-
+    private static CloudantSyncHandler instance;
     private final Context mContext;
     private final Handler mHandler;
+    private Replicator mPushReplicator;
+    private Replicator mPullReplicator;
     private CloudantSyncListener mListener;
     private CountDownLatch countDownLatch;
-
     private String dbURL;
-
-    private static CloudantSyncHandler instance;
-
-    public static CloudantSyncHandler getInstance(Context context) {
-        if (instance == null) {
-            instance = new CloudantSyncHandler(context);
-        }
-        return instance;
-    }
 
     public CloudantSyncHandler(Context context) {
         this.mContext = context;
@@ -107,6 +95,13 @@ public class CloudantSyncHandler {
             Log.e(LOG_TAG, "Exception While setting up datastore", e);
         }
 
+    }
+
+    public static CloudantSyncHandler getInstance(Context context) {
+        if (instance == null) {
+            instance = new CloudantSyncHandler(context);
+        }
+        return instance;
     }
 
     //

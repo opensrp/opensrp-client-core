@@ -16,10 +16,6 @@ public enum FontVariant {
         this.fontFile = fontFile;
     }
 
-    public String fontFile() {
-        return fontFile;
-    }
-
     public static FontVariant tryParse(int value, FontVariant defaultValue) {
         for (FontVariant fontVariant : values()) {
             if (fontVariant.value == value) {
@@ -27,5 +23,9 @@ public enum FontVariant {
             }
         }
         return defaultValue;
+    }
+
+    public String fontFile() {
+        return fontFile;
     }
 }

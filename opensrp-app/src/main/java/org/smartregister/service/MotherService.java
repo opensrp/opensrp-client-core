@@ -33,11 +33,11 @@ import static org.smartregister.util.Log.logWarn;
 
 public class MotherService {
     public static final String MOTHER_ID = "motherId";
+    public static String submissionDate = "submissionDate";
     private AllBeneficiaries allBeneficiaries;
     private AllTimelineEvents allTimelines;
     private AllEligibleCouples allEligibleCouples;
     private ServiceProvidedService serviceProvidedService;
-    public static String submissionDate = "submissionDate";
 
 
     public MotherService(AllBeneficiaries allBeneficiaries, AllEligibleCouples allEligibleCouples,

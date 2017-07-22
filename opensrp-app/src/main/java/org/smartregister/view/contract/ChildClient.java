@@ -42,7 +42,7 @@ public class ChildClient implements ChildSmartRegisterClient {
             CATEGORY_OPVBOOSTER, CATEGORY_DPT, CATEGORY_PENTAVALENT,
             CATEGORY_HEPB, CATEGORY_VITAMIN_A, CATEGORY_CHILD_ILLNESS};
 
-    private static  Map<String, List<ChildServiceType>> categoriesToServiceTypeMap = new HashMap<String, List<ChildServiceType>>();
+    private static Map<String, List<ChildServiceType>> categoriesToServiceTypeMap = new HashMap<String, List<ChildServiceType>>();
 
     static {
         categoriesToServiceTypeMap.put(CATEGORY_BCG, Arrays.asList(BCG));
@@ -56,12 +56,11 @@ public class ChildClient implements ChildSmartRegisterClient {
         categoriesToServiceTypeMap.put(CATEGORY_CHILD_ILLNESS, Arrays.asList(ILLNESS_VISIT));
     }
 
-    Map<String, Treatments> serviceToTreatmentMap = new HashMap<String, Treatments>();
-
     private final String entityId;
+    private final String thayiCardNumber;
+    Map<String, Treatments> serviceToTreatmentMap = new HashMap<String, Treatments>();
     private String gender;
     private String weight;
-    private final String thayiCardNumber;
     private String name;
     private String motherName;
     private String dob;
@@ -80,11 +79,6 @@ public class ChildClient implements ChildSmartRegisterClient {
 
     private ServiceProvidedDTO lastService;
     private ServiceProvidedDTO illnessVisitServiceProvided;
-
-    private class Treatments {
-        public ServiceProvidedDTO provided = emptyService;
-        public AlertDTO toProvide = emptyAlert;
-    }
 
     public ChildClient(String entityId, String gender, String weight, String thayiCardNumber) {
         this.entityId = entityId;
@@ -538,8 +532,18 @@ public class ChildClient implements ChildSmartRegisterClient {
         return alerts;
     }
 
+    @Override
+    public boolean isDataError() {
+        // only important data
+        return (Strings.isNullOrEmpty(motherName) || Strings.isNullOrEmpty(fatherName));
+    }
 
-    class DateComparator implements Comparator<ServiceProvidedDTO>{
+    private class Treatments {
+        public ServiceProvidedDTO provided = emptyService;
+        public AlertDTO toProvide = emptyAlert;
+    }
+
+    class DateComparator implements Comparator<ServiceProvidedDTO> {
 
         @Override
         public int compare(ServiceProvidedDTO serviceProvidedDTO1, ServiceProvidedDTO serviceProvidedDTO2) {
@@ -558,11 +562,5 @@ public class ChildClient implements ChildSmartRegisterClient {
             }
             return -1;
         }
-    }
-
-    @Override
-    public boolean isDataError() {
-        // only important data
-        return (Strings.isNullOrEmpty(motherName) || Strings.isNullOrEmpty(fatherName));
     }
 }

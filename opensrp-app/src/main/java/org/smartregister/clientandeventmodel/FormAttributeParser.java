@@ -45,11 +45,21 @@ import com.google.gson.JsonSyntaxException;
  */
 public class FormAttributeParser {
 
-    Context mContext;
     private static final String TAG = "FormAttributeParser";
+    Context mContext;
+    private String jsonFilePath;
+    private String xmlFilePath;
 
     public FormAttributeParser(Context context) {
         this.mContext = context;
+    }
+
+    private static String getXPath(Node node) {
+        if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
+            return "";
+        }
+
+        return getXPath(node.getParentNode()) + "/" + node.getNodeName();
     }
 
     public FormSubmissionMap createFormSubmissionMap(FormSubmission fs) throws JsonIOException,
@@ -200,14 +210,12 @@ public class FormAttributeParser {
         return document;
     }
 
-    private String jsonFilePath;
-    private String xmlFilePath;
-
     /**
      * The method returns the field name in form submission mapped with custom attributes given as
      * attributeMap.
      * Ex: What is the field name in given form submission that is mapped with entity=person
      * and entity_id=first_name
+     *
      * @param attributeMap
      * @param formSubmission
      * @return
@@ -234,6 +242,7 @@ public class FormAttributeParser {
      * The method returns the field name in form submission in given subform(repeat group) mapped with custom attributes given as attributeMap.
      * Ex: What is the field name in given form submission in subform=child_born that is
      * mapped with entity=person and entity_id=first_name
+     *
      * @param attributeMap
      * @param subform
      * @param formSubmission
@@ -248,16 +257,16 @@ public class FormAttributeParser {
                                FormSubmission formSubmission) throws XPathExpressionException,
             ParserConfigurationException,
             SAXException,
-            IOException
-    {
+            IOException {
         Node fieldTag = getFieldTagFromModel(attributeMap, subform, formSubmission);
-        String bind =getXPath(fieldTag);
+        String bind = getXPath(fieldTag);
 
         return getFieldNameFromFormDefinition(bind, subform, formSubmission);
     }
 
     /**
      * Returns the field name in form submission with given bind path
+     *
      * @param bind
      * @param formName
      * @param
@@ -266,8 +275,7 @@ public class FormAttributeParser {
      * @throws JsonSyntaxException
      */
     String getFieldNameFromFormDefinition(String bind, String formName) throws JsonSyntaxException,
-            IOException
-    {
+            IOException {
         String fieldAttribute;
         JsonObject jsonObject = getFormDefinitionData(formName);
         JsonElement formElement = jsonObject.get("form");
@@ -282,7 +290,7 @@ public class FormAttributeParser {
         if (formElement != null) {
             fields = formElement.getAsJsonObject();
 
-            for (Entry<String, JsonElement> element:fields.entrySet()) {
+            for (Entry<String, JsonElement> element : fields.entrySet()) {
                 if (element.getKey().equalsIgnoreCase("fields")) {
                     fieldArray = element.getValue().getAsJsonArray();
                 }
@@ -291,8 +299,7 @@ public class FormAttributeParser {
                     subFormArray = element.getValue().getAsJsonArray();
                 }
             }
-            for (JsonElement fieldElement : fieldArray)
-            {
+            for (JsonElement fieldElement : fieldArray) {
                 individualField = fieldElement.getAsJsonObject();
                 individualBindObj = individualField.get("bind");
                 individualNameObj = individualField.get("name");
@@ -326,6 +333,7 @@ public class FormAttributeParser {
 
     /**
      * Returns the field name in given subform of given form submission with specified bind path
+     *
      * @param bind
      * @param subform
      * @param formSubmission
@@ -361,6 +369,7 @@ public class FormAttributeParser {
 
     /**
      * Returns the Node in model.xml of given form submission that maps to given custom attributes
+     *
      * @param attributeMapForm
      * @param formSubmission
      * @return
@@ -399,6 +408,7 @@ public class FormAttributeParser {
     /**
      * Returns the Node in model.xml of given subForm of given form submission that maps to given
      * custom attributes
+     *
      * @param attributeMapForm
      * @param subForm
      * @param formSubmission
@@ -482,14 +492,6 @@ public class FormAttributeParser {
             map.put(attributeNode.getNodeName(), attributeNode.getNodeValue());
         }
         return map;
-    }
-
-    private static String getXPath(Node node) {
-        if (node == null || node.getNodeType() != Node.ELEMENT_NODE) {
-            return "";
-        }
-
-        return getXPath(node.getParentNode()) + "/" + node.getNodeName();
     }
 
     /**

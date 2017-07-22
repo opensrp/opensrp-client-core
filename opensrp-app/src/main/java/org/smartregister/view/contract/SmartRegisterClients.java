@@ -2,6 +2,7 @@ package org.smartregister.view.contract;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
@@ -33,7 +34,7 @@ public class SmartRegisterClients extends ArrayList<SmartRegisterClient> {
             public boolean apply(SmartRegisterClient client) {
                 boolean isClientToBeFiltered = true;
                 for (FilterOption filterOption : filterOptions) {
-                     isClientToBeFiltered = isClientToBeFiltered && filterOption.filter(client);
+                    isClientToBeFiltered = isClientToBeFiltered && filterOption.filter(client);
                 }
                 return isClientToBeFiltered;
             }

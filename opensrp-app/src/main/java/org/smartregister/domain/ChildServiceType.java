@@ -256,19 +256,12 @@ public enum ChildServiceType {
         public String displayName() {
             return Context.getInstance().applicationContext().getString(R.string.service_type_empty);
         }
+
         @Override
         public String category() {
             return "";
         }
     };
-
-    public abstract String displayName();
-
-    public String shortName() {
-        return displayName();
-    }
-
-    public abstract String category();
 
     public static ChildServiceType tryParse(String type, ChildServiceType defaultType) {
         try {
@@ -276,7 +269,7 @@ public enum ChildServiceType {
                 return ChildServiceType.valueOf("ILLNESS_VISIT");
             } else if (type.equalsIgnoreCase("Vitamin A")) {
                 return ChildServiceType.valueOf("VITAMIN_A");
-            }  else if (type.equalsIgnoreCase("opvbooster")) {
+            } else if (type.equalsIgnoreCase("opvbooster")) {
                 return ChildServiceType.valueOf("OPV_BOOSTER");
             } else {
                 return StringUtils.isBlank(type) ? defaultType : ChildServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
@@ -286,4 +279,12 @@ public enum ChildServiceType {
             return defaultType;
         }
     }
+
+    public abstract String displayName();
+
+    public String shortName() {
+        return displayName();
+    }
+
+    public abstract String category();
 }

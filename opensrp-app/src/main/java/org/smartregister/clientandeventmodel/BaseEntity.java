@@ -26,13 +26,10 @@ public class BaseEntity extends BaseDataObject {
     @JsonProperty
     private List<Photo> photos;
 
-    protected BaseEntity() {}
-
-    public String type() {
-        return type;
+    protected BaseEntity() {
     }
 
-    public BaseEntity(String baseEntityId){
+    public BaseEntity(String baseEntityId) {
         this.baseEntityId = baseEntityId;
     }
 
@@ -54,6 +51,10 @@ public class BaseEntity extends BaseDataObject {
         this.addresses = addresses;
     }
 
+    public String type() {
+        return type;
+    }
+
     public String getBaseEntityId() {
         return baseEntityId;
     }
@@ -69,15 +70,6 @@ public class BaseEntity extends BaseDataObject {
         return addresses;
     }
 
-    public Address getAddress(String addressType) {
-        for (Address address : addresses) {
-            if(address.getAddressType().equalsIgnoreCase(addressType)){
-                return address;
-            }
-        }
-        return null;
-    }
-
     /**
      * WARNING: Overrides all existing addresses
      *
@@ -86,6 +78,15 @@ public class BaseEntity extends BaseDataObject {
      */
     public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    public Address getAddress(String addressType) {
+        for (Address address : addresses) {
+            if (address.getAddressType().equalsIgnoreCase(addressType)) {
+                return address;
+            }
+        }
+        return null;
     }
 
     public void addAddress(Address address) {
@@ -102,18 +103,6 @@ public class BaseEntity extends BaseDataObject {
         return attributes;
     }
 
-    public Object getAttribute(String name) {
-        if(attributes == null){
-            return null;
-        }
-        for (String k : attributes.keySet()) {
-            if(k.equalsIgnoreCase(name)){
-                return attributes.get(k);
-            }
-        }
-        return null;
-    }
-
     /**
      * WARNING: Overrides all existing attributes
      *
@@ -122,6 +111,18 @@ public class BaseEntity extends BaseDataObject {
      */
     public void setAttributes(Map<String, Object> attributes) {
         this.attributes = attributes;
+    }
+
+    public Object getAttribute(String name) {
+        if (attributes == null) {
+            return null;
+        }
+        for (String k : attributes.keySet()) {
+            if (k.equalsIgnoreCase(name)) {
+                return attributes.get(k);
+            }
+        }
+        return null;
     }
 
     public void addAttribute(String name, Object value) {
@@ -137,29 +138,30 @@ public class BaseEntity extends BaseDataObject {
     }
 
     public Map<String, String> getIdentifiers() {
-        if(identifiers == null){
+        if (identifiers == null) {
             identifiers = new HashMap<>();
         }
         return identifiers;
     }
 
+    public void setIdentifiers(Map<String, String> identifiers) {
+        this.identifiers = identifiers;
+    }
+
     public String getIdentifier(String identifierType) {
-        if(identifiers == null){
+        if (identifiers == null) {
             return null;
         }
         for (String k : identifiers.keySet()) {
-            if(k.equalsIgnoreCase(identifierType)){
+            if (k.equalsIgnoreCase(identifierType)) {
                 return identifiers.get(k);
             }
         }
         return null;
     }
-    public void setIdentifiers(Map<String, String> identifiers) {
-        this.identifiers = identifiers;
-    }
 
     public void addIdentifier(String identifierType, String identifier) {
-        if(identifiers == null){
+        if (identifiers == null) {
             identifiers = new HashMap<>();
         }
 
@@ -177,6 +179,7 @@ public class BaseEntity extends BaseDataObject {
 
     /**
      * WARNING: Overrides all existing identifiers
+     *
      * @param identifiers
      * @return
      */
@@ -186,7 +189,7 @@ public class BaseEntity extends BaseDataObject {
     }
 
     public BaseEntity withIdentifier(String identifierType, String identifier) {
-        if(identifiers == null){
+        if (identifiers == null) {
             identifiers = new HashMap<>();
         }
         identifiers.put(identifierType, identifier);

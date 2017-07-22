@@ -47,19 +47,19 @@ public class FormSubmissionSyncService {
     }
 
     public FetchStatus sync() {
-        try{
+        try {
 //            CloudantSyncHandler mCloudantSyncHandler = CloudantSyncHandler.getInstance(Context.getInstance().applicationContext());
 //            CountDownLatch mCountDownLatch = new CountDownLatch(2);
 //            mCloudantSyncHandler.setCountDownLatch(mCountDownLatch);
 //            mCloudantSyncHandler.startPullReplication();
 //            mCloudantSyncHandler.startPushReplication();
 
-  //          mCountDownLatch.await();
+            //          mCountDownLatch.await();
             //pushToServer();
-            Intent intent = new Intent(DrishtiApplication.getInstance().getApplicationContext(),ImageUploadSyncService.class);
+            Intent intent = new Intent(DrishtiApplication.getInstance().getApplicationContext(), ImageUploadSyncService.class);
             DrishtiApplication.getInstance().getApplicationContext().startService(intent);
             return FetchStatus.fetched;
-        }catch (Exception e) {
+        } catch (Exception e) {
             return FetchStatus.fetchedFailed;
         }
 

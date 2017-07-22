@@ -14,9 +14,9 @@ import org.smartregister.R;
  * Created by Bogdan Melnychuk on 2/10/15.
  */
 public class TreeNodeWrapperView extends LinearLayout {
+    private final int containerStyle;
     private LinearLayout nodeItemsContainer;
     private ViewGroup nodeContainer;
-    private final int containerStyle;
 
     public TreeNodeWrapperView(Context context, int containerStyle) {
         super(context);

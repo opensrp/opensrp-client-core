@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
 import org.smartregister.view.contract.ANCSmartRegisterClient;

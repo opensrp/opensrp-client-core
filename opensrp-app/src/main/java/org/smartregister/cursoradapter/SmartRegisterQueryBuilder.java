@@ -11,6 +11,13 @@ import java.util.List;
 public class SmartRegisterQueryBuilder {
     String Selectquery;
 
+    public SmartRegisterQueryBuilder(String selectquery) {
+        Selectquery = selectquery;
+    }
+
+    public SmartRegisterQueryBuilder() {
+    }
+
     public String getSelectquery() {
         return Selectquery;
     }
@@ -19,31 +26,24 @@ public class SmartRegisterQueryBuilder {
         Selectquery = selectquery;
     }
 
-    public SmartRegisterQueryBuilder(String selectquery) {
-        Selectquery = selectquery;
-    }
-
-    public SmartRegisterQueryBuilder() {
-    }
-
     /*
             This method takes in @param tablename and columns other than ID. Any special conditions
             for sorting if required can also be added in condition string and if not you can pass null.
             Alertname is the name of the alert you would like to sort this by.
              */
-    public  String queryForRegisterSortBasedOnRegisterAndAlert(String tablename,String[]columns,String condition,String AlertName){
-        Selectquery = "Select "+tablename+".id as _id";
+    public String queryForRegisterSortBasedOnRegisterAndAlert(String tablename, String[] columns, String condition, String AlertName) {
+        Selectquery = "Select " + tablename + ".id as _id";
 
         for (String column : columns) {
             Selectquery = Selectquery + " , " + column;
         }
-        Selectquery= Selectquery+ " FROM " + tablename;
-        Selectquery = Selectquery+ " LEFT JOIN alerts ";
-        Selectquery = Selectquery+ " ON "+ tablename +".id = alerts.caseID";
-        if(condition != null){
-            Selectquery= Selectquery+ " WHERE " + condition + " AND";
+        Selectquery = Selectquery + " FROM " + tablename;
+        Selectquery = Selectquery + " LEFT JOIN alerts ";
+        Selectquery = Selectquery + " ON " + tablename + ".id = alerts.caseID";
+        if (condition != null) {
+            Selectquery = Selectquery + " WHERE " + condition + " AND";
         }
-        Selectquery= Selectquery+ " WHERE " + "alerts.scheduleName = '" + AlertName + "' ";
+        Selectquery = Selectquery + " WHERE " + "alerts.scheduleName = '" + AlertName + "' ";
         Selectquery = Selectquery + "ORDER BY CASE WHEN alerts.status = 'urgent' THEN '1'\n" +
                 "WHEN alerts.status = 'upcoming' THEN '2'\n" +
                 "WHEN alerts.status = 'normal' THEN '3'\n" +
@@ -52,102 +52,114 @@ public class SmartRegisterQueryBuilder {
                 "Else alerts.status END ASC";
         return Selectquery;
     }
-    public String queryForCountOnRegisters(String tablename,String condition){
+
+    public String queryForCountOnRegisters(String tablename, String condition) {
         String Selectquery = "SELECT COUNT (*) ";
-        Selectquery= Selectquery+ " FROM " + tablename;
-        if(condition != null){
-            Selectquery= Selectquery+ " WHERE " + condition ;
+        Selectquery = Selectquery + " FROM " + tablename;
+        if (condition != null) {
+            Selectquery = Selectquery + " WHERE " + condition;
         }
         return Selectquery;
     }
-    public String addlimitandOffset(String selectquery,int limit,int offset){
-        return selectquery + " LIMIT " +offset+","+limit;
+
+    public String addlimitandOffset(String selectquery, int limit, int offset) {
+        return selectquery + " LIMIT " + offset + "," + limit;
     }
-    public String limitandOffset(int limit,int offset){
-        return Selectquery + " LIMIT " +offset+","+limit;
+
+    public String limitandOffset(int limit, int offset) {
+        return Selectquery + " LIMIT " + offset + "," + limit;
     }
-    public  String Endquery(String selectquery){
-        return selectquery+";";
+
+    public String Endquery(String selectquery) {
+        return selectquery + ";";
     }
-    public String SelectInitiateMainTable(String tablename,String [] columns){
-        Selectquery = "Select "+tablename+".id as _id";
+
+    public String SelectInitiateMainTable(String tablename, String[] columns) {
+        Selectquery = "Select " + tablename + ".id as _id";
 
         for (String column : columns) {
             Selectquery = Selectquery + " , " + column;
         }
-        Selectquery= Selectquery+ " FROM " + tablename;
+        Selectquery = Selectquery + " FROM " + tablename;
         return Selectquery;
     }
 
-    public String SelectInitiateMainTable(String tablenames[],String [] columns){
+    public String SelectInitiateMainTable(String tablenames[], String[] columns) {
         Selectquery = "Select " + tablenames[0] + ".id as _id";
         for (String column : columns) {
             Selectquery = Selectquery + " , " + column;
         }
 
         StringBuilder sb = new StringBuilder();
-        for (String str : tablenames){
+        for (String str : tablenames) {
             sb.append(str).append(",");
         }
         //remove trailing ,
         sb.deleteCharAt(sb.length() - 1);
 
-        Selectquery= Selectquery+ " From " + sb.toString();
+        Selectquery = Selectquery + " From " + sb.toString();
         return Selectquery;
     }
 
-    public String SelectInitiateMainTableCounts(String tablename){
+    public String SelectInitiateMainTableCounts(String tablename) {
         Selectquery = "SELECT COUNT(*)";
-        Selectquery= Selectquery+ " FROM " + tablename;
+        Selectquery = Selectquery + " FROM " + tablename;
         return Selectquery;
     }
-    public String mainCondition(String condition){
-        Selectquery= Selectquery+(!condition.isEmpty()? " WHERE " + condition + " " : "");
+
+    public String mainCondition(String condition) {
+        Selectquery = Selectquery + (!condition.isEmpty() ? " WHERE " + condition + " " : "");
         return Selectquery;
     }
-    public String addCondition(String condition){
-        Selectquery= Selectquery + " " + condition ;
+
+    public String addCondition(String condition) {
+        Selectquery = Selectquery + " " + condition;
         return Selectquery;
     }
-    public String orderbyCondition(String condition){
+
+    public String orderbyCondition(String condition) {
         // No need to order a count query
-        if(StringUtils.containsIgnoreCase(Selectquery.trim().substring(0, 15), "Select Count(*)")) {
+        if (StringUtils.containsIgnoreCase(Selectquery.trim().substring(0, 15), "Select Count(*)")) {
             return Selectquery;
         }
 
         Selectquery = Selectquery + (condition != null && !condition.isEmpty() ? " ORDER BY " + condition + " " : "");
         return Selectquery;
     }
-    public String joinwithALerts(String tablename,String alertname){
-        Selectquery = Selectquery+ " LEFT JOIN alerts ";
-        Selectquery = Selectquery+ " ON "+ tablename +".id = alerts.caseID AND  alerts.scheduleName = '"+alertname+"'" ;
-        return Selectquery;
-    }
-    public String joinwithALerts(String tablename){
-        Selectquery = Selectquery+ " LEFT JOIN alerts ";
-        Selectquery = Selectquery+ " ON "+ tablename +".id = alerts.caseID " ;
-        return Selectquery;
-    }
-    public String customJoin(String query){
-        Selectquery = Selectquery+ " "+query;
-        return Selectquery;
-    }
-    @Override
-    public String toString(){
+
+    public String joinwithALerts(String tablename, String alertname) {
+        Selectquery = Selectquery + " LEFT JOIN alerts ";
+        Selectquery = Selectquery + " ON " + tablename + ".id = alerts.caseID AND  alerts.scheduleName = '" + alertname + "'";
         return Selectquery;
     }
 
-    public String toStringFts(List<String> ids, String idColumn){
+    public String joinwithALerts(String tablename) {
+        Selectquery = Selectquery + " LEFT JOIN alerts ";
+        Selectquery = Selectquery + " ON " + tablename + ".id = alerts.caseID ";
+        return Selectquery;
+    }
+
+    public String customJoin(String query) {
+        Selectquery = Selectquery + " " + query;
+        return Selectquery;
+    }
+
+    @Override
+    public String toString() {
+        return Selectquery;
+    }
+
+    public String toStringFts(List<String> ids, String idColumn) {
         String res = Selectquery;
 
         // Remove where clause, Already used when fetching ids
-        if(StringUtils.containsIgnoreCase(res, "WHERE")){
+        if (StringUtils.containsIgnoreCase(res, "WHERE")) {
             res = res.substring(0, res.toUpperCase().lastIndexOf("WHERE"));
         }
 
-        if(ids.isEmpty()){
+        if (ids.isEmpty()) {
             res += String.format(" WHERE %s IN () ", idColumn);
-        }else {
+        } else {
             String joinedIds = "'" + StringUtils.join(ids, "','") + "'";
             res += String.format(" WHERE %s IN (%s) ", idColumn, joinedIds);
         }
@@ -155,17 +167,17 @@ public class SmartRegisterQueryBuilder {
         return res;
     }
 
-    public String toStringFts(List<String> ids, String idColumn, String sort){
+    public String toStringFts(List<String> ids, String idColumn, String sort) {
         String res = Selectquery;
 
         // Remove where clause, Already used when fetching ids
-        if(StringUtils.containsIgnoreCase(res, "WHERE")){
+        if (StringUtils.containsIgnoreCase(res, "WHERE")) {
             res = res.substring(0, res.toUpperCase().lastIndexOf("WHERE"));
         }
 
-        if(ids.isEmpty()){
+        if (ids.isEmpty()) {
             res += String.format(" WHERE %s IN () ", idColumn);
-        }else {
+        } else {
             String joinedIds = "'" + StringUtils.join(ids, "','") + "'";
             res += String.format(" WHERE %s IN (%s) ", idColumn, joinedIds);
 
@@ -181,8 +193,8 @@ public class SmartRegisterQueryBuilder {
         return res;
     }
 
-    public String searchQueryFts(String tablename, String searchJoinTable, String mainCondition, String searchFilter, String sort, int limit, int offset){
-        if(StringUtils.isNotBlank(searchJoinTable) && StringUtils.isNotBlank(searchFilter)){
+    public String searchQueryFts(String tablename, String searchJoinTable, String mainCondition, String searchFilter, String sort, int limit, int offset) {
+        if (StringUtils.isNotBlank(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {
             String query = "SELECT " + CommonFtsObject.idColumn + " FROM " + CommonFtsObject.searchTableName(tablename) + phraseClause(tablename, searchJoinTable, mainCondition, searchFilter) + orderByClause(sort) + limitClause(limit, offset);
             return query;
         }
@@ -199,56 +211,56 @@ public class SmartRegisterQueryBuilder {
         return query;
     }
 
-    private String phraseClause(String mainCondition, String phrase){
-        if(StringUtils.isNotBlank(phrase)) {
+    private String phraseClause(String mainCondition, String phrase) {
+        if (StringUtils.isNotBlank(phrase)) {
             String phraseClause = " WHERE " + mainConditionClause(mainCondition) + CommonFtsObject.phraseColumn + matchPhrase(phrase);
             return phraseClause;
-        }else if(StringUtils.isNotBlank(mainCondition)){
+        } else if (StringUtils.isNotBlank(mainCondition)) {
             return " WHERE " + mainCondition;
         }
         return "";
     }
 
-    private String phraseClause(String joinTable, String mainCondition, String phrase){
+    private String phraseClause(String joinTable, String mainCondition, String phrase) {
         String phraseClause = " WHERE " + mainConditionClause(mainCondition) + CommonFtsObject.phraseColumn + matchPhrase(phrase) +
-                    " UNION SELECT " + CommonFtsObject.relationalIdColumn + " FROM " + CommonFtsObject.searchTableName(joinTable) + " WHERE " + CommonFtsObject.phraseColumn + matchPhrase(phrase);
+                " UNION SELECT " + CommonFtsObject.relationalIdColumn + " FROM " + CommonFtsObject.searchTableName(joinTable) + " WHERE " + CommonFtsObject.phraseColumn + matchPhrase(phrase);
         return phraseClause;
     }
 
-    private String phraseClause(String tableName, String joinTable, String mainCondition, String phrase){
+    private String phraseClause(String tableName, String joinTable, String mainCondition, String phrase) {
         String phraseClause = " WHERE " + CommonFtsObject.idColumn + " IN ( SELECT " + CommonFtsObject.idColumn + " FROM " + CommonFtsObject.searchTableName(tableName) + " WHERE " + mainConditionClause(mainCondition) + CommonFtsObject.phraseColumn + matchPhrase(phrase) +
                 " UNION SELECT " + CommonFtsObject.relationalIdColumn + " FROM " + CommonFtsObject.searchTableName(joinTable) + " WHERE " + CommonFtsObject.phraseColumn + matchPhrase(phrase) + " )";
         return phraseClause;
     }
 
-    private String matchPhrase(String phrase){
-        if(phrase == null){
+    private String matchPhrase(String phrase) {
+        if (phrase == null) {
             phrase = "";
         }
 
         // Underscore does not work well in fts search
-        if(phrase.contains("_")) {
+        if (phrase.contains("_")) {
             phrase = phrase.replace("_", "");
         }
         return " MATCH '" + phrase + "*' ";
 
     }
 
-    private String orderByClause(String sort){
-        if(StringUtils.isNotBlank(sort)){
+    private String orderByClause(String sort) {
+        if (StringUtils.isNotBlank(sort)) {
             return " ORDER BY " + sort;
         }
         return "";
     }
 
-    private String limitClause(int limit, int offset){
-        return " LIMIT " +  offset + "," + limit;
+    private String limitClause(int limit, int offset) {
+        return " LIMIT " + offset + "," + limit;
     }
 
-    private String mainConditionClause(String mainCondition){
-        if(StringUtils.isNotBlank(mainCondition)){
+    private String mainConditionClause(String mainCondition) {
+        if (StringUtils.isNotBlank(mainCondition)) {
             return mainCondition += " AND ";
-        }else{
+        } else {
             return mainCondition = "";
         }
     }

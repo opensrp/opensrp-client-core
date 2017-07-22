@@ -31,31 +31,35 @@ public class FormDefinitionVersion {
         return formName;
     }
 
-    public String getVersion() {
-        return formDataDefinitionVersion;
-    }
-
-    public String getFormDirName() { return formDirName; }
-
-    public SyncStatus getSyncStatus() {
-        return syncStatus;
-    }
-
-    public String getEntityId() { return entityId; }
-
     public void setFormName(String formName) {
         this.formName = formName;
+    }
+
+    public String getVersion() {
+        return formDataDefinitionVersion;
     }
 
     public void setVersion(String formDataDefinitionVersion) {
         this.formDataDefinitionVersion = formDataDefinitionVersion;
     }
 
+    public String getFormDirName() {
+        return formDirName;
+    }
+
     public void setFormDirName(String formDirName) {
         this.formDirName = formDirName;
     }
 
+    public SyncStatus getSyncStatus() {
+        return syncStatus;
+    }
+
     public void setSyncStatus(SyncStatus syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+    public String getEntityId() {
+        return entityId;
     }
 }

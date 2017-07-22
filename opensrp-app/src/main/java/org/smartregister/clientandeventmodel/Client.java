@@ -35,14 +35,6 @@ public class Client extends BaseEntity {
     @JsonProperty
     private String relationalBaseEntityId;
 
-    public String getRelationalBaseEntityId() {
-        return relationalBaseEntityId;
-    }
-
-    public void setRelationalBaseEntityId(String relationalBaseEntityId) {
-        this.relationalBaseEntityId = relationalBaseEntityId;
-    }
-
     protected Client() {
 
     }
@@ -94,6 +86,14 @@ public class Client extends BaseEntity {
         setIdentifiers(identifiers);
         setAddresses(addresses);
         setAttributes(attributes);
+    }
+
+    public String getRelationalBaseEntityId() {
+        return relationalBaseEntityId;
+    }
+
+    public void setRelationalBaseEntityId(String relationalBaseEntityId) {
+        this.relationalBaseEntityId = relationalBaseEntityId;
     }
 
     public String getFirstName() {
@@ -222,7 +222,7 @@ public class Client extends BaseEntity {
     }
 
     public List<String> findRelatives(String relationshipType) {
-        if(relationships == null){
+        if (relationships == null) {
             relationships = new HashMap<>();
         }
 
@@ -230,12 +230,12 @@ public class Client extends BaseEntity {
     }
 
     public void addRelationship(String relationType, String relativeEntityId) {
-        if(relationships == null){
+        if (relationships == null) {
             relationships = new HashMap<>();
         }
 
         List<String> relatives = findRelatives(relationType);
-        if(relatives == null){
+        if (relatives == null) {
             relatives = new ArrayList<>();
         }
         relatives.add(relativeEntityId);
@@ -245,7 +245,7 @@ public class Client extends BaseEntity {
     public List<String> getRelationships(String relativeEntityId) {
         List<String> relations = new ArrayList<String>();
         for (Map.Entry<String, List<String>> rl : relationships.entrySet()) {
-            if(rl.getValue().toString().equalsIgnoreCase(relativeEntityId)){
+            if (rl.getValue().toString().equalsIgnoreCase(relativeEntityId)) {
                 relations.add(rl.getKey());
             }
         }

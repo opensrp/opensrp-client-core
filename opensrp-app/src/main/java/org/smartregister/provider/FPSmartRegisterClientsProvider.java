@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
 import org.smartregister.view.contract.FPSmartRegisterClient;
@@ -25,11 +26,9 @@ public class FPSmartRegisterClientsProvider implements SmartRegisterClientsProvi
     private final SecuredActivity activity;
     private final View.OnClickListener onClickListener;
     private final ProfilePhotoLoader photoLoader;
-
-    private ServiceModeOption currentServiceModeOption;
     private final AbsListView.LayoutParams clientViewLayoutParams;
-
     protected FPSmartRegisterController controller;
+    private ServiceModeOption currentServiceModeOption;
 
     public FPSmartRegisterClientsProvider(SecuredActivity activity,
                                           View.OnClickListener onClickListener,

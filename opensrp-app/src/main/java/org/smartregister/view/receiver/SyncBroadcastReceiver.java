@@ -3,6 +3,7 @@ package org.smartregister.view.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import org.smartregister.sync.SyncAfterFetchListener;
 import org.smartregister.sync.SyncProgressIndicator;
 import org.smartregister.sync.UpdateActionsTask;

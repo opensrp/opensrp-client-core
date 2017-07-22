@@ -4,6 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import org.smartregister.R;
 import org.smartregister.view.customcontrols.ClientIdDetailsView;
 import org.smartregister.view.customcontrols.ClientProfileView;

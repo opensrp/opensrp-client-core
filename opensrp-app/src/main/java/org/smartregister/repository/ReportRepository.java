@@ -2,7 +2,9 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.smartregister.domain.Report;
 
 import java.util.ArrayList;

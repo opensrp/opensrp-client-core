@@ -2,9 +2,12 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.smartregister.AllConstants;
 import org.smartregister.domain.EligibleCouple;
 
@@ -20,8 +23,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 public class EligibleCoupleRepository extends DrishtiRepository {
-    private static final String EC_SQL = "CREATE TABLE eligible_couple(id VARCHAR PRIMARY KEY, wifeName VARCHAR, husbandName VARCHAR, " +
-            "ecNumber VARCHAR, village VARCHAR, subCenter VARCHAR, isOutOfArea VARCHAR, details VARCHAR, isClosed VARCHAR, photoPath VARCHAR)";
     public static final String ID_COLUMN = "id";
     public static final String EC_NUMBER_COLUMN = "ecNumber";
     public static final String WIFE_NAME_COLUMN = "wifeName";
@@ -30,14 +31,15 @@ public class EligibleCoupleRepository extends DrishtiRepository {
     public static final String SUBCENTER_NAME_COLUMN = "subCenter";
     public static final String IS_OUT_OF_AREA_COLUMN = "isOutOfArea";
     public static final String DETAILS_COLUMN = "details";
-    private static final String IS_CLOSED_COLUMN = "isClosed";
     public static final String PHOTO_PATH_COLUMN = "photoPath";
     public static final String EC_TABLE_NAME = "eligible_couple";
+    public static final String NOT_CLOSED = "false";
+    private static final String EC_SQL = "CREATE TABLE eligible_couple(id VARCHAR PRIMARY KEY, wifeName VARCHAR, husbandName VARCHAR, " +
+            "ecNumber VARCHAR, village VARCHAR, subCenter VARCHAR, isOutOfArea VARCHAR, details VARCHAR, isClosed VARCHAR, photoPath VARCHAR)";
+    private static final String IS_CLOSED_COLUMN = "isClosed";
     public static final String[] EC_TABLE_COLUMNS = new String[]{ID_COLUMN, WIFE_NAME_COLUMN, HUSBAND_NAME_COLUMN,
             EC_NUMBER_COLUMN, VILLAGE_NAME_COLUMN, SUBCENTER_NAME_COLUMN, IS_OUT_OF_AREA_COLUMN, DETAILS_COLUMN,
             IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
-
-    public static final String NOT_CLOSED = "false";
     private static final String IN_AREA = "false";
 
     @Override

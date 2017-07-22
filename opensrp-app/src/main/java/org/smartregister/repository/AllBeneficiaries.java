@@ -11,10 +11,10 @@ import static org.smartregister.repository.MotherRepository.TYPE_ANC;
 import static org.smartregister.repository.MotherRepository.TYPE_PNC;
 
 public class AllBeneficiaries {
-    private ChildRepository childRepository;
-    private MotherRepository motherRepository;
     private final AlertRepository alertRepository;
     private final TimelineEventRepository timelineEventRepository;
+    private ChildRepository childRepository;
+    private MotherRepository motherRepository;
 
     public AllBeneficiaries(MotherRepository motherRepository, ChildRepository childRepository,
                             AlertRepository alertRepository, TimelineEventRepository timelineEventRepository) {

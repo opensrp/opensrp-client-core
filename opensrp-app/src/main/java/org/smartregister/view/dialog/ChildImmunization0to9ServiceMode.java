@@ -2,6 +2,7 @@ package org.smartregister.view.dialog;
 
 import android.view.View;
 import android.widget.TextView;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.domain.ChildServiceType;
@@ -167,9 +168,11 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
             viewHolder.addPentavView().setOnClickListener(launchChildImmunizationForm(client));
         }
     }
+
     private OnClickFormLauncher launchChildImmunizationForm(ChildSmartRegisterClient client) {
         return provider().newFormLauncher(CHILD_IMMUNIZATIONS, client.entityId(), null);
     }
+
     private void setAlertLayout(View layout, TextView typeView,
                                 TextView dateView, AlertDTO alert) {
         typeView.setText(alert.type().shortName());

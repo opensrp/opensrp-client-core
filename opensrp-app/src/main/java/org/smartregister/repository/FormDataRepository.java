@@ -34,20 +34,20 @@ import static org.smartregister.domain.SyncStatus.PENDING;
 import static org.smartregister.domain.SyncStatus.SYNCED;
 
 public class FormDataRepository extends DrishtiRepository {
-    private static final String FORM_SUBMISSION_SQL = "CREATE TABLE form_submission(instanceId VARCHAR PRIMARY KEY, entityId VARCHAR, " +
-            "formName VARCHAR, instance VARCHAR, version VARCHAR, serverVersion VARCHAR, formDataDefinitionVersion VARCHAR, syncStatus VARCHAR)";
     public static final String INSTANCE_ID_COLUMN = "instanceId";
     public static final String ENTITY_ID_COLUMN = "entityId";
+    public static final String ID_COLUMN = "id";
+    private static final String FORM_SUBMISSION_SQL = "CREATE TABLE form_submission(instanceId VARCHAR PRIMARY KEY, entityId VARCHAR, " +
+            "formName VARCHAR, instance VARCHAR, version VARCHAR, serverVersion VARCHAR, formDataDefinitionVersion VARCHAR, syncStatus VARCHAR)";
     private static final String FORM_NAME_COLUMN = "formName";
     private static final String INSTANCE_COLUMN = "instance";
     private static final String VERSION_COLUMN = "version";
     private static final String SERVER_VERSION_COLUMN = "serverVersion";
     private static final String SYNC_STATUS_COLUMN = "syncStatus";
     private static final String FORM_DATA_DEFINITION_VERSION_COLUMN = "formDataDefinitionVersion";
-    private static final String FORM_SUBMISSION_TABLE_NAME = "form_submission";
     public static final String[] FORM_SUBMISSION_TABLE_COLUMNS = new String[]{INSTANCE_ID_COLUMN, ENTITY_ID_COLUMN, FORM_NAME_COLUMN,
             INSTANCE_COLUMN, VERSION_COLUMN, SERVER_VERSION_COLUMN, FORM_DATA_DEFINITION_VERSION_COLUMN, SYNC_STATUS_COLUMN};
-    public static final String ID_COLUMN = "id";
+    private static final String FORM_SUBMISSION_TABLE_NAME = "form_submission";
     private static final String DETAILS_COLUMN_NAME = "details";
     private static final String FORM_NAME_PARAM = "formName";
     private static final String TAG = "FormDataRepository";
@@ -59,9 +59,9 @@ public class FormDataRepository extends DrishtiRepository {
         TABLE_COLUMN_MAP.put(MotherRepository.MOTHER_TABLE_NAME, MotherRepository.MOTHER_TABLE_COLUMNS);
         TABLE_COLUMN_MAP.put(ChildRepository.CHILD_TABLE_NAME, ChildRepository.CHILD_TABLE_COLUMNS);
 
-        if(Context.getInstance().configuration().appName().equals(APP_NAME_INDONESIA)) return;
+        if (Context.getInstance().configuration().appName().equals(APP_NAME_INDONESIA)) return;
 
-        for(int i = 0;i< Context.bindtypes.size();i++){
+        for (int i = 0; i < Context.bindtypes.size(); i++) {
             TABLE_COLUMN_MAP.put(Context.bindtypes.get(i).getBindtypename(), Context.getInstance().commonrepository(Context.bindtypes.get(i).getBindtypename()).common_TABLE_COLUMNS);
         }
     }
@@ -297,17 +297,16 @@ public class FormDataRepository extends DrishtiRepository {
 
 
     public Map<String, String> getMapFromSQLQuery(String sql) {
-        Map<String, String > map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         Cursor cursor = null;
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
             cursor = database.rawQuery(sql, new String[]{});
             map = sqliteRowToMap(cursor);
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
-        }
-        finally {
-            if (cursor != null){
+        } finally {
+            if (cursor != null) {
                 cursor.close();
             }
         }
@@ -317,7 +316,7 @@ public class FormDataRepository extends DrishtiRepository {
     public Map<String, String> sqliteRowToMap(Cursor cursor) {
         int totalColumn = cursor.getColumnCount();
         Map<String, String> rowObject = new HashMap<String, String>();
-        if (cursor != null && cursor.moveToFirst()){
+        if (cursor != null && cursor.moveToFirst()) {
             for (int i = 0; i < totalColumn; i++) {
                 if (cursor.getColumnName(i) != null) {
                     try {
