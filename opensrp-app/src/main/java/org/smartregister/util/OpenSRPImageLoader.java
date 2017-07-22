@@ -57,9 +57,10 @@ import java.util.UUID;
 public class OpenSRPImageLoader extends ImageLoader {
 
     private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
-    private static final String TAG = "OpenSRPImageLoader";
+
     private static final float IMAGE_SCALE_PROPORTION = 0.95F;
 
+    private static final String TAG = "OpenSRPImageLoader";
     private static final ColorDrawable transparentDrawable = new ColorDrawable(Color.BLACK);
 
     private Resources mResources;

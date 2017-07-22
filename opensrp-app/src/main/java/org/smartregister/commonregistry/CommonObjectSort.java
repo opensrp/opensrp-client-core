@@ -45,42 +45,36 @@ class CommonObjectSort implements SortOption {
         return allClients;
     }
 
-    private Comparator<SmartRegisterClient> commonComparator = new Comparator<SmartRegisterClient>() {
+    private Comparator<SmartRegisterClient> commonComparator =
+            new Comparator<SmartRegisterClient>() {
         @Override
-        public int compare(SmartRegisterClient smartRegisterClient, SmartRegisterClient smartRegisterClient2) {
+        public int compare(SmartRegisterClient smartRegisterClient,
+                           SmartRegisterClient smartRegisterClient2) {
             CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
             CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
+            boolean isDetails;
 
             switch (byColumnAndByDetails) {
                 case byColumn:
-                    String columnFieldValue = getFieldValue(client, isInteger, false);
-                    String columnFieldValue2 = getFieldValue(client2, isInteger, false);
-
-                    if (!isInteger) {
-                        return columnFieldValue.compareTo(columnFieldValue2);
-                    } else {
-                        return Integer.valueOf(columnFieldValue).compareTo(
-                                Integer.valueOf(columnFieldValue2));
-
-                    }
+                    isDetails = false;
+                    break;
                 case byDetails:
-                    String detailFieldValue = getFieldValue(client, isInteger, true);
-                    String detailFieldValue2 = getFieldValue(client2, isInteger, true);
-
-                    if (!isInteger) {
-                        return detailFieldValue.compareTo(detailFieldValue2);
-                    } else {
-                        return Integer.valueOf(detailFieldValue).compareTo(
-                                Integer.valueOf(detailFieldValue2));
-                    }
+                    isDetails = true;
+                    break;
+                default:
+                    return 0;
             }
-            return 0;
+
+            String fieldValue = getFieldValue(client, isDetails);
+            String fieldValue2 = getFieldValue(client2, isDetails);
+
+            return isInteger ? Integer.valueOf(fieldValue).compareTo(
+                    Integer.valueOf(fieldValue2)) : fieldValue.compareTo(fieldValue2);
         }
     };
 
     @NonNull
     private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient,
-                                 boolean isInteger,
                                  boolean isDetails) {
         String defaultValue = isInteger ? "0" : "";
         Map<String, String> valueMap = isDetails ? commonPersonObjectClient.getDetails()
