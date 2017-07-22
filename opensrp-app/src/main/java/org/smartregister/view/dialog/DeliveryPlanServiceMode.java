@@ -60,7 +60,9 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
     }
 
     @Override
-    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(ChildSmartRegisterClient client,
+                              NativeChildSmartRegisterViewHolder viewHolder,
+                              View.OnClickListener clientSectionClickListener) {
 
     }
 
@@ -74,19 +76,24 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
     }
 
     @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(FPSmartRegisterClient client,
+                              NativeFPSmartRegisterViewHolder viewHolder,
+                              View.OnClickListener clientSectionClickListener) {
 
     }
 
     @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder viewHolder, View.OnClickListener clientSectionClickListener) {
+    public void setupListView(PNCSmartRegisterClient client,
+                              NativePNCSmartRegisterViewHolder viewHolder,
+                              View.OnClickListener clientSectionClickListener) {
 
     }
 
     public void setupDeliveryPlanLayout(ANCSmartRegisterClient client,
                                         NativeANCSmartRegisterViewHolder viewHolder) {
         AlertDTO deliveryPlanAlert = client.getAlert(ANCServiceType.DELIVERY_PLAN);
-        ServiceProvidedDTO deliveryPlanServiceProvided = client.getServiceProvidedDTO(ANCServiceType.DELIVERY_PLAN.serviceName());
+        ServiceProvidedDTO deliveryPlanServiceProvided = client.getServiceProvidedDTO(
+                ANCServiceType.DELIVERY_PLAN.serviceName());
         viewHolder.hideViewsInDeliveryPlanViews();
         if (deliveryPlanServiceProvided != null) {
             viewHolder.layoutDeliveryPlanServiceProvided().setVisibility(VISIBLE);
@@ -97,7 +104,8 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
             setAshaPhoneNumber(client, viewHolder);
             setContactPhoneNumber(viewHolder, deliveryPlanServiceProvided);
             setReviewedHRPStatus(client, viewHolder, deliveryPlanServiceProvided);
-        } else if (deliveryPlanAlert != emptyAlert && deliveryPlanAlert.name().equalsIgnoreCase(DELIVERY_PLAN.serviceName())) {
+        } else if (deliveryPlanAlert != emptyAlert && deliveryPlanAlert.name().
+                equalsIgnoreCase(DELIVERY_PLAN.serviceName())) {
             setAlertLayout(viewHolder.layoutDeliveryPlanAlert(),
                     viewHolder.txtDeliveryPlanDueType(),
                     viewHolder.txtDeliveryPlanDueOn(), client,
