@@ -8,7 +8,7 @@ public enum  DownloadStatus implements Displayable{
 
     private String displayValue;
 
-    private DownloadStatus(String displayValue) {
+    DownloadStatus(String displayValue) {
         this.displayValue = displayValue;
     }
 

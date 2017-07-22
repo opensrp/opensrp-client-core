@@ -378,9 +378,9 @@ public class FormUtils {
                     Element child = (Element) entries.item(i);
                     String fieldName = child.getNodeName();
 
-                 /* its a subform element process it */
+                    // its a subform element process it
                     if(!subFormNames.isEmpty() && subFormNames.contains(fieldName)) {
-                        /** its a subform element process it **/
+                        // its a subform element process it
                         // get the subform definition
                         JSONArray subForms = formDefinition.getJSONObject("form").getJSONArray("sub_forms");
                         JSONObject subFormDefinition = retriveSubformDefinitionForBindPath(subForms, fieldName);
@@ -962,9 +962,7 @@ public class FormUtils {
                 inputStream.close();
 
                 return new JSONObject(stringBuilder.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
         }

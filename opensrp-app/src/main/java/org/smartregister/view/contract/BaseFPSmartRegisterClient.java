@@ -7,18 +7,18 @@ import java.util.Comparator;
 
 public interface BaseFPSmartRegisterClient extends SmartRegisterClient {
 
-    public FPMethod fpMethod();
+    FPMethod fpMethod();
 
-    public String familyPlanningMethodChangeDate();
+    String familyPlanningMethodChangeDate();
 
-    public String numberOfOCPDelivered();
+    String numberOfOCPDelivered();
 
-    public String numberOfCondomsSupplied();
+    String numberOfCondomsSupplied();
 
-    public String numberOfCentchromanPillsDelivered();
+    String numberOfCentchromanPillsDelivered();
 
-    public String iudPerson();
+    String iudPerson();
 
-    public String iudPlace();
+    String iudPlace();
 
 }

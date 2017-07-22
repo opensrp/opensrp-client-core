@@ -28,8 +28,8 @@ public class ClientRepository extends SQLiteOpenHelper {
         super(context, "test_convert", null, 1);
         additionalcolumns = columns;
         common_SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(_id INTEGER PRIMARY KEY AUTOINCREMENT,baseEntityId VARCHAR,";
-        for (int i = 0; i < columns.length; i++) {
-            common_SQL = common_SQL + columns[i] + " VARCHAR,";
+        for (String column : columns) {
+            common_SQL = common_SQL + column + " VARCHAR,";
         }
         common_SQL = common_SQL + "attributedetails VARCHAR, propertydetails VARCHAR)";
     }

@@ -86,39 +86,39 @@ public interface SmartRegisterClient {
         }
     };
 
-    public String entityId();
+    String entityId();
 
-    public String name();
+    String name();
 
-    public String displayName();
+    String displayName();
 
-    public String village();
+    String village();
 
-    public String wifeName();
+    String wifeName();
 
-    public String husbandName();
+    String husbandName();
 
-    public int age();
+    int age();
 
-    public int ageInDays();
+    int ageInDays();
 
-    public String ageInString();
+    String ageInString();
 
-    public boolean isSC();
+    boolean isSC();
 
-    public boolean isST();
+    boolean isST();
 
-    public boolean isHighRisk();
+    boolean isHighRisk();
 
-    public boolean isHighPriority();
+    boolean isHighPriority();
 
-    public boolean isBPL();
+    boolean isBPL();
 
-    public String profilePhotoPath();
+    String profilePhotoPath();
 
-    public String locationStatus();
+    String locationStatus();
 
-    public boolean satisfiesFilter(String filterCriterion);
+    boolean satisfiesFilter(String filterCriterion);
 
-    public int compareName(SmartRegisterClient client);
+    int compareName(SmartRegisterClient client);
 }

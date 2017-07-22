@@ -46,16 +46,21 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * A class that wraps up remote image loading requests using the Volley library combined with a memory cache. A single instance of this class should be created
- * once when your Activity or Fragment is created, then use {@link #get(String, ImageView)} if the image doesn't exist locally or one of the variations to queue the image to be
- * fetched and loaded from the network. Loading images in a {@link android.widget.ListView} or {@link android.widget.GridView} is also supported but you must
- * store the {@link com.android.volley.Request} in your ViewHolder type class and pass it into loadImage to ensure the request is canceled as views are
- * recycled.
+ * A class that wraps up remote image loading requests using the Volley library combined with a
+ * memory cache. A single instance of this class should be created once when your Activity or
+ * Fragment is created, then use {@link #get(String, ImageView)} if the image doesn't exist locally
+ * or one of the variations to queue the image to be fetched and loaded from the network. Loading
+ * images in a {@link android.widget.ListView} or {@link android.widget.GridView} is also supported
+ * but you must store the {@link com.android.volley.Request} in your ViewHolder type class and pass
+ * it into loadImage to ensure the request is canceled as views are recycled.
  */
 public class OpenSRPImageLoader extends ImageLoader {
 
-    private static final String TAG = "OpenSRPImageLoader";
+    private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
 
+    private static final float IMAGE_SCALE_PROPORTION = 0.95F;
+
+    private static final String TAG = "OpenSRPImageLoader";
     private static final ColorDrawable transparentDrawable = new ColorDrawable(Color.BLACK);
 
     private Resources mResources;
@@ -63,11 +68,10 @@ public class OpenSRPImageLoader extends ImageLoader {
     private boolean mFadeInImage = true;
     private int mMaxImageHeight = 0;
     private int mMaxImageWidth = 0;
-    private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
-
 
     /**
-     * Creates an ImageLoader with Bitmap memory cache. No default placeholder image will be shown while the image is being fetched and loaded.
+     * Creates an ImageLoader with Bitmap memory cache. No default placeholder image will be shown
+     * while the image is being fetched and loaded.
      */
     public OpenSRPImageLoader(FragmentActivity activity) {
         super(newRequestQueue(activity), DrishtiApplication.getMemoryCacheInstance());
@@ -75,7 +79,8 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     /**
-     * Creates an ImageLoader with Bitmap memory cache. No default placeholder image will be shown while the image is being fetched and loaded.
+     * Creates an ImageLoader with Bitmap memory cache. No default placeholder image will be shown
+     * while the image is being fetched and loaded.
      */
     public OpenSRPImageLoader(Service service, int defaultPlaceHolderResId) {
         super(newRequestQueue(service), DrishtiApplication.getMemoryCacheInstance());
@@ -83,7 +88,8 @@ public class OpenSRPImageLoader extends ImageLoader {
 
 
         mPlaceHolderDrawables = new ArrayList<Drawable>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null : mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
+                : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     public OpenSRPImageLoader(Context context, int defaultPlaceHolderResId) {
@@ -91,29 +97,30 @@ public class OpenSRPImageLoader extends ImageLoader {
         mResources = DrishtiApplication.getInstance().getResources();
 
         mPlaceHolderDrawables = new ArrayList<Drawable>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null : mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
+                : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     /**
-     * Creates an ImageLoader with Bitmap memory cache and a default placeholder image while the image is being fetched and loaded.
+     * Creates an ImageLoader with Bitmap memory cache and a default placeholder image while the
+     * image is being fetched and loaded.
      */
     public OpenSRPImageLoader(FragmentActivity activity, int defaultPlaceHolderResId) {
         this(activity);
 
         mPlaceHolderDrawables = new ArrayList<Drawable>(1);
-        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null : mResources.getDrawable(defaultPlaceHolderResId));
+        mPlaceHolderDrawables.add(defaultPlaceHolderResId == -1 ? null
+                : mResources.getDrawable(defaultPlaceHolderResId));
     }
 
     /**
      * Creates an ImageLoader with Bitmap memory cache and a list of default placeholder drawables.
      */
-    public OpenSRPImageLoader(FragmentActivity activity, ArrayList<Drawable> placeHolderDrawables) {
+    public OpenSRPImageLoader(FragmentActivity activity,
+                              ArrayList<Drawable> placeHolderDrawables) {
         this(activity);
         mPlaceHolderDrawables = placeHolderDrawables;
     }
-
-
-
 
     public OpenSRPImageLoader setFadeInImage(boolean fadeInImage) {
         mFadeInImage = fadeInImage;
@@ -131,12 +138,14 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     /**
-     * Retrieves a locally stored image using the id of the image from the images db table. If the file is not present, this function will also attempt to
-     * retrieve it using url of the source image.
-     * The assumption here is that this method will be used to fetch profile images whereby the name of the file is equals to the client's base entity id
+     * Retrieves a locally stored image using the id of the image from the images db table. If the
+     * file is not present, this function will also attempt to retrieve it using url of the source
+     * image. The assumption here is that this method will be used to fetch profile images whereby
+     * the name of the file is equals to the client's base entity id.
      *
-     * @param entityId- The id of the image to be retrieved
-     * @return ImageContainer that will contain either the specified default bitmap or the loaded bitmap. If the default was returned, the
+     * @param entityId - The id of the image to be retrieved
+     * @return ImageContainer that will contain either the specified default bitmap or the loaded
+     *     bitmap. If the default was returned, the
      * {@link OpenSRPImageLoader} will be invoked when the request is fulfilled.
      */
     public void getImageByClientId(String entityId, OpenSRPImageListener opensrpImageListener) {
@@ -144,9 +153,7 @@ public class OpenSRPImageLoader extends ImageLoader {
         try {
             if (entityId == null || entityId.isEmpty()) {
 
-                /***
-                 * If imageId is NULL, just return the image with resource id "defaultImageResId"
-                 */
+                // If imageId is NULL, just return the image with resource id "defaultImageResId"
                 ImageContainer imgContainer = new ImageContainer(null, null, null, opensrpImageListener);
 
                 opensrpImageListener.onResponse(imgContainer, true);
@@ -155,7 +162,8 @@ public class OpenSRPImageLoader extends ImageLoader {
             } else {
                 //get image record from the db
                 opensrpImageListener.setEntityId(entityId);
-                LoadProfileImageTask loadProfileImageTask = new LoadProfileImageTask(this, opensrpImageListener, entityId);
+                LoadProfileImageTask loadProfileImageTask = new LoadProfileImageTask(
+                        this, opensrpImageListener, entityId);
                 startAsyncTask(loadProfileImageTask, null);
 
             }
@@ -167,140 +175,25 @@ public class OpenSRPImageLoader extends ImageLoader {
     public void get(final ProfileImage image, final OpenSRPImageListener opensrpImageListener) {
 
         try {
-            /***
-             * Non existent image record, display image with defaultImageResId
-             */
+            // Non existent image record, display image with defaultImageResId
             if (image == null) {
-                ImageContainer imgContainer = new ImageContainer(null, null, null, opensrpImageListener);
+                ImageContainer imgContainer = new ImageContainer(null,
+                        null,
+                        null,
+                        opensrpImageListener);
                 opensrpImageListener.onResponse(imgContainer, true);
                 return;
             }
             opensrpImageListener.setAbsoluteFileName(image.getFilepath());
 
             String[] filePathArray = { image.getFilepath() };
-            LoadBitmapFromDiskTask loadBitmap = new LoadBitmapFromDiskTask(opensrpImageListener, image, this);
+            LoadBitmapFromDiskTask loadBitmap = new LoadBitmapFromDiskTask(opensrpImageListener,
+                    image,
+                    this);
             startAsyncTask(loadBitmap, filePathArray);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-        }
-    }
-
-    private class LoadBitmapFromDiskTask extends AsyncTask<String, Void, Bitmap> {
-
-        private OpenSRPImageListener opensrpImageListener;
-        private ProfileImage imageRecord;
-        private ImageView imageView;
-        private OpenSRPImageLoader cachedImageLoader;
-
-        public LoadBitmapFromDiskTask(OpenSRPImageListener opensrpImageListener, ProfileImage imageRecord, OpenSRPImageLoader cachedImageLoader) {
-            this.opensrpImageListener = opensrpImageListener;
-            this.imageRecord = imageRecord;
-            this.imageView = opensrpImageListener.getImageView();
-            this.cachedImageLoader = cachedImageLoader;
-        }
-
-        @Override
-        protected Bitmap doInBackground(String... params) {
-            return FileUtilities.retrieveStaticImageFromDisk(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-
-            try {
-
-                /***
-                 * Display image loaded from disk if reference is not NULL
-                 */
-                if (result != null) {
-                    Log.i(TAG, "Found image on local storage, no download needed");
-                    ImageContainer imgContainer = new ImageContainer(result, null, null, opensrpImageListener);
-                    if (opensrpImageListener != null) {
-                        if (opensrpImageListener.getHasImageViewTag()) {
-                            String imageId = opensrpImageListener.getImageView().getTag().toString();
-                            if (imageRecord.getEntityID().equalsIgnoreCase(imageId))
-                                opensrpImageListener.onResponse(imgContainer, true);
-                        } else
-                            opensrpImageListener.onResponse(imgContainer, true);
-                    }
-                    return;
-                }
-                /***
-                 * ProfileImage not found on disk, we need to get it from the network, here we piggyback on Volley library functionality to retrieve the image from the
-                 * network after a couple of sanity checks
-                 */
-                else {
-                    // Find any old image load request pending on this ImageView (in case this view was recycled)
-                    ImageContainer imageContainer = imageView.getTag() != null && imageView.getTag() instanceof ImageContainer ? (ImageContainer) imageView
-                            .getTag() : null;
-
-                    // Find image url from prior request
-                    String recycledImageUrl = imageContainer != null ? imageContainer.getRequestUrl() : null;
-
-                    // get this from the database based on imageId
-                    String requestUrl = imageRecord.getImageUrl();
-
-                    // If the new requestUrl is null or the new requestUrl is different to the previous recycled requestUrl
-                    if (requestUrl == null || !requestUrl.equals(recycledImageUrl)) {
-                        if (imageContainer != null) {
-                            // Cancel previous image request
-                            imageContainer.cancelRequest();
-                            imageView.setTag(null);
-                        }
-                        if (requestUrl != null) {
-                            // Queue new request to fetch image
-                            imageContainer = cachedImageLoader.get(requestUrl, opensrpImageListener, 0, 0);
-                            // Store request in ImageView tag
-                            imageView.setTag(imageContainer);
-                        } else {
-                            // Use default image
-                            imageContainer = new ImageContainer(null, null, null, opensrpImageListener);
-                            opensrpImageListener.onResponse(imageContainer, true);
-                            // Nullify ImageView tag
-                            imageView.setTag(null);
-                        }
-                    }
-
-                    return;
-                }
-
-            } catch (Exception exc) {
-
-                Log.e(TAG, exc.getMessage(), exc);
-
-            }
-
-        }
-    }
-
-    private class LoadProfileImageTask extends AsyncTask<Void, Void, ProfileImage>{
-        private OpenSRPImageLoader openSRPImageLoader;
-        private OpenSRPImageListener opensrpImageListener;
-        private String entityId;
-
-        public LoadProfileImageTask(OpenSRPImageLoader openSRPImageLoader, OpenSRPImageListener opensrpImageListener, String entityId){
-            this.openSRPImageLoader = openSRPImageLoader;
-            this.opensrpImageListener = opensrpImageListener;
-            this.entityId = entityId;
-        }
-
-        @Override
-        protected ProfileImage doInBackground(Void... params) {
-            ImageRepository imageRepo = org.smartregister.Context.getInstance().imageRepository();
-            ProfileImage imageRecord = imageRepo.findByEntityId(entityId);
-            return imageRecord;
-        }
-
-        @Override
-        protected void onPostExecute(ProfileImage imageRecord) {
-            if (imageRecord != null) {
-                openSRPImageLoader.get(imageRecord, opensrpImageListener);
-            } else {
-                String url = FileUtilities.getImageUrl(entityId);
-                openSRPImageLoader.get(url, opensrpImageListener);
-
-            }
         }
     }
 
@@ -309,23 +202,34 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     public ImageContainer get(String requestUrl, ImageView imageView, int placeHolderIndex) {
-        return get(requestUrl, imageView, mPlaceHolderDrawables.get(placeHolderIndex), mMaxImageWidth, mMaxImageHeight);
+        return get(requestUrl,
+                imageView,
+                mPlaceHolderDrawables.get(placeHolderIndex),
+                mMaxImageWidth,
+                mMaxImageHeight);
     }
 
     public ImageContainer get(String requestUrl, ImageView imageView, Drawable placeHolder) {
         return get(requestUrl, imageView, placeHolder, mMaxImageWidth, mMaxImageHeight);
     }
 
-    public ImageContainer get(String requestUrl, ImageView imageView, Drawable placeHolder, int maxWidth, int maxHeight) {
+    public ImageContainer get(String requestUrl,
+                              ImageView imageView,
+                              Drawable placeHolder,
+                              int maxWidth,
+                              int maxHeight) {
 
         // Find any old image load request pending on this ImageView (in case this view was
         // recycled)
-        ImageContainer imageContainer = imageView.getTag() != null && imageView.getTag() instanceof ImageContainer ? (ImageContainer) imageView.getTag() : null;
+        ImageContainer imageContainer = imageView.getTag() != null
+                && imageView.getTag() instanceof ImageContainer
+                ? (ImageContainer) imageView.getTag() : null;
 
         // Find image url from prior request
         String recycledImageUrl = imageContainer != null ? imageContainer.getRequestUrl() : null;
 
-        // If the new requestUrl is null or the new requestUrl is different to the previous recycled requestUrl
+        // If the new requestUrl is null or the new requestUrl is different to the previous
+        // recycled requestUrl
         if (requestUrl == null || !requestUrl.equals(recycledImageUrl)) {
             if (imageContainer != null) {
                 // Cancel previous image request
@@ -334,7 +238,10 @@ public class OpenSRPImageLoader extends ImageLoader {
             }
             if (requestUrl != null) {
                 // Queue new request to fetch image
-                imageContainer = get(requestUrl, getImageListener(mResources, imageView, placeHolder, mFadeInImage), maxWidth, maxHeight);
+                imageContainer = get(requestUrl,
+                        getImageListener(mResources, imageView, placeHolder, mFadeInImage),
+                        maxWidth,
+                        maxHeight);
                 // Store request in ImageView tag
                 imageView.setTag(imageContainer);
             } else {
@@ -346,13 +253,19 @@ public class OpenSRPImageLoader extends ImageLoader {
         return imageContainer;
     }
 
-    private static ImageListener getImageListener(final Resources resources, final ImageView imageView, final Drawable placeHolder, final boolean fadeInImage) {
+    private static ImageListener getImageListener(final Resources resources,
+                                                  final ImageView imageView,
+                                                  final Drawable placeHolder,
+                                                  final boolean fadeInImage) {
         return new ImageListener() {
             @Override
             public void onResponse(ImageContainer response, boolean isImmediate) {
                 imageView.setTag(null);
                 if (response.getBitmap() != null) {
-                    setImageBitmap(imageView, response.getBitmap(), resources, fadeInImage && !isImmediate);
+                    setImageBitmap(imageView,
+                            response.getBitmap(),
+                            resources,
+                            fadeInImage && !isImmediate);
                 } else {
                     imageView.setImageDrawable(placeHolder);
                 }
@@ -360,6 +273,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                // Do nothing
             }
         };
     }
@@ -376,7 +290,8 @@ public class OpenSRPImageLoader extends ImageLoader {
                 public HttpResponse performRequest(Request<?> request, Map<String, String> headers)
                         throws IOException, AuthFailureError {
 
-                    headers.putAll(org.smartregister.Context.getInstance().allSettings().getAuthParams());
+                    headers.putAll(
+                            org.smartregister.Context.getInstance().allSettings().getAuthParams());
 
                     return super.performRequest(request, headers);
                 }
@@ -385,13 +300,15 @@ public class OpenSRPImageLoader extends ImageLoader {
             requestQueue = Volley.newRequestQueue(context, stack);
 
         } else {
-            HttpClientStack stack = new HttpClientStack(AndroidHttpClient.newInstance(FileUtilities
-                    .getUserAgent(context))) {
+            HttpClientStack stack = new HttpClientStack(AndroidHttpClient.newInstance(
+                    FileUtilities.getUserAgent(context))) {
                 @Override
                 public HttpResponse performRequest(Request<?> request, Map<String, String> headers)
                         throws IOException, AuthFailureError {
 
-                     headers.putAll(org.smartregister.Context.getInstance().allSettings().getAuthParams());
+                        headers.putAll(
+                                org.smartregister.Context.getInstance().allSettings().
+                                        getAuthParams());
 
                     return super.performRequest(request, headers);
                 }
@@ -404,22 +321,28 @@ public class OpenSRPImageLoader extends ImageLoader {
 
     /**
      * Sets a {@link Bitmap} to an {@link ImageView} using a fade-in animation. If there is a
-     * {@link Drawable} already set on the ImageView then use that as the image to fade from. Otherwise fade in from a transparent
-     * Drawable.
+     * {@link Drawable} already set on the ImageView then use that as the image to fade from.
+     * Otherwise fade in from a transparent Drawable.
      */
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR1)
-    private static void setImageBitmap(final ImageView imageView, final Bitmap bitmap, Resources resources, boolean fadeIn) {
+    private static void setImageBitmap(final ImageView imageView,
+                                       final Bitmap bitmap,
+                                       Resources resources,
+                                       boolean fadeIn) {
 
         // If we're fading in and on HC MR1+
-        if (fadeIn && Build.VERSION.SDK_INT >= 12) {
+        if (fadeIn) {
             // Use ViewPropertyAnimator to run a simple fade in + fade out animation to update the
             // ImageView
-            imageView.animate().scaleY(0.95f).scaleX(0.95f).alpha(0f).setDuration(imageView.getDrawable() == null ? 0 : HALF_FADE_IN_TIME)
+            imageView.animate().scaleY(IMAGE_SCALE_PROPORTION).scaleX(IMAGE_SCALE_PROPORTION).
+                    alpha(0F).setDuration(
+                    imageView.getDrawable() == null ? 0 : HALF_FADE_IN_TIME)
                     .setListener(new AnimatorListenerAdapter() {
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             imageView.setImageBitmap(bitmap);
-                            imageView.animate().alpha(1f).scaleY(1f).scaleX(1f).setDuration(HALF_FADE_IN_TIME).setListener(null);
+                            imageView.animate().alpha(1F).scaleY(1F).scaleX(1F).setDuration(
+                                    HALF_FADE_IN_TIME).setListener(null);
                         }
                     });
         } else if (fadeIn) {
@@ -432,7 +355,8 @@ public class OpenSRPImageLoader extends ImageLoader {
             }
             BitmapDrawable bitmapDrawable = new BitmapDrawable(resources, bitmap);
             // Use TransitionDrawable to fade in
-            final TransitionDrawable td = new TransitionDrawable(new Drawable[]{initialDrawable, bitmapDrawable});
+            final TransitionDrawable td = new TransitionDrawable(
+                    new Drawable[]{initialDrawable, bitmapDrawable});
             imageView.setImageDrawable(td);
             td.startTransition(AllConstants.ANIMATION_FADE_IN_TIME);
         } else {
@@ -470,21 +394,17 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     /**
-     * Interface an activity can implement to provide an ImageLoader to its children fragments.
-     */
-    public interface ImageLoaderProvider {
-        public OpenSRPImageLoader getImageLoaderInstance();
-    }
-
-    /**
-     * Custom implementation of ImageListener which encapsulates basic functionality of showing a default image until the network response is received, at which
-     * point it will switch to either the actual image or the error image. Additional functionality also includes saving the received image to disk for future
-     * use
+     * Custom implementation of ImageListener which encapsulates basic functionality of showing a
+     * default image until the network response is received, at which point it will switch to
+     * either the actual image or the error image. Additional functionality also includes saving
+     * the received image to disk for future use.
      *
      * @param defaultImageResId Default image resource ID to use, or 0 if it doesn't exist.
      * @param errorImageResId   Error image resource ID to use, or 0 if it doesn't exist.
      */
-    public static OpenSRPImageListener getStaticImageListener(ImageView view, int defaultImageResId, int errorImageResId) {
+    public static OpenSRPImageListener getStaticImageListener(ImageView view,
+                                                              int defaultImageResId,
+                                                              int errorImageResId) {
 
         return new OpenSRPImageListener(view, defaultImageResId, errorImageResId) {
 
@@ -525,11 +445,13 @@ public class OpenSRPImageLoader extends ImageLoader {
 
                     // perform I/O on non UI thread
                     if (!isImmediate) {
-                    //pass the entity id to act as the file name . Remember to always set this value as a tag in the image view
+                        // pass the entity id to act as the file name . Remember to always set this
+                        // value as a tag in the image view
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
-                                OpenSRPImageLoader.saveStaticImageToDisk(imageView.getTag(R.id.entity_id).toString(), response.getBitmap());
+                                OpenSRPImageLoader.saveStaticImageToDisk(imageView.getTag(
+                                        R.id.entity_id).toString(), response.getBitmap());
                             }
                         }).start();
                     }
@@ -559,8 +481,8 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     /**
-     * Save image to the local storage.If an image is downloaded from the server it's compressed to jpeg format and the entityid
-     * becomes the file name
+     * Save image to the local storage.If an image is downloaded from the server it's compressed to
+     * jpeg format and the entityid becomes the file name
      * @param entityId
      * @param image
      */
@@ -571,15 +493,18 @@ public class OpenSRPImageLoader extends ImageLoader {
             try {
 
                 if (entityId != null && !entityId.isEmpty()) {
-                    final String absoluteFileName = DrishtiApplication.getAppDir() + File.separator + entityId+".JPEG";
+                    final String absoluteFileName = DrishtiApplication.getAppDir()
+                            + File.separator + entityId + ".JPEG";
 
                     File outputFile = new File(absoluteFileName);
                     os = new FileOutputStream(outputFile);
-                    CompressFormat compressFormat = OpenSRPImageLoader.getCompressFormat(absoluteFileName);
+                    CompressFormat compressFormat = OpenSRPImageLoader.getCompressFormat(
+                            absoluteFileName);
                     if (compressFormat != null) {
                         image.compress(compressFormat, 100, os);
                     } else {
-                        throw new IllegalArgumentException("Failed to save static image, could not retrieve image compression format from name "
+                        throw new IllegalArgumentException("Failed to save static image, could not"
+                                + " retrieve image compression format from name "
                                 + absoluteFileName);
                     }
                     // insert into the db
@@ -589,7 +514,8 @@ public class OpenSRPImageLoader extends ImageLoader {
                     profileImage.setFilepath(absoluteFileName);
                     profileImage.setFilecategory("profilepic");
                     profileImage.setSyncStatus(ImageRepository.TYPE_Synced);
-                    ImageRepository imageRepo = (ImageRepository) org.smartregister.Context.getInstance().imageRepository();
+                    ImageRepository imageRepo = org.smartregister.Context.getInstance().
+                            imageRepository();
                     imageRepo.add(profileImage);
                 }
 
@@ -600,7 +526,8 @@ public class OpenSRPImageLoader extends ImageLoader {
                     try {
                         os.close();
                     } catch (IOException e) {
-                        Log.e(TAG, "Failed to close static images output stream after attempting to write image");
+                        Log.e(TAG, "Failed to close static images output stream after attempting"
+                                + " to write image");
                     }
                 }
             }
@@ -608,8 +535,10 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    protected <T> void  startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
-        if (params == null) {
+    protected <T> void  startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] paramsArg) {
+        T[] params = paramsArg;
+
+        if (paramsArg == null) {
             @SuppressWarnings("unchecked")
             T[] arr = (T[]) new Void[0];
             params = arr;
@@ -621,4 +550,143 @@ public class OpenSRPImageLoader extends ImageLoader {
         }
     }
 
+    /**
+     * Interface an activity can implement to provide an ImageLoader to its children fragments.
+     */
+    public interface ImageLoaderProvider {
+        OpenSRPImageLoader getImageLoaderInstance();
+    }
+
+    private class LoadBitmapFromDiskTask extends AsyncTask<String, Void, Bitmap> {
+
+        private OpenSRPImageListener opensrpImageListener;
+        private ProfileImage imageRecord;
+        private ImageView imageView;
+        private OpenSRPImageLoader cachedImageLoader;
+
+        LoadBitmapFromDiskTask(OpenSRPImageListener opensrpImageListenerArg,
+                               ProfileImage imageRecordArg,
+                               OpenSRPImageLoader cachedImageLoaderArg) {
+            opensrpImageListener = opensrpImageListenerArg;
+            imageRecord = imageRecordArg;
+            imageView = opensrpImageListenerArg.getImageView();
+            cachedImageLoader = cachedImageLoaderArg;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... params) {
+            return FileUtilities.retrieveStaticImageFromDisk(params[0]);
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap result) {
+
+            try {
+                // Display image loaded from disk if reference is not NULL
+                if (result != null) {
+                    Log.i(TAG, "Found image on local storage, no download needed");
+                    ImageContainer imgContainer = new ImageContainer(result,
+                            null,
+                            null,
+                            opensrpImageListener);
+                    if (opensrpImageListener != null) {
+                        if (opensrpImageListener.getHasImageViewTag()) {
+                            String imageId = opensrpImageListener.getImageView().getTag().
+                                    toString();
+                            if (imageRecord.getEntityID().equalsIgnoreCase(imageId))
+                                opensrpImageListener.onResponse(imgContainer, true);
+                        } else
+                            opensrpImageListener.onResponse(imgContainer, true);
+                    }
+                    return;
+                }
+
+                // ProfileImage not found on disk, we need to get it from the network, here we
+                // piggyback on Volley library functionality to retrieve the image from the
+                // network after a couple of sanity checks
+                else {
+                    // Find any old image load request pending on this ImageView (in case this view
+                    // was recycled)
+                    ImageContainer imageContainer = imageView.getTag() != null
+                            && imageView.getTag() instanceof ImageContainer
+                            ? (ImageContainer) imageView.getTag() : null;
+
+                    // Find image url from prior request
+                    String recycledImageUrl = imageContainer != null
+                            ? imageContainer.getRequestUrl() : null;
+
+                    // get this from the database based on imageId
+                    String requestUrl = imageRecord.getImageUrl();
+
+                    // If the new requestUrl is null or the new requestUrl is different to the
+                    // previous recycled requestUrl
+                    if (requestUrl == null || !requestUrl.equals(recycledImageUrl)) {
+                        if (imageContainer != null) {
+                            // Cancel previous image request
+                            imageContainer.cancelRequest();
+                            imageView.setTag(null);
+                        }
+                        if (requestUrl != null) {
+                            // Queue new request to fetch image
+                            imageContainer = cachedImageLoader.get(requestUrl,
+                                    opensrpImageListener,
+                                    0,
+                                    0);
+                            // Store request in ImageView tag
+                            imageView.setTag(imageContainer);
+                        } else {
+                            // Use default image
+                            imageContainer = new ImageContainer(null,
+                                    null,
+                                    null,
+                                    opensrpImageListener);
+                            opensrpImageListener.onResponse(imageContainer, true);
+                            // Nullify ImageView tag
+                            imageView.setTag(null);
+                        }
+                    }
+
+                    return;
+                }
+
+            } catch (Exception exc) {
+
+                Log.e(TAG, exc.getMessage(), exc);
+
+            }
+
+        }
+    }
+
+    private class LoadProfileImageTask extends AsyncTask<Void, Void, ProfileImage> {
+        private OpenSRPImageLoader openSRPImageLoader;
+        private OpenSRPImageListener opensrpImageListener;
+        private String entityId;
+
+        LoadProfileImageTask(OpenSRPImageLoader openSRPImageLoaderArg,
+                                    OpenSRPImageListener opensrpImageListenerArg,
+                                    String entityIdArg) {
+            this.openSRPImageLoader = openSRPImageLoaderArg;
+            this.opensrpImageListener = opensrpImageListenerArg;
+            this.entityId = entityIdArg;
+        }
+
+        @Override
+        protected ProfileImage doInBackground(Void... params) {
+            ImageRepository imageRepo = org.smartregister.Context.getInstance().imageRepository();
+            ProfileImage imageRecord = imageRepo.findByEntityId(entityId);
+            return imageRecord;
+        }
+
+        @Override
+        protected void onPostExecute(ProfileImage imageRecord) {
+            if (imageRecord != null) {
+                openSRPImageLoader.get(imageRecord, opensrpImageListener);
+            } else {
+                String url = FileUtilities.getImageUrl(entityId);
+                openSRPImageLoader.get(url, opensrpImageListener);
+
+            }
+        }
+    }
 }

@@ -22,13 +22,9 @@ public class FormSubmissionMap {
         return fs.entityId();
     }
 
-    ;
-
     public long clientTimestamp() {
         return fs.clientVersion();
     }
-
-    ;
 
     public String formVersion() {
         return fs.formDataDefinitionVersion();

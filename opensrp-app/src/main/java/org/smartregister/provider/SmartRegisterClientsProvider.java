@@ -11,14 +11,14 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 public interface SmartRegisterClientsProvider {
 
-    public View getView(SmartRegisterClient client, View parentView, ViewGroup viewGroup);
+    View getView(SmartRegisterClient client, View parentView, ViewGroup viewGroup);
 
-    public SmartRegisterClients getClients();
+    SmartRegisterClients getClients();
 
     SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption,
                                        FilterOption searchFilter, SortOption sortOption);
 
     void onServiceModeSelected(ServiceModeOption serviceModeOption);
 
-    public OnClickFormLauncher newFormLauncher(String formName, String entityId, String metaData);
+    OnClickFormLauncher newFormLauncher(String formName, String entityId, String metaData);
 }

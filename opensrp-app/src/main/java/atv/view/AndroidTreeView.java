@@ -332,7 +332,7 @@ public class AndroidTreeView {
     private void selectNode(TreeNode parent, boolean selected, boolean skipCollapsed) {
         parent.setSelected(selected);
         toogleSelectionForNode(parent, true);
-        boolean toContinue = skipCollapsed ? parent.isExpanded() : true;
+        boolean toContinue = !skipCollapsed || parent.isExpanded();
         if (toContinue) {
             for (TreeNode node : parent.getChildren()) {
                 selectNode(node, selected, skipCollapsed);
@@ -351,7 +351,7 @@ public class AndroidTreeView {
         TreeNode.BaseNodeViewHolder viewHolder = node.getViewHolder();
         if (viewHolder == null) {
             try {
-                final Object object = defaultViewHolderClass.getConstructor(Context.class).newInstance(new Object[]{mContext});
+                final Object object = defaultViewHolderClass.getConstructor(Context.class).newInstance(mContext);
                 viewHolder = (TreeNode.BaseNodeViewHolder) object;
                 node.setViewHolder(viewHolder);
             } catch (Exception e) {

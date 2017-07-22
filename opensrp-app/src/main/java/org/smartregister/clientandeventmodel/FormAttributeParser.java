@@ -64,7 +64,7 @@ public class FormAttributeParser {
             String type = bindPath==null?null:getFieldType(bindPath, jsonForm);
             Map<String, String> fieldAttributes = bindPath==null?new HashMap<String, String>():getAttributesForBindPath(bindPath, modelXml);
 
-            boolean ismultiselect = bindPath==null?false:isMultiselect(bindPath, jsonForm);
+            boolean ismultiselect = bindPath != null && isMultiselect(bindPath, jsonForm);
             if(!StringUtils.isEmpty(fsf.value())){
                 if(ismultiselect){
                     String[] vals = fsf.value().split(" ");
@@ -92,7 +92,7 @@ public class FormAttributeParser {
                         String bindPath = getPathFromSubformDefinition(sf.name(), sffl.getKey(), formDefinitionData);
                         String type = bindPath==null?null:getFieldType(bindPath, jsonForm);
                         Map<String, String> attributes = bindPath==null?new HashMap<String, String>():getAttributesForBindPath(bindPath, modelXml);
-                        boolean ismultiselect = bindPath==null?false:isMultiselect(bindPath, jsonForm);
+                        boolean ismultiselect = bindPath != null && isMultiselect(bindPath, jsonForm);
                         if(ismultiselect){
                             String[] vals = sffl.getValue().split(" ");
                             Map<String, Map<String, String>> valCods = new HashMap<>();
@@ -596,13 +596,10 @@ public class FormAttributeParser {
         String nodeNameToFind = sps[sps.length-1];
         JsonObject node = getChildrenOfLevel(level, jsonForm, nodeNameToFind);
 
-        if(node != null && node.getAsJsonObject().has("children")
+        return node != null && node.getAsJsonObject().has("children")
                 && node.has("type")
-                && (node.get("type").getAsString().startsWith("select all") || node.get("type").getAsString().startsWith("select multiple"))){
-            return true;
-        }
+                && (node.get("type").getAsString().startsWith("select all") || node.get("type").getAsString().startsWith("select multiple"));
 
-        return false;
     }
 
     private JsonObject getChildrenOfLevel(int level, JsonObject node, String nodeName){

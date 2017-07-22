@@ -17,46 +17,46 @@ public interface PNCSmartRegisterClient extends BaseFPSmartRegisterClient {
         }
     };
 
-    public String thayiNumber();
+    String thayiNumber();
 
-    public String deliveryDateForDisplay();
+    String deliveryDateForDisplay();
 
-    public String deliveryShortDate();
+    String deliveryShortDate();
 
-    public LocalDate deliveryDate();
+    LocalDate deliveryDate();
 
-    public String deliveryPlace();
+    String deliveryPlace();
 
-    public String deliveryType();
+    String deliveryType();
 
-    public String deliveryComplications();
+    String deliveryComplications();
 
-    public String womanDOB();
+    String womanDOB();
 
-    public List<ChildClient> children();
+    List<ChildClient> children();
 
-    public List<PNCCircleDatum> pncCircleData();
+    List<PNCCircleDatum> pncCircleData();
 
-    public List<PNCStatusDatum> pncStatusData();
+    List<PNCStatusDatum> pncStatusData();
 
-    public PNCStatusColor pncVisitStatusColor();
+    PNCStatusColor pncVisitStatusColor();
 
-    public List<PNCTickDatum> pncTickData();
+    List<PNCTickDatum> pncTickData();
 
-    public List<PNCLineDatum> pncLineData();
+    List<PNCLineDatum> pncLineData();
 
-    public List<PNCVisitDaysDatum> visitDaysData();
+    List<PNCVisitDaysDatum> visitDaysData();
 
-    public PNCFirstSevenDaysVisits firstSevenDaysVisits();
+    PNCFirstSevenDaysVisits firstSevenDaysVisits();
 
-    public List<ServiceProvidedDTO> recentlyProvidedServices();
+    List<ServiceProvidedDTO> recentlyProvidedServices();
 
     boolean isVisitsDone();
 
-    public String visitDoneDateWithVisitName();
+    String visitDoneDateWithVisitName();
 
-    public AlertDTO getAlert(ANCServiceType serviceType);
+    AlertDTO getAlert(ANCServiceType serviceType);
 
-    public String pncComplications();
+    String pncComplications();
 }
 

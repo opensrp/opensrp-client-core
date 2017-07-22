@@ -42,7 +42,7 @@ public class CommonPersonObjectController {
     ArrayList <ControllerFilterMap> filtermap;
 
     public enum ByColumnAndByDetails{
-        byColumn,byDetails,byrelationalid,byrelational_id;
+        byColumn,byDetails,byrelationalid,byrelational_id
     }
 
 

@@ -4,7 +4,7 @@ public enum SyncStatus {
     SYNCED("SYNCED"), PENDING("PENDING");
     private String value;
 
-    private SyncStatus(String value) {
+    SyncStatus(String value) {
         this.value = value;
     }
 

@@ -1,16 +1,19 @@
 package org.smartregister.commonregistry;
 
+import android.support.annotation.NonNull;
+
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.dialog.SortOption;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Map;
 
 /**
  * Created by Raihan Ahmed on 3/22/15.
  */
-public class CommonObjectSort implements SortOption {
+class CommonObjectSort implements SortOption {
 
 
     private String field;
@@ -18,14 +21,17 @@ public class CommonObjectSort implements SortOption {
     private boolean isInteger;
     private String sortOptionName;
     public enum ByColumnAndByDetails{
-        byColumn,byDetails;
+        byColumn, byDetails
     }
 
-    public CommonObjectSort(ByColumnAndByDetails byColumnAndByDetails, boolean isinteger, String field,String sortOptionName) {
-        this.byColumnAndByDetails = byColumnAndByDetails;
-        this.isInteger = isinteger;
-        this.field = field;
-        this.sortOptionName = sortOptionName;
+    CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg,
+                     boolean isIntegerArg,
+                     String fieldArg,
+                     String sortOptionNameArg) {
+        byColumnAndByDetails = byColumnAndByDetailsArg;
+        isInteger = isIntegerArg;
+        field = fieldArg;
+        sortOptionName = sortOptionNameArg;
     }
 
     @Override
@@ -35,32 +41,46 @@ public class CommonObjectSort implements SortOption {
 
     @Override
     public SmartRegisterClients sort(SmartRegisterClients allClients) {
-        Collections.sort(allClients, commoncomparator);
+        Collections.sort(allClients, commonComparator);
         return allClients;
     }
 
-    Comparator<SmartRegisterClient> commoncomparator = new Comparator<SmartRegisterClient>() {
+    private Comparator<SmartRegisterClient> commonComparator =
+            new Comparator<SmartRegisterClient>() {
         @Override
-        public int compare(SmartRegisterClient oneClient, SmartRegisterClient anotherClient2) {
-            CommonPersonObjectClient commonPersonObjectClient = (CommonPersonObjectClient)oneClient;
-            CommonPersonObjectClient commonPersonObjectClient2 = (CommonPersonObjectClient)anotherClient2;
-            switch (byColumnAndByDetails){
+        public int compare(SmartRegisterClient smartRegisterClient,
+                           SmartRegisterClient smartRegisterClient2) {
+            CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
+            CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
+            boolean isDetails;
+
+            switch (byColumnAndByDetails) {
                 case byColumn:
-                    if(!isInteger){
-                        return ((commonPersonObjectClient.getColumnmaps().get(field)!=null?commonPersonObjectClient.getColumnmaps().get(field):"")).trim().toLowerCase().compareTo((commonPersonObjectClient2.getColumnmaps().get(field)!=null?commonPersonObjectClient2.getColumnmaps().get(field):"").trim().toLowerCase());
-
-                    }else{
-                        return (new Integer(commonPersonObjectClient.getColumnmaps().get(field)!=null?commonPersonObjectClient.getColumnmaps().get(field):"0")).compareTo(new Integer(commonPersonObjectClient2.getColumnmaps().get(field)!=null?commonPersonObjectClient2.getColumnmaps().get(field):"0"));
-
-                    }
+                    isDetails = false;
+                    break;
                 case byDetails:
-                    if(!isInteger){
-                        return ((commonPersonObjectClient.getDetails().get(field)!=null?commonPersonObjectClient.getDetails().get(field):"")).trim().toLowerCase().compareTo((commonPersonObjectClient2.getDetails().get(field)!=null?commonPersonObjectClient2.getDetails().get(field):"").trim().toLowerCase());
-                    }else{
-                        return (new Integer(commonPersonObjectClient.getDetails().get(field)!=null?commonPersonObjectClient.getDetails().get(field):"0").compareTo(new Integer(commonPersonObjectClient2.getDetails().get(field)!=null?commonPersonObjectClient2.getDetails().get(field):"0")));
-                    }
+                    isDetails = true;
+                    break;
+                default:
+                    return 0;
             }
-            return 0;
+
+            String fieldValue = getFieldValue(client, isDetails);
+            String fieldValue2 = getFieldValue(client2, isDetails);
+
+            return isInteger ? Integer.valueOf(fieldValue).compareTo(
+                    Integer.valueOf(fieldValue2)) : fieldValue.compareTo(fieldValue2);
         }
     };
+
+    @NonNull
+    private String getFieldValue(CommonPersonObjectClient commonPersonObjectClient,
+                                 boolean isDetails) {
+        String defaultValue = isInteger ? "0" : "";
+        Map<String, String> valueMap = isDetails ? commonPersonObjectClient.getDetails()
+                : commonPersonObjectClient.getColumnmaps();
+        String detailsFieldValue = valueMap.get(field);
+
+        return (detailsFieldValue != null ? detailsFieldValue : defaultValue).trim().toLowerCase();
+    }
 }

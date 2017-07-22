@@ -71,7 +71,7 @@ public class DristhiConfiguration {
     }
 
     public boolean shouldSyncForm() {
-        return this.get(SYNC_FORM) != null ? Boolean.parseBoolean(this.get(SYNC_FORM)) : false;
+        return this.get(SYNC_FORM) != null && Boolean.parseBoolean(this.get(SYNC_FORM));
     }
 
     public DrishtiApplication getDrishtiApplication() {

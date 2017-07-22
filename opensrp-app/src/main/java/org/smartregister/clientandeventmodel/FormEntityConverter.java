@@ -351,7 +351,7 @@ public class FormEntityConverter {
             } catch (Exception e) {
                  Log.e(TAG, e.toString(), e);
             }
-            birthdateApprox = bde > 0 ? true : false;
+            birthdateApprox = bde > 0;
         }
         String aproxdd = fs.getFieldValue(getFieldName(Person.deathdate_estimated, fs));
         Boolean deathdateApprox = false;
@@ -362,7 +362,7 @@ public class FormEntityConverter {
             } catch (Exception e) {
                  Log.e(TAG, e.toString(), e);
             }
-            deathdateApprox = dde > 0 ? true : false;
+            deathdateApprox = dde > 0;
         }
         String gender = fs.getFieldValue(getFieldName(Person.gender, fs));
 
@@ -410,7 +410,7 @@ public class FormEntityConverter {
             } catch (Exception e) {
                  Log.e(TAG, e.toString(), e);
             }
-            birthdateApprox = bde > 0 ? true : false;
+            birthdateApprox = bde > 0;
         }
         String aproxdd = subf.getFieldValue(getFieldName(Person.deathdate_estimated, subf));
         Boolean deathdateApprox = false;
@@ -421,7 +421,7 @@ public class FormEntityConverter {
             } catch (Exception e) {
                  Log.e(TAG, e.toString(), e);
             }
-            deathdateApprox = dde > 0 ? true : false;
+            deathdateApprox = dde > 0;
         }
 
         List<Address> addresses = new ArrayList<>(extractAddressesForSubform(subf).values());

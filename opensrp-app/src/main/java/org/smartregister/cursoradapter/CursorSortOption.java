@@ -5,5 +5,5 @@ import org.smartregister.view.dialog.DialogOption;
 import org.smartregister.view.dialog.SortOption;
 
 public interface CursorSortOption extends SortOption {
-    public String sort();
+    String sort();
 }

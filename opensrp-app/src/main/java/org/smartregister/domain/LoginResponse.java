@@ -10,7 +10,7 @@ public enum LoginResponse {
     private String payload;
     private String message;
 
-    private LoginResponse(String message) {
+    LoginResponse(String message) {
         this.message = message;
     }
 

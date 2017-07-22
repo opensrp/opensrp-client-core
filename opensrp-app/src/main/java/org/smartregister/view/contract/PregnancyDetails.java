@@ -5,18 +5,20 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class PregnancyDetails {
+
+    private static final int MONTHS_PREGNANT = 9;
     private String monthsPregnant;
     private String edd;
     private boolean isEDDPassed;
     private boolean isLastMonthOfPregnancy;
     private int daysPastEdd;
 
-    public PregnancyDetails(String monthsPregnant, String edd, int daysPastEdd) {
-        this.monthsPregnant = monthsPregnant;
-        this.edd = edd;
-        isEDDPassed = (Integer.valueOf(monthsPregnant) >= 9) ? true : false;
-        isLastMonthOfPregnancy = Integer.valueOf(monthsPregnant) >= 8;
-        this.daysPastEdd = daysPastEdd;
+    public PregnancyDetails(String monthsPregnantArg, String eddArg, int daysPastEddArg) {
+        monthsPregnant = monthsPregnantArg;
+        edd = eddArg;
+        isEDDPassed = Integer.valueOf(monthsPregnant) >= MONTHS_PREGNANT;
+        isLastMonthOfPregnancy = Integer.valueOf(monthsPregnant) >= MONTHS_PREGNANT - 1;
+        daysPastEdd = daysPastEddArg;
     }
 
     @Override
