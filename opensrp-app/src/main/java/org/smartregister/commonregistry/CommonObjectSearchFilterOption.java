@@ -12,14 +12,16 @@ import java.util.List;
  */
 public class CommonObjectSearchFilterOption implements FilterOption {
     private final String criteria;
-    ArrayList<FilterOptionsForSearch> filteroptions;
-    public enum ByColumnAndByDetails{
-        byColumn,byDetails,byChildren
+    ArrayList<FilterOptionsForSearch> filterOptions;
+
+    public enum ByColumnAndByDetails {
+        byColumn, byDetails, byChildren
     }
 
-    public CommonObjectSearchFilterOption(String criteria, ArrayList<FilterOptionsForSearch> filtermaps) {
+    public CommonObjectSearchFilterOption(String criteria,
+                                          ArrayList<FilterOptionsForSearch> filterMaps) {
         this.criteria = criteria;
-        this.filteroptions = filtermaps;
+        this.filterOptions = filterMaps;
 
     }
 
@@ -30,59 +32,77 @@ public class CommonObjectSearchFilterOption implements FilterOption {
 
     @Override
     public boolean filter(SmartRegisterClient client) {
-        for(int i = 0;i<filteroptions.size();i++) {
+        for (int i = 0; i < filterOptions.size(); i++) {
 
-        switch (filteroptions.get(i).byColumnAndByDetails){
-            case byColumn:
-                return ((CommonPersonObjectClient)client).getColumnmaps().get(filteroptions.get(i).fieldname).trim().toLowerCase().contains(criteria.trim().toLowerCase());
-            case byDetails:
-                return (((CommonPersonObjectClient)client).getDetails().get(filteroptions.get(i).fieldname)!=null?((CommonPersonObjectClient)client).getDetails().get(filteroptions.get(i).fieldname):"").trim().toLowerCase().contains(criteria.toLowerCase());
-            case byChildren:
-                CommonPersonObjectClient currentclient = (CommonPersonObjectClient) client;
-                AllCommonsRepository allchildRepository = Context.getInstance().allCommonsRepositoryobjects(filteroptions.get(i).childname);
-                ArrayList<String> list = new ArrayList<String>();
-                list.add((currentclient.entityId()));
-                List<CommonPersonObject> allchild = allchildRepository.findByRelational_IDs(list);
-                for (int j = 0; j < allchild.size(); j++) {
-                    switch (filteroptions.get(i).byChildColumnAndByDetails) {
-                        case byDetails:
-                        if (allchild.get(j).getDetails().get(filteroptions.get(i).fieldname) != null) {
-                            if (allchild.get(i).getDetails().get(filteroptions.get(i).fieldname).toLowerCase().trim().contains(criteria.toLowerCase().trim())) {
-                                return true;
-                            }
-                        }
-                        break;
-                        case byColumn:
-                            if (allchild.get(j).getColumnmaps().get(filteroptions.get(i).fieldname) != null) {
-                                if (allchild.get(i).getColumnmaps().get(filteroptions.get(i).fieldname).toLowerCase().trim().contains(criteria.toLowerCase().trim())) {
-                                    return true;
+            switch (filterOptions.get(i).byColumnAndByDetails) {
+                case byColumn:
+                    return ((CommonPersonObjectClient) client).getColumnmaps().get(
+                            filterOptions.get(i).fieldName).trim().toLowerCase().contains(
+                                    criteria.trim().toLowerCase());
+                case byDetails:
+                    return (((CommonPersonObjectClient) client).getDetails().get(
+                            filterOptions.get(i).fieldName) != null
+                            ? ((CommonPersonObjectClient) client).getDetails().get(
+                                    filterOptions.get(i).fieldName) : "").trim().toLowerCase().
+                            contains(criteria.toLowerCase());
+                case byChildren:
+                    CommonPersonObjectClient currentclient = (CommonPersonObjectClient) client;
+                    AllCommonsRepository allchildRepository = Context.getInstance().
+                            allCommonsRepositoryobjects(filterOptions.get(i).childName);
+                    ArrayList<String> list = new ArrayList<String>();
+                    list.add((currentclient.entityId()));
+                    List<CommonPersonObject> allchild = allchildRepository.
+                            findByRelational_IDs(list);
+
+                    for (int j = 0; j < allchild.size(); j++) {
+                        switch (filterOptions.get(i).byChildColumnAndByDetails) {
+                            case byDetails:
+                                if (allchild.get(j).getDetails().get(
+                                        filterOptions.get(i).fieldName) != null) {
+                                    if (allchild.get(i).getDetails().get(
+                                            filterOptions.get(i).fieldName).toLowerCase().trim().
+                                            contains(criteria.toLowerCase().trim())) {
+                                        return true;
+                                    }
                                 }
-                            }
-                            break;
+                                break;
+                            case byColumn:
+                                if (allchild.get(j).getColumnmaps().get(
+                                        filterOptions.get(i).fieldName) != null) {
+                                    if (allchild.get(i).getColumnmaps().get(
+                                            filterOptions.get(i).fieldName).toLowerCase().trim().
+                                            contains(criteria.toLowerCase().trim())) {
+                                        return true;
+                                    }
+                                }
+                                break;
+                        }
                     }
-                }
-                break;
-        }
+                    break;
+            }
         }
         return false;
     }
 
-    static class FilterOptionsForSearch{
-            String childname;
+    static class FilterOptionsForSearch {
+        String childName;
         ByColumnAndByDetails byColumnAndByDetails;
         ByColumnAndByDetails byChildColumnAndByDetails;
-        String fieldname;
+        String fieldName;
 
-        FilterOptionsForSearch(ByColumnAndByDetails byColumnAndByDetails, String fieldname) {
-            this.byColumnAndByDetails = byColumnAndByDetails;
-            this.fieldname = fieldname;
+        FilterOptionsForSearch(ByColumnAndByDetails byColumnAndByDetailsArg, String fieldNameArg) {
+            byColumnAndByDetails = byColumnAndByDetailsArg;
+            fieldName = fieldNameArg;
         }
 
-        FilterOptionsForSearch(String childname, ByColumnAndByDetails byColumnAndByDetails, String fieldname, ByColumnAndByDetails byChildColumnAndByDetails) {
-            this.childname = childname;
-            this.byColumnAndByDetails = byColumnAndByDetails;
-            this.fieldname = fieldname;
-            this.byChildColumnAndByDetails = byChildColumnAndByDetails;
+        FilterOptionsForSearch(String childNameArg,
+                               ByColumnAndByDetails byColumnAndByDetailsArg,
+                               String fieldNameArg,
+                               ByColumnAndByDetails byChildColumnAndByDetailsArg) {
+            childName = childNameArg;
+            byColumnAndByDetails = byColumnAndByDetailsArg;
+            fieldName = fieldNameArg;
+            byChildColumnAndByDetails = byChildColumnAndByDetailsArg;
         }
     }
 }

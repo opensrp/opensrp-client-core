@@ -19,8 +19,10 @@ import java.io.InputStream;
  */
 public class FormPathService {
 
-    public static String sdcardPath = Environment.getExternalStorageDirectory().getPath() +"/Download/OpenSRP/form/";
-    public static String sdcardPathDownload = Environment.getExternalStorageDirectory().getPath() + "/Download/OpenSRP/zip/";
+    public static String sdcardPath = Environment.getExternalStorageDirectory().getPath()
+            + "/Download/OpenSRP/form/";
+    public static String sdcardPathDownload = Environment.getExternalStorageDirectory().getPath()
+            + "/Download/OpenSRP/zip/";
     public static String appPath = "www/form/";
     private AssetManager assetManager;
 
@@ -35,10 +37,10 @@ public class FormPathService {
     public String getForms(String file, String encoding) throws IOException {
         DristhiConfiguration configuration = Context.getInstance().configuration();
 
-        if(configuration.shouldSyncForm()) {
+        if (configuration.shouldSyncForm()) {
             File formFile = new File(sdcardPath + file);
 
-            if(formFile.exists()) {
+            if (formFile.exists()) {
                 return IOUtils.toString(new FileInputStream(formFile), encoding);
             }
         }
