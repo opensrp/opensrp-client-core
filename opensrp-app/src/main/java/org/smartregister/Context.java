@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonPersonObjectClients;
@@ -928,6 +929,9 @@ public class Context {
         getEcBindtypes();
         try {
             String str = ReadFromfile("bindtypes.json", getInstance().applicationContext);
+            if (StringUtils.isBlank(str)) {
+                return;
+            }
             JSONObject jsonObject = new JSONObject(str);
             JSONArray bindtypeObjects = jsonObject.getJSONArray("bindobjects");
 
@@ -951,6 +955,9 @@ public class Context {
         try {
             AssetManager assetManager = getInstance().applicationContext().getAssets();
             String str = ReadFromfile("ec_client_fields.json", getInstance().applicationContext);
+            if (StringUtils.isBlank(str)) {
+                return;
+            }
             JSONObject jsonObject = new JSONObject(str);
             JSONArray bindtypeObjects = jsonObject.getJSONArray("bindobjects");
 
