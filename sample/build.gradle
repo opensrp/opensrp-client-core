@@ -48,7 +48,7 @@ dependencies {
 android {
 
     compileSdkVersion 22
-    buildToolsVersion "26.0.0"
+    buildToolsVersion "26.0.1"
 
     defaultConfig {
         applicationId "org.smartregister.sample"
