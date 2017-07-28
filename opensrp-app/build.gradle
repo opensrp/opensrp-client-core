@@ -12,6 +12,15 @@ buildscript {
     }
 }
 
+
+
+allprojects {
+    repositories {
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        mavenLocal()
+    }
+}
+
 apply plugin: 'com.android.library'
 apply plugin: 'org.robolectric'
 

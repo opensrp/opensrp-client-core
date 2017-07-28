@@ -2,13 +2,14 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 def sonatypeRepositoryURL
+def mavenLocalFlag = hasProperty('mavenLocal') ? mavenLocal.toBoolean() : true;
 
 if (isReleaseBuild()) {
-    println 'PROCESSING MAVEN RELEASE BUILD ...'
+    println 'PROCESSING MAVEN '+(mavenLocalFlag?'LOCAL':'REMOTE')+' RELEASE BUILD ...'
     sonatypeRepositoryURL = hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
             : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 } else {
-    println 'PROCESSING MAVEN SNAPSHOT BUILD ...'
+    println 'PROCESSING MAVEN '+(mavenLocalFlag?'LOCAL':'REMOTE')+' SNAPSHOT BUILD ...'
     sonatypeRepositoryURL = hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
             : "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -25,42 +26,80 @@ def getRepositoryUsername() {
 afterEvaluate { project ->
     uploadArchives {
         repositories {
-            mavenDeployer {
-                beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                pom.artifactId = POM_SETTING_ARTIFACT_ID
+            if (mavenLocalFlag) {
 
-                repository(url: sonatypeRepositoryURL) {
-                    authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
-                }
+                mavenInstaller {
 
-                pom.project {
-                    name POM_SETTING_NAME
-                    packaging POM_SETTING_PACKAGING
-                    description POM_SETTING_DESCRIPTION
-                    url POM_SETTING_URL
+                    pom.artifactId = POM_SETTING_ARTIFACT_ID
 
-                    scm {
-                        url POM_SETTING_SCM_URL
-                        connection POM_SETTING_SCM_CONNECTION
-                        developerConnection POM_SETTING_SCM_DEV_CONNECTION
-                    }
+                    pom.project {
+                        name POM_SETTING_NAME
+                        packaging POM_SETTING_PACKAGING
+                        description POM_SETTING_DESCRIPTION
+                        url POM_SETTING_URL
 
-                    licenses {
-                        license {
-                            name POM_SETTING_LICENCE_NAME
-                            url POM_SETTING_LICENCE_URL
-                            distribution POM_SETTING_LICENCE_DIST
+                        scm {
+                            url POM_SETTING_SCM_URL
+                            connection POM_SETTING_SCM_CONNECTION
+                            developerConnection POM_SETTING_SCM_DEV_CONNECTION
+                        }
+
+                        licenses {
+                            license {
+                                name POM_SETTING_LICENCE_NAME
+                                url POM_SETTING_LICENCE_URL
+                                distribution POM_SETTING_LICENCE_DIST
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id POM_SETTING_DEVELOPER_ID
+                                name POM_SETTING_DEVELOPER_NAME
+                            }
                         }
                     }
+                }
+            } else {
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-                    developers {
-                        developer {
-                            id POM_SETTING_DEVELOPER_ID
-                            name POM_SETTING_DEVELOPER_NAME
+                    pom.artifactId = POM_SETTING_ARTIFACT_ID
+
+                    repository(url: sonatypeRepositoryURL) {
+                        authentication(userName: getRepositoryUsername(), password: getRepositoryPassword())
+                    }
+
+                    pom.project {
+                        name POM_SETTING_NAME
+                        packaging POM_SETTING_PACKAGING
+                        description POM_SETTING_DESCRIPTION
+                        url POM_SETTING_URL
+
+                        scm {
+                            url POM_SETTING_SCM_URL
+                            connection POM_SETTING_SCM_CONNECTION
+                            developerConnection POM_SETTING_SCM_DEV_CONNECTION
+                        }
+
+                        licenses {
+                            license {
+                                name POM_SETTING_LICENCE_NAME
+                                url POM_SETTING_LICENCE_URL
+                                distribution POM_SETTING_LICENCE_DIST
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id POM_SETTING_DEVELOPER_ID
+                                name POM_SETTING_DEVELOPER_NAME
+                            }
                         }
                     }
                 }
+
             }
         }
     }
@@ -81,21 +120,8 @@ afterEvaluate { project ->
         classifier = 'sources'
     }
 
-    artifacts {
-        //archives packageReleaseJar
+    artifacts { 
         archives androidSourcesJar
         archives androidJavadocsJar
-    }
-
-    android.libraryVariants.all { variant ->
-
-
-
-        variant.outputs.each { output ->
-            println output
-            output.packageLibrary.exclude('.......')
-        }
-
-
     }
 }
