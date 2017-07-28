@@ -6,213 +6,216 @@ import java.util.List;
 import java.util.Map;
 
 public class BaseEntity extends BaseDataObject {
-	
-	private String baseEntityId;
-	
-	private Map<String, String> identifiers;
-	
-	private List<Address> addresses;
-	
-	private Map<String, Object> attributes;
 
-	protected BaseEntity() {}
-	
-	public BaseEntity(String baseEntityId){
-		this.baseEntityId = baseEntityId;
-	}
+    private String baseEntityId;
 
-	public BaseEntity(String baseEntityId, Map<String, String> identifiers) {
-		this.baseEntityId = baseEntityId;
-		this.identifiers = identifiers;
-	}
+    private Map<String, String> identifiers;
 
-	public BaseEntity(String baseEntityId, Map<String, String> identifiers, Map<String, Object> attributes) {
-		this.baseEntityId = baseEntityId;
-		this.identifiers = identifiers;
-		this.attributes = attributes;
-	}
+    private List<Address> addresses;
 
-	public BaseEntity(String baseEntityId, Map<String, String> identifiers, Map<String, Object> attributes, List<Address> addresses) {
-		this.baseEntityId = baseEntityId;
-		this.identifiers = identifiers;
-		this.attributes = attributes;
-		this.addresses = addresses;
-	}
-	
-	public String getBaseEntityId() {
-		return baseEntityId;
-	}
+    private Map<String, Object> attributes;
 
-	public void setBaseEntityId(String baseEntityId) {
-		this.baseEntityId = baseEntityId;
-	}
+    protected BaseEntity() {
+    }
 
-	public List<Address> getAddresses() {
-		if (addresses == null) {
-			addresses = new ArrayList<Address>();
-		}
-		return addresses;
-	}
-	
-	public Address getAddress(String addressType) {
-		for (Address address : addresses) {
-			if(address.getAddressType().equalsIgnoreCase(addressType)){
-				return address;
-			}
-		}
-		return null;
-	}
+    public BaseEntity(String baseEntityId) {
+        this.baseEntityId = baseEntityId;
+    }
 
-	/**
-	 * WARNING: Overrides all existing addresses
-	 * 
-	 * @param addresses
-	 * @return
-	 */
-	public void setAddresses(List<Address> addresses) {
-		this.addresses = addresses;
-	}
+    public BaseEntity(String baseEntityId, Map<String, String> identifiers) {
+        this.baseEntityId = baseEntityId;
+        this.identifiers = identifiers;
+    }
 
-	public void addAddress(Address address) {
-		if (addresses == null) {
-			addresses = new ArrayList<Address>();
-		}
-		addresses.add(address);
-	}
+    public BaseEntity(String baseEntityId, Map<String, String> identifiers, Map<String, Object> attributes) {
+        this.baseEntityId = baseEntityId;
+        this.identifiers = identifiers;
+        this.attributes = attributes;
+    }
 
-	public Map<String, Object> getAttributes() {
-		if (attributes == null) {
-			attributes = new HashMap<String, Object>();
-		}
-		return attributes;
-	}
+    public BaseEntity(String baseEntityId, Map<String, String> identifiers, Map<String, Object> attributes, List<Address> addresses) {
+        this.baseEntityId = baseEntityId;
+        this.identifiers = identifiers;
+        this.attributes = attributes;
+        this.addresses = addresses;
+    }
 
-	public Object getAttribute(String name) {
-		if(attributes == null){
-			return null;
-		}
-		for (String k : attributes.keySet()) {
-			if(k.equalsIgnoreCase(name)){
-				return attributes.get(k);
-			}
-		}
-		return null;
-	}
+    public String getBaseEntityId() {
+        return baseEntityId;
+    }
 
-	/**
-	 * WARNING: Overrides all existing attributes
-	 * 
-	 * @param attributes
-	 * @return
-	 */
-	public void setAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
-	}
+    public void setBaseEntityId(String baseEntityId) {
+        this.baseEntityId = baseEntityId;
+    }
 
-	public void addAttribute(String name, Object value) {
-		if (attributes == null) {
-			attributes = new HashMap<String, Object>();
-		}
+    public List<Address> getAddresses() {
+        if (addresses == null) {
+            addresses = new ArrayList<Address>();
+        }
+        return addresses;
+    }
 
-		attributes.put(name, value);
-	}
+    public Address getAddress(String addressType) {
+        for (Address address : addresses) {
+            if (address.getAddressType().equalsIgnoreCase(addressType)) {
+                return address;
+            }
+        }
+        return null;
+    }
 
-	public void removeAttribute(String name) {
-		attributes.remove(name);
-	}
-	
-	public Map<String, String> getIdentifiers() {
-		if(identifiers == null){
-			identifiers = new HashMap<String, String>();
-		}
-		return identifiers;
-	}
+    /**
+     * WARNING: Overrides all existing addresses
+     *
+     * @param addresses
+     * @return
+     */
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
 
-	public String getIdentifier(String identifierType) {
-		if(identifiers == null){
-			return null;
-		}
-		for (String k : identifiers.keySet()) {
-			if(k.equalsIgnoreCase(identifierType)){
-				return identifiers.get(k);
-			}
-		}
-		return null;
-	}
-	public void setIdentifiers(Map<String, String> identifiers) {
-		this.identifiers = identifiers;
-	}
+    public void addAddress(Address address) {
+        if (addresses == null) {
+            addresses = new ArrayList<Address>();
+        }
+        addresses.add(address);
+    }
 
-	public void addIdentifier(String identifierType, String identifier) {
-		if(identifiers == null){
-			identifiers = new HashMap<String, String>();
-		}
-		
-		identifiers.put(identifierType, identifier);
-	}
+    public Map<String, Object> getAttributes() {
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        }
+        return attributes;
+    }
 
-	public void removeIdentifier(String identifierType) {
-		identifiers.remove(identifierType);
-	}
-	
-	public BaseEntity withBaseEntityId(String baseEntityId) {
-		this.baseEntityId = baseEntityId;
-		return this;
-	}
+    public Object getAttribute(String name) {
+        if (attributes == null) {
+            return null;
+        }
+        for (String k : attributes.keySet()) {
+            if (k.equalsIgnoreCase(name)) {
+                return attributes.get(k);
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * WARNING: Overrides all existing identifiers
-	 * @param identifiers
-	 * @return
-	 */
-	public BaseEntity withIdentifiers(Map<String, String> identifiers) {
-		this.identifiers = identifiers;
-		return this;
-	}
-	
-	public BaseEntity withIdentifier(String identifierType, String identifier) {
-		if(identifiers == null){
-			identifiers = new HashMap<String, String>();
-		}
-		identifiers.put(identifierType, identifier);
-		return this;
-	}	
+    /**
+     * WARNING: Overrides all existing attributes
+     *
+     * @param attributes
+     * @return
+     */
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+    }
 
-	/**
-	 * WARNING: Overrides all existing addresses
-	 * 
-	 * @param addresses
-	 * @return
-	 */
-	public BaseEntity withAddresses(List<Address> addresses) {
-		this.addresses = addresses;
-		return this;
-	}
+    public void addAttribute(String name, Object value) {
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        }
 
-	public BaseEntity withAddress(Address address) {
-		if (addresses == null) {
-			addresses = new ArrayList<Address>();
-		}
-		addresses.add(address);
-		return this;
-	}
+        attributes.put(name, value);
+    }
 
-	/**
-	 * WARNING: Overrides all existing attributes
-	 * 
-	 * @param attributes
-	 * @return
-	 */
-	public BaseEntity withAttributes(Map<String, Object> attributes) {
-		this.attributes = attributes;
-		return this;
-	}
+    public void removeAttribute(String name) {
+        attributes.remove(name);
+    }
 
-	public BaseEntity withAttribute(String name, Object value) {
-		if (attributes == null) {
-			attributes = new HashMap<String, Object>();
-		}
-		attributes.put(name, value);
-		return this;
-	}
+    public Map<String, String> getIdentifiers() {
+        if (identifiers == null) {
+            identifiers = new HashMap<String, String>();
+        }
+        return identifiers;
+    }
+
+    public String getIdentifier(String identifierType) {
+        if (identifiers == null) {
+            return null;
+        }
+        for (String k : identifiers.keySet()) {
+            if (k.equalsIgnoreCase(identifierType)) {
+                return identifiers.get(k);
+            }
+        }
+        return null;
+    }
+
+    public void setIdentifiers(Map<String, String> identifiers) {
+        this.identifiers = identifiers;
+    }
+
+    public void addIdentifier(String identifierType, String identifier) {
+        if (identifiers == null) {
+            identifiers = new HashMap<String, String>();
+        }
+
+        identifiers.put(identifierType, identifier);
+    }
+
+    public void removeIdentifier(String identifierType) {
+        identifiers.remove(identifierType);
+    }
+
+    public BaseEntity withBaseEntityId(String baseEntityId) {
+        this.baseEntityId = baseEntityId;
+        return this;
+    }
+
+    /**
+     * WARNING: Overrides all existing identifiers
+     *
+     * @param identifiers
+     * @return
+     */
+    public BaseEntity withIdentifiers(Map<String, String> identifiers) {
+        this.identifiers = identifiers;
+        return this;
+    }
+
+    public BaseEntity withIdentifier(String identifierType, String identifier) {
+        if (identifiers == null) {
+            identifiers = new HashMap<String, String>();
+        }
+        identifiers.put(identifierType, identifier);
+        return this;
+    }
+
+    /**
+     * WARNING: Overrides all existing addresses
+     *
+     * @param addresses
+     * @return
+     */
+    public BaseEntity withAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+        return this;
+    }
+
+    public BaseEntity withAddress(Address address) {
+        if (addresses == null) {
+            addresses = new ArrayList<Address>();
+        }
+        addresses.add(address);
+        return this;
+    }
+
+    /**
+     * WARNING: Overrides all existing attributes
+     *
+     * @param attributes
+     * @return
+     */
+    public BaseEntity withAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+        return this;
+    }
+
+    public BaseEntity withAttribute(String name, Object value) {
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        }
+        attributes.put(name, value);
+        return this;
+    }
 }

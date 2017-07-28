@@ -1,6 +1,7 @@
 package org.smartregister.domain.db;
-public enum FilterType{
-		AND, OR
-	}
-	
+
+public enum FilterType {
+    AND, OR
+}
+
 	

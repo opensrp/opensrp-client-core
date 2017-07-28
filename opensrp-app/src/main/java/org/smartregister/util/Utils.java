@@ -323,7 +323,6 @@ public class Utils {
     }
 
 
-
     public static boolean hasFroyo() {
         // Can use static final constants like FROYO, declared in later versions
         // of the OS since they are inlined at compile time. This is guaranteed behavior.
@@ -481,16 +480,19 @@ public class Utils {
         }
     }
 
+    private static String KG_FORMAT = "%s kg";
+
     public static String kgStringSuffix(Float weight) {
-        return String.format("%s kg", weight);
+        return String.format(KG_FORMAT, weight);
     }
 
     public static String kgStringSuffix(String weight) {
-        return String.format("%s kg", weight);
+        return String.format(KG_FORMAT, weight);
     }
 
     public static CommonPersonObjectClient convert(CommonPersonObject commonPersonObject) {
-        CommonPersonObjectClient pc = new CommonPersonObjectClient(commonPersonObject.getCaseId(), commonPersonObject.getDetails(), commonPersonObject.getColumnmaps().get("first_name"));
+        CommonPersonObjectClient pc = new CommonPersonObjectClient(commonPersonObject.getCaseId(),
+                commonPersonObject.getDetails(), commonPersonObject.getColumnmaps().get("first_name"));
         pc.setColumnmaps(commonPersonObject.getColumnmaps());
         return pc;
     }

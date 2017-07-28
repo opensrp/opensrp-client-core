@@ -32,7 +32,6 @@ import java.util.UUID;
 public class JsonFormUtils {
     public static final String TAG = "JsonFormUtils";
 
-
     public static final String OPENMRS_ENTITY = "openmrs_entity";
     public static final String OPENMRS_ENTITY_ID = "openmrs_entity_id";
     public static final String OPENMRS_ENTITY_PARENT = "openmrs_entity_parent";

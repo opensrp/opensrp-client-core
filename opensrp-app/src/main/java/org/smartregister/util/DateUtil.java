@@ -173,13 +173,12 @@ public class DateUtil {
                 months++;
             }
 
-            if(months < 12) {
+            if (months < 12) {
                 duration = months + "m";
                 if (weeks > 0 && months < 12) {
                     duration += " " + weeks + "w";
                 }
-            }
-            else if (months >= 12) {
+            } else if (months >= 12) {
                 duration = "1y";
             }
         } else {

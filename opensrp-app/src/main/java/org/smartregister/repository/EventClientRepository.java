@@ -39,14 +39,15 @@ import java.util.Map;
  */
 public class EventClientRepository extends BaseRepository {
     private static final String TAG = BaseRepository.class.getCanonicalName();
-    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 
     public EventClientRepository(Repository repository) {
         super(repository);
     }
 
-    public void insert(SQLiteDatabase db, Class<?> cls, Table table, Column[] cols, Object o, JSONObject serverJsonObject) throws IllegalAccessException, IllegalArgumentException, NoSuchFieldException {
+    public void
+    insert(SQLiteDatabase db, Class<?> cls, Table table, Column[] cols, Object o, JSONObject serverJsonObject) throws IllegalAccessException, IllegalArgumentException, NoSuchFieldException {
         insert(db, cls, table, cols, null, null, o, serverJsonObject);
     }
 
@@ -525,7 +526,7 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            if(cursor != null) {
+            if (cursor != null) {
                 cursor.close();
             }
         }
@@ -557,7 +558,7 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            if(cursor != null) {
+            if (cursor != null) {
                 cursor.close();
             }
         }
@@ -608,7 +609,7 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         } finally {
-            if(cursor != null) {
+            if (cursor != null) {
                 cursor.close();
             }
         }
@@ -1033,7 +1034,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public String getSQLDate(DateTime date) {
-        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date.toDate());
+        return dateFormat.format(date.toDate());
     }
 
     public ArrayList<HashMap<String, String>> rawQuery(SQLiteDatabase db, String query) {

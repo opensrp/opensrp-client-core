@@ -5,360 +5,374 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-public class Address{
+public class Address {
 
-	
-	private String addressType;
-	
-	private Date startDate;
-	
-	private Date endDate;
-	
-	private Map<String, String> addressFields;
-	
-	private String latitude;
-	
-	private String longitude;
-	
-	private String geopoint;
-	
-	private String postalCode;
-	
-	private String subTown;
-	
-	private String town;
-	
-	private String subDistrict;
-	
-	private String countyDistrict;
-	
-	private String cityVillage;
-	
-	private String stateProvince;
-	
-	private String country;
-	
-	
-	public Address() {	}
+    private String addressType;
 
-	public Address(String addressType, Date startDate, Date endDate, Map<String, String> addressFields, 
-			String latitude, String longitude, String postalCode, String stateProvince, String country) {
-		this.addressType = addressType;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.addressFields = addressFields;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.postalCode = postalCode;
-		this.stateProvince = stateProvince;
-		this.country = country;
-	}
+    private Date startDate;
 
-	public String getAddressType() {
-		return addressType;
-	}
+    private Date endDate;
 
-	public void setAddressType(String addressType) {
-		this.addressType = addressType;
-	}
+    private Map<String, String> addressFields;
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    private String latitude;
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    private String longitude;
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    private String geopoint;
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    private String postalCode;
 
-	public Map<String, String> getAddressFields() {
-		return addressFields;
-	}
-	
-	public String getAddressField(String addressField) {
-		return addressFields.get(addressField);
-	}
+    private String subTown;
 
-	/**
-	 * Returns field matching the regex. Note that incase of multiple fields matching criteria 
-	 * function would return first match. The must be well formed to find out a single value
-	 * @param regex
-	 * @return
-	 */
-	public String getAddressFieldMatchingRegex(String regex) {
-		for (Entry<String, String> a : addressFields.entrySet()) {
-			if(a.getKey().matches(regex)){
-				return a.getValue();
-			}
-		}
-		return null;
-	}
-	
-	/**
-	 * WARNING: Overrides all existing fields
-	 * @param addressFields
-	 * @return
-	 */
-	public void setAddressFields(Map<String, String> addressFields) {
-		this.addressFields = addressFields;
-	}
+    private String town;
 
-	public void addAddressField(String field, String value) {
-		if(addressFields == null){
-			addressFields = new HashMap<String, String>();
-		}
-		addressFields.put(field, value);
-	}
-	
-	public void removeAddressField(String field) {
-		addressFields.remove(field);
-	}
-	
-	public String getLatitude() {
-		return latitude;
-	}
+    private String subDistrict;
 
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
+    private String countyDistrict;
 
-	public String getLongitude() {
-		return longitude;
-	}
+    private String cityVillage;
 
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
+    private String stateProvince;
 
-	public String getGeopoint() {
-		return geopoint;
-	}
-
-	public void setGeopoint(String geopoint) {
-		this.geopoint = geopoint;
-	}
-
-	public String getPostalCode() {
-		return postalCode;
-	}
-
-	public void setPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-	}
-
-	public String getSubTown() {
-		return subTown;
-	}
-
-	public void setSubTown(String subTown) {
-		this.subTown = subTown;
-	}
-
-	public String getTown() {
-		return town;
-	}
-
-	public void setTown(String town) {
-		this.town = town;
-	}
-
-	public String getSubDistrict() {
-		return subDistrict;
-	}
-
-	public void setSubDistrict(String subDistrict) {
-		this.subDistrict = subDistrict;
-	}
-
-	public String getCountyDistrict() {
-		return countyDistrict;
-	}
-
-	public void setCountyDistrict(String countyDistrict) {
-		this.countyDistrict = countyDistrict;
-	}
-
-	public String getCityVillage() {
-		return cityVillage;
-	}
-
-	public void setCityVillage(String cityVillage) {
-		this.cityVillage = cityVillage;
-	}
-
-	public String getStateProvince() {
-		return stateProvince;
-	}
-
-	public void setStateProvince(String stateProvince) {
-		this.stateProvince = stateProvince;
-	}
-
-	public String getCountry() {
-		return country;
-	}
-
-	public void setCountry(String country) {
-		this.country = country;
-	}
-	
+    private String country;
 
 
-	/**
-	 * True if endDate is null or endDate is in future
-	 * @return
-	 */
-	public boolean isActive() {
-		return endDate==null||endDate.after(new Date());
-	}
+    public Address() {
+    }
 
-	/**
-	 * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date 
-	 * @return
-	 */
-	private long durationInMillis() {
-		if(startDate == null){
-			return -1;
-		}
-		if(endDate == null){
-			return new Date().getTime()-startDate.getTime();
-		}
-		
-		return endDate.getTime()-startDate.getTime();
-	}
+    public Address(String addressType, Date startDate, Date endDate, Map<String, String> addressFields,
+                   String latitude, String longitude, String postalCode, String stateProvince, String country) {
+        this.addressType = addressType;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.addressFields = addressFields;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.postalCode = postalCode;
+        this.stateProvince = stateProvince;
+        this.country = country;
+    }
 
-	/**
-	 * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date 
-	 * @return
-	 */
-	public int durationInDays() {
-		return (int) (durationInMillis()==-1?durationInMillis():(durationInMillis()/(1000*60*60*24)));
-	}
-	/**
-	 * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date 
-	 * @return
-	 */
-	public int durationInWeeks() {
-		return durationInDays()==-1?durationInDays():(durationInDays()/7);
-	}
-	/**
-	 * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date 
-	 * @return
-	 */
-	public int durationInMonths() {
-		return durationInDays()==-1?durationInDays():((int) (durationInDays()/30));
-	}
-	/**
-	 * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date 
-	 * @return
-	 */
-	public int durationInYears() {
-		return durationInDays()==-1?durationInDays():(durationInDays()/365);
-	}
-	
-	/**
-	 * The type address represents
-	 * @param addressType
-	 * @return
-	 */
-	public Address withAddressType(String addressType) {
-		this.addressType = addressType;
-		return this;
-	}
+    public String getAddressType() {
+        return addressType;
+    }
 
-	/**
-	 * The date when address was started or owned
-	 * @param endDate
-	 * @return
-	 */
-	public Address withStartDate(Date startDate) {
-		this.startDate = startDate;
-		return this;
-	}
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
+    }
 
-	/**
-	 * The date when address was outdated or abandoned
-	 * @param endDate
-	 * @return
-	 */
-	public Address withEndDate(Date endDate) {
-		this.endDate = endDate;
-		return this;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	/**
-	 * WARNING: Overrides all existing fields
-	 * @param addressFields
-	 * @return
-	 */
-	public Address withAddressFields(Map<String, String> addressFields) {
-		this.addressFields = addressFields;
-		return this;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public Address withAddressField(String field, String value) {
-		if(addressFields == null){
-			addressFields = new HashMap<String, String>();
-		}
-		addressFields.put(field, value);
-		return this;
-	}
-	
-	public Address withLatitude(String latitude) {
-		this.latitude = latitude;
-		return this;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public Address withLongitude(String longitude) {
-		this.longitude = longitude;
-		return this;
-	}
-	
-	public Address withGeopoint(String geopoint) {
-		this.geopoint = geopoint;
-		return this;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public Address withPostalCode(String postalCode) {
-		this.postalCode = postalCode;
-		return this;
-	}
+    public Map<String, String> getAddressFields() {
+        return addressFields;
+    }
 
-	public Address withTown(String town) {
-		this.town = town;
-		return this;
-	}
-	
-	public Address withSubDistrict(String subDistrict) {
-		this.subDistrict = subDistrict;
-		return this;
-	}
-	
-	public Address withCountyDistrict(String countyDistrict) {
-		this.countyDistrict = countyDistrict;
-		return this;
-	}
-	
-	public Address withCityVillage(String cityVillage) {
-		this.cityVillage = cityVillage;
-		return this;
-	}
-	
-	public Address withStateProvince(String stateProvince) {
-		this.stateProvince = stateProvince;
-		return this;
-	}
+    public String getAddressField(String addressField) {
+        return addressFields.get(addressField);
+    }
 
-	public Address withCountry(String country) {
-		this.country = country;
-		return this;
-	}
-	
+    /**
+     * Returns field matching the regex. Note that incase of multiple fields matching criteria
+     * function would return first match. The must be well formed to find out a single value
+     *
+     * @param regex
+     * @return
+     */
+    public String getAddressFieldMatchingRegex(String regex) {
+        for (Entry<String, String> a : addressFields.entrySet()) {
+            if (a.getKey().matches(regex)) {
+                return a.getValue();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * WARNING: Overrides all existing fields
+     *
+     * @param addressFields
+     * @return
+     */
+    public void setAddressFields(Map<String, String> addressFields) {
+        this.addressFields = addressFields;
+    }
+
+    public void addAddressField(String field, String value) {
+        if (addressFields == null) {
+            addressFields = new HashMap<String, String>();
+        }
+        addressFields.put(field, value);
+    }
+
+    public void removeAddressField(String field) {
+        addressFields.remove(field);
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getGeopoint() {
+        return geopoint;
+    }
+
+    public void setGeopoint(String geopoint) {
+        this.geopoint = geopoint;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getSubTown() {
+        return subTown;
+    }
+
+    public void setSubTown(String subTown) {
+        this.subTown = subTown;
+    }
+
+    public String getTown() {
+        return town;
+    }
+
+    public void setTown(String town) {
+        this.town = town;
+    }
+
+    public String getSubDistrict() {
+        return subDistrict;
+    }
+
+    public void setSubDistrict(String subDistrict) {
+        this.subDistrict = subDistrict;
+    }
+
+    public String getCountyDistrict() {
+        return countyDistrict;
+    }
+
+    public void setCountyDistrict(String countyDistrict) {
+        this.countyDistrict = countyDistrict;
+    }
+
+    public String getCityVillage() {
+        return cityVillage;
+    }
+
+    public void setCityVillage(String cityVillage) {
+        this.cityVillage = cityVillage;
+    }
+
+    public String getStateProvince() {
+        return stateProvince;
+    }
+
+    public void setStateProvince(String stateProvince) {
+        this.stateProvince = stateProvince;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+
+    /**
+     * True if endDate is null or endDate is in future
+     *
+     * @return
+     */
+    public boolean isActive() {
+        return endDate == null || endDate.after(new Date());
+    }
+
+    /**
+     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     *
+     * @return
+     */
+    private long durationInMillis() {
+        if (startDate == null) {
+            return -1;
+        }
+        if (endDate == null) {
+            return new Date().getTime() - startDate.getTime();
+        }
+
+        return endDate.getTime() - startDate.getTime();
+    }
+
+    /**
+     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     *
+     * @return
+     */
+    public int durationInDays() {
+        return (int) (durationInMillis() == -1 ? durationInMillis() : (durationInMillis() / (1000 * 60 * 60 * 24)));
+    }
+
+    /**
+     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     *
+     * @return
+     */
+    public int durationInWeeks() {
+        return durationInDays() == -1 ? durationInDays() : (durationInDays() / 7);
+    }
+
+    /**
+     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     *
+     * @return
+     */
+    public int durationInMonths() {
+        return durationInDays() == -1 ? durationInDays() : ((int) (durationInDays() / 30));
+    }
+
+    /**
+     * If startDate is not specified returns -1. If endDate is not specified duration is from startDate to current date
+     *
+     * @return
+     */
+    public int durationInYears() {
+        return durationInDays() == -1 ? durationInDays() : (durationInDays() / 365);
+    }
+
+    /**
+     * The type address represents
+     *
+     * @param addressType
+     * @return
+     */
+    public Address withAddressType(String addressType) {
+        this.addressType = addressType;
+        return this;
+    }
+
+    /**
+     * The date when address was started or owned
+     *
+     * @param endDate
+     * @return
+     */
+    public Address withStartDate(Date startDate) {
+        this.startDate = startDate;
+        return this;
+    }
+
+    /**
+     * The date when address was outdated or abandoned
+     *
+     * @param endDate
+     * @return
+     */
+    public Address withEndDate(Date endDate) {
+        this.endDate = endDate;
+        return this;
+    }
+
+    /**
+     * WARNING: Overrides all existing fields
+     *
+     * @param addressFields
+     * @return
+     */
+    public Address withAddressFields(Map<String, String> addressFields) {
+        this.addressFields = addressFields;
+        return this;
+    }
+
+    public Address withAddressField(String field, String value) {
+        if (addressFields == null) {
+            addressFields = new HashMap<String, String>();
+        }
+        addressFields.put(field, value);
+        return this;
+    }
+
+    public Address withLatitude(String latitude) {
+        this.latitude = latitude;
+        return this;
+    }
+
+    public Address withLongitude(String longitude) {
+        this.longitude = longitude;
+        return this;
+    }
+
+    public Address withGeopoint(String geopoint) {
+        this.geopoint = geopoint;
+        return this;
+    }
+
+    public Address withPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+        return this;
+    }
+
+    public Address withTown(String town) {
+        this.town = town;
+        return this;
+    }
+
+    public Address withSubDistrict(String subDistrict) {
+        this.subDistrict = subDistrict;
+        return this;
+    }
+
+    public Address withCountyDistrict(String countyDistrict) {
+        this.countyDistrict = countyDistrict;
+        return this;
+    }
+
+    public Address withCityVillage(String cityVillage) {
+        this.cityVillage = cityVillage;
+        return this;
+    }
+
+    public Address withStateProvince(String stateProvince) {
+        this.stateProvince = stateProvince;
+        return this;
+    }
+
+    public Address withCountry(String country) {
+        this.country = country;
+        return this;
+    }
+
 }

@@ -8,232 +8,234 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Event extends BaseDataObject{
-	private String eventId;
-	
-	private String baseEntityId;
-	
-	private String locationId;
-	
-	private DateTime eventDate;
-	
-	private String eventType;
-	
-	private String formSubmissionId;
-	
-	private String providerId;
-	
-	private List<Obs> obs;
-	
-	private String entityType;
-	
-	private Map<String, String> details;
-	
-	private long version;
-	
-	public Event() {
-		this.version = System.currentTimeMillis();
-	}
+public class Event extends BaseDataObject {
+    private String eventId;
 
-	public Event(String baseEntityId, String eventId, String eventType, DateTime eventDate, String entityType, 
-			String providerId, String locationId, String formSubmissionId) {
-		this.baseEntityId = baseEntityId;
-		this.eventId = eventId;
-		this.eventType = eventType;
-		this.eventDate = eventDate;
-		this.entityType = entityType;
-		this.providerId = providerId;
-		this.locationId = locationId;
-		this.formSubmissionId = formSubmissionId;
-		this.version = System.currentTimeMillis();
-	}
-	
-	public List<Obs> getObs() {
-		if(obs == null){
-			obs = new ArrayList<>();
-		}
-		return obs;
-	}
+    private String baseEntityId;
 
-	/**
-	 * WARNING: Overrides all existing obs
-	 * @param obs
-	 * @return
-	 */
-	public void setObs(List<Obs> obs) {
-		this.obs = obs;
-	}
-	
-	public void addObs(Obs observation) {
-		if(obs == null){
-			obs = new ArrayList<Obs>();
-		}
-		
-		obs.add(observation);
-	}
-	
-	public String getBaseEntityId() {
-		return baseEntityId;
-	}
-	
-	public void setBaseEntityId(String baseEntityId) {
-		this.baseEntityId = baseEntityId;
-	}
+    private String locationId;
 
-	public String getLocationId() {
-		return locationId;
-	}
+    private DateTime eventDate;
 
-	public void setLocationId(String locationId) {
-		this.locationId = locationId;
-	}
+    private String eventType;
 
-	public DateTime getEventDate() {
-		return eventDate;
-	}
+    private String formSubmissionId;
 
-	public void setEventDate(DateTime eventDate) {
-		this.eventDate = eventDate;
-	}
+    private String providerId;
 
-	public String getEventType() {
-		return eventType;
-	}
+    private List<Obs> obs;
 
-	public void setEventType(String eventType) {
-		this.eventType = eventType;
-	}
+    private String entityType;
 
-	public String getFormSubmissionId() {
-		return formSubmissionId;
-	}
+    private Map<String, String> details;
 
-	public void setFormSubmissionId(String formSubmissionId) {
-		this.formSubmissionId = formSubmissionId;
-	}
+    private long version;
 
-	public String getProviderId() {
-		return providerId;
-	}
+    public Event() {
+        this.version = System.currentTimeMillis();
+    }
 
-	public void setProviderId(String providerId) {
-		this.providerId = providerId;
-	}
+    public Event(String baseEntityId, String eventId, String eventType, DateTime eventDate, String entityType,
+                 String providerId, String locationId, String formSubmissionId) {
+        this.baseEntityId = baseEntityId;
+        this.eventId = eventId;
+        this.eventType = eventType;
+        this.eventDate = eventDate;
+        this.entityType = entityType;
+        this.providerId = providerId;
+        this.locationId = locationId;
+        this.formSubmissionId = formSubmissionId;
+        this.version = System.currentTimeMillis();
+    }
 
-	public String getEventId() {
-		return eventId;
-	}
+    public List<Obs> getObs() {
+        if (obs == null) {
+            obs = new ArrayList<>();
+        }
+        return obs;
+    }
 
-	public void setEventId(String eventId) {
-		this.eventId = eventId;
-	}
+    /**
+     * WARNING: Overrides all existing obs
+     *
+     * @param obs
+     * @return
+     */
+    public void setObs(List<Obs> obs) {
+        this.obs = obs;
+    }
 
-	public String getEntityType() {
-		return entityType;
-	}
+    public void addObs(Obs observation) {
+        if (obs == null) {
+            obs = new ArrayList<Obs>();
+        }
 
-	public void setEntityType(String entityType) {
-		this.entityType = entityType;
-	}
+        obs.add(observation);
+    }
 
-	public Map<String, String> getDetails() {
-		return details;
-	}
+    public String getBaseEntityId() {
+        return baseEntityId;
+    }
 
-	public void setDetails(Map<String, String> details) {
-		this.details = details;
-	}
-	
-	public void addDetails(String key, String val) {
-		if(details == null){
-			details = new HashMap<String, String>();
-		}
-		details.put(key, val);
-	}
+    public void setBaseEntityId(String baseEntityId) {
+        this.baseEntityId = baseEntityId;
+    }
 
-	public long getVersion() {
-		return version;
-	}
+    public String getLocationId() {
+        return locationId;
+    }
 
-	public void setVersion(long version) {
-		this.version = version;
-	}
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
+    }
 
-	public Obs findObs(String parentId, boolean nonEmpty, String... fieldIds){
-		Obs res = null;
-		for (String f : fieldIds){
-			for(Obs o : getObs()){
-				// if parent is specified and not matches leave and move forward
-				if(StringUtils.isNotBlank(parentId) && !o.getParentCode().equalsIgnoreCase(parentId)){
-					continue;
-				}
+    public DateTime getEventDate() {
+        return eventDate;
+    }
 
-				if(o.getFieldCode().equalsIgnoreCase(f) || o.getFormSubmissionField().equalsIgnoreCase(f)){
-					// obs is found and first  one.. should throw exception if multiple obs found with same names/ids
-					if(nonEmpty && o.getValues().isEmpty()){
-						continue;
-					}
-					if(res == null){
-						res = o;
-					}
-					else throw new RuntimeException("Multiple obs found with name or ids specified ");
-				}
-			}
-		}
-		return res;
-	}
+    public void setEventDate(DateTime eventDate) {
+        this.eventDate = eventDate;
+    }
 
-	public Event withBaseEntityId(String baseEntityId) {
-		this.baseEntityId = baseEntityId;
-		return this;
-	}
+    public String getEventType() {
+        return eventType;
+    }
 
-	public Event withLocationId(String locationId) {
-		this.locationId = locationId;
-		return this;
-	}
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
 
-	public Event withEventDate(DateTime eventDate) {
-		this.eventDate = eventDate;
-		return this;
-	}
+    public String getFormSubmissionId() {
+        return formSubmissionId;
+    }
 
-	public Event withEventType(String eventType) {
-		this.eventType = eventType;
-		return this;
-	}
+    public void setFormSubmissionId(String formSubmissionId) {
+        this.formSubmissionId = formSubmissionId;
+    }
 
-	public Event withFormSubmissionId(String formSubmissionId) {
-		this.formSubmissionId = formSubmissionId;
-		return this;
-	}
+    public String getProviderId() {
+        return providerId;
+    }
 
-	public Event withProviderId(String providerId) {
-		this.providerId = providerId;
-		return this;
-	}
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
+    }
 
-	public Event withEntityType(String entityType) {
-		this.entityType = entityType;
-		return this;
-	}
-	
-	/**
-	 * WARNING: Overrides all existing obs
-	 * @param obs
-	 * @return
-	 */
-	public Event withObs(List<Obs> obs) {
-		this.obs = obs;
-		return this;
-	}
-	
-	public Event withObs(Obs observation) {
-		if(obs == null){
-			obs = new ArrayList<Obs>();
-		}
-		obs.add(observation);
-		return this;
-	}
-	
+    public String getEventId() {
+        return eventId;
+    }
+
+    public void setEventId(String eventId) {
+        this.eventId = eventId;
+    }
+
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(String entityType) {
+        this.entityType = entityType;
+    }
+
+    public Map<String, String> getDetails() {
+        return details;
+    }
+
+    public void setDetails(Map<String, String> details) {
+        this.details = details;
+    }
+
+    public void addDetails(String key, String val) {
+        if (details == null) {
+            details = new HashMap<String, String>();
+        }
+        details.put(key, val);
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
+
+    public Obs findObs(String parentId, boolean nonEmpty, String... fieldIds) {
+        Obs res = null;
+        for (String f : fieldIds) {
+            for (Obs o : getObs()) {
+                // if parent is specified and not matches leave and move forward
+                if (StringUtils.isNotBlank(parentId) && !o.getParentCode().equalsIgnoreCase(parentId)) {
+                    continue;
+                }
+
+                if (o.getFieldCode().equalsIgnoreCase(f) || o.getFormSubmissionField().equalsIgnoreCase(f)) {
+                    // obs is found and first  one.. should throw exception if multiple obs found with same names/ids
+                    if (nonEmpty && o.getValues().isEmpty()) {
+                        continue;
+                    }
+                    if (res == null) {
+                        res = o;
+                    } else
+                        throw new RuntimeException("Multiple obs found with name or ids specified ");
+                }
+            }
+        }
+        return res;
+    }
+
+    public Event withBaseEntityId(String baseEntityId) {
+        this.baseEntityId = baseEntityId;
+        return this;
+    }
+
+    public Event withLocationId(String locationId) {
+        this.locationId = locationId;
+        return this;
+    }
+
+    public Event withEventDate(DateTime eventDate) {
+        this.eventDate = eventDate;
+        return this;
+    }
+
+    public Event withEventType(String eventType) {
+        this.eventType = eventType;
+        return this;
+    }
+
+    public Event withFormSubmissionId(String formSubmissionId) {
+        this.formSubmissionId = formSubmissionId;
+        return this;
+    }
+
+    public Event withProviderId(String providerId) {
+        this.providerId = providerId;
+        return this;
+    }
+
+    public Event withEntityType(String entityType) {
+        this.entityType = entityType;
+        return this;
+    }
+
+    /**
+     * WARNING: Overrides all existing obs
+     *
+     * @param obs
+     * @return
+     */
+    public Event withObs(List<Obs> obs) {
+        this.obs = obs;
+        return this;
+    }
+
+    public Event withObs(Obs observation) {
+        if (obs == null) {
+            obs = new ArrayList<Obs>();
+        }
+        obs.add(observation);
+        return this;
+    }
+
 }

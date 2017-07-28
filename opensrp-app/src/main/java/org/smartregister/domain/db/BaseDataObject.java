@@ -4,141 +4,141 @@ import org.joda.time.DateTime;
 
 public abstract class BaseDataObject {
 
-	
-	private String creator;
-	
-	private DateTime dateCreated;
-	
-	private String editor;
-	
-	private DateTime dateEdited;
-	
-	private Boolean voided;
-	
-	private DateTime dateVoided;
-	
-	private String voider;
-	
-	private String voidReason;
+    private String creator;
 
-	private long serverVersion;
+    private DateTime dateCreated;
 
-	public BaseDataObject() {}
-	
-	public String getCreator() {
-		return creator;
-	}
+    private String editor;
 
-	public void setCreator(String creator) {
-		this.creator = creator;
-	}
+    private DateTime dateEdited;
 
-	public DateTime getDateCreated() {
-		return dateCreated;
-	}
+    private Boolean voided;
 
-	public void setDateCreated(DateTime dateCreated) {
-		this.dateCreated = dateCreated;
-	}
+    private DateTime dateVoided;
 
-	public String getEditor() {
-		return editor;
-	}
+    private String voider;
 
-	public void setEditor(String editor) {
-		this.editor = editor;
-	}
+    private String voidReason;
 
-	public DateTime getDateEdited() {
-		return dateEdited;
-	}
+    private long serverVersion;
 
-	public void setDateEdited(DateTime dateEdited) {
-		this.dateEdited = dateEdited;
-	}
+    public BaseDataObject() {
+    }
 
-	public Boolean getVoided() {
-		return voided;
-	}
+    public String getCreator() {
+        return creator;
+    }
 
-	public void setVoided(Boolean voided) {
-		this.voided = voided;
-	}
+    public void setCreator(String creator) {
+        this.creator = creator;
+    }
 
-	public DateTime getDateVoided() {
-		return dateVoided;
-	}
+    public DateTime getDateCreated() {
+        return dateCreated;
+    }
 
-	public void setDateVoided(DateTime dateVoided) {
-		this.dateVoided = dateVoided;
-	}
+    public void setDateCreated(DateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 
-	public String getVoider() {
-		return voider;
-	}
+    public String getEditor() {
+        return editor;
+    }
 
-	public void setVoider(String voider) {
-		this.voider = voider;
-	}
+    public void setEditor(String editor) {
+        this.editor = editor;
+    }
 
-	public String getVoidReason() {
-		return voidReason;
-	}
+    public DateTime getDateEdited() {
+        return dateEdited;
+    }
 
-	public void setVoidReason(String voidReason) {
-		this.voidReason = voidReason;
-	}
+    public void setDateEdited(DateTime dateEdited) {
+        this.dateEdited = dateEdited;
+    }
 
-	public long getServerVersion() {
-		return serverVersion;
-	}
+    public Boolean getVoided() {
+        return voided;
+    }
 
-	public void setServerVersion(long serverVersion) {
-		this.serverVersion = serverVersion;
-	}
+    public void setVoided(Boolean voided) {
+        this.voided = voided;
+    }
 
-	public BaseDataObject withCreator(String creator) {
-		this.creator = creator;
-		return this;
-	}
+    public DateTime getDateVoided() {
+        return dateVoided;
+    }
 
-	public BaseDataObject withDateCreated(DateTime dateCreated) {
-		this.dateCreated = dateCreated;
-		return this;
-	}
+    public void setDateVoided(DateTime dateVoided) {
+        this.dateVoided = dateVoided;
+    }
 
-	public BaseDataObject withEditor(String editor) {
-		this.editor = editor;
-		return this;
-	}
+    public String getVoider() {
+        return voider;
+    }
 
-	public BaseDataObject withDateEdited(DateTime dateEdited) {
-		this.dateEdited = dateEdited;
-		return this;
-	}
+    public void setVoider(String voider) {
+        this.voider = voider;
+    }
 
-	public BaseDataObject withVoided(Boolean voided) {
-		this.voided = voided;
-		return this;
-	}
+    public String getVoidReason() {
+        return voidReason;
+    }
 
-	public BaseDataObject withDateVoided(DateTime dateVoided) {
-		this.dateVoided = dateVoided;
-		return this;
-	}
+    public void setVoidReason(String voidReason) {
+        this.voidReason = voidReason;
+    }
 
-	public BaseDataObject withVoider(String voider) {
-		this.voider = voider;
-		return this;
-	}
+    public long getServerVersion() {
+        return serverVersion;
+    }
 
-	public BaseDataObject withVoidReason(String voidReason) {
-		this.voidReason = voidReason;
-		return this;
-	}
+    public void setServerVersion(long serverVersion) {
+        this.serverVersion = serverVersion;
+    }
 
-	public BaseDataObject withServerVersion(long serverVersion) {
-		this.serverVersion = serverVersion;
-		return this;
-	}
+    public BaseDataObject withCreator(String creator) {
+        this.creator = creator;
+        return this;
+    }
+
+    public BaseDataObject withDateCreated(DateTime dateCreated) {
+        this.dateCreated = dateCreated;
+        return this;
+    }
+
+    public BaseDataObject withEditor(String editor) {
+        this.editor = editor;
+        return this;
+    }
+
+    public BaseDataObject withDateEdited(DateTime dateEdited) {
+        this.dateEdited = dateEdited;
+        return this;
+    }
+
+    public BaseDataObject withVoided(Boolean voided) {
+        this.voided = voided;
+        return this;
+    }
+
+    public BaseDataObject withDateVoided(DateTime dateVoided) {
+        this.dateVoided = dateVoided;
+        return this;
+    }
+
+    public BaseDataObject withVoider(String voider) {
+        this.voider = voider;
+        return this;
+    }
+
+    public BaseDataObject withVoidReason(String voidReason) {
+        this.voidReason = voidReason;
+        return this;
+    }
+
+    public BaseDataObject withServerVersion(long serverVersion) {
+        this.serverVersion = serverVersion;
+        return this;
+    }
 }

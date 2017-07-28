@@ -5,8 +5,8 @@ package org.smartregister.domain;
  */
 public class Photo {
 
-    String filePath;
-    int resourceId;
+    private String filePath;
+    private int resourceId;
 
     public String getFilePath() {
         return filePath;
