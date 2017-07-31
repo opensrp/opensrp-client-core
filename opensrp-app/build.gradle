@@ -211,17 +211,12 @@ gradle.projectsEvaluated {
 
 }
 
-
-
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebug']) {
 
     reports {
         xml.enabled = true
         html.enabled = true
     }
-
-    getReports().getXml().setDestination(file("$buildDir/../reports/jacoco/merged.xml"))
-    getReports().getHtml().setDestination(file("$buildDir/../reports/jacoco/html"))
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
