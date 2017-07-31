@@ -8,16 +8,29 @@ buildscript {
     }
 }
 
+repositories {
+    jcenter()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    mavenLocal()
+}
+
 apply plugin: 'com.android.application'
 
 dependencies {
-    compile fileTree(dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:22.2.1'
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile project(':opensrp-app')
 
-    testCompile ('org.robolectric:robolectric:3.4-rc3') {
+    compile('org.smartregister:opensrp-client-core:1.0.0-SNAPSHOT@aar') {
+        transitive = true
+
+        exclude group: 'com.github.bmelnychuk', module: 'atv'
+    }
+    compile ('com.android.support:design:22.2.1'){
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+
+    }
+
+    testCompile 'junit:junit:4.12'
+    testCompile ('org.robolectric:robolectric:3.4') {
 
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
@@ -25,11 +38,9 @@ dependencies {
         exclude group: 'com.android.support'
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
-
     testCompile ("org.robolectric:shadows-multidex:3.4-rc2") {
         exclude group: 'com.google.guava', module: 'guava'
     }
-
     testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
 }
 
@@ -82,4 +93,3 @@ android {
         abortOnError false
     }
 }
-

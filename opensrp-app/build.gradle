@@ -9,11 +9,23 @@ buildscript {
         classpath "com.android.tools.build:gradle:1.2.3"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
         classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+    }
+}
+
+
+
+allprojects {
+    repositories {
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        mavenLocal()
     }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'org.robolectric'
+apply plugin: 'jacoco'
+apply plugin: 'com.github.kt3k.coveralls'
 
 android {
     compileSdkVersion androidCompileSdkVersion
@@ -53,8 +65,8 @@ android {
         //applicationId "org.smartregister"
         minSdkVersion 16
         targetSdkVersion 21
-        versionCode 1
-        versionName "3.0.1"
+        versionCode Integer.parseInt(project.VERSION_CODE)
+        versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
     }
 
@@ -196,5 +208,31 @@ gradle.projectsEvaluated {
             }
         } catch (Exception e) {} // Just drop the exception
     }
-
 }
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebug']) {
+
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+
+    getReports().getXml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"))
+    getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
+
+    def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories = files([mainSrc])
+    classDirectories = files([debugTree])
+    executionData = fileTree(dir: project.buildDir, includes: [
+            'jacoco/testDebug.exec', 'outputs/code-coverage/connected/*coverage.ec'
+    ])
+}
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
+}
+
+apply from: '../maven.gradle'

@@ -1,4 +1,8 @@
 configure(allprojects) { project ->
+
+    version = VERSION_NAME
+    group = GROUP
+    
     buildscript {
         repositories {
             jcenter()
@@ -63,3 +67,8 @@ buildDashboard {
 
 test.reports.html.enabled = false
 test.reports.junitXml.enabled = false
+
+
+def isReleaseBuild() {
+    return version.contains("SNAPSHOT") == false
+}
