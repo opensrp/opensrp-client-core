@@ -54,13 +54,13 @@ public class DisplayUtils {
     public static double getScreenSize(Activity activity) {
         DisplayMetrics dm = new DisplayMetrics();
         activity.getWindowManager().getDefaultDisplay().getMetrics(dm);
-        int width=dm.widthPixels;
-        int height=dm.heightPixels;
-        double wi=(double)width/(double)dm.xdpi;
-        double hi=(double)height/(double)dm.ydpi;
-        double x = Math.pow(wi,2);
-        double y = Math.pow(hi,2);
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        double wi = (double) width / (double) dm.xdpi;
+        double hi = (double) height / (double) dm.ydpi;
+        double x = Math.pow(wi, 2);
+        double y = Math.pow(hi, 2);
 
-        return Math.sqrt(x+y);
+        return Math.sqrt(x + y);
     }
 }
