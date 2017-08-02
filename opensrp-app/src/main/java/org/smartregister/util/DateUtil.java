@@ -204,6 +204,14 @@ public class DateUtil {
 
     }
 
+    public static boolean checkIfDateThreeMonthsOlder(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(cal.getTime());
+        cal.add(Calendar.DATE, -90);
+        Date dateBefore90Days = cal.getTime();
+        return date.before(dateBefore90Days);
+    }
+
 }
 
 class RealDate implements DateUtility {

@@ -258,4 +258,47 @@
     <style name="CustomFontTextViewStyle.ListView.Small.Bold" parent="CustomFontTextViewStyle">
         <item name="fontVariant">bold</item>
     </style>
+
+    <!-- Client List fonts -->
+    <style name="CustomFontTextViewStyle.ClientList" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">regular</item>
+        <item name="android:textColor">#737373</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.Black" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">black</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.Bold" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">bold</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.NoPadding" parent="CustomFontTextViewStyle">
+        <item name="android:paddingLeft">0dp</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.Medium" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">medium</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.Light" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">light</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.Light.twoline" parent="CustomFontTextViewStyle.ClientList.Light">
+        <item name="android:singleLine">false</item>
+        <item name="android:maxLines">2</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.ClientList.Thin" parent="CustomFontTextViewStyle">
+        <item name="fontVariant">thin</item>
+    </style>
+
+
+    <style name="CustomFontTextViewStyle.tabIndicator" parent="CustomFontTextViewStyle.ClientList.Bold">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
 </resources>
