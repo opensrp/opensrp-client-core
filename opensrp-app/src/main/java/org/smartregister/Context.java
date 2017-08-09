@@ -6,6 +6,8 @@ import android.graphics.drawable.Drawable;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonPersonObjectClients;
@@ -90,8 +92,6 @@ import org.smartregister.view.contract.Villages;
 import org.smartregister.view.contract.pnc.PNCClients;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

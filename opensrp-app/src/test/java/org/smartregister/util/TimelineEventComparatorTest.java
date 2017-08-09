@@ -1,8 +1,8 @@
 package org.smartregister.util;
 
-import org.smartregister.domain.TimelineEvent;
 import org.joda.time.LocalDate;
 import org.junit.Test;
+import org.smartregister.domain.TimelineEvent;
 
 import static junit.framework.Assert.assertEquals;
 

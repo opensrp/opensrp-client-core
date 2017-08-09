@@ -1,8 +1,5 @@
 package org.smartregister.sync;
 
-import android.util.Log;
-import android.widget.Toast;
-
 /**
  * Created by keyman on 21/07/16.
  */

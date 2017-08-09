@@ -1,10 +1,10 @@
 package org.smartregister.clientandeventmodel;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Obs {
 

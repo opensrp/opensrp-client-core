@@ -1,9 +1,10 @@
 package org.smartregister.view.contract;
 
 import junit.framework.Assert;
+
+import org.junit.Test;
 import org.smartregister.util.EasyMap;
 import org.smartregister.view.contract.pnc.PNCClient;
-import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;

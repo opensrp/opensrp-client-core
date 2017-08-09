@@ -4,9 +4,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
 import org.smartregister.view.dialog.FilterClause;
-import org.smartregister.view.dialog.FilterOption;
-import org.smartregister.view.dialog.ServiceModeOption;
-import org.smartregister.view.dialog.SortOption;
 
 import java.util.ArrayList;
 import java.util.List;

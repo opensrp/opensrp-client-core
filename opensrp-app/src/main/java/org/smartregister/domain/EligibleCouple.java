@@ -11,7 +11,9 @@ import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.smartregister.AllConstants.BOOLEAN_TRUE;
-import static org.smartregister.AllConstants.ECRegistrationFields.*;
+import static org.smartregister.AllConstants.ECRegistrationFields.CURRENT_FP_METHOD;
+import static org.smartregister.AllConstants.ECRegistrationFields.HIGH_PRIORITY_REASON;
+import static org.smartregister.AllConstants.ECRegistrationFields.IS_HIGH_PRIORITY;
 import static org.smartregister.AllConstants.SPACE;
 
 public class EligibleCouple {

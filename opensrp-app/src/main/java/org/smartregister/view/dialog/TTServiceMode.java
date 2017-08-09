@@ -6,16 +6,26 @@ import android.widget.TextView;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-import org.smartregister.view.contract.*;
+import org.smartregister.view.contract.ANCSmartRegisterClient;
+import org.smartregister.view.contract.AlertDTO;
+import org.smartregister.view.contract.AlertStatus;
+import org.smartregister.view.contract.ChildSmartRegisterClient;
+import org.smartregister.view.contract.FPSmartRegisterClient;
+import org.smartregister.view.contract.ServiceProvidedDTO;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewholder.*;
+import org.smartregister.view.viewholder.NativeANCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.TT;
 import static org.smartregister.Context.getInstance;
-import static org.smartregister.domain.ANCServiceType.*;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
-        .ClientsHeaderProvider;
+import static org.smartregister.domain.ANCServiceType.TT_1;
+import static org.smartregister.domain.ANCServiceType.TT_2;
+import static org.smartregister.domain.ANCServiceType.TT_BOOSTER;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 import static org.smartregister.view.contract.AlertDTO.emptyAlert;
 
 public class TTServiceMode extends ServiceModeOption {

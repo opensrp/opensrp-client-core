@@ -1,14 +1,14 @@
 package org.smartregister.service;
 
-import org.robolectric.RobolectricTestRunner;
 import org.apache.commons.io.IOUtils;
-import org.smartregister.domain.Response;
-import org.smartregister.domain.ResponseStatus;
 import org.ei.drishti.dto.Action;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.ResponseStatus;
 
 import java.util.List;
 
@@ -17,11 +17,11 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.ei.drishti.dto.AlertStatus.normal;
 import static org.ei.drishti.dto.BeneficiaryType.mother;
-import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
-import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
+import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
 
 @RunWith(RobolectricTestRunner.class)
 public class DrishtiServiceTest {

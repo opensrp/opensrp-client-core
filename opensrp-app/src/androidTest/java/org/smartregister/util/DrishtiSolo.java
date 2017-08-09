@@ -2,7 +2,9 @@ package org.smartregister.util;
 
 import android.app.Activity;
 import android.app.Instrumentation;
+
 import com.jayway.android.robotium.solo.Solo;
+
 import org.smartregister.view.activity.HomeActivity;
 import org.smartregister.view.activity.LoginActivity;
 

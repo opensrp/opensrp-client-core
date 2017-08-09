@@ -8,11 +8,16 @@ import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.util.IntegerUtil;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.replace;
 import static org.smartregister.AllConstants.COMMA_WITH_SPACE;
-import static org.smartregister.AllConstants.ECRegistrationFields.*;
+import static org.smartregister.AllConstants.ECRegistrationFields.BPL_VALUE;
+import static org.smartregister.AllConstants.ECRegistrationFields.SC_VALUE;
+import static org.smartregister.AllConstants.ECRegistrationFields.ST_VALUE;
 import static org.smartregister.AllConstants.SPACE;
 import static org.smartregister.Context.getInstance;
 import static org.smartregister.util.DateUtil.formatDate;

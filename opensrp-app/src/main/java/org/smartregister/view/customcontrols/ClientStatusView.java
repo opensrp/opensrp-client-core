@@ -17,7 +17,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.smartregister.util.DateUtil.formatDate;
-import static org.smartregister.view.controller.ECSmartRegisterController.*;
+import static org.smartregister.view.controller.ECSmartRegisterController.ANC_STATUS;
+import static org.smartregister.view.controller.ECSmartRegisterController.EC_STATUS;
+import static org.smartregister.view.controller.ECSmartRegisterController.FP_METHOD_DATE_FIELD;
+import static org.smartregister.view.controller.ECSmartRegisterController.FP_STATUS;
+import static org.smartregister.view.controller.ECSmartRegisterController.PNC_FP_STATUS;
+import static org.smartregister.view.controller.ECSmartRegisterController.PNC_STATUS;
+import static org.smartregister.view.controller.ECSmartRegisterController.STATUS_DATE_FIELD;
+import static org.smartregister.view.controller.ECSmartRegisterController.STATUS_EDD_FIELD;
+import static org.smartregister.view.controller.ECSmartRegisterController.STATUS_TYPE_FIELD;
 
 public class ClientStatusView extends FrameLayout {
 

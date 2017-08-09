@@ -1,22 +1,24 @@
 package org.smartregister.service;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.Alert;
 import org.ei.drishti.dto.Action;
 import org.ei.drishti.dto.BeneficiaryType;
-import org.smartregister.repository.AlertRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.Alert;
+import org.smartregister.repository.AlertRepository;
 
 import java.util.HashMap;
 
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.domain.AlertStatus.urgent;
-import static org.smartregister.util.ActionBuilder.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.domain.AlertStatus.urgent;
+import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
+import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
+import static org.smartregister.util.ActionBuilder.actionForDeleteAllAlert;
 
 @RunWith(RobolectricTestRunner.class)
 public class AlertServiceTest {

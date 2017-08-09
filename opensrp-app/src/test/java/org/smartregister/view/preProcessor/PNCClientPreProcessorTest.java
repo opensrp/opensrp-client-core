@@ -1,15 +1,23 @@
 package org.smartregister.view.preProcessor;
 
-import org.smartregister.Context;
-import org.smartregister.R;
-import org.smartregister.util.DateUtil;
-import org.smartregister.view.contract.*;
-import org.smartregister.view.contract.pnc.*;
 import org.joda.time.LocalDate;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.smartregister.Context;
+import org.smartregister.R;
+import org.smartregister.util.DateUtil;
+import org.smartregister.view.contract.ServiceProvidedDTO;
+import org.smartregister.view.contract.pnc.PNCCircleDatum;
+import org.smartregister.view.contract.pnc.PNCClient;
+import org.smartregister.view.contract.pnc.PNCLineDatum;
+import org.smartregister.view.contract.pnc.PNCStatusColor;
+import org.smartregister.view.contract.pnc.PNCStatusDatum;
+import org.smartregister.view.contract.pnc.PNCTickDatum;
+import org.smartregister.view.contract.pnc.PNCVisitDaysDatum;
+import org.smartregister.view.contract.pnc.PNCVisitStatus;
+import org.smartregister.view.contract.pnc.PNCVisitType;
 
 import java.util.Arrays;
 import java.util.List;

@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+
 import org.smartregister.domain.TimelineEvent;
 import org.smartregister.util.Session;
 

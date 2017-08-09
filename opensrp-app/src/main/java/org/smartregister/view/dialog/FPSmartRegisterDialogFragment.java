@@ -1,12 +1,15 @@
 package org.smartregister.view.dialog;
 
 import android.app.DialogFragment;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;

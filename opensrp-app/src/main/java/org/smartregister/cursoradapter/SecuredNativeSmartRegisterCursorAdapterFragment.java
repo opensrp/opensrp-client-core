@@ -23,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.LocalDate;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.ReportMonth;
@@ -40,7 +41,6 @@ import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
-import org.joda.time.LocalDate;
 
 import java.util.List;
 

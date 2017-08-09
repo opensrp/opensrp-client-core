@@ -1,17 +1,17 @@
 package org.smartregister.util;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.event.Event;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.event.Event;
 
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.fetchedFailed;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.fetchedFailed;
 
 @RunWith(RobolectricTestRunner.class)
 public class CacheTest {

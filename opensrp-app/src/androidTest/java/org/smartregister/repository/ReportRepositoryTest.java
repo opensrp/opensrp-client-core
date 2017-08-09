@@ -2,9 +2,11 @@ package org.smartregister.repository;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+
 import com.google.gson.Gson;
-import org.smartregister.domain.Report;
+
 import org.ei.drishti.dto.MonthSummaryDatum;
+import org.smartregister.domain.Report;
 import org.smartregister.util.Session;
 
 import java.util.Date;

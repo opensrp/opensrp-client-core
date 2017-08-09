@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
+
 import org.smartregister.Context;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;

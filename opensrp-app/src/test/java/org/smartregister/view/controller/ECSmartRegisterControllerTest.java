@@ -2,6 +2,11 @@ package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -12,10 +17,6 @@ import org.smartregister.util.Cache;
 import org.smartregister.view.contract.ECChildClient;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import java.util.Collections;
 import java.util.List;
@@ -23,10 +24,10 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.util.EasyMap.create;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.util.EasyMap.create;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class ECSmartRegisterControllerTest {

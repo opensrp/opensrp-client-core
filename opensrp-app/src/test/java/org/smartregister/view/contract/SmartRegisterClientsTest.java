@@ -1,14 +1,26 @@
 package org.smartregister.view.contract;
 
-import org.smartregister.Context;
-import org.smartregister.R;
-import org.smartregister.view.dialog.*;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.Context;
+import org.smartregister.R;
+import org.smartregister.view.dialog.AllClientsFilter;
+import org.smartregister.view.dialog.AllEligibleCoupleServiceMode;
+import org.smartregister.view.dialog.BPLSort;
+import org.smartregister.view.dialog.ECNumberSort;
+import org.smartregister.view.dialog.ECSearchOption;
+import org.smartregister.view.dialog.FPAllMethodsServiceMode;
+import org.smartregister.view.dialog.FPMethodFilter;
+import org.smartregister.view.dialog.HighPrioritySort;
+import org.smartregister.view.dialog.NameSort;
+import org.smartregister.view.dialog.OutOfAreaFilter;
+import org.smartregister.view.dialog.SCSort;
+import org.smartregister.view.dialog.STSort;
+import org.smartregister.view.dialog.VillageFilter;
 
 import static java.util.Arrays.asList;
 import static org.junit.Assert.assertEquals;

@@ -2,9 +2,14 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
+import com.ocpsoft.pretty.time.PrettyTime;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -15,20 +20,16 @@ import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.TimelineEventComparator;
 import org.smartregister.view.activity.CameraLaunchActivity;
-import org.smartregister.view.contract.*;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import com.ocpsoft.pretty.time.PrettyTime;
-
-import android.webkit.JavascriptInterface;
+import org.smartregister.view.contract.BirthDetails;
+import org.smartregister.view.contract.ChildDetail;
+import org.smartregister.view.contract.CoupleDetails;
+import org.smartregister.view.contract.LocationDetails;
+import org.smartregister.view.contract.TimelineEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static java.lang.Math.min;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.smartregister.AllConstants.CHILD_TYPE;
 import static org.smartregister.AllConstants.ENTITY_ID;

@@ -2,7 +2,6 @@ package org.smartregister.service.intentservices;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 /**
  * Created by onamacuser on 18/03/2016.

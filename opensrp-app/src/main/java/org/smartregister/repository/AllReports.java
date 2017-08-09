@@ -1,8 +1,8 @@
 package org.smartregister.repository;
 
+import org.ei.drishti.dto.Action;
 import org.smartregister.domain.Report;
 import org.smartregister.domain.ReportIndicator;
-import org.ei.drishti.dto.Action;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,5 +1,11 @@
 package org.smartregister.view.controller;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.domain.Alert;
@@ -13,24 +19,18 @@ import org.smartregister.view.contract.AlertDTO;
 import org.smartregister.view.contract.FPClient;
 import org.smartregister.view.contract.FPClients;
 import org.smartregister.view.contract.RefillFollowUps;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
 
 import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.domain.AlertStatus.urgent;
-import static org.smartregister.util.EasyMap.create;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.domain.AlertStatus.urgent;
+import static org.smartregister.util.EasyMap.create;
 
 @RunWith(RobolectricTestRunner.class)
 public class FPSmartRegisterControllerTest {

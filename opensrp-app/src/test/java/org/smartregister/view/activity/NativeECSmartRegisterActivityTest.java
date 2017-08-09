@@ -5,9 +5,23 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
+import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.robolectric.Robolectric;
+import org.robolectric.annotation.Config;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
+import org.robolectric.shadows.ShadowActivity;
+import org.robolectric.shadows.ShadowIntent;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.setup.DrishtiTestRunner;
@@ -19,18 +33,9 @@ import org.smartregister.view.contract.Villages;
 import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
 import org.smartregister.view.viewholder.NativeECSmartRegisterViewHolder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.Robolectric;
-import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowIntent;
 
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
 import static org.junit.Assert.*;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
 
 @RunWith(DrishtiTestRunner.class)
 @Config(shadows = {ShadowContext.class})

@@ -18,9 +18,9 @@ import java.util.UUID;
 
 import static android.os.Environment.DIRECTORY_PICTURES;
 import static android.os.Environment.getExternalStoragePublicDirectory;
+import static org.smartregister.AllConstants.CHILD_TYPE;
 import static org.smartregister.AllConstants.ENTITY_ID;
 import static org.smartregister.AllConstants.WOMAN_TYPE;
-import static org.smartregister.AllConstants.CHILD_TYPE;
 import static org.smartregister.event.Event.ON_PHOTO_CAPTURED;
 
 public class CameraLaunchActivity extends SecuredActivity {

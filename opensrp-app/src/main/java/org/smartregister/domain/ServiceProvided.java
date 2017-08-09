@@ -7,8 +7,15 @@ import org.smartregister.domain.mapper.TTMapper;
 
 import java.util.Map;
 
-import static org.smartregister.AllConstants.ANCVisitFields.*;
-import static org.smartregister.AllConstants.DeliveryPlanFields.*;
+import static org.smartregister.AllConstants.ANCVisitFields.BP_DIASTOLIC;
+import static org.smartregister.AllConstants.ANCVisitFields.BP_SYSTOLIC;
+import static org.smartregister.AllConstants.ANCVisitFields.WEIGHT;
+import static org.smartregister.AllConstants.DeliveryPlanFields.ASHA_PHONE_NUMBER;
+import static org.smartregister.AllConstants.DeliveryPlanFields.BIRTH_COMPANION;
+import static org.smartregister.AllConstants.DeliveryPlanFields.DELIVERY_FACILITY_NAME;
+import static org.smartregister.AllConstants.DeliveryPlanFields.PHONE_NUMBER;
+import static org.smartregister.AllConstants.DeliveryPlanFields.REVIEWED_HRP_STATUS;
+import static org.smartregister.AllConstants.DeliveryPlanFields.TRANSPORTATION_PLAN;
 import static org.smartregister.AllConstants.VitaminAFields.VITAMIN_A_DOSE;
 import static org.smartregister.AllConstants.VitaminAFields.VITAMIN_A_PLACE;
 import static org.smartregister.util.EasyMap.create;

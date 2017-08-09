@@ -1,8 +1,9 @@
 package org.smartregister.service;
 
-import org.smartregister.domain.LoginResponse;
-import org.smartregister.repository.*;
-import org.smartregister.sync.SaveUserInfoTask;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.opensrp.api.domain.Location;
 import org.opensrp.api.domain.User;
 import org.opensrp.api.util.EntityUtils;
@@ -10,24 +11,27 @@ import org.opensrp.api.util.LocationTree;
 import org.opensrp.api.util.TreeNode;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.domain.LoginResponse;
+import org.smartregister.repository.AllAlerts;
+import org.smartregister.repository.AllEligibleCouples;
+import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.Repository;
 import org.smartregister.sync.SaveANMLocationTask;
+import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.Session;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Map;
 
-import static org.smartregister.AllConstants.ENGLISH_LOCALE;
-import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.KANNADA_LOCALE;
 
 @RunWith(RobolectricTestRunner.class)
 public class UserServiceTest {

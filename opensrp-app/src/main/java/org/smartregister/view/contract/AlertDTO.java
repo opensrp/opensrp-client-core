@@ -6,7 +6,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.domain.ChildServiceType;
-
 import org.smartregister.util.DateUtil;
 
 public class AlertDTO {

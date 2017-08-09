@@ -1,14 +1,18 @@
 package org.smartregister.util;
 
-import org.smartregister.domain.Response;
-import org.smartregister.domain.ResponseStatus;
 import org.ei.drishti.dto.Action;
 import org.ei.drishti.dto.AlertStatus;
 import org.ei.drishti.dto.BeneficiaryType;
-import org.smartregister.service.DrishtiService;
 import org.joda.time.DateTime;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.ResponseStatus;
+import org.smartregister.service.DrishtiService;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.ei.drishti.dto.ActionData.createAlert;
 

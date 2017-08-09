@@ -15,7 +15,11 @@ import java.util.List;
 import java.util.Map;
 
 import static java.text.MessageFormat.format;
-import static org.smartregister.AllConstants.*;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.AllConstants.INSTANCE_ID_PARAM;
+import static org.smartregister.AllConstants.SYNC_STATUS;
+import static org.smartregister.AllConstants.VERSION_PARAM;
 import static org.smartregister.domain.SyncStatus.SYNCED;
 import static org.smartregister.util.EasyMap.create;
 import static org.smartregister.util.Log.logError;

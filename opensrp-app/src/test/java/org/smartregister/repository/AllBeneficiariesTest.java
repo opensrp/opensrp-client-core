@@ -1,12 +1,12 @@
 package org.smartregister.repository;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.Child;
-import org.smartregister.domain.Mother;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.Child;
+import org.smartregister.domain.Mother;
 
 import java.util.Collections;
 import java.util.HashMap;

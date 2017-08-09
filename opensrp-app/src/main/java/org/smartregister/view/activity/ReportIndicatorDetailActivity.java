@@ -5,7 +5,8 @@ import android.os.Bundle;
 import org.smartregister.domain.Report;
 import org.smartregister.view.controller.ReportIndicatorDetailViewController;
 
-import static org.smartregister.AllConstants.*;
+import static org.smartregister.AllConstants.CATEGORY_DESCRIPTION;
+import static org.smartregister.AllConstants.INDICATOR_DETAIL;
 
 public class ReportIndicatorDetailActivity extends SecuredWebActivity {
 

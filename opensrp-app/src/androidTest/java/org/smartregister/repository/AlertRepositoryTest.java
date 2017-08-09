@@ -2,16 +2,20 @@ package org.smartregister.repository;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+
+import org.joda.time.LocalDate;
 import org.smartregister.domain.Alert;
 import org.smartregister.util.Session;
-import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static  org.smartregister.domain.AlertStatus.*;
+import static org.smartregister.domain.AlertStatus.complete;
+import static org.smartregister.domain.AlertStatus.inProcess;
+import static org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.domain.AlertStatus.urgent;
 
 public class AlertRepositoryTest extends AndroidTestCase {
     private AlertRepository alertRepository;

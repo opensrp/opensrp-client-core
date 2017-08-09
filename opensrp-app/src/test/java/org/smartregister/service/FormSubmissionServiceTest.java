@@ -1,22 +1,23 @@
 package org.smartregister.service;
 
 import com.google.gson.Gson;
-import org.smartregister.domain.form.FormSubmission;
-import org.smartregister.repository.AllSettings;
-import org.smartregister.repository.FormDataRepository;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.FormDataRepository;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.SyncStatus.SYNCED;
 import static org.smartregister.util.EasyMap.create;
 import static org.smartregister.util.FormSubmissionBuilder.create;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 public class FormSubmissionServiceTest {
     @Mock

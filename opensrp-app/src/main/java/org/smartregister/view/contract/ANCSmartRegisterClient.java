@@ -1,7 +1,7 @@
 package org.smartregister.view.contract;
 
-import org.smartregister.domain.ANCServiceType;
 import org.joda.time.LocalDateTime;
+import org.smartregister.domain.ANCServiceType;
 
 import java.util.Comparator;
 import java.util.List;

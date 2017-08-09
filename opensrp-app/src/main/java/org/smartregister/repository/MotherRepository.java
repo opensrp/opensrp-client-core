@@ -20,7 +20,9 @@ import static java.lang.Boolean.TRUE;
 import static net.sqlcipher.DatabaseUtils.longForQuery;
 import static org.apache.commons.lang3.StringUtils.join;
 import static org.apache.commons.lang3.StringUtils.repeat;
-import static org.smartregister.repository.EligibleCoupleRepository.*;
+import static org.smartregister.repository.EligibleCoupleRepository.EC_TABLE_COLUMNS;
+import static org.smartregister.repository.EligibleCoupleRepository.EC_TABLE_NAME;
+import static org.smartregister.repository.EligibleCoupleRepository.IS_OUT_OF_AREA_COLUMN;
 
 public class MotherRepository extends DrishtiRepository {
     public static final String MOTHER_TABLE_NAME = "mother";

@@ -1,9 +1,9 @@
 package org.smartregister.view.dialog;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.smartregister.view.contract.Village;
 import org.junit.Before;
 import org.junit.Test;
+import org.smartregister.view.contract.Village;
 
 import java.util.List;
 

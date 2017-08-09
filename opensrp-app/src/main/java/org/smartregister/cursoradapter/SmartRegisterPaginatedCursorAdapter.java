@@ -9,7 +9,6 @@ import android.widget.CursorAdapter;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.view.contract.SmartRegisterClient;
 
 /**
  * Created by raihan on 3/9/16.

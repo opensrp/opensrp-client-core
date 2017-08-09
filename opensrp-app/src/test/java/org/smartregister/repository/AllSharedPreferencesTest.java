@@ -1,16 +1,21 @@
 package org.smartregister.repository;
 
 import android.content.SharedPreferences;
+
 import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 
-import static org.smartregister.AllConstants.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.AllConstants.DEFAULT_LOCALE;
+import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
+import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
+import static org.smartregister.AllConstants.LANGUAGE_PREFERENCE_KEY;
 
 @RunWith(RobolectricTestRunner.class)
 public class AllSharedPreferencesTest extends TestCase {

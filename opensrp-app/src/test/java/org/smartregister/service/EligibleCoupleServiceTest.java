@@ -1,17 +1,21 @@
 package org.smartregister.service;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.TimelineEvent;
-import org.smartregister.domain.form.FormSubmission;
-import org.smartregister.repository.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.TimelineEvent;
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.repository.AllBeneficiaries;
+import org.smartregister.repository.AllEligibleCouples;
+import org.smartregister.repository.AllTimelineEvents;
+import org.smartregister.repository.EligibleCoupleRepository;
+import org.smartregister.repository.TimelineEventRepository;
 
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class EligibleCoupleServiceTest {

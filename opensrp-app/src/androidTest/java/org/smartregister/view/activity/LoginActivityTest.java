@@ -1,13 +1,13 @@
 package org.smartregister.view.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
+
 import org.smartregister.Context;
-import org.smartregister.util.*;
 
 import java.util.Date;
 
-import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.FakeContext.setupService;
 import static org.smartregister.util.Wait.waitForFilteringToFinish;
 import static org.smartregister.util.Wait.waitForProgressBarToGoAway;

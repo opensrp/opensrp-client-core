@@ -1,12 +1,12 @@
 package org.smartregister.view.contract;
 
-import org.smartregister.util.DateUtil;
 import org.joda.time.DateTimeUtils;
-import java.util.Calendar;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+
+import java.util.Calendar;
 
 import static org.junit.Assert.*;
 

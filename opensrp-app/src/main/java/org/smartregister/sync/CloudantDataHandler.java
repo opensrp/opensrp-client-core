@@ -14,13 +14,13 @@ import com.cloudant.sync.datastore.DocumentRevision;
 import com.cloudant.sync.query.IndexManager;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.cloudant.models.Client;
 import org.smartregister.cloudant.models.Event;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.text.ParseException;

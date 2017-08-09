@@ -8,7 +8,10 @@ import org.smartregister.event.Listener;
 import org.smartregister.service.PendingFormSubmissionService;
 import org.smartregister.view.controller.HomeController;
 
-import static org.smartregister.event.Event.*;
+import static org.smartregister.event.Event.ACTION_HANDLED;
+import static org.smartregister.event.Event.FORM_SUBMITTED;
+import static org.smartregister.event.Event.SYNC_COMPLETED;
+import static org.smartregister.event.Event.SYNC_STARTED;
 
 public class HomeActivity extends SecuredWebActivity {
     private MenuItem updateMenuItem;

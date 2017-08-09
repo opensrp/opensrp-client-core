@@ -10,14 +10,34 @@ import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.controller.PNCSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
-import org.smartregister.view.dialog.*;
+import org.smartregister.view.dialog.AllClientsFilter;
+import org.smartregister.view.dialog.BPLSort;
+import org.smartregister.view.dialog.DateOfDeliverySort;
+import org.smartregister.view.dialog.DialogOption;
+import org.smartregister.view.dialog.DialogOptionMapper;
+import org.smartregister.view.dialog.DialogOptionModel;
+import org.smartregister.view.dialog.EditOption;
+import org.smartregister.view.dialog.FilterOption;
+import org.smartregister.view.dialog.HighRiskSort;
+import org.smartregister.view.dialog.NameSort;
+import org.smartregister.view.dialog.OpenFormOption;
+import org.smartregister.view.dialog.OutOfAreaFilter;
+import org.smartregister.view.dialog.PNCOverviewServiceMode;
+import org.smartregister.view.dialog.PNCVisitsServiceMode;
+import org.smartregister.view.dialog.SCSort;
+import org.smartregister.view.dialog.STSort;
+import org.smartregister.view.dialog.ServiceModeOption;
+import org.smartregister.view.dialog.SortOption;
 
 import java.util.List;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.toArray;
 import static java.util.Arrays.asList;
-import static org.smartregister.AllConstants.FormNames.*;
+import static org.smartregister.AllConstants.FormNames.PNC_CLOSE;
+import static org.smartregister.AllConstants.FormNames.PNC_POSTPARTUM_FAMILY_PLANNING;
+import static org.smartregister.AllConstants.FormNames.PNC_REGISTRATION_OA;
+import static org.smartregister.AllConstants.FormNames.PNC_VISIT;
 
 public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 

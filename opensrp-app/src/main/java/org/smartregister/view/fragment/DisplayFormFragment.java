@@ -26,9 +26,9 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONObject;
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;

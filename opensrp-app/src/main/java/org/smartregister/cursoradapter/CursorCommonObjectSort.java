@@ -1,12 +1,6 @@
 package org.smartregister.cursoradapter;
 
-import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
-import org.smartregister.view.dialog.SortOption;
-
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * Created by Raihan Ahmed on 3/22/15.

@@ -5,8 +5,8 @@ import android.database.Cursor;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.smartregister.domain.TimelineEvent;
 import org.joda.time.LocalDate;
+import org.smartregister.domain.TimelineEvent;
 
 import java.util.ArrayList;
 import java.util.List;

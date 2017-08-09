@@ -2,8 +2,8 @@ package org.smartregister.view.dialog;
 
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
+import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 
 import java.util.Collections;
 

@@ -7,7 +7,10 @@ import org.smartregister.R;
 import java.util.Locale;
 import java.util.Map;
 
-import static org.smartregister.domain.TimelineEvent.*;
+import static org.smartregister.domain.TimelineEvent.forFPCondomRenew;
+import static org.smartregister.domain.TimelineEvent.forFPDMPARenew;
+import static org.smartregister.domain.TimelineEvent.forFPIUDRenew;
+import static org.smartregister.domain.TimelineEvent.forFPOCPRenew;
 import static org.smartregister.util.Log.logWarn;
 
 public enum FPMethod {

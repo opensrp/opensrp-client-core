@@ -5,6 +5,8 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.DownloadStatus;
@@ -14,8 +16,6 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.util.ZipUtil;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileFilter;

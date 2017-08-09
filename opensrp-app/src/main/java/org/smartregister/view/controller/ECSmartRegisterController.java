@@ -3,6 +3,8 @@ package org.smartregister.view.controller;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
@@ -17,8 +19,6 @@ import org.smartregister.view.contract.ECChildClient;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,7 +28,23 @@ import static java.util.Collections.sort;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.smartregister.AllConstants.ANCRegistrationFields.EDD;
 import static org.smartregister.AllConstants.DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH;
-import static org.smartregister.AllConstants.ECRegistrationFields.*;
+import static org.smartregister.AllConstants.ECRegistrationFields.CASTE;
+import static org.smartregister.AllConstants.ECRegistrationFields.CURRENT_FP_METHOD;
+import static org.smartregister.AllConstants.ECRegistrationFields.ECONOMIC_STATUS;
+import static org.smartregister.AllConstants.ECRegistrationFields.FAMILY_PLANNING_METHOD_CHANGE_DATE;
+import static org.smartregister.AllConstants.ECRegistrationFields.HIGH_PRIORITY_REASON;
+import static org.smartregister.AllConstants.ECRegistrationFields.IUD_PERSON;
+import static org.smartregister.AllConstants.ECRegistrationFields.IUD_PLACE;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_ABORTIONS;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_CENTCHROMAN_PILLS_DELIVERED;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_CONDOMS_SUPPLIED;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_LIVING_CHILDREN;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_OCP_DELIVERED;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_PREGNANCIES;
+import static org.smartregister.AllConstants.ECRegistrationFields.NUMBER_OF_STILL_BIRTHS;
+import static org.smartregister.AllConstants.ECRegistrationFields.PARITY;
+import static org.smartregister.AllConstants.ECRegistrationFields.REGISTRATION_DATE;
+import static org.smartregister.AllConstants.ECRegistrationFields.WOMAN_DOB;
 
 public class ECSmartRegisterController {
     public static final String STATUS_TYPE_FIELD = "type";

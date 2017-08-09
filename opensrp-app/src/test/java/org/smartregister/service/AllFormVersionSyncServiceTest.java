@@ -1,13 +1,5 @@
 package org.smartregister.service;
 
-import org.smartregister.DristhiConfiguration;
-import org.smartregister.domain.DownloadStatus;
-import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.FormDefinitionVersion;
-import org.smartregister.domain.Response;
-import org.smartregister.domain.SyncStatus;
-import org.smartregister.repository.FormsVersionRepository;
-import org.smartregister.util.EasyMap;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,6 +9,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.smartregister.DristhiConfiguration;
+import org.smartregister.domain.DownloadStatus;
+import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.FormDefinitionVersion;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncStatus;
+import org.smartregister.repository.FormsVersionRepository;
+import org.smartregister.util.EasyMap;
 
 import java.io.File;
 import java.util.Collections;
@@ -25,15 +25,15 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.domain.ResponseStatus.success;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+import static org.smartregister.domain.ResponseStatus.success;
 
 /**
  * Created by Dimas Ciputra on 3/31/15.

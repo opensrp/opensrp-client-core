@@ -12,7 +12,11 @@ import org.smartregister.service.AlertService;
 import org.smartregister.service.ServiceProvidedService;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;
-import org.smartregister.view.contract.*;
+import org.smartregister.view.contract.AlertDTO;
+import org.smartregister.view.contract.ChildClient;
+import org.smartregister.view.contract.ServiceProvidedDTO;
+import org.smartregister.view.contract.SmartRegisterClient;
+import org.smartregister.view.contract.SmartRegisterClients;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +25,9 @@ import java.util.List;
 import static java.lang.String.valueOf;
 import static java.util.Collections.sort;
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.smartregister.domain.ServiceProvided.*;
+import static org.smartregister.domain.ServiceProvided.CHILD_ILLNESS_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.PNC_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.VITAMIN_A_SERVICE_PROVIDED_NAME;
 
 public class ChildSmartRegisterController {
     private static final String CHILD_CLIENTS_LIST_CACHE_ENTRY_NAME = "ChildClientList";

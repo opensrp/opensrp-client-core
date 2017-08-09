@@ -2,8 +2,8 @@ package org.smartregister.view.contract;
 
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
-import org.smartregister.domain.ChildServiceType;
 import org.smartregister.R;
+import org.smartregister.domain.ChildServiceType;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.StringUtil;
 

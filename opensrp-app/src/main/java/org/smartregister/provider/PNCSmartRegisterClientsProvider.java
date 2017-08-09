@@ -8,12 +8,18 @@ import android.widget.AbsListView;
 
 import org.smartregister.R;
 import org.smartregister.view.activity.SecuredActivity;
-import org.smartregister.view.contract.*;
+import org.smartregister.view.contract.SmartRegisterClient;
+import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.contract.pnc.PNCClients;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 import org.smartregister.view.controller.PNCSmartRegisterController;
-import org.smartregister.view.dialog.*;
-import org.smartregister.view.viewholder.*;
+import org.smartregister.view.dialog.FilterOption;
+import org.smartregister.view.dialog.ServiceModeOption;
+import org.smartregister.view.dialog.SortOption;
+import org.smartregister.view.viewholder.ECProfilePhotoLoader;
+import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
+import org.smartregister.view.viewholder.ProfilePhotoLoader;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 

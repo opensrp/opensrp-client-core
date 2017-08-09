@@ -1,15 +1,20 @@
 package org.smartregister.domain;
 
 import com.google.gson.Gson;
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.form.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.form.FormData;
+import org.smartregister.domain.form.FormField;
+import org.smartregister.domain.form.FormInstance;
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.domain.form.SubForm;
 
 import static java.util.Arrays.asList;
-import static org.smartregister.util.FormSubmissionBuilder.create;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.smartregister.util.FormSubmissionBuilder.create;
 
 @RunWith(RobolectricTestRunner.class)
 public class FormSubmissionTest {

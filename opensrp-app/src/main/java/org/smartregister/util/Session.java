@@ -4,7 +4,9 @@ import org.smartregister.AllConstants;
 
 import java.util.Date;
 
-import static org.joda.time.DateTimeConstants.*;
+import static org.joda.time.DateTimeConstants.MILLIS_PER_SECOND;
+import static org.joda.time.DateTimeConstants.MINUTES_PER_HOUR;
+import static org.joda.time.DateTimeConstants.SECONDS_PER_MINUTE;
 
 public class Session {
     private String password;

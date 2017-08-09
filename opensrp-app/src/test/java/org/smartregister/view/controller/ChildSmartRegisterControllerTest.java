@@ -2,9 +2,17 @@ package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import org.smartregister.view.contract.SmartRegisterClients;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.*;
+import org.smartregister.domain.Alert;
+import org.smartregister.domain.Child;
+import org.smartregister.domain.EligibleCouple;
+import org.smartregister.domain.Mother;
+import org.smartregister.domain.ServiceProvided;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.service.AlertService;
@@ -13,10 +21,7 @@ import org.smartregister.util.Cache;
 import org.smartregister.view.contract.AlertDTO;
 import org.smartregister.view.contract.ChildClient;
 import org.smartregister.view.contract.ServiceProvidedDTO;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.smartregister.view.contract.SmartRegisterClients;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +29,11 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.util.EasyMap.create;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.util.EasyMap.create;
 
 @RunWith(RobolectricTestRunner.class)
 public class ChildSmartRegisterControllerTest {

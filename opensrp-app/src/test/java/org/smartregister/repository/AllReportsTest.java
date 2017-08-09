@@ -1,22 +1,24 @@
 package org.smartregister.repository;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.Report;
 import org.ei.drishti.dto.Action;
-import org.smartregister.util.ActionBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.Report;
+import org.smartregister.util.ActionBuilder;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.ReportIndicator.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.ReportIndicator.CONDOM;
+import static org.smartregister.domain.ReportIndicator.EARLY_ANC_REGISTRATIONS;
+import static org.smartregister.domain.ReportIndicator.IUD;
 
 @RunWith(RobolectricTestRunner.class)
 public class AllReportsTest {

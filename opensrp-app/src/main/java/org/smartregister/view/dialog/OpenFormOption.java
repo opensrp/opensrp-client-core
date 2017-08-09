@@ -2,11 +2,11 @@ package org.smartregister.view.dialog;
 
 import android.util.Log;
 
+import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.form.FieldOverrides;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.controller.FormController;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
