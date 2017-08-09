@@ -1,6 +1,5 @@
 package org.smartregister;
 
-import android.content.res.AssetManager;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -789,7 +788,7 @@ public class Context {
     public DristhiConfiguration configuration() {
         if (configuration == null) {
             configuration = new DristhiConfiguration(
-                    getInstance().applicationContext().getAssets());
+                    this.applicationContext().getAssets());
         }
         return configuration;
     }
@@ -924,11 +923,13 @@ public class Context {
 
     public void assignbindtypes() {
         bindtypes = new ArrayList<CommonRepositoryInformationHolder>();
-        AssetManager assetManager = getInstance().applicationContext().getAssets();
         // create common repository definition for the ec models
         getEcBindtypes();
         try {
-            String str = ReadFromfile("bindtypes.json", getInstance().applicationContext);
+            if (this.applicationContext() == null) {
+                return;
+            }
+            String str = ReadFromfile("bindtypes.json", this.applicationContext());
             if (StringUtils.isBlank(str)) {
                 return;
             }
@@ -953,8 +954,10 @@ public class Context {
 
     public void getEcBindtypes() {
         try {
-            AssetManager assetManager = getInstance().applicationContext().getAssets();
-            String str = ReadFromfile("ec_client_fields.json", getInstance().applicationContext);
+            if (this.applicationContext() == null) {
+                return;
+            }
+            String str = ReadFromfile("ec_client_fields.json", this.applicationContext());
             if (StringUtils.isBlank(str)) {
                 return;
             }
