@@ -3,14 +3,30 @@ package org.smartregister.view.preProcessor;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
+import org.joda.time.LocalDate;
 import org.smartregister.util.DateUtil;
 import org.smartregister.view.contract.ServiceProvidedDTO;
-import org.smartregister.view.contract.pnc.*;
-import org.joda.time.LocalDate;
+import org.smartregister.view.contract.pnc.PNCCircleDatum;
+import org.smartregister.view.contract.pnc.PNCClient;
+import org.smartregister.view.contract.pnc.PNCFirstSevenDaysVisits;
+import org.smartregister.view.contract.pnc.PNCLineDatum;
+import org.smartregister.view.contract.pnc.PNCStatusColor;
+import org.smartregister.view.contract.pnc.PNCStatusDatum;
+import org.smartregister.view.contract.pnc.PNCTickDatum;
+import org.smartregister.view.contract.pnc.PNCVisitDaysDatum;
+import org.smartregister.view.contract.pnc.PNCVisitStatus;
+import org.smartregister.view.contract.pnc.PNCVisitType;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.smartregister.util.DateUtil.dayDifference;
 import static org.smartregister.util.DateUtil.formatDate;

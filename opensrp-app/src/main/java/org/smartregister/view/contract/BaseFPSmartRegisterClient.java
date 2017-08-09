@@ -1,9 +1,6 @@
 package org.smartregister.view.contract;
 
 import org.smartregister.domain.FPMethod;
-import org.smartregister.util.IntegerUtil;
-
-import java.util.Comparator;
 
 public interface BaseFPSmartRegisterClient extends SmartRegisterClient {
 

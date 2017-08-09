@@ -10,9 +10,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import static org.smartregister.util.EasyMap.create;
 import static org.smartregister.domain.SyncStatus.PENDING;
 import static org.smartregister.domain.SyncStatus.SYNCED;
+import static org.smartregister.util.EasyMap.create;
 
 /**
  * Created by Dimas Ciputra on 3/22/15.

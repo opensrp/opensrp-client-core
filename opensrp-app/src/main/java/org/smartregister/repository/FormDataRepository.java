@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.util.Log;
+import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -12,14 +14,10 @@ import org.smartregister.Context;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import android.util.Log;
-import android.webkit.JavascriptInterface;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;

@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.google.gson.Gson;
 
-import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.processor.model.Client;
 
 import java.util.Map;

@@ -2,10 +2,10 @@ package org.smartregister.clientandeventmodel.processor;
 
 import android.util.Log;
 
-import org.smartregister.clientandeventmodel.processor.model.Event;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.clientandeventmodel.processor.model.Event;
 
 import java.util.HashMap;
 import java.util.Iterator;

@@ -1,32 +1,37 @@
 package org.smartregister.service;
 
-import org.smartregister.repository.AllSharedPreferences;
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.Response;
-import org.smartregister.domain.ResponseStatus;
 import org.ei.drishti.dto.Action;
-import org.smartregister.repository.AllEligibleCouples;
-import org.smartregister.repository.AllReports;
-import org.smartregister.repository.AllSettings;
-import org.smartregister.router.ActionRouter;
-import org.smartregister.util.ActionBuilder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.ResponseStatus;
+import org.smartregister.repository.AllEligibleCouples;
+import org.smartregister.repository.AllReports;
+import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.router.ActionRouter;
+import org.smartregister.util.ActionBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.FetchStatus.*;
-import static org.smartregister.domain.ResponseStatus.failure;
-import static org.smartregister.domain.ResponseStatus.success;
-import static org.smartregister.util.ActionBuilder.*;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.fetchedFailed;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
+import static org.smartregister.domain.ResponseStatus.failure;
+import static org.smartregister.domain.ResponseStatus.success;
+import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
+import static org.smartregister.util.ActionBuilder.actionForCloseMother;
+import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
+import static org.smartregister.util.ActionBuilder.actionForReport;
 
 @RunWith(RobolectricTestRunner.class)
 public class ActionServiceTest {

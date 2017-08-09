@@ -1,4 +1,4 @@
-package ona.siafuinc.com.sample;
+package org.smartregister.sample;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

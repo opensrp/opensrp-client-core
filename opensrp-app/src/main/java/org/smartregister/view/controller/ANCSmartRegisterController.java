@@ -11,7 +11,11 @@ import org.smartregister.service.AlertService;
 import org.smartregister.service.ServiceProvidedService;
 import org.smartregister.util.Cache;
 import org.smartregister.util.CacheableData;
-import org.smartregister.view.contract.*;
+import org.smartregister.view.contract.ANCClient;
+import org.smartregister.view.contract.ANCClients;
+import org.smartregister.view.contract.AlertDTO;
+import org.smartregister.view.contract.ServiceProvidedDTO;
+import org.smartregister.view.contract.SmartRegisterClient;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +25,16 @@ import static java.lang.String.valueOf;
 import static java.util.Collections.sort;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.smartregister.AllConstants.DEFAULT_WOMAN_IMAGE_PLACEHOLDER_PATH;
-import static org.smartregister.domain.ServiceProvided.*;
+import static org.smartregister.domain.ServiceProvided.ANC_1_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.ANC_2_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.ANC_3_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.ANC_4_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.DELIVERY_PLAN_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.HB_TEST_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.IFA_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.TT_1_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.TT_2_SERVICE_PROVIDED_NAME;
+import static org.smartregister.domain.ServiceProvided.TT_BOOSTER_SERVICE_PROVIDED_NAME;
 
 public class ANCSmartRegisterController {
     private static final String ANC_1_ALERT_NAME = "ANC 1";

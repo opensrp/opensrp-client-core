@@ -10,12 +10,12 @@ import android.widget.LinearLayout;
 
 import com.google.common.base.Strings;
 
-import org.smartregister.R;
-import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.json.JSONObject;
 import org.opensrp.api.domain.Location;
 import org.opensrp.api.util.EntityUtils;
 import org.opensrp.api.util.LocationTree;
+import org.smartregister.R;
+import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 
 import java.util.Map;
 
@@ -23,7 +23,7 @@ import atv.holder.SelectableItemHolder;
 import atv.model.TreeNode;
 import atv.view.AndroidTreeView;
 
-import static org.smartregister.util.StringUtil.*;
+import static org.smartregister.util.StringUtil.humanize;
 
 public class LocationSelectorDialogFragment extends DialogFragment {
 

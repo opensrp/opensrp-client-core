@@ -5,15 +5,15 @@ import android.content.Intent;
 
 import com.google.gson.Gson;
 
+import org.ei.drishti.dto.MonthSummaryDatum;
+import org.joda.time.LocalDate;
 import org.smartregister.domain.Report;
 import org.smartregister.domain.ReportIndicator;
 import org.smartregister.domain.ReportsCategory;
-import org.ei.drishti.dto.MonthSummaryDatum;
 import org.smartregister.repository.AllReports;
 import org.smartregister.view.activity.ReportIndicatorDetailActivity;
 import org.smartregister.view.contract.CategoryReports;
 import org.smartregister.view.contract.IndicatorReport;
-import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Collections;

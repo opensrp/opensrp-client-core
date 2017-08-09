@@ -8,7 +8,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.smartregister.R;
-import org.smartregister.view.customcontrols.*;
+import org.smartregister.view.customcontrols.ClientPNCPpFpMethodView;
+import org.smartregister.view.customcontrols.ClientProfileView;
+import org.smartregister.view.customcontrols.DeliveryInfoView;
+import org.smartregister.view.customcontrols.PNCWebViewClient;
 
 public class NativePNCSmartRegisterViewHolder {
     private final ClientProfileView profileInfoLayout;

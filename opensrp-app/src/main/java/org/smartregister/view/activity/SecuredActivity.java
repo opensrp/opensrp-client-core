@@ -18,7 +18,6 @@ import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
-import org.smartregister.sync.CloudantSyncHandler;
 import org.smartregister.event.Listener;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.controller.ANMController;
@@ -28,7 +27,13 @@ import org.smartregister.view.controller.NavigationController;
 import java.util.Map;
 
 import static android.widget.Toast.LENGTH_SHORT;
-import static org.smartregister.AllConstants.*;
+import static org.smartregister.AllConstants.ALERT_NAME_PARAM;
+import static org.smartregister.AllConstants.CloudantSync;
+import static org.smartregister.AllConstants.ENTITY_ID;
+import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
+import static org.smartregister.AllConstants.FORM_NAME_PARAM;
+import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
 import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 

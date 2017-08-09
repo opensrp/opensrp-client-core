@@ -17,7 +17,10 @@ import org.smartregister.view.controller.NativeAfterANMDetailsFetchListener;
 import org.smartregister.view.controller.NativeUpdateANMDetailsTask;
 
 import static java.lang.String.valueOf;
-import static org.smartregister.event.Event.*;
+import static org.smartregister.event.Event.ACTION_HANDLED;
+import static org.smartregister.event.Event.FORM_SUBMITTED;
+import static org.smartregister.event.Event.SYNC_COMPLETED;
+import static org.smartregister.event.Event.SYNC_STARTED;
 
 public class NativeHomeActivity extends SecuredActivity {
     private MenuItem updateMenuItem;

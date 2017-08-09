@@ -5,8 +5,8 @@ import android.database.Cursor;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.smartregister.domain.Alert;
 import org.joda.time.LocalDate;
+import org.smartregister.domain.Alert;
 
 import java.util.ArrayList;
 import java.util.List;

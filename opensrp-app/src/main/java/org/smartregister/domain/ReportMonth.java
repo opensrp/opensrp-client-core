@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
-import org.smartregister.util.DateUtil;
 import org.joda.time.LocalDate;
+import org.smartregister.util.DateUtil;
 
 import java.util.Date;
 

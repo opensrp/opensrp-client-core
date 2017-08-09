@@ -2,6 +2,12 @@ package org.smartregister.view;
 
 import android.content.Context;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.FetchStatus;
@@ -11,19 +17,13 @@ import org.smartregister.service.AllFormVersionSyncService;
 import org.smartregister.service.FormSubmissionSyncService;
 import org.smartregister.sync.AfterFetchListener;
 import org.smartregister.sync.UpdateActionsTask;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
 
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.FetchStatus.fetched;
+import static org.smartregister.domain.FetchStatus.nothingFetched;
 
 @RunWith(RobolectricTestRunner.class)
 public class UpdateActionsTaskTest {

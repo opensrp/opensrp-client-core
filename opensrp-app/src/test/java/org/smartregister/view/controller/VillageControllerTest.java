@@ -2,13 +2,14 @@ package org.smartregister.view.controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.util.Cache;
 import org.smartregister.view.contract.Village;
 import org.smartregister.view.contract.Villages;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
 
 import java.util.List;
 

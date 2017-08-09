@@ -2,8 +2,8 @@ package org.smartregister.util;
 
 import org.junit.Test;
 
-import static org.smartregister.util.StringUtil.humanize;
 import static org.junit.Assert.assertEquals;
+import static org.smartregister.util.StringUtil.humanize;
 
 public class StringUtilTest {
 

@@ -1,6 +1,10 @@
 package org.smartregister.util;
 
-import static android.util.Log.*;
+import static android.util.Log.d;
+import static android.util.Log.e;
+import static android.util.Log.i;
+import static android.util.Log.v;
+import static android.util.Log.w;
 
 public class Log {
     public static void logVerbose(String message) {

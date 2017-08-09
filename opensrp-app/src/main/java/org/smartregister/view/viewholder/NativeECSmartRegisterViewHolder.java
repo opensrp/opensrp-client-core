@@ -5,7 +5,11 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.smartregister.R;
-import org.smartregister.view.customcontrols.*;
+import org.smartregister.view.customcontrols.ClientChildrenView;
+import org.smartregister.view.customcontrols.ClientFpMethodView;
+import org.smartregister.view.customcontrols.ClientGplsaView;
+import org.smartregister.view.customcontrols.ClientProfileView;
+import org.smartregister.view.customcontrols.ClientStatusView;
 
 public class NativeECSmartRegisterViewHolder {
     private final ClientProfileView profileInfoLayout;

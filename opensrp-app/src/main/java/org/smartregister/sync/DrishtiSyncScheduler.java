@@ -10,10 +10,10 @@ import android.net.NetworkInfo;
 import org.smartregister.event.Listener;
 
 import static java.text.MessageFormat.format;
-import static org.smartregister.event.Event.ON_LOGOUT;
-import static org.smartregister.util.Log.logInfo;
 import static org.joda.time.DateTimeConstants.MILLIS_PER_MINUTE;
 import static org.joda.time.DateTimeConstants.MILLIS_PER_SECOND;
+import static org.smartregister.event.Event.ON_LOGOUT;
+import static org.smartregister.util.Log.logInfo;
 
 public class DrishtiSyncScheduler {
     public static final int SYNC_INTERVAL = 2 * MILLIS_PER_MINUTE;

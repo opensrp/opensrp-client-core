@@ -1,7 +1,14 @@
 package org.smartregister.view.controller;
 
 import android.content.Context;
+
 import com.google.gson.Gson;
+
+import org.joda.time.LocalDate;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.TimelineEvent;
@@ -11,11 +18,6 @@ import org.smartregister.util.DateUtil;
 import org.smartregister.view.contract.Child;
 import org.smartregister.view.contract.CoupleDetails;
 import org.smartregister.view.contract.ECDetail;
-import org.joda.time.LocalDate;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.HashMap;

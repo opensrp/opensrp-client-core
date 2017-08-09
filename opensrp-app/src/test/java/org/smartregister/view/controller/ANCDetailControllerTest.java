@@ -1,7 +1,14 @@
 package org.smartregister.view.controller;
 
 import android.content.Context;
+
 import com.google.gson.Gson;
+
+import org.joda.time.LocalDate;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -14,20 +21,15 @@ import org.smartregister.view.contract.ANCDetail;
 import org.smartregister.view.contract.CoupleDetails;
 import org.smartregister.view.contract.LocationDetails;
 import org.smartregister.view.contract.PregnancyDetails;
-import org.joda.time.LocalDate;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class ANCDetailControllerTest {

@@ -1,11 +1,11 @@
 package org.smartregister.view.contract;
 
-import org.smartregister.util.DateUtil;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.util.DateUtil;
 
 import static org.junit.Assert.assertEquals;
 

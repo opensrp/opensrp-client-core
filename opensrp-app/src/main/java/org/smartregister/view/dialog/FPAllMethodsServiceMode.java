@@ -4,15 +4,23 @@ import android.view.View;
 
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-import org.smartregister.view.contract.*;
+import org.smartregister.view.contract.ANCSmartRegisterClient;
+import org.smartregister.view.contract.AlertStatus;
+import org.smartregister.view.contract.ChildSmartRegisterClient;
+import org.smartregister.view.contract.FPAlertType;
+import org.smartregister.view.contract.FPSmartRegisterClient;
+import org.smartregister.view.contract.RefillFollowUps;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewholder.*;
+import org.smartregister.view.viewholder.NativeANCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
+import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.FP_COMPLICATIONS;
 import static org.smartregister.Context.getInstance;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
-        .ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class FPAllMethodsServiceMode extends ServiceModeOption {
 

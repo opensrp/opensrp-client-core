@@ -1,15 +1,15 @@
 package org.smartregister.view.activity;
 
-import org.junit.Ignore;
-import org.smartregister.R;
-import org.smartregister.setup.DrishtiTestRunner;
-import org.smartregister.shadows.ShadowContext;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
+import org.smartregister.R;
+import org.smartregister.setup.DrishtiTestRunner;
+import org.smartregister.shadows.ShadowContext;
 
 import static org.junit.Assert.assertEquals;
 

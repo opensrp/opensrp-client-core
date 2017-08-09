@@ -12,11 +12,32 @@ import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
-import org.smartregister.view.dialog.*;
+import org.smartregister.view.dialog.AllClientsFilter;
+import org.smartregister.view.dialog.AllEligibleCoupleServiceMode;
+import org.smartregister.view.dialog.BPLSort;
+import org.smartregister.view.dialog.DialogOption;
+import org.smartregister.view.dialog.DialogOptionMapper;
+import org.smartregister.view.dialog.DialogOptionModel;
+import org.smartregister.view.dialog.ECNumberSort;
+import org.smartregister.view.dialog.EditOption;
+import org.smartregister.view.dialog.FilterOption;
+import org.smartregister.view.dialog.HighPrioritySort;
+import org.smartregister.view.dialog.LocationSelectorDialogFragment;
+import org.smartregister.view.dialog.NameSort;
+import org.smartregister.view.dialog.OpenFormOption;
+import org.smartregister.view.dialog.SCSort;
+import org.smartregister.view.dialog.STSort;
+import org.smartregister.view.dialog.ServiceModeOption;
+import org.smartregister.view.dialog.SortOption;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.toArray;
-import static org.smartregister.AllConstants.FormNames.*;
+import static org.smartregister.AllConstants.FormNames.ANC_REGISTRATION;
+import static org.smartregister.AllConstants.FormNames.CHILD_REGISTRATION_EC;
+import static org.smartregister.AllConstants.FormNames.EC_CLOSE;
+import static org.smartregister.AllConstants.FormNames.EC_EDIT;
+import static org.smartregister.AllConstants.FormNames.EC_REGISTRATION;
+import static org.smartregister.AllConstants.FormNames.FP_CHANGE;
 
 public class NativeECSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 

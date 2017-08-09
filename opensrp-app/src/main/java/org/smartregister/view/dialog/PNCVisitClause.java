@@ -1,9 +1,7 @@
 package org.smartregister.view.dialog;
 
-import org.smartregister.Context;
-import org.smartregister.R;
-import org.smartregister.view.contract.ServiceProvidedDTO;
 import org.joda.time.LocalDate;
+import org.smartregister.view.contract.ServiceProvidedDTO;
 
 public class PNCVisitClause implements FilterClause<ServiceProvidedDTO> {
     private LocalDate visitEndDate;

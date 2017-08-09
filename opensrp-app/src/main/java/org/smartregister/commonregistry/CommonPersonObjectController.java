@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
-import org.smartregister.Context;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.Cache;
@@ -14,9 +13,7 @@ import org.smartregister.view.dialog.SortOption;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static java.util.Collections.sort;
 

@@ -1,5 +1,9 @@
 package org.smartregister.service;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.Mother;
@@ -7,24 +11,27 @@ import org.smartregister.domain.ServiceProvided;
 import org.smartregister.domain.TimelineEvent;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
-import org.smartregister.repository.*;
+import org.smartregister.repository.AllAlerts;
+import org.smartregister.repository.AllBeneficiaries;
+import org.smartregister.repository.AllTimelineEvents;
+import org.smartregister.repository.ChildRepository;
+import org.smartregister.repository.MotherRepository;
 import org.smartregister.util.EasyMap;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import java.util.ArrayList;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static org.smartregister.domain.ServiceProvided.*;
-import static org.smartregister.domain.ServiceProvided.forChildImmunization;
-import static org.smartregister.domain.TimelineEvent.*;
-import static org.smartregister.util.EasyMap.create;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.ServiceProvided.forChildIllnessVisit;
+import static org.smartregister.domain.ServiceProvided.forChildImmunization;
+import static org.smartregister.domain.ServiceProvided.forVitaminAProvided;
+import static org.smartregister.domain.TimelineEvent.forChildBirthInChildProfile;
+import static org.smartregister.domain.TimelineEvent.forChildBirthInECProfile;
+import static org.smartregister.domain.TimelineEvent.forChildBirthInMotherProfile;
+import static org.smartregister.util.EasyMap.create;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class ChildServiceTest {

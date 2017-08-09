@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.smartregister.util.DateUtil;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
+import org.smartregister.util.DateUtil;
 
 public class ECChildClient {
     private final String entityId;

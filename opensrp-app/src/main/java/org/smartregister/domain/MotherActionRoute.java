@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
-import org.smartregister.Context;
 import org.ei.drishti.dto.Action;
+import org.smartregister.Context;
 import org.smartregister.event.Event;
 
 public enum MotherActionRoute {

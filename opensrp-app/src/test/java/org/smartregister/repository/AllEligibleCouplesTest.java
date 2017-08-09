@@ -1,11 +1,11 @@
 package org.smartregister.repository;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.EligibleCouple;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.EligibleCouple;
 
 import java.util.Arrays;
 import java.util.HashMap;

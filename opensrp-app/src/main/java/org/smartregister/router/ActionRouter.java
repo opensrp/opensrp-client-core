@@ -1,8 +1,8 @@
 package org.smartregister.router;
 
+import org.ei.drishti.dto.Action;
 import org.smartregister.domain.AlertActionRoute;
 import org.smartregister.domain.MotherActionRoute;
-import org.ei.drishti.dto.Action;
 
 import static org.smartregister.util.Log.logWarn;
 

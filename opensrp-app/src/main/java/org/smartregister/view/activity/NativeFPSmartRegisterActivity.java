@@ -4,7 +4,6 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import org.smartregister.AllConstants;
 import org.smartregister.R;
@@ -14,12 +13,44 @@ import org.smartregister.provider.FPSmartRegisterClientsProvider;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.FPClient;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.smartregister.view.controller.*;
-import org.smartregister.view.dialog.*;
+import org.smartregister.view.controller.FPSmartRegisterController;
+import org.smartregister.view.controller.VillageController;
+import org.smartregister.view.dialog.AllClientsFilter;
+import org.smartregister.view.dialog.BPLSort;
+import org.smartregister.view.dialog.DialogOption;
+import org.smartregister.view.dialog.DialogOptionMapper;
+import org.smartregister.view.dialog.DialogOptionModel;
+import org.smartregister.view.dialog.ECNumberSort;
+import org.smartregister.view.dialog.EditOption;
+import org.smartregister.view.dialog.FPAllMethodsServiceMode;
+import org.smartregister.view.dialog.FPCondomServiceMode;
+import org.smartregister.view.dialog.FPDMPAServiceMode;
+import org.smartregister.view.dialog.FPDialogOptionModel;
+import org.smartregister.view.dialog.FPFemaleSterilizationServiceMode;
+import org.smartregister.view.dialog.FPIUCDServiceMode;
+import org.smartregister.view.dialog.FPMaleSterilizationServiceMode;
+import org.smartregister.view.dialog.FPOCPServiceMode;
+import org.smartregister.view.dialog.FPOthersServiceMode;
+import org.smartregister.view.dialog.FPPrioritizationAllECServiceMode;
+import org.smartregister.view.dialog.FPPrioritizationHighPriorityServiceMode;
+import org.smartregister.view.dialog.FPPrioritizationOneChildrenServiceMode;
+import org.smartregister.view.dialog.FPPrioritizationTwoPlusChildrenServiceMode;
+import org.smartregister.view.dialog.FPSmartRegisterDialogFragment;
+import org.smartregister.view.dialog.FilterOption;
+import org.smartregister.view.dialog.HighPrioritySort;
+import org.smartregister.view.dialog.NameSort;
+import org.smartregister.view.dialog.OpenFormOption;
+import org.smartregister.view.dialog.SCSort;
+import org.smartregister.view.dialog.STSort;
+import org.smartregister.view.dialog.ServiceModeOption;
+import org.smartregister.view.dialog.SortOption;
 
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.toArray;
-import static org.smartregister.AllConstants.FormNames.*;
+import static org.smartregister.AllConstants.FormNames.EC_REGISTRATION;
+import static org.smartregister.AllConstants.FormNames.FP_CHANGE;
+import static org.smartregister.AllConstants.FormNames.FP_COMPLICATIONS;
+import static org.smartregister.AllConstants.FormNames.RECORD_ECPS;
 
 public class NativeFPSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 

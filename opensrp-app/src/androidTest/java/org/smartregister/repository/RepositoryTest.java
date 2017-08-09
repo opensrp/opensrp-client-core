@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+
 import org.smartregister.domain.Alert;
 import org.smartregister.util.Session;
 
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static  org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.domain.AlertStatus.normal;
 
 public class RepositoryTest extends AndroidTestCase {
     public void testShouldCheckPassword() throws Exception {

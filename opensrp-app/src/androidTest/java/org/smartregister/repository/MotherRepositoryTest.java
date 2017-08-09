@@ -2,13 +2,14 @@ package org.smartregister.repository;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
+
 import org.apache.commons.lang3.tuple.Pair;
+import org.joda.time.LocalDate;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.EasyMap;
 import org.smartregister.util.Session;
-import org.joda.time.LocalDate;
 
 import java.util.Collections;
 import java.util.Date;

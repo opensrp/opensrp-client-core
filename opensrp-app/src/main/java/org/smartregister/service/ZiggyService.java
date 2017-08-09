@@ -1,18 +1,22 @@
 package org.smartregister.service;
 
-import org.smartregister.repository.FormDataRepository;
-import org.smartregister.service.formsubmissionhandler.FormSubmissionRouter;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Function;
 import org.mozilla.javascript.ScriptableObject;
+import org.smartregister.repository.FormDataRepository;
+import org.smartregister.service.formsubmissionhandler.FormSubmissionRouter;
 
 import java.util.Map;
 
 import static java.text.MessageFormat.format;
-import static org.smartregister.AllConstants.*;
+import static org.mozilla.javascript.Context.enter;
+import static org.mozilla.javascript.Context.exit;
+import static org.mozilla.javascript.Context.toObject;
+import static org.smartregister.AllConstants.FORM_SUBMISSION_ROUTER;
+import static org.smartregister.AllConstants.REPOSITORY;
+import static org.smartregister.AllConstants.ZIGGY_FILE_LOADER;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
-import static org.mozilla.javascript.Context.*;
 
 public class ZiggyService {
     private static final String SAVE_METHOD_NAME = "save";

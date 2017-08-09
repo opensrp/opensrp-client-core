@@ -2,22 +2,22 @@ package org.smartregister.commonregistry;
 
 import com.google.gson.Gson;
 
-import org.smartregister.repository.AllBeneficiaries;
-import org.smartregister.util.Cache;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.repository.AllBeneficiaries;
+import org.smartregister.util.Cache;
 
 import java.util.Collections;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.util.EasyMap.create;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.util.EasyMap.create;
 
 /*
  by Raihan Ahmed

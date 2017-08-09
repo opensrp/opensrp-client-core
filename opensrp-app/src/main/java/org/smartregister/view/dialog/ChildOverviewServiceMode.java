@@ -6,7 +6,10 @@ import android.view.View;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-import org.smartregister.view.contract.*;
+import org.smartregister.view.contract.ANCSmartRegisterClient;
+import org.smartregister.view.contract.ChildSmartRegisterClient;
+import org.smartregister.view.contract.FPSmartRegisterClient;
+import org.smartregister.view.contract.ServiceProvidedDTO;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
 import org.smartregister.view.viewholder.NativeANCSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
@@ -16,8 +19,7 @@ import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.CHILD_ILLNESS;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
-        .ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class ChildOverviewServiceMode extends ServiceModeOption {
     private String illnessReport = Context.getInstance().getStringResource(R.string.illness_report);

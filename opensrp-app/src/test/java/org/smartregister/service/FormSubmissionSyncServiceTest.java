@@ -1,34 +1,35 @@
 package org.smartregister.service;
 
 import com.google.gson.Gson;
-import org.smartregister.repository.AllSharedPreferences;
+
+import org.ei.drishti.dto.form.FormSubmissionDTO;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.form.FormSubmission;
-import org.ei.drishti.dto.form.FormSubmissionDTO;
 import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.FormDataRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 
 import java.util.Collections;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.domain.FetchStatus.nothingFetched;
 import static org.smartregister.domain.ResponseStatus.failure;
 import static org.smartregister.domain.ResponseStatus.success;
 import static org.smartregister.domain.SyncStatus.PENDING;
 import static org.smartregister.domain.SyncStatus.SYNCED;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class FormSubmissionSyncServiceTest {

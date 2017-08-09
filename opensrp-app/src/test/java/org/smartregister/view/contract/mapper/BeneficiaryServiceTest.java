@@ -1,5 +1,8 @@
 package org.smartregister.view.contract.mapper;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -7,17 +10,14 @@ import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.service.BeneficiaryService;
 import org.smartregister.view.contract.Beneficiary;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.util.EasyMap.mapOf;
 
 public class BeneficiaryServiceTest {
     @Mock

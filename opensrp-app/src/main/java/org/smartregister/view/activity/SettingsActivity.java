@@ -1,9 +1,5 @@
 package org.smartregister.view.activity;
 
-import org.smartregister.R;
-import org.smartregister.repository.AllSharedPreferences;
-
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
@@ -11,7 +7,9 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.view.Menu;
+
+import org.smartregister.R;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.net.MalformedURLException;
 import java.net.URL;

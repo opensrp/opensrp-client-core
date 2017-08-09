@@ -10,7 +10,15 @@ import java.util.Map;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
-import static org.smartregister.domain.TimelineEvent.*;
+import static org.smartregister.domain.TimelineEvent.forChildBirthInChildProfile;
+import static org.smartregister.domain.TimelineEvent.forChildBirthInECProfile;
+import static org.smartregister.domain.TimelineEvent.forChildBirthInMotherProfile;
+import static org.smartregister.domain.TimelineEvent.forChildImmunization;
+import static org.smartregister.domain.TimelineEvent.forDeliveryPlan;
+import static org.smartregister.domain.TimelineEvent.forFPCondomRenew;
+import static org.smartregister.domain.TimelineEvent.forFPDMPARenew;
+import static org.smartregister.domain.TimelineEvent.forFPIUDRenew;
+import static org.smartregister.domain.TimelineEvent.forFPOCPRenew;
 import static org.smartregister.util.EasyMap.create;
 
 public class TimelineEventTest {

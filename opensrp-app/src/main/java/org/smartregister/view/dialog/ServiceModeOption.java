@@ -12,8 +12,7 @@ import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
-        .ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public abstract class ServiceModeOption implements DialogOption {
 

@@ -1,9 +1,10 @@
 package org.smartregister.util;
 
-import org.robolectric.RobolectricTestRunner;
 import junit.framework.TestCase;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
 
 @RunWith(RobolectricTestRunner.class)
 public class IntegerUtilTest extends TestCase {

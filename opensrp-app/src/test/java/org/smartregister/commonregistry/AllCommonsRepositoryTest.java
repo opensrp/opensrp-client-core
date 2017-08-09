@@ -1,12 +1,12 @@
 package org.smartregister.commonregistry;
 
-import org.smartregister.repository.AlertRepository;
-import org.smartregister.repository.TimelineEventRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.repository.AlertRepository;
+import org.smartregister.repository.TimelineEventRepository;
 
 import java.util.Arrays;
 import java.util.HashMap;

@@ -9,7 +9,10 @@ import java.util.Map;
 
 import static java.text.MessageFormat.format;
 import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.event.Event.*;
+import static org.smartregister.event.Event.ACTION_HANDLED;
+import static org.smartregister.event.Event.FORM_SUBMITTED;
+import static org.smartregister.event.Event.ON_DATA_FETCHED;
+import static org.smartregister.event.Event.ON_PHOTO_CAPTURED;
 import static org.smartregister.util.Log.logWarn;
 
 public class Cache<T> {

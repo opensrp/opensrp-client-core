@@ -3,9 +3,18 @@ package org.smartregister.view.controller;
 import android.app.Activity;
 import android.content.Intent;
 
-import org.smartregister.view.activity.*;
+import org.smartregister.view.activity.NativeANCSmartRegisterActivity;
+import org.smartregister.view.activity.NativeChildSmartRegisterActivity;
+import org.smartregister.view.activity.NativeECSmartRegisterActivity;
+import org.smartregister.view.activity.NativeFPSmartRegisterActivity;
+import org.smartregister.view.activity.NativePNCSmartRegisterActivity;
+import org.smartregister.view.activity.ReportsActivity;
+import org.smartregister.view.activity.VideosActivity;
 
-import static org.smartregister.view.controller.ProfileNavigationController.*;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToANCProfile;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToChildProfile;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToECProfile;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToPNCProfile;
 
 public class NavigationController {
     private Activity activity;

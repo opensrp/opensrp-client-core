@@ -15,8 +15,7 @@ import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.Context.getInstance;
-import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity
-        .ClientsHeaderProvider;
+import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class FPPrioritizationAllECServiceMode extends ServiceModeOption {
 

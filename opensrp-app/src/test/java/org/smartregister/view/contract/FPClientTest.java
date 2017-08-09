@@ -1,20 +1,20 @@
 package org.smartregister.view.contract;
 
-import org.smartregister.Context;
-import org.smartregister.R;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.Context;
+import org.smartregister.R;
 
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.Context.getInstance;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.Context.getInstance;
 
 @RunWith(RobolectricTestRunner.class)
 public class FPClientTest {

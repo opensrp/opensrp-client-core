@@ -1,5 +1,10 @@
 package org.smartregister.service;
 
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Mother;
 import org.smartregister.domain.ServiceProvided;
 import org.smartregister.domain.TimelineEvent;
@@ -8,17 +13,14 @@ import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.EligibleCoupleRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
 
-import static org.smartregister.domain.TimelineEvent.*;
-import static org.smartregister.util.EasyMap.create;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.TimelineEvent.forDeliveryPlan;
+import static org.smartregister.domain.TimelineEvent.forIFATabletsGiven;
+import static org.smartregister.domain.TimelineEvent.forTTShotProvided;
+import static org.smartregister.util.EasyMap.create;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class MotherServiceTest {

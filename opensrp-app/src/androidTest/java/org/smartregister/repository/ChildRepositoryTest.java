@@ -2,11 +2,21 @@ package org.smartregister.repository;
 
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
-import org.smartregister.domain.*;
+
+import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
+import org.smartregister.domain.Child;
+import org.smartregister.domain.EligibleCouple;
+import org.smartregister.domain.Mother;
+import org.smartregister.domain.TimelineEvent;
 import org.smartregister.util.Session;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static org.smartregister.util.EasyMap.create;

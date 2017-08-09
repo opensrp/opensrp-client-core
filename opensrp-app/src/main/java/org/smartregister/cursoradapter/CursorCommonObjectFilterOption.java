@@ -1,12 +1,6 @@
 package org.smartregister.cursoradapter;
 
-import net.sqlcipher.Cursor;
-
-import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.smartregister.view.dialog.FilterOption;
-
-import static org.smartregister.util.StringUtil.humanize;
 
 public class CursorCommonObjectFilterOption implements CursorFilterOption {
 

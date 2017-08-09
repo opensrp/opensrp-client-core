@@ -2,9 +2,9 @@ package org.smartregister.service;
 
 import com.google.gson.Gson;
 
+import org.ei.drishti.dto.Action;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
-import org.ei.drishti.dto.Action;
 import org.smartregister.repository.AllReports;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;

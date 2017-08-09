@@ -5,15 +5,17 @@ import android.content.Intent;
 
 import com.google.gson.Gson;
 
-import org.smartregister.domain.Report;
 import org.ei.drishti.dto.MonthSummaryDatum;
+import org.smartregister.domain.Report;
 import org.smartregister.view.activity.ReportIndicatorCaseListActivity;
 import org.smartregister.view.contract.IndicatorReportDetail;
 
 import java.util.ArrayList;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.smartregister.AllConstants.*;
+import static org.smartregister.AllConstants.CASE_IDS;
+import static org.smartregister.AllConstants.INDICATOR;
+import static org.smartregister.AllConstants.MONTH;
 
 public class ReportIndicatorDetailViewController {
     private final Context context;

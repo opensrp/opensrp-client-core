@@ -5,7 +5,10 @@ import org.smartregister.view.contract.Beneficiary;
 
 import java.util.List;
 
-import static org.smartregister.view.controller.ProfileNavigationController.*;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToANCProfile;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToChildProfile;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToECProfile;
+import static org.smartregister.view.controller.ProfileNavigationController.navigateToPNCProfile;
 
 public enum ReportIndicator {
     IUD("IUD", "IUD Adoption") {

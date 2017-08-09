@@ -6,6 +6,8 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
@@ -17,8 +19,6 @@ import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +42,12 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
-import static org.smartregister.AllConstants.*;
+import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
+import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
+import static org.smartregister.AllConstants.KANNADA_LOCALE;
+import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
+import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {

@@ -3,14 +3,17 @@ package org.smartregister.domain;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.smartregister.util.DateUtil;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.smartregister.util.DateUtil;
 
 import java.util.Map;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.smartregister.AllConstants.PNCVisitFields.*;
+import static org.smartregister.AllConstants.PNCVisitFields.BP_DIASTOLIC;
+import static org.smartregister.AllConstants.PNCVisitFields.BP_SYSTOLIC;
+import static org.smartregister.AllConstants.PNCVisitFields.HB_LEVEL;
+import static org.smartregister.AllConstants.PNCVisitFields.TEMPERATURE;
 import static org.smartregister.util.EasyMap.create;
 import static org.smartregister.util.EasyMap.mapOf;
 

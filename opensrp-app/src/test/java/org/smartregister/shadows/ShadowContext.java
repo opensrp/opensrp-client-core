@@ -1,5 +1,9 @@
 package org.smartregister.shadows;
 
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.robolectric.annotation.Implementation;
+import org.robolectric.annotation.Implements;
 import org.smartregister.Context;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
@@ -7,10 +11,6 @@ import org.smartregister.repository.Repository;
 import org.smartregister.service.PendingFormSubmissionService;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.robolectric.annotation.Implementation;
-import org.robolectric.annotation.Implements;
 
 import static org.mockito.Mockito.when;
 

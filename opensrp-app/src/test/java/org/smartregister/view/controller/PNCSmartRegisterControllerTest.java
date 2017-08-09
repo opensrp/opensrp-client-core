@@ -1,7 +1,16 @@
 package org.smartregister.view.controller;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.smartregister.domain.*;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.Alert;
+import org.smartregister.domain.Child;
+import org.smartregister.domain.EligibleCouple;
+import org.smartregister.domain.Mother;
+import org.smartregister.domain.ServiceProvided;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.service.AlertService;
@@ -15,11 +24,6 @@ import org.smartregister.view.contract.Visits;
 import org.smartregister.view.contract.pnc.PNCClient;
 import org.smartregister.view.contract.pnc.PNCClients;
 import org.smartregister.view.preProcessor.PNCClientPreProcessor;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,13 +33,13 @@ import java.util.Map;
 import static java.util.Arrays.asList;
 import static java.util.Collections.EMPTY_LIST;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.util.EasyMap.create;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.util.EasyMap.create;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class PNCSmartRegisterControllerTest {

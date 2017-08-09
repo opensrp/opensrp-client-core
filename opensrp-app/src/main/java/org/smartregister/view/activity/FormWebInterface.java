@@ -1,10 +1,9 @@
 package org.smartregister.view.activity;
 
 import android.app.Activity;
+import android.webkit.JavascriptInterface;
 
 import org.smartregister.util.Log;
-
-import android.webkit.JavascriptInterface;
 
 import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
 

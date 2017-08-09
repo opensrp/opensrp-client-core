@@ -11,7 +11,25 @@ import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.controller.ChildSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
-import org.smartregister.view.dialog.*;
+import org.smartregister.view.dialog.AllClientsFilter;
+import org.smartregister.view.dialog.BPLSort;
+import org.smartregister.view.dialog.ChildAgeSort;
+import org.smartregister.view.dialog.ChildHighRiskSort;
+import org.smartregister.view.dialog.ChildImmunization0to9ServiceMode;
+import org.smartregister.view.dialog.ChildImmunization9PlusServiceMode;
+import org.smartregister.view.dialog.ChildOverviewServiceMode;
+import org.smartregister.view.dialog.DialogOption;
+import org.smartregister.view.dialog.DialogOptionMapper;
+import org.smartregister.view.dialog.DialogOptionModel;
+import org.smartregister.view.dialog.EditOption;
+import org.smartregister.view.dialog.FilterOption;
+import org.smartregister.view.dialog.NameSort;
+import org.smartregister.view.dialog.OpenFormOption;
+import org.smartregister.view.dialog.OutOfAreaFilter;
+import org.smartregister.view.dialog.SCSort;
+import org.smartregister.view.dialog.STSort;
+import org.smartregister.view.dialog.ServiceModeOption;
+import org.smartregister.view.dialog.SortOption;
 
 import java.util.List;
 

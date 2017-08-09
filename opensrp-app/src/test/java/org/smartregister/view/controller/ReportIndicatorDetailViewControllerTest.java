@@ -1,13 +1,15 @@
 package org.smartregister.view.controller;
 
 import android.content.Context;
+
 import com.google.gson.Gson;
-import org.smartregister.domain.Report;
+
 import org.ei.drishti.dto.MonthSummaryDatum;
-import org.smartregister.view.contract.IndicatorReportDetail;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.smartregister.domain.Report;
+import org.smartregister.view.contract.IndicatorReportDetail;
 
 import java.util.List;
 

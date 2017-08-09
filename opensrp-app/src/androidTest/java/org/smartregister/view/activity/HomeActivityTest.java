@@ -1,8 +1,8 @@
 package org.smartregister.view.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
+
 import org.smartregister.Context;
-import org.smartregister.util.*;
 
 import java.util.Date;
 

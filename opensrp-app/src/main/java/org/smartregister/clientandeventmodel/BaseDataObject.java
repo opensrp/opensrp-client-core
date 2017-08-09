@@ -1,9 +1,9 @@
 package org.smartregister.clientandeventmodel;
 
-import java.util.Date;
-
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.codehaus.jackson.annotate.JsonProperty;
+
+import java.util.Date;
 
 public abstract class BaseDataObject extends MotechBaseDataObject {
 

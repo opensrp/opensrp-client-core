@@ -4,7 +4,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.smartregister.domain.FPMethod;
-import org.smartregister.view.contract.BaseFPSmartRegisterClient;
 import org.smartregister.view.contract.FPSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
 

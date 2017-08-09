@@ -1,18 +1,20 @@
 package org.smartregister.view.contract;
 
-import org.smartregister.util.DateUtil;
-import org.smartregister.util.EasyMap;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.util.DateUtil;
+import org.smartregister.util.EasyMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
-import static junit.framework.Assert.*;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 @RunWith(RobolectricTestRunner.class)
 public class ANCClientTest {

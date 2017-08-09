@@ -6,13 +6,13 @@ import android.view.ViewGroup;
 
 import org.smartregister.R;
 
-import atv.view.AndroidTreeView;
-import atv.view.TreeNodeWrapperView;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import atv.view.AndroidTreeView;
+import atv.view.TreeNodeWrapperView;
 
 /**
  * Created by Bogdan Melnychuk on 2/10/15.

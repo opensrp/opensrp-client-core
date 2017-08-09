@@ -1,18 +1,15 @@
 package org.smartregister.service;
 
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
 import android.os.Environment;
 
 import org.apache.commons.io.IOUtils;
-import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.DristhiConfiguration;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by Dimas Ciputra on 3/22/15.

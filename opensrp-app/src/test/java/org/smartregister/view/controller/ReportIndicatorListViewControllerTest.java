@@ -1,27 +1,29 @@
 package org.smartregister.view.controller;
 
 import android.content.Context;
+
 import com.google.gson.Gson;
-import org.smartregister.domain.Report;
+
 import org.ei.drishti.dto.MonthSummaryDatum;
-import org.smartregister.repository.AllReports;
-import org.smartregister.util.DateUtil;
-import org.smartregister.view.contract.CategoryReports;
-import org.smartregister.view.contract.IndicatorReport;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.smartregister.domain.Report;
+import org.smartregister.repository.AllReports;
+import org.smartregister.util.DateUtil;
+import org.smartregister.view.contract.CategoryReports;
+import org.smartregister.view.contract.IndicatorReport;
 
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.ReportsCategory.ANC_SERVICES;
-import static org.smartregister.domain.ReportsCategory.FPS;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.ReportsCategory.ANC_SERVICES;
+import static org.smartregister.domain.ReportsCategory.FPS;
 
 public class ReportIndicatorListViewControllerTest {
     @Mock

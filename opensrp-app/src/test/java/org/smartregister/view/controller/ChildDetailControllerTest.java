@@ -1,7 +1,13 @@
 package org.smartregister.view.controller;
 
 import android.content.Context;
+
 import com.google.gson.Gson;
+
+import org.joda.time.LocalDate;
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.Mock;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -14,10 +20,6 @@ import org.smartregister.view.contract.BirthDetails;
 import org.smartregister.view.contract.ChildDetail;
 import org.smartregister.view.contract.CoupleDetails;
 import org.smartregister.view.contract.LocationDetails;
-import org.joda.time.LocalDate;
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mock;
 
 import java.util.HashMap;
 

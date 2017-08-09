@@ -2,7 +2,6 @@ package org.smartregister.view.dialog;
 
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECSmartRegisterBaseClient;
 import org.smartregister.view.contract.SmartRegisterClients;
 

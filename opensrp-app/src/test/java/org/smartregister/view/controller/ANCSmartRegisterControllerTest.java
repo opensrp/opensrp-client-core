@@ -1,6 +1,11 @@
 package org.smartregister.view.controller;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -11,12 +16,12 @@ import org.smartregister.service.AlertService;
 import org.smartregister.service.ServiceProvidedService;
 import org.smartregister.util.Cache;
 import org.smartregister.util.EasyMap;
-import org.smartregister.view.contract.*;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.view.contract.ANCClient;
+import org.smartregister.view.contract.ANCClients;
+import org.smartregister.view.contract.AlertDTO;
+import org.smartregister.view.contract.ServiceProvidedDTO;
+import org.smartregister.view.contract.SmartRegisterClients;
+import org.smartregister.view.contract.Visits;
 
 import java.util.Collections;
 import java.util.List;
@@ -24,12 +29,12 @@ import java.util.Map;
 
 import static java.util.Arrays.asList;
 import static junit.framework.Assert.assertEquals;
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.util.EasyMap.create;
-import static org.smartregister.util.EasyMap.mapOf;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.domain.AlertStatus.normal;
+import static org.smartregister.util.EasyMap.create;
+import static org.smartregister.util.EasyMap.mapOf;
 
 @RunWith(RobolectricTestRunner.class)
 public class ANCSmartRegisterControllerTest {

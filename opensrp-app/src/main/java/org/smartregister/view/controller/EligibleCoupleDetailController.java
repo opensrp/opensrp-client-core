@@ -2,9 +2,12 @@ package org.smartregister.view.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.repository.AllEligibleCouples;
@@ -15,10 +18,6 @@ import org.smartregister.view.contract.Child;
 import org.smartregister.view.contract.CoupleDetails;
 import org.smartregister.view.contract.ECDetail;
 import org.smartregister.view.contract.TimelineEvent;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import android.webkit.JavascriptInterface;
 
 import java.util.ArrayList;
 import java.util.Collections;

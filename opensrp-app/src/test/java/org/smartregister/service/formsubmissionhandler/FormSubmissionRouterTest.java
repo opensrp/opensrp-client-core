@@ -1,19 +1,19 @@
 package org.smartregister.service.formsubmissionhandler;
 
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.domain.form.FormSubmission;
-import org.smartregister.event.Listener;
-import org.smartregister.repository.FormDataRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.event.Listener;
+import org.smartregister.repository.FormDataRepository;
 
-import static org.smartregister.event.Event.FORM_SUBMITTED;
-import static org.smartregister.util.FormSubmissionBuilder.create;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
+import static org.smartregister.event.Event.FORM_SUBMITTED;
+import static org.smartregister.util.FormSubmissionBuilder.create;
 
 @RunWith(RobolectricTestRunner.class)
 public class FormSubmissionRouterTest {
