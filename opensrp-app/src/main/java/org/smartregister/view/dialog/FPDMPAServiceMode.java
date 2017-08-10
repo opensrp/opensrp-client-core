@@ -1,9 +1,8 @@
 package org.smartregister.view.dialog;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-
-import static org.smartregister.Context.getInstance;
 
 public class FPDMPAServiceMode extends FPAllMethodsServiceMode {
 
@@ -13,6 +12,6 @@ public class FPDMPAServiceMode extends FPAllMethodsServiceMode {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.fp_register_service_mode_dmpa);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.fp_register_service_mode_dmpa);
     }
 }

@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.util.IntegerUtil;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
 
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.R.color.alert_urgent_red;
 
 public class ANCStatusView extends RelativeLayout {
@@ -91,29 +91,29 @@ public class ANCStatusView extends RelativeLayout {
     private void setTextColorForLMP(ANCSmartRegisterClient client) {
         if (IntegerUtil.tryParse(client.pastDueInDays(), 0) > -30
                 && IntegerUtil.tryParse(client.pastDueInDays(), 0) < 0) {
-            txtLmp.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
-            txtEdd.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
+            txtLmp.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_in_progress_blue));
+            txtEdd.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_in_progress_blue));
             txtANCStatus
-                    .setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
-            lblLmp.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
-            lblEdd.setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
+                    .setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_in_progress_blue));
+            lblLmp.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_in_progress_blue));
+            lblEdd.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_in_progress_blue));
             lblANCStatus
-                    .setTextColor(getInstance().getColorResource(R.color.alert_in_progress_blue));
+                    .setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_in_progress_blue));
         } else {
-            txtLmp.setTextColor(getInstance().getColorResource(R.color.text_black));
-            txtEdd.setTextColor(getInstance().getColorResource(R.color.text_black));
-            txtANCStatus.setTextColor(getInstance().getColorResource(R.color.text_black));
-            lblLmp.setTextColor(getInstance().getColorResource(R.color.text_black));
-            lblEdd.setTextColor(getInstance().getColorResource(R.color.text_black));
-            lblANCStatus.setTextColor(getInstance().getColorResource(R.color.text_black));
+            txtLmp.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
+            txtEdd.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
+            txtANCStatus.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
+            lblLmp.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
+            lblEdd.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
+            lblANCStatus.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
         }
     }
 
     private void setTextColorForPastDue() {
-        lblEdd.setTextColor(getInstance().getColorResource(alert_urgent_red));
-        txtEdd.setTextColor(getInstance().getColorResource(alert_urgent_red));
-        lblDaysPastDue.setTextColor(getInstance().getColorResource(alert_urgent_red));
-        txtDaysPastDue.setTextColor(getInstance().getColorResource(alert_urgent_red));
+        lblEdd.setTextColor(CoreLibrary.getInstance().context().getColorResource(alert_urgent_red));
+        txtEdd.setTextColor(CoreLibrary.getInstance().context().getColorResource(alert_urgent_red));
+        lblDaysPastDue.setTextColor(CoreLibrary.getInstance().context().getColorResource(alert_urgent_red));
+        txtDaysPastDue.setTextColor(CoreLibrary.getInstance().context().getColorResource(alert_urgent_red));
     }
 
     private void hideAllViews() {

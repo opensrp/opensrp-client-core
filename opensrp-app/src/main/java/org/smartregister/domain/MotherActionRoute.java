@@ -1,14 +1,14 @@
 package org.smartregister.domain;
 
 import org.ei.drishti.dto.Action;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.event.Event;
 
 public enum MotherActionRoute {
     CLOSE("close") {
         @Override
         public void direct(Action action) {
-            Context.getInstance().motherService()
+            CoreLibrary.getInstance().context().motherService()
                     .close(action.caseID(), action.get("reasonForClose"));
             Event.ACTION_HANDLED.notifyListeners("Mother closed");
         }

@@ -9,11 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.view.contract.BaseFPSmartRegisterClient;
-
-import static org.smartregister.Context.getInstance;
 
 public class ClientFpMethodView extends LinearLayout {
     private TextView fpMethodView;
@@ -74,7 +73,7 @@ public class ClientFpMethodView extends LinearLayout {
         } else if (fpMethod == FPMethod.CONDOM) {
             fpMethodQuantityLabelView.setVisibility(View.VISIBLE);
             fpMethodQuantityLabelView
-                    .setText(getInstance().getStringResource(R.string.str_number_given));
+                    .setText(CoreLibrary.getInstance().context().getStringResource(R.string.str_number_given));
             fpMethodQuantityView.setVisibility(View.VISIBLE);
             fpMethodQuantityView.setText(client.numberOfCondomsSupplied());
         } else if (fpMethod == FPMethod.CENTCHROMAN) {

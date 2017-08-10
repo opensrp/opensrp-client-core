@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.sync.SyncAfterFetchListener;
 import org.smartregister.sync.SyncProgressIndicator;
 import org.smartregister.sync.UpdateActionsTask;
@@ -16,10 +17,10 @@ public class SyncBroadcastReceiver extends BroadcastReceiver {
         logInfo("Sync alarm triggered. Trying to Sync.");
 
         UpdateActionsTask updateActionsTask = new UpdateActionsTask(context,
-                org.smartregister.Context.getInstance().actionService(),
-                org.smartregister.Context.getInstance().formSubmissionSyncService(),
+                CoreLibrary.getInstance().context().actionService(),
+                CoreLibrary.getInstance().context().formSubmissionSyncService(),
                 new SyncProgressIndicator(),
-                org.smartregister.Context.getInstance().allFormVersionSyncService());
+                CoreLibrary.getInstance().context().allFormVersionSyncService());
 
         updateActionsTask.updateFromServer(new SyncAfterFetchListener());
     }

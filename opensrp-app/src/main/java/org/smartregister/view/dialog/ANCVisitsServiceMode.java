@@ -4,6 +4,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -23,7 +24,6 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.ANCVisitFields.WEIGHT;
 import static org.smartregister.AllConstants.FormNames.ANC_VISIT;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.domain.ANCServiceType.ANC_1;
 import static org.smartregister.domain.ANCServiceType.ANC_2;
 import static org.smartregister.domain.ANCServiceType.ANC_3;
@@ -39,7 +39,7 @@ public class ANCVisitsServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.anc_service_mode_anc_visits);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.anc_service_mode_anc_visits);
     }
 
     @Override
@@ -201,7 +201,7 @@ public class ANCVisitsServiceMode extends ServiceModeOption {
 
     private void setServiceProvidedLayout(ANCSmartRegisterClient client, ServiceProvidedDTO
             ancServiceProvided, View serviceProvidedLayout, TextView txtVisitDoneDate, TextView
-            lblBp, TextView txtBp, TextView lblWeight, TextView txtWeight) {
+                                                  lblBp, TextView txtBp, TextView lblWeight, TextView txtWeight) {
         serviceProvidedLayout.setVisibility(View.VISIBLE);
         txtVisitDoneDate.setVisibility(View.VISIBLE);
         txtVisitDoneDate.setText(ancServiceProvided.shortDate());

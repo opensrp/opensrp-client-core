@@ -6,7 +6,7 @@ import org.smartregister.view.contract.ServiceProvidedDTO;
 public class PNCVisitClause implements FilterClause<ServiceProvidedDTO> {
     private LocalDate visitEndDate;
     private String PNC_IDENTIFIER = "PNC";
-//    private String PNC_IDENTIFIER = Context.getInstance().getStringResource(R.string
+//    private String PNC_IDENTIFIER = CoreLibrary.getInstance().context().getStringResource(R.string
 // .str_pnc_clause);
 
     public PNCVisitClause(LocalDate visitEndDate) {

@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.dialog.AllClientsFilter;
 import org.smartregister.view.dialog.AllEligibleCoupleServiceMode;
@@ -49,7 +50,7 @@ public class SmartRegisterClientsTest {
     public void setUp() throws Exception {
         initMocks(this);
         when(context.applicationContext()).thenReturn(applicationContext);
-        currentContext = Context.getInstance();
+        currentContext = CoreLibrary.getInstance().context();
         Context.setInstance(context);
     }
 

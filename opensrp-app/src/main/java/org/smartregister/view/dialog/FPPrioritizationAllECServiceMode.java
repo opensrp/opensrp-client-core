@@ -2,6 +2,7 @@ package org.smartregister.view.dialog;
 
 import android.view.View;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -14,7 +15,6 @@ import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
 import static android.view.View.VISIBLE;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class FPPrioritizationAllECServiceMode extends ServiceModeOption {
@@ -25,7 +25,7 @@ public class FPPrioritizationAllECServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.fp_prioritization_all_ec_service_mode);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.fp_prioritization_all_ec_service_mode);
     }
 
     @Override

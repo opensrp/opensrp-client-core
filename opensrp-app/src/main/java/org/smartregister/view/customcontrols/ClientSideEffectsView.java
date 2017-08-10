@@ -6,11 +6,10 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.view.contract.FPSmartRegisterClient;
-
-import static org.smartregister.Context.getInstance;
 
 public class ClientSideEffectsView extends LinearLayout {
     private TextView complicationsDateView;
@@ -46,12 +45,12 @@ public class ClientSideEffectsView extends LinearLayout {
         sideEffectsView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
 
         complicationsDateView.setText(client.complicationDate());
-        if (client.refillFollowUps() != null && getInstance()
+        if (client.refillFollowUps() != null && CoreLibrary.getInstance().context()
                 .getStringResource(R.string.str_referral)
                 .equalsIgnoreCase(client.refillFollowUps().type())) {
             sideEffectsView.setVisibility(View.VISIBLE);
-            sideEffectsView.setText(getInstance().getStringResource(R.string.str_referred));
-            sideEffectsView.setTextColor(getInstance().getColorResource(R.color.alert_urgent_red));
+            sideEffectsView.setText(CoreLibrary.getInstance().context().getStringResource(R.string.str_referred));
+            sideEffectsView.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.alert_urgent_red));
             sideEffectsView.setCompoundDrawablesWithIntrinsicBounds(
                     getResources().getDrawable(R.drawable.icon_referral_warning), null, null, null);
 

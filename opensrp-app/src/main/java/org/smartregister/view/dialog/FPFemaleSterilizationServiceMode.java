@@ -1,9 +1,8 @@
 package org.smartregister.view.dialog;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-
-import static org.smartregister.Context.getInstance;
 
 public class FPFemaleSterilizationServiceMode extends FPAllMethodsServiceMode {
 
@@ -13,7 +12,7 @@ public class FPFemaleSterilizationServiceMode extends FPAllMethodsServiceMode {
 
     @Override
     public String name() {
-        return getInstance()
+        return CoreLibrary.getInstance().context()
                 .getStringResource(R.string.fp_register_service_mode_female_sterilization);
     }
 }

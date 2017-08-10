@@ -1,6 +1,6 @@
 package org.smartregister.domain;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.view.contract.Beneficiary;
 
 import java.util.List;
@@ -885,15 +885,15 @@ public enum ReportIndicator {
     }
 
     private static List<Beneficiary> fetchECCaseList(List<String> caseIds) {
-        return Context.getInstance().beneficiaryService().fetchFromEcCaseIds(caseIds);
+        return CoreLibrary.getInstance().context().beneficiaryService().fetchFromEcCaseIds(caseIds);
     }
 
     private static List<Beneficiary> fetchMotherCaseList(List<String> caseIds) {
-        return Context.getInstance().beneficiaryService().fetchFromMotherCaseIds(caseIds);
+        return CoreLibrary.getInstance().context().beneficiaryService().fetchFromMotherCaseIds(caseIds);
     }
 
     private static List<Beneficiary> fetchChildCaseList(List<String> caseIds) {
-        return Context.getInstance().beneficiaryService().fetchFromChildCaseIds(caseIds);
+        return CoreLibrary.getInstance().context().beneficiaryService().fetchFromChildCaseIds(caseIds);
     }
 
     public static ReportIndicator parseToReportIndicator(String indicator) {

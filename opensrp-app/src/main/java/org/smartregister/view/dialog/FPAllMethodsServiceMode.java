@@ -2,6 +2,7 @@ package org.smartregister.view.dialog;
 
 import android.view.View;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -19,7 +20,6 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.FP_COMPLICATIONS;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class FPAllMethodsServiceMode extends ServiceModeOption {
@@ -30,7 +30,7 @@ public class FPAllMethodsServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.fp_register_service_mode_all_methods);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.fp_register_service_mode_all_methods);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class FPAllMethodsServiceMode extends ServiceModeOption {
         setupSideEffectsView(client, viewHolder);
         setupSideEffectsButtonView(client, viewHolder);
         setupUpdateButtonView(client, viewHolder, onClickListener);
-        setupFPMethodView(client, viewHolder, getInstance().getColorResource(R.color.text_black));
+        setupFPMethodView(client, viewHolder, CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
         setupAlertView(client, viewHolder);
     }
 
@@ -128,7 +128,7 @@ public class FPAllMethodsServiceMode extends ServiceModeOption {
         viewHolder.fpAlertLayout().setBackgroundResource(alertStatus.backgroundColorResourceId());
         viewHolder.txtAlertDateView().setTextColor(alertStatus.fontColor());
         viewHolder.txtAlertDateView().setText(
-                getInstance().getStringResource(R.string.str_due) + refillFollowUps.alert()
+                CoreLibrary.getInstance().context().getStringResource(R.string.str_due) + refillFollowUps.alert()
                         .shortDate());
         viewHolder.fpAlertLayout().setOnClickListener(
                 launchForm(FPAlertType.from(refillFollowUps.type()).getFormName(),

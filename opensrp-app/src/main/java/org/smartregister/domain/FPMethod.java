@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 
 import java.util.Locale;
@@ -21,7 +21,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_condom);
         }
     }, IUD {
@@ -31,7 +31,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_iucd);
         }
     }, OCP {
@@ -41,7 +41,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_ocp);
         }
     }, DMPA_INJECTABLE {
@@ -51,7 +51,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_dmpa);
         }
     }, MALE_STERILIZATION {
@@ -61,7 +61,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_male_sterilization);
         }
     }, FEMALE_STERILIZATION {
@@ -71,7 +71,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_female_sterilization);
         }
     }, ECP {
@@ -81,7 +81,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_ecp);
         }
     }, TRADITIONAL_METHODS {
@@ -91,7 +91,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_traditional);
         }
     }, LAM {
@@ -101,7 +101,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_lam);
         }
     }, CENTCHROMAN {
@@ -111,7 +111,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_centchroman);
         }
     }, NONE_PS {
@@ -121,7 +121,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_none_ps);
         }
     }, NONE_SS {
@@ -131,7 +131,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.fp_register_service_mode_none_ss);
         }
     }, NONE {
@@ -141,7 +141,7 @@ public enum FPMethod {
 
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.ec_register_no_fp);
+            return CoreLibrary.getInstance().context().applicationContext().getString(R.string.ec_register_no_fp);
         }
     };
 

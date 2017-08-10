@@ -5,6 +5,7 @@ import android.os.Environment;
 
 import org.apache.commons.io.IOUtils;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 
 import java.io.File;
@@ -32,7 +33,7 @@ public class FormPathService {
     }
 
     public String getForms(String file, String encoding) throws IOException {
-        DristhiConfiguration configuration = Context.getInstance().configuration();
+        DristhiConfiguration configuration = CoreLibrary.getInstance().context().configuration();
 
         if (configuration.shouldSyncForm()) {
             File formFile = new File(sdcardPath + file);

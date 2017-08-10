@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.ChildClient;
 
@@ -13,7 +13,7 @@ public enum ChildServiceType {
     MEASLES {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_measles);
         }
 
@@ -24,13 +24,13 @@ public enum ChildServiceType {
     }, MEASLESBOOSTER {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_measles_booster);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_measles_booster_short);
         }
 
@@ -41,7 +41,7 @@ public enum ChildServiceType {
     }, OPV_BOOSTER {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_opv_booster);
         }
 
@@ -54,13 +54,13 @@ public enum ChildServiceType {
     DPTBOOSTER_1 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_dpt_booster_1);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_dpt_booster_1_short);
         }
 
@@ -71,13 +71,13 @@ public enum ChildServiceType {
     }, DPTBOOSTER_2 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_dpt_booster_2);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_dpt_booster_2_short);
         }
 
@@ -88,7 +88,7 @@ public enum ChildServiceType {
     }, OPV_0 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_opv_0);
         }
 
@@ -99,7 +99,7 @@ public enum ChildServiceType {
     }, OPV_1 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_opv_1);
         }
 
@@ -110,7 +110,7 @@ public enum ChildServiceType {
     }, OPV_2 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_opv_2);
         }
 
@@ -121,7 +121,7 @@ public enum ChildServiceType {
     }, OPV_3 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_opv_3);
         }
 
@@ -134,13 +134,13 @@ public enum ChildServiceType {
     PENTAVALENT_1 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_pentavalent_1);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_pentavalent_1_short);
         }
 
@@ -151,13 +151,13 @@ public enum ChildServiceType {
     }, PENTAVALENT_2 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_pentavalent_2);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_pentavalent_2_short);
         }
 
@@ -168,13 +168,13 @@ public enum ChildServiceType {
     }, PENTAVALENT_3 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_pentavalent_3);
         }
 
         @Override
         public String shortName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_pentavalent_3_short);
         }
 
@@ -185,7 +185,7 @@ public enum ChildServiceType {
     }, BCG {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_bcg);
+            return CoreLibrary.getInstance().context().applicationContext().getString(R.string.service_type_bcg);
         }
 
         @Override
@@ -195,7 +195,7 @@ public enum ChildServiceType {
     }, PNC {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_pnc);
+            return CoreLibrary.getInstance().context().applicationContext().getString(R.string.service_type_pnc);
         }
 
         @Override
@@ -205,7 +205,7 @@ public enum ChildServiceType {
     }, JE {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_je);
+            return CoreLibrary.getInstance().context().applicationContext().getString(R.string.service_type_je);
         }
 
         @Override
@@ -215,7 +215,7 @@ public enum ChildServiceType {
     }, MMR {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext().getString(R.string.service_type_mmr);
+            return CoreLibrary.getInstance().context().applicationContext().getString(R.string.service_type_mmr);
         }
 
         @Override
@@ -225,7 +225,7 @@ public enum ChildServiceType {
     }, VITAMIN_A {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_vitamin_a);
         }
 
@@ -236,7 +236,7 @@ public enum ChildServiceType {
     }, ILLNESS_VISIT {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_illness_visit);
         }
 
@@ -247,7 +247,7 @@ public enum ChildServiceType {
     }, HEPB_0 {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_hepb_0);
         }
 
@@ -258,7 +258,7 @@ public enum ChildServiceType {
     }, EMPTY {
         @Override
         public String displayName() {
-            return Context.getInstance().applicationContext()
+            return CoreLibrary.getInstance().context().applicationContext()
                     .getString(R.string.service_type_empty);
         }
 

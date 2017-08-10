@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.event.Listener;
 
 import static java.text.MessageFormat.format;
@@ -26,7 +27,7 @@ public class DrishtiSyncScheduler {
     }
 
     public static void start(final Context context) {
-        if (org.smartregister.Context.getInstance().IsUserLoggedOut()) {
+        if (CoreLibrary.getInstance().context().IsUserLoggedOut()) {
             return;
         }
 

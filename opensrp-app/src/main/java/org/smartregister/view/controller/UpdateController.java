@@ -2,7 +2,7 @@ package org.smartregister.view.controller;
 
 import android.webkit.WebView;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,7 @@ public class UpdateController {
     }
 
     public void updateANMDetails() {
-        UpdateANMDetailsTask task = new UpdateANMDetailsTask(Context.getInstance().anmController());
+        UpdateANMDetailsTask task = new UpdateANMDetailsTask(CoreLibrary.getInstance().context().anmController());
         task.fetch(new AfterANMDetailsFetchListener() {
             @Override
             public void afterFetch(String anmDetails) {

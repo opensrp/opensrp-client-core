@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -26,7 +26,6 @@ import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.ANC_VISIT;
 import static org.smartregister.AllConstants.FormNames.IFA;
 import static org.smartregister.AllConstants.FormNames.TT;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 import static org.smartregister.view.contract.AlertDTO.emptyAlert;
 import static org.smartregister.view.contract.AlertStatus.COMPLETE;
@@ -42,7 +41,7 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.anc_service_mode_overview);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.anc_service_mode_overview);
     }
 
     @Override
@@ -198,7 +197,7 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
     private void setupEditView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
             viewHolder, View.OnClickListener onClickListener) {
         if (iconPencilDrawable == null) {
-            iconPencilDrawable = Context.getInstance().getDrawableResource(R.drawable.ic_pencil);
+            iconPencilDrawable = CoreLibrary.getInstance().context().getDrawableResource(R.drawable.ic_pencil);
         }
         viewHolder.btnEditView().setImageDrawable(iconPencilDrawable);
         viewHolder.btnEditView().setOnClickListener(onClickListener);
@@ -225,7 +224,7 @@ public class ANCOverviewServiceMode extends ServiceModeOption {
         if (StringUtils.isNotEmpty(serviceDate)) {
             dateView.setText(serviceDate);
         } else {
-            dateView.setText(getInstance().getStringResource(R.string.str_due) + alert.shortDate());
+            dateView.setText(CoreLibrary.getInstance().context().getStringResource(R.string.str_due) + alert.shortDate());
         }
         dateView.setTextColor(alert.alertStatus().fontColor());
     }

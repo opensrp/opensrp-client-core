@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormAttributeParser;
@@ -70,7 +71,7 @@ public class FormUtils {
 
     public FormUtils(Context context) throws Exception {
         mContext = context;
-        theAppContext = org.smartregister.Context.getInstance();
+        theAppContext = CoreLibrary.getInstance().context();
         FormAttributeParser formAttributeParser = new FormAttributeParser(context);
         formEntityConverter = new FormEntityConverter(formAttributeParser, mContext);
         // Protect creation of static variable.
@@ -226,7 +227,7 @@ public class FormUtils {
                                                                String formName) {
         org.smartregister.clientandeventmodel.FormSubmission v2FormSubmission;
 
-        String anmId = org.smartregister.Context.getInstance().anmService().fetchDetails().name();
+        String anmId = CoreLibrary.getInstance().context().anmService().fetchDetails().name();
         String instanceId = formSubmission.instanceId();
         String entityId = formSubmission.entityId();
         Long clientVersion = new Date().getTime();
@@ -611,7 +612,7 @@ public class FormUtils {
                 JSONObject fieldsObject =
                         formDefinition.has("form") ? formDefinition.getJSONObject("form")
                                 : formDefinition.has("sub_forms") ? formDefinition
-                                        .getJSONObject("sub_forms") : formDefinition;
+                                .getJSONObject("sub_forms") : formDefinition;
                 if (fieldsObject.has("fields")) {
                     JSONArray fields = fieldsObject.getJSONArray("fields");
                     for (int i = 0; i < fields.length(); i++) {

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.Cache;
@@ -40,7 +41,7 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype, String null_check_key,
+                                                personClientsCache, String nameString, String bindtype, String null_check_key,
                                         ByColumnAndByDetails byColumnAndByDetailsNullcheck) {
         this.allpersonobjects = allpersons;
         this.allBeneficiaries = allBeneficiaries;
@@ -55,8 +56,8 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype, String filterkey, String
-            filtervalue, ByColumnAndByDetails byColumnAndByDetails, String null_check_key,
+                                                personClientsCache, String nameString, String bindtype, String filterkey, String
+                                                filtervalue, ByColumnAndByDetails byColumnAndByDetails, String null_check_key,
                                         ByColumnAndByDetails byColumnAndByDetailsNullcheck) {
         this.allpersonobjects = allpersons;
         this.allBeneficiaries = allBeneficiaries;
@@ -73,7 +74,7 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype, String null_check_key,
+                                                personClientsCache, String nameString, String bindtype, String null_check_key,
                                         ByColumnAndByDetails byColumnAndByDetailsNullcheck,
                                         SortOption sortOption) {
         this.allpersonobjects = allpersons;
@@ -90,8 +91,8 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype, String filterkey, String
-            filtervalue, ByColumnAndByDetails byColumnAndByDetails, String null_check_key,
+                                                personClientsCache, String nameString, String bindtype, String filterkey, String
+                                                filtervalue, ByColumnAndByDetails byColumnAndByDetails, String null_check_key,
                                         ByColumnAndByDetails byColumnAndByDetailsNullcheck,
                                         SortOption sortOption) {
         this.allpersonobjects = allpersons;
@@ -110,10 +111,10 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype, String filterkey, String
-            filtervalue, boolean filterCase, ByColumnAndByDetails byColumnAndByDetails, String
-            null_check_key, ByColumnAndByDetails byColumnAndByDetailsNullcheck, SortOption
-            sortOption) {
+                                                personClientsCache, String nameString, String bindtype, String filterkey, String
+                                                filtervalue, boolean filterCase, ByColumnAndByDetails byColumnAndByDetails, String
+                                                null_check_key, ByColumnAndByDetails byColumnAndByDetailsNullcheck, SortOption
+                                                sortOption) {
         this.allpersonobjects = allpersons;
         this.allBeneficiaries = allBeneficiaries;
         this.cache = cache;
@@ -131,7 +132,7 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype,
+                                                personClientsCache, String nameString, String bindtype,
                                         ArrayList<ControllerFilterMap> filtermap,
                                         ByColumnAndByDetails byColumnAndByDetails, String
                                                 null_check_key, ByColumnAndByDetails
@@ -152,7 +153,7 @@ public class CommonPersonObjectController {
 
     public CommonPersonObjectController(AllCommonsRepository allpersons, AllBeneficiaries
             allBeneficiaries, Cache<String> cache, Cache<CommonPersonObjectClients>
-            personClientsCache, String nameString, String bindtype,
+                                                personClientsCache, String nameString, String bindtype,
                                         ArrayList<ControllerFilterMap> filtermap,
                                         ByColumnAndByDetails byColumnAndByDetails, String
                                                 null_check_key, ByColumnAndByDetails
@@ -462,8 +463,7 @@ public class CommonPersonObjectController {
     }
 
     private void updateDetails(List<CommonPersonObject> p) {
-        DetailsRepository detailsRepository = org.smartregister.Context.getInstance()
-                .detailsRepository();
+        DetailsRepository detailsRepository = CoreLibrary.getInstance().context().detailsRepository();
         for (CommonPersonObject pc : p) {
             if (detailsRepository != null) {
                 detailsRepository.updateDetails(pc);

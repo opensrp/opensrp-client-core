@@ -35,8 +35,8 @@ public class SettingsActivityTest extends ActivityInstrumentationTestCase2<HomeA
 
     @Suppress
     public void testShouldRegisterANM() throws Exception {
-        AllSharedPreferences preferences = Context.getInstance().allSharedPreferences();
-        AllSettings settings = Context.getInstance().allSettings();
+        AllSharedPreferences preferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        AllSettings settings = CoreLibrary.getInstance().context().allSettings();
 
         settings.registerANM("XYZ", "password Y");
 

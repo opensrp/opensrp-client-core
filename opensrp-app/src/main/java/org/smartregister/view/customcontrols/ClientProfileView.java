@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -81,7 +82,7 @@ public class ClientProfileView extends RelativeLayout {
     }
 
     private String getOutOfAreaText(String locationStatus) {
-        return isOutOfArea(locationStatus) ? org.smartregister.Context.getInstance()
+        return isOutOfArea(locationStatus) ? CoreLibrary.getInstance().context()
                 .getStringResource(R.string.str_out_of_area) : "";
     }
 

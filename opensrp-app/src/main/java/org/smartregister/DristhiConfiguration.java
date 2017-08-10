@@ -26,7 +26,7 @@ public class DristhiConfiguration {
     protected String dummyData = null;
 
     public DristhiConfiguration(AssetManager assetManager) {
-        preferences = Context.getInstance().allSharedPreferences();
+        preferences = CoreLibrary.getInstance().context().allSharedPreferences();
         try {
             properties.load(assetManager.open("app.properties"));
         } catch (IOException e) {

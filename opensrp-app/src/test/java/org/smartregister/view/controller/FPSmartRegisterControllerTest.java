@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.EligibleCouple;
@@ -64,7 +65,7 @@ public class FPSmartRegisterControllerTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        currentContext = Context.getInstance();
+        currentContext = CoreLibrary.getInstance().context();
         Context.setInstance(context);
         emptyDetails = Collections.emptyMap();
         controller = new FPSmartRegisterController(allEligibleCouples, allBeneficiaries, alertService, new Cache<String>(), new Cache<FPClients>());

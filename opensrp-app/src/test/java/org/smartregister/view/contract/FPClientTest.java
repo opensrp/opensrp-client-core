@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import java.util.Arrays;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.Context.getInstance;
 
 @RunWith(RobolectricTestRunner.class)
 public class FPClientTest {
@@ -28,7 +28,7 @@ public class FPClientTest {
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        currentContext = Context.getInstance();
+        currentContext = CoreLibrary.getInstance().context();
         Context.setInstance(context);
         fpClient = new FPClient("entity id 1", "woman name", "husband name", "village name", "ec no 1");
     }
@@ -64,7 +64,7 @@ public class FPClientTest {
                 , new AlertDTO("FP Followup", "normal", "2013-02-02")
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")))
                 .withFPMethod("female_sterilization");
-        when(getInstance().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
+        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
 
         fpClient.setRefillFollowUp();
 
@@ -84,7 +84,7 @@ public class FPClientTest {
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")))
                 .withFPMethod("female_sterilization");
 
-        when(getInstance().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
+        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
 
         fpClient.setRefillFollowUp();
 
@@ -102,7 +102,7 @@ public class FPClientTest {
         fpClient.withAlerts(Arrays.asList(new AlertDTO("Male Sterilization Followup", "urgent", "2013-02-02")
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")))
                 .withFPMethod("female_sterilization");
-        when(getInstance().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
+        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
 
         fpClient.setRefillFollowUp();
 
@@ -121,7 +121,7 @@ public class FPClientTest {
                 , new AlertDTO("Condom Refill", "urgent", "2013-02-02")))
                 .withFPMethod("condom");
 
-        when(getInstance().getStringResource(R.string.str_refill)).thenReturn("refill");
+        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_refill)).thenReturn("refill");
 
         fpClient.setRefillFollowUp();
 
@@ -140,7 +140,7 @@ public class FPClientTest {
                 , new AlertDTO("Condom Refill", "urgent", "2013-02-02")))
                 .withFPMethod("condom");
 
-        when(getInstance().getStringResource(R.string.str_refill)).thenReturn("refill");
+        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_refill)).thenReturn("refill");
 
         fpClient.setRefillFollowUp();
 

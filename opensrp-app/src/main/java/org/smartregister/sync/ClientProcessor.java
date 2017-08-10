@@ -747,7 +747,7 @@ public class ClientProcessor {
      * @param timestamp
      */
     private void saveClientDetails(String baseEntityId, String key, String value, Long timestamp) {
-        DetailsRepository detailsRepository = org.smartregister.Context.getInstance().
+        DetailsRepository detailsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 detailsRepository();
         detailsRepository.add(baseEntityId, key, value, timestamp);
     }
@@ -769,7 +769,7 @@ public class ClientProcessor {
 
         if (jsonDocObject == null || humanReadableValues == null
                 || humanReadableValues.length() == 0) {
-            String humanReadableValue = org.smartregister.Context.getInstance().
+            String humanReadableValue = org.smartregister.CoreLibrary.getInstance().context().
                     customHumanReadableConceptResponse().get(value);
 
             if (StringUtils.isNotBlank(humanReadableValue)) {
@@ -837,18 +837,18 @@ public class ClientProcessor {
      * Insert the a new record to the database and returns its id
      **/
     public Long executeInsertStatement(ContentValues values, String tableName) {
-        CommonRepository cr = org.smartregister.Context.getInstance().commonrepository(tableName);
+        CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
         Long id = cr.executeInsertStatement(values, tableName);
         return id;
     }
 
     public void closeCase(String tableName, String baseEntityId) {
-        CommonRepository cr = org.smartregister.Context.getInstance().commonrepository(tableName);
+        CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
         cr.closeCase(baseEntityId, tableName);
     }
 
     public boolean deleteCase(String tableName, String baseEntityId) {
-        CommonRepository cr = org.smartregister.Context.getInstance().commonrepository(tableName);
+        CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
         return cr.deleteCase(baseEntityId, tableName);
     }
 
@@ -860,7 +860,7 @@ public class ClientProcessor {
                     .from(contentValues.getAsString(AlertRepository.ALERTS_STATUS_COLUMN)),
                     contentValues.getAsString(AlertRepository.ALERTS_STARTDATE_COLUMN),
                     contentValues.getAsString(AlertRepository.ALERTS_EXPIRYDATE_COLUMN));
-            AlertService alertService = org.smartregister.Context.getInstance().alertService();
+            AlertService alertService = org.smartregister.CoreLibrary.getInstance().context().alertService();
             List<Alert> alerts = alertService
                     .findByEntityIdAndAlertNames(alert.caseId(), alert.visitCode());
 
@@ -871,7 +871,7 @@ public class ClientProcessor {
     }
 
     private Cursor queryTable(String sql, String tableName) {
-        CommonRepository cr = org.smartregister.Context.getInstance().commonrepository(tableName);
+        CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
         Cursor c = cr.queryTable(sql);
 
         return c;
@@ -930,7 +930,7 @@ public class ClientProcessor {
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
         Log.i(TAG, "Starting updateFTSsearch table: " + tableName);
-        AllCommonsRepository allCommonsRepository = org.smartregister.Context.getInstance().
+        AllCommonsRepository allCommonsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 allCommonsRepositoryobjects(tableName);
 
         if (allCommonsRepository != null) {

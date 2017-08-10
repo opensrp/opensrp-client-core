@@ -2,7 +2,7 @@ package org.smartregister.view.dialog;
 
 import android.view.View;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -24,7 +24,7 @@ public class AllEligibleCoupleServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.couple_selection);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.couple_selection);
     }
 
     @Override

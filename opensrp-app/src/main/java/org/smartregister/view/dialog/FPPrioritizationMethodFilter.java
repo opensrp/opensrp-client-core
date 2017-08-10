@@ -3,7 +3,7 @@ package org.smartregister.view.dialog;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.view.contract.FPPrioritizationServiceModes;
@@ -17,7 +17,7 @@ public class FPPrioritizationMethodFilter implements FilterOption {
     public FPPrioritizationMethodFilter(String filter) {
 
         this.filter = filter;
-        this.allECIdentifier = Context.getInstance()
+        this.allECIdentifier = CoreLibrary.getInstance().context()
                 .getStringResource(R.string.fp_prioritization_all_ec_service_mode);
     }
 
