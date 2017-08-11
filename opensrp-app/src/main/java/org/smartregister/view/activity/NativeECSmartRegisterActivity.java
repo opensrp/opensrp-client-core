@@ -120,12 +120,21 @@ public class NativeECSmartRegisterActivity extends SecuredNativeSmartRegisterAct
 
     private DialogOption[] getEditOptions() {
         return new DialogOption[]{new OpenFormOption(getString(R.string.str_register_anc_form),
-                ANC_REGISTRATION, formController), new OpenFormOption(
-                getString(R.string.str_register_fp_form), FP_CHANGE,
-                formController), new OpenFormOption(getString(R.string.str_register_child_form),
-                CHILD_REGISTRATION_EC, formController), new OpenFormOption(
-                getString(R.string.str_edit_ec_form), EC_EDIT, formController), new OpenFormOption(
-                getString(R.string.str_close_ec_form), EC_CLOSE, formController),};
+                                                     ANC_REGISTRATION,
+                                                     formController),
+                                  new OpenFormOption(getString(R.string.str_register_fp_form),
+                                                     FP_CHANGE,
+                                                     formController),
+                                  new OpenFormOption(getString(R.string.str_register_child_form),
+                                                     CHILD_REGISTRATION_EC,
+                                                     formController),
+                                  new OpenFormOption(getString(R.string.str_edit_ec_form),
+                                                     EC_EDIT,
+                                                     formController),
+                                  new OpenFormOption(getString(R.string.str_close_ec_form),
+                                                     EC_CLOSE,
+                                                     formController),
+                                  };
     }
 
     @Override

@@ -31,27 +31,28 @@ public class AllCommonsRepositoryTest {
     @Before
     public void setUp() throws Exception{
         initMocks(this);
-        allCommonsRepository = new AllCommonsRepository(personRepository,alertRepository,timelineEventRepository);
+        allCommonsRepository = new AllCommonsRepository(personRepository,
+                                                        alertRepository,
+                                                        timelineEventRepository);
     }
 
     @Test
     public void ShouldReturnAllPersonObjectOfaCertainTypeFromRepository() {
-        List <CommonPersonObject> expectedpersonobjects = Arrays.asList(new CommonPersonObject("case1","relationid1",new HashMap<String, String>(),""));
+        List<CommonPersonObject> expectedpersonobjects = Arrays.asList(new CommonPersonObject(
+                "case1",
+                "relationid1",
+                new HashMap<String, String>(),
+                ""));
         when(personRepository.allcommon()).thenReturn(expectedpersonobjects);
-        assertEquals(expectedpersonobjects,personRepository.allcommon());
+        assertEquals(expectedpersonobjects, personRepository.allcommon());
     }
-
 
     @Test
-    public void ShouldShowcount() throws Exception{
+    public void ShouldShowcount() throws Exception {
         when(personRepository.count()).thenReturn((long) 8);
-        assertEquals(personRepository.count(),(long) 8);
+        assertEquals(personRepository.count(), (long) 8);
 
     }
-
-
-
-
 //    public List<CommonPersonObject> findByCaseIDs(List<String> caseIds) {
 //        return personRepository.findByCaseIDs(caseIds.toArray(new String[caseIds.size()]));
 //    }

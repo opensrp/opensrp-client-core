@@ -86,7 +86,7 @@ public class EventClientRepository extends BaseRepository {
 
             for (Column c : cols) {
                 if (c.name().equalsIgnoreCase(referenceColumn)) {
-                    continue;//skip reference column as it is already appended
+                    continue; // skip reference column as it is already appended
                 }
                 Field f = null;
                 try {
@@ -425,7 +425,7 @@ public class EventClientRepository extends BaseRepository {
                 String jsonEventStr = (cursor.getString(0));
                 // String jsonEventStr = new String(json, "UTF-8");
                 if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
                     continue;
                 }
 
@@ -437,8 +437,8 @@ public class EventClientRepository extends BaseRepository {
                     continue;
                 }
 
-                if (!type.equals("Event")
-                        && !type.equals("Action")) { // Skip type that isn't Event or Action
+                if (!"Event".equals(type)
+                        && !"Action".equals(type)) { // Skip type that isn't Event or Action
                     continue;
                 }
                 if (jsonObectEventOrAlert.has(event_column.baseEntityId.name())) {
@@ -539,7 +539,7 @@ public class EventClientRepository extends BaseRepository {
                 String jsonEventStr = (cursor.getString(0));
                 // String jsonEventStr = new String(json, "UTF-8");
                 if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
                     continue;
                 }
 
@@ -551,8 +551,8 @@ public class EventClientRepository extends BaseRepository {
                     continue;
                 }
 
-                if (!type.equals("Event")
-                        && !type.equals("Action")) { // Skip type that isn't Event or Action
+                if (!"Event".equals(type)
+                        && !"Action".equals(type)) { // Skip type that isn't Event or Action
                     continue;
                 }
                 if (jsonObectEventOrAlert.has(event_column.baseEntityId.name())) {
@@ -754,7 +754,7 @@ public class EventClientRepository extends BaseRepository {
             while (cursor.moveToNext()) {
                 String beid = (cursor.getString(0));
                 if (StringUtils.isBlank(beid)
-                        || beid.equals("{}")) { // Skip blank/empty json string
+                        || "{}".equals(beid)) { // Skip blank/empty json string
                     continue;
                 }
 
@@ -774,7 +774,7 @@ public class EventClientRepository extends BaseRepository {
             while (cursor.moveToNext()) {
                 String beid = (cursor.getString(0));
                 if (StringUtils.isBlank(beid)
-                        || beid.equals("{}")) { // Skip blank/empty json string
+                        || "{}".equals(beid)) { // Skip blank/empty json string
                     continue;
                 }
 
@@ -1046,13 +1046,11 @@ public class EventClientRepository extends BaseRepository {
                                                     jsonObject.getString(event_column
                                                                                  .formSubmissionId
                                                                                  .name()))) {
-                    int id = getWritableDatabase().update(Table.event.name(),
-                                                          values,
-                                                          event_column.formSubmissionId.name()
-                                                                  + "=?",
-                                                          new String[]{jsonObject.getString(
-                                                                  event_column.formSubmissionId
-                                                                          .name())});
+                    getWritableDatabase().update(Table.event.name(),
+                                                 values,
+                                                 event_column.formSubmissionId.name() + "=?",
+                                                 new String[]{jsonObject.getString(
+                                                         event_column.formSubmissionId.name())});
                 } else {
                     //that odd case
                     values.put(event_column.formSubmissionId.name(),
@@ -1089,13 +1087,11 @@ public class EventClientRepository extends BaseRepository {
                                                     jsonObject.getString(report_column
                                                                                  .formSubmissionId
                                                                                  .name()))) {
-                    int id = getWritableDatabase().update(Table.path_reports.name(),
-                                                          values,
-                                                          report_column.formSubmissionId.name()
-                                                                  + "=?",
-                                                          new String[]{jsonObject.getString(
-                                                                  report_column.formSubmissionId
-                                                                          .name())});
+                    getWritableDatabase().update(Table.path_reports.name(),
+                                                 values,
+                                                 report_column.formSubmissionId.name() + "=?",
+                                                 new String[]{jsonObject.getString(
+                                                         report_column.formSubmissionId.name())});
                 } else {
                     //that odd case
                     values.put(report_column.formSubmissionId.name(),
