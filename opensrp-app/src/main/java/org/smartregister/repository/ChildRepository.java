@@ -42,6 +42,12 @@ public class ChildRepository extends DrishtiRepository {
     public static final String[] CHILD_TABLE_COLUMNS = {ID_COLUMN, MOTHER_ID_COLUMN,
             THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN,
             IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
+    private static final int CASE_ID_IDX = 0;
+    private static final int MOTHER_CASE_ID_IDX = 1;
+    private static final int THAYI_CARD_NUMBER_IDX = 2;
+    private static final int DATE_OF_BIRTH_IDX = 3;
+    private static final int GENDER_IDX = 4;
+    private static final int DETAILS_IDX = 5;
 
     @Override
     protected void onCreate(SQLiteDatabase database) {
@@ -164,12 +170,16 @@ public class ChildRepository extends DrishtiRepository {
         cursor.moveToFirst();
         List<Child> children = new ArrayList<Child>();
         while (!cursor.isAfterLast()) {
-            children.add(new Child(cursor.getString(0), cursor.getString(1), cursor.getString(2),
-                    cursor.getString(3), cursor.getString(4),
-                    new Gson().<Map<String, String>>fromJson(cursor.getString(5),
-                            new TypeToken<Map<String, String>>() {
-                            }.getType())).setIsClosed(Boolean.valueOf(cursor.getString(6)))
-                    .withPhotoPath(cursor.getString(cursor.getColumnIndex(PHOTO_PATH_COLUMN))));
+            children.add(new Child(cursor.getString(CASE_ID_IDX),
+                                   cursor.getString(MOTHER_CASE_ID_IDX),
+                                   cursor.getString(THAYI_CARD_NUMBER_IDX),
+                                   cursor.getString(DATE_OF_BIRTH_IDX),
+                                   cursor.getString(GENDER_IDX),
+                                   new Gson().<Map<String, String>>fromJson(cursor.getString(
+                                           DETAILS_IDX), new TypeToken<Map<String, String>>() {
+                                   }.getType())).setIsClosed(Boolean.valueOf(cursor.getString(6)))
+                                                .withPhotoPath(cursor.getString(
+                                                        cursor.getColumnIndex(PHOTO_PATH_COLUMN))));
             cursor.moveToNext();
         }
         cursor.close();

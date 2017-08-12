@@ -29,7 +29,15 @@ public class CommonPersonObjectFilterOptionTest {
     public void setUp() throws Exception {
         //initMocks(this);
         emptyDetails = Collections.emptyMap();
-        controller = new CommonPersonObjectController(allCommonsRepository, allBeneficiaries, new Cache<String>(), new Cache<CommonPersonObjectClients>(),"name","bindtype","name", CommonPersonObjectController.ByColumnAndByDetails.byDetails);
+        controller = new CommonPersonObjectController(
+                allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "name",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails);
     }
     
     // TODO : fix failing test

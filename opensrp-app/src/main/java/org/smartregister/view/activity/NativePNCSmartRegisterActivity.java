@@ -41,8 +41,7 @@ import static org.smartregister.AllConstants.FormNames.PNC_VISIT;
 
 public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
 
-    public static final List<? extends DialogOption> DEFAULT_PNC_FILTER_OPTIONS = asList(
-            new OutOfAreaFilter());
+    public static final List<? extends DialogOption> DEFAULT_PNC_FILTER_OPTIONS = asList(new OutOfAreaFilter());
     private final ClientActionHandler clientActionHandler = new ClientActionHandler();
     private SmartRegisterClientsProvider clientProvider = null;
     private PNCSmartRegisterController controller;
@@ -87,22 +86,28 @@ public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
             @Override
             public DialogOption[] filterOptions() {
                 Iterable<? extends DialogOption> villageFilterOptions = dialogOptionMapper
-                        .mapToVillageFilterOptions(villageController.getVillages());
-                return toArray(concat(DEFAULT_FILTER_OPTIONS, DEFAULT_PNC_FILTER_OPTIONS,
-                        villageFilterOptions), DialogOption.class);
+                        .mapToVillageFilterOptions(
+                        villageController.getVillages());
+                return toArray(concat(DEFAULT_FILTER_OPTIONS,
+                                      DEFAULT_PNC_FILTER_OPTIONS,
+                                      villageFilterOptions), DialogOption.class);
             }
 
             @Override
             public DialogOption[] serviceModeOptions() {
 
-                return new DialogOption[]{new PNCOverviewServiceMode(
-                        clientsProvider()), new PNCVisitsServiceMode(clientsProvider()),};
+                return new DialogOption[]{new PNCOverviewServiceMode(clientsProvider()),
+                                          new PNCVisitsServiceMode(clientsProvider()),};
             }
 
             @Override
             public DialogOption[] sortingOptions() {
-                return new DialogOption[]{new NameSort(), new DateOfDeliverySort(), new
-                        HighRiskSort(), new BPLSort(), new SCSort(), new STSort()};
+                return new DialogOption[]{new NameSort(),
+                                          new DateOfDeliverySort(),
+                                          new HighRiskSort(),
+                                          new BPLSort(),
+                                          new SCSort(),
+                                          new STSort()};
             }
 
             @Override
@@ -115,27 +120,38 @@ public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
         if (clientProvider == null) {
-            clientProvider = new PNCSmartRegisterClientsProvider(this, clientActionHandler,
-                    controller);
+            clientProvider = new PNCSmartRegisterClientsProvider(this,
+                                                                 clientActionHandler,
+                                                                 controller);
         }
         return clientProvider;
     }
 
     private DialogOption[] getUpdateOptions() {
-        return new DialogOption[]{new OpenFormOption(getString(R.string.str_pnc_visit_form),
-                PNC_VISIT, formController), new OpenFormOption(
-                getString(R.string.str_pnc_postpartum_family_planning_form),
-                PNC_POSTPARTUM_FAMILY_PLANNING, formController), new OpenFormOption(
-                getString(R.string.str_pnc_close_form), PNC_CLOSE, formController),};
+        return new DialogOption[]{
+                new OpenFormOption(getString(R.string.str_pnc_visit_form),
+                                   PNC_VISIT,
+                                   formController),
+                new OpenFormOption(getString(R.string.str_pnc_postpartum_family_planning_form),
+                                   PNC_POSTPARTUM_FAMILY_PLANNING,
+                                   formController),
+                new OpenFormOption(getString(R.string.str_pnc_close_form),
+                                   PNC_CLOSE,
+                                   formController),
+                };
     }
 
     @Override
     protected void onInitialization() {
         controller = new PNCSmartRegisterController(context().serviceProvidedService(),
-                context().alertService(), context().allEligibleCouples(),
-                context().allBeneficiaries(), context().listCache(), context().pncClientsCache());
+                                                    context().alertService(),
+                                                    context().allEligibleCouples(),
+                                                    context().allBeneficiaries(),
+                                                    context().listCache(),
+                                                    context().pncClientsCache());
         villageController = new VillageController(context().allEligibleCouples(),
-                context().listCache(), context().villagesCache());
+                                                  context().listCache(),
+                                                  context().villagesCache());
         dialogOptionMapper = new DialogOptionMapper();
         clientsProvider().onServiceModeSelected(new PNCOverviewServiceMode(clientsProvider()));
     }
@@ -147,8 +163,8 @@ public class NativePNCSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
     @Override
     public void startRegistration() {
-        FieldOverrides fieldOverrides = new FieldOverrides(
-                context().anmLocationController().getLocationJSON());
+        FieldOverrides fieldOverrides = new FieldOverrides(context().anmLocationController()
+                                                                    .getLocationJSON());
         startFormActivity(PNC_REGISTRATION_OA, null, fieldOverrides.getJSONString());
     }
 

@@ -6,7 +6,6 @@ import java.util.List;
 
 public class ANMLocation {
     private String district;
-    private String phcName;
     private String phcIdentifier;
     private String subCenter;
     private List<String> villages;

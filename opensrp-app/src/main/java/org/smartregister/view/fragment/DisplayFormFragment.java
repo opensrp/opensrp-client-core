@@ -42,7 +42,7 @@ public class DisplayFormFragment extends Fragment {
     private static final String headerTemplate = "web/forms/header";
     private static final String footerTemplate = "web/forms/footer";
     private static final String scriptFile = "web/forms/js_include.js";
-    public static String formInputErrorMessage = "Form contains errors please try again";//
+    public static String formInputErrorMessage = "Form contains errors please try again";
     // externalize this
     public static String okMessage = "ok";
     String formData = "";
