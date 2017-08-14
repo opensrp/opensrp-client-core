@@ -1,6 +1,5 @@
 package org.smartregister.view.contract;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,24 +43,17 @@ public class SmartRegisterClientsTest {
     @Mock
     private android.content.Context applicationContext;
 
-    private Context currentContext;
-
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        when(context.applicationContext()).thenReturn(applicationContext);
-        currentContext = CoreLibrary.getInstance().context();
-        Context.setInstance(context);
-    }
 
-    @After
-    public void tearDown() throws Exception {
-        Context.setInstance(currentContext);
+        when(applicationContext.getString(R.string.fp_register_service_mode_condom)).thenReturn("Condom");
+        when(context.applicationContext()).thenReturn(applicationContext);
+        CoreLibrary.reset(context);
     }
 
     @Test
     public void emptyStringSearchShouldReturnAllTheResults() {
-
         SmartRegisterClients originalClients = getUniformSmartRegisterClients(10);
         SmartRegisterClients filteredClients = originalClients.applyFilter(
                 new AllClientsFilter(),
@@ -276,7 +268,6 @@ public class SmartRegisterClientsTest {
 
     @Test
     public void shouldReturnFilteredListForFP() {
-        when(applicationContext.getString(R.string.fp_register_service_mode_condom)).thenReturn("Condom");
 
         SmartRegisterClients originalClients = getFPSmartRegisterClientsWithProperDetails();
         SmartRegisterClients filteredClients = originalClients.applyFilterWithFP(fpAllMethodsServiceMode, new NameSort(), new FPMethodFilter("condom"));

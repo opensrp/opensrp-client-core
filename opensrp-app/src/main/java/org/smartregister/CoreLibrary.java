@@ -31,4 +31,16 @@ public class CoreLibrary {
         return context;
     }
 
+    /**
+     * Use this method when testing.
+     * It should replace org.smartregister.Context#setInstance(org.smartregister.Context) which has been removed
+     *
+     * @param context
+     */
+    public static void reset(Context context) {
+        if (context != null) {
+            instance = new CoreLibrary(context);
+        }
+    }
+
 }

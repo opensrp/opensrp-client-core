@@ -1,6 +1,5 @@
 package org.smartregister.view.contract;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,19 +22,12 @@ public class FPClientTest {
     private Context context;
 
     private FPClient fpClient;
-    private Context currentContext;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        currentContext = CoreLibrary.getInstance().context();
-        Context.setInstance(context);
+        CoreLibrary.init(context);
         fpClient = new FPClient("entity id 1", "woman name", "husband name", "village name", "ec no 1");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Context.setInstance(currentContext);
     }
 
     @Test
@@ -44,7 +36,7 @@ public class FPClientTest {
                 , new AlertDTO("OCP Refill", "urgent", "2013-02-02")
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")
         )).withFPMethod("female_sterilization");
-        when(context.getStringResource(R.string.str_referral)).thenReturn("referral");
+        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_referral)).thenReturn("referral");
 
         fpClient.setRefillFollowUp();
 
@@ -55,7 +47,14 @@ public class FPClientTest {
                 .withFPMethod("female_sterilization")
                 .withRefillFollowUps(new RefillFollowUps("FP Referral Followup", new AlertDTO("FP Referral Followup", "normal", "2013-02-02"), "referral"));
 
-        assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+        RefillFollowUps expectedRefillFollowUps = expectedFPClient.refillFollowUps();
+        RefillFollowUps refillFollowUps = fpClient.refillFollowUps();
+
+        assertEquals(expectedRefillFollowUps.name(), refillFollowUps.name());
+        assertEquals(expectedRefillFollowUps.type(), refillFollowUps.type());
+        assertEquals(expectedRefillFollowUps.alert().name(), refillFollowUps.alert().name());
+        assertEquals(expectedRefillFollowUps.alert().status(), refillFollowUps.alert().status());
+        assertEquals(expectedRefillFollowUps.alert().date(), refillFollowUps.alert().date());
     }
 
     @Test

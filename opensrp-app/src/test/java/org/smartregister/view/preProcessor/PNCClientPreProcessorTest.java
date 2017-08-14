@@ -1,7 +1,6 @@
 package org.smartregister.view.preProcessor;
 
 import org.joda.time.LocalDate;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -30,20 +29,13 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class PNCClientPreProcessorTest {
     @Mock
     Context mockedContext;
-    private Context realContext;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        realContext = CoreLibrary.getInstance().context();
-        Context.setInstance(mockedContext);
+        CoreLibrary.init(mockedContext);
         when(mockedContext.getStringResource(R.string.str_pnc_circle_type_expected)).thenReturn("expected");
         when(mockedContext.getStringResource(R.string.str_pnc_circle_type_actual)).thenReturn("actual");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Context.setInstance(realContext);
     }
 
     @Test

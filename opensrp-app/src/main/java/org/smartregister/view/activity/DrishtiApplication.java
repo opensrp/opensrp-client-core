@@ -66,7 +66,6 @@ public abstract class DrishtiApplication extends Application {
         try {
             super.onCreate();
             mInstance = this;
-            context = CoreLibrary.getInstance().context();
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
             logError("Error on onCreate: " + e);
