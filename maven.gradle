@@ -29,9 +29,11 @@ afterEvaluate { project ->
 
             if (mavenLocalFlag) {
 
-                mavenInstaller {
+                mavenDeployer {
 
                     pom.artifactId = POM_SETTING_ARTIFACT_ID
+
+                    repository(url: mavenLocal().url)
 
                     pom.project {
                         name POM_SETTING_NAME

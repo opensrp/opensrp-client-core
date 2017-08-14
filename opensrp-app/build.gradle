@@ -59,6 +59,11 @@ android {
         abortOnError false
     }
 
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "4g"
+    }
+
     defaultConfig {
         // Enabling multidex support.
         multiDexEnabled true
