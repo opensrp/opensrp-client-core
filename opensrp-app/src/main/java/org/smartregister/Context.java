@@ -204,11 +204,6 @@ public class Context {
         return context;
     }
 
-    public static Context setInstance(Context context) {
-        Context.context = context;
-        return context;
-    }
-
     public android.content.Context applicationContext() {
         return applicationContext;
     }

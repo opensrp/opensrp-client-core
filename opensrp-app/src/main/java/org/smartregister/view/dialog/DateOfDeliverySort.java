@@ -1,6 +1,6 @@
 package org.smartregister.view.dialog;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
@@ -10,7 +10,7 @@ import java.util.Collections;
 public class DateOfDeliverySort implements SortOption {
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.sort_by_date_of_delivery_label);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.sort_by_date_of_delivery_label);
     }
 
     @Override

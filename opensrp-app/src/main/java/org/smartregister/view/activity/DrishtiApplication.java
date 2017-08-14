@@ -8,6 +8,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
@@ -65,7 +66,6 @@ public abstract class DrishtiApplication extends Application {
         try {
             super.onCreate();
             mInstance = this;
-            context = Context.getInstance();
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
             logError("Error on onCreate: " + e);
@@ -81,7 +81,7 @@ public abstract class DrishtiApplication extends Application {
     }
 
     public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = Context.getInstance()
+        ArrayList<DrishtiRepository> drishtireposotorylist = CoreLibrary.getInstance().context()
                 .sharedRepositories();
         DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
                 .toArray(new DrishtiRepository[drishtireposotorylist.size()]);

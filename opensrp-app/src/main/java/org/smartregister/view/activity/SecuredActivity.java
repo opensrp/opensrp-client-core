@@ -16,6 +16,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
@@ -176,7 +177,7 @@ public abstract class SecuredActivity extends ActionBarActivity {
                         }.getType());
                 if (metaDataMap.containsKey(ENTITY_ID) && metaDataMap
                         .containsKey(ALERT_NAME_PARAM)) {
-                    Context.getInstance().alertService()
+                    CoreLibrary.getInstance().context().alertService()
                             .changeAlertStatusToInProcess(metaDataMap.get(ENTITY_ID),
                                     metaDataMap.get(ALERT_NAME_PARAM));
                 }
@@ -229,6 +230,6 @@ public abstract class SecuredActivity extends ActionBarActivity {
     }
 
     protected Context context() {
-        return Context.getInstance().updateApplicationContext(this.getApplicationContext());
+        return CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
     }
 }

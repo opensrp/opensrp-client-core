@@ -1,7 +1,7 @@
 package org.smartregister.view.dialog;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.view.contract.SmartRegisterClient;
 
@@ -14,7 +14,7 @@ public class ECSearchOption implements FilterOption {
 
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.str_ec_search_hint);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.str_ec_search_hint);
     }
 
     @Override

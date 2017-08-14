@@ -6,6 +6,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -32,7 +33,6 @@ import static org.smartregister.AllConstants.DeliveryPlanFields.DELIVERY_FACILIT
 import static org.smartregister.AllConstants.DeliveryPlanFields.PHONE_NUMBER;
 import static org.smartregister.AllConstants.DeliveryPlanFields.REVIEWED_HRP_STATUS;
 import static org.smartregister.AllConstants.DeliveryPlanFields.TRANSPORTATION_PLAN;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.domain.ANCServiceType.DELIVERY_PLAN;
 import static org.smartregister.util.StringUtil.humanize;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
@@ -46,7 +46,7 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.anc_service_mode_delivery_plan);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.anc_service_mode_delivery_plan);
     }
 
     @Override
@@ -135,14 +135,14 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
             viewHolder.txtDeliveryPlace().setText(humanize(deliveryFacilityName));
             if (isDeliveryPlaceAppropriate(client, deliveryFacilityName)) {
                 setStatus(viewHolder.imgDeliveryPlaceStatus(),
-                        getInstance().getDrawable(R.drawable.ic_yes_large));
+                        CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_yes_large));
             } else {
                 setStatus(viewHolder.imgDeliveryPlaceStatus(),
-                        getInstance().getDrawable(R.drawable.ic_remove));
+                        CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_remove));
             }
         } else {
             setStatus(viewHolder.imgDeliveryPlaceStatus(),
-                    getInstance().getDrawable(R.drawable.ic_remove));
+                    CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_remove));
         }
     }
 
@@ -163,11 +163,11 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
         if (birthCompanion != null && birthCompanion.equalsIgnoreCase(BOOLEAN_TRUE)) {
             viewHolder.txtHasCompanion().setText(humanize(birthCompanion));
             setStatus(viewHolder.imgHasCompanionStatus(),
-                    getInstance().getDrawable(R.drawable.ic_yes_large));
+                    CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_yes_large));
         } else {
             viewHolder.txtHasCompanion().setText(humanize(birthCompanion));
             setStatus(viewHolder.imgHasCompanionStatus(),
-                    getInstance().getDrawable(R.drawable.ic_remove));
+                    CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_remove));
         }
     }
 
@@ -229,9 +229,9 @@ public class DeliveryPlanServiceMode extends ServiceModeOption {
             detail) {
         if (detail != null) {
             txtDetails.setText(humanize(detail));
-            setStatus(transportStatus, getInstance().getDrawable(R.drawable.ic_yes_large));
+            setStatus(transportStatus, CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_yes_large));
         } else {
-            setStatus(transportStatus, getInstance().getDrawable(R.drawable.ic_remove));
+            setStatus(transportStatus, CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_remove));
         }
     }
 

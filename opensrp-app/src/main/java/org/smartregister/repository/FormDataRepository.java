@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 
@@ -63,12 +64,12 @@ public class FormDataRepository extends DrishtiRepository {
                 .put(MotherRepository.MOTHER_TABLE_NAME, MotherRepository.MOTHER_TABLE_COLUMNS);
         TABLE_COLUMN_MAP.put(ChildRepository.CHILD_TABLE_NAME, ChildRepository.CHILD_TABLE_COLUMNS);
 
-        if (Context.getInstance().configuration().appName().equals(APP_NAME_INDONESIA)) {
+        if (CoreLibrary.getInstance().context().configuration().appName().equals(APP_NAME_INDONESIA)) {
             return;
         }
 
         for (int i = 0; i < Context.bindtypes.size(); i++) {
-            TABLE_COLUMN_MAP.put(Context.bindtypes.get(i).getBindtypename(), Context.getInstance()
+            TABLE_COLUMN_MAP.put(Context.bindtypes.get(i).getBindtypename(), CoreLibrary.getInstance().context()
                     .commonrepository(
                             Context.bindtypes.get(i).getBindtypename()).common_TABLE_COLUMNS);
         }

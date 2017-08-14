@@ -6,7 +6,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import org.smartregister.AllConstants;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.util.FloatUtil;
@@ -27,7 +27,6 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.HbTestFields.HB_LEVEL;
 import static org.smartregister.AllConstants.SPACE;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.R.string.anc_service_mode_hb_ifa;
 import static org.smartregister.R.string.anc_service_mode_hb_unit;
 import static org.smartregister.R.string.anc_service_mode_ifa_tablets;
@@ -48,12 +47,12 @@ public class HbIFAServiceMode extends ServiceModeOption {
 
     public HbIFAServiceMode(SmartRegisterClientsProvider provider) {
         super(provider);
-        this.inflater = LayoutInflater.from(Context.getInstance().applicationContext());
+        this.inflater = LayoutInflater.from(CoreLibrary.getInstance().context().applicationContext());
     }
 
     @Override
     public String name() {
-        return getInstance().getStringResource(anc_service_mode_hb_ifa);
+        return CoreLibrary.getInstance().context().getStringResource(anc_service_mode_hb_ifa);
     }
 
     @Override
@@ -121,7 +120,7 @@ public class HbIFAServiceMode extends ServiceModeOption {
             ((TextView) hbDetailsViewGroup.findViewById(R.id.txt_hb_date))
                     .setText(serviceProvided.shortDate());
             ((TextView) hbDetailsViewGroup.findViewById(R.id.txt_hb_level))
-                    .setText(hbLevel + getInstance().getStringResource(anc_service_mode_hb_unit));
+                    .setText(hbLevel + CoreLibrary.getInstance().context().getStringResource(anc_service_mode_hb_unit));
             hbDetailsViewGroup.findViewById(R.id.hb_level_indicator)
                     .setBackgroundColor(getHbColor(hbLevel));
 
@@ -140,7 +139,7 @@ public class HbIFAServiceMode extends ServiceModeOption {
             ((TextView) ifaDetailsViewGroup.findViewById(R.id.txt_ifa_date))
                     .setText(serviceProvided.shortDate());
             ((TextView) ifaDetailsViewGroup.findViewById(R.id.txt_number_of_ifa_tablets)).setText(
-                    numberOfIFATablets + getInstance()
+                    numberOfIFATablets + CoreLibrary.getInstance().context()
                             .getStringResource(anc_service_mode_ifa_tablets));
             viewHolder.layoutIFADetailsViewHolder().addView(ifaDetailsViewGroup);
         }
@@ -171,11 +170,11 @@ public class HbIFAServiceMode extends ServiceModeOption {
     private int getHbColor(String hbLevel) {
         float hbValue = FloatUtil.tryParse(hbLevel, 0F);
         if (hbValue < 7) {
-            return getInstance().getColorResource(R.color.hb_level_dangerous);
+            return CoreLibrary.getInstance().context().getColorResource(R.color.hb_level_dangerous);
         } else if (hbValue >= 7 && hbValue < 11) {
-            return getInstance().getColorResource(R.color.hb_level_high);
+            return CoreLibrary.getInstance().context().getColorResource(R.color.hb_level_high);
         } else {
-            return getInstance().getColorResource(R.color.hb_level_normal);
+            return CoreLibrary.getInstance().context().getColorResource(R.color.hb_level_normal);
         }
     }
 
@@ -218,13 +217,13 @@ public class HbIFAServiceMode extends ServiceModeOption {
         if (alert.status().equalsIgnoreCase(COMPLETE.name())) {
             dateView.setText(alert.shortDate());
         } else {
-            dateView.setText(getInstance().getStringResource(R.string.str_due) + alert.shortDate());
+            dateView.setText(CoreLibrary.getInstance().context().getStringResource(R.string.str_due) + alert.shortDate());
         }
     }
 
     private void setServiceProvidedLayout(ANCSmartRegisterClient client, ServiceProvidedDTO
             serviceProvided, View serviceProvidedLayout, TextView txtDoneTick, TextView
-            txtServiceType, TextView txtServiceDate) {
+                                                  txtServiceType, TextView txtServiceDate) {
         serviceProvidedLayout.setVisibility(View.VISIBLE);
         serviceProvidedLayout.setBackgroundResource(R.color.status_bar_text_almost_white);
 
@@ -232,11 +231,11 @@ public class HbIFAServiceMode extends ServiceModeOption {
 
         txtServiceType.setVisibility(VISIBLE);
         txtServiceType.setText(serviceProvided.name() + SPACE + getTotalNumberOfIFATablets(client));
-        txtServiceType.setTextColor(getInstance().getColorResource(R.color.text_black));
+        txtServiceType.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
 
         txtServiceDate.setVisibility(VISIBLE);
         txtServiceDate.setText("On " + serviceProvided.shortDate());
-        txtServiceDate.setTextColor(getInstance().getColorResource(R.color.text_black));
+        txtServiceDate.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
     }
 
     private String getTotalNumberOfIFATablets(ANCSmartRegisterClient client) {

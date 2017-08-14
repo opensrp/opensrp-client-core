@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.FetchStatus;
@@ -20,7 +21,10 @@ import org.smartregister.sync.UpdateActionsTask;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.domain.FetchStatus.nothingFetched;
@@ -53,7 +57,7 @@ public class UpdateActionsTaskTest {
     @Test
     public void shouldShowProgressBarsWhileFetchingAlerts() throws Exception {
         progressIndicator = mock(ProgressIndicator.class);
-        org.smartregister.Context.setInstance(context);
+
         when(context.IsUserLoggedOut()).thenReturn(false);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchLanguagePreference()).thenReturn("en");
@@ -77,7 +81,7 @@ public class UpdateActionsTaskTest {
 
     @Test
     public void shouldNotUpdateDisplayIfNothingWasFetched() throws Exception {
-        org.smartregister.Context.setInstance(context);
+        CoreLibrary.init(context);
         when(context.IsUserLoggedOut()).thenReturn(false);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchLanguagePreference()).thenReturn("en");
@@ -96,10 +100,13 @@ public class UpdateActionsTaskTest {
 
     @Test
     public void shouldNotUpdateWhenUserIsNotLoggedIn() throws Exception {
-        org.smartregister.Context.setInstance(context);
+        when(context.configuration()).thenReturn(configuration);
+        when(configuration.shouldSyncForm()).thenReturn(false);
+        CoreLibrary.init(context);
         when(context.IsUserLoggedOut()).thenReturn(true);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchLanguagePreference()).thenReturn("en");
+
 
         UpdateActionsTask updateActionsTask = new UpdateActionsTask(androidContext, actionService, formSubmissionSyncService, progressIndicator, allFormVersionSyncService);
         updateActionsTask.updateFromServer(new AfterFetchListener() {
@@ -113,7 +120,7 @@ public class UpdateActionsTaskTest {
 
     @Test
     public void shouldSyncFormSubmissionsWithServer() throws Exception {
-        org.smartregister.Context.setInstance(context);
+        CoreLibrary.init(context);
         when(context.IsUserLoggedOut()).thenReturn(false);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchLanguagePreference()).thenReturn("en");

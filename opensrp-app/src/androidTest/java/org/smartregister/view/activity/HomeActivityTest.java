@@ -2,7 +2,7 @@ package org.smartregister.view.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 
 import java.util.Date;
 
@@ -25,7 +25,7 @@ public class HomeActivityTest extends ActivityInstrumentationTestCase2<HomeActiv
         userService = new FakeUserService();
 
         setupService(drishtiService, userService, 100000).updateApplicationContext(getActivity());
-        Context.getInstance().session().setPassword("password");
+        CoreLibrary.getInstance().context().session().setPassword("password");
 
         solo = new DrishtiSolo(getInstrumentation(), getActivity());
     }

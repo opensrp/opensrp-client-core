@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
 import org.smartregister.AllConstants;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 
 import static java.text.MessageFormat.format;
 
@@ -86,7 +86,7 @@ public class ProfileImage {
 
     public String getImageUrl() {
         String url = format("{0}/{1}/{2}",
-                Context.getInstance().allSharedPreferences().fetchBaseURL(""),
+                CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL(""),
                 AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
         return url;
     }

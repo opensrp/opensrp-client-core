@@ -31,6 +31,7 @@ import com.android.volley.toolbox.Volley;
 
 import org.apache.http.HttpResponse;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.repository.ImageRepository;
@@ -154,7 +155,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                         headers) throws IOException, AuthFailureError {
 
                     headers.putAll(
-                            org.smartregister.Context.getInstance().allSettings().getAuthParams());
+                            CoreLibrary.getInstance().context().allSettings().getAuthParams());
 
                     return super.performRequest(request, headers);
                 }
@@ -169,7 +170,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                 public HttpResponse performRequest(Request<?> request, Map<String, String>
                         headers) throws IOException, AuthFailureError {
 
-                    headers.putAll(org.smartregister.Context.getInstance().allSettings().
+                    headers.putAll(CoreLibrary.getInstance().context().allSettings().
                             getAuthParams());
 
                     return super.performRequest(request, headers);
@@ -374,7 +375,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                     profileImage.setFilepath(absoluteFileName);
                     profileImage.setFilecategory("profilepic");
                     profileImage.setSyncStatus(ImageRepository.TYPE_Synced);
-                    ImageRepository imageRepo = org.smartregister.Context.getInstance().
+                    ImageRepository imageRepo = CoreLibrary.getInstance().context().
                             imageRepository();
                     imageRepo.add(profileImage);
                 }
@@ -648,7 +649,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
         @Override
         protected ProfileImage doInBackground(Void... params) {
-            ImageRepository imageRepo = org.smartregister.Context.getInstance().imageRepository();
+            ImageRepository imageRepo = CoreLibrary.getInstance().context().imageRepository();
             ProfileImage imageRecord = imageRepo.findByEntityId(entityId);
             return imageRecord;
         }

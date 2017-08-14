@@ -1,11 +1,11 @@
 package org.smartregister.view.preProcessor;
 
 import org.joda.time.LocalDate;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.util.DateUtil;
 import org.smartregister.view.contract.ServiceProvidedDTO;
@@ -29,20 +29,13 @@ import static org.mockito.MockitoAnnotations.initMocks;
 public class PNCClientPreProcessorTest {
     @Mock
     Context mockedContext;
-    private Context realContext;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
-        realContext = Context.getInstance();
-        Context.setInstance(mockedContext);
+        CoreLibrary.init(mockedContext);
         when(mockedContext.getStringResource(R.string.str_pnc_circle_type_expected)).thenReturn("expected");
         when(mockedContext.getStringResource(R.string.str_pnc_circle_type_actual)).thenReturn("actual");
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        Context.setInstance(realContext);
     }
 
     @Test
@@ -196,8 +189,8 @@ public class PNCClientPreProcessorTest {
                 new PNCCircleDatum(2, PNCVisitType.ACTUAL, true),
                 new PNCCircleDatum(3, PNCVisitType.ACTUAL, true),
                 new PNCCircleDatum(7, PNCVisitType.ACTUAL, true)
-                );
-        List<PNCStatusDatum> expectedStatusData= Arrays.asList(
+        );
+        List<PNCStatusDatum> expectedStatusData = Arrays.asList(
                 new PNCStatusDatum(1, PNCVisitStatus.DONE),
                 new PNCStatusDatum(3, PNCVisitStatus.DONE),
                 new PNCStatusDatum(7, PNCVisitStatus.DONE)
@@ -246,10 +239,10 @@ public class PNCClientPreProcessorTest {
                 new PNCStatusDatum(7, PNCVisitStatus.MISSED)
         );
         List<PNCTickDatum> expectedTickData = Arrays.asList(
-                new PNCTickDatum(2,PNCVisitType.ACTUAL),
-                new PNCTickDatum(4,PNCVisitType.ACTUAL),
-                new PNCTickDatum(5,PNCVisitType.ACTUAL),
-                new PNCTickDatum(6,PNCVisitType.ACTUAL)
+                new PNCTickDatum(2, PNCVisitType.ACTUAL),
+                new PNCTickDatum(4, PNCVisitType.ACTUAL),
+                new PNCTickDatum(5, PNCVisitType.ACTUAL),
+                new PNCTickDatum(6, PNCVisitType.ACTUAL)
         );
         assertEquals("should create circles of type expected on each expected day",
                 expectedCircleData, processedClient.pncCircleData());

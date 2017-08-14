@@ -5,7 +5,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.event.Listener;
 import org.smartregister.service.PendingFormSubmissionService;
@@ -143,7 +143,7 @@ public class NativeHomeActivity extends SecuredActivity {
 
     private void updateRegisterCounts() {
         NativeUpdateANMDetailsTask task = new NativeUpdateANMDetailsTask(
-                Context.getInstance().anmController());
+                CoreLibrary.getInstance().context().anmController());
         task.fetch(new NativeAfterANMDetailsFetchListener() {
             @Override
             public void afterFetch(HomeContext anmDetails) {

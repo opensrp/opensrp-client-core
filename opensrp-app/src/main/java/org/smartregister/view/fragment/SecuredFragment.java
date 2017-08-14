@@ -11,6 +11,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.event.Listener;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -149,7 +150,7 @@ public abstract class SecuredFragment extends Fragment {
     }
 
     protected Context context() {
-        return Context.getInstance()
+        return CoreLibrary.getInstance().context()
                 .updateApplicationContext(this.getActivity().getApplicationContext());
     }
 

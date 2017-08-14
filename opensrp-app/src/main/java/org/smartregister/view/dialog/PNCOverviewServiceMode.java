@@ -6,7 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -22,7 +22,6 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.PNC_POSTPARTUM_FAMILY_PLANNING;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class PNCOverviewServiceMode extends ServiceModeOption {
@@ -32,12 +31,12 @@ public class PNCOverviewServiceMode extends ServiceModeOption {
 
     public PNCOverviewServiceMode(SmartRegisterClientsProvider provider) {
         super(provider);
-        this.inflater = LayoutInflater.from(Context.getInstance().applicationContext());
+        this.inflater = LayoutInflater.from(CoreLibrary.getInstance().context().applicationContext());
     }
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.pnc_register_service_mode_overview);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.pnc_register_service_mode_overview);
     }
 
     @Override
@@ -73,7 +72,7 @@ public class PNCOverviewServiceMode extends ServiceModeOption {
         viewHolder.pncOverviewServiceModeView().setVisibility(VISIBLE);
         setupDeliveryInfo(client, viewHolder);
         setupComplicationsView(client, viewHolder);
-        setPpFpMethodView(client, viewHolder, getInstance().getColorResource(R.color.text_black));
+        setPpFpMethodView(client, viewHolder, CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
         setChildView(client, viewHolder);
         setupEditView(client, viewHolder, clientSectionClickListener);
     }
@@ -104,7 +103,7 @@ public class PNCOverviewServiceMode extends ServiceModeOption {
                     .inflate(R.layout.smart_register_pnc_child_layout, null);
             ((TextView) childViewGroup.findViewById(R.id.txt_child_gender)).setText(child.gender());
             ((TextView) childViewGroup.findViewById(R.id.txt_child_weight)).setText(String.format(
-                    org.smartregister.Context.getInstance()
+                    CoreLibrary.getInstance().context()
                             .getStringResource(R.string.str_pnc_child_weight), child.weight()));
             viewHolder.childHolderLayout().addView(childViewGroup);
         }
@@ -113,7 +112,7 @@ public class PNCOverviewServiceMode extends ServiceModeOption {
     private void setupEditView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
             viewHolder, View.OnClickListener onClickListener) {
         if (iconPencilDrawable == null) {
-            iconPencilDrawable = Context.getInstance().getDrawable(R.drawable.ic_pencil);
+            iconPencilDrawable = CoreLibrary.getInstance().context().getDrawable(R.drawable.ic_pencil);
         }
         viewHolder.editButton().setImageDrawable(iconPencilDrawable);
         viewHolder.editButton().setOnClickListener(onClickListener);

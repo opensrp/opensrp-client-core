@@ -3,6 +3,7 @@ package org.smartregister.view.dialog;
 import android.view.View;
 import android.widget.TextView;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -21,7 +22,6 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.TT;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.domain.ANCServiceType.TT_1;
 import static org.smartregister.domain.ANCServiceType.TT_2;
 import static org.smartregister.domain.ANCServiceType.TT_BOOSTER;
@@ -36,7 +36,7 @@ public class TTServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.anc_service_mode_tt);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.anc_service_mode_tt);
     }
 
     @Override
@@ -150,11 +150,11 @@ public class TTServiceMode extends ServiceModeOption {
 
         txtTTType.setVisibility(VISIBLE);
         txtTTType.setText(ttServiceProvided.name());
-        txtTTType.setTextColor(getInstance().getColorResource(R.color.text_black));
+        txtTTType.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
 
         txtTTDate.setVisibility(VISIBLE);
         txtTTDate.setText("On " + ttServiceProvided.shortDate());
-        txtTTDate.setTextColor(getInstance().getColorResource(R.color.text_black));
+        txtTTDate.setTextColor(CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
     }
 
     private OnClickFormLauncher launchForm(String formName, ANCSmartRegisterClient client,

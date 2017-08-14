@@ -1,23 +1,23 @@
 package org.smartregister.domain;
 
 import org.ei.drishti.dto.Action;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 
 public enum AlertActionRoute {
     CREATE_ALERT("createAlert") {
         @Override
         public void direct(Action action) {
-            Context.getInstance().alertService().create(action);
+            CoreLibrary.getInstance().context().alertService().create(action);
         }
     }, CLOSE_ALERT("closeAlert") {
         @Override
         public void direct(Action action) {
-            Context.getInstance().alertService().close(action);
+            CoreLibrary.getInstance().context().alertService().close(action);
         }
     }, DELETE_ALL_ALERTS("deleteAllAlerts") {
         @Override
         public void direct(Action action) {
-            Context.getInstance().alertService().deleteAll(action);
+            CoreLibrary.getInstance().context().alertService().deleteAll(action);
         }
     };
 

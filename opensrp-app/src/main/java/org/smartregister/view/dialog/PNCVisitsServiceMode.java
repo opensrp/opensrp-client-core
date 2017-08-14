@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -27,7 +27,6 @@ import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 
 import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.PNC_VISIT;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class PNCVisitsServiceMode extends ServiceModeOption {
@@ -36,12 +35,12 @@ public class PNCVisitsServiceMode extends ServiceModeOption {
 
     public PNCVisitsServiceMode(SmartRegisterClientsProvider provider) {
         super(provider);
-        this.inflater = LayoutInflater.from(Context.getInstance().applicationContext());
+        this.inflater = LayoutInflater.from(CoreLibrary.getInstance().context().applicationContext());
     }
 
     @Override
     public String name() {
-        return getInstance().getStringResource(R.string.pnc_register_service_mode_pnc_visits);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.pnc_register_service_mode_pnc_visits);
     }
 
     @Override

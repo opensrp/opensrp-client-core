@@ -3,7 +3,7 @@ package org.smartregister.view.dialog;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ANCSmartRegisterClient;
@@ -22,7 +22,7 @@ import static org.smartregister.AllConstants.FormNames.CHILD_ILLNESS;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
 public class ChildOverviewServiceMode extends ServiceModeOption {
-    private String illnessReport = Context.getInstance().getStringResource(R.string.illness_report);
+    private String illnessReport = CoreLibrary.getInstance().context().getStringResource(R.string.illness_report);
 
     public ChildOverviewServiceMode(SmartRegisterClientsProvider provider) {
         super(provider);
@@ -30,7 +30,7 @@ public class ChildOverviewServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return Context.getInstance().getStringResource(R.string.child_service_mode_overview);
+        return CoreLibrary.getInstance().context().getStringResource(R.string.child_service_mode_overview);
     }
 
     @Override
@@ -123,7 +123,7 @@ public class ChildOverviewServiceMode extends ServiceModeOption {
     private void setupEditView(ChildSmartRegisterClient client,
                                NativeChildSmartRegisterViewHolder viewHolder, View
                                        .OnClickListener onClickListener) {
-        Drawable iconPencilDrawable = Context.getInstance().applicationContext().getResources()
+        Drawable iconPencilDrawable = CoreLibrary.getInstance().context().applicationContext().getResources()
                 .getDrawable(R.drawable.ic_pencil);
         viewHolder.editButton().setImageDrawable(iconPencilDrawable);
         viewHolder.editButton().setOnClickListener(onClickListener);

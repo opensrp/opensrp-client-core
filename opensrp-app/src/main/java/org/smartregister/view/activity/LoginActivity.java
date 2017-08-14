@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
@@ -53,7 +54,7 @@ public class LoginActivity extends Activity {
         logVerbose("Initializing ...");
         setContentView(R.layout.login);
 
-        context = Context.getInstance().updateApplicationContext(this.getApplicationContext());
+        context = CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
         initializeLoginFields();
         initializeBuildDetails();
         setDoneActionHandlerOnPasswordField();

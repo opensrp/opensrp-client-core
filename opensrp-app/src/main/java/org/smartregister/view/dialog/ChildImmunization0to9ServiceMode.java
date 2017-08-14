@@ -3,7 +3,7 @@ package org.smartregister.view.dialog;
 import android.view.View;
 import android.widget.TextView;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.ChildServiceType;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -31,7 +31,7 @@ public class ChildImmunization0to9ServiceMode extends ServiceModeOption {
 
     @Override
     public String name() {
-        return Context.getInstance()
+        return CoreLibrary.getInstance().context()
                 .getStringResource(R.string.child_service_mode_immunization_0_to_9);
     }
 

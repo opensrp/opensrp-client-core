@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.util.IntegerUtil;
@@ -19,7 +20,6 @@ import static org.smartregister.AllConstants.ECRegistrationFields.BPL_VALUE;
 import static org.smartregister.AllConstants.ECRegistrationFields.SC_VALUE;
 import static org.smartregister.AllConstants.ECRegistrationFields.ST_VALUE;
 import static org.smartregister.AllConstants.SPACE;
-import static org.smartregister.Context.getInstance;
 import static org.smartregister.util.DateUtil.formatDate;
 import static org.smartregister.util.StringUtil.humanize;
 import static org.smartregister.util.StringUtil.humanizeAndDoUPPERCASE;
@@ -121,10 +121,10 @@ public class FPClient implements FPSmartRegisterClient {
         if (fpReferralFollowUpAlert != null) {
             this.withRefillFollowUps(
                     new RefillFollowUps(REFERRAL_FOLLOW_UP, fpReferralFollowUpAlert,
-                            getInstance().getStringResource(R.string.str_referral)));
+                            CoreLibrary.getInstance().context().getStringResource(R.string.str_referral)));
         } else if (fpFollowUpAlert != null) {
             this.withRefillFollowUps(new RefillFollowUps(FP_FOLLOW_UP, fpFollowUpAlert,
-                    getInstance().getStringResource(R.string.str_follow_up)));
+                    CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)));
         } else {
             this.withRefillFollowUps(getOtherFPMethod(alerts));
         }
@@ -135,10 +135,10 @@ public class FPClient implements FPSmartRegisterClient {
         for (AlertDTO alert : alerts) {
             if (isOtherFPMethodAlert(alert) && isAlertBelongsTo(alert, followUpTypes)) {
                 return new RefillFollowUps(alert.name(), alert,
-                        getInstance().getStringResource(R.string.str_follow_up));
+                        CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up));
             } else if (isOtherFPMethodAlert(alert) && isAlertBelongsTo(alert, refillTypes)) {
                 return new RefillFollowUps(alert.name(), alert,
-                        getInstance().getStringResource(R.string.str_refill));
+                        CoreLibrary.getInstance().context().getStringResource(R.string.str_refill));
             }
         }
         return null;

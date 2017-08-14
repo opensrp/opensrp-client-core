@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
 
@@ -29,12 +30,16 @@ public class CommonPersonObjectControllerTest {
     @Mock
     private AllBeneficiaries allBeneficiaries;
 
+    @Mock
+    private org.smartregister.Context context;
+
     private CommonPersonObjectController controller;
     private Map<String, String> emptyDetails;
 
     @Before
     public void setUp() throws Exception {
         initMocks(this);
+        CoreLibrary.init(context);
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository,
                                                       allBeneficiaries,

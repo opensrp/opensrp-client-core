@@ -1,6 +1,6 @@
 package org.smartregister.commonregistry;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.dialog.FilterOption;
 
@@ -43,7 +43,7 @@ public class CommonObjectSearchFilterOption implements FilterOption {
                             contains(criteria.toLowerCase());
                 case byChildren:
                     CommonPersonObjectClient currentclient = (CommonPersonObjectClient) client;
-                    AllCommonsRepository allchildRepository = Context.getInstance().
+                    AllCommonsRepository allchildRepository = CoreLibrary.getInstance().context().
                             allCommonsRepositoryobjects(filterOptions.get(i).childName);
                     ArrayList<String> list = new ArrayList<String>();
                     list.add((currentclient.entityId()));

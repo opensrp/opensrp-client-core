@@ -9,6 +9,7 @@ import android.webkit.WebSettings;
 
 import org.apache.commons.io.IOUtils;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -71,9 +72,9 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
         webViewSettings.setDomStorageEnabled(true);
         webView.addJavascriptInterface(new FormWebInterface(model, form, this),
                 ANDROID_CONTEXT_FIELD);
-        webView.addJavascriptInterface(Context.getInstance().formDataRepository(), REPOSITORY);
-        webView.addJavascriptInterface(Context.getInstance().ziggyFileLoader(), ZIGGY_FILE_LOADER);
-        webView.addJavascriptInterface(Context.getInstance().formSubmissionRouter(),
+        webView.addJavascriptInterface(CoreLibrary.getInstance().context().formDataRepository(), REPOSITORY);
+        webView.addJavascriptInterface(CoreLibrary.getInstance().context().ziggyFileLoader(), ZIGGY_FILE_LOADER);
+        webView.addJavascriptInterface(CoreLibrary.getInstance().context().formSubmissionRouter(),
                 FORM_SUBMISSION_ROUTER);
         String encodedFieldOverrides = null;
         try {

@@ -8,6 +8,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -96,7 +97,7 @@ public class FileUtilities {
 
     public static String getImageUrl(String entityID) {
         String url = format("{0}/{1}/{2}",
-                org.smartregister.Context.getInstance().allSharedPreferences().fetchBaseURL(""),
+                CoreLibrary.getInstance().context().allSharedPreferences().fetchBaseURL(""),
                 AllConstants.PROFILE_IMAGES_DOWNLOAD_PATH, entityID);
         return url;
     }

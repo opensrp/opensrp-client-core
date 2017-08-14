@@ -3,6 +3,7 @@ package org.smartregister.sync;
 import android.content.Context;
 import android.widget.Toast;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.service.ActionService;
@@ -41,7 +42,7 @@ public class UpdateActionsTask {
     }
 
     public void updateFromServer(final AfterFetchListener afterFetchListener) {
-        if (org.smartregister.Context.getInstance().IsUserLoggedOut()) {
+        if (CoreLibrary.getInstance().context().IsUserLoggedOut()) {
             logInfo("Not updating from server as user is not logged in.");
             return;
         }
@@ -54,7 +55,7 @@ public class UpdateActionsTask {
                 FetchStatus fetchStatusAdditional = additionalSyncService == null ? nothingFetched
                         : additionalSyncService.sync();
 
-                if (org.smartregister.Context.getInstance().configuration().shouldSyncForm()) {
+                if (CoreLibrary.getInstance().context().configuration().shouldSyncForm()) {
 
                     allFormVersionSyncService.verifyFormsInFolder();
                     FetchStatus fetchVersionStatus = allFormVersionSyncService

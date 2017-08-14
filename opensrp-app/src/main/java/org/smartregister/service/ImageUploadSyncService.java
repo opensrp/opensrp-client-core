@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import org.smartregister.AllConstants;
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.repository.ImageRepository;
 
@@ -27,7 +27,7 @@ public class ImageUploadSyncService extends IntentService {
      */
     public ImageUploadSyncService() {
         super("ImageUploadSyncService");
-        imageRepo = Context.getInstance().imageRepository();
+        imageRepo = CoreLibrary.getInstance().context().imageRepository();
     }
 
     @Override
@@ -35,8 +35,8 @@ public class ImageUploadSyncService extends IntentService {
         try {
             List<ProfileImage> profileImages = imageRepo.findAllUnSynced();
             for (int i = 0; i < profileImages.size(); i++) {
-                String response = Context.getInstance().getHttpAgent().httpImagePost(
-                        Context.getInstance().configuration().dristhiBaseURL()
+                String response = CoreLibrary.getInstance().context().getHttpAgent().httpImagePost(
+                        CoreLibrary.getInstance().context().configuration().dristhiBaseURL()
                                 + AllConstants.PROFILE_IMAGES_UPLOAD_PATH, profileImages.get(i));
                 if (response.contains("success")) {
                     imageRepo.close(profileImages.get(i).getImageid());
