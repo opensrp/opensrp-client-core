@@ -1,4 +1,3 @@
-
 description = 'OpenSRP core client library'
 
 buildscript {
@@ -30,6 +29,8 @@ apply plugin: 'com.github.kt3k.coveralls'
 android {
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion androidBuildToolsVersion
+
+    defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
     signingConfigs {
         config {
@@ -104,13 +105,13 @@ android {
     }
 }
 
-def filesToCopy = copySpec{
+def filesToCopy = copySpec {
     from "${projectDir}/src/test/resources"
 }
 
 task copyTestResources() {
     def path = "${buildDir}/intermediates/classes/test"
-    def paths = [ "${path}/debug", "${path}/release"]
+    def paths = ["${path}/debug", "${path}/release"]
     paths.each { dest ->
         copy {
             with filesToCopy
@@ -132,10 +133,10 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile "org.apache.httpcomponents:httpmime:4.2.3"
     compile 'com.google.code.gson:gson:2.3'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version:'2.1.1'
-    compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
-    compile group: 'com.google.guava', name: 'guava', version:'15.0'
-    compile group: 'commons-io', name: 'commons-io', version:'2.4'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.1'
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    compile group: 'com.google.guava', name: 'guava', version: '15.0'
+    compile group: 'commons-io', name: 'commons-io', version: '2.4'
     compile 'org.apache.commons:commons-lang3:3.2'
     compile 'org.mozilla:rhino:1.7R4'
     compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
@@ -156,7 +157,7 @@ dependencies {
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
     androidTestCompile 'junit:junit:4.11'
 
-    testCompile group: 'com.google.android', name: 'android-test', version:'4.1.1.4'
+    testCompile group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
     testCompile 'junit:junit:4.11'
     testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
     testCompile 'org.mockito:mockito-core:1.9.5'
@@ -171,12 +172,13 @@ task makeJar(type: Copy) {
     from('build/intermediates/bundles/release/')
     into('build/libs/')
     include('classes.jar')
-    rename ('classes.jar', 'myCompiledLibrary.jar')
+    rename('classes.jar', 'myCompiledLibrary.jar')
 }
 
 makeJar.dependsOn(clearJar, build)
 
 import org.apache.commons.lang3.StringUtils
+
 gradle.projectsEvaluated {
     def variants = android.libraryVariants.collect()
 
@@ -211,7 +213,8 @@ gradle.projectsEvaluated {
                     throw new Exception("Break") // Breaking the loop
                 }
             }
-        } catch (Exception e) {} // Just drop the exception
+        } catch (Exception e) {
+        } // Just drop the exception
     }
 }
 
