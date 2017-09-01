@@ -70,26 +70,6 @@
                 android:theme="@android:style/Theme.Holo.NoActionBar"
                 android:screenOrientation="landscape"/>
         <activity
-                android:name=".view.activity.ECSmartRegisterActivity"
-                android:theme="@style/AppThemeNoTitle"
-                android:screenOrientation="landscape"/>
-        <activity
-                android:name=".view.activity.FPSmartRegisterActivity"
-                android:theme="@style/AppThemeNoTitle"
-                android:screenOrientation="landscape"/>
-        <activity
-                android:name=".view.activity.ANCSmartRegisterActivity"
-                android:theme="@style/AppThemeNoTitle"
-                android:screenOrientation="landscape"/>
-        <activity
-                android:name=".view.activity.PNCSmartRegisterActivity"
-                android:theme="@style/AppThemeNoTitle"
-                android:screenOrientation="landscape"/>
-        <activity
-                android:name=".view.activity.ChildSmartRegisterActivity"
-                android:theme="@style/AppThemeNoTitle"
-                android:screenOrientation="landscape"/>
-        <activity
                 android:name=".view.activity.FormActivity"
                 android:theme="@style/AppThemeNoTitle"
                 android:screenOrientation="portrait"/>
