@@ -5,20 +5,13 @@ import android.view.View;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
-import org.smartregister.view.contract.ANCSmartRegisterClient;
 import org.smartregister.view.contract.AlertStatus;
-import org.smartregister.view.contract.ChildSmartRegisterClient;
 import org.smartregister.view.contract.FPAlertType;
 import org.smartregister.view.contract.FPSmartRegisterClient;
 import org.smartregister.view.contract.RefillFollowUps;
-import org.smartregister.view.contract.pnc.PNCSmartRegisterClient;
-import org.smartregister.view.viewholder.NativeANCSmartRegisterViewHolder;
-import org.smartregister.view.viewholder.NativeChildSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.NativeFPSmartRegisterViewHolder;
-import org.smartregister.view.viewholder.NativePNCSmartRegisterViewHolder;
 import org.smartregister.view.viewholder.OnClickFormLauncher;
 
-import static android.view.View.VISIBLE;
 import static org.smartregister.AllConstants.FormNames.FP_COMPLICATIONS;
 import static org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 
@@ -60,17 +53,7 @@ public class FPAllMethodsServiceMode extends ServiceModeOption {
         };
     }
 
-    @Override
-    public void setupListView(FPSmartRegisterClient client, NativeFPSmartRegisterViewHolder
-            viewHolder, View.OnClickListener onClickListener) {
-        viewHolder.serviceModeFPMethod().setVisibility(VISIBLE);
 
-        setupSideEffectsView(client, viewHolder);
-        setupSideEffectsButtonView(client, viewHolder);
-        setupUpdateButtonView(client, viewHolder, onClickListener);
-        setupFPMethodView(client, viewHolder, CoreLibrary.getInstance().context().getColorResource(R.color.text_black));
-        setupAlertView(client, viewHolder);
-    }
 
     private void setupSideEffectsButtonView(FPSmartRegisterClient client,
                                             NativeFPSmartRegisterViewHolder viewHolder) {
@@ -141,21 +124,5 @@ public class FPAllMethodsServiceMode extends ServiceModeOption {
         return provider().newFormLauncher(formName, entityId, metaData);
     }
 
-    @Override
-    public void setupListView(ChildSmartRegisterClient client, NativeChildSmartRegisterViewHolder
-            viewHolder, View.OnClickListener clientSectionClickListener) {
 
-    }
-
-    @Override
-    public void setupListView(ANCSmartRegisterClient client, NativeANCSmartRegisterViewHolder
-            viewHolder, View.OnClickListener clientSectionClickListener) {
-
-    }
-
-    @Override
-    public void setupListView(PNCSmartRegisterClient client, NativePNCSmartRegisterViewHolder
-            viewHolder, View.OnClickListener clientSectionClickListener) {
-
-    }
 }

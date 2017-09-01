@@ -37,30 +37,6 @@ public class NativeHomeActivityTest {
 
     @Ignore // FIXME Failing test
     @Test
-    public void shouldLaunchAncRegisterOnPressingAncRegisterButton() {
-        verifyLaunchOfActivityOnPressingButton(R.id.btn_anc_register, NativeANCSmartRegisterActivity.class);
-    }
-
-    @Ignore // FIXME Failing test
-    @Test
-    public void shouldLaunchPncRegisterOnPressingPncRegisterButton() {
-        verifyLaunchOfActivityOnPressingButton(R.id.btn_pnc_register, NativePNCSmartRegisterActivity.class);
-    }
-
-    @Ignore // FIXME Failing test
-    @Test
-    public void shouldLaunchFpRegisterOnPressingFpRegisterButton() {
-        verifyLaunchOfActivityOnPressingButton(R.id.btn_fp_register, NativeFPSmartRegisterActivity.class);
-    }
-
-    @Ignore // FIXME Failing test
-    @Test
-    public void shouldLaunchChildRegisterOnPressingChildRegisterButton() {
-        verifyLaunchOfActivityOnPressingButton(R.id.btn_child_register, NativeChildSmartRegisterActivity.class);
-    }
-
-    @Ignore // FIXME Failing test
-    @Test
     public void shouldLaunchReportingActivityOnPressingReportingButton() {
         verifyLaunchOfActivityOnPressingButton(R.id.btn_reporting, ReportsActivity.class);
     }
