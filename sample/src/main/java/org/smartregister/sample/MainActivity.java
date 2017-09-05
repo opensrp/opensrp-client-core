@@ -1,5 +1,6 @@
 package org.smartregister.sample;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -9,6 +10,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.smartregister.DristhiConfiguration;
+import org.smartregister.ssl.FetchSSLAsyncTask;
+import org.smartregister.ssl.OpensrpSSLHelper;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -17,13 +22,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        final Context context = this;
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                 FetchSSLAsyncTask task = new FetchSSLAsyncTask(context);
+                task.execute("https://zeir.smartregister.org/opensrp");
+
             }
         });
     }

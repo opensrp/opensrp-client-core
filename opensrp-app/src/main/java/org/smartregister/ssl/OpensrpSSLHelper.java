@@ -1,23 +1,26 @@
 package org.smartregister.ssl;
 
-import android.content.Context;
-import android.util.Base64;
+import android.util.Log;
 
 import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.AbstractVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.BCStyle;
+import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.smartregister.DristhiConfiguration;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.net.URL;
 import java.security.KeyStore;
-import java.security.cert.CertificateFactory;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLException;
 
 /**
@@ -25,25 +28,19 @@ import javax.net.ssl.SSLException;
  */
 
 public class OpensrpSSLHelper {
-    private Context context;
-    private DristhiConfiguration configuration;
+    private static DristhiConfiguration configuration;
+    private static String TAG = OpensrpSSLHelper.class.getCanonicalName();
 
-    public OpensrpSSLHelper(Context context_, DristhiConfiguration configuration_) {
-        this.context = context_;
+    public OpensrpSSLHelper(DristhiConfiguration configuration_) {
         this.configuration = configuration_;
     }
 
-    public SocketFactory getSslSocketFactoryWithOpenSrpCertificate() {
-
+    public SocketFactory getSslSocketFactoryWithOpenSrpCertificate(final String url) throws Exception {
         try {
 
-            String certificateString = "";
-
-            ByteArrayInputStream derInputStream = new ByteArrayInputStream(certificateString.getBytes());
-            CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-            X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(derInputStream);
-            String alias = cert.getSubjectX500Principal().getName();
             KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            X509Certificate cert = getSSLServerCertificate(url);
+            String alias = cert.getSubjectX500Principal().getName();
             trustStore.load(null);
             trustStore.setCertificateEntry(alias, cert);
 
@@ -54,7 +51,7 @@ public class OpensrpSSLHelper {
                 public void verify(String host, String[] cns, String[] subjectAlts) throws
                         SSLException {
                     for (String cn : cns) {
-                        if (!configuration.shouldVerifyCertificate() || host.equals(cn)) {
+                        if (false || host.equals(cn)) {
                             return;
                         }
                     }
@@ -63,7 +60,48 @@ public class OpensrpSSLHelper {
             });
             return socketFactory;
         } catch (Exception e) {
-            throw new AssertionError(e);
+            Log.e(TAG, e.getMessage());
+            return null;
         }
+
+    }
+
+    public X509Certificate getSSLServerCertificate(String url) throws Exception {
+        List<X509Certificate> certificates = getValidSSLCertificates(url);
+        URL destinationURL = new URL(url);
+        for (X509Certificate certificate : certificates) {
+            X500Name x500name = new X500Name(certificate.getSubjectX500Principal().getName());
+            RDN cn = x500name.getRDNs(BCStyle.CN)[0];
+
+            String principal = IETFUtils.valueToString(cn.getFirst().getValue());
+            if (principal.equalsIgnoreCase(destinationURL.getHost())) {
+                return certificate;
+            }
+        }
+        return null;
+    }
+
+    public static List<X509Certificate> getValidSSLCertificates(String aURL) throws Exception {
+
+        URL destinationURL = new URL(aURL);
+        List<X509Certificate> certificates = new ArrayList<>();
+        HttpsURLConnection connection = (HttpsURLConnection) destinationURL
+                .openConnection();
+        connection.connect();
+        Certificate[] certs = connection.getServerCertificates();
+        connection.disconnect();
+        for (Certificate cert : certs) {
+            if (cert instanceof X509Certificate) {
+                X509Certificate x509Certificate = (X509Certificate) cert;
+                try {
+                    x509Certificate.checkValidity();
+                    Log.d(TAG, "Certificate " + x509Certificate.getSubjectDN().getName() + " is Active");
+                    certificates.add(x509Certificate);
+                } catch (CertificateExpiredException cee) {
+                    Log.e(TAG, "Certificate " + x509Certificate.getSubjectDN().getName() + " is expired");
+                }
+            }
+        }
+        return certificates;
     }
 }

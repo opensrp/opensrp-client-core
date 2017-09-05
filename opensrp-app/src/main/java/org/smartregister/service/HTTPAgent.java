@@ -14,24 +14,18 @@ import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.scheme.SocketFactory;
-import org.apache.http.conn.ssl.AbstractVerifier;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.SingleClientConnManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.smartregister.DristhiConfiguration;
-import org.smartregister.R;
 import org.smartregister.client.GZipEncodingHttpClient;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
@@ -46,10 +40,6 @@ import org.smartregister.util.FileUtilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.security.KeyStore;
-
-import javax.net.ssl.SSLException;
 
 import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
@@ -64,13 +54,14 @@ import static org.smartregister.util.Log.logWarn;
 public class HTTPAgent {
     private static final String TAG = HTTPAgent.class.getCanonicalName();
     private final GZipEncodingHttpClient httpClient;
-    private Context context;
+    protected Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
-            allSharedPreferences, DristhiConfiguration configuration) {
+            allSharedPreferences, DristhiConfiguration configuration) throws Exception {
+
         this.context = context;
         this.settings = settings;
         this.allSharedPreferences = allSharedPreferences;
@@ -81,14 +72,20 @@ public class HTTPAgent {
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
 
         SchemeRegistry registry = new SchemeRegistry();
-        OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+        OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(configuration);
         registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        registry.register(new Scheme("https", opensrpSSLHelper.getSslSocketFactoryWithOpenSrpCertificate(), 443));
+        registry.register(new Scheme("https", opensrpSSLHelper.getSslSocketFactoryWithOpenSrpCertificate("https://zeir.smartregister.org"), 443));
 
         ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(basicHttpParams,
                 registry);
-        httpClient = new GZipEncodingHttpClient(
-                new DefaultHttpClient(connectionManager, basicHttpParams));
+
+        Log.d(TAG+"$$$xs$$$", connectionManager ==null? "Connection Manager is NULL": "Connection Mgr OK");
+        Log.d(TAG+"$$$xs$$$", basicHttpParams ==null? "basicHttpParams is NULL": "Basic Params OK");
+        DefaultHttpClient defaultClient = new DefaultHttpClient(connectionManager, basicHttpParams);
+        Log.d(TAG+"$$$xs$$$", defaultClient ==null? "Default Client  is NULL": "Default Client OK");
+        httpClient = new GZipEncodingHttpClient(defaultClient);
+        Log.d(TAG+"$$$xs$$$", httpClient ==null? "GZip Client  is NULL": "GZip Client OK");
+
     }
 
     public Response<String> fetch(String requestURLPath) {
@@ -227,4 +224,6 @@ public class HTTPAgent {
         return s;
 
     }
+
+
 }

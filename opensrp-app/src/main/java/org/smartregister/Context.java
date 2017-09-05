@@ -476,9 +476,13 @@ public class Context {
     }
 
     protected HTTPAgent httpAgent() {
-        if (httpAgent == null) {
-            httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
-                    configuration());
+        try {
+            if (httpAgent == null) {
+                httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
+                        configuration());
+            }
+        } catch (Exception e) {
+
         }
         return httpAgent;
     }
