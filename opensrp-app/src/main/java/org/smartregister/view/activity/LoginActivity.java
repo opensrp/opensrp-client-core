@@ -145,20 +145,28 @@ public class LoginActivity extends Activity {
     }
 
     private void remoteLogin(final View view, final String userName, final String password) {
-        tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
-            public void onEvent(LoginResponse loginResponse) {
-                if (loginResponse == SUCCESS) {
-                    remoteLoginWith(userName, password, loginResponse.payload());
-                } else {
-                    if (loginResponse == null) {
-                        showErrorDialog("Login failed. Unknown reason. Try Again");
+
+        if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
+
+            tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+                public void onEvent(LoginResponse loginResponse) {
+                    if (loginResponse == SUCCESS) {
+                        remoteLoginWith(userName, password, loginResponse.payload());
                     } else {
-                        showErrorDialog(loginResponse.message());
+                        if (loginResponse == null) {
+                            showErrorDialog("Login failed. Unknown reason. Try Again");
+                        } else {
+                            showErrorDialog(loginResponse.message());
+                        }
+                        view.setClickable(true);
                     }
-                    view.setClickable(true);
                 }
-            }
-        });
+            });
+
+        } else {
+            showErrorDialog("Base URL is missing, Please add it in Settings and try again");
+
+        }
     }
 
     private void showErrorDialog(String message) {
