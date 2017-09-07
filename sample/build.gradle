@@ -19,11 +19,7 @@ apply plugin: 'com.android.application'
 
 dependencies {
 
-    compile('org.smartregister:opensrp-client-core:1.0.0-SNAPSHOT@aar') {
-        transitive = true
-
-        exclude group: 'com.github.bmelnychuk', module: 'atv'
-    }
+    compile project (":opensrp-app")
     compile ('com.android.support:design:22.2.1'){
         exclude group: 'com.android.support', module: 'recyclerview-v7'
 

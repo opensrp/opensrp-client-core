@@ -18,6 +18,7 @@ allprojects {
     repositories {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
+        mavenCentral()
     }
 }
 
@@ -149,6 +150,7 @@ dependencies {
     compile 'com.mcxiaoke.volley:library:1.0.+'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.cloudant:cloudant-http:2.7.0'
+    compile group: 'org.bouncycastle', name: 'bcprov-jdk16', version: '1.46'
 
 }
 
