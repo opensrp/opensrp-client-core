@@ -164,7 +164,8 @@ public class LoginActivity extends Activity {
             });
 
         } else {
-            showErrorDialog("Base URL is missing, Please add it in Settings and try again");
+            view.setClickable(true);
+            showErrorDialog("OpenSRP Base URL is missing, Please add it in Settings and try again");
 
         }
     }

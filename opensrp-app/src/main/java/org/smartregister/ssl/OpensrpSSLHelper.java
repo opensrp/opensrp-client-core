@@ -22,7 +22,7 @@ import javax.net.ssl.SSLException;
 public class OpensrpSSLHelper {
     private Context context;
     private DristhiConfiguration configuration;
-    private static String TAG = OpensrpSSLHelper.class.getCanonicalName();
+    private String TAG = OpensrpSSLHelper.class.getCanonicalName();
 
     public OpensrpSSLHelper(Context context_, DristhiConfiguration configuration_) {
         this.context = context_;
