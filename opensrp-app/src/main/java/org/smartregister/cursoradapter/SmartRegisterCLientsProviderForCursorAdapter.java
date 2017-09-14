@@ -16,7 +16,6 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
  */
 public interface SmartRegisterCLientsProviderForCursorAdapter {
     void getView(Cursor cursor, SmartRegisterClient client, View view);
-    void getView(SmartRegisterClient client, View view);
 
     SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
             serviceModeOption, FilterOption searchFilter, SortOption sortOption);
