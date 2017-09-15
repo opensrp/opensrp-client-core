@@ -8,10 +8,8 @@
 
 * [Introduction](#introduction)
 * [Features](#features)
-* [Further Documentation](#further-documentation)
-   * [Developer Guides](#developer-guides)
-   * [Wiki](#wiki)
-   * [Website](#website)
+* [Why OpenSRP?](#why-opensrp)
+* [Website](#website)
 * [Developer Documentation](#developer-documentation)
    * [Pre-requisites](#pre-requisites)
    * [Installation Devices](#installation-devices)
@@ -40,32 +38,15 @@ OpenSRP Client Core App/Module basically provides basic functionality such as ne
 3. Enhanced security
 4. Fundamentally connects to OpenMRS
 5. It is tailored to work for health workers who regularly provide outreach services
-6. It generates HIA2 reports
+6. It generates custom reports
 7. It manages stock levels provides to the health workers
 8. It works on the most available
 9. It implements the WHO-recommended **z-score** for child growth monitoring
 
-## Further Documentation
 
-More documentation on OpenSRP and OpenMRS can be found at:
-
-### Developer Guides
-
-If you want to contribute please refer to these resources:
-
-   * [Getting started with OpenSRP](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619148/Getting+started+with+OpenSRP)
-   * [Setup Instructions](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619255/Setup+Instructions)
-   * [Complete OpenSRP Developer's Guide](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619193/OpenSRP+Developer%27s+Guide)
-
-### Wiki
-
-If you are looking for detailed guides on how to install, configure, contribute and extend OpenSRP visit [OpenSRP Wiki](https://smartregister.atlassian.net/wiki)
-
-### Website
+# Website
 
 If you are looking for more information regarding OpenSRP as a platform check [OpenSRP Site](http://smartregister.org/)
-
-   * OpenSRP Android Apks [http://smartregister.org/opensrp-client/apk-download.html](http://smartregister.org/opensrp-client/apk-download.html)
 
 
 # Developer Documentation
@@ -98,9 +79,23 @@ This section will provide a brief description how to build and install the appli
 1. Open Genymotion and Run the Virtual Device created previously.
 1. Run the app on Android Studio and chose the Genymotion Emulator as the ` Deployment Target`
 
-## Modules
 
-1. Security
+### Developer Guides
+
+If you want to contribute please refer to these resources:
+
+   * [Getting started with OpenSRP](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619148/Getting+started+with+OpenSRP)
+   * [Setup Instructions](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619255/Setup+Instructions)
+   * [Complete OpenSRP Developer's Guide](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619193/OpenSRP+Developer%27s+Guide)
+
+### Wiki
+
+If you are looking for detailed guides on how to install, configure, contribute and extend OpenSRP visit [OpenSRP Wiki](https://smartregister.atlassian.net/wiki)
+
+
+# Main Functions
+
+## 1. Security
 
 Security is provided in the following:
    * Network - It supports ssl from client if the user uses a https url for the base server url setting
@@ -109,7 +104,7 @@ Security is provided in the following:
 
 The security classes can be found in `org.smartregister.`
 
-2. Data management
+## 2. Data management
 
 This app provides data management for the following:
    * Alerts
@@ -132,7 +127,7 @@ This app provides data management for the following:
 
 The data management classes can be found in `org.smartregister.repository` & `org.smartregister.repository`
 
-3. Networking
+## 3. Networking
 
 This app provides the following networking capabilities:
    * SSL Connection helper
@@ -151,7 +146,7 @@ The networking classes can be found in:
    * `org.smartregister.client`
 
 
-4. Domain Objects
+## 4. Domain Objects
 
 This app provides the following domain objects:
    * Database Domain
@@ -188,12 +183,12 @@ This app provides the following domain objects:
 
 The domain object classes can be found in `org.smartregister.domain`
 
-5. Sync
+## 5. Sync
 
 This app provides the following sync capabilities:
    * Periodic syncing based on network connection
 
-6. Utitiles
+## 6. Utitiles
 
 This app provides the following utilties:
    * Improved Image caching
@@ -209,7 +204,7 @@ This app provides the following utilties:
    * String manipulation utility
    * Timeline events comparator
 
-7. Services
+## 7. Services
 
 This app provides business logic for operations related to:
 
