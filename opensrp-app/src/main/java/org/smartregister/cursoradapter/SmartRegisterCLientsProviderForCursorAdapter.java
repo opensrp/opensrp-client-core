@@ -1,5 +1,6 @@
 package org.smartregister.cursoradapter;
 
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -14,7 +15,7 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
  * Created by raihan on 3/9/16.
  */
 public interface SmartRegisterCLientsProviderForCursorAdapter {
-    void getView(SmartRegisterClient client, View view);
+    void getView(Cursor cursor, SmartRegisterClient client, View view);
 
     SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
             serviceModeOption, FilterOption searchFilter, SortOption sortOption);

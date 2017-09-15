@@ -40,7 +40,7 @@ public class SmartRegisterPaginatedCursorAdapter extends CursorAdapter {
         CommonPersonObjectClient pClient = new CommonPersonObjectClient(personinlist.getCaseId(),
                 personinlist.getDetails(), personinlist.getDetails().get("FWHOHFNAME"));
         pClient.setColumnmaps(personinlist.getColumnmaps());
-        listItemProvider.getView(pClient, view);
+        listItemProvider.getView(cursor, pClient, view);
 
     }
 
