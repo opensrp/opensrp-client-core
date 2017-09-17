@@ -163,6 +163,13 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
     testCompile 'org.robolectric:robolectric:2.4'
+
+    // PowerMock
+    def powerMockVersion = '1.7.1'
+    testCompile "org.powermock:powermock-module-junit4:$powerMockVersion"
+    testCompile "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
+    testCompile "org.powermock:powermock-api-mockito2:$powerMockVersion"
+    testCompile("org.powermock:powermock-classloading-xstream:$powerMockVersion")
 }
 task clearJar(type: Delete) {
     delete 'build/libs/myCompiledLibrary.jar'
