@@ -25,14 +25,16 @@ OpenSRP Client Core App/Module basically provides basic functionality such as ne
 
 # Features
 
-1. It provides domain objects for forms and database.
-2. It provides mappers between the different domains
-3. It provides basic and advanced networking capabilities to securely and efficiently connect to an OpenSRP backend
-4. It provides sync abilities that handle and maintain data consistency between the client and backend
-5. It provides data creation, edit, retrieval and deletion capabilities on the client device
-6. It provides security services that maintain global data and application security
-7. It provides utilities used for file storage, caching, image rendering, logging, session management and number conversions.
-8. It provides access to tailored android views/widgets for OpenSRP
+It provides:
+
+1. Domain objects for forms and database.
+2. Mappers between the different domains
+3. Basic and advanced networking capabilities to securely and efficiently connect to an OpenSRP backend
+4. Sync abilities that handle and maintain data consistency between the client and backend
+5. Data creation, edit, retrieval and deletion capabilities on the client device
+6. Security services that maintain global data and application security
+7. Utilities used for file storage, caching, image rendering, logging, session management and number conversions.
+8. Access to tailored android views/widgets for OpenSRP
 
 # Why OpenSRP?
 
