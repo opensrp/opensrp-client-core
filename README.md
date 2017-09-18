@@ -14,34 +14,36 @@
    * [Pre-requisites](#pre-requisites)
    * [Installation Devices](#installation-devices)
    * [How to install](#how-to-install)
+   * [Developer Guides](#developer-guides)
+   * [Wiki](#wiki)
+   * [Uses](#uses)
    * [Packages](#packages)
 
 # Introduction
 
-OpenSRP Client Core App/Module basically provides basic functionality such as networking, security, database access, common widget, utilities, domain objects, services, broadcast receivers and syncing.
+OpenSRP Client Core App/Module basically provides basic functionality such as networking, security, database access, common widgets, utilities, domain objects, service layer, broadcast receivers and syncing.
 
 # Features
 
 1. It provides domain objects for forms and database.
 2. It provides mappers between the different domains
 3. It provides basic and advanced networking capabilities to securely and efficiently connect to an OpenSRP backend
-4. It provides sync abilities that handle maintain data consistency between the client and backend
+4. It provides sync abilities that handle and maintain data consistency between the client and backend
 5. It provides data creation, edit, retrieval and deletion capabilities on the client device
-6. It provide security services that maintains global data and application security
+6. It provides security services that maintain global data and application security
 7. It provides utilities used for file storage, caching, image rendering, logging, session management and number conversions.
-8. It provides access to tailored views for OpenSRP
+8. It provides access to tailored android views/widgets for OpenSRP
 
 # Why OpenSRP?
 
-1. It provides client access on Android phones - Easily available, acquirable and 
+1. It provides client access on Android phones which are easily available and acquirable
 2. It can work with minimal or no internet connection
-3. Enhanced security
-4. Fundamentally connects to OpenMRS
-5. It is tailored to work for health workers who regularly provide outreach services
-6. It generates custom reports
-7. It manages stock levels provides to the health workers
-8. It works on the most available
-9. It implements the WHO-recommended **z-score** for child growth monitoring
+3. It provides enhanced security
+4. It primarily integrates with OpenMRS
+5. It is tailored to be used by health workers who regularly provide outreach services
+6. It generates custom reports eg. HIA 2
+7. It manages stock levels for stock provided to the health workers
+8. It implements the WHO-recommended **z-score** for child growth monitoring
 
 
 # Website
@@ -52,6 +54,7 @@ If you are looking for more information regarding OpenSRP as a platform check [O
 # Developer Documentation
 
 This section will provide a brief description how to build and install the application from the repository source code.
+
 
 ## Pre-requisites
 
@@ -93,16 +96,27 @@ If you want to contribute please refer to these resources:
 If you are looking for detailed guides on how to install, configure, contribute and extend OpenSRP visit [OpenSRP Wiki](https://smartregister.atlassian.net/wiki)
 
 
+# Uses
+
+OpenSRP Client core has been used in several libraries and applications:
+
+   * [OpenSRP Path application](https://github.com/OpenSRP/opensrp-client-path)
+   * [OpenSRP KIP application](https://github.com/OpenSRP/opensrp-client-kip)
+   * [OpenSRP Growth monitoring library](https://github.com/OpenSRP/opensrp-client-growth-monitoring)
+   * [OpenSRP Immunization library](https://github.com/OpenSRP/opensrp-client-immunization)
+   * [OpenSRP Native Form library](https://github.com/OpenSRP/opensrp-client-native-form)
+
+
 # Main Functions
 
 ## 1. Security
 
 Security is provided in the following:
-   * Network - It supports ssl from client if the user uses a https url for the base server url setting
+   * Network - It supports ssl in cases where the backend server is connected through a `https` url
    * Data access - Only registered providers can be able to view and manipulate records
-   * Data encryption - The database on Android client is encrypted
+   * Data encryption - The database on the android client is encrypted
 
-The security classes can be found in `org.smartregister.`
+The security classes can be found in `org.smartregister.ssl`
 
 ## 2. Data management
 
@@ -122,7 +136,7 @@ This app provides data management for the following:
    * Image Locations
    * Mothers
    * Reports
-   * Device User
+   * Device Users
    * Connection configurations
 
 The data management classes can be found in `org.smartregister.repository` & `org.smartregister.repository`
@@ -132,12 +146,12 @@ The data management classes can be found in `org.smartregister.repository` & `or
 This app provides the following networking capabilities:
    * SSL Connection helper
    * Asynchronous networking classes
-   * Synchronous
+   * Synchronous networking classes
    * Network status detection
-   * Thread safe connection
+   * Thread safe connections
    * GZip encoding and decoding capabilities
    * Session management
-   * Client-Server time and timezone synchronization
+   * Client-Server time synchronization
    * User authentication
 
 The networking classes can be found in:
@@ -168,7 +182,7 @@ This app provides the following domain objects:
       * Form Submission
    * Global Domain
       * Alert
-      * ANM(Health Services Provider)
+      * ANM (Health Services Provider)
       * Child
       * Eligible Couple
       * Form Definition Version
@@ -186,7 +200,10 @@ The domain object classes can be found in `org.smartregister.domain`
 ## 5. Sync
 
 This app provides the following sync capabilities:
+
    * Periodic syncing based on network connection
+
+The sync classes can be found in `org.smartregister.sync`
 
 ## 6. Utitiles
 
@@ -196,13 +213,15 @@ This app provides the following utilties:
    * File storage utilities
    * Float conversion utility
    * Form Submission builders
-   * Form generation utitlity
+   * Form generation utility
    * Integer conversion utility
    * Json Form data extractor and injector
    * Image uploader
    * Session manager
    * String manipulation utility
    * Timeline events comparator
+
+The utilities classes can be found under `org.smartregister.util`
 
 ## 7. Services
 
@@ -218,6 +237,7 @@ This app provides business logic for operations related to:
    * Mothers
    * Services Provided
 
-The sync classes can be found in `org.smartregister.sync`
+The service classes can be found in `org.smartregister.services`
+
 
 
