@@ -139,7 +139,7 @@ This app provides data management for the following:
    * Device Users
    * Connection configurations
 
-The data management classes can be found in `org.smartregister.repository` & `org.smartregister.repository`
+The data management classes can be found in `org.smartregister.repository`
 
 ## 3. Networking
 
@@ -237,7 +237,7 @@ This app provides business logic for operations related to:
    * Mothers
    * Services Provided
 
-The service classes can be found in `org.smartregister.services`
+The service classes can be found in `org.smartregister.service`
 
 
 
