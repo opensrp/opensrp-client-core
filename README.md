@@ -50,7 +50,7 @@ It provides:
 
 # Website
 
-If you are looking for more information regarding OpenSRP as a platform check [OpenSRP Site](http://smartregister.org/)
+If you are looking for more information regarding OpenSRP as a platform checkout the [OpenSRP Site](http://smartregister.org/)
 
 
 # Developer Documentation
@@ -114,9 +114,9 @@ OpenSRP Client core has been used in several libraries and applications:
 ## 1. Security
 
 Security is provided in the following:
-   * Network - It supports ssl in cases where the backend server is connected through a `https` url
-   * Data access - Only registered providers can be able to view and manipulate records
-   * Data encryption - The database on the android client is encrypted
+   * Network - It supports SSL in cases where the backend server is connected through an `https` url
+   * Data access - Only registered providers are able to view and manipulate records
+   * Data encryption - The database on the android client is encrypted with 256-bit AES encryption using [SQLCipher](https://guardianproject.info/code/sqlcipher/).
 
 The security classes can be found in `org.smartregister.ssl`
 
@@ -124,12 +124,12 @@ The security classes can be found in `org.smartregister.ssl`
 
 This app provides data management for the following:
    * Alerts
-   * Eligible couples
+   * Eligible Couples
    * Reports
    * Services Provided
    * Settings
-   * Name-Value pairs
-   * Timeline events
+   * Name-Value Pairs
+   * Timeline Events
    * Children
    * Details
    * Events
@@ -139,7 +139,7 @@ This app provides data management for the following:
    * Mothers
    * Reports
    * Device Users
-   * Connection configurations
+   * Connection Configurations
 
 The data management classes can be found in `org.smartregister.repository`
 
@@ -193,7 +193,7 @@ This app provides the following domain objects:
       * Profile Image
       * Report
       * Montly Report
-      * Http response
+      * Http Response
       * Service Provided
       * Timeline Event
 
@@ -210,14 +210,14 @@ The sync classes can be found in `org.smartregister.sync`
 ## 6. Utitiles
 
 This app provides the following utilties:
-   * Improved Image caching
+   * Improved image caching
    * Data caching
    * File storage utilities
    * Float conversion utility
-   * Form Submission builders
+   * Form submission builders
    * Form generation utility
    * Integer conversion utility
-   * Json Form data extractor and injector
+   * JSON form data extractor and injector
    * Image uploader
    * Session manager
    * String manipulation utility
