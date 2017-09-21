@@ -50,7 +50,7 @@ It provides:
 
 # Website
 
-If you are looking for more information regarding OpenSRP as a platform check [OpenSRP Site](http://smartregister.org/)
+If you are looking for more information regarding OpenSRP as a platform checkout the [OpenSRP Site](http://smartregister.org/)
 
 
 # Developer Documentation
@@ -114,90 +114,98 @@ OpenSRP Client core has been used in several libraries and applications:
 ## 1. Security
 
 Security is provided in the following:
-   * Network - It supports ssl in cases where the backend server is connected through a `https` url
-   * Data access - Only registered providers can be able to view and manipulate records
-   * Data encryption - The database on the android client is encrypted
+   * Network - It supports SSL in cases where the backend server is connected through an `https` url
+   * Data access - Only registered providers are able to view and manipulate records
+   * Data encryption - The database on the android client is encrypted with 256-bit AES encryption using [SQLCipher](https://guardianproject.info/code/sqlcipher/).
 
 The security classes can be found in `org.smartregister.ssl`
 
 ## 2. Data management
 
 This app provides data management for the following:
-   * Alerts
-   * Eligible couples
-   * Reports
-   * Services Provided
-   * Settings
-   * Name-Value pairs
-   * Timeline events
-   * Children
-   * Details
-   * Events
-   * Form data
-   * Form Versions
-   * Image Locations
-   * Mothers
-   * Reports
-   * Device Users
-   * Connection configurations
+
+They implement both insecure and secure data storage with those implementing secure storage extending `SQLiteOpenHelper`, `Repository` or `BaseRepository`.
+
+The rest are insecure and use the SQLite helpers provided by Android.
+
+For this reason, there are multiple implementations for storing the same model.
+
+Class | Represents
+----- | --------------
+`EventClientRepository` | Events
+`AlertRepository` | Alerts
+`ChildRepository` | Children
+`ClientRepository` | Clients/Patients
+`DetailsRepository` | Details
+`EligibleCoupleRepository` | Eligible couples
+`EventRepository` | Events
+`FormDataRepository` | Form data
+`FormsVersionRepository` | Form version
+`ImageRepository` | Image locations
+`MotherRepository` | Mothers
+`ServiceProvidedRepository` | Provided service to the patient
+`SettingsRepository` | App settings eg. connection configurations
+`TimelineEventRepository` | Timeline events
 
 The data management classes can be found in `org.smartregister.repository`
 
 ## 3. Networking
 
 This app provides the following networking capabilities:
-   * SSL Connection helper
-   * Asynchronous networking classes
-   * Synchronous networking classes
-   * Network status detection
-   * Thread safe connections
-   * GZip encoding and decoding capabilities
-   * Session management
-   * Client-Server time synchronization
-   * User authentication
+
+Class | Represents
+----- | --------------
+`OpensrpSSLHelper` | SSL Connection helper
+`` | Asynchronous networking class
+`HttpAgent` | Synchronous networking class with username\password ([Basic Auth](https://tools.ietf.org/html/rfc2617)) access support
+`ConnectivityChangeReceiver` | Network status detection by a broadcast receiver
+Thread safe connections
+`GZipEncodingHttpClient` | GZip encoding and decoding capabilities
+Session management
+`UserService` | User authentication & Client-Server time synchronization
 
 The networking classes can be found in:
    * `org.smartregister.service`
    * `org.smartregister.util`
    * `org.smartregister.client`
+   * `org.smartregister.ssl`
+   * `org.smartregister.view.receiver`
 
 
 ## 4. Domain Objects
 
 This app provides the following domain objects:
-   * Database Domain
-      * Address
-      * Base Data Object
-      * Base Entity
-      * Client
-      * Column
-      * Column Attribute
-      * Event
-      * Filter Type
-      * Obs
-      * Query
-   * Form Domain
-      * Field Overrides
-      * Form Data
-      * Form Field
-      * Form Instance
-      * Form Submission
-   * Global Domain
-      * Alert
-      * ANM (Health Services Provider)
-      * Child
-      * Eligible Couple
-      * Form Definition Version
-      * Mother
-      * Photo
-      * Profile Image
-      * Report
-      * Montly Report
-      * Http response
-      * Service Provided
-      * Timeline Event
 
-The domain object classes can be found in `org.smartregister.domain`
+Class | Represents
+----- | ----------
+`Address` | Location address containing map coordinates
+`BaseDataObject` | Data object with datestamps, void flag, related void details and server version
+`BaseEntity` | Extends `BaseDataObject` to include the `baseEntityId`, `identifiers`, `addresses` and `attributes` that are common in OpenSRP models
+`Client` | Represents a patient in OpenSRP eg. a child. It contains relevant patient details and extends `BaseEntity`
+`ColumnAttribute` | Represents a column using type, is-primary-key and is-index properties. It is used in the `EventClientRepository` class to define and access columns in the appropriate table
+`Event` | It represents an event in OpenSRP which are mainly [encounters](#https://github.com/OpenSRP/opensrp-client-native-form#encounter-types) eg. Birth Registration, Death. It extends the `BaseDataObject` and provides other properties
+`Obs` | It represents an observation in an `Event` _above_
+`Query` | It represents a data query and enables creation of queries using an OOP approach
+`FormData` | It represents form fields, their inputs and any sub-forms
+`FormField` | It represents a single form question/field with a name, value and source
+`FormInstance` | It represents a `FormData` of a specific definition version
+`FormSubmission` | It represents the status of form before or after submission. It therefore contains other metadata such as client version and server verion.
+`SubForm` | It represents a form inside another form
+`Alert` | It represents a notification of a due or overdue expected encounter
+`ANM` | It represents a healt services provider
+`Child` | It represents a child
+`EligibleCouple` | It represents an eligible couple
+`FormDefinitionVersion` | It represents a form version
+`Mother` | It represents a mother
+`Photo` | It represents a photo by storing the file path & resource id
+`ProfileImage` | It represents the photo of an entity
+`Report` | It represents the report
+`MontlyReport` | It represents a monthly report
+`Response` | It represents a http response with status & payload
+`ServiceProvided` | It represents a service that was provided to a patient
+`TimelineEvent` | It represents an event within a patient's life eg. birth
+
+The domain object classes can be found in `org.smartregister.domain`. There are several domains namely: global domain, form and database domain. 
 
 ## 5. Sync
 
@@ -210,34 +218,41 @@ The sync classes can be found in `org.smartregister.sync`
 ## 6. Utitiles
 
 This app provides the following utilties:
-   * Improved Image caching
-   * Data caching
-   * File storage utilities
-   * Float conversion utility
-   * Form Submission builders
-   * Form generation utility
-   * Integer conversion utility
-   * Json Form data extractor and injector
-   * Image uploader
-   * Session manager
-   * String manipulation utility
-   * Timeline events comparator
+
+Class | Provides
+----- | --------
+`BitmapImageCache` | Improved image caching
+`Cache` | Data caching and modifications listener
+`FileUtilities` | File storage utility
+`FloatUtil` | Float conversion utility
+`FormSubmissionBuilder` | Form submission builders
+`FormUtils` | Form generation and manipulation utility
+`IntegerUtil` | Integer conversion utility
+`JsonFormUtils` | JSON form data extractor and injector
+`OpenSRPImageLoader` | Asynchronous image downloader with image caching
+`Session` | Session manager
+`StringUtil` | String manipulation utility
+`TimelineEventComparator` | Timeline event comparator
+`Utils` | Date conversion, android preference manipulator, view generator, metrics humanizer among others.
+
 
 The utilities classes can be found under `org.smartregister.util`
 
 ## 7. Services
 
-This app provides business logic for operations related to:
+This app provides business logic for operations as follows:
 
-   * Actions
-   * Alerts
-   * Form Versions
-   * Health Service Provider
-   * Beneficiaries
-   * Patient/Child
-   * Forms
-   * Mothers
-   * Services Provided
+Class | Business logic related to
+----- | ----------
+`ActionService` | Actions
+`AlertService` | Alerts
+`AllFormVersionSyncService` | Form versions
+`ANMService` | Health service providers
+`BeneficiaryService` | Beneficiaries
+`ChildService` | Children
+`Drishti` | Form submissions
+`MotherService` | Mothers
+`ServiceProvidedService` | Services provided
 
 The service classes can be found in `org.smartregister.service`
 
