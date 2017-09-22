@@ -33,7 +33,7 @@ public class OpensrpSSLHelper {
         try {
 
             KeyStore trustedKeystore = KeyStore.getInstance("BKS");
-            InputStream inputStream = context.getResources().openRawResource(R.raw.opensrp_zeir_truststore);
+            InputStream inputStream = context.getResources().openRawResource(R.raw.opensrp_truststore);
             try {
                 trustedKeystore.load(inputStream, "phone red pen".toCharArray());
             } finally {
