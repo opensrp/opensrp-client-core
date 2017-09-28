@@ -191,7 +191,7 @@ Class | Represents
 `FormInstance` | It represents a `FormData` of a specific definition version
 `FormSubmission` | It represents the status of form before or after submission. It therefore contains other metadata such as client version and server verion.
 `SubForm` | It represents a form inside another form
-`Alert` | It represents a notification of a due or overdue expected encounter
+`Alert` | It represents a notification about an encounter which is due or overdue the expected time
 `ANM` | It represents a healt services provider
 `Child` | It represents a child
 `EligibleCouple` | It represents an eligible couple
