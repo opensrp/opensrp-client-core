@@ -122,11 +122,10 @@ The security classes can be found in `org.smartregister.ssl`
 
 ## 2. Data management
 
-This app provides data management for the following:
+This app provides data management.
+It implements both plain and secure data storage with those implementing secure storage extending `SQLiteOpenHelper`, `Repository` or `BaseRepository`.
 
-They implement both insecure and secure data storage with those implementing secure storage extending `SQLiteOpenHelper`, `Repository` or `BaseRepository`.
-
-The rest are insecure and use the SQLite helpers provided by Android.
+The rest are plain and use the SQLite helpers provided by Android.
 
 For this reason, there are multiple implementations for storing the same model.
 
@@ -175,6 +174,7 @@ The networking classes can be found in:
 ## 4. Domain Objects
 
 This app provides the following domain objects:
+<<<<<<< HEAD
 
 Class | Represents
 ----- | ----------
@@ -207,6 +207,7 @@ Class | Represents
 
 The domain object classes can be found in `org.smartregister.domain`. There are several domains namely: global domain, form and database domain. 
 
+
 ## 5. Sync
 
 This app provides the following sync capabilities:
@@ -218,6 +219,7 @@ The sync classes can be found in `org.smartregister.sync`
 ## 6. Utitiles
 
 This app provides the following utilties:
+<<<<<<< HEAD
 
 Class | Provides
 ----- | --------
