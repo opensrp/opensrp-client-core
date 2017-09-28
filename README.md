@@ -127,7 +127,7 @@ It implements both plain and secure data storage with those implementing secure 
 
 The rest are plain and use the SQLite helpers provided by Android.
 
-For this reason, there are multiple implementations for storing the same model.
+For this reason, there are multiple implementations for storing the same model(s).
 
 Class | Represents
 ----- | --------------
@@ -174,7 +174,6 @@ The networking classes can be found in:
 ## 4. Domain Objects
 
 This app provides the following domain objects:
-<<<<<<< HEAD
 
 Class | Represents
 ----- | ----------
@@ -219,7 +218,6 @@ The sync classes can be found in `org.smartregister.sync`
 ## 6. Utitiles
 
 This app provides the following utilties:
-<<<<<<< HEAD
 
 Class | Provides
 ----- | --------
