@@ -17,7 +17,6 @@
    * [Developer Guides](#developer-guides)
    * [Wiki](#wiki)
    * [Uses](#uses)
-   * [Packages](#packages)
 
 # Introduction
 
