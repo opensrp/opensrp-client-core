@@ -33,7 +33,7 @@ It provides:
 4. Sync abilities that handle and maintain data consistency between the client and backend
 5. Data creation, edit, retrieval and deletion capabilities on the client device
 6. Security services that maintain global data and application security
-7. Utilities used for file storage, caching, image rendering, logging, session management and number conversions.
+7. Utilities used for file storage, caching, image rendering, logging, session management and number conversions
 8. Access to tailored android views/widgets for OpenSRP
 
 # Why OpenSRP?
@@ -55,7 +55,7 @@ If you are looking for more information regarding OpenSRP as a platform checkout
 
 # Developer Documentation
 
-This section will provide a brief description how to build and install the application from the repository source code.
+This section will provide a brief description on how to build and install the application from the repository source code.
 
 
 ## Pre-requisites
@@ -100,7 +100,7 @@ If you are looking for detailed guides on how to install, configure, contribute 
 
 # Uses
 
-OpenSRP Client core has been used in several libraries and applications:
+OpenSRP Client core has been used in several modules and applications:
 
    * [OpenSRP Path application](https://github.com/OpenSRP/opensrp-client-path)
    * [OpenSRP KIP application](https://github.com/OpenSRP/opensrp-client-kip)
@@ -114,7 +114,7 @@ OpenSRP Client core has been used in several libraries and applications:
 ## 1. Security
 
 Security is provided in the following:
-   * Network - It supports SSL in cases where the backend server is connected through an `https` url
+   * Network - It supports SSL certificates from **[Let's Encrypt](https://letsencrypt.org/)** CA
    * Data access - Only registered providers are able to view and manipulate records
    * Data encryption - The database on the android client is encrypted with 256-bit AES encryption using [SQLCipher](https://guardianproject.info/code/sqlcipher/).
 
@@ -123,9 +123,10 @@ The security classes can be found in `org.smartregister.ssl`
 ## 2. Data management
 
 This app provides data management.
-It implements both plain and secure data storage with those implementing secure storage extending `SQLiteOpenHelper`, `Repository` or `BaseRepository`.
 
-The rest are plain and use the SQLite helpers provided by Android.
+It implements both plain and secure data storage. Classes implementing secure storage extend `SQLiteOpenHelper`, `Repository` or `BaseRepository`.
+
+The rest use the SQLite helpers provided in the Android SDK.
 
 For this reason, there are multiple implementations for storing the same model(s).
 
@@ -155,13 +156,12 @@ This app provides the following networking capabilities:
 Class | Represents
 ----- | --------------
 `OpensrpSSLHelper` | SSL Connection helper
-`` | Asynchronous networking class
+`OpenSRPImageLoader` | Asynchronous image downloder
 `HttpAgent` | Synchronous networking class with username\password ([Basic Auth](https://tools.ietf.org/html/rfc2617)) access support
 `ConnectivityChangeReceiver` | Network status detection by a broadcast receiver
-Thread safe connections
 `GZipEncodingHttpClient` | GZip encoding and decoding capabilities
-Session management
-`UserService` | User authentication & Client-Server time synchronization
+`Session` | Session management
+`UserService` | User authentication & client-server time synchronization
 
 The networking classes can be found in:
    * `org.smartregister.service`
@@ -181,26 +181,26 @@ Class | Represents
 `BaseDataObject` | Data object with datestamps, void flag, related void details and server version
 `BaseEntity` | Extends `BaseDataObject` to include the `baseEntityId`, `identifiers`, `addresses` and `attributes` that are common in OpenSRP models
 `Client` | Represents a patient in OpenSRP eg. a child. It contains relevant patient details and extends `BaseEntity`
-`ColumnAttribute` | Represents a column using type, is-primary-key and is-index properties. It is used in the `EventClientRepository` class to define and access columns in the appropriate table
+`ColumnAttribute` | Represents a column using the type, is-primary-key and is-index properties. It is used in the `EventClientRepository` class to define and access columns in the appropriate table
 `Event` | It represents an event in OpenSRP which are mainly [encounters](#https://github.com/OpenSRP/opensrp-client-native-form#encounter-types) eg. Birth Registration, Death. It extends the `BaseDataObject` and provides other properties
 `Obs` | It represents an observation in an `Event` _above_
 `Query` | It represents a data query and enables creation of queries using an OOP approach
 `FormData` | It represents form fields, their inputs and any sub-forms
 `FormField` | It represents a single form question/field with a name, value and source
 `FormInstance` | It represents a `FormData` of a specific definition version
-`FormSubmission` | It represents the status of form before or after submission. It therefore contains other metadata such as client version and server verion.
+`FormSubmission` | It represents the status of a form before or after submission. It therefore contains other metadata such as client version and server verion.
 `SubForm` | It represents a form inside another form
 `Alert` | It represents a notification about an encounter which is due or overdue the expected time
-`ANM` | It represents a healt services provider
+`ANM` | It represents a health services provider
 `Child` | It represents a child
 `EligibleCouple` | It represents an eligible couple
 `FormDefinitionVersion` | It represents a form version
 `Mother` | It represents a mother
 `Photo` | It represents a photo by storing the file path & resource id
 `ProfileImage` | It represents the photo of an entity
-`Report` | It represents the report
+`Report` | It represents a report
 `MontlyReport` | It represents a monthly report
-`Response` | It represents a http response with status & payload
+`Response` | It represents an HTTP response with status & payload
 `ServiceProvided` | It represents a service that was provided to a patient
 `TimelineEvent` | It represents an event within a patient's life eg. birth
 
@@ -212,6 +212,7 @@ The domain object classes can be found in `org.smartregister.domain`. There are 
 This app provides the following sync capabilities:
 
    * Periodic syncing based on network connection
+   * Updating views with updated information
 
 The sync classes can be found in `org.smartregister.sync`
 
@@ -229,14 +230,14 @@ Class | Provides
 `FormUtils` | Form generation and manipulation utility
 `IntegerUtil` | Integer conversion utility
 `JsonFormUtils` | JSON form data extractor and injector
-`OpenSRPImageLoader` | Asynchronous image downloader with image caching
+`OpenSRPImageLoader` | Asynchronous image downloader with thread-safe image caching
 `Session` | Session manager
 `StringUtil` | String manipulation utility
 `TimelineEventComparator` | Timeline event comparator
-`Utils` | Date conversion, android preference manipulator, view generator, metrics humanizer among others.
+`Utils` | Date conversion, android preference manipulator, view generator, metrics humanizer among other basic utility functions.
 
 
-The utilities classes can be found under `org.smartregister.util`
+The utility classes can be found under `org.smartregister.util`
 
 ## 7. Services
 
