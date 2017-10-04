@@ -141,12 +141,12 @@ dependencies {
     compile 'org.mozilla:rhino:1.7R4'
     compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
     compile 'joda-time:joda-time:2.3'
-    compile 'com.github.bmelnychuk:atv:1.2.+'
+    compile 'com.github.bmelnychuk:atv:1.2.9'
     compile 'com.github.johnkil.print:print:1.2.3'
     compile 'ch.acra:acra:4.5.0'
 
     compile 'com.google.guava:guava:18.0'
-    compile 'com.mcxiaoke.volley:library:1.0.+'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.cloudant:cloudant-http:2.7.0'
 
