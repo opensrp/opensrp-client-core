@@ -717,7 +717,7 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.syncStatus
-                + " = '" + BaseRepository.TYPE_Synced + "'"
+                + " = '" + BaseRepository.TYPE_Synced + "' AND "
                 + event_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "'"
                 + " order by "
                 + event_column.updatedAt
@@ -755,8 +755,8 @@ public class EventClientRepository extends BaseRepository {
                 + Table.path_reports.name()
                 + " where "
                 + report_column.syncStatus
-                + " = '" + BaseRepository.TYPE_Synced + "'"
-                + report_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "'"
+                + " = '" + BaseRepository.TYPE_Synced + "' AND "
+                + report_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "' "
                 + " order by "
                 + report_column.updatedAt
                 + " asc limit "
@@ -793,8 +793,8 @@ public class EventClientRepository extends BaseRepository {
                 + Table.client.name()
                 + " where "
                 + client_column.syncStatus
-                + " = '" + BaseRepository.TYPE_Synced + "'"
-                + client_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "'"
+                + " = '" + BaseRepository.TYPE_Synced + "' AND "
+                + client_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "' "
                 + " order by "
                 + client_column.updatedAt
                 + " asc limit "
@@ -1119,11 +1119,11 @@ public class EventClientRepository extends BaseRepository {
 
     public void addEvent(String baseEntityId, JSONObject jsonObject) {
         try {
-
+            final String EVENT_TYPE = "eventType";
             ContentValues values = new ContentValues();
             values.put(event_column.json.name(), jsonObject.toString());
             values.put(event_column.eventType.name(),
-                    jsonObject.has("eventType") ? jsonObject.getString("eventType") : "");
+                    jsonObject.has(EVENT_TYPE) ? jsonObject.getString(EVENT_TYPE) : "");
             values.put(event_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(event_column.baseEntityId.name(), baseEntityId);
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
@@ -1139,7 +1139,7 @@ public class EventClientRepository extends BaseRepository {
                             values,
                             event_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
-                                    event_column.formSubmissionId.name())});
+                                    event_column.formSubmissionId.name()),});
                 } else {
                     //that odd case
                     values.put(event_column.formSubmissionId.name(),
@@ -1180,7 +1180,7 @@ public class EventClientRepository extends BaseRepository {
                             values,
                             report_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
-                                    report_column.formSubmissionId.name())});
+                                    report_column.formSubmissionId.name()),});
                 } else {
                     //that odd case
                     values.put(report_column.formSubmissionId.name(),
@@ -1532,7 +1532,7 @@ public class EventClientRepository extends BaseRepository {
 
         baseEntityId(ColumnAttribute.Type.text, true, true),
         syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.bool, false, true),
+        validationStatus(ColumnAttribute.Type.text, false, true),
         json(ColumnAttribute.Type.text, false, false),
         identifiers(ColumnAttribute.Type.map, false, true),
         attributes(ColumnAttribute.Type.map, false, true),
@@ -1601,7 +1601,7 @@ public class EventClientRepository extends BaseRepository {
         eventId(ColumnAttribute.Type.text, true, true),
         baseEntityId(ColumnAttribute.Type.text, false, true),
         syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.bool, false, true),
+        validationStatus(ColumnAttribute.Type.text, false, true),
         json(ColumnAttribute.Type.text, false, false),
         locationId(ColumnAttribute.Type.text, false, false),
         eventDate(ColumnAttribute.Type.date, false, true),
