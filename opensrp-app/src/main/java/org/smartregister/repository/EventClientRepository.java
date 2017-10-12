@@ -1367,30 +1367,38 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public static void createTable(SQLiteDatabase db, Table table, Column[] columns) {
-        String cl = "";
-        for (Column cc : columns) {
-            cl += getCreateTableColumn(cc) + ",";
+        try {
+            String cl = "";
+            for (Column cc : columns) {
+                cl += getCreateTableColumn(cc) + ",";
+            }
+            cl = removeEndingComma(cl);
+            String create_tb = "CREATE TABLE " + table.name() + " ( " + cl + " )";
+
+            db.execSQL(create_tb);
+
+            createIndex(db, table, columns);
+        } catch (Exception e) {
+            Log.e(EventClientRepository.class.getName(), "Exception", e);
         }
-        cl = removeEndingComma(cl);
-        String create_tb = "CREATE TABLE " + table.name() + " ( " + cl + " )";
-
-        db.execSQL(create_tb);
-
-        createIndex(db, table, columns);
     }
 
     public static void createIndex(SQLiteDatabase db, Table table, Column[] columns) {
-        for (Column cc : columns) {
-            if (cc.column().index()) {
-                String create_id = "CREATE INDEX "
-                        + cc.name()
-                        + "_index ON "
-                        + table.name()
-                        + " ("
-                        + cc.name()
-                        + "); ";
-                db.execSQL(create_id);
+        try {
+            for (Column cc : columns) {
+                if (cc.column().index()) {
+                    String create_id = "CREATE INDEX "
+                            + cc.name()
+                            + "_index ON "
+                            + table.name()
+                            + " ("
+                            + cc.name()
+                            + "); ";
+                    db.execSQL(create_id);
+                }
             }
+        } catch (Exception e) {
+            Log.e(EventClientRepository.class.getName(), "Exception", e);
         }
     }
 
