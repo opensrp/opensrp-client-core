@@ -38,6 +38,7 @@ import java.util.Map;
 public class EventClientRepository extends BaseRepository {
     private static final String TAG = BaseRepository.class.getCanonicalName();
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final String ORDER_BY = " order by ";
 
     public EventClientRepository(Repository repository) {
         super(repository);
@@ -180,10 +181,8 @@ public class EventClientRepository extends BaseRepository {
                     + table.name()
                     + " WHERE "
                     + event_column.baseEntityId
-                    + " = '"
-                    + baseEntityId
-                    + "'";
-            mCursor = getWritableDatabase().rawQuery(query, null);
+                    + " = ?";
+            mCursor = getWritableDatabase().rawQuery(query, new String[]{baseEntityId});
             if (mCursor != null && mCursor.moveToFirst()) {
 
                 return true;
@@ -207,10 +206,8 @@ public class EventClientRepository extends BaseRepository {
                     + table.name()
                     + " WHERE "
                     + event_column.formSubmissionId
-                    + " = '"
-                    + formSubmissionId
-                    + "'";
-            mCursor = getWritableDatabase().rawQuery(query, null);
+                    + " =?";
+            mCursor = getWritableDatabase().rawQuery(query, new String[]{formSubmissionId});
             if (mCursor != null && mCursor.moveToFirst()) {
 
                 return true;
@@ -398,14 +395,12 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.updatedAt
-                + " > '"
-                + lastSyncString
-                + "'  and length("
+                + " > ? and length("
                 + event_column.json
                 + ")>2 order by "
                 + event_column.updatedAt
                 + " asc ";
-        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{lastSyncString});
 
         try {
             while (cursor.moveToNext()) {
@@ -505,18 +500,14 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.syncStatus
-                + " = '"
-                + syncStatus
-                + "' and "
+                + " = ? and "
                 + event_column.updatedAt
-                + " > '"
-                + lastSyncString
-                + "'  and length("
+                + " > ? and length("
                 + event_column.json
                 + ")>2 order by "
                 + event_column.updatedAt
                 + " asc ";
-        Cursor cursor = getWritableDatabase().rawQuery(query, null);
+        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{syncStatus, lastSyncString});
 
         try {
             while (cursor.moveToNext()) {
@@ -614,9 +605,7 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.syncStatus
-                + " = '"
-                + BaseRepository.TYPE_Unsynced
-                + "'  and length("
+                + " = ?  and length("
                 + event_column.json
                 + ")>2 order by "
                 + event_column.updatedAt
@@ -624,7 +613,7 @@ public class EventClientRepository extends BaseRepository {
                 + limit;
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, null);
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced});
 
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
@@ -673,9 +662,7 @@ public class EventClientRepository extends BaseRepository {
                 + Table.path_reports.name()
                 + " where "
                 + report_column.syncStatus
-                + " = '"
-                + BaseRepository.TYPE_Unsynced
-                + "'  and length("
+                + " = ?  and length("
                 + report_column.json
                 + ")>2 order by "
                 + report_column.updatedAt
@@ -683,7 +670,7 @@ public class EventClientRepository extends BaseRepository {
                 + limit;
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, null);
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced});
 
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
@@ -711,22 +698,24 @@ public class EventClientRepository extends BaseRepository {
     public List<String> getUnValidatedEventFormSubmissionIds(int limit) {
         List<String> ids = new ArrayList<String>();
 
+        final String validateFilter = " where "
+                + event_column.syncStatus + " = ? "
+                + " AND ( " + event_column.validationStatus + " is NULL or "
+                + event_column.validationStatus + " != ? ) ";
+
         String query = "select "
                 + event_column.formSubmissionId
                 + " from "
                 + Table.event.name()
-                + " where "
-                + event_column.syncStatus
-                + " = '" + BaseRepository.TYPE_Synced + "' AND "
-                + event_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "'"
-                + " order by "
+                + validateFilter
+                + ORDER_BY
                 + event_column.updatedAt
                 + " asc limit "
                 + limit;
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, null);
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
@@ -749,22 +738,24 @@ public class EventClientRepository extends BaseRepository {
     public List<String> getUnValidatedReportFormSubmissionIds(int limit) {
         List<String> ids = new ArrayList<String>();
 
+        final String validateFilter = " where "
+                + report_column.syncStatus + " = ? "
+                + " AND ( " + client_column.validationStatus + " is NULL or "
+                + report_column.validationStatus + " != ? ) ";
+
         String query = "select "
                 + report_column.formSubmissionId
                 + " from "
                 + Table.path_reports.name()
-                + " where "
-                + report_column.syncStatus
-                + " = '" + BaseRepository.TYPE_Synced + "' AND "
-                + report_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "' "
-                + " order by "
+                + validateFilter
+                + ORDER_BY
                 + report_column.updatedAt
                 + " asc limit "
                 + limit;
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, null);
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
@@ -784,25 +775,27 @@ public class EventClientRepository extends BaseRepository {
         return ids;
     }
 
-    public List<String> getUnValidatedClientFormSubmissionIds(int limit) {
-        List<String> ids = new ArrayList<String>();
+    public List<String> getUnValidatedClientBaseEntityIds(int limit) {
+        List<String> ids = new ArrayList<>();
+
+        final String validateFilter = " where "
+                + client_column.syncStatus + " = ? "
+                + " AND ( " + client_column.validationStatus + " is NULL or "
+                + client_column.validationStatus + " != ? ) ";
 
         String query = "select "
                 + client_column.baseEntityId
                 + " from "
                 + Table.client.name()
-                + " where "
-                + client_column.syncStatus
-                + " = '" + BaseRepository.TYPE_Synced + "' AND "
-                + client_column.validationStatus + " != '" + BaseRepository.TYPE_Valid + "' "
-                + " order by "
+                + validateFilter
+                + ORDER_BY
                 + client_column.updatedAt
                 + " asc limit "
                 + limit;
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, null);
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
@@ -895,9 +888,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.client.name()
                     + " WHERE "
                     + client_column.baseEntityId.name()
-                    + "='"
-                    + baseEntityId
-                    + "' ", null);
+                    + "= ? ", new String[]{baseEntityId});
             if (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
                 jsonEventStr = jsonEventStr.replaceAll("'", "");
@@ -927,9 +918,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.event.name()
                     + " WHERE "
                     + event_column.baseEntityId.name()
-                    + "='"
-                    + baseEntityId
-                    + "' ", null);
+                    + "= ? ", new String[]{baseEntityId});
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 
@@ -965,9 +954,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.event.name()
                     + " WHERE "
                     + event_column.eventId.name()
-                    + "='"
-                    + eventId
-                    + "' ", null);
+                    + "= ? ", new String[]{eventId});
             if (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 
@@ -998,9 +985,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.event.name()
                     + " WHERE "
                     + event_column.formSubmissionId.name()
-                    + "='"
-                    + formSubmissionId
-                    + "' ", null);
+                    + "= ? ", new String[]{formSubmissionId});
             if (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 
@@ -1027,9 +1012,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.client.name()
                     + " WHERE "
                     + client_column.baseEntityId.name()
-                    + "='"
-                    + baseEntityId
-                    + "' ", null);
+                    + " = ? ", new String[]{baseEntityId});
             if (cursor.moveToNext()) {
                 String jsonString = cursor.getString(0);
                 jsonString = jsonString.replaceAll("'", "");
@@ -1054,13 +1037,9 @@ public class EventClientRepository extends BaseRepository {
                     + Table.client.name()
                     + " WHERE "
                     + client_column.syncStatus.name()
-                    + "='"
-                    + BaseRepository.TYPE_Unsynced
-                    + "' and "
+                    + " = ? and "
                     + client_column.baseEntityId.name()
-                    + "='"
-                    + baseEntityId
-                    + "' ", null);
+                    + " = ? ", new String[]{BaseRepository.TYPE_Unsynced, baseEntityId});
             if (cursor.moveToNext()) {
                 String json = cursor.getString(0);
                 json = json.replaceAll("'", "");
@@ -1083,9 +1062,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.client.name()
                     + " WHERE "
                     + client_column.baseEntityId.name()
-                    + "='"
-                    + baseEntityId
-                    + "' ", null);
+                    + " = ? ", new String[]{baseEntityId});
             if (cursor.moveToNext()) {
                 String beid = cursor.getString(0);
                 if (beid != null) {
@@ -1139,7 +1116,7 @@ public class EventClientRepository extends BaseRepository {
                             values,
                             event_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
-                                    event_column.formSubmissionId.name()),});
+                                    event_column.formSubmissionId.name())});
                 } else {
                     //that odd case
                     values.put(event_column.formSubmissionId.name(),
@@ -1180,7 +1157,7 @@ public class EventClientRepository extends BaseRepository {
                             values,
                             report_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
-                                    report_column.formSubmissionId.name()),});
+                                    report_column.formSubmissionId.name())});
                 } else {
                     //that odd case
                     values.put(report_column.formSubmissionId.name(),
