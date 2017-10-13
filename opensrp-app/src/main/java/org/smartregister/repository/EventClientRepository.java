@@ -740,7 +740,7 @@ public class EventClientRepository extends BaseRepository {
 
         final String validateFilter = " where "
                 + report_column.syncStatus + " = ? "
-                + " AND ( " + client_column.validationStatus + " is NULL or "
+                + " AND ( " + report_column.validationStatus + " is NULL or "
                 + report_column.validationStatus + " != ? ) ";
 
         String query = "select "
