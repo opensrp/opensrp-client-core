@@ -1227,14 +1227,13 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void markEventValidationStatus(String validationStatus, String formSubmissionId) {
+    public void markEventValidationStatus(String formSubmissionId, boolean valid) {
         try {
-
             ContentValues values = new ContentValues();
             values.put(event_column.formSubmissionId.name(), formSubmissionId);
-            values.put(event_column.validationStatus.name(), validationStatus);
-            if (!TYPE_Valid.equals(validationStatus)) {
-                values.put(event_column.validationStatus.name(), TYPE_Unsynced);
+            values.put(event_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
+            if (!valid) {
+                values.put(event_column.syncStatus.name(), TYPE_Unsynced);
             }
 
             getWritableDatabase().update(Table.event.name(),
@@ -1247,14 +1246,13 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void markReportValidationStatus(String validationStatus, String formSubmissionId) {
+    public void markReportValidationStatus(String formSubmissionId, boolean valid) {
         try {
-
             ContentValues values = new ContentValues();
             values.put(report_column.formSubmissionId.name(), formSubmissionId);
-            values.put(report_column.validationStatus.name(), validationStatus);
-            if (!TYPE_Valid.equals(validationStatus)) {
-                values.put(report_column.validationStatus.name(), TYPE_Unsynced);
+            values.put(report_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
+            if (!valid) {
+                values.put(report_column.syncStatus.name(), TYPE_Unsynced);
             }
 
             getWritableDatabase().update(Table.path_reports.name(),
@@ -1267,14 +1265,13 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void markClientValidationStatus(String validationStatus, String baseEntityId) {
+    public void markClientValidationStatus(String baseEntityId, boolean valid) {
         try {
-
             ContentValues values = new ContentValues();
             values.put(client_column.baseEntityId.name(), baseEntityId);
-            values.put(client_column.validationStatus.name(), validationStatus);
-            if (!TYPE_Valid.equals(validationStatus)) {
-                values.put(client_column.validationStatus.name(), TYPE_Unsynced);
+            values.put(client_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
+            if (!valid) {
+                values.put(client_column.syncStatus.name(), TYPE_Unsynced);
             }
 
             getWritableDatabase().update(Table.client.name(),
