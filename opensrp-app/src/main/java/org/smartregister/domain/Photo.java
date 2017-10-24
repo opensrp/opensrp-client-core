@@ -1,9 +1,11 @@
 package org.smartregister.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by keyman on 20/02/2017.
  */
-public class Photo {
+public class Photo implements Serializable {
 
     private String filePath;
     private int resourceId;
