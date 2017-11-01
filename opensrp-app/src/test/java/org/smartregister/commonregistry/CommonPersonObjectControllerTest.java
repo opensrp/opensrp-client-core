@@ -6,11 +6,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
+import org.smartregister.view.dialog.SortOption;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
@@ -50,6 +53,92 @@ public class CommonPersonObjectControllerTest {
                                                       "name",
                                                       CommonPersonObjectController
                                                               .ByColumnAndByDetails.byDetails);
+    }
+
+    @Test
+    public void assertConstructorsCreateNonNullObjectsOnInstantiation() throws Exception {
+        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "name",
+                "filtervalue",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                "nullCheckKey",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails));
+
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "nameString",
+                "bindtype",
+                new ArrayList<ControllerFilterMap>(),
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                "null_check_key",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                Mockito.mock(SortOption.class)));
+
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "nameString",
+                "bindtype",
+                "filterkey",
+                "filtervalue",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                "null_check_key",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                Mockito.mock(SortOption.class)));
+
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "nameString",
+                "bindtype",
+                new ArrayList<ControllerFilterMap>(),
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                "null_check_key",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails));
+
+        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "nullCheckKey",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails));
+
+        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "nullCheckKey",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                Mockito.mock(SortOption.class)
+                ));
+
+        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "nameString",
+                "bindtype",
+                "filterkey",
+                "filtervalue",
+                true,
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                "null_check_key",
+                CommonPersonObjectController.ByColumnAndByDetails.byDetails,
+                Mockito.mock(SortOption.class)));
+
     }
 
     @Test
