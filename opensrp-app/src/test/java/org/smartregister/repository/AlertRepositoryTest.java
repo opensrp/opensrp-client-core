@@ -93,7 +93,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void CreateAlertsCallsInsert1TimeForNewALerts() throws Exception {
+    public void createAlertsCallsInsert1TimeForNewALerts() throws Exception {
         MatrixCursor matrixCursor= new MatrixCursor(alertColumns);
 //        matrixCursor.addRow(alertRow);
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
@@ -107,7 +107,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void CreateAlertsCallsUpdate1TimeForOldALerts() throws Exception {
+    public void createAlertsCallsUpdate1TimeForOldALerts() throws Exception {
         MatrixCursor matrixCursor= new MatrixCursor(alertColumns);
         matrixCursor.addRow(alertRow);
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
