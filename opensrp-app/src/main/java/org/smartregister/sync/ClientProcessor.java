@@ -39,7 +39,7 @@ public class ClientProcessor {
     protected static final String VALUES_KEY = "values";
     private static final String TAG = "ClientProcessor";
     private static final String detailsUpdated = "detailsUpdated";
-    private static final String[] openmrs_gen_ids = {"zeir_id"};
+    private static final String[] openmrs_gen_ids = {"openmrs_gen_id"};
     private static ClientProcessor instance;
     Context mContext;
     private CloudantDataHandler mCloudantDataHandler;
