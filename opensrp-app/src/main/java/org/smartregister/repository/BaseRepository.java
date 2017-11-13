@@ -13,6 +13,9 @@ public class BaseRepository {
 
     public static String TYPE_Unsynced = "Unsynced";
     public static String TYPE_Synced = "Synced";
+    public static String TYPE_Valid = "Valid";
+    public static String TYPE_InValid = "Invalid";
+
     public static String COLLATE_NOCASE = " COLLATE NOCASE ";
 
     private Repository repository;

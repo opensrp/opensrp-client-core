@@ -37,10 +37,12 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 import org.smartregister.util.FileUtilities;
+import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
 
+import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
@@ -112,6 +114,31 @@ public class HTTPAgent {
                             ? ResponseStatus.success : ResponseStatus.failure;
             response.getEntity().consumeContent();
             return new Response<>(responseStatus, null);
+        } catch (Exception e) {
+            logWarn(e.toString());
+            return new Response<>(ResponseStatus.failure, null);
+        }
+    }
+
+    public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
+        try {
+            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
+            HttpPost httpPost = new HttpPost(postURLPath);
+            Log.v("jsonpayload", jsonPayload);
+            FileUtilities fu = new FileUtilities();
+            fu.write("jsonpayload.txt", jsonPayload);
+
+            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
+            entity.setContentType("application/json; charset=utf-8");
+            httpPost.setEntity(entity);
+
+            HttpResponse response = httpClient.postContent(httpPost);
+            if (response.getStatusLine().getStatusCode() != SC_OK) {
+                return new Response<>(ResponseStatus.failure, "Invalid status code: " + response.getStatusLine().getStatusCode());
+            } else {
+                String payload = IOUtils.toString(HttpResponseUtil.getResponseStream(response));
+                return new Response<>(ResponseStatus.success, payload);
+            }
         } catch (Exception e) {
             logWarn(e.toString());
             return new Response<>(ResponseStatus.failure, null);
