@@ -1,5 +1,6 @@
 package org.smartregister.sync;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -28,6 +29,7 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.sync.mock.MockActivity;
@@ -55,7 +57,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
  * Created by raihan on 11/6/17.
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class, AssetHandler.class, CloudantDataHandler.class, PreferenceManager.class})
+@PrepareForTest({DrishtiApplication.class, AssetHandler.class, CloudantDataHandler.class, PreferenceManager.class, CoreLibrary.class})
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 public class ClientProcessorTest extends BaseUnitTest {
 
@@ -74,7 +76,8 @@ public class ClientProcessorTest extends BaseUnitTest {
     DetailsRepository detailsRepository;
     @Mock
     CloudantDataHandler cloudantDataHandler;
-
+    @Mock
+    CommonRepository cr;
     @Mock
     SharedPreferences sharedPreferences;
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
@@ -85,6 +88,11 @@ public class ClientProcessorTest extends BaseUnitTest {
         MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context);
         Mockito.when(context.detailsRepository()).thenReturn(detailsRepository);
+        PowerMockito.mockStatic(CoreLibrary.class);
+        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+        PowerMockito.when(coreLibrary.context()).thenReturn(context);
+        PowerMockito.when(context.commonrepository(Mockito.anyString())).thenReturn(cr);
+        PowerMockito.when(cr.executeInsertStatement(Mockito.any(ContentValues.class),Mockito.anyString())).thenReturn(1l);
 
         PowerMockito.mockStatic(AssetHandler.class);
         PowerMockito.when(AssetHandler.readFileFromAssetsFolder("ec_client_classification.json", context.applicationContext())).thenReturn(ClientData.clientClassificationJson);
@@ -94,6 +102,21 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     @Test
     public void processClientTest() throws Exception {
+        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
+        final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
+        for(int i = 0;i<eventArray.length();i++){
+            eventList.add(eventArray.getJSONObject(i));
+        }
+        JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
+        ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
+        for(int i = 0;i<clientArray.length();i++){
+            clientList.add(clientArray.getJSONObject(i));
+        }
+
+        PowerMockito.mockStatic(CloudantDataHandler.class);
+        PowerMockito.when(CloudantDataHandler.getInstance(context.applicationContext())).thenReturn(cloudantDataHandler);
+        PowerMockito.when(cloudantDataHandler.getUpdatedEventsAndAlerts(Mockito.any(Date.class))).thenReturn(eventList);
+        PowerMockito.when(cloudantDataHandler.getClientByBaseEntityId(Mockito.anyString())).thenReturn(clientList.get(0));
 
         clientProcessor = new ClientProcessor(context.applicationContext());
         PowerMockito.mockStatic(PreferenceManager.class);
@@ -103,24 +126,40 @@ public class ClientProcessorTest extends BaseUnitTest {
         PowerMockito.when(sharedPreferences.edit()).thenReturn(edit);
         PowerMockito.when(edit.putLong(Mockito.anyString(), Mockito.anyLong())).thenReturn(MockEditor.getEditor());
 
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
+
+
+//        eventsAndAlerts.addAll(alertList);
+
+        clientProcessor.processClient();
+        clientProcessor.processClient(eventList);
+    }
+
+    @Test
+    public void assertProcessFieldReturnsTrue() throws Exception {
+        final JSONObject fieldObject = new JSONObject(ClientData.ec_client_fields_json);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
+        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for(int i = 0;i<eventArray.length();i++){
             eventList.add(eventArray.getJSONObject(i));
         }
-//        JSONArray alertArray = new JSONArray(ClientData.ec_client_alerts);
-//        ArrayList<JSONObject> alertList = new ArrayList<JSONObject>();
-//        for(int i = 0;i<alertArray.length();i++){
-//            alertList.add(alertArray.getJSONObject(i));
-//        }
-        ArrayList<JSONObject>eventsAndAlerts = new ArrayList<JSONObject>();
-        eventsAndAlerts.addAll(eventList);
-//        eventsAndAlerts.addAll(alertList);
+        JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
+        ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
+        for(int i = 0;i<clientArray.length();i++){
+            clientList.add(clientArray.getJSONObject(i));
+        }
         PowerMockito.mockStatic(CloudantDataHandler.class);
         PowerMockito.when(CloudantDataHandler.getInstance(context.applicationContext())).thenReturn(cloudantDataHandler);
-        PowerMockito.when(cloudantDataHandler.getUpdatedEventsAndAlerts(Mockito.any(Date.class))).thenReturn(eventsAndAlerts);
-        clientProcessor.processClient();
-        clientProcessor.processClient(eventsAndAlerts);
+        clientProcessor = new ClientProcessor(context.applicationContext());
+        JSONArray fieldArray = fieldObject.getJSONArray("bindobjects");
+        Assert.assertEquals(clientProcessor.processField(fieldArray.getJSONObject(0),eventList.get(0),clientList.get(0)),Boolean.TRUE);
+//        for(int i=0;i<fieldArray.length();i++){
+//            JSONArray columns = fieldArray.getJSONObject(i).getJSONArray("columns");
+//            for(int j =0;j<columns.length();j++){
+//      Assert.assertEquals(clientProcessor.processField(columns.getJSONObject(j).getJSONObject("json_mapping"),eventList.get(0),clientList.get(0)),Boolean.TRUE);
+//            }
+//
+//        }
+
     }
 
     @Test
@@ -204,27 +243,7 @@ public class ClientProcessorTest extends BaseUnitTest {
         JSONObject clientClassificationRulesObject = clientClassificationArray.getJSONObject(0);
         JSONArray creates_case = clientClassificationRulesObject.getJSONObject("rule").getJSONArray("fields").getJSONObject(0).getJSONArray("creates_case");
         Boolean b = clientProcessor.processCaseModel(eventList.get(0), clientList.get(0), creates_case);
-//        ClientProcessor clientProcessorspy = Mockito.spy(clientProcessor);
-        //Mockito.when(clientProcessor.getFileContents(anyString())).thenReturn(ec_client_fields_json);
-//        for(int i=0;i<eventList.size();i++){
-//            for(int j =0;j<clientList.size();j++){
-//                for(int k =0;k<clientClassificationArray.length();k++){
-//                    JSONObject clientClassificationRulesObject = clientClassificationArray.getJSONObject(k);
-//                    JSONArray fieldArray = clientClassificationRulesObject.getJSONObject("rule").getJSONArray("fields");
-//                    for(int f = 0; f<fieldArray.length();f++){
-//                        JSONArray creates_case = fieldArray.getJSONObject(f).getJSONArray("creates_case");
-//                        Boolean b = clientProcessor.processCaseModel(eventList.get(i),clientList.get(j),creates_case);
-//                        if(b == null)
-//                            System.out.println("NULL FOR: "+i+" "+j+" "+k+" "+f);
-//                        else
-//                            System.out.println(b.booleanValue()+"FOR: "+i+" "+j+" "+k+" "+f);
-//                    }
-//
-//                }
-//            }
-//        }
-
-//        Assert.assertEquals(Boolean.FALSE,clientProcessor.processCaseModel(eventList.get(0),clientList.get(0),creates_case));
+        Assert.assertEquals(Boolean.TRUE, b);
 
     }
 
