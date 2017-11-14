@@ -510,4 +510,78 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Assert.assertNotNull(commonRepository.rawQuery(query));
     }
 
+    @Test
+    public void assertPopulateSearchValuesByCaseIdReturnsContentValue(){
+        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        MatrixCursor cursor= new MatrixCursor(columns);
+        cursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
+        String tableName = "common";
+        String [] tableColumns = new String[] {};
+        String [] tables = {"common","common2"};
+        String [] mainConditions = {"details"};
+        String [] shortFields = {"id","alerts.relationalid","alerts.details","is_closed"};
+
+        String[] columns2 = new String[] { "id", "name"};
+        MatrixCursor cursor2= new MatrixCursor(columns2);
+        cursor2.addRow(new Object[] { "caseID", "details"});
+
+
+        commonFtsObject = Mockito.mock(CommonFtsObject.class);
+        CommonRepository commonRepository = new CommonRepository(commonFtsObject, tableName, tableColumns);
+        repository = Mockito.mock(Repository.class);
+        sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
+
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        commonRepository.updateMasterRepository(repository);
+        Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(cursor);
+        Mockito.when(commonFtsObject.getSearchFields(Mockito.anyString())).thenReturn(columns);
+        Mockito.when(commonFtsObject.getTables()).thenReturn(tables);
+        Mockito.when(commonFtsObject.getMainConditions(Mockito.anyString())).thenReturn(mainConditions);
+        Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
+        tableName = "common2";
+        String query = "PRAGMA table_info(" + tableName + ")";
+        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor2);
+        Assert.assertNotNull(commonRepository.populateSearchValues("caseID"));
+    }
+
+    @Test
+    public void assertPopulateSearchValuesReturnsContentBoolean(){
+        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        MatrixCursor cursor= new MatrixCursor(columns);
+        cursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
+        String tableName = "common";
+        String [] tableColumns = new String[] {};
+        String [] tables = {"common"};
+        String [] mainConditions = {"details"};
+        String [] shortFields = {"id","alerts.relationalid","alerts.details","is_closed"};
+
+        String[] columns2 = new String[] { "id", "name", CommonFtsObject.phraseColumn};
+        MatrixCursor cursor2= new MatrixCursor(columns2);
+        cursor2.addRow(new Object[] { "caseID", "details", "| hello| world"});
+
+
+        commonFtsObject = Mockito.mock(CommonFtsObject.class);
+        CommonRepository commonRepository = new CommonRepository(commonFtsObject, tableName, tableColumns);
+        repository = Mockito.mock(Repository.class);
+        sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
+
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        commonRepository.updateMasterRepository(repository);
+        Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(cursor);
+        Mockito.when(commonFtsObject.getSearchFields(Mockito.anyString())).thenReturn(columns);
+        Mockito.when(commonFtsObject.getTables()).thenReturn(tables);
+        Mockito.when(commonFtsObject.getMainConditions(Mockito.anyString())).thenReturn(mainConditions);
+        Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
+
+        String query = "SELECT object_id, field FROM common_search WHERE  object_id = 'caseID'";
+        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor2);
+        Assert.assertEquals(commonRepository.populateSearchValues("caseID","field","value",new String[]{"details"}),false);
+        Mockito.when(sqliteDatabase.update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
+        query = "SELECT object_id, phrase FROM common_search WHERE  object_id = 'caseID'";
+        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor2);
+        Assert.assertEquals(commonRepository.populateSearchValues("caseID",CommonFtsObject.phraseColumn,"hello_world",new String[]{"hello"}),true);
+    }
+
 }
