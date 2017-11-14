@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 import org.junit.Test;
@@ -78,5 +79,16 @@ public class IntegerUtilTest extends TestCase {
         String value = IntegerUtil.tryParse("", "1");
 
         assertEquals(value, "1");
+    }
+
+    @Test
+    public void assertInitializationNotNull() {
+        Assert.assertNotNull(new IntegerUtil());
+    }
+    @Test
+    public void assertIntegerCompareReturnsInt() {
+        Assert.assertEquals(IntegerUtil.compare(1,2),-1);
+        Assert.assertEquals(IntegerUtil.compare(2,2),0);
+        Assert.assertEquals(IntegerUtil.compare(3,2),1);
     }
 }
