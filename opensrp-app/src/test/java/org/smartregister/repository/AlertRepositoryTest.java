@@ -82,6 +82,15 @@ public class AlertRepositoryTest extends BaseUnitTest {
     }
 
     @Test
+    public void assertOnCreateCallsDatabaseExecSql() {
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        alertRepository.updateMasterRepository(repository);
+        alertRepository.onCreate(sqliteDatabase);
+        Mockito.verify(sqliteDatabase,Mockito.times(5)).execSQL(Mockito.anyString());
+    }
+
+    @Test
     public void assertAllAlertsReturnNotNUll() throws Exception {
         MatrixCursor matrixCursor= new MatrixCursor(alertColumns);
         matrixCursor.addRow(alertRow);

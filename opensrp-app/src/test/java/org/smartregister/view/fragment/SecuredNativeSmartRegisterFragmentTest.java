@@ -1,0 +1,98 @@
+package org.smartregister.view.fragment;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
+import org.robolectric.util.FragmentTestUtil;
+import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
+import org.smartregister.view.fragment.mock.MockFragment;
+import org.smartregister.view.fragment.mock.SecuredNativeSmartRegisterFragmentActivityMock;
+
+import static org.mockito.Mockito.when;
+
+/**
+ * Created by kaderchowdhury on 14/11/17.
+ */
+@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
+@PrepareForTest({CoreLibrary.class})
+public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
+
+    @Rule
+    public PowerMockRule rule = new PowerMockRule();
+
+    private ActivityController<Activity> controller;
+
+    @InjectMocks
+    private Activity activity;
+    @Mock
+    CoreLibrary coreLibrary;
+    @Mock
+    private org.smartregister.Context context_;
+
+    @Before
+    public void setUp() throws Exception {
+        org.mockito.MockitoAnnotations.initMocks(this);
+        Intent intent = new Intent(RuntimeEnvironment.application, SecuredNativeSmartRegisterFragmentActivityMock.class);
+        controller = Robolectric.buildActivity(Activity.class, intent);
+//        activity = controller.start().resume().get();
+
+
+        CoreLibrary.init(context_);
+
+        MockFragment fragment = new MockFragment();
+        PowerMockito.mockStatic(CoreLibrary.class);
+        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+        PowerMockito.when(coreLibrary.context()).thenReturn(context_);
+        PowerMockito.when(context_.updateApplicationContext(Mockito.any(android.content.Context.class))).thenReturn(context_);
+        //when(context_.IsUserLoggedOut()).thenReturn(false);
+
+//        SupportFragmentTestUtil.startFragment(fragment);
+
+    }
+
+    @After
+    public void tearDown() {
+        destroyController();
+        activity = null;
+        controller = null;
+
+    }
+
+    private void destroyController() {
+        try {
+            activity.finish();
+            controller.pause().stop().destroy(); //destroy controller if we can
+
+        } catch (Exception e) {
+            Log.e(getClass().getCanonicalName(), e.getMessage());
+        }
+
+        System.gc();
+    }
+
+    @Test
+    public void assertThatCallToNewInstanceCreatesAFragment() {
+//        junit.framework.Assert.assertNotNull(ServiceDialogFragment.newInstance(Collections.EMPTY_LIST, new ServiceWrapper()));
+//        junit.framework.Assert.assertNotNull(ServiceDialogFragment.newInstance(new DateTime(), Collections.EMPTY_LIST, new ServiceWrapper(), true));
+    }
+}
