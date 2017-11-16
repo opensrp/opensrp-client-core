@@ -1,15 +1,23 @@
 package org.smartregister.repository;
 
+import android.util.Pair;
+
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Child;
+import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.*;
@@ -36,6 +44,115 @@ public class AllBeneficiariesTest {
     public void setUp() throws Exception {
         initMocks(this);
         allBeneficiaries = new AllBeneficiaries(motherRepository, childRepository, alertRepository, timelineEventRepository);
+    }
+
+    @Test
+    public void assertFindMotherWithOpenStatus() {
+        Mockito.when(motherRepository.findOpenCaseByCaseID(Mockito.anyString())).thenReturn(Mockito.mock(Mother.class));
+        Assert.assertNotNull(allBeneficiaries.findMotherWithOpenStatus(""));
+    }
+
+    @Test
+    public void assertFindMotherReturnsMother() {
+        Mockito.when(motherRepository.findByCaseIds(Mockito.anyString())).thenReturn(new ArrayList<Mother>());
+        Assert.assertNull(allBeneficiaries.findMother(""));
+        List<Mother> list = new ArrayList<Mother>();
+        list.add(Mockito.mock(Mother.class));
+        Mockito.when(motherRepository.findByCaseIds(Mockito.anyString())).thenReturn(list);
+        Assert.assertNotNull(allBeneficiaries.findMother(""));
+    }
+
+    @Test
+    public void assertFindMotherByECCaseIdReturnsMother() {
+        Mockito.when(motherRepository.findAllCasesForEC(Mockito.anyString())).thenReturn(new ArrayList<Mother>());
+        Assert.assertNull(allBeneficiaries.findMotherByECCaseId(""));
+        List<Mother> list = new ArrayList<Mother>();
+        list.add(Mockito.mock(Mother.class));
+        Mockito.when(motherRepository.findAllCasesForEC(Mockito.anyString())).thenReturn(list);
+        Assert.assertNotNull(allBeneficiaries.findMotherByECCaseId(""));
+    }
+
+    @Test
+    public void assertFindAllChildrenByCaseIDs() {
+        Mockito.when(childRepository.findChildrenByCaseIds(Mockito.any(String[].class))).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.findAllChildrenByCaseIDs(new ArrayList<String>()));
+    }
+
+    @Test
+    public void assertAllChildrenWithMotherAndEC() {
+        Mockito.when(childRepository.allChildrenWithMotherAndEC()).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.allChildrenWithMotherAndEC());
+    }
+
+    @Test
+    public void assertFindAllChildrenByECId() {
+        Mockito.when(childRepository.findAllChildrenByECId(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.findAllChildrenByECId(""));
+    }
+
+    @Test
+    public void assertFindMotherWithOpenStatusByECId() {
+        Mockito.when(motherRepository.findMotherWithOpenStatusByECId(Mockito.anyString())).thenReturn(Mockito.mock(Mother.class));
+        Assert.assertNotNull(allBeneficiaries.findMotherWithOpenStatusByECId(""));
+    }
+
+    @Test
+    public void assertIsPregnant() {
+        Mockito.when(motherRepository.isPregnant(Mockito.anyString())).thenReturn(false);
+        Assert.assertEquals(allBeneficiaries.isPregnant(""),false);
+    }
+    @Test
+    public void assertSwitchMotherToPNC() {
+        Mockito.doNothing().when(motherRepository).switchToPNC(Mockito.anyString());
+        allBeneficiaries.switchMotherToPNC("");
+        Mockito.verify(motherRepository,Mockito.times(1)).switchToPNC(Mockito.anyString());
+    }
+
+    @Test
+    public void assertFindAllMothersByCaseIDs() {
+        Mockito.when(motherRepository.findByCaseIds(Mockito.any(String[].class))).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.findAllMothersByCaseIDs(new ArrayList<String>()));
+    }
+    @Test
+    public void assertFindAllChildrenByMotherId() {
+        Mockito.when(childRepository.findByMotherCaseId(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.findAllChildrenByMotherId(""));
+    }
+
+    @Test
+    public void assertFindChild() {
+        Mockito.when(childRepository.find(Mockito.anyString())).thenReturn(Mockito.mock(Child.class));
+        Assert.assertNotNull(allBeneficiaries.findChild(""));
+    }
+
+    @Test
+    public void assertANCcountReturnsLong() {
+        Mockito.when(motherRepository.ancCount()).thenReturn(0l);
+        Assert.assertEquals(allBeneficiaries.ancCount(),0l);
+    }
+
+    @Test
+    public void assertPNCcountReturnsLong() {
+        Mockito.when(motherRepository.pncCount()).thenReturn(0l);
+        Assert.assertEquals(allBeneficiaries.pncCount(),0l);
+    }
+
+    @Test
+    public void assertChildcountReturnsLong() {
+        Mockito.when(childRepository.count()).thenReturn(0l);
+        Assert.assertEquals(allBeneficiaries.childCount(),0l);
+    }
+
+    @Test
+    public void assertAllANCsWithECReturnsList () {
+        Mockito.when(motherRepository.allMothersOfATypeWithEC(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.allANCsWithEC());
+    }
+
+    @Test
+    public void assertAllPNCsWithECReturnsList () {
+        Mockito.when(motherRepository.allMothersOfATypeWithEC(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
+        Assert.assertNotNull(allBeneficiaries.allPNCsWithEC());
     }
 
     @Test

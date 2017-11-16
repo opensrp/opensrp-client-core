@@ -1,10 +1,16 @@
 package org.smartregister.repository;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -81,6 +87,52 @@ public class AllSettingsTest {
         allSettings.appliedVillageFilter("All");
 
         verify(settingsRepository).querySetting("appliedVillageFilter", "All");
+    }
+
+    @Test
+    public void assertRegisterANMCallsPreferenceAndRepositoryUpdate() throws Exception {
+        Mockito.doNothing().when(allSharedPreferences).updateANMUserName(Mockito.anyString());
+        Mockito.doNothing().doNothing().when(settingsRepository).updateSetting(Mockito.anyString(),Mockito.anyString());
+        allSettings.registerANM("","");
+        Mockito.verify(allSharedPreferences,Mockito.times(1)).updateANMUserName(Mockito.anyString());
+        Mockito.verify(settingsRepository,Mockito.times(1)).updateSetting(Mockito.anyString(),Mockito.anyString());
+    }
+
+    @Test
+    public void assertSaveANMLocationCallsRepositoryUpdate() {
+        Mockito.doNothing().doNothing().when(settingsRepository).updateSetting(Mockito.anyString(),Mockito.anyString());
+        allSettings.saveANMLocation("");
+        Mockito.verify(settingsRepository,Mockito.times(1)).updateSetting(Mockito.anyString(),Mockito.anyString());
+    }
+
+    @Test
+    public void assertFetchANMLocationCallsRepositoryQuery() {
+        Mockito.when(settingsRepository.querySetting(Mockito.anyString(),Mockito.anyString())).thenReturn("");
+        Assert.assertEquals(allSettings.fetchANMLocation(),"");
+        Mockito.verify(settingsRepository,Mockito.times(1)).querySetting(Mockito.anyString(),Mockito.anyString());
+    }
+
+    @Test
+    public void assertFetchUserInformationCallsRepositoryQuery() {
+        Mockito.when(settingsRepository.querySetting(Mockito.anyString(),Mockito.anyString())).thenReturn("");
+        Assert.assertEquals(allSettings.fetchUserInformation(),"");
+        Mockito.verify(settingsRepository,Mockito.times(1)).querySetting(Mockito.anyString(),Mockito.anyString());
+    }
+
+    @Test
+    public void assertSaveUserInformationCallsRepositoryUpdate() {
+        Mockito.doNothing().doNothing().when(settingsRepository).updateSetting(Mockito.anyString(),Mockito.anyString());
+        allSettings.saveUserInformation("");
+        Mockito.verify(settingsRepository,Mockito.times(1)).updateSetting(Mockito.anyString(),Mockito.anyString());
+    }
+
+    @Test
+    public void assertGetAuthParamsReturnsUserNamePassword() {
+        Mockito.when(allSharedPreferences.fetchRegisteredANM()).thenReturn("username");
+        Mockito.when(settingsRepository.querySetting(Mockito.anyString(),Mockito.anyString())).thenReturn("password");
+        Map<String,String> auth = allSettings.getAuthParams();
+        Assert.assertEquals("username",auth.get("username"));
+        Assert.assertEquals("password",auth.get("password"));
     }
 
 }

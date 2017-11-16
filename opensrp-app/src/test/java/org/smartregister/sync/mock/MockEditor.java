@@ -15,32 +15,32 @@ public class MockEditor {
         return new SharedPreferences.Editor() {
             @Override
             public SharedPreferences.Editor putString(String s, @Nullable String s1) {
-                return null;
+                return this;
             }
 
             @Override
             public SharedPreferences.Editor putStringSet(String s, @Nullable Set<String> set) {
-                return null;
+                return this;
             }
 
             @Override
             public SharedPreferences.Editor putInt(String s, int i) {
-                return null;
+                return this;
             }
 
             @Override
             public SharedPreferences.Editor putLong(String s, long l) {
-                return null;
+                return this;
             }
 
             @Override
             public SharedPreferences.Editor putFloat(String s, float v) {
-                return null;
+                return this;
             }
 
             @Override
             public SharedPreferences.Editor putBoolean(String s, boolean b) {
-                return null;
+                return this;
             }
 
             @Override
