@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,10 +22,12 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
-import org.robolectric.shadows.support.v4.SupportFragmentTestUtil;
+import org.robolectric.annotation.Config;
 import org.robolectric.util.FragmentTestUtil;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.customshadows.FontTextViewShadow;
+import org.smartregister.view.activity.LoginActivity;
 import org.smartregister.view.fragment.mock.MockFragment;
 import org.smartregister.view.fragment.mock.SecuredNativeSmartRegisterFragmentActivityMock;
 
@@ -35,15 +38,16 @@ import static org.mockito.Mockito.when;
  */
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
+@Config(shadows = {FontTextViewShadow.class})
 public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 
-    private ActivityController<Activity> controller;
+    private ActivityController<SecuredNativeSmartRegisterFragmentActivityMock> controller;
 
     @InjectMocks
-    private Activity activity;
+    private SecuredNativeSmartRegisterFragmentActivityMock activity;
     @Mock
     CoreLibrary coreLibrary;
     @Mock
@@ -52,43 +56,46 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
-        Intent intent = new Intent(RuntimeEnvironment.application, SecuredNativeSmartRegisterFragmentActivityMock.class);
-        controller = Robolectric.buildActivity(Activity.class, intent);
-//        activity = controller.start().resume().get();
 
+//        Intent intent = new Intent(RuntimeEnvironment.application, SecuredNativeSmartRegisterFragmentActivityMock.class);
+//        controller = Robolectric.buildActivity(SecuredNativeSmartRegisterFragmentActivityMock.class, intent);
+
+//        RuntimeEnvironment.application.startActivity(intent);
+//        activity = controller.create().start().resume().get();
+//        activity = Robolectric.setupActivity(SecuredNativeSmartRegisterFragmentActivityMock.class);
 
         CoreLibrary.init(context_);
 
-        MockFragment fragment = new MockFragment();
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context_);
-        PowerMockito.when(context_.updateApplicationContext(Mockito.any(android.content.Context.class))).thenReturn(context_);
+//        MockFragment fragment = new MockFragment();
+//        PowerMockito.mockStatic(CoreLibrary.class);
+//        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+//        PowerMockito.when(coreLibrary.context()).thenReturn(context_);
+//        PowerMockito.when(context_.updateApplicationContext(Mockito.any(android.content.Context.class))).thenReturn(context_);
         //when(context_.IsUserLoggedOut()).thenReturn(false);
 
 //        SupportFragmentTestUtil.startFragment(fragment);
 
     }
 
-    @After
-    public void tearDown() {
-        destroyController();
-        activity = null;
-        controller = null;
-
-    }
-
-    private void destroyController() {
-        try {
-            activity.finish();
-            controller.pause().stop().destroy(); //destroy controller if we can
-
-        } catch (Exception e) {
-            Log.e(getClass().getCanonicalName(), e.getMessage());
-        }
-
-        System.gc();
-    }
+//    @After
+//    public void tearDown() {
+//        destroyController();
+//        activity = null;
+//        controller = null;
+//
+//    }
+//
+//    private void destroyController() {
+//        try {
+//            activity.finish();
+//            controller.pause().stop().destroy(); //destroy controller if we can
+//
+//        } catch (Exception e) {
+//            Log.e(getClass().getCanonicalName(), e.getMessage());
+//        }
+//
+//        System.gc();
+//    }
 
     @Test
     public void assertThatCallToNewInstanceCreatesAFragment() {

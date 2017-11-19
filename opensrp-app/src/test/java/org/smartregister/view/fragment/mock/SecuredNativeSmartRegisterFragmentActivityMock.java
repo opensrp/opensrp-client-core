@@ -16,7 +16,7 @@ import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
  * Created by kaderchowdhury on 14/11/17.
  */
 
-public class SecuredNativeSmartRegisterFragmentActivityMock extends Activity {
+public class SecuredNativeSmartRegisterFragmentActivityMock extends SecuredNativeSmartRegisterActivity {
 
     private LinearLayout linearLayout;
 
@@ -24,39 +24,39 @@ public class SecuredNativeSmartRegisterFragmentActivityMock extends Activity {
     public void onCreate(Bundle bundle) {
         setTheme(R.style.AppTheme); //we need this here
         super.onCreate(bundle);
-//        startFragment();
+        startFragment();
     }
 
-//    public void startFragment() {
-//        MockFragment fragment = new MockFragment();
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        fragmentTransaction.add(fragment, "");
-//        fragmentTransaction.commit();
-//    }
-//
-//    @Override
-//    protected DefaultOptionsProvider getDefaultOptionsProvider() {
-//        return null;
-//    }
-//
-//    @Override
-//    protected NavBarOptionsProvider getNavBarOptionsProvider() {
-//        return null;
-//    }
-//
-//    @Override
-//    protected SmartRegisterClientsProvider clientsProvider() {
-//        return null;
-//    }
-//
-//    @Override
-//    protected void onInitialization() {
-//
-//    }
-//
-//    @Override
-//    public void startRegistration() {
-//
-//    }
+    public void startFragment() {
+        MockFragment fragment = new MockFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(fragment, "");
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    protected DefaultOptionsProvider getDefaultOptionsProvider() {
+        return null;
+    }
+
+    @Override
+    protected NavBarOptionsProvider getNavBarOptionsProvider() {
+        return null;
+    }
+
+    @Override
+    protected SmartRegisterClientsProvider clientsProvider() {
+        return null;
+    }
+
+    @Override
+    protected void onInitialization() {
+
+    }
+
+    @Override
+    public void startRegistration() {
+
+    }
 }

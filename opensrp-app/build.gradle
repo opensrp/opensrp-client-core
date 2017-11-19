@@ -169,9 +169,6 @@ dependencies {
         exclude group: 'com.android.support'
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
-    testCompile('org.robolectric:shadows-support-v4:3.0'){
-        exclude group: 'com.google.guava', module: 'guava'
-    }
     testCompile('org.robolectric:shadows-multidex:3.4-rc2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
