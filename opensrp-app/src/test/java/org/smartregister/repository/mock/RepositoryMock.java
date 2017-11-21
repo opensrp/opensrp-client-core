@@ -14,7 +14,50 @@ import org.smartregister.util.Session;
  * Created by kaderchowdhury on 19/11/17.
  */
 
-public class RepositoryMock {
+public class RepositoryMock extends Repository {
+
+
+    public RepositoryMock(Context context, Session session, DrishtiRepository... repositories) {
+        super(context, session, repositories);
+    }
+
+    public RepositoryMock(Context context, Session session, CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
+        super(context, session, commonFtsObject, repositories);
+    }
+
+    public RepositoryMock(Context context, String dbName, int version, Session session, CommonFtsObject commonFtsObject, DrishtiRepository... repositories) {
+        super(context, dbName, version, session, commonFtsObject, repositories);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase database) {
+        super.onCreate(database);
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int oldVersion, int newVersion) {
+        super.onUpgrade(sqLiteDatabase, oldVersion, newVersion);
+    }
+
+    @Override
+    public SQLiteDatabase getReadableDatabase() {
+        return super.getReadableDatabase();
+    }
+
+    @Override
+    public SQLiteDatabase getWritableDatabase() {
+        return super.getWritableDatabase();
+    }
+
+    @Override
+    public boolean canUseThisPassword(String password) {
+        return super.canUseThisPassword(password);
+    }
+
+    @Override
+    public void deleteRepository() {
+        super.deleteRepository();
+    }
 
     public Repository getInstance1(){
         try {

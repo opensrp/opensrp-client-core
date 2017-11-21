@@ -144,7 +144,6 @@ dependencies {
     compile 'com.github.bmelnychuk:atv:1.2.9'
     compile 'com.github.johnkil.print:print:1.2.3'
     compile 'ch.acra:acra:4.5.0'
-
     compile 'com.google.guava:guava:18.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile fileTree(include: ['*.jar'], dir: 'libs')

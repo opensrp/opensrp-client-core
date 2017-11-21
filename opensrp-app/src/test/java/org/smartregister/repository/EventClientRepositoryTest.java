@@ -18,6 +18,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
@@ -25,6 +26,7 @@ import org.smartregister.Context;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
+import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.Event;
 import org.smartregister.service.AlertService;
 import org.smartregister.sync.ClientData;
@@ -34,9 +36,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -66,7 +65,10 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        eventClientRepository = new EventClientRepository(repository);
     }
 
     @Test
@@ -76,118 +78,69 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void batchInsertClientsReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         Assert.assertNotNull(eventClientRepository.batchInsertClients(new JSONArray(ClientData.clientJsonArray)));
-
     }
 
     @Test
     public void batchInsertEventsReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         Assert.assertNotNull(eventClientRepository.batchInsertEvents(new JSONArray(ClientData.eventJsonArray),0l));
-
     }
 
     @Test
     public void getEventsByServerVersionsReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
-            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString()});
-        }
         String query = "SELECT json FROM event WHERE serverVersion > 0 AND serverVersion <= 0 ORDER BY serverVersion";
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(0l,0l));
 
     }
 
     @Test
     public void getEventsBySyncDateAndSyncStatusReturnsNotNull() throws Exception {
-        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json","timestamp"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
-            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString(),"1985-07-24T00:00:00.000Z"});
-        }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(new Date(),"unsynced"));
 
     }
 
     @Test
     public void getEventsBySyncDateReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json","timestamp"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
-            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString(),"1985-07-24T00:00:00.000Z"});
-        }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(new Date()));
 
     }
 
     @Test
     public void getUnsyncedEventsReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
-            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString()});
-        }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getUnSyncedEvents(100));
 
     }
 
     @Test
     public void getEventsByBaseEntityIdReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
-            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString()});
-        }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId("baseEntityId"));
 
     }
 
     @Test
     public void getEventsByEventIdReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
-            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString()});
-        }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getEventsByEventId("EventId"));
 
     }
 
+    public MatrixCursor getEvetCursor() throws Exception {
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json","timestamp"});
+        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
+        for(int i = 0;i<eventArray.length();i++){
+            matrixCursor.addRow(new String []{eventArray.getJSONObject(i).toString(),"1985-07-24T00:00:00.000Z"});
+        }
+        return matrixCursor;
+    }
+
     @Test
     public void getEventsByFormSubmissionIdReturnsNotNull() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"json"});
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for(int i = 0;i<eventArray.length();i++){
@@ -200,32 +153,17 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void markEventsAsSyncedCallsUpdateAsMAnyTimesAsEventsAndClientsPassedIntoMethod() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
-            eventList.add(eventArray.getJSONObject(i));
-        }
-        JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
-        ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
-            clientList.add(clientArray.getJSONObject(i));
-        }
+
         HashMap<String, Object> syncedObjects = new HashMap<String, Object>();
-        syncedObjects.put("clients",clientList);
-        syncedObjects.put("events",eventList);
+        syncedObjects.put("clients",getClientList());
+        syncedObjects.put("events",getEventList());
         eventClientRepository.markEventsAsSynced(syncedObjects);
-        Mockito.verify(sqliteDatabase, Mockito.times(eventList.size()+clientList.size())).update(org.mockito.ArgumentMatchers       .anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org            .mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(getEventList().size()+getClientList().size())).update(org.mockito.ArgumentMatchers       .anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org            .mockito.ArgumentMatchers.any(String [].class));
 
     }
 
     @Test
     public void markAllAsUnSyncedCallsUpdate2timesFor2Objects() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
         matrixCursor.addRow(new String []{"baseEntityId","syncStatus"});
         matrixCursor.addRow(new String []{"baseEntityId","syncStatus"});
@@ -238,81 +176,65 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void addorUpdateClientCallsInsert1timeForNewClients() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
 //        matrixCursor.addRow(new String []{"baseEntityId","syncStatus"});
-        JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
-        ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
-            clientList.add(clientArray.getJSONObject(i));
-        }
+
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addorUpdateClient("baseEntityID",clientList.get(0));
+        eventClientRepository.addorUpdateClient("baseEntityID",getClientList().get(0));
         Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 
     @Test
     public void addorUpdateClientCallsUpdate1timeForOldClients() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
         matrixCursor.addRow(new String []{"baseEntityId","syncStatus"});
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        eventClientRepository.addorUpdateClient("baseEntityID",getClientList().get(0));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
+
+    }
+
+    public ArrayList<JSONObject> getClientList() throws Exception {
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
         for(int i = 0;i<clientArray.length();i++){
             clientList.add(clientArray.getJSONObject(i));
         }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addorUpdateClient("baseEntityID",clientList.get(0));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
-
+        return clientList;
     }
 
     @Test
     public void addorUpdateEventCallsInsert1timeForNewEvents() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
-//        matrixCursor.addRow(new String []{"baseEntityId","syncStatus"});
-        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        ArrayList<JSONObject> eventlist = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
-            eventlist.add(eventArray.getJSONObject(i));
-        }
+
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addEvent("baseEntityID",eventlist.get(0));
+        eventClientRepository.addEvent("baseEntityID",getEventList().get(0));
         Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 
     @Test
     public void addorUpdateEventCallsUpdate1timeForOldEvents() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
         matrixCursor.addRow(new String []{"baseEntityId","syncStatus"});
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
+        eventClientRepository.addEvent("baseEntityID",getEventList().get(0));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers          .any(String [].class));
+
+    }
+    public ArrayList<JSONObject> getEventList() throws Exception {
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
         for(int i = 0;i<eventArray.length();i++){
             eventList.add(eventArray.getJSONObject(i));
         }
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addEvent("baseEntityID",eventList.get(0));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers          .any(String [].class));
-
+        return eventList;
     }
-
     @Test
     public void deleteClientCallsDelete1time() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         eventClientRepository.deleteClient("baseEntityID");
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
@@ -320,9 +242,6 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void deleteEventCallsDelete1time() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         eventClientRepository.deleteEventsByBaseEntityId("baseEntityID","eventType");
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
@@ -330,57 +249,68 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertConvertToJson() throws Exception {
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
         Assert.assertNull(eventClientRepository.convertToJson(null));
+    }
+    public MatrixCursor getCursorSyncStatus() {
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
+        matrixCursor.addRow(new String []{"{\"json\":\"data\"}","syncStatus"});
+        return matrixCursor;
     }
 
     @Test
     public void assertGetUnSyncedReportsReturnsList() throws Exception{
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
-        matrixCursor.addRow(new String []{"{\"json\":\"data\"}","syncStatus"});
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository = new EventClientRepository(repository);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnSyncedReports(1));
-
     }
 
     @Test
     public void assertGetUnValidatedEventFormSubmissionIdsReturnsList() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
-        matrixCursor.addRow(new String []{"{\"json\":\"data\"}","syncStatus"});
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository = new EventClientRepository(repository);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedEventFormSubmissionIds(1));
-
     }
 
     @Test
     public void assertGetUnValidatedReportFormSubmissionIdsReturnsList() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
-        matrixCursor.addRow(new String []{"{\"json\":\"data\"}","syncStatus"});
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository = new EventClientRepository(repository);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedReportFormSubmissionIds(1));
-
     }
 
     @Test
     public void assertGetUnValidatedClientBaseEntityIdsReturnsList() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId","syncStatus"});
-        matrixCursor.addRow(new String []{"{\"json\":\"data\"}","syncStatus"});
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository = new EventClientRepository(repository);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedClientBaseEntityIds(1));
-
     }
+
+    @Test
+    public void assertAddReportCallsDatabaseInsertAndUpdate() throws Exception {
+        String jsonReport = "{\"reportType\":\"reportType\",\"formSubmissionId\":\"formSubmissionId\"}";
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(getCursorSyncStatus());
+        eventClientRepository.addReport(new JSONObject(jsonReport));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers          .any(String [].class));
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(null);
+        eventClientRepository.addReport(new JSONObject(jsonReport));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
+    }
+
+    @Test
+    public void assertmarkReportsAsSyncedCallsDatabaseUpdate() throws Exception {
+        String jsonReport = "{\"reportType\":\"reportType\",\"formSubmissionId\":\"formSubmissionId\"}";
+        List<JSONObject>reports = new ArrayList<>();
+        reports.add(new JSONObject(jsonReport));
+        eventClientRepository.markReportsAsSynced(reports);
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers          .any(String [].class));
+    }
+
+    @Test
+    public void assertcreateTableCallsExecSql() {
+        int count = 1; //first one to create table, rest for create index
+        for (Column cc : EventClientRepository.client_column.values()) {
+            if (cc.column().index()) {
+                count++;
+            }
+        }
+        eventClientRepository.createTable(sqliteDatabase, EventClientRepository.Table.client,EventClientRepository.client_column.values());
+        Mockito.verify(sqliteDatabase,Mockito.times(count)).execSQL(Mockito.anyString());
+    }
+
 }

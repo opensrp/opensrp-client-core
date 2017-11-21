@@ -58,7 +58,7 @@ public class RepositoryTest extends BaseUnitTest{
 
     @Test
     public void constructor1() {
-        repositoryMock = new RepositoryMock();
+//        repositoryMock = new RepositoryMock();
 //        repositoryMock.getInstance1();
 //        Session session = new Session();
 //        session.setRepositoryName(AllConstants.DATABASE_NAME);
