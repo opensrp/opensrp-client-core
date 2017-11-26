@@ -1,10 +1,10 @@
-package org.smartregister.domain.db;
+package org.smartregister.clientandeventmodel;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.smartregister.domain.db.mock.BaseEntityMock;
+import org.smartregister.clientandeventmodel.mock.BaseEntityMock;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +47,8 @@ public class BaseEntityTest {
         baseEntity.setBaseEntityId(baseEntityId);
         Assert.assertEquals(getBaseEntityId(),baseEntityId);
     }
+
+    
     public List<Address> getAddresses() {
         return baseEntity.getAddresses();
     }
@@ -75,12 +77,12 @@ public class BaseEntityTest {
         Assert.assertEquals(getAddress("NULL"),null);
     }
 
-
+    
     public Map<String, Object> getAttributes() {
         return baseEntity.getAttributes();
     }
 
-
+    
     public Object getAttribute(String name) {
         return baseEntity.getAttribute(name);
     }
@@ -110,17 +112,17 @@ public class BaseEntityTest {
         Assert.assertEquals(getAttribute("name"),null);
     }
 
-
+    
     public void removeAttribute(String name) {
         baseEntity.removeAttribute(name);
     }
 
-
+    
     public Map<String, String> getIdentifiers() {
         return baseEntity.getIdentifiers();
     }
 
-
+    
     public String getIdentifier(String identifierType) {
         return baseEntity.getIdentifier(identifierType);
     }
@@ -186,4 +188,20 @@ public class BaseEntityTest {
         Assert.assertNotNull(baseEntity.withAttribute(name, value));
     }
 
+
+    @Test
+    public void assertequals() {
+        Object o = new BaseEntity();
+        Assert.assertEquals(baseEntity.equals(o),false);
+    }
+
+    @Test
+    public void asserthashCode() {
+        Assert.assertNotNull(baseEntity.hashCode());
+    }
+
+    @Test
+    public void asserttoString() {
+        Assert.assertNotNull(baseEntity.toString());
+    }
 }

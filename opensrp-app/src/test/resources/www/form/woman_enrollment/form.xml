@@ -1,0 +1,1232 @@
+<?xml version="1.0" encoding="UTF-8"?><form autocomplete="off" class="or clearfix" id="woman_tt_enrollement_form" novalidate="novalidate">
+    <!--This form was created by transforming a OpenRosa-flavored (X)Form using an XSLT sheet created by Enketo LLC.-->
+    <section class="form-logo"> </section>
+    <h3 id="form-title">خواتین انرولمنٹ فارم برائے ٹی ٹی ٹیکاجات - Woman TT Enrollment Form</h3>
+    <select data-default-lang="en" id="form-languages">
+        <option value="Roman Urdu">Roman Urdu</option>  <option value="en">English</option> </select>        <label class="note non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/provider_location_note:label" lang="Roman Urdu">Shehr: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_city ">            </span> ; Town: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_town ">            </span> ; UC: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_uc ">            </span> ; Center ka naam: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_location_name ">            </span>
+    </span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/provider_location_note:label" lang="en">City: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_city ">            </span> ; Town: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_town ">            </span> ; UC: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_uc ">            </span> ; Center Name: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provider_location_name ">            </span>
+    </span>
+    <input data-type-xml="string" name="/Woman_TT_Enrollment_Form/provider_location_note" readonly="readonly" type="text"/>
+</label>    <label class="note non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/program_client_id:label" lang="Roman Urdu">Program ID: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/existing_program_client_id ">            </span>
+    </span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/program_client_id:label" lang="en">Program ID: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/existing_program_client_id ">            </span>
+    </span>
+    <input data-type-xml="string" name="/Woman_TT_Enrollment_Form/program_client_id" readonly="readonly" required="required" type="text"/>
+</label>    <label class="question non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/epi_card_number:jr:constraintMsg" lang="Roman Urdu">Number 8 hindason par mushtamil hona chahiye</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/epi_card_number:jr:constraintMsg" lang="en">Number should be 8 digits</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/epi_card_number:label" lang="Roman Urdu">EPI Card Number</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/epi_card_number:label" lang="en">EPI Card Number:</span>
+    <span class="required">*</span>
+    <input data-constraint="string-length(.) = 8" data-type-xml="int" name="/Woman_TT_Enrollment_Form/epi_card_number" required="required" type="number"/>
+</label>    <label class="question non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/first_name:jr:constraintMsg" lang="Roman Urdu">Darj karda maaloomaat durust nahi</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/first_name:jr:constraintMsg" lang="en">Invalid data entered</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/first_name:label" lang="Roman Urdu">Naam</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/first_name:label" lang="en">Name</span>
+    <span class="required">*</span>
+    <input data-constraint="regex(., '^[a-zA-Z\s\.\-]{3,25}$')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/first_name" required="required" type="text"/>
+</label>    <fieldset class="question ">
+    <fieldset>
+        <legend>
+            <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/birth_date_known:label" lang="Roman Urdu">Kya tareekh-e-pedaaish maloom hai?</span>
+
+            <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/birth_date_known:label" lang="en">Is birthdate known?</span>
+            <span class="required">*</span>                    </legend>
+        <div class="option-wrapper">
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/birth_date_known" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/birth_date_known" required="required" type="radio" value="yes"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/birth_date_known/yes:label" lang="Roman Urdu">Yes</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/birth_date_known/yes:label" lang="en">Yes</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/birth_date_known" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/birth_date_known" required="required" type="radio" value="no"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/birth_date_known/no:label" lang="Roman Urdu">No</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/birth_date_known/no:label" lang="en">No</span>
+            </label>
+        </div>
+    </fieldset>
+</fieldset>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/birth_date:jr:constraintMsg" lang="Roman Urdu">Khatoon ki umar 15 saal ya zyada honi chahiyay</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/birth_date:jr:constraintMsg" lang="en">Woman must be 15 years or above</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/birth_date:label" lang="Roman Urdu">Tareekh-e-pedaaish</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/birth_date:label" lang="en">Birth date</span>
+    <span class="required">*</span>
+    <input data-constraint=".&lt;=( /Woman_TT_Enrollment_Form/today  - (15*365))" data-relevant="contains( /Woman_TT_Enrollment_Form/birth_date_known , 'yes')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/birth_date" required="required" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/age:jr:constraintMsg" lang="Roman Urdu">Khatoon ki umar 15 saal ya zyada honi chahiyay</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/age:jr:constraintMsg" lang="en">Woman must be 15 years or above</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/age:label" lang="Roman Urdu">Umar (saal)</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/age:label" lang="en">Age (years)</span>
+    <span class="required">*</span>
+    <input data-constraint=". &gt;= 15" data-relevant="contains( /Woman_TT_Enrollment_Form/birth_date_known , 'no')" data-type-xml="int" name="/Woman_TT_Enrollment_Form/age" required="required" type="number"/>
+</label>    <label class="note non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/birth_date_note:label" lang="Roman Urdu">Tareekh-e-pedaaish: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/dob ">            </span> (<span class="or-output" data-value=" /Woman_TT_Enrollment_Form/calc_age ">            </span> saal)</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/birth_date_note:label" lang="en">Date of Birth: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/dob ">            </span> (<span class="or-output" data-value=" /Woman_TT_Enrollment_Form/calc_age ">            </span> years)</span>
+    <input data-type-xml="string" name="/Woman_TT_Enrollment_Form/birth_date_note" readonly="readonly" type="text"/>
+</label>    <label class="question non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/father_name:jr:constraintMsg" lang="Roman Urdu">Darj karda maaloomaat durust nahi</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/father_name:jr:constraintMsg" lang="en">Invalid data entered</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/father_name:label" lang="Roman Urdu">Waalid ka naam</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/father_name:label" lang="en">Father's Name</span>
+    <input data-constraint="regex(., '^[a-zA-Z\s\.\-]{3,25}$')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/father_name" type="text"/>
+</label>    <fieldset class="question ">
+    <fieldset>
+        <legend>
+            <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/marriage:label" lang="Roman Urdu">Kya aap shaadi shuda hain?</span>
+
+            <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/marriage:label" lang="en">Are you married?</span>
+            <span class="required">*</span>                    </legend>
+        <div class="option-wrapper">
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/marriage" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/marriage" required="required" type="radio" value="yes"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/marriage/yes:label" lang="Roman Urdu">Yes</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/marriage/yes:label" lang="en">Yes</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/marriage" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/marriage" required="required" type="radio" value="no"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/marriage/no:label" lang="Roman Urdu">No</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/marriage/no:label" lang="en">No</span>
+            </label>
+        </div>
+    </fieldset>
+</fieldset>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/husband_name:jr:constraintMsg" lang="Roman Urdu">Darj karda maaloomaat durust nahi</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/husband_name:jr:constraintMsg" lang="en">Invalid data entered</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/husband_name:label" lang="Roman Urdu">Shohar ka naam</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/husband_name:label" lang="en">Husband's Name</span>
+    <input data-constraint="regex(., '^[a-zA-Z\s\.\-]{3,25}$')" data-relevant="contains( /Woman_TT_Enrollment_Form/marriage , 'yes')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/husband_name" type="text"/>
+</label>    <label class="question or-appearance-minimal ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/ethnicity:label" lang="Roman Urdu">Qomiat</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/ethnicity:label" lang="en">Ethnicity</span>
+    <span class="required">*</span>
+    <select data-name="/Woman_TT_Enrollment_Form/ethnicity" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/ethnicity" required="required">
+        <option value="">...</option>
+        <option value="punjabi">Punjabi</option>
+        <option value="pushtuns">Pushtun</option>
+        <option value="sindhi">Sindhi</option>
+        <option value="saraiki">Saraiki</option>
+        <option value="muhajir">Muhajir</option>
+        <option value="balochi">Balochi</option>
+        <option value="other">Other</option>
+    </select>
+    <span class="or-option-translations" style="display:none;">
+        <span data-option-value="punjabi" lang="Roman Urdu">Punjabi</span>
+
+        <span data-option-value="punjabi" lang="en">Punjabi</span>
+        <span data-option-value="pushtuns" lang="Roman Urdu">Pushtun</span>
+
+        <span data-option-value="pushtuns" lang="en">Pushtun</span>
+        <span data-option-value="sindhi" lang="Roman Urdu">Sindhi</span>
+
+        <span data-option-value="sindhi" lang="en">Sindhi</span>
+        <span data-option-value="saraiki" lang="Roman Urdu">Saraiki</span>
+
+        <span data-option-value="saraiki" lang="en">Saraiki</span>
+        <span data-option-value="muhajir" lang="Roman Urdu">Muhajir</span>
+
+        <span data-option-value="muhajir" lang="en">Muhajir</span>
+        <span data-option-value="balochi" lang="Roman Urdu">Balochi</span>
+
+        <span data-option-value="balochi" lang="en">Balochi</span>
+        <span data-option-value="other" lang="Roman Urdu">Deegar</span>
+
+        <span data-option-value="other" lang="en">Other</span>                </span>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/ethnicity_other:label" lang="Roman Urdu">Wazaahat karain</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/ethnicity_other:label" lang="en">Please specify:</span>
+    <input data-relevant="contains( /Woman_TT_Enrollment_Form/ethnicity , 'other')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/ethnicity_other" type="text"/>
+</label>    <label class="question or-appearance-minimal ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/province:label" lang="Roman Urdu">Suba</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/province:label" lang="en">Province</span>
+    <span class="required">*</span>
+    <select data-name="/Woman_TT_Enrollment_Form/province" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/province" required="required">
+        <option value="">...</option>
+        <option value="kpk">Khyber Pakhtunkhwa</option>
+        <option value="sindh">Sindh</option>
+        <option value="balochistan">Balochistan</option>
+        <option value="punjab">Punjab</option>
+        <option value="gilgit_baltistan">Gilgit Baltistan</option>
+        <option value="kashmir">Kashmir</option>
+        <option value="fata">FATA</option>
+        <option value="out_of_country">Out of Country</option>
+    </select>
+    <span class="or-option-translations" style="display:none;">
+        <span data-option-value="kpk" lang="Roman Urdu">Khyber Pakhtunkhwa</span>
+
+        <span data-option-value="kpk" lang="en">Khyber Pakhtunkhwa</span>
+        <span data-option-value="sindh" lang="Roman Urdu">Sindh</span>
+
+        <span data-option-value="sindh" lang="en">Sindh</span>
+        <span data-option-value="balochistan" lang="Roman Urdu">Balochistan</span>
+
+        <span data-option-value="balochistan" lang="en">Balochistan</span>
+        <span data-option-value="punjab" lang="Roman Urdu">Punjab</span>
+
+        <span data-option-value="punjab" lang="en">Punjab</span>
+        <span data-option-value="gilgit_baltistan" lang="Roman Urdu">Gilgit Baltistan</span>
+
+        <span data-option-value="gilgit_baltistan" lang="en">Gilgit Baltistan</span>
+        <span data-option-value="kashmir" lang="Roman Urdu">Kashmir</span>
+
+        <span data-option-value="kashmir" lang="en">Kashmir</span>
+        <span data-option-value="fata" lang="Roman Urdu">FATA</span>
+
+        <span data-option-value="fata" lang="en">FATA</span>
+        <span data-option-value="out_of_country" lang="Roman Urdu">Mulk se baahir</span>
+
+        <span data-option-value="out_of_country" lang="en">Out of Country</span>                </span>
+</label>    <label class="question or-appearance-minimal ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/city_village:label" lang="Roman Urdu">Shehr</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/city_village:label" lang="en">City</span>
+    <span class="required">*</span>
+    <select data-name="/Woman_TT_Enrollment_Form/city_village" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/city_village" required="required">
+        <option class="itemset-template" data-items-path="instance('cities')/root/item[province= /Woman_TT_Enrollment_Form/province  or province='na']" value="">...</option>
+    </select>
+    <span class="or-option-translations" style="display:none;">                </span>
+    <span class="itemset-labels" data-label-ref="itextId" data-label-type="itext" data-value-ref="name">
+        <span class="option-label " data-itext-id="static_instance-cities-0" lang="Roman Urdu">Karachi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-cities-0" lang="en">Karachi</span>
+        <span class="option-label " data-itext-id="static_instance-cities-1" lang="Roman Urdu">Hafizabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-cities-1" lang="en">Hafizabad</span>
+        <span class="option-label " data-itext-id="static_instance-cities-2" lang="Roman Urdu">Muzaffargarh</span>
+
+        <span class="option-label active" data-itext-id="static_instance-cities-2" lang="en">Muzaffargarh</span>
+        <span class="option-label " data-itext-id="static_instance-cities-3" lang="Roman Urdu">Deegar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-cities-3" lang="en">Other</span>
+        <span class="option-label " data-itext-id="static_instance-cities-4" lang="Roman Urdu">Not Applicable</span>
+
+        <span class="option-label active" data-itext-id="static_instance-cities-4" lang="en">Not Applicable</span>            </span>
+</label>    <label class="question or-appearance-minimal ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/town:label" lang="Roman Urdu">Town / Tehsil</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/town:label" lang="en">Town</span>
+    <span class="required">*</span>
+    <select data-name="/Woman_TT_Enrollment_Form/town" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/town" required="required">
+        <option class="itemset-template" data-items-path="instance('towns')/root/item[(province= /Woman_TT_Enrollment_Form/province  and city= /Woman_TT_Enrollment_Form/city_village  ) or city='na']" value="">...</option>
+    </select>
+    <span class="or-option-translations" style="display:none;">                </span>
+    <span class="itemset-labels" data-label-ref="itextId" data-label-type="itext" data-value-ref="name">
+        <span class="option-label " data-itext-id="static_instance-towns-0" lang="Roman Urdu">Korangi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-0" lang="en">Korangi</span>
+        <span class="option-label " data-itext-id="static_instance-towns-1" lang="Roman Urdu">Landhi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-1" lang="en">Landhi</span>
+        <span class="option-label " data-itext-id="static_instance-towns-2" lang="Roman Urdu">Baldia</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-2" lang="en">Baldia</span>
+        <span class="option-label " data-itext-id="static_instance-towns-3" lang="Roman Urdu">Bin Qasim</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-3" lang="en">Bin Qasim</span>
+        <span class="option-label " data-itext-id="static_instance-towns-4" lang="Roman Urdu">Gadap</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-4" lang="en">Gadap</span>
+        <span class="option-label " data-itext-id="static_instance-towns-5" lang="Roman Urdu">Gulberg</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-5" lang="en">Gulberg</span>
+        <span class="option-label " data-itext-id="static_instance-towns-6" lang="Roman Urdu">Gulshan</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-6" lang="en">Gulshan</span>
+        <span class="option-label " data-itext-id="static_instance-towns-7" lang="Roman Urdu">Jamshed</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-7" lang="en">Jamshed</span>
+        <span class="option-label " data-itext-id="static_instance-towns-8" lang="Roman Urdu">Kiamari</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-8" lang="en">Kiamari</span>
+        <span class="option-label " data-itext-id="static_instance-towns-9" lang="Roman Urdu">Liaquatabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-9" lang="en">Liaquatabad</span>
+        <span class="option-label " data-itext-id="static_instance-towns-10" lang="Roman Urdu">Lyari</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-10" lang="en">Lyari</span>
+        <span class="option-label " data-itext-id="static_instance-towns-11" lang="Roman Urdu">Malir</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-11" lang="en">Malir</span>
+        <span class="option-label " data-itext-id="static_instance-towns-12" lang="Roman Urdu">New Karachi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-12" lang="en">New Karachi</span>
+        <span class="option-label " data-itext-id="static_instance-towns-13" lang="Roman Urdu">North Nazimabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-13" lang="en">North Nazimabad</span>
+        <span class="option-label " data-itext-id="static_instance-towns-14" lang="Roman Urdu">Orangi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-14" lang="en">Orangi</span>
+        <span class="option-label " data-itext-id="static_instance-towns-15" lang="Roman Urdu">Saddar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-15" lang="en">Saddar</span>
+        <span class="option-label " data-itext-id="static_instance-towns-16" lang="Roman Urdu">Shah Faisal</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-16" lang="en">Shah Faisal</span>
+        <span class="option-label " data-itext-id="static_instance-towns-17" lang="Roman Urdu">S.I.T.E.</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-17" lang="en">S.I.T.E.</span>
+        <span class="option-label " data-itext-id="static_instance-towns-18" lang="Roman Urdu">Deegar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-18" lang="en">Other</span>
+        <span class="option-label " data-itext-id="static_instance-towns-19" lang="Roman Urdu">Qaabil-e-atlaaq nahi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-towns-19" lang="en">Not Applicable</span>            </span>
+</label>    <label class="question or-appearance-minimal ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/union_council:label" lang="Roman Urdu">Union Council</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/union_council:label" lang="en">Union Council</span>
+    <span class="required">*</span>
+    <select data-name="/Woman_TT_Enrollment_Form/union_council" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/union_council" required="required">
+        <option class="itemset-template" data-items-path="instance('ucs')/root/item[(province= /Woman_TT_Enrollment_Form/province  and city= /Woman_TT_Enrollment_Form/city_village  and town= /Woman_TT_Enrollment_Form/town ) or town='na']" value="">...</option>
+    </select>
+    <span class="or-option-translations" style="display:none;">                </span>
+    <span class="itemset-labels" data-label-ref="itextId" data-label-type="itext" data-value-ref="name">
+        <span class="option-label " data-itext-id="static_instance-ucs-0" lang="Roman Urdu">Bilal Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-0" lang="en">Bilal Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-1" lang="Roman Urdu">Nasir Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-1" lang="en">Nasir Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-2" lang="Roman Urdu">Chakra Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-2" lang="en">Chakra Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-3" lang="Roman Urdu">Mustafa Taj Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-3" lang="en">Mustafa Taj Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-4" lang="Roman Urdu">Hundred Quarters</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-4" lang="en">Hundred Quarters</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-5" lang="Roman Urdu">Gulzar Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-5" lang="en">Gulzar Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-6" lang="Roman Urdu">Korangi Sector 33</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-6" lang="en">Korangi Sector 33</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-7" lang="Roman Urdu">Zaman Town</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-7" lang="en">Zaman Town</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-8" lang="Roman Urdu">Hasrat Mohani Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-8" lang="en">Hasrat Mohani Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-9" lang="Roman Urdu">Gulshan-e-Ghazi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-9" lang="en">Gulshan-e-Ghazi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-10" lang="Roman Urdu">Ittehad Town</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-10" lang="en">Ittehad Town</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-11" lang="Roman Urdu">Islam Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-11" lang="en">Islam Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-12" lang="Roman Urdu">Nai Abadi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-12" lang="en">Nai Abadi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-13" lang="Roman Urdu">Saeedabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-13" lang="en">Saeedabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-14" lang="Roman Urdu">Muslim Mujahid Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-14" lang="en">Muslim Mujahid Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-15" lang="Roman Urdu">Muhajir Camp</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-15" lang="en">Muhajir Camp</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-16" lang="Roman Urdu">Rasheedabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-16" lang="en">Rasheedabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-17" lang="Roman Urdu">Ibrahim Hyderi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-17" lang="en">Ibrahim Hyderi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-18" lang="Roman Urdu">Rehri</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-18" lang="en">Rehri</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-19" lang="Roman Urdu">Cattle Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-19" lang="en">Cattle Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-20" lang="Roman Urdu">Qaidabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-20" lang="en">Qaidabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-21" lang="Roman Urdu">Landhi Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-21" lang="en">Landhi Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-22" lang="Roman Urdu">Gulshan-e-Hadeed</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-22" lang="en">Gulshan-e-Hadeed</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-23" lang="Roman Urdu">Gaghar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-23" lang="en">Gaghar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-24" lang="Roman Urdu">Murad Memon Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-24" lang="en">Murad Memon Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-25" lang="Roman Urdu">Darsano Chana</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-25" lang="en">Darsano Chana</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-26" lang="Roman Urdu">Gujro</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-26" lang="en">Gujro</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-27" lang="Roman Urdu">Songal</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-27" lang="en">Songal</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-28" lang="Roman Urdu">Maymarabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-28" lang="en">Maymarabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-29" lang="Roman Urdu">Yousuf Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-29" lang="en">Yousuf Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-30" lang="Roman Urdu">Manghopir</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-30" lang="en">Manghopir</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-31" lang="Roman Urdu">Azizabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-31" lang="en">Azizabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-32" lang="Roman Urdu">Karimabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-32" lang="en">Karimabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-33" lang="Roman Urdu">Aisha Manzil</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-33" lang="en">Aisha Manzil</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-34" lang="Roman Urdu">Ancholi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-34" lang="en">Ancholi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-35" lang="Roman Urdu">Naseerabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-35" lang="en">Naseerabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-36" lang="Roman Urdu">Yaseenabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-36" lang="en">Yaseenabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-37" lang="Roman Urdu">Water Pump</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-37" lang="en">Water Pump</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-38" lang="Roman Urdu">Shafiq Mill Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-38" lang="en">Shafiq Mill Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-39" lang="Roman Urdu">Delhi Mercantile Society</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-39" lang="en">Delhi Mercantile Society</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-40" lang="Roman Urdu">Civic Centre</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-40" lang="en">Civic Centre</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-41" lang="Roman Urdu">Pir Ilahi Buksh Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-41" lang="en">Pir Ilahi Buksh Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-42" lang="Roman Urdu">Essa Nagri</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-42" lang="en">Essa Nagri</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-43" lang="Roman Urdu">Gulshan-e-Iqbal</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-43" lang="en">Gulshan-e-Iqbal</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-44" lang="Roman Urdu">Gillani Railway Station</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-44" lang="en">Gillani Railway Station</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-45" lang="Roman Urdu">Shanti Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-45" lang="en">Shanti Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-46" lang="Roman Urdu">Jamali Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-46" lang="en">Jamali Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-47" lang="Roman Urdu">Gulshan-e-Iqbal II</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-47" lang="en">Gulshan-e-Iqbal II</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-48" lang="Roman Urdu">Pehlwan Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-48" lang="en">Pehlwan Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-49" lang="Roman Urdu">Matrovil Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-49" lang="en">Matrovil Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-50" lang="Roman Urdu">Gulzar-e-Hijri</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-50" lang="en">Gulzar-e-Hijri</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-51" lang="Roman Urdu">Safooran Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-51" lang="en">Safooran Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-52" lang="Roman Urdu">Akhtar Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-52" lang="en">Akhtar Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-53" lang="Roman Urdu">Manzoor Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-53" lang="en">Manzoor Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-54" lang="Roman Urdu">Azam Basti</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-54" lang="en">Azam Basti</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-55" lang="Roman Urdu">Chanesar Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-55" lang="en">Chanesar Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-56" lang="Roman Urdu">Mahmudabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-56" lang="en">Mahmudabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-57" lang="Roman Urdu">P.E.C.H.S.</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-57" lang="en">P.E.C.H.S.</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-58" lang="Roman Urdu">P.E.C.H.S. II</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-58" lang="en">P.E.C.H.S. II</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-59" lang="Roman Urdu">Jut Line</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-59" lang="en">Jut Line</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-60" lang="Roman Urdu">Central Jacob Lines</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-60" lang="en">Central Jacob Lines</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-61" lang="Roman Urdu">Jamshed Quarters</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-61" lang="en">Jamshed Quarters</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-62" lang="Roman Urdu">Garden East</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-62" lang="en">Garden East</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-63" lang="Roman Urdu">Soldier Bazar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-63" lang="en">Soldier Bazar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-64" lang="Roman Urdu">Pakistan Quarters</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-64" lang="en">Pakistan Quarters</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-65" lang="Roman Urdu">Bhutta Village</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-65" lang="en">Bhutta Village</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-66" lang="Roman Urdu">Sultanabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-66" lang="en">Sultanabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-67" lang="Roman Urdu">Kiamari UC</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-67" lang="en">Kiamari UC</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-68" lang="Roman Urdu">Baba Bhit</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-68" lang="en">Baba Bhit</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-69" lang="Roman Urdu">Machar Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-69" lang="en">Machar Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-70" lang="Roman Urdu">Maripur</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-70" lang="en">Maripur</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-71" lang="Roman Urdu">SherShah</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-71" lang="en">SherShah</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-72" lang="Roman Urdu">Gabo Pat</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-72" lang="en">Gabo Pat</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-73" lang="Roman Urdu">Muzafarabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-73" lang="en">Muzafarabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-74" lang="Roman Urdu">Muslimabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-74" lang="en">Muslimabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-75" lang="Roman Urdu">Dawood Chowrangi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-75" lang="en">Dawood Chowrangi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-76" lang="Roman Urdu">Moinabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-76" lang="en">Moinabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-77" lang="Roman Urdu">Sharafi Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-77" lang="en">Sharafi Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-78" lang="Roman Urdu">Bhutto Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-78" lang="en">Bhutto Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-79" lang="Roman Urdu">Khawaja Ajmeer Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-79" lang="en">Khawaja Ajmeer Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-80" lang="Roman Urdu">Landhi UC</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-80" lang="en">Landhi UC</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-81" lang="Roman Urdu">Awami Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-81" lang="en">Awami Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-82" lang="Roman Urdu">Burmee Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-82" lang="en">Burmee Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-83" lang="Roman Urdu">Korangi UC</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-83" lang="en">Korangi UC</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-84" lang="Roman Urdu">Sherabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-84" lang="en">Sherabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-85" lang="Roman Urdu">Rizvia Society</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-85" lang="en">Rizvia Society</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-86" lang="Roman Urdu">Firdous Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-86" lang="en">Firdous Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-87" lang="Roman Urdu">Super Market</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-87" lang="en">Super Market</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-88" lang="Roman Urdu">Dak Khana</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-88" lang="en">Dak Khana</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-89" lang="Roman Urdu">Qasimabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-89" lang="en">Qasimabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-90" lang="Roman Urdu">Bandhani Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-90" lang="en">Bandhani Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-91" lang="Roman Urdu">Sharifabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-91" lang="en">Sharifabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-92" lang="Roman Urdu">Commercial Area</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-92" lang="en">Commercial Area</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-93" lang="Roman Urdu">Mujahid Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-93" lang="en">Mujahid Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-94" lang="Roman Urdu">Nazimabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-94" lang="en">Nazimabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-95" lang="Roman Urdu">Abbasi Shaheed</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-95" lang="en">Abbasi Shaheed</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-96" lang="Roman Urdu">Agra Taj Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-96" lang="en">Agra Taj Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-97" lang="Roman Urdu">Daryaabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-97" lang="en">Daryaabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-98" lang="Roman Urdu">Nawabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-98" lang="en">Nawabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-99" lang="Roman Urdu">Khada Memon Society</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-99" lang="en">Khada Memon Society</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-100" lang="Roman Urdu">Baghdadi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-100" lang="en">Baghdadi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-101" lang="Roman Urdu">Shah Baig Line</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-101" lang="en">Shah Baig Line</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-102" lang="Roman Urdu">Bihar Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-102" lang="en">Bihar Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-103" lang="Roman Urdu">Ragiwara</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-103" lang="en">Ragiwara</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-104" lang="Roman Urdu">Singo Line</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-104" lang="en">Singo Line</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-105" lang="Roman Urdu">Chakiwara</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-105" lang="en">Chakiwara</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-106" lang="Roman Urdu">Allama Iqbal Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-106" lang="en">Allama Iqbal Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-107" lang="Roman Urdu">Model Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-107" lang="en">Model Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-108" lang="Roman Urdu">Kala Board</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-108" lang="en">Kala Board</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-109" lang="Roman Urdu">Saudabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-109" lang="en">Saudabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-110" lang="Roman Urdu">Khokhra Par</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-110" lang="en">Khokhra Par</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-111" lang="Roman Urdu">Jafar-e-Tayyar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-111" lang="en">Jafar-e-Tayyar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-112" lang="Roman Urdu">Gharibabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-112" lang="en">Gharibabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-113" lang="Roman Urdu">Ghazi Brohi Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-113" lang="en">Ghazi Brohi Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-114" lang="Roman Urdu">Kalyana</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-114" lang="en">Kalyana</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-115" lang="Roman Urdu">Sir Syed Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-115" lang="en">Sir Syed Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-116" lang="Roman Urdu">Fatima Jinnah Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-116" lang="en">Fatima Jinnah Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-117" lang="Roman Urdu">Godhra</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-117" lang="en">Godhra</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-118" lang="Roman Urdu">Abu Zar Ghaffari</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-118" lang="en">Abu Zar Ghaffari</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-119" lang="Roman Urdu">Hakim Ahsan</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-119" lang="en">Hakim Ahsan</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-120" lang="Roman Urdu">Madina Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-120" lang="en">Madina Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-121" lang="Roman Urdu">Faisal Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-121" lang="en">Faisal Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-122" lang="Roman Urdu">Khamiso Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-122" lang="en">Khamiso Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-123" lang="Roman Urdu">Mustufa Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-123" lang="en">Mustufa Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-124" lang="Roman Urdu">Khawaja Ajmeer Nagri</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-124" lang="en">Khawaja Ajmeer Nagri</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-125" lang="Roman Urdu">Gulshan-e-Saeed</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-125" lang="en">Gulshan-e-Saeed</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-126" lang="Roman Urdu">Shah Nawaz Bhutto Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-126" lang="en">Shah Nawaz Bhutto Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-127" lang="Roman Urdu">Paposh Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-127" lang="en">Paposh Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-128" lang="Roman Urdu">Pahar Ganj</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-128" lang="en">Pahar Ganj</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-129" lang="Roman Urdu">Khandu Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-129" lang="en">Khandu Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-130" lang="Roman Urdu">Hyderi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-130" lang="en">Hyderi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-131" lang="Roman Urdu">Sakhi Hassan</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-131" lang="en">Sakhi Hassan</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-132" lang="Roman Urdu">Farooq-e-Azam</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-132" lang="en">Farooq-e-Azam</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-133" lang="Roman Urdu">Nusrat Bhutto Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-133" lang="en">Nusrat Bhutto Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-134" lang="Roman Urdu">Shadman Town</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-134" lang="en">Shadman Town</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-135" lang="Roman Urdu">Buffer Zone</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-135" lang="en">Buffer Zone</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-136" lang="Roman Urdu">Buffer Zone II</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-136" lang="en">Buffer Zone II</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-137" lang="Roman Urdu">Mominabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-137" lang="en">Mominabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-138" lang="Roman Urdu">Haryana Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-138" lang="en">Haryana Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-139" lang="Roman Urdu">Hanifabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-139" lang="en">Hanifabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-140" lang="Roman Urdu">Mohammad Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-140" lang="en">Mohammad Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-141" lang="Roman Urdu">Madina Colony Orangi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-141" lang="en">Madina Colony Orangi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-142" lang="Roman Urdu">Ghaziabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-142" lang="en">Ghaziabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-143" lang="Roman Urdu">Chisti Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-143" lang="en">Chisti Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-144" lang="Roman Urdu">Bilal Colony Orangi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-144" lang="en">Bilal Colony Orangi</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-145" lang="Roman Urdu">Iqbal Baloch Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-145" lang="en">Iqbal Baloch Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-146" lang="Roman Urdu">Ghabool Town</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-146" lang="en">Ghabool Town</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-147" lang="Roman Urdu">Data Nagar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-147" lang="en">Data Nagar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-148" lang="Roman Urdu">Mujahidabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-148" lang="en">Mujahidabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-149" lang="Roman Urdu">Baloch Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-149" lang="en">Baloch Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-150" lang="Roman Urdu">Old Haji Camp</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-150" lang="en">Old Haji Camp</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-151" lang="Roman Urdu">Garden</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-151" lang="en">Garden</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-152" lang="Roman Urdu">Kharadar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-152" lang="en">Kharadar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-153" lang="Roman Urdu">City Railway Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-153" lang="en">City Railway Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-154" lang="Roman Urdu">Nanak Wara</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-154" lang="en">Nanak Wara</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-155" lang="Roman Urdu">Gazdarabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-155" lang="en">Gazdarabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-156" lang="Roman Urdu">Millat Nagar/Islam Pura</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-156" lang="en">Millat Nagar/Islam Pura</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-157" lang="Roman Urdu">Saddar UC</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-157" lang="en">Saddar UC</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-158" lang="Roman Urdu">Civil Line</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-158" lang="en">Civil Line</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-159" lang="Roman Urdu">Clifton</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-159" lang="en">Clifton</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-160" lang="Roman Urdu">Kehkashan</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-160" lang="en">Kehkashan</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-161" lang="Roman Urdu">Natha Khan Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-161" lang="en">Natha Khan Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-162" lang="Roman Urdu">Pak Sadat Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-162" lang="en">Pak Sadat Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-163" lang="Roman Urdu">Drigh Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-163" lang="en">Drigh Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-164" lang="Roman Urdu">Raita Plot</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-164" lang="en">Raita Plot</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-165" lang="Roman Urdu">Moria Khan Goth</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-165" lang="en">Moria Khan Goth</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-166" lang="Roman Urdu">Rafa-e-Aam Society</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-166" lang="en">Rafa-e-Aam Society</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-167" lang="Roman Urdu">Al-Falah Society</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-167" lang="en">Al-Falah Society</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-168" lang="Roman Urdu">Pak Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-168" lang="en">Pak Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-169" lang="Roman Urdu">Old Golimar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-169" lang="en">Old Golimar</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-170" lang="Roman Urdu">Jahanabad</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-170" lang="en">Jahanabad</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-171" lang="Roman Urdu">Metrovil</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-171" lang="en">Metrovil</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-172" lang="Roman Urdu">Bhawani Chali</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-172" lang="en">Bhawani Chali</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-173" lang="Roman Urdu">Frontier Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-173" lang="en">Frontier Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-174" lang="Roman Urdu">Banaras Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-174" lang="en">Banaras Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-175" lang="Roman Urdu">Qasba Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-175" lang="en">Qasba Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-176" lang="Roman Urdu">Islamia Colony</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-176" lang="en">Islamia Colony</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-177" lang="Roman Urdu">Deegar</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-177" lang="en">Other</span>
+        <span class="option-label " data-itext-id="static_instance-ucs-178" lang="Roman Urdu">Qaabil-e-atlaaq nahi</span>
+
+        <span class="option-label active" data-itext-id="static_instance-ucs-178" lang="en">Not Applicable</span>            </span>
+</label>    <label class="question non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/address1:label" lang="Roman Urdu">Ghar ka pata</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/address1:label" lang="en">Home Address</span>
+    <input data-type-xml="string" name="/Woman_TT_Enrollment_Form/address1" type="text"/>
+</label>    <label class="note non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/address:label" lang="Roman Urdu">Pata: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/address1 ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/union_councilname ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/townname ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/city_villagename ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provincename ">            </span>
+    </span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/address:label" lang="en">Address: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/address1 ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/union_councilname ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/townname ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/city_villagename ">            </span>, <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/provincename ">            </span>
+    </span>
+    <input data-type-xml="string" name="/Woman_TT_Enrollment_Form/address" readonly="readonly" type="text"/>
+</label>    <label class="question non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/centre_gps:label" lang="Roman Urdu">Hasil karda malomaat ki jaga ke GPS coordinates darj karain</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/centre_gps:label" lang="en">Collect GPS coordinates of data entry location</span>
+    <span class="or-hint active" lang="">GPS coordinates can only be collected when outside.</span>
+    <input data-type-xml="geopoint" name="/Woman_TT_Enrollment_Form/centre_gps" type="text"/>
+</label>    <fieldset class="question ">
+    <fieldset>
+        <legend>
+            <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/reminders_approval:label" lang="Roman Urdu">Kya aap apnay aglay doray ki yaad-dihani ke liye SMS mausool karna chahti hain?</span>
+
+            <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/reminders_approval:label" lang="en">Are you willing to receive SMS reminders for your next visit?</span>
+            <span class="required">*</span>                    </legend>
+        <div class="option-wrapper">
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/reminders_approval" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/reminders_approval" required="required" type="radio" value="yes"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/reminders_approval/yes:label" lang="Roman Urdu">Yes</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/reminders_approval/yes:label" lang="en">Yes</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/reminders_approval" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/reminders_approval" required="required" type="radio" value="no"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/reminders_approval/no:label" lang="Roman Urdu">No</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/reminders_approval/no:label" lang="en">No</span>
+            </label>
+        </div>
+    </fieldset>
+</fieldset>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/contact_phone_number:jr:constraintMsg" lang="Roman Urdu">Phone number 11 hindason par mushtamil aur mundarja zail shakal main hona chahiey: 03*********</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/contact_phone_number:jr:constraintMsg" lang="en">Phone number should be 11 digits in the following format: 03*********</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/contact_phone_number:label" lang="Roman Urdu">Mobile number:</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/contact_phone_number:label" lang="en">Mobile Number:</span>
+    <span class="required">*</span>
+    <input data-constraint="regex(., '^03[0-9]{9}$')" data-relevant=" /Woman_TT_Enrollment_Form/reminders_approval ='yes'" data-type-xml="string" name="/Woman_TT_Enrollment_Form/contact_phone_number" required="required" type="text"/>
+</label>    <fieldset class="question or-branch pre-init ">
+    <fieldset>
+        <legend>
+            <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/pregnant:label" lang="Roman Urdu">Kia aap haamla hain?</span>
+
+            <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/pregnant:label" lang="en">Are you pregnant?</span>
+            <span class="required">*</span>                    </legend>
+        <div class="option-wrapper">
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/pregnant" data-relevant="contains( /Woman_TT_Enrollment_Form/marriage , 'yes')" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/pregnant" required="required" type="radio" value="yes"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/pregnant/yes:label" lang="Roman Urdu">Yes</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/pregnant/yes:label" lang="en">Yes</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/pregnant" data-relevant="contains( /Woman_TT_Enrollment_Form/marriage , 'yes')" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/pregnant" required="required" type="radio" value="no"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/pregnant/no:label" lang="Roman Urdu">No</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/pregnant/no:label" lang="en">No</span>
+            </label>
+        </div>
+    </fieldset>
+</fieldset>    <fieldset class="question or-branch pre-init ">
+    <fieldset>
+        <legend>
+            <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp:label" lang="Roman Urdu">Kya aap ko apni pichli mahwaari ki tareekh, zachgi ki mutawaqqa tareekh ya ultrasound ka ilm hai?</span>
+
+            <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp:label" lang="en">Do you know your LMP, EDD or last Ultrasound information?</span>                    </legend>
+        <div class="option-wrapper">
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/edd_lmp" data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/edd_lmp" type="radio" value="edd"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/edd:label" lang="Roman Urdu">EDD</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/edd:label" lang="en">EDD</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/edd_lmp" data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/edd_lmp" type="radio" value="lmp"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/lmp:label" lang="Roman Urdu">LMP</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/lmp:label" lang="en">LMP</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/edd_lmp" data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/edd_lmp" type="radio" value="ultrasound"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/ultrasound:label" lang="Roman Urdu">Ultrasound</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/ultrasound:label" lang="en">Ultrasound</span>
+            </label>
+            <label class="">
+                <input data-name="/Woman_TT_Enrollment_Form/edd_lmp" data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/edd_lmp" type="radio" value="none"/>
+                <span class="option-label " data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/none:label" lang="Roman Urdu">Koi bhi nahi</span>
+
+                <span class="option-label active" data-itext-id="/Woman_TT_Enrollment_Form/edd_lmp/none:label" lang="en">None of the above</span>
+            </label>
+        </div>
+    </fieldset>
+</fieldset>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/edd:jr:constraintMsg" lang="Roman Urdu">Zachgi ki mutawaqqa tareekh maazi ki nahi hosakti</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/edd:jr:constraintMsg" lang="en">EDD cannot be in the past</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/edd:label" lang="Roman Urdu">Zachgi ki mutawaqqa tareekh</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/edd:label" lang="en">EDD</span>
+    <input data-constraint=".&gt;= /Woman_TT_Enrollment_Form/today " data-relevant="selected ( /Woman_TT_Enrollment_Form/edd_lmp , 'edd')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/edd" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/lmp:jr:constraintMsg" lang="Roman Urdu">Pichli mahwaari ki tareekh mustaqbil ki nahi hosakti</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/lmp:jr:constraintMsg" lang="en">LMP cannot be in the future</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/lmp:label" lang="Roman Urdu">Pichli mahwaari ki tareekh</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/lmp:label" lang="en">LMP</span>
+    <input data-constraint=".&lt;= /Woman_TT_Enrollment_Form/today " data-relevant="selected ( /Woman_TT_Enrollment_Form/edd_lmp , 'lmp')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/lmp" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/ultrasound_date:label" lang="Roman Urdu">Ultrasound ki tareekh</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/ultrasound_date:label" lang="en">Ultrasound Date</span>
+    <input data-relevant="selected ( /Woman_TT_Enrollment_Form/edd_lmp , 'ultrasound')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/ultrasound_date" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/ultrasound_weeks:label" lang="Roman Urdu">Ultrasound ki madad se hamal ki muddat (hafton me)</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/ultrasound_weeks:label" lang="en">Gestational age determined by ultrasound</span>
+    <input data-relevant="selected ( /Woman_TT_Enrollment_Form/edd_lmp , 'ultrasound')" data-type-xml="int" name="/Woman_TT_Enrollment_Form/ultrasound_weeks" type="number"/>
+</label>    <label class="note or-branch pre-init non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/final_edd_note:label" lang="Roman Urdu">Zachgi ki mutawaqqa tareekh: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/final_edd ">            </span>
+    </span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/final_edd_note:label" lang="en">EDD: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/final_edd ">            </span>
+    </span>
+    <input data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/final_edd_note" readonly="readonly" type="text"/>
+</label>    <label class="note or-branch pre-init non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/final_lmp_note:label" lang="Roman Urdu">Pichli mahwaari ki tareekh: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/final_lmp ">            </span>
+    </span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/final_lmp_note:label" lang="en">LMP: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/final_lmp ">            </span>
+    </span>
+    <input data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/final_lmp_note" readonly="readonly" type="text"/>
+</label>    <label class="note or-branch pre-init non-select ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/final_ga_note:label" lang="Roman Urdu">Hamal ki muddat: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/final_ga ">            </span> weeks</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/final_ga_note:label" lang="en">GA: <span class="or-output" data-value=" /Woman_TT_Enrollment_Form/final_ga ">            </span> weeks</span>
+    <input data-relevant="selected ( /Woman_TT_Enrollment_Form/pregnant , 'yes')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/final_ga_note" readonly="readonly" type="text"/>
+</label>    <label class="question or-appearance-minimal ">
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/vaccines:label" lang="Roman Urdu">Pichli vaccine ka record</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/vaccines:label" lang="en">Retro vaccines</span>
+    <select data-calculate="minimal" data-type-xml="select" multiple="multiple" name="/Woman_TT_Enrollment_Form/vaccines">
+        <option class="itemset-template" data-items-path="instance('vaccines')/root/item[name != 'TT5']" value="">...</option>
+    </select>
+    <span class="or-option-translations" style="display:none;">                </span>
+    <span class="itemset-labels" data-label-ref="itextId" data-label-type="itext" data-value-ref="name">
+        <span class="option-label " data-itext-id="static_instance-vaccines-0" lang="Roman Urdu">TT1</span>
+
+        <span class="option-label active" data-itext-id="static_instance-vaccines-0" lang="en">TT1</span>
+        <span class="option-label " data-itext-id="static_instance-vaccines-1" lang="Roman Urdu">TT2</span>
+
+        <span class="option-label active" data-itext-id="static_instance-vaccines-1" lang="en">TT2</span>
+        <span class="option-label " data-itext-id="static_instance-vaccines-2" lang="Roman Urdu">TT3</span>
+
+        <span class="option-label active" data-itext-id="static_instance-vaccines-2" lang="en">TT3</span>
+        <span class="option-label " data-itext-id="static_instance-vaccines-3" lang="Roman Urdu">TT4</span>
+
+        <span class="option-label active" data-itext-id="static_instance-vaccines-3" lang="en">TT4</span>
+        <span class="option-label " data-itext-id="static_instance-vaccines-4" lang="Roman Urdu">TT5</span>
+
+        <span class="option-label active" data-itext-id="static_instance-vaccines-4" lang="en">TT5</span>            </span>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/tt1_retro:jr:constraintMsg" lang="Roman Urdu">Darj karda tareekh indraaj ki tareekh say pehlay or umar kay pandarhwain saal ya uskay baad honi chahiyay</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/tt1_retro:jr:constraintMsg" lang="en">Provided date must be before registration date and must be received in or after 15th year of age</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/tt1_retro:label" lang="Roman Urdu">TT1</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/tt1_retro:label" lang="en">TT1</span>
+    <span class="required">*</span>
+    <input data-constraint=".&lt; /Woman_TT_Enrollment_Form/today  and . &gt;= ( /Woman_TT_Enrollment_Form/dob  + (15*365))" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT1')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/tt1_retro" required="required" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/tt2_retro:jr:constraintMsg" lang="Roman Urdu">Darj karda tareekh indraaj ki tareekh say pehlay or umar kay pandarhwain saal ya uskay baad or TT ki pichli dose (agar indraaj kiya gaya hay) ki tareekh kay baad honi chahiyay</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/tt2_retro:jr:constraintMsg" lang="en">Provided date must be before registration date and must be received in or after 15th year of age and must be after previous TT dose (if specified)</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/tt2_retro:label" lang="Roman Urdu">TT2</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/tt2_retro:label" lang="en">TT2</span>
+    <span class="required">*</span>
+    <input data-constraint=".&lt; /Woman_TT_Enrollment_Form/today  and . &gt;= ( /Woman_TT_Enrollment_Form/dob  + (15*365))" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT2')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/tt2_retro" required="required" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/tt3_retro:jr:constraintMsg" lang="Roman Urdu">Darj karda tareekh indraaj ki tareekh say pehlay or umar kay pandarhwain saal ya uskay baad or TT ki pichli dose (agar indraaj kiya gaya hay) ki tareekh kay baad honi chahiyay</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/tt3_retro:jr:constraintMsg" lang="en">Provided date must be before registration date and must be received in or after 15th year of age and must be after previous TT dose (if specified)</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/tt3_retro:label" lang="Roman Urdu">TT3</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/tt3_retro:label" lang="en">TT3</span>
+    <span class="required">*</span>
+    <input data-constraint=".&lt; /Woman_TT_Enrollment_Form/today  and . &gt;= ( /Woman_TT_Enrollment_Form/dob  + (15*365))" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT3')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/tt3_retro" required="required" type="date"/>
+</label>    <label class="question or-branch pre-init non-select ">
+    <span class="or-constraint-msg " data-itext-id="/Woman_TT_Enrollment_Form/tt4_retro:jr:constraintMsg" lang="Roman Urdu">Darj karda tareekh indraaj ki tareekh say pehlay or umar kay pandarhwain saal ya uskay baad or TT ki pichli dose (agar indraaj kiya gaya hay) ki tareekh kay baad honi chahiyay</span>
+
+    <span class="or-constraint-msg active" data-itext-id="/Woman_TT_Enrollment_Form/tt4_retro:jr:constraintMsg" lang="en">Provided date must be before registration date and must be received in or after 15th year of age and must be after previous TT dose (if specified)</span>
+    <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/tt4_retro:label" lang="Roman Urdu">TT4</span>
+
+    <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/tt4_retro:label" lang="en">TT4</span>
+    <span class="required">*</span>
+    <input data-constraint=".&lt; /Woman_TT_Enrollment_Form/today  and . &gt;= ( /Woman_TT_Enrollment_Form/dob  + (15*365))" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT4')" data-type-xml="date" name="/Woman_TT_Enrollment_Form/tt4_retro" required="required" type="date"/>
+</label>    <fieldset class="question ">
+    <fieldset>
+        <legend>
+            <span class="question-label " data-itext-id="/Woman_TT_Enrollment_Form/vaccines_2:label" lang="Roman Urdu">Mulaqat par di gai vaccine</span>
+
+            <span class="question-label active" data-itext-id="/Woman_TT_Enrollment_Form/vaccines_2:label" lang="en">Vaccine administered on visit</span>
+            <span class="required">*</span>                    </legend>
+        <div class="option-wrapper">
+            <label class="itemset-template" data-items-path="instance('vaccines')/root/item[(name = 'TT1' and not(contains( /Woman_TT_Enrollment_Form/vaccines , 'TT1')) ) or  (name = 'TT2' and not(contains( /Woman_TT_Enrollment_Form/vaccines , 'TT2')) ) or  (name = 'TT3' and not(contains( /Woman_TT_Enrollment_Form/vaccines , 'TT3')) ) or  (name = 'TT4' and not(contains( /Woman_TT_Enrollment_Form/vaccines , 'TT4')) ) or  (name = 'TT5' and not(contains( /Woman_TT_Enrollment_Form/vaccines , 'TT5')) )]">
+                <input data-name="/Woman_TT_Enrollment_Form/vaccines_2" data-type-xml="select1" name="/Woman_TT_Enrollment_Form/vaccines_2" required="required" type="radio" value=""/>
+            </label>
+            <span class="itemset-labels" data-label-ref="itextId" data-label-type="itext" data-value-ref="name">
+                <span class="option-label " data-itext-id="static_instance-vaccines-0" lang="Roman Urdu">TT1</span>
+
+                <span class="option-label active" data-itext-id="static_instance-vaccines-0" lang="en">TT1</span>
+                <span class="option-label " data-itext-id="static_instance-vaccines-1" lang="Roman Urdu">TT2</span>
+
+                <span class="option-label active" data-itext-id="static_instance-vaccines-1" lang="en">TT2</span>
+                <span class="option-label " data-itext-id="static_instance-vaccines-2" lang="Roman Urdu">TT3</span>
+
+                <span class="option-label active" data-itext-id="static_instance-vaccines-2" lang="en">TT3</span>
+                <span class="option-label " data-itext-id="static_instance-vaccines-3" lang="Roman Urdu">TT4</span>
+
+                <span class="option-label active" data-itext-id="static_instance-vaccines-3" lang="en">TT4</span>
+                <span class="option-label " data-itext-id="static_instance-vaccines-4" lang="Roman Urdu">TT5</span>
+
+                <span class="option-label active" data-itext-id="static_instance-vaccines-4" lang="en">TT5</span>            </span>
+        </div>
+    </fieldset>
+</fieldset>  <fieldset id="or-preload-items" style="display:none;">
+    <label class="calculation non-select ">
+        <input data-preload="timestamp" data-preload-params="start" data-type-xml="dateTime" name="/Woman_TT_Enrollment_Form/start" type="hidden"/>
+    </label>
+    <label class="calculation non-select ">
+        <input data-preload="timestamp" data-preload-params="end" data-type-xml="dateTime" name="/Woman_TT_Enrollment_Form/end" type="hidden"/>
+    </label>
+    <label class="calculation non-select ">
+        <input data-preload="date" data-preload-params="today" data-type-xml="date" name="/Woman_TT_Enrollment_Form/today" type="hidden"/>
+    </label>
+    <label class="calculation non-select ">
+        <input data-preload="property" data-preload-params="deviceid" data-type-xml="string" name="/Woman_TT_Enrollment_Form/deviceid" type="hidden"/>
+    </label>
+    <label class="calculation non-select ">
+        <input data-preload="property" data-preload-params="subscriberid" data-type-xml="string" name="/Woman_TT_Enrollment_Form/subscriberid" type="hidden"/>
+    </label>
+    <label class="calculation non-select ">
+        <input data-preload="property" data-preload-params="simserial" data-type-xml="string" name="/Woman_TT_Enrollment_Form/simserial" type="hidden"/>
+    </label>
+    <label class="calculation non-select ">
+        <input data-preload="property" data-preload-params="phonenumber" data-type-xml="string" name="/Woman_TT_Enrollment_Form/phonenumber" type="hidden"/>
+    </label>
+</fieldset>
+    <fieldset id="or-calculated-items" style="display:none;">
+        <label class="calculation non-select ">
+            <input data-calculate=" /Woman_TT_Enrollment_Form/today " data-type-xml="string" name="/Woman_TT_Enrollment_Form/client_reg_date" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if(contains( /Woman_TT_Enrollment_Form/birth_date_known , 'yes'), int(( /Woman_TT_Enrollment_Form/today  -  /Woman_TT_Enrollment_Form/birth_date ) div 365),  /Woman_TT_Enrollment_Form/age )" data-type-xml="string" name="/Woman_TT_Enrollment_Form/calc_age" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="format-date (date( /Woman_TT_Enrollment_Form/today  - int( /Woman_TT_Enrollment_Form/age  * 365.25)), '%Y-%m-%d')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/calc_dob" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if( /Woman_TT_Enrollment_Form/birth_date_known ='yes',  /Woman_TT_Enrollment_Form/birth_date ,  /Woman_TT_Enrollment_Form/calc_dob )" data-type-xml="string" name="/Woman_TT_Enrollment_Form/dob" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if( /Woman_TT_Enrollment_Form/birth_date_known  = 'yes', '0', '1')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/dob_estimated" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="female" data-type-xml="string" name="/Woman_TT_Enrollment_Form/gender" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if( /Woman_TT_Enrollment_Form/marriage  = 'no',  /Woman_TT_Enrollment_Form/father_name ,  /Woman_TT_Enrollment_Form/husband_name )" data-type-xml="string" name="/Woman_TT_Enrollment_Form/last_name" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="jr:choice-name( /Woman_TT_Enrollment_Form/province , ' /Woman_TT_Enrollment_Form/province ')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/provincename" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="jr:choice-name( /Woman_TT_Enrollment_Form/city_village , ' /Woman_TT_Enrollment_Form/city_village ')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/city_villagename" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="jr:choice-name( /Woman_TT_Enrollment_Form/town , ' /Woman_TT_Enrollment_Form/town ')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/townname" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="jr:choice-name( /Woman_TT_Enrollment_Form/union_council , ' /Woman_TT_Enrollment_Form/union_council ')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/union_councilname" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="date( /Woman_TT_Enrollment_Form/lmp +280)" data-type-xml="string" name="/Woman_TT_Enrollment_Form/edd_calc_lmp" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="date((280-( /Woman_TT_Enrollment_Form/ultrasound_weeks *7)+ /Woman_TT_Enrollment_Form/ultrasound_date  ))" data-type-xml="string" name="/Woman_TT_Enrollment_Form/edd_calc_ultrasound" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="format-date( /Woman_TT_Enrollment_Form/edd_calc_lmp , '%Y-%n-%e')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/edd_calc_lmp_formatted" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="format-date( /Woman_TT_Enrollment_Form/edd_calc_ultrasound , '%Y-%n-%e')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/edd_calc_ultrasound_formatted" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="date( /Woman_TT_Enrollment_Form/edd -280)" data-type-xml="string" name="/Woman_TT_Enrollment_Form/lmp_calc_edd" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="date( /Woman_TT_Enrollment_Form/ultrasound_date -( /Woman_TT_Enrollment_Form/ultrasound_weeks *7))" data-type-xml="string" name="/Woman_TT_Enrollment_Form/lmp_calc_ultrasound" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="format-date( /Woman_TT_Enrollment_Form/lmp_calc_edd , '%Y-%n-%e')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/lmp_calc_edd_formatted" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="format-date( /Woman_TT_Enrollment_Form/lmp_calc_ultrasound , '%Y-%n-%e')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/lmp_calc_ultrasound_formatted" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if( /Woman_TT_Enrollment_Form/edd_lmp ='lmp', /Woman_TT_Enrollment_Form/edd_calc_lmp_formatted ,if( /Woman_TT_Enrollment_Form/edd_lmp ='edd', /Woman_TT_Enrollment_Form/edd  ,if( /Woman_TT_Enrollment_Form/edd_lmp ='ultrasound', /Woman_TT_Enrollment_Form/edd_calc_ultrasound_formatted ,'')))" data-type-xml="string" name="/Woman_TT_Enrollment_Form/final_edd" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if( /Woman_TT_Enrollment_Form/edd_lmp ='lmp', /Woman_TT_Enrollment_Form/lmp ,if( /Woman_TT_Enrollment_Form/edd_lmp ='edd', /Woman_TT_Enrollment_Form/lmp_calc_edd_formatted  ,if( /Woman_TT_Enrollment_Form/edd_lmp ='ultrasound', /Woman_TT_Enrollment_Form/lmp_calc_ultrasound_formatted ,'')))" data-type-xml="string" name="/Woman_TT_Enrollment_Form/final_lmp" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="int(( /Woman_TT_Enrollment_Form/today  - ( /Woman_TT_Enrollment_Form/edd -280)) div 7)" data-type-xml="string" name="/Woman_TT_Enrollment_Form/ga_edd" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="int(( /Woman_TT_Enrollment_Form/today  -  /Woman_TT_Enrollment_Form/lmp ) div 7)" data-type-xml="string" name="/Woman_TT_Enrollment_Form/ga_lmp" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="int(( /Woman_TT_Enrollment_Form/today  -( /Woman_TT_Enrollment_Form/ultrasound_date -( /Woman_TT_Enrollment_Form/ultrasound_weeks *7))) div 7)" data-type-xml="string" name="/Woman_TT_Enrollment_Form/ga_ult" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="if( /Woman_TT_Enrollment_Form/edd_lmp ='lmp', /Woman_TT_Enrollment_Form/ga_lmp ,if( /Woman_TT_Enrollment_Form/edd_lmp ='edd', /Woman_TT_Enrollment_Form/ga_edd  ,if( /Woman_TT_Enrollment_Form/edd_lmp ='ultrasound', /Woman_TT_Enrollment_Form/ga_ult ,'')))" data-type-xml="string" name="/Woman_TT_Enrollment_Form/final_ga" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="1" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT1')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_1_dose" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="2" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT2')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_2_dose" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="3" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT3')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_3_dose" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="4" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines ,'TT4')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_4_dose" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate=" /Woman_TT_Enrollment_Form/today " data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT1')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt1" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="1" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT1')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_1_dose_today" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate=" /Woman_TT_Enrollment_Form/today " data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT2')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt2" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="2" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT2')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_2_dose_today" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate=" /Woman_TT_Enrollment_Form/today " data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT3')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt3" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="3" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT3')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_3_dose_today" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate=" /Woman_TT_Enrollment_Form/today " data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT4')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt4" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="4" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT4')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_4_dose_today" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate=" /Woman_TT_Enrollment_Form/today " data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT5')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt5" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="5" data-relevant="contains( /Woman_TT_Enrollment_Form/vaccines_2 ,'TT5')" data-type-xml="string" name="/Woman_TT_Enrollment_Form/tt_5_dose_today" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="concat('uuid:', uuid())" data-type-xml="string" name="/Woman_TT_Enrollment_Form/meta/instanceID" type="hidden"/>
+        </label>
+        <label class="calculation non-select ">
+            <input data-calculate="'ac0325034d314316bd0801d32013892d'" data-type-xml="string" name="/Woman_TT_Enrollment_Form/formhub/uuid" type="hidden"/>
+        </label>
+    </fieldset>
+</form>
