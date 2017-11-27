@@ -2,6 +2,9 @@ package org.smartregister.clientandeventmodel;
 
 import android.content.res.AssetManager;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -29,6 +32,8 @@ import java.util.Map;
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
+
+import static org.powermock.api.support.membermodification.MemberMatcher.method;
 
 /**
  * Created by kaderchowdhury on 22/11/17.
@@ -178,15 +183,23 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
     }
 
-    @Test(expected = Exception.class)
+    public String getStringFromStream(InputStream is) throws Exception {
+        String fileContents = "";
+        int size = is.available();
+        byte[] buffer = new byte[size];
+        is.read(buffer);
+        is.close();
+        fileContents = new String(buffer, "UTF-8");
+        return fileContents;
+    }
+
+    @Test
     public void assertGetFieldnameSubForm() throws Exception {
         Map<String,String> attributes = new HashMap<>();
         attributes.put("encounter_type","Child Vaccination Enrollment");
         attributes.put("id","child_vaccination_enrollment");
         attributes.put("version","201607121711");
-        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this,formDefinition));
-        InputStream modelStream = new FileInputStream(getFileFromPath(this,model));
-        InputStream formJSONStream = new FileInputStream(getFileFromPath(this,formMultiJSON));
+
         List<FormField> formFields = new ArrayList<FormField>();
 
         formFields.add(new FormField("birth_date_known","1 2 3 4","www/form/"));
@@ -215,14 +228,23 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
         FormData fd = new FormData("pkchild", "www/form/", formFields, subFormData);
 
+        FormAttributeParser spyparser = PowerMockito.spy(parser);
+
         FormInstance fi = new FormInstance();
         fi.setForm(fd);
         FormSubmission fs = new FormSubmission("","",FORMNAME,"",0l,"", fi,0l);
         FormAttributeParser parser = new FormAttributeParser(context);
         Mockito.when(context.getAssets()).thenReturn(assetManager);
-        Mockito.when(assetManager.open(formDefinition)).thenReturn(formDefinitionStream);
-        Mockito.when(assetManager.open(model)).thenReturn(modelStream);
-        Mockito.when(assetManager.open(formJSON)).thenReturn(formJSONStream);
+        FileInputStream formDefinitionIS = (new FileInputStream(getFileFromPath(this, formDefinition)));
+        String stringOfFormDefinition = getStringFromStream(formDefinitionIS);
+        JsonParser jsonparser = new JsonParser();
+        Object obj = jsonparser.parse(stringOfFormDefinition);
+
+
+//        PowerMockito.when(spyparser.readFileFromAssetsFolder(formDefinition)).thenReturn(formDefinitionIS);
+        PowerMockito.doReturn((JsonObject) obj).when(spyparser).getFormDefinitionData(FORMNAME);
+        Mockito.when(assetManager.open(model)).thenReturn(new FileInputStream(getFileFromPath(this,model)));
+        Mockito.when(assetManager.open(formJSON)).thenReturn(new FileInputStream(getFileFromPath(this,formMultiJSON)));
         PowerMockito.mockStatic(XPathFactory.class);
         PowerMockito.when(XPathFactory.newInstance()).thenReturn(xPathFactory);
         PowerMockito.when(xPathFactory.newXPath()).thenReturn(xPath);
@@ -234,7 +256,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
 //        PowerMockito.when(assetManager.open(model)).thenReturn(modelStream);
 //        PowerMockito.when(assetManager.open(formJSON)).thenReturn(formJSONStream);
 
-        Assert.assertEquals(parser.getFieldName(attributes,"magic_subform",fs),"birth_date_known");
+        Assert.assertEquals(spyparser.getFieldName(attributes,"magic_subform",fs),"birth_date_known");
 
     }
 

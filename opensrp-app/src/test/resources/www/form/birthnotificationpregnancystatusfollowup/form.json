@@ -1,0 +1,1128 @@
+{
+  "root": {
+    "form": {
+      "-autocomplete": "off",
+      "-novalidate": "novalidate",
+      "-class": "or clearfix",
+      "-dir": "ltr",
+      "-id": "BirthNotificationFollowUp",
+      "section": [
+        { "-class": "form-logo" },
+        {
+          "-class": "or-group or-branch pre-init ",
+          "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured",
+          "-data-relevant": " /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS  ='3' or  /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS  ='4'",
+          "h4": {
+            "span": [
+              {
+                "-lang": "bn",
+                "-class": "question-label active",
+                "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured:label",
+                "#text": "ভাইটাল স্ট্যাটাস আপডেট"
+              },
+              {
+                "-lang": "en",
+                "-class": "question-label ",
+                "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured:label",
+                "#text": "Vital Status Update"
+              }
+            ]
+          },
+          "fieldset": {
+            "-class": "question simple-select ",
+            "fieldset": {
+              "legend": {
+                "span": [
+                  {
+                    "-lang": "bn",
+                    "-class": "question-label active",
+                    "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS:label",
+                    "#text": "মহিলার ভাইটাল স্ট্যাটাস"
+                  },
+                  {
+                    "-lang": "en",
+                    "-class": "question-label ",
+                    "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS:label",
+                    "#text": "Vital Status of the Woman"
+                  },
+                  {
+                    "-class": "required",
+                    "#text": "*"
+                  }
+                ]
+              },
+              "div": {
+                "-class": "option-wrapper",
+                "label": [
+                  {
+                    "input": {
+                      "-type": "radio",
+                      "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS",
+                      "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS",
+                      "-value": "0",
+                      "-required": "required",
+                      "-data-type-xml": "select1"
+                    },
+                    "span": [
+                      {
+                        "-lang": "bn",
+                        "-class": "option-label active",
+                        "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/0:label",
+                        "#text": "মারা গেছেন"
+                      },
+                      {
+                        "-lang": "en",
+                        "-class": "option-label ",
+                        "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/0:label",
+                        "#text": "Deceased"
+                      }
+                    ]
+                  },
+                  {
+                    "input": {
+                      "-type": "radio",
+                      "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS",
+                      "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS",
+                      "-value": "1",
+                      "-required": "required",
+                      "-data-type-xml": "select1"
+                    },
+                    "span": [
+                      {
+                        "-lang": "bn",
+                        "-class": "option-label active",
+                        "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/1:label",
+                        "#text": "বেঁচে আছেন"
+                      },
+                      {
+                        "-lang": "en",
+                        "-class": "option-label ",
+                        "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/1:label",
+                        "#text": "Alive"
+                      }
+                    ]
+                  },
+                  {
+                    "input": {
+                      "-type": "radio",
+                      "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS",
+                      "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS",
+                      "-value": "9",
+                      "-required": "required",
+                      "-data-type-xml": "select1"
+                    },
+                    "span": [
+                      {
+                        "-lang": "bn",
+                        "-class": "option-label active",
+                        "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/9:label",
+                        "#text": "জানিনা"
+                      },
+                      {
+                        "-lang": "en",
+                        "-class": "option-label ",
+                        "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/9:label",
+                        "#text": "Don't know"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "span": [
+              {
+                "-class": "or-constraint-msg active",
+                "-data-i18n": "constraint.invalid",
+                "#text": "Value not allowed"
+              },
+              {
+                "-class": "or-required-msg active",
+                "-data-i18n": "constraint.required",
+                "#text": "This field is required"
+              }
+            ]
+          },
+          "label": [
+            {
+              "-class": "question non-select ",
+              "span": [
+                {
+                  "-lang": "bn",
+                  "-class": "question-label active",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO:label",
+                  "#text": "আউটকামের তারিখ এবং সময় (ঘণ্টা)"
+                },
+                {
+                  "-lang": "en",
+                  "-class": "question-label ",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO:label",
+                  "#text": "What was the date and time of the outcome?"
+                },
+                {
+                  "-class": "required",
+                  "#text": "*"
+                },
+                {
+                  "-class": "or-constraint-msg active",
+                  "-data-i18n": "constraint.invalid",
+                  "#text": "Value not allowed"
+                },
+                {
+                  "-class": "or-required-msg active",
+                  "-data-i18n": "constraint.required",
+                  "#text": "This field is required"
+                }
+              ],
+              "input": {
+                "-type": "datetime",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO",
+                "-required": "required",
+                "-data-constraint": ".<= /BirthNotificationPregnancyStatusFollowUp/start ",
+                "-data-type-xml": "dateTime"
+              }
+            },
+            {
+              "-class": "question or-branch pre-init non-select ",
+              "span": [
+                {
+                  "-lang": "bn",
+                  "-class": "question-label active",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB:label",
+                  "#text": "জীবিত বাচ্চার সংখ্যা"
+                },
+                {
+                  "-lang": "en",
+                  "-class": "question-label ",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB:label",
+                  "#text": "Number of live births"
+                },
+                {
+                  "-class": "required",
+                  "#text": "*"
+                },
+                {
+                  "-class": "or-constraint-msg active",
+                  "-data-i18n": "constraint.invalid",
+                  "#text": "Value not allowed"
+                },
+                {
+                  "-class": "or-required-msg active",
+                  "-data-i18n": "constraint.required",
+                  "#text": "This field is required"
+                }
+              ],
+              "input": {
+                "-type": "number",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB",
+                "-required": "required",
+                "-data-relevant": "selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '3')",
+                "-data-type-xml": "int"
+              }
+            }
+          ],
+          "section": {
+            "-class": "or-group or-branch pre-init ",
+            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS",
+            "-data-relevant": "selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '3')",
+            "h4": {
+              "span": [
+                {
+                  "-lang": "bn",
+                  "-class": "question-label active",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS:label",
+                  "#text": "বাচ্চাকে নিবন্ধন"
+                },
+                {
+                  "-lang": "en",
+                  "-class": "question-label ",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS:label",
+                  "#text": "Child Registration"
+                }
+              ]
+            },
+            "section": {
+              "-class": "or-repeat ",
+              "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS",
+              "fieldset": [
+                {
+                  "-class": "question simple-select ",
+                  "fieldset": {
+                    "legend": {
+                      "span": [
+                        {
+                          "-lang": "bn",
+                          "-class": "question-label active",
+                          "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN:label",
+                          "#text": "বাচ্চার লিঙ্গ"
+                        },
+                        {
+                          "-lang": "en",
+                          "-class": "question-label ",
+                          "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN:label",
+                          "#text": "Gender of baby"
+                        },
+                        {
+                          "-class": "required",
+                          "#text": "*"
+                        }
+                      ]
+                    },
+                    "div": {
+                      "-class": "option-wrapper",
+                      "label": [
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN",
+                            "-value": "1",
+                            "-required": "required",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/1:label",
+                              "#text": "ছেলে"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/1:label",
+                              "#text": "Male"
+                            }
+                          ]
+                        },
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN",
+                            "-value": "2",
+                            "-required": "required",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/2:label",
+                              "#text": "মেয়ে"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/2:label",
+                              "#text": "Female"
+                            }
+                          ]
+                        },
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN",
+                            "-value": "9",
+                            "-required": "required",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/9:label",
+                              "#text": "জানিনা"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/9:label",
+                              "#text": "Don't know"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "span": [
+                    {
+                      "-class": "or-constraint-msg active",
+                      "-data-i18n": "constraint.invalid",
+                      "#text": "Value not allowed"
+                    },
+                    {
+                      "-class": "or-required-msg active",
+                      "-data-i18n": "constraint.required",
+                      "#text": "This field is required"
+                    }
+                  ]
+                },
+                {
+                  "-class": "question simple-select ",
+                  "fieldset": {
+                    "legend": {
+                      "span": [
+                        {
+                          "-lang": "bn",
+                          "-class": "question-label active",
+                          "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS:label",
+                          "#text": "বাচ্চার ভাইটাল স্ট্যাটাস"
+                        },
+                        {
+                          "-lang": "en",
+                          "-class": "question-label ",
+                          "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS:label",
+                          "#text": "Child’s vital status"
+                        },
+                        {
+                          "-class": "required",
+                          "#text": "*"
+                        }
+                      ]
+                    },
+                    "div": {
+                      "-class": "option-wrapper",
+                      "label": [
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS",
+                            "-value": "0",
+                            "-required": "required",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/0:label",
+                              "#text": "মারা গেছেন"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/0:label",
+                              "#text": "Deceased"
+                            }
+                          ]
+                        },
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS",
+                            "-value": "1",
+                            "-required": "required",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/1:label",
+                              "#text": "বেঁচে আছেন"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/1:label",
+                              "#text": "Alive"
+                            }
+                          ]
+                        },
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS",
+                            "-value": "9",
+                            "-required": "required",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/9:label",
+                              "#text": "জানিনা"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/9:label",
+                              "#text": "Don't know"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "span": [
+                    {
+                      "-class": "or-constraint-msg active",
+                      "-data-i18n": "constraint.invalid",
+                      "#text": "Value not allowed"
+                    },
+                    {
+                      "-class": "or-required-msg active",
+                      "-data-i18n": "constraint.required",
+                      "#text": "This field is required"
+                    }
+                  ]
+                },
+                {
+                  "-class": "question simple-select or-branch pre-init ",
+                  "fieldset": {
+                    "legend": {
+                      "span": [
+                        {
+                          "-lang": "bn",
+                          "-class": "question-label active",
+                          "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK:label",
+                          "#text": "বাচ্চাটির কি কোন নাম আছে?"
+                        },
+                        {
+                          "-lang": "en",
+                          "-class": "question-label ",
+                          "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK:label",
+                          "#text": "Does the child have a name?"
+                        },
+                        {
+                          "-class": "required",
+                          "#text": "*"
+                        }
+                      ]
+                    },
+                    "div": {
+                      "-class": "option-wrapper",
+                      "label": [
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK",
+                            "-value": "0",
+                            "-required": "required",
+                            "-data-relevant": " /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ='1'",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/0:label",
+                              "#text": "এখনো না"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/0:label",
+                              "#text": "Not yet"
+                            }
+                          ]
+                        },
+                        {
+                          "input": {
+                            "-type": "radio",
+                            "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK",
+                            "-data-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK",
+                            "-value": "1",
+                            "-required": "required",
+                            "-data-relevant": " /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ='1'",
+                            "-data-type-xml": "select1"
+                          },
+                          "span": [
+                            {
+                              "-lang": "bn",
+                              "-class": "option-label active",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/1:label",
+                              "#text": "হ্যাঁ"
+                            },
+                            {
+                              "-lang": "en",
+                              "-class": "option-label ",
+                              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/1:label",
+                              "#text": "Yes"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  },
+                  "span": [
+                    {
+                      "-class": "or-constraint-msg active",
+                      "-data-i18n": "constraint.invalid",
+                      "#text": "Value not allowed"
+                    },
+                    {
+                      "-class": "or-required-msg active",
+                      "-data-i18n": "constraint.required",
+                      "#text": "This field is required"
+                    }
+                  ]
+                }
+              ],
+              "label": [
+                {
+                  "-class": "question or-branch pre-init non-select ",
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "question-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME:label",
+                      "#text": "বাচ্চার নাম"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "question-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME:label",
+                      "#text": "Child Name"
+                    },
+                    {
+                      "-class": "required",
+                      "#text": "*"
+                    },
+                    {
+                      "-class": "or-constraint-msg active",
+                      "-data-i18n": "constraint.invalid",
+                      "#text": "Value not allowed"
+                    },
+                    {
+                      "-class": "or-required-msg active",
+                      "-data-i18n": "constraint.required",
+                      "#text": "This field is required"
+                    }
+                  ],
+                  "input": {
+                    "-type": "text",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME",
+                    "-required": "required",
+                    "-data-relevant": " /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='1'",
+                    "-data-type-xml": "string"
+                  }
+                },
+                {
+                  "-class": "note non-select ",
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "question-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/add_child:label",
+                      "#text": "যদি জীবিত বাচ্চার সংখ্যা একের বেশি হয়, তাহলে '+' অপশনটি নির্বাচন করুন এবং একই প্রক্রিয়ায় পরবর্তী বাচ্চাকে নিবন্ধন করুন"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "question-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/add_child:label",
+                      "#text": "If there were any additional children born of this pregnancy, select the \"+\" below to register the next child's vital status."
+                    }
+                  ],
+                  "input": {
+                    "-type": "text",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/add_child",
+                    "-data-type-xml": "string",
+                    "-readonly": "readonly"
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "h3": {
+        "-id": "form-title",
+        "#text": "বার্থ নোটিফিক্যাশন ফলোআপ ফর্ম"
+      },
+      "select": {
+        "-id": "form-languages",
+        "-data-default-lang": "bn",
+        "option": [
+          {
+            "-value": "bn",
+            "#text": "Bengali"
+          },
+          {
+            "-value": "en",
+            "#text": "English"
+          }
+        ]
+      },
+      "label": [
+        {
+          "-class": "question non-select ",
+          "span": [
+            {
+              "-lang": "bn",
+              "-class": "question-label active",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:label",
+              "#text": "সাক্ষাতকারের তারিখ"
+            },
+            {
+              "-lang": "en",
+              "-class": "question-label ",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:label",
+              "#text": "Date of Interview"
+            },
+            {
+              "-class": "required",
+              "#text": "*"
+            },
+            {
+              "-lang": "bn",
+              "-class": "or-hint active",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:hint",
+              "#text": "আজকের তারিখ দিন"
+            },
+            {
+              "-lang": "en",
+              "-class": "or-hint ",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:hint",
+              "#text": "Please Confirm Today’s date is correct"
+            },
+            {
+              "-class": "or-constraint-msg active",
+              "-data-i18n": "constraint.invalid",
+              "#text": "Value not allowed"
+            },
+            {
+              "-class": "or-required-msg active",
+              "-data-i18n": "constraint.required",
+              "#text": "This field is required"
+            }
+          ],
+          "input": {
+            "-type": "date",
+            "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE",
+            "-required": "required",
+            "-data-constraint": ".<= /BirthNotificationPregnancyStatusFollowUp/today ",
+            "-data-type-xml": "date"
+          }
+        },
+        {
+          "-class": "note non-select ",
+          "span": [
+            {
+              "-lang": "bn",
+              "-class": "question-label active",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION:label",
+              "#text": [
+                "মহিলার নাম, সরকারী খানা নম্বর জীবিতা খানা নম্বর সঠিক কিনা তা নিশ্চিত করুন -
+        মহিলার নাম: ",
+                "
+        GoB HHID: ",
+                "
+        JiVitA HHID: "
+              ],
+              "span": [
+                {
+                  "-class": "or-output",
+                  "-data-value": " /BirthNotificationPregnancyStatusFollowUp/existing_first_name "
+                },
+                {
+                  "-class": "or-output",
+                  "-data-value": " /BirthNotificationPregnancyStatusFollowUp/existing_gobhhid "
+                },
+                {
+                  "-class": "or-output",
+                  "-data-value": " /BirthNotificationPregnancyStatusFollowUp/existing_jivhhid "
+                }
+              ]
+            },
+            {
+              "-lang": "en",
+              "-class": "question-label ",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION:label",
+              "#text": [
+                "Confirm woman’s name, GoB HHID and JiVitA HHID are correct:
+
+        Name: ",
+                "
+        GoB HHID: ",
+                "
+        JiVitA HHID: "
+              ],
+              "span": [
+                {
+                  "-class": "or-output",
+                  "-data-value": " /BirthNotificationPregnancyStatusFollowUp/existing_first_name "
+                },
+                {
+                  "-class": "or-output",
+                  "-data-value": " /BirthNotificationPregnancyStatusFollowUp/existing_gobhhid "
+                },
+                {
+                  "-class": "or-output",
+                  "-data-value": " /BirthNotificationPregnancyStatusFollowUp/existing_jivhhid "
+                }
+              ]
+            }
+          ],
+          "input": {
+            "-type": "text",
+            "-name": "/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION",
+            "-data-type-xml": "string",
+            "-readonly": "readonly"
+          }
+        },
+        {
+          "-class": "note or-branch pre-init non-select ",
+          "span": [
+            {
+              "-lang": "bn",
+              "-class": "question-label active",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1:label",
+              "#text": "মহিলা এবং তার পরিবারের সদস্যদের গর্ভের যে কোন ফলাফল হওয়ার সাথে সাথে বা বাচ্চা জন্মানোর সাথে সাথে খবর দেয়ার কথা মনে করিয়ে দিন। পাশাপাশি বাচ্চা এবং মায়ের সুস্বাস্থ্যের জন্য বাচ্চা হওয়ার সাথেসাথেই স্বাস্থ্যকর্মীকে জানানো যে কতটা জরুরী তা বুঝিয়ে বলুন।"
+            },
+            {
+              "-lang": "en",
+              "-class": "question-label ",
+              "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1:label",
+              "#text": "Remind the woman to send a birth notification SMS immediately following the birth and emphasize the importance of immediately notifying a health worker of the birth for the health of the baby and mother."
+            }
+          ],
+          "input": {
+            "-type": "text",
+            "-name": "/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1",
+            "-data-relevant": "selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '1')",
+            "-data-type-xml": "string",
+            "-readonly": "readonly"
+          }
+        }
+      ],
+      "fieldset": [
+        {
+          "-class": "question simple-select ",
+          "fieldset": {
+            "legend": {
+              "span": [
+                {
+                  "-lang": "bn",
+                  "-class": "question-label active",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS:label",
+                  "#text": "BNF ভিজিট স্ট্যাটাস"
+                },
+                {
+                  "-lang": "en",
+                  "-class": "question-label ",
+                  "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS:label",
+                  "#text": "BNF Status"
+                },
+                {
+                  "-class": "required",
+                  "#text": "*"
+                }
+              ]
+            },
+            "div": {
+              "-class": "option-wrapper",
+              "label": [
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "1",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/1:label",
+                      "#text": "দেখা হয়েছে এবং গর্ভবতী"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/1:label",
+                      "#text": "Met and pregnant"
+                    }
+                  ]
+                },
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "2",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/2:label",
+                      "#text": "দেখা হয়নি"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/2:label",
+                      "#text": "Not met"
+                    }
+                  ]
+                },
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "3",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/3:label",
+                      "#text": "জীবিত বাচ্চা জন্ম দিয়েছেন"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/3:label",
+                      "#text": "Woman had live birth"
+                    }
+                  ]
+                },
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "4",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/4:label",
+                      "#text": "গর্ভনষ্ট হয়েছে / মৃতবাচ্চা প্রসব হয়েছে"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/4:label",
+                      "#text": "Miscarriage/Stillbirth"
+                    }
+                  ]
+                },
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "6",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/6:label",
+                      "#text": "উত্তর দিতে
+        অসম্মতি জানিয়েছেন"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/6:label",
+                      "#text": "Refused"
+                    }
+                  ]
+                },
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "7",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/7:label",
+                      "#text": "একেবারেই এলাকা
+        ছেড়ে চলে গেছেন"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/7:label",
+                      "#text": "Permanently moved"
+                    }
+                  ]
+                },
+                {
+                  "input": {
+                    "-type": "radio",
+                    "-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-data-name": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS",
+                    "-value": "9",
+                    "-required": "required",
+                    "-data-type-xml": "select1"
+                  },
+                  "span": [
+                    {
+                      "-lang": "bn",
+                      "-class": "option-label active",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/9:label",
+                      "#text": "বাচ্চা জন্ম দেওয়ার আগেই মহিলা মারা গেছেন"
+                    },
+                    {
+                      "-lang": "en",
+                      "-class": "option-label ",
+                      "-data-itext-id": "/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/9:label",
+                      "#text": "Woman died before birth"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "span": [
+            {
+              "-class": "or-constraint-msg active",
+              "-data-i18n": "constraint.invalid",
+              "#text": "Value not allowed"
+            },
+            {
+              "-class": "or-required-msg active",
+              "-data-i18n": "constraint.required",
+              "#text": "This field is required"
+            }
+          ]
+        },
+        {
+          "-id": "or-preload-items",
+          "-style": "display:none;",
+          "label": [
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/today",
+                "-data-preload": "date",
+                "-data-preload-params": "today",
+                "-data-type-xml": "date"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/start",
+                "-data-preload": "timestamp",
+                "-data-preload-params": "start",
+                "-data-type-xml": "dateTime"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/end",
+                "-data-preload": "timestamp",
+                "-data-preload-params": "end",
+                "-data-type-xml": "dateTime"
+              }
+            }
+          ]
+        },
+        {
+          "-id": "or-calculated-items",
+          "-style": "display:none;",
+          "label": [
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/FWGESTATIONALAGE",
+                "-data-calculate": "round((( /BirthNotificationPregnancyStatusFollowUp/today - /BirthNotificationPregnancyStatusFollowUp/existing_psrlmp ) div 7),0)",
+                "-data-type-xml": "string"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/FWEDD",
+                "-data-calculate": "format-date(date( /BirthNotificationPregnancyStatusFollowUp/existing_psrlmp +259), '%Y-%n-%e')",
+                "-data-type-xml": "string"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHILDNAME",
+                "-data-calculate": "if(( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='0' and  /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN  ='1'), 'BABYBOY', if( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='1',  /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME , if(( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='0' and  /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN  ='2'), 'BABYGIRL', 'BABY')))",
+                "-data-type-xml": "string"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFDOB",
+                "-data-calculate": "format-date(date( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO ), '%Y-%n-%e')",
+                "-data-type-xml": "string"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/Is_PNC",
+                "-data-calculate": "if( (selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS ,'1') and selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ,'1')) or  (selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '4') and selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS ,'1')) or  (selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS ,'1') and (selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ,'0') or selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS , '9'))), '1',' 0')",
+                "-data-type-xml": "string"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/meta/instanceID",
+                "-data-calculate": "concat('uuid:', uuid())",
+                "-data-type-xml": "string"
+              }
+            },
+            {
+              "-class": "calculation non-select ",
+              "input": {
+                "-type": "hidden",
+                "-name": "/BirthNotificationPregnancyStatusFollowUp/formhub/uuid",
+                "-data-calculate": "'c9a068238f294b8fa782aa8285085d08'",
+                "-data-type-xml": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "xsltmessages": {
+      "message": {
+        "-level": "0",
+        "#text": "XML to HTML transformation for form took 0.03 seconds"
+      }
+    },
+    "jrvalidationmessages": {
+      "message": {
+        "-level": "1",
+        "#text": "This validation is yet not functional."
+      }
+    }
+  }
+}
