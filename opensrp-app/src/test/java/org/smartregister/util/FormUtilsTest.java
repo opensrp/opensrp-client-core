@@ -1,6 +1,7 @@
 package org.smartregister.util;
 
 import android.content.res.AssetManager;
+import android.util.Xml;
 
 import junit.framework.Assert;
 
@@ -23,19 +24,23 @@ import org.smartregister.cloudant.models.Client;
 import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.ANM;
 import org.smartregister.domain.SyncStatus;
+import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.sync.CloudantDataHandler;
+import org.smartregister.util.mock.XmlSerializerMock;
+import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
-@PrepareForTest({CoreLibrary.class, CloudantDataHandler.class})
+@PrepareForTest({CoreLibrary.class, CloudantDataHandler.class,Xml.class})
 public class FormUtilsTest extends BaseUnitTest {
 
     FormUtils formUtils;
@@ -47,6 +52,8 @@ public class FormUtilsTest extends BaseUnitTest {
     String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
     String formSubmissionXML = "www/form/form_submission/form_submission_xml.xml";
     String formSubmissionJSON = "www/form/form_submission/form_submission_json.json";
+    String entityRelationShip = "www/form/entity_relationship.json";
+
     @Rule
     public PowerMockRule rule = new PowerMockRule();
     @Mock
@@ -81,8 +88,19 @@ public class FormUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertretrieveValueForLinkedRecord(){
-//        formUtils.retrieveValueForLinkedRecord();
+    public void assertretrieveValueForLinkedRecord() throws Exception {
+        formUtils = new FormUtils(context_);
+        Mockito.when(context_.getAssets()).thenReturn(assetManager);
+
+        Mockito.when(assetManager.open(entityRelationShip)).thenAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return new FileInputStream(getFileFromPath(this, entityRelationShip));
+            }
+        });
+        JSONObject mockobject = Mockito.mock(JSONObject.class);
+        Mockito.when(mockobject.getString(Mockito.anyString())).thenReturn("val");
+        formUtils.retrieveValueForLinkedRecord("household.elco",mockobject);
     }
     @Test
     public void assertgenerateXMLInputForFormWithEntityId() throws Exception {
@@ -102,8 +120,25 @@ public class FormUtilsTest extends BaseUnitTest {
                 return new FileInputStream(getFileFromPath(this, model));
             }
         });
-        formUtils.generateXMLInputForFormWithEntityId("baseEntityId",FORMNAME,null);
+        Mockito.when(assetManager.open(formJSON)).thenAnswer(new Answer<InputStream>() {
+            @Override
+            public InputStream answer(InvocationOnMock invocation) throws Throwable {
+                return new FileInputStream(getFileFromPath(this,formJSON));
+            }
+        });
+
+        FormDataRepository formDataRepository = Mockito.mock(FormDataRepository.class);
+        Mockito.when(context.formDataRepository()).thenReturn(formDataRepository);
+        Mockito.when(formDataRepository.getMapFromSQLQuery(Mockito.anyString())).thenReturn(new HashMap<String, String>());
+        DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
+        Mockito.when(context.detailsRepository()).thenReturn(detailsRepository);
+        Mockito.when(detailsRepository.getAllDetailsForClient(Mockito.anyString())).thenReturn(new HashMap<String, String>());
+        PowerMockito.mockStatic(Xml.class);
+        XmlSerializerMock xmlSerializer = new XmlSerializerMock();
+        PowerMockito.when(Xml.newSerializer()).thenReturn(xmlSerializer);
+        Assert.assertNotNull(formUtils.generateXMLInputForFormWithEntityId("baseEntityId",FORMNAME,null));
     }
+
     @Test
     public void assertWithEntityIdReturnsFormSubmissionBuilder(){
         FormSubmissionBuilder builder= new FormSubmissionBuilder();
@@ -152,7 +187,7 @@ public class FormUtilsTest extends BaseUnitTest {
         Mockito.when(context.formDataRepository()).thenReturn(formDataRepository);
         Mockito.when(formDataRepository.queryUniqueResult(Mockito.anyString())).thenReturn(null);
 
-        formUtils.generateFormSubmisionFromXMLString("baseEntityId", formData, FORMNAME, new JSONObject());
+        Assert.assertNotNull(formUtils.generateFormSubmisionFromXMLString("baseEntityId", formData, FORMNAME, new JSONObject()));
     }
 
     private static File getFileFromPath(Object obj, String fileName) {

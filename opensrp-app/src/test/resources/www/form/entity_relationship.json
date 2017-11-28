@@ -1,20 +1,27 @@
 [
   {
-    "parent": "pkwoman",
-    "child": "pkchild",
+    "parent": "household",
+    "child": "elco",
+    "field": "wife",
+    "kind": "one_to_many",
+    "from": "household.id",
+    "to": "elco.relationalid"
+  },
+  {
+    "parent": "elco",
+    "child": "mcaremother",
     "field": "child",
     "kind": "one_to_many",
-    "from": "pkwoman.id",
-    "to": "pkchild.relationalid"
+    "from": "elco.id",
+    "to": "mcaremother.relationalid"
   },
-
   {
-    "parent": "stock",
-    "child": "reports",
-    "field": "stock",
-    "kind": "one_to_one",
-    "from": "stock.id",
-    "to": "reports.relationalid"
+    "parent": "mcaremother",
+    "child": "mcarechild",
+    "field": "child",
+    "kind": "one_to_many",
+    "from": "mcaremother.id",
+    "to": "mcarechild.relationalid"
   },
   {
     "parent": "eligible_couple",
@@ -25,11 +32,11 @@
     "to": "mother.ecCaseId"
   },
   {
-    "parent": "wife",
+    "parent": "mother",
     "child": "child",
     "field": "children",
     "kind": "one_to_many",
-    "from": "wife.id",
+    "from": "mother.id",
     "to": "child.motherCaseId"
   }
 ]

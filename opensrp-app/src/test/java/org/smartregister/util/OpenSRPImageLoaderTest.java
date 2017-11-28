@@ -32,6 +32,7 @@ import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.util.mock.MockContext;
 import org.smartregister.util.mock.MockService;
 import org.smartregister.util.mock.OpenSRPImageLoaderTestActivity;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -47,11 +48,12 @@ public class OpenSRPImageLoaderTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();
-    private Volley volley;
-    private OpenSRPImageLoader openSRPImageLoader;
+
     private OpenSRPImageLoaderTestActivity activity;
     @Mock
     private Context context;
+    @Mock
+    Resources res;
     @Mock
     private DrishtiApplication drishtiApplication;
     private ActivityController<OpenSRPImageLoaderTestActivity> controller;
@@ -85,25 +87,10 @@ public class OpenSRPImageLoaderTest extends BaseUnitTest {
 
     @Test
     public void assertServiceConstructorInitializationNotNull() throws Exception {
-
         PowerMockito.mockStatic(Volley.class);
         PowerMockito.when(Volley.newRequestQueue(Mockito.any(android.content.Context.class),Mockito.any(HurlStack.class))).thenReturn(Mockito.mock(RequestQueue.class));
         OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(Mockito.mock(Service.class),-1);
         Assert.assertNotNull(openSRPImageLoader);
     }
-
-    @Test
-    public void assertContextConstructorInitializationNotNull() throws Exception {
-        PowerMockito.mockStatic(Volley.class);
-        PowerMockito.when(Volley.newRequestQueue(Mockito.any(android.content.Context.class),Mockito.any(HurlStack.class))).thenReturn(Mockito.mock(RequestQueue.class));
-//        PowerMockito.mockStatic(DrishtiApplication.class);
-//        PowerMockito.when(DrishtiApplication.getInstance()).thenReturn(drishtiApplication);
-
-//        OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(Mockito.mock(android.content.Context.class),-1);
-//        Assert.assertNotNull(openSRPImageLoader);
-    }
-
-
-
 
 }

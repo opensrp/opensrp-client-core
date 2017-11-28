@@ -13,6 +13,7 @@
       <existing_first_name/>
       <existing_husname/>
       <existing_psrlmp/>
+      <mother_entity_id openmrs_entity="person_relationship" openmrs_entity_id="mother"/>
       <existing_location openmrs_entity="encounter" openmrs_entity_id="location_id"/>
       <today openmrs_entity="encounter" openmrs_entity_id="encounter_date"/>
       <start openmrs_entity="concept" openmrs_entity_id="163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"/>
