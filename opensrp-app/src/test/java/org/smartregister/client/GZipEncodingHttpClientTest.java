@@ -66,27 +66,27 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
 
             @Override
             public void setStatusLine(StatusLine statusLine) {
-
+                System.out.println();
             }
 
             @Override
             public void setStatusLine(ProtocolVersion protocolVersion, int i) {
-
+                System.out.println();
             }
 
             @Override
             public void setStatusLine(ProtocolVersion protocolVersion, int i, String s) {
-
+                System.out.println();
             }
 
             @Override
             public void setStatusCode(int i) throws IllegalStateException {
-
+                System.out.println();
             }
 
             @Override
             public void setReasonPhrase(String s) throws IllegalStateException {
-
+                System.out.println();
             }
 
             @Override
@@ -139,14 +139,14 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
 
                     @Override
                     public void consumeContent() throws IOException {
-
+                        System.out.println();
                     }
                 };
             }
 
             @Override
             public void setEntity(HttpEntity httpEntity) {
-
+                System.out.println();
             }
 
             @Override
@@ -156,7 +156,7 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
 
             @Override
             public void setLocale(Locale locale) {
-
+                System.out.println();
             }
 
             @Override
@@ -191,37 +191,37 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
 
             @Override
             public void addHeader(Header header) {
-
+                System.out.println();
             }
 
             @Override
             public void addHeader(String s, String s1) {
-
+                System.out.println();
             }
 
             @Override
             public void setHeader(Header header) {
-
+                System.out.println();
             }
 
             @Override
             public void setHeader(String s, String s1) {
-
+                System.out.println();
             }
 
             @Override
             public void setHeaders(Header[] headers) {
-
+                System.out.println();
             }
 
             @Override
             public void removeHeader(Header header) {
-
+                System.out.println();
             }
 
             @Override
             public void removeHeaders(String s) {
-
+                System.out.println();
             }
 
             @Override
@@ -241,7 +241,7 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
 
             @Override
             public void setParams(HttpParams httpParams) {
-
+                System.out.println();
             }
         };
 

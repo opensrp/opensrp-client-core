@@ -14,7 +14,7 @@ import org.smartregister.customshadows.FontTextViewShadow;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, sdk = 21, shadows = {FontTextViewShadow.class})
+@Config(constants = BuildConfig.class, shadows = {FontTextViewShadow.class})
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 public abstract class BaseUnitTest {
 
