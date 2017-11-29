@@ -24,7 +24,11 @@ public class BaseEntityTest {
     private List<Address> addresses = new ArrayList<>();
 
     private Map<String, Object> attributes = new HashMap<String, Object>();
-    BaseEntityMock baseEntity;
+    private BaseEntityMock baseEntity;
+    private String name = "";
+
+    private String identifierType = "type";
+    private String identifier = "identifier";
 
     @Before
     public void setUp() {
@@ -47,12 +51,10 @@ public class BaseEntityTest {
         baseEntity.setBaseEntityId(baseEntityId);
         Assert.assertEquals(getBaseEntityId(), baseEntityId);
     }
-
     
     public List<Address> getAddresses() {
         return baseEntity.getAddresses();
     }
-
 
     public Address getAddress(String addressType) {
         return baseEntity.getAddress(addressType);
@@ -76,12 +78,10 @@ public class BaseEntityTest {
         Assert.assertEquals(getAddress("type"), address);
         Assert.assertEquals(getAddress("NULL"), null);
     }
-
     
     public Map<String, Object> getAttributes() {
         return baseEntity.getAttributes();
     }
-
     
     public Object getAttribute(String name) {
         return baseEntity.getAttribute(name);
@@ -95,7 +95,6 @@ public class BaseEntityTest {
 
     @Test
     public void addAttribute() {
-        String name = "name";
         Object value = new Object();
         baseEntity.setAttributes(null);
         baseEntity.addAttribute(name, value);
@@ -106,9 +105,9 @@ public class BaseEntityTest {
         baseEntity.setAttributes(attributes);
         Assert.assertEquals(getAttribute(""), null);
         baseEntity.addAttribute(name, value);
-        Assert.assertEquals(getAttribute("name"), value);
-        baseEntity.removeAttribute("name");//attribute successfully added and removed
-        Assert.assertEquals(getAttribute("name"), null);
+        Assert.assertEquals(getAttribute(name), value);
+        baseEntity.removeAttribute(name);//attribute successfully added and removed
+        Assert.assertEquals(getAttribute(name), null);
     }
 
     public void removeAttribute(String name) {
@@ -129,8 +128,6 @@ public class BaseEntityTest {
         Assert.assertEquals(getIdentifiers(), identifiers);
     }
 
-    String identifierType = "type";
-    String identifier = "identifier";
     @Test
     public void addIdentifier() {
         baseEntity.setIdentifiers(identifiers);
@@ -179,7 +176,7 @@ public class BaseEntityTest {
 
     @Test
     public void withAttribute() {
-        String name = "name";
+
         Object value = new Object();
         Assert.assertNotNull(baseEntity.withAttribute(name, value));
     }

@@ -30,6 +30,7 @@ public class EventTest extends BaseUnitTest {
     private String formSubmissionId = "formSubmissionId";
     private Map<String, String> details = new HashMap<>();
     private HashMap<String, String> identifiers = new HashMap<>();
+    private String status = "done";
 
     @Before
     public void setUp() {
@@ -253,8 +254,7 @@ public class EventTest extends BaseUnitTest {
     public String getStatus() {
         return event.getStatus();
     }
-    String status = "done";
-    
+
     @Test
     public void setStatus() {
         event.setStatus(status);

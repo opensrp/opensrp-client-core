@@ -15,9 +15,11 @@ import java.util.Date;
 
 public class BaseDataObjectTest extends BaseUnitTest {
 
-    BaseDataObjectMock baseDataObject;
-    User user = new User();
-    Date date = new Date(0l);
+    private BaseDataObjectMock baseDataObject;
+    private User user = new User();
+    private Date date = new Date(0l);
+    private String reasonString = "reason";
+
     @Before
     public void setUp() {
         baseDataObject = new BaseDataObjectMock();
@@ -99,8 +101,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
 
     @Test
     public void setVoidReason() {
-        baseDataObject.setVoidReason("reason");
-        Assert.assertEquals(getVoidReason(), "reason");
+        baseDataObject.setVoidReason(reasonString);
+        Assert.assertEquals(getVoidReason(), reasonString);
     }
 
     @Test

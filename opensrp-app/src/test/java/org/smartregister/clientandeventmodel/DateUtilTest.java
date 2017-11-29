@@ -13,12 +13,13 @@ import java.util.Date;
 
 public class DateUtilTest extends BaseUnitTest {
 
-    LocalDate start = new LocalDate(1447487308000l);
+    private LocalDate start = new LocalDate(1447487308000l);
 
     @Before
     public void setUp() {
         DateUtil.fakeIt(start);
     }
+
     @Test
     public void assertDateUtilNotNUll() {
      org.junit.Assert.assertNotNull(new DateUtil());

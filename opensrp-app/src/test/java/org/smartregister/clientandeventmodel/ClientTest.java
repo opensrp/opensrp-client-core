@@ -18,21 +18,21 @@ import java.util.Map;
 
 public class ClientTest extends BaseUnitTest {
 
-    ClientMock client;
-    String baseEntityId = "baseEntityId";
-    String firstName = "firstName";
-    String middleName = "middleName";
-    String lastName = "LastName";
-    Date birthdate = new Date(0l);
-    Date deathdate = new Date(0l);
-    Boolean birthdateApprox = Boolean.FALSE;
-    Boolean deathdateApprox = Boolean.TRUE;
-    String gender = "X";
-    String identifierType = "type";
-    String identifier = "identifier";
-    List<Address> addresses = new ArrayList<>();
-    Map<String, String> identifiers = new HashMap<>();
-    Map<String, Object> attributes = new HashMap<>();
+    private ClientMock client;
+    private String baseEntityId = "baseEntityId";
+    private String firstName = "firstName";
+    private String middleName = "middleName";
+    private String lastName = "LastName";
+    private Date birthdate = new Date(0l);
+    private Date deathdate = new Date(0l);
+    private Boolean birthdateApprox = Boolean.FALSE;
+    private Boolean deathdateApprox = Boolean.TRUE;
+    private String gender = "X";
+    private String identifierType = "type";
+    private String identifier = "identifier";
+    private List<Address> addresses = new ArrayList<>();
+    private Map<String, String> identifiers = new HashMap<>();
+    private Map<String, Object> attributes = new HashMap<>();
 
     @Before
     public void setUp() {
