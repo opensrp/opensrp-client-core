@@ -1,8 +1,6 @@
 package org.smartregister.view.dialog;
 
-import android.content.Intent;
 import android.util.Log;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.smartregister.BaseUnitTest;

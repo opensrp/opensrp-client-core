@@ -1,6 +1,5 @@
 package org.smartregister.repository;
 
-
 import android.content.ContentValues;
 
 import junit.framework.Assert;

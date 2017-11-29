@@ -1,16 +1,12 @@
 package org.smartregister.view.fragment.mock;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.widget.LinearLayout;
-
 import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
-import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
 
 /**
  * Created by kaderchowdhury on 14/11/17.

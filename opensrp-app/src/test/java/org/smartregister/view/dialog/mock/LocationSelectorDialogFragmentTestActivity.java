@@ -1,6 +1,5 @@
 package org.smartregister.view.dialog.mock;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.graphics.drawable.Drawable;
@@ -16,7 +15,6 @@ import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.smartregister.view.dialog.DialogOption;
 import org.smartregister.view.dialog.DialogOptionModel;
 import org.smartregister.view.dialog.EditOption;
 import org.smartregister.view.dialog.FilterOption;

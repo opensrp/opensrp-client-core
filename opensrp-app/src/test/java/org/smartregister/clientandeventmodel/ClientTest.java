@@ -43,25 +43,25 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void constructor1() {
+    public void assertconstructor1() {
         client = new ClientMock(baseEntityId);
         Assert.assertNotNull(client);
     }
 
     @Test
-    public void constructor2() {
+    public void assertconstructor2() {
         client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender);
         Assert.assertNotNull(client);
     }
     
     @Test
-    public void constructor3() {
+    public void assertconstructor3() {
         client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, identifierType, identifier);
         Assert.assertNotNull(client);
     }
 
     @Test
-    public void constructor4() {
+    public void assertconstructor4() {
         client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, addresses, identifiers, attributes);
         Assert.assertNotNull(client);
     }
@@ -71,7 +71,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setFirstName() {
+    public void assertSetFirstName() {
         client.setFirstName(firstName);
         Assert.assertEquals(getFirstName(), firstName);
     }
@@ -81,7 +81,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setMiddleName() {
+    public void assertSetMiddleName() {
         client.setMiddleName(middleName);
         Assert.assertEquals(getMiddleName(), middleName);
     }
@@ -91,7 +91,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setLastName() {
+    public void assertSetLastName() {
         client.setLastName(lastName);
         Assert.assertEquals(getLastName(), lastName);
     }
@@ -101,7 +101,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setBirthdate() {
+    public void assertSetBirthdate() {
         client.setBirthdate(birthdate);
         Assert.assertEquals(getBirthdate(), birthdate);
     }
@@ -111,7 +111,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setDeathdate() {
+    public void assertSetDeathdate() {
         client.setDeathdate(deathdate);
         Assert.assertEquals(getDeathdate(), deathdate);
     }
@@ -121,7 +121,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setBirthdateApprox() {
+    public void assertSetBirthdateApprox() {
         client.setBirthdateApprox(birthdateApprox);
         Assert.assertEquals(getBirthdateApprox(), birthdateApprox);
     }
@@ -131,7 +131,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setDeathdateApprox() {
+    public void assertSetDeathdateApprox() {
         client.setDeathdateApprox(deathdateApprox);
         Assert.assertEquals(getDeathdateApprox(), deathdateApprox);
     }
@@ -141,7 +141,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setGender() {
+    public void assertSetGender() {
         client.setGender(gender);
         Assert.assertEquals(getGender(), gender);
     }
@@ -151,53 +151,53 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setRelationships() {
+    public void assertSetRelationships() {
         client.setRelationships(relationships);
         Assert.assertEquals(getRelationships(), relationships);
     }
 
     @Test
-    public void withFirstName() {
+    public void assertwithFirstName() {
         Assert.assertNotNull(client.withFirstName(firstName));
     }
 
     @Test
-    public void withMiddleName() {
+    public void assertwithMiddleName() {
         Assert.assertNotNull(client.withMiddleName(middleName));
     }
 
     @Test
-    public void withLastName() {
+    public void assertwithLastName() {
         Assert.assertNotNull(client.withLastName(lastName));
     }
 
     @Test
-    public void withName() {
+    public void assertwithName() {
         Assert.assertNotNull(client.withName(firstName, middleName, lastName));
     }
 
     @Test
-    public void withBirthdate() {
+    public void assertwithBirthdate() {
         Assert.assertNotNull(client.withBirthdate(birthdate, Boolean.TRUE));
     }
 
     @Test
-    public void withDeathdate() {
+    public void assertwithDeathdate() {
         Assert.assertNotNull(client.withDeathdate(deathdate, Boolean.TRUE));
     }
 
     @Test
-    public void withGender() {
+    public void assertthatwithGender() {
         Assert.assertNotNull(client.withGender(gender));
     }
 
     @Test
-    public void withRelationships() {
+    public void assertwithRelationships() {
         Assert.assertNotNull(client.withRelationships(relationships));
     }
 
     @Test
-    public void findRelatives() {
+    public void assertfindRelatives() {
         client.setRelationships(null);
         Assert.assertNull(client.findRelatives(null));
         relationships.put(identifierType, new ArrayList<String>());
@@ -206,14 +206,14 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void addRelationship() {
+    public void assertaddRelationship() {
         client.setRelationships(null);
         client.addRelationship(identifierType, baseEntityId);
         Assert.assertNotNull(client.findRelatives(identifierType));
     }
 
     @Test
-    public void getRelationshipsReturnsList() {
+    public void assertgetRelationshipsReturnsList() {
         relationships.put(baseEntityId, new ArrayList<String>());
         client.setRelationships(relationships);
         Assert.assertNotNull(client.getRelationships(baseEntityId));
@@ -224,7 +224,7 @@ public class ClientTest extends BaseUnitTest {
     }
 
     @Test
-    public void setRelationalBaseEntityId() {
+    public void assertSetRelationalBaseEntityId() {
         String relationalBaseEntityId = "0";
         client.setRelationalBaseEntityId(relationalBaseEntityId);
         Assert.assertEquals(getRelationalBaseEntityId(), relationalBaseEntityId);

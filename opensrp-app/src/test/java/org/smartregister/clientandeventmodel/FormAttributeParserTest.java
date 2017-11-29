@@ -263,7 +263,6 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
     }
 
-
     private static File getFileFromPath(Object obj, String fileName) {
         ClassLoader classLoader = obj.getClass().getClassLoader();
         URL resource = classLoader.getResource(fileName);

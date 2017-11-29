@@ -1,6 +1,5 @@
 package org.smartregister.commonregistry;
 
-
 import android.content.ContentValues;
 
 import junit.framework.Assert;
@@ -76,7 +75,6 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Mock
     private AlertService alertService;
-
 
     @Mock
     private Context context;

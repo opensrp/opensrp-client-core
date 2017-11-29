@@ -47,7 +47,7 @@ public class BaseEntityTest {
     }
 
     @Test
-    public void setBaseEntityId() {
+    public void assertsetBaseEntityId() {
         baseEntity.setBaseEntityId(baseEntityId);
         Assert.assertEquals(getBaseEntityId(), baseEntityId);
     }
@@ -61,13 +61,13 @@ public class BaseEntityTest {
     }
 
     @Test
-    public void setAddresses() {
+    public void assertsetAddresses() {
         baseEntity.setAddresses(addresses);
         Assert.assertEquals(getAddresses(), addresses);
     }
 
     @Test
-    public void addAddress() {
+    public void assertaddAddress() {
         Address address = new Address();
         address.setAddressType(identifierType);
         List<Address>addressesses = new ArrayList<>();
@@ -88,7 +88,7 @@ public class BaseEntityTest {
     }
 
     @Test
-    public void setAttributes() {
+    public void assertsetAttributes() {
         baseEntity.setAttributes(attributes);
         Assert.assertEquals(getAttributes(), attributes);
     }
@@ -123,20 +123,20 @@ public class BaseEntityTest {
     }
 
     @Test
-    public void setIdentifiers() {
+    public void assertsetIdentifiers() {
         baseEntity.setIdentifiers(identifiers);
         Assert.assertEquals(getIdentifiers(), identifiers);
     }
 
     @Test
-    public void addIdentifier() {
+    public void assertaddIdentifier() {
         baseEntity.setIdentifiers(identifiers);
         baseEntity.addIdentifier(identifierType, identifier);
         Assert.assertEquals(getIdentifier(identifierType), identifier);
     }
 
     @Test
-    public void removeIdentifier() {
+    public void assertremoveIdentifier() {
         identifiers.put(identifierType, identifier);
         baseEntity.setIdentifiers(identifiers);
         baseEntity.removeIdentifier(identifierType);
@@ -144,38 +144,38 @@ public class BaseEntityTest {
     }
 
     @Test
-    public void withBaseEntityId() {
+    public void assertwithBaseEntityId() {
         Assert.assertNotNull(baseEntity.withBaseEntityId(baseEntityId));
     }
 
     @Test
-    public void withIdentifiers() {
+    public void assertwithIdentifiers() {
         Assert.assertNotNull(baseEntity.withIdentifiers(identifiers));
     }
 
     @Test
-    public void withIdentifier() {
+    public void assertwithIdentifier() {
         Assert.assertNotNull(baseEntity.withIdentifier("", ""));
     }
 
     @Test
-    public void withAddresses() {
+    public void assertwithAddresses() {
         Assert.assertNotNull(baseEntity.withAddresses(addresses));
     }
 
     @Test
-    public void withAddress() {
+    public void assertwithAddress() {
         Address address = new Address();
         Assert.assertNotNull(baseEntity.withAddress(address));
     }
 
     @Test
-    public void withAttributes() {
+    public void assertwithAttributes() {
         Assert.assertNotNull(baseEntity.withAttributes(attributes));
     }
 
     @Test
-    public void withAttribute() {
+    public void assertwithAttribute() {
 
         Object value = new Object();
         Assert.assertNotNull(baseEntity.withAttribute(name, value));

@@ -40,7 +40,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setAddressType() {
+    public void assertsetAddressType() {
         String addressType = "";
         address.setAddressType(addressType);
         Assert.assertEquals(getAddressType(), addressType);
@@ -51,7 +51,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setStartDate() {
+    public void assertsetStartDate() {
         Date startDate = new Date(0l);
         address.setStartDate(startDate);
         Assert.assertEquals(getStartDate(), startDate);
@@ -62,7 +62,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setEndDate() {
+    public void assertsetEndDate() {
         Date endDate = new Date(0l);
         address.setEndDate(endDate);
         Assert.assertEquals(getEndDate(), endDate);
@@ -77,7 +77,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void getAddressFieldMatchingRegex() {
+    public void assertgetAddressFieldMatchingRegex() {
         Assert.assertNull(address.getAddressFieldMatchingRegex(regex));
         Map<String, String> addressFields = new HashMap<>();
         addressFields.put(field, value);
@@ -86,21 +86,21 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setAddressFields() {
+    public void assertsetAddressFields() {
         Map<String, String> addressFields = new HashMap<>();
         address.setAddressFields(addressFields);
         Assert.assertEquals(getAddressFields(), addressFields);
     }
 
     @Test
-    public void addAddressField() {
+    public void assertthataddAddressField() {
         address.setAddressFields(null);
         address.addAddressField(field, value);
         Assert.assertEquals(getAddressField(field), value);
     }
 
     @Test
-    public void removeAddressField() {
+    public void assertthatremoveAddressField() {
         address.addAddressField(field, value);
         address.removeAddressField(field);
         Assert.assertEquals(getAddressField(field), null);
@@ -111,7 +111,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setLatitude() {
+    public void assertsetLatitude() {
 
         address.setLatitude(latitude);
         Assert.assertEquals(getLatitude(), latitude);
@@ -122,7 +122,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setLongitude() {
+    public void assertsetLongitude() {
 
         address.setLongitude(longitude);
         Assert.assertEquals(getLongitude(), longitude);
@@ -133,7 +133,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setGeopoint() {
+    public void assertsetGeopoint() {
         String geopoint = mockString;
         address.setGeopoint(geopoint);
         Assert.assertEquals(getGeopoint(), geopoint);
@@ -144,7 +144,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setPostalCode() {
+    public void assertsetPostalCode() {
         String postalCode = mockString;
         address.setPostalCode(postalCode);
         Assert.assertEquals(getPostalCode(), postalCode);
@@ -155,7 +155,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setSubTown() {
+    public void assertsetSubTown() {
         String subTown = mockString;
         address.setSubTown(subTown);
         Assert.assertEquals(getSubTown(), subTown);
@@ -166,7 +166,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setTown() {
+    public void assertsetTown() {
         String town = mockString;
         address.setTown(town);
         Assert.assertEquals(getTown(), town);
@@ -177,7 +177,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setSubDistrict() {
+    public void assertsetSubDistrict() {
         String subDistrict = mockString;
         address.setSubDistrict(subDistrict);
         Assert.assertEquals(getSubDistrict(), subDistrict);
@@ -188,7 +188,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setCountyDistrict() {
+    public void assertsetCountyDistrict() {
         String countyDistrict = mockString;
         address.setCountyDistrict(countyDistrict);
         Assert.assertEquals(getCountyDistrict(), countyDistrict);
@@ -199,7 +199,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setCityVillage() {
+    public void assertsetCityVillage() {
         String cityVillage = mockString;
         address.setCityVillage(cityVillage);
         Assert.assertEquals(getCityVillage(), cityVillage);
@@ -210,7 +210,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setStateProvince() {
+    public void assertsetStateProvince() {
         String stateProvince = mockString;
         address.setStateProvince(stateProvince);
         Assert.assertEquals(getStateProvince(), stateProvince);
@@ -221,21 +221,21 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void setCountry() {
+    public void assertsetCountry() {
         String country = mockString;
         address.setCountry(country);
         Assert.assertEquals(getCountry(), country);
     }
 
     @Test
-    public void isActive() {
+    public void assertisActive() {
         Assert.assertEquals(address.isActive(), false);
         address.setEndDate(null);
         Assert.assertEquals(address.isActive(), true);
     }
 
     @Test
-    public void durationInDays() {
+    public void assertdurationInDays() {
         Assert.assertEquals(address.durationInDays(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInDays(), -1);
@@ -245,7 +245,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void durationInWeeks() {
+    public void assertdurationInWeeks() {
         Assert.assertEquals(address.durationInWeeks(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInWeeks(), -1);
@@ -255,7 +255,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void durationInMonths() {
+    public void assertdurationInMonths() {
         Assert.assertEquals(address.durationInMonths(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInMonths(), -1);
@@ -265,7 +265,7 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void durationInYears() {
+    public void assertdurationInYears() {
         Assert.assertEquals(address.durationInYears(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInYears(), -1);
@@ -275,31 +275,31 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void withAddressType() {
+    public void assertwithAddressType() {
         String addressType = "";
         Assert.assertNotNull(address.withAddressType(addressType));
     }
 
     @Test
-    public void withStartDate() {
+    public void assertwithStartDate() {
         Date startDate = new Date(0l);
         Assert.assertNotNull(address.withStartDate(startDate));
     }
 
     @Test
-    public void withEndDate() {
+    public void assertwithEndDate() {
         Date endDate = new Date(0l);
         Assert.assertNotNull(address.withEndDate(endDate));
     }
 
     @Test
-    public void withAddressFields() {
+    public void assertwithAddressFields() {
         Map<String, String> addressFields = new HashMap<>();
         Assert.assertNotNull(address.withAddressFields(addressFields));
     }
 
     @Test
-    public void withAddressField() {
+    public void assertthatwithAddressField() {
         
         Assert.assertNotNull(address.withAddressField(field, value));
         address.setAddressFields(null);
@@ -308,79 +308,79 @@ public class AddressTest extends BaseUnitTest {
     }
 
     @Test
-    public void withLatitude() {
+    public void assertwithLatitude() {
         String latitude = "0";
         Assert.assertNotNull(address.withLatitude(latitude));
     }
 
     @Test
-    public void withLongitude() {
+    public void assertwithLongitude() {
         String longitude = "0";
         Assert.assertNotNull(address.withLongitude(longitude));
     }
 
     @Test
-    public void withGeopoint() {
+    public void assertwithGeopoint() {
         String geopoint = mockString;
         Assert.assertNotNull(address.withGeopoint(geopoint));
     }
 
     @Test
-    public void withPostalCode() {
+    public void assertwithPostalCode() {
         String postalCode = mockString;
         Assert.assertNotNull(address.withPostalCode(postalCode));
     }
 
     @Test
-    public void withTown() {
+    public void assertwithTown() {
         String town = mockString;
         Assert.assertNotNull(address.withTown(town));
     }
 
     @Test
-    public void withSubDistrict() {
+    public void assertwithSubDistrict() {
         String subDistrict = mockString;
         Assert.assertNotNull(address.withSubDistrict(subDistrict));
     }
 
     @Test
-    public void withCountyDistrict() {
+    public void assertwithCountyDistrict() {
         String countyDistrict = mockString;
         Assert.assertNotNull(address.withCountyDistrict(countyDistrict));
     }
 
     @Test
-    public void withCityVillage() {
+    public void assertwithCityVillage() {
         String cityVillage = mockString;
         Assert.assertNotNull(address.withCityVillage(cityVillage));
     }
 
     @Test
-    public void withStateProvince() {
+    public void assertwithStateProvince() {
         String stateProvince = mockString;
         Assert.assertNotNull(address.withStateProvince(stateProvince));
     }
 
     @Test
-    public void withCountry() {
+    public void assertwithCountry() {
         String country = mockString;
         Assert.assertNotNull(address.withCountry(country));
     }
 
     @Test
-    public void getAddressField() {
+    public void assertgetAddressField() {
         Assert.assertEquals(address.getAddressField(AddressField.CITY), null);
     }
 
     @Test
-    public void assertaddAddressField() {
+    public void assertassertaddAddressField() {
         address.setAddressFields(null);
         address.addAddressField(AddressField.CITY, mockString);
         Assert.assertEquals(address.getAddressField(AddressField.CITY), mockString);
     }
 
     @Test
-    public void assertremoveAddressField() {
+    public void assertassertremoveAddressField() {
         address.setAddressFields(null);
         address.addAddressField(AddressField.CITY, mockString);
         Assert.assertEquals(address.getAddressField(AddressField.CITY), mockString);
