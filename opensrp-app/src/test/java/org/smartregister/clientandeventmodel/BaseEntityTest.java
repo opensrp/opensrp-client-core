@@ -25,7 +25,7 @@ public class BaseEntityTest {
 
     private Map<String, Object> attributes = new HashMap<String, Object>();
     private BaseEntityMock baseEntity;
-    private String name = "";
+    private String name = "name";
 
     private String identifierType = "type";
     private String identifier = "identifier";

@@ -159,10 +159,10 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
         matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
         matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
-        Mockito.when(sqliteDatabase.rawQuery("select baseEntityId, syncStatus from client", null)).thenReturn(matrixCursor);
-        Mockito.when(sqliteDatabase.rawQuery("select baseEntityId, syncStatus from event", null)).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery("select baseEntityId,syncStatus from client", null)).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery("select baseEntityId,syncStatus from event", null)).thenReturn(matrixCursor);
         eventClientRepository.markAllAsUnSynced();
-        Mockito.verify(sqliteDatabase, Mockito.times(2)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers          .any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(2)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
