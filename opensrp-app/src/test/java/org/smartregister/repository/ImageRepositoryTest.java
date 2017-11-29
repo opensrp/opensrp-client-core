@@ -29,13 +29,13 @@ public class ImageRepositoryTest extends BaseUnitTest {
     public static final String filecategory_COLUMN = "filecategory";
     private static final String contenttype_COLUMN = "contenttype";
 
-    ImageRepository imageRepository;
+    private ImageRepository imageRepository;
 
     @Mock
-    SQLiteDatabase sqLiteDatabase;
+    private SQLiteDatabase sqLiteDatabase;
 
     @Mock
-    Repository repository;
+    private Repository repository;
 
     @Before
     public void setUp() {
@@ -54,35 +54,36 @@ public class ImageRepositoryTest extends BaseUnitTest {
     @Test
     public void assertOnCrateCallsDatabaseExec() {
         imageRepository.onCreate(sqLiteDatabase);
-        Mockito.verify(sqLiteDatabase,Mockito.times(2)).execSQL(Mockito.anyString());
+        Mockito.verify(sqLiteDatabase, Mockito.times(2)).execSQL(Mockito.anyString());
     }
 
     @Test
     public void assertAddCallsDatabaseInsert() {
         imageRepository.add(getProfileImage());
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).insert(Mockito.anyString(),Mockito.isNull(String.class),Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
 
     @Test
     public void assertallProfileImages() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.allProfileImages());
     }
 
     @Test
     public void assertclose() {
         imageRepository.close("1");
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
+    
     @Test
     public void assertfindAllUnSynced() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.findAllUnSynced());
     }
 
     @Test
     public void assertfindByEntityId() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.findByEntityId("1"));
     }
 
@@ -99,12 +100,10 @@ public class ImageRepositoryTest extends BaseUnitTest {
     }
 
     public MatrixCursor getCursor() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {ID_COLUMN, anm_ID_COLUMN,
-                entityID_COLUMN, contenttype_COLUMN, filepath_COLUMN, syncStatus_COLUMN,
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {ID_COLUMN, anm_ID_COLUMN, 
+                entityID_COLUMN, contenttype_COLUMN, filepath_COLUMN, syncStatus_COLUMN, 
                 filecategory_COLUMN});
-        matrixCursor.addRow(new String []{"1","2","3","4","5","6","7"});
+        matrixCursor.addRow(new String []{"1", "2", "3", "4", "5", "6", "7"});
         return matrixCursor;
     }
-
-
 }

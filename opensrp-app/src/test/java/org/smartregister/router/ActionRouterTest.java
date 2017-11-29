@@ -15,20 +15,14 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.DristhiConfiguration;
-import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.service.AlertService;
 import org.smartregister.service.MotherService;
-
-import java.util.ArrayList;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
 @PrepareForTest({CoreLibrary.class})
-public class ActionRouterTest extends BaseUnitTest{
-
+public class ActionRouterTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();

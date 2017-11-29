@@ -1,5 +1,6 @@
 package org.smartregister.service;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -7,6 +8,7 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.smartregister.DristhiConfiguration;
@@ -19,18 +21,11 @@ import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.util.EasyMap;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.domain.FetchStatus.nothingFetched;
 import static org.smartregister.domain.ResponseStatus.success;
@@ -43,15 +38,15 @@ import static org.smartregister.domain.ResponseStatus.success;
 public class AllFormVersionSyncServiceTest {
 
     @Mock
-    HTTPAgent httpAgent;
+    private HTTPAgent httpAgent;
     @Mock
-    DristhiConfiguration configuration;
+    private DristhiConfiguration configuration;
     @Mock
-    FormsVersionRepository formsVersionRepository;
+    private FormsVersionRepository formsVersionRepository;
     @Mock
-    FormPathService formPathService;
+    private FormPathService formPathService;
     @Mock
-    File file;
+    private File file;
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
@@ -60,52 +55,52 @@ public class AllFormVersionSyncServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
-        service = Mockito.spy(new AllFormVersionSyncService(httpAgent,
-                                                            configuration,
+        MockitoAnnotations.initMocks(this);
+        service = Mockito.spy(new AllFormVersionSyncService(httpAgent, 
+                                                            configuration, 
                                                             formsVersionRepository));
-        expectedFormDefinitionVersion = asList(new FormDefinitionVersion("form_ec", "ec_dir", "2"));
-        when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
+        expectedFormDefinitionVersion = Arrays.asList(new FormDefinitionVersion("form_ec", "ec_dir", "2"));
+        Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
     }
 
     @Test
     public void shouldNotDownloadIfThereIsNoPendingForms() throws Exception {
-        when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
+        Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 Collections.<FormDefinitionVersion>emptyList());
 
         DownloadStatus status = service.downloadAllPendingFormFromServer();
 
-        assertEquals(status, DownloadStatus.nothingDownloaded);
-        verify(formsVersionRepository).getAllFormWithSyncStatus(SyncStatus.PENDING);
-        verifyNoMoreInteractions(formsVersionRepository);
-        verifyZeroInteractions(httpAgent);
+        Assert.assertEquals(status, DownloadStatus.nothingDownloaded);
+        Mockito.verify(formsVersionRepository).getAllFormWithSyncStatus(SyncStatus.PENDING);
+        Mockito.verifyNoMoreInteractions(formsVersionRepository);
+        Mockito.verifyZeroInteractions(httpAgent);
     }
 
     @Test
     public void shouldDownloadIfThereIsAPendingForms() throws Exception {
-        when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
+        Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 this.expectedFormDefinitionVersion);
-        when(httpAgent.downloadFromUrl("http://opensrp_base_url/form/form-files?formDirName=ec_dir",
+        Mockito.when(httpAgent.downloadFromUrl("http://opensrp_base_url/form/form-files?formDirName=ec_dir",
                                        "ec_dir.zip")).thenReturn(DownloadStatus.downloaded);
 
         DownloadStatus status = service.downloadAllPendingFormFromServer();
 
-        assertEquals(status, DownloadStatus.downloaded);
-        verify(formsVersionRepository).getAllFormWithSyncStatus(SyncStatus.PENDING);
-        verify(httpAgent).downloadFromUrl(
-                "http://opensrp_base_url/form/form-files?formDirName=ec_dir",
+        Assert.assertEquals(status, DownloadStatus.downloaded);
+        Mockito.verify(formsVersionRepository).getAllFormWithSyncStatus(SyncStatus.PENDING);
+        Mockito.verify(httpAgent).downloadFromUrl(
+                "http://opensrp_base_url/form/form-files?formDirName=ec_dir", 
                 "ec_dir.zip");
     }
 
     @Test
     public void shouldReturnWhenThereIsNoFileInFolder() throws Exception {
-        when(service.listFormFiles()).thenReturn(null);
+        Mockito.when(service.listFormFiles()).thenReturn(null);
 
         service.verifyFormsInFolder();
 
-        verify(formsVersionRepository).deleteAll();
-        verifyNoMoreInteractions(formsVersionRepository);
-        verifyNoMoreInteractions(file);
+        Mockito.verify(formsVersionRepository).deleteAll();
+        Mockito.verifyNoMoreInteractions(formsVersionRepository);
+        Mockito.verifyNoMoreInteractions(file);
     }
 
     @Test
@@ -128,13 +123,13 @@ public class AllFormVersionSyncServiceTest {
                                                .put("syncStatus", "SYNCED")
                                                .map();
 
-        when(service.listFormFiles()).thenReturn(formFiles);
-        when(formsVersionRepository.getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED)).thenReturn(
-                asList(repoFile1, repoFile2));
+        Mockito.when(service.listFormFiles()).thenReturn(formFiles);
+        Mockito.when(formsVersionRepository.getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED)).thenReturn(
+                Arrays.asList(repoFile1, repoFile2));
 
         service.verifyFormsInFolder();
 
-        verify(formsVersionRepository).updateSyncStatus("anc_registration", SyncStatus.PENDING);
+        Mockito.verify(formsVersionRepository).updateSyncStatus("anc_registration", SyncStatus.PENDING);
     }
 
     @Test
@@ -144,87 +139,87 @@ public class AllFormVersionSyncServiceTest {
 
         File[] formFiles = new File[]{file1, file2};
 
-        FormDefinitionVersion f1 = new FormDefinitionVersion("ec_registration",
-                                                             "ec_registration",
+        FormDefinitionVersion f1 = new FormDefinitionVersion("ec_registration", 
+                                                             "ec_registration", 
                                                              "1");
-        FormDefinitionVersion f2 = new FormDefinitionVersion("anc_registration",
-                                                             "anc_registration",
+        FormDefinitionVersion f2 = new FormDefinitionVersion("anc_registration", 
+                                                             "anc_registration", 
                                                              "1");
 
-        when(service.listFormFiles()).thenReturn(formFiles);
-        doReturn(f1).when(service).getFormDefinitionFromFile(file1);
-        doReturn(f2).when(service).getFormDefinitionFromFile(file2);
+        Mockito.when(service.listFormFiles()).thenReturn(formFiles);
+        Mockito.doReturn(f1).when(service).getFormDefinitionFromFile(file1);
+        Mockito.doReturn(f2).when(service).getFormDefinitionFromFile(file2);
 
-        when(formsVersionRepository.formExists("ec_registration")).thenReturn(false);
-        when(formsVersionRepository.formExists("anc_registration")).thenReturn(false);
+        Mockito.when(formsVersionRepository.formExists("ec_registration")).thenReturn(false);
+        Mockito.when(formsVersionRepository.formExists("anc_registration")).thenReturn(false);
 
         service.verifyFormsInFolder();
 
-        verify(formsVersionRepository).formExists("ec_registration");
-        verify(formsVersionRepository).formExists("anc_registration");
-        verify(formsVersionRepository).addFormVersionFromObject(f1);
-        verify(formsVersionRepository).addFormVersionFromObject(f2);
+        Mockito.verify(formsVersionRepository).formExists("ec_registration");
+        Mockito.verify(formsVersionRepository).formExists("anc_registration");
+        Mockito.verify(formsVersionRepository).addFormVersionFromObject(f1);
+        Mockito.verify(formsVersionRepository).addFormVersionFromObject(f2);
     }
 
     @Test
     public void shouldUpdateVersionIfThereIsNewerVersion() throws Exception {
         String jsonObject = "{\"formVersions\" : [{\"formName\": \"EC_ENGKAN\", \"formDirName\": "
                 + "\"ec_dir\", \"formDataDefinitionVersion\": \"3\"}] }";
-        when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
+        Mockito.when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
                 new Response<String>(
-                    success,
+                    success, 
                     jsonObject));
 
-        List<FormDefinitionVersion> repoForm = asList(new FormDefinitionVersion("form_ec",
-                                                                                "ec_dir",
+        List<FormDefinitionVersion> repoForm = Arrays.asList(new FormDefinitionVersion("form_ec",
+                                                                                "ec_dir", 
                                                                                 "1"));
 
-        when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
-        when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
+        Mockito.when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
+        Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 repoForm);
-        when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
+        Mockito.when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
                     new FormDefinitionVersion(
-                    "EC_ENGAN",
-                    "ec_dir",
+                    "EC_ENGAN", 
+                    "ec_dir", 
                     "1"));
-        when(formsVersionRepository.getVersion("ec_dir")).thenReturn("1");
+        Mockito.when(formsVersionRepository.getVersion("ec_dir")).thenReturn("1");
 
         FetchStatus fetchStatus = service.pullFormDefinitionFromServer();
 
-        assertEquals(fetched, fetchStatus);
+        Assert.assertEquals(fetched, fetchStatus);
 
-        verify(httpAgent).fetch("http://opensrp_base_url/form/latest-form-versions");
-        verify(formsVersionRepository).updateFormName("ec_dir", "EC_ENGKAN");
-        verify(formsVersionRepository).formExists("ec_dir");
-        verify(formsVersionRepository).updateServerVersion("ec_dir", "3");
-        verify(formsVersionRepository).updateSyncStatus("ec_dir", SyncStatus.PENDING);
+        Mockito.verify(httpAgent).fetch("http://opensrp_base_url/form/latest-form-versions");
+        Mockito.verify(formsVersionRepository).updateFormName("ec_dir", "EC_ENGKAN");
+        Mockito.verify(formsVersionRepository).formExists("ec_dir");
+        Mockito.verify(formsVersionRepository).updateServerVersion("ec_dir", "3");
+        Mockito.verify(formsVersionRepository).updateSyncStatus("ec_dir", SyncStatus.PENDING);
     }
 
     @Test
     public void shouldNotUpdateIfLocalFormIsTheLatestVersion() throws Exception {
         String jsonObject = "{\"formVersions\" : [{\"formName\": \"EC_ENGKAN\", \"formDirName\":"
                 + " \"ec_dir\", \"formDataDefinitionVersion\": \"2\"}] }";
-        when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
+        Mockito.when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
                 new Response<String>(
-                    success,
+                    success, 
                     jsonObject));
 
-        List<FormDefinitionVersion> repoForm = asList(new FormDefinitionVersion("form_ec",
-                                                                                "ec_dir",
+        List<FormDefinitionVersion> repoForm = Arrays.asList(new FormDefinitionVersion("form_ec",
+                                                                                "ec_dir", 
                                                                                 "3"));
 
-        when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
-        when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
+        Mockito.when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
+        Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 repoForm);
-        when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
+        Mockito.when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
                 new FormDefinitionVersion(
-                    "EC_ENGAN",
-                    "ec_dir",
+                    "EC_ENGAN", 
+                    "ec_dir", 
                     "3"));
-        when(formsVersionRepository.getVersion("ec_dir")).thenReturn("3");
+        Mockito.when(formsVersionRepository.getVersion("ec_dir")).thenReturn("3");
 
         FetchStatus fetchStatus = service.pullFormDefinitionFromServer();
 
-        assertEquals(nothingFetched, fetchStatus);
+        Assert.assertEquals(nothingFetched, fetchStatus);
     }
 }

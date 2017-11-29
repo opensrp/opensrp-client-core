@@ -23,14 +23,14 @@ import java.util.HashMap;
 
 public class ServiceProvidedRepositoryTest extends BaseUnitTest{
 
-    ServiceProvidedRepository serviceProvidedRepository;
+    private ServiceProvidedRepository serviceProvidedRepository;
 
     @Mock
-    SQLiteDatabase sqLiteDatabase;
+    private SQLiteDatabase sqLiteDatabase;
     @Mock
-    Repository repository;
+    private Repository repository;
     @Mock
-    ServiceProvided serviceProvided;
+    private ServiceProvided serviceProvided;
 
     @Before
     public void setUp() {
@@ -49,14 +49,14 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest{
     @Test
     public void ssertOnCreateCallsDatabaseExec() {
         serviceProvidedRepository.onCreate(sqLiteDatabase);
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).execSQL(Mockito.anyString());
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
     }
 
     @Test
     public void assertadCallsDatabaseInsert() {
-        ServiceProvided serviceProvided = new ServiceProvided("","","",new HashMap<String,String>());
+        ServiceProvided serviceProvided = new ServiceProvided("", "", "", new HashMap<String, String>());
         serviceProvidedRepository.add(serviceProvided);
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).insert(Mockito.anyString(),Mockito.isNull(String.class),Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
 
     public static final String ENTITY_ID_COLUMN = "entityId";
@@ -66,20 +66,20 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest{
 
     @Test
     public void assertAllfindByEntityIdAndServiceNames(){
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(getCursor());
-        Assert.assertNotNull(serviceProvidedRepository.findByEntityIdAndServiceNames(ENTITY_ID_COLUMN,new String[]{"a","b"}));
-
-
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor());
+        Assert.assertNotNull(serviceProvidedRepository.findByEntityIdAndServiceNames(ENTITY_ID_COLUMN, new String[]{"a", "b"}));
     }
+    
     @Test
     public void assertAllReturnsList() {
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.anyString())).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.anyString())).thenReturn(getCursor());
         Assert.assertNotNull(serviceProvidedRepository.all());
     }
+    
     public MatrixCursor getCursor() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {ENTITY_ID_COLUMN,
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {ENTITY_ID_COLUMN, 
                 NAME_ID_COLUMN, DATE_ID_COLUMN, DATA_ID_COLUMN});
-        matrixCursor.addRow(new String []{"1","2","3","{\"json\":\"data\"}"});
+        matrixCursor.addRow(new String []{"1", "2", "3", "{\"json\":\"data\"}"});
         return matrixCursor;
     }
 

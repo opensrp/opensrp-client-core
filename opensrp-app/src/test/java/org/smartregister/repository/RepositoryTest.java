@@ -1,50 +1,41 @@
 package org.smartregister.repository;
 
-import junit.framework.Assert;
-
 import net.sqlcipher.database.SQLiteDatabase;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.repository.mock.ContextMock;
-import org.smartregister.repository.mock.DrishtiRepositoryMock;
 import org.smartregister.repository.mock.RepositoryMock;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
-
 import java.io.File;
 
 /**
  * Created by kaderchowdhury on 19/11/17.
  */
 @PrepareForTest({DrishtiApplication.class,SQLiteDatabase.class})
-public class RepositoryTest extends BaseUnitTest{
+public class RepositoryTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 
-    RepositoryMock repositoryMock;
+    private RepositoryMock repositoryMock;
 
     @Mock
-    DrishtiApplication drishtiApplication;
+    private DrishtiApplication drishtiApplication;
 
-    Repository repository;
+    private Repository repository;
     @Mock
-    android.content.Context context;
+    private android.content.Context context;
     @Mock
-    Session session;
+    private Session session;
     @Mock
-    DrishtiRepository drishtiRepository;
+    private DrishtiRepository drishtiRepository;
 
     @Before
     public void setUp() {
