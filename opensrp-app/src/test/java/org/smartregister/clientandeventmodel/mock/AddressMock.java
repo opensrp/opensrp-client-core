@@ -1,17 +1,13 @@
 package org.smartregister.clientandeventmodel.mock;
 
-
-
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.AddressField;
 
 import java.util.Date;
 import java.util.Map;
-
 /**
  * Created by kaderchowdhury on 20/11/17.
  */
-
 public class AddressMock extends Address {
     public AddressMock() {
         super();

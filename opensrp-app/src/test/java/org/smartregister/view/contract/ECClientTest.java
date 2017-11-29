@@ -2,13 +2,12 @@ package org.smartregister.view.contract;
 
 import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDate;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 
 import java.util.Calendar;
-
-import static org.junit.Assert.*;
 
 @RunWith(RobolectricTestRunner.class)
 public class ECClientTest {
@@ -17,32 +16,32 @@ public class ECClientTest {
     public void shouldReturnTrueForIsBPLWhenEconomicStatusIsBPL() throws Exception {
         ECClient client = getClient().withEconomicStatus("BPL");
 
-        assertTrue(client.isBPL());
+        Assert.assertTrue(client.isBPL());
     }
 
     @Test
     public void shouldReturnFalseForIsBPLWhenEconomicStatusIsAPLOrNothing() throws Exception {
         ECClient client = getClient().withEconomicStatus("APL");
-        assertFalse(client.isBPL());
+        Assert.assertFalse(client.isBPL());
 
         client = getClient();
-        assertFalse(client.isBPL());
+        Assert.assertFalse(client.isBPL());
     }
 
     @Test
     public void shouldReturnTrueWhenClientContainsCasteAsSC() throws Exception {
         ECClient SCClient = getClient().withCaste("SC");
 
-        assertTrue(SCClient.isSC());
-        assertFalse(SCClient.isST());
+        Assert.assertTrue(SCClient.isSC());
+        Assert.assertFalse(SCClient.isST());
     }
 
     @Test
     public void shouldReturnTrueWhenClientContainsCasteAsST() throws Exception {
         ECClient STClient = getClient().withCaste("ST");
 
-        assertFalse(STClient.isSC());
-        assertTrue(STClient.isST());
+        Assert.assertFalse(STClient.isSC());
+        Assert.assertTrue(STClient.isST());
     }
 
     @Test
@@ -53,7 +52,7 @@ public class ECClientTest {
 
         final int age = getClient().withDateOfBirth(new LocalDate(1980, 4, 4).toString()).age();
 
-        assertEquals(34, age);
+        Assert.assertEquals(34, age);
     }
 
     @Test
@@ -64,7 +63,7 @@ public class ECClientTest {
 
         int age = getClient().withDateOfBirth(new LocalDate(2014, 4, 4).toString()).age();
 
-        assertEquals(0, age);
+        Assert.assertEquals(0, age);
     }
 
     @Test
@@ -75,63 +74,63 @@ public class ECClientTest {
 
         final int age = getClient().withDateOfBirth(new LocalDate(2013, 4, 18).toString()).age();
 
-        assertEquals(1, age);
+        Assert.assertEquals(1, age);
     }
 
     @Test
     public void ShouldReturnUpperCaseIUDPerson() {
         String iudPerson = getClient().withIUDPerson("iudperson").iudPerson();
 
-        assertEquals(iudPerson, "IUDPERSON");
+        Assert.assertEquals(iudPerson, "IUDPERSON");
     }
 
     @Test
     public void ShouldReturnUpperCaseIUDPlace() {
         String iudPerson = getClient().withIUDPerson("iudplace").iudPerson();
 
-        assertEquals(iudPerson, "IUDPLACE");
+        Assert.assertEquals(iudPerson, "IUDPLACE");
     }
 
     @Test
     public void shouldSatisfyFilterForNameStartingWithSameCharacters() {
         boolean filterMatches = getClient().satisfiesFilter("Dr");
 
-        assertFalse(filterMatches);
+        Assert.assertFalse(filterMatches);
     }
 
     @Test
     public void shouldSatisfyFilterForECNumberStartingWithSameCharacters() {
         boolean filterMatches = getClient().satisfiesFilter("12");
 
-        assertTrue(filterMatches);
+        Assert.assertTrue(filterMatches);
     }
 
     @Test
     public void shouldNotSatisfyFilterForNameNotStartingWithSameCharacters() {
         boolean filterMatches = getClient().satisfiesFilter("shti");
 
-        assertFalse(filterMatches);
+        Assert.assertFalse(filterMatches);
     }
 
     @Test
     public void shouldSatisfyFilterForBlankName() {
         boolean filterMatches = getClient().satisfiesFilter("");
 
-        assertTrue(filterMatches);
+        Assert.assertTrue(filterMatches);
     }
 
     @Test
     public void shouldNotSatisfyFilterForECNumberNotStartingWithSameCharacters() {
         boolean filterMatches = getClient().satisfiesFilter("23");
 
-        assertFalse(filterMatches);
+        Assert.assertFalse(filterMatches);
     }
 
     @Test
     public void shouldSatisfyFilterForBlankECNumber() {
         boolean filterMatches = getClient().satisfiesFilter("");
 
-        assertTrue(filterMatches);
+        Assert.assertTrue(filterMatches);
     }
 
     private ECClient getClient() {

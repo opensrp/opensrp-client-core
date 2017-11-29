@@ -69,13 +69,13 @@ public class BaseEntityTest {
     @Test
     public void addAddress() {
         Address address = new Address();
-        address.setAddressType("type");
+        address.setAddressType(identifierType);
         List<Address>addressesses = new ArrayList<>();
         addressesses.add(address);
         baseEntity.setAddresses(addressesses);
         baseEntity.addAddress(address);
         Assert.assertEquals(getAddresses(), addressesses);
-        Assert.assertEquals(getAddress("type"), address);
+        Assert.assertEquals(getAddress(identifierType), address);
         Assert.assertEquals(getAddress("NULL"), null);
     }
     
@@ -106,7 +106,7 @@ public class BaseEntityTest {
         Assert.assertEquals(getAttribute(""), null);
         baseEntity.addAttribute(name, value);
         Assert.assertEquals(getAttribute(name), value);
-        baseEntity.removeAttribute(name);//attribute successfully added and removed
+        baseEntity.removeAttribute(name); //attribute successfully added and removed
         Assert.assertEquals(getAttribute(name), null);
     }
 

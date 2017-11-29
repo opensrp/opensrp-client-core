@@ -1,6 +1,5 @@
 package org.smartregister.view.activity;
 
-
 import android.app.Activity;
 import android.app.Fragment;
 import android.view.View;

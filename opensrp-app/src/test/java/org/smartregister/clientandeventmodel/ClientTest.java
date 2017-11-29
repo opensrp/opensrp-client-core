@@ -34,6 +34,8 @@ public class ClientTest extends BaseUnitTest {
     private Map<String, String> identifiers = new HashMap<>();
     private Map<String, Object> attributes = new HashMap<>();
 
+    private Map<String, List<String>> relationships = new HashMap<String, List<String>>();
+
     @Before
     public void setUp() {
         client = new ClientMock(baseEntityId);
@@ -43,6 +45,7 @@ public class ClientTest extends BaseUnitTest {
     @Test
     public void constructor1() {
         client = new ClientMock(baseEntityId);
+        Assert.assertNotNull(client);
     }
 
     @Test
@@ -147,7 +150,6 @@ public class ClientTest extends BaseUnitTest {
         return client.getRelationships();
     }
 
-    Map<String, List<String>> relationships = new HashMap<String, List<String>>();
     @Test
     public void setRelationships() {
         client.setRelationships(relationships);

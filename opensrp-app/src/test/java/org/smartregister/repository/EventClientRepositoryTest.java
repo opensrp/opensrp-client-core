@@ -39,7 +39,8 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @InjectMocks
     private EventClientRepository eventClientRepository;
-
+    private String baseEntityId = "baseEntityId";
+    private String syncStatus = "syncStatus";
     @Mock
     private Repository repository;
 
@@ -110,7 +111,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void getEventsByBaseEntityIdReturnsNotNull() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId("baseEntityId"));
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(baseEntityId));
 
     }
 
@@ -156,9 +157,9 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void markAllAsUnSyncedCallsUpdate2timesFor2Objects() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
-        matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
-        matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {baseEntityId, syncStatus});
+        matrixCursor.addRow(new String []{baseEntityId, syncStatus});
+        matrixCursor.addRow(new String []{baseEntityId, syncStatus});
         Mockito.when(sqliteDatabase.rawQuery("select baseEntityId,syncStatus from client", null)).thenReturn(matrixCursor);
         Mockito.when(sqliteDatabase.rawQuery("select baseEntityId,syncStatus from event", null)).thenReturn(matrixCursor);
         eventClientRepository.markAllAsUnSynced();
@@ -168,22 +169,22 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void addorUpdateClientCallsInsert1timeForNewClients() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
-//        matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {baseEntityId, syncStatus});
+//        matrixCursor.addRow(new String []{baseEntityId, syncStatus});
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addorUpdateClient("baseEntityID", getClientList().get(0));
+        eventClientRepository.addorUpdateClient(baseEntityId, getClientList().get(0));
         Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 
     @Test
     public void addorUpdateClientCallsUpdate1timeForOldClients() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
-        matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {baseEntityId, syncStatus});
+        matrixCursor.addRow(new String []{baseEntityId, syncStatus});
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addorUpdateClient("baseEntityID", getClientList().get(0));
+        eventClientRepository.addorUpdateClient(baseEntityId, getClientList().get(0));
         Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
@@ -199,21 +200,21 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void addorUpdateEventCallsInsert1timeForNewEvents() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {baseEntityId, syncStatus});
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addEvent("baseEntityID", getEventList().get(0));
+        eventClientRepository.addEvent(baseEntityId, getEventList().get(0));
         Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 
     @Test
     public void addorUpdateEventCallsUpdate1timeForOldEvents() throws Exception {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
-        matrixCursor.addRow(new String []{"baseEntityId", "syncStatus"});
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {baseEntityId, syncStatus});
+        matrixCursor.addRow(new String []{baseEntityId, syncStatus});
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any          (String[].class))).thenReturn(matrixCursor);
-        eventClientRepository.addEvent("baseEntityID", getEventList().get(0));
+        eventClientRepository.addEvent(baseEntityId, getEventList().get(0));
         Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers          .any(String [].class));
 
     }
@@ -229,14 +230,14 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void deleteClientCallsDelete1time() throws Exception {
-        eventClientRepository.deleteClient("baseEntityID");
+        eventClientRepository.deleteClient(baseEntityId);
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
     @Test
     public void deleteEventCallsDelete1time() throws Exception {
-        eventClientRepository.deleteEventsByBaseEntityId("baseEntityID", "eventType");
+        eventClientRepository.deleteEventsByBaseEntityId(baseEntityId, "eventType");
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito               .ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
@@ -247,8 +248,8 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     public MatrixCursor getCursorSyncStatus() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {"baseEntityId", "syncStatus"});
-        matrixCursor.addRow(new String []{"{\"json\":\"data\"}", "syncStatus"});
+        MatrixCursor matrixCursor= new MatrixCursor(new String [] {baseEntityId, syncStatus});
+        matrixCursor.addRow(new String []{"{\"json\":\"data\"}", syncStatus});
         return matrixCursor;
     }
 

@@ -17,12 +17,12 @@ import java.util.Map;
 public class AddressTest extends BaseUnitTest {
 
     private AddressMock address;
-    private String regex = "field";
-    private String field = "field"; 
+    private final String regex = "field";
+    private String field = regex;
     private String value = "value";
     private String mockString = "xd";
     private String latitude = "0";
-    private String longitude = "0";
+    private String longitude = "1";
     
     @Before
     public void setUp() {

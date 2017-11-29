@@ -26,7 +26,6 @@ import org.smartregister.CoreLibrary;
 @PrepareForTest({CoreLibrary.class})
 public class SecuredNativeSmartRegisterActivityTest extends BaseUnitTest{
 
-
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 

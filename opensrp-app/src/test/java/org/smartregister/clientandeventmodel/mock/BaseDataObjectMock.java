@@ -1,17 +1,14 @@
 package org.smartregister.clientandeventmodel.mock;
 
-import org.joda.time.DateTime;
 import org.smartregister.clientandeventmodel.BaseDataObject;
 import org.smartregister.clientandeventmodel.User;
 
 import java.util.Date;
-
-
 /**
  * Created by kaderchowdhury on 20/11/17.
  */
-
 public class BaseDataObjectMock extends BaseDataObject {
+
     public BaseDataObjectMock() {
         super();
     }

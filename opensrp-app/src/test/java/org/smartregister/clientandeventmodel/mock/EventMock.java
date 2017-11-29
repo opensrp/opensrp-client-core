@@ -1,6 +1,5 @@
 package org.smartregister.clientandeventmodel.mock;
 
-
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
 

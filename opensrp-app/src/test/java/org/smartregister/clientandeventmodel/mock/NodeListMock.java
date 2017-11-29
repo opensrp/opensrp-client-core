@@ -29,7 +29,7 @@ public class NodeListMock {
 
                     @Override
                     public void setNodeValue(String s) throws DOMException {
-
+                        System.out.println();
                     }
 
                     @Override
@@ -109,7 +109,7 @@ public class NodeListMock {
 
                     @Override
                     public void normalize() {
-
+                        System.out.println();
                     }
 
                     @Override
@@ -129,7 +129,7 @@ public class NodeListMock {
 
                     @Override
                     public void setPrefix(String s) throws DOMException {
-
+                        System.out.println();
                     }
 
                     @Override
@@ -159,7 +159,7 @@ public class NodeListMock {
 
                     @Override
                     public void setTextContent(String s) throws DOMException {
-
+                        System.out.println();
                     }
 
                     @Override

@@ -249,112 +249,112 @@ public class ContextMock {
 
             @Override
             public void setWallpaper(Bitmap bitmap) throws IOException {
-
+                System.out.println();
             }
 
             @Override
             public void setWallpaper(InputStream inputStream) throws IOException {
-
+                System.out.println();
             }
 
             @Override
             public void clearWallpaper() throws IOException {
-
+                System.out.println();
             }
 
             @Override
             public void startActivity(Intent intent) {
-
+                System.out.println();
             }
 
             @Override
             public void startActivity(Intent intent, @Nullable Bundle bundle) {
-
+                System.out.println();
             }
 
             @Override
             public void startActivities(Intent[] intents) {
-
+                System.out.println();
             }
 
             @Override
             public void startActivities(Intent[] intents, Bundle bundle) {
-
+                System.out.println();
             }
 
             @Override
             public void startIntentSender(IntentSender intentSender, Intent intent, int i, int i1, int i2) throws IntentSender.SendIntentException {
-
+                System.out.println();
             }
 
             @Override
             public void startIntentSender(IntentSender intentSender, @Nullable Intent intent, int i, int i1, int i2, Bundle bundle) throws IntentSender.SendIntentException {
-
+                System.out.println();
             }
 
             @Override
             public void sendBroadcast(Intent intent) {
-
+                System.out.println();
             }
 
             @Override
             public void sendBroadcast(Intent intent, @Nullable String s) {
-
+                System.out.println();
             }
 
             @Override
             public void sendOrderedBroadcast(Intent intent, @Nullable String s) {
-
+                System.out.println();
             }
 
             @Override
             public void sendOrderedBroadcast(@NonNull Intent intent, @Nullable String s, @Nullable BroadcastReceiver broadcastReceiver, @Nullable Handler handler, int i, @Nullable String s1, @Nullable Bundle bundle) {
-
+                System.out.println();
             }
 
             @Override
             public void sendBroadcastAsUser(Intent intent, UserHandle userHandle) {
-
+                System.out.println();
             }
 
             @Override
             public void sendBroadcastAsUser(Intent intent, UserHandle userHandle, @Nullable String s) {
-
+                System.out.println();
             }
 
             @Override
             public void sendOrderedBroadcastAsUser(Intent intent, UserHandle userHandle, @Nullable String s, BroadcastReceiver broadcastReceiver, @Nullable Handler handler, int i, @Nullable String s1, @Nullable Bundle bundle) {
-
+                System.out.println();
             }
 
             @Override
             public void sendStickyBroadcast(Intent intent) {
-
+                System.out.println();
             }
 
             @Override
             public void sendStickyOrderedBroadcast(Intent intent, BroadcastReceiver broadcastReceiver, @Nullable Handler handler, int i, @Nullable String s, @Nullable Bundle bundle) {
-
+                System.out.println();
             }
 
             @Override
             public void removeStickyBroadcast(Intent intent) {
-
+                System.out.println();
             }
 
             @Override
             public void sendStickyBroadcastAsUser(Intent intent, UserHandle userHandle) {
-
+                System.out.println();
             }
 
             @Override
             public void sendStickyOrderedBroadcastAsUser(Intent intent, UserHandle userHandle, BroadcastReceiver broadcastReceiver, @Nullable Handler handler, int i, @Nullable String s, @Nullable Bundle bundle) {
-
+                System.out.println();
             }
 
             @Override
             public void removeStickyBroadcastAsUser(Intent intent, UserHandle userHandle) {
-
+                System.out.println();
             }
 
             @Nullable
@@ -371,7 +371,7 @@ public class ContextMock {
 
             @Override
             public void unregisterReceiver(BroadcastReceiver broadcastReceiver) {
-
+                System.out.println();
             }
 
             @Nullable
@@ -392,7 +392,7 @@ public class ContextMock {
 
             @Override
             public void unbindService(@NonNull ServiceConnection serviceConnection) {
-
+                System.out.println();
             }
 
             @Override
@@ -427,22 +427,22 @@ public class ContextMock {
 
             @Override
             public void enforceCallingPermission(@NonNull String s, @Nullable String s1) {
-
+                System.out.println();
             }
 
             @Override
             public void enforceCallingOrSelfPermission(@NonNull String s, @Nullable String s1) {
-
+                System.out.println();
             }
 
             @Override
             public void grantUriPermission(String s, Uri uri, int i) {
-
+                System.out.println();
             }
 
             @Override
             public void revokeUriPermission(Uri uri, int i) {
-
+                System.out.println();
             }
 
             @Override
@@ -467,22 +467,22 @@ public class ContextMock {
 
             @Override
             public void enforceUriPermission(Uri uri, int i, int i1,  int i2, String s) {
-
+                System.out.println();
             }
 
             @Override
             public void enforceCallingUriPermission(Uri uri,  int i, String s) {
-
+                System.out.println();
             }
 
             @Override
             public void enforceCallingOrSelfUriPermission(Uri uri,  int i, String s) {
-
+                System.out.println();
             }
 
             @Override
             public void enforceUriPermission(@Nullable Uri uri, @Nullable String s, @Nullable String s1, int i, int i1,  int i2, @Nullable String s2) {
-
+                System.out.println();
             }
 
             @Override

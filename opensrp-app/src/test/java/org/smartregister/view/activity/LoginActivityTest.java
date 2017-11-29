@@ -43,7 +43,7 @@ public class LoginActivityTest extends BaseUnitTest {
     @Mock
     private org.smartregister.Context context_;
     @Mock
-    CoreLibrary coreLibrary;
+    private CoreLibrary coreLibrary;
 
     @Before
     public void setUp() throws Exception {
@@ -69,4 +69,5 @@ public class LoginActivityTest extends BaseUnitTest {
      //   login_button.performClick();
         Assert.assertNotNull(activity);
     }
+
 }

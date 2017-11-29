@@ -7,10 +7,9 @@ import org.smartregister.util.EasyMap;
 import org.smartregister.view.contract.pnc.PNCClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
 
 public class PNCClientTest {
     @Test
@@ -21,7 +20,7 @@ public class PNCClientTest {
                                             "name",
                                             "thayi",
                                             "2013-01-30"
-        ).withAlerts(asList(pncAlert)).withServicesProvided(new ArrayList<ServiceProvidedDTO>());
+        ).withAlerts(Arrays.asList(pncAlert)).withServicesProvided(new ArrayList<ServiceProvidedDTO>());
 
         PNCClient preprocessedClients = pncClient.withPreProcess();
 
@@ -43,7 +42,7 @@ public class PNCClientTest {
                                             "name",
                                             "thayi",
                                             "2013-01-30").withAlerts(new ArrayList<AlertDTO>())
-                                                         .withServicesProvided(asList(
+                                                         .withServicesProvided(Arrays.asList(
                                                                  servicesProvided));
 
         PNCClient preprocessedClients = pncClient.withPreProcess();

@@ -29,7 +29,7 @@ public class ObsTest extends BaseUnitTest {
     private String comments = "good job";
 
     private String formSubmissionField = "FSField";
-    ObsMock ob;
+    private ObsMock ob;
 
     @Before
     public void setUp() {

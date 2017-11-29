@@ -13,7 +13,9 @@ import java.util.Date;
 
 public class DateUtilTest extends BaseUnitTest {
 
-    private LocalDate start = new LocalDate(1447487308000l);
+    private final long default_time = 1447487308000l;
+    private LocalDate start = new LocalDate(default_time);
+    private String mockDate = "2017-10-10";
 
     @Before
     public void setUp() {
@@ -22,7 +24,7 @@ public class DateUtilTest extends BaseUnitTest {
 
     @Test
     public void assertDateUtilNotNUll() {
-     org.junit.Assert.assertNotNull(new DateUtil());
+        Assert.assertNotNull(new DateUtil());
     }
 
     @Test
@@ -31,10 +33,10 @@ public class DateUtilTest extends BaseUnitTest {
         Assert.assertNotNull(DateUtil.today());
         Assert.assertNotNull(DateUtil.millis());
         Assert.assertEquals(DateUtil.isDateWithinGivenPeriodBeforeToday(null, null), true);
-        Assert.assertNotNull(DateUtil.parseDate("2017-10-10"));
+        Assert.assertNotNull(DateUtil.parseDate(mockDate));
         Assert.assertNotNull(DateUtil.parseDate("2017-10-10 10:10:10"));
         Assert.assertNotNull(DateUtil.parseDate("1985-07-24T00:00:00.000Z"));
-        Assert.assertNotNull(DateUtil.tryParse("2017-10-10", start));
+        Assert.assertNotNull(DateUtil.tryParse(mockDate, start));
         Assert.assertNotNull(DateUtil.toDate(new Date(0l)));
         Assert.assertNotNull(DateUtil.fromDate(new Date(0l)));
         Assert.assertNotNull(DateUtil.getDateFromString("1985-07-24T00:00:00.000Z"));

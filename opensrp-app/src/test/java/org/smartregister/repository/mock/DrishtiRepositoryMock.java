@@ -13,7 +13,7 @@ public class DrishtiRepositoryMock {
         return new DrishtiRepository() {
             @Override
             protected void onCreate(SQLiteDatabase database) {
-
+                System.out.println();
             }
         };
     }
