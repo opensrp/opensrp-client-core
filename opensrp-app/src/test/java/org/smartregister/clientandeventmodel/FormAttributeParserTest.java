@@ -44,22 +44,22 @@ public class FormAttributeParserTest extends BaseUnitTest {
     @Rule
     public PowerMockRule rule = new PowerMockRule();
     @Mock
-    XPathFactory xPathFactory;
+    private XPathFactory xPathFactory;
     @Mock
-    XPath xPath;
+    private XPath xPath;
     @Mock
-    AssetManager assetManager;
+    private AssetManager assetManager;
     @Mock
-    android.content.Context context;
-    FormAttributeParser parser;
-    String FORMNAME = "child_enrollment";
-    String SUBFORMNAME = "magic_subform";
-    String subFormDefinition = "www/form/"+SUBFORMNAME+"/form_definition.json";
-    String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
-    String model = "www/form/"+FORMNAME+"/model.xml";
-    String formJSON = "www/form/"+FORMNAME+"/form.json";
-    String formMultiJSON = "www/form/"+FORMNAME+"/form_multi.json";
-    String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
+    private android.content.Context context;
+    private FormAttributeParser parser;
+    private String FORMNAME = "child_enrollment";
+    private String SUBFORMNAME = "magic_subform";
+    private String subFormDefinition = "www/form/"+SUBFORMNAME+"/form_definition.json";
+    private String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
+    private String model = "www/form/"+FORMNAME+"/model.xml";
+    private String formJSON = "www/form/"+FORMNAME+"/form.json";
+    private String formMultiJSON = "www/form/"+FORMNAME+"/form_multi.json";
+    private String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
 
     @Before
     public void setUp() {
@@ -69,18 +69,18 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
     @Test
     public void assertTestCreateFormSubmissionMap() throws Exception {
-        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this,formDefinition));
-        InputStream modelStream = new FileInputStream(getFileFromPath(this,model));
-        InputStream formJSONStream = new FileInputStream(getFileFromPath(this,formJSON));
+        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this, formDefinition));
+        InputStream modelStream = new FileInputStream(getFileFromPath(this, model));
+        InputStream formJSONStream = new FileInputStream(getFileFromPath(this, formJSON));
         List<FormField> formFields = new ArrayList<FormField>();
-        formFields.add(new FormField("NULL","value","www/form/"));
-        formFields.add(new FormField("instanceID","value","www/form/"));
-        FormData fd = new FormData("bind_type", "www/form/", formFields,
+        formFields.add(new FormField("NULL", "value", "www/form/"));
+        formFields.add(new FormField("instanceID", "value", "www/form/"));
+        FormData fd = new FormData("bind_type", "www/form/", formFields, 
                 new ArrayList<SubFormData>());
 
         FormInstance fi = new FormInstance();
         fi.setForm(fd);
-        FormSubmission fs = new FormSubmission("","",FORMNAME,"",0l,"", fi,0l);
+        FormSubmission fs = new FormSubmission("", "", FORMNAME, "", 0l, "", fi, 0l);
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         Mockito.when(assetManager.open(formDefinition)).thenReturn(formDefinitionStream);
         Mockito.when(assetManager.open(model)).thenReturn(modelStream);
@@ -90,20 +90,20 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
     @Test
     public void assertTestCreateFormSubmissionMapMultiSelect() throws Exception {
-        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this,formDefinition));
-        InputStream modelStream = new FileInputStream(getFileFromPath(this,model));
-        InputStream formJSONStream = new FileInputStream(getFileFromPath(this,formMultiJSON));
+        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this, formDefinition));
+        InputStream modelStream = new FileInputStream(getFileFromPath(this, model));
+        InputStream formJSONStream = new FileInputStream(getFileFromPath(this, formMultiJSON));
         List<FormField> formFields = new ArrayList<FormField>();
 
-        formFields.add(new FormField("birth_date_known","1 2 3 4","www/form/"));
-        formFields.add(new FormField("instanceID","1 2 3 4","www/form/"));
+        formFields.add(new FormField("birth_date_known", "1 2 3 4", "www/form/"));
+        formFields.add(new FormField("instanceID", "1 2 3 4", "www/form/"));
 
         List<SubFormData>subFormData = new ArrayList<SubFormData>();
         SubFormData sf = new SubFormData();
         sf.setName("magic_subform");
-        List<Map<String,String>> instances = new ArrayList<>();
-        HashMap<String,String> instance = new HashMap<>();
-        instance.put("birth_date_known","1 2 3 4");
+        List<Map<String, String>> instances = new ArrayList<>();
+        HashMap<String, String> instance = new HashMap<>();
+        instance.put("birth_date_known", "1 2 3 4");
         instances.add(instance);
         sf.setInstances(instances);
         sf.setDefault_bind_path(DEFAULT_BIND_PATH);
@@ -113,7 +113,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         sf.setName("magic_subform");
         instances = new ArrayList<>();
         instance = new HashMap<>();
-        instance.put("instanceID","1 2 3 4");
+        instance.put("instanceID", "1 2 3 4");
         instances.add(instance);
         sf.setInstances(instances);
         sf.setDefault_bind_path(DEFAULT_BIND_PATH);
@@ -123,33 +123,34 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
         FormInstance fi = new FormInstance();
         fi.setForm(fd);
-        FormSubmission fs = new FormSubmission("","",FORMNAME,"",0l,"", fi,0l);
+        FormSubmission fs = new FormSubmission("", "", FORMNAME, "", 0l, "", fi, 0l);
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         Mockito.when(assetManager.open(formDefinition)).thenReturn(formDefinitionStream);
         Mockito.when(assetManager.open(model)).thenReturn(modelStream);
         Mockito.when(assetManager.open(formJSON)).thenReturn(formJSONStream);
         Assert.assertNotNull(parser.createFormSubmissionMap(fs));
     }
+    
     @Test
     public void assertGetFieldname() throws Exception {
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("encounter_type","Child Vaccination Enrollment");
-        attributes.put("id","child_vaccination_enrollment");
-        attributes.put("version","201607121711");
-        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this,formDefinition));
-        InputStream modelStream = new FileInputStream(getFileFromPath(this,model));
-        InputStream formJSONStream = new FileInputStream(getFileFromPath(this,formMultiJSON));
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("encounter_type", "Child Vaccination Enrollment");
+        attributes.put("id", "child_vaccination_enrollment");
+        attributes.put("version", "201607121711");
+        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this, formDefinition));
+        InputStream modelStream = new FileInputStream(getFileFromPath(this, model));
+        InputStream formJSONStream = new FileInputStream(getFileFromPath(this, formMultiJSON));
         List<FormField> formFields = new ArrayList<FormField>();
 
-        formFields.add(new FormField("birth_date_known","1 2 3 4","www/form/"));
-        formFields.add(new FormField("instanceID","1 2 3 4","www/form/"));
+        formFields.add(new FormField("birth_date_known", "1 2 3 4", "www/form/"));
+        formFields.add(new FormField("instanceID", "1 2 3 4", "www/form/"));
 
         List<SubFormData>subFormData = new ArrayList<SubFormData>();
         SubFormData sf = new SubFormData();
         sf.setName("magic_subform");
-        List<Map<String,String>> instances = new ArrayList<>();
-        HashMap<String,String> instance = new HashMap<>();
-        instance.put("birth_date_known","1 2 3 4");
+        List<Map<String, String>> instances = new ArrayList<>();
+        HashMap<String, String> instance = new HashMap<>();
+        instance.put("birth_date_known", "1 2 3 4");
         instances.add(instance);
         sf.setInstances(instances);
         sf.setDefault_bind_path("/model/instance/Child_Vaccination_Enrollment/birth_date_known");
@@ -159,7 +160,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         sf.setName("magic_subform");
         instances = new ArrayList<>();
         instance = new HashMap<>();
-        instance.put("instanceID","1 2 3 4");
+        instance.put("instanceID", "1 2 3 4");
         instances.add(instance);
         sf.setInstances(instances);
         sf.setDefault_bind_path("/model/instance/Child_Vaccination_Enrollment/meta/instanceID");
@@ -169,7 +170,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
         FormInstance fi = new FormInstance();
         fi.setForm(fd);
-        FormSubmission fs = new FormSubmission("","",FORMNAME,"",0l,"", fi,0l);
+        FormSubmission fs = new FormSubmission("", "", FORMNAME, "", 0l, "", fi, 0l);
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         Mockito.when(assetManager.open(formDefinition)).thenReturn(formDefinitionStream);
         Mockito.when(assetManager.open(model)).thenReturn(modelStream);
@@ -178,8 +179,8 @@ public class FormAttributeParserTest extends BaseUnitTest {
         PowerMockito.when(XPathFactory.newInstance()).thenReturn(xPathFactory);
         PowerMockito.when(xPathFactory.newXPath()).thenReturn(xPath);
 
-        PowerMockito.when(xPath.evaluate(Mockito.anyString(),Mockito.any(Object.class),Mockito.any(QName.class))).thenReturn(NodeListMock.getNodeList());
-        Assert.assertEquals(parser.getFieldName(attributes,fs),"birth_date_known");
+        PowerMockito.when(xPath.evaluate(Mockito.anyString(), Mockito.any(Object.class), Mockito.any(QName.class))).thenReturn(NodeListMock.getNodeList());
+        Assert.assertEquals(parser.getFieldName(attributes, fs), "birth_date_known");
 
     }
 
@@ -195,22 +196,22 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
     @Test
     public void assertGetFieldnameSubForm() throws Exception {
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("encounter_type","Child Vaccination Enrollment");
-        attributes.put("id","child_vaccination_enrollment");
-        attributes.put("version","201607121711");
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("encounter_type", "Child Vaccination Enrollment");
+        attributes.put("id", "child_vaccination_enrollment");
+        attributes.put("version", "201607121711");
 
         List<FormField> formFields = new ArrayList<FormField>();
 
-        formFields.add(new FormField("birth_date_known","1 2 3 4","www/form/"));
-        formFields.add(new FormField("instanceID","1 2 3 4","www/form/"));
+        formFields.add(new FormField("birth_date_known", "1 2 3 4", "www/form/"));
+        formFields.add(new FormField("instanceID", "1 2 3 4", "www/form/"));
 
         List<SubFormData>subFormData = new ArrayList<SubFormData>();
         SubFormData sf = new SubFormData();
         sf.setName("magic_subform");
-        List<Map<String,String>> instances = new ArrayList<>();
-        HashMap<String,String> instance = new HashMap<>();
-        instance.put("birth_date_known","1 2 3 4");
+        List<Map<String, String>> instances = new ArrayList<>();
+        HashMap<String, String> instance = new HashMap<>();
+        instance.put("birth_date_known", "1 2 3 4");
         instances.add(instance);
         sf.setInstances(instances);
         sf.setDefault_bind_path("/model/instance/Child_Vaccination_Enrollment/birth_date_known");
@@ -220,7 +221,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         sf.setName("magic_subform");
         instances = new ArrayList<>();
         instance = new HashMap<>();
-        instance.put("instanceID","1 2 3 4");
+        instance.put("instanceID", "1 2 3 4");
         instances.add(instance);
         sf.setInstances(instances);
         sf.setDefault_bind_path("/model/instance/Child_Vaccination_Enrollment/meta/instanceID");
@@ -232,31 +233,28 @@ public class FormAttributeParserTest extends BaseUnitTest {
 
         FormInstance fi = new FormInstance();
         fi.setForm(fd);
-        FormSubmission fs = new FormSubmission("","",FORMNAME,"",0l,"", fi,0l);
+        FormSubmission fs = new FormSubmission("", "", FORMNAME, "", 0l, "", fi, 0l);
         FormAttributeParser parser = new FormAttributeParser(context);
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         FileInputStream formDefinitionIS = (new FileInputStream(getFileFromPath(this, formDefinition)));
         String stringOfFormDefinition = getStringFromStream(formDefinitionIS);
         JsonParser jsonparser = new JsonParser();
         Object obj = jsonparser.parse(stringOfFormDefinition);
-
-
-//        PowerMockito.when(spyparser.readFileFromAssetsFolder(formDefinition)).thenReturn(formDefinitionIS);
         PowerMockito.doReturn((JsonObject) obj).when(spyparser).getFormDefinitionData(FORMNAME);
-        Mockito.when(assetManager.open(model)).thenReturn(new FileInputStream(getFileFromPath(this,model)));
-        Mockito.when(assetManager.open(formJSON)).thenReturn(new FileInputStream(getFileFromPath(this,formMultiJSON)));
+        Mockito.when(assetManager.open(model)).thenReturn(new FileInputStream(getFileFromPath(this, model)));
+        Mockito.when(assetManager.open(formJSON)).thenReturn(new FileInputStream(getFileFromPath(this, formMultiJSON)));
         PowerMockito.mockStatic(XPathFactory.class);
         PowerMockito.when(XPathFactory.newInstance()).thenReturn(xPathFactory);
         PowerMockito.when(xPathFactory.newXPath()).thenReturn(xPath);
 
-        PowerMockito.when(xPath.evaluate(Mockito.anyString(),Mockito.any(Object.class),Mockito.any(QName.class))).thenReturn(NodeListMock.getNodeList());
+        PowerMockito.when(xPath.evaluate(Mockito.anyString(), Mockito.any(Object.class), Mockito.any(QName.class))).thenReturn(NodeListMock.getNodeList());
 
 //        PowerMockito.when(assetManager.open(subFormDefinition)).thenReturn(formDefinitionStream);
 
 //        PowerMockito.when(assetManager.open(model)).thenReturn(modelStream);
 //        PowerMockito.when(assetManager.open(formJSON)).thenReturn(formJSONStream);
 
-        Assert.assertEquals(spyparser.getFieldName(attributes,"magic_subform",fs),"birth_date_known");
+        Assert.assertEquals(spyparser.getFieldName(attributes, "magic_subform", fs), "birth_date_known");
 
     }
 

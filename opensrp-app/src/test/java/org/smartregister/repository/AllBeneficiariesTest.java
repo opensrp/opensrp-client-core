@@ -1,7 +1,5 @@
 package org.smartregister.repository;
 
-import android.util.Pair;
-
 import junit.framework.Assert;
 
 import org.junit.Before;
@@ -9,19 +7,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Child;
-import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class AllBeneficiariesTest {
@@ -42,7 +36,7 @@ public class AllBeneficiariesTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         allBeneficiaries = new AllBeneficiaries(motherRepository, childRepository, alertRepository, timelineEventRepository);
     }
 
@@ -99,13 +93,14 @@ public class AllBeneficiariesTest {
     @Test
     public void assertIsPregnant() {
         Mockito.when(motherRepository.isPregnant(Mockito.anyString())).thenReturn(false);
-        Assert.assertEquals(allBeneficiaries.isPregnant(""),false);
+        Assert.assertEquals(allBeneficiaries.isPregnant(""), false);
     }
+
     @Test
     public void assertSwitchMotherToPNC() {
         Mockito.doNothing().when(motherRepository).switchToPNC(Mockito.anyString());
         allBeneficiaries.switchMotherToPNC("");
-        Mockito.verify(motherRepository,Mockito.times(1)).switchToPNC(Mockito.anyString());
+        Mockito.verify(motherRepository, Mockito.times(1)).switchToPNC(Mockito.anyString());
     }
 
     @Test
@@ -113,6 +108,7 @@ public class AllBeneficiariesTest {
         Mockito.when(motherRepository.findByCaseIds(Mockito.any(String[].class))).thenReturn(Mockito.mock(List.class));
         Assert.assertNotNull(allBeneficiaries.findAllMothersByCaseIDs(new ArrayList<String>()));
     }
+
     @Test
     public void assertFindAllChildrenByMotherId() {
         Mockito.when(childRepository.findByMotherCaseId(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
@@ -128,19 +124,19 @@ public class AllBeneficiariesTest {
     @Test
     public void assertANCcountReturnsLong() {
         Mockito.when(motherRepository.ancCount()).thenReturn(0l);
-        Assert.assertEquals(allBeneficiaries.ancCount(),0l);
+        Assert.assertEquals(allBeneficiaries.ancCount(), 0l);
     }
 
     @Test
     public void assertPNCcountReturnsLong() {
         Mockito.when(motherRepository.pncCount()).thenReturn(0l);
-        Assert.assertEquals(allBeneficiaries.pncCount(),0l);
+        Assert.assertEquals(allBeneficiaries.pncCount(), 0l);
     }
 
     @Test
     public void assertChildcountReturnsLong() {
         Mockito.when(childRepository.count()).thenReturn(0l);
-        Assert.assertEquals(allBeneficiaries.childCount(),0l);
+        Assert.assertEquals(allBeneficiaries.childCount(), 0l);
     }
 
     @Test
@@ -159,60 +155,60 @@ public class AllBeneficiariesTest {
     public void shouldDeleteTimelineEventsAndAlertsWhileClosingMother() throws Exception {
         allBeneficiaries.closeMother("entity id 1");
 
-        verify(alertRepository).deleteAllAlertsForEntity("entity id 1");
-        verify(timelineEventRepository).deleteAllTimelineEventsForEntity("entity id 1");
+        Mockito.verify(alertRepository).deleteAllAlertsForEntity("entity id 1");
+        Mockito.verify(timelineEventRepository).deleteAllTimelineEventsForEntity("entity id 1");
     }
 
     @Test
     public void shouldDeleteTimelineEventsAndAlertsForAllMothersWhenECIsClosed() throws Exception {
-        when(motherRepository.findAllCasesForEC("ec id 1"))
-                .thenReturn(asList(new Mother("mother id 1", "ec id 1", "12345", "2012-12-12"), new Mother("mother id 2", "ec id 2", "123456", "2012-12-10")));
+        Mockito.when(motherRepository.findAllCasesForEC("ec id 1"))
+                .thenReturn(Arrays.asList(new Mother("mother id 1", "ec id 1", "12345", "2012-12-12"), new Mother("mother id 2", "ec id 2", "123456", "2012-12-10")));
 
         allBeneficiaries.closeAllMothersForEC("ec id 1");
 
-        verify(alertRepository).deleteAllAlertsForEntity("mother id 1");
-        verify(alertRepository).deleteAllAlertsForEntity("mother id 2");
-        verify(timelineEventRepository).deleteAllTimelineEventsForEntity("mother id 1");
-        verify(timelineEventRepository).deleteAllTimelineEventsForEntity("mother id 2");
-        verify(motherRepository).close("mother id 1");
-        verify(motherRepository).close("mother id 2");
+        Mockito.verify(alertRepository).deleteAllAlertsForEntity("mother id 1");
+        Mockito.verify(alertRepository).deleteAllAlertsForEntity("mother id 2");
+        Mockito.verify(timelineEventRepository).deleteAllTimelineEventsForEntity("mother id 1");
+        Mockito.verify(timelineEventRepository).deleteAllTimelineEventsForEntity("mother id 2");
+        Mockito.verify(motherRepository).close("mother id 1");
+        Mockito.verify(motherRepository).close("mother id 2");
     }
 
     @Test
     public void shouldDeleteTimelineEventsAndAlertsWhenAChildIsClosed() throws Exception {
-        when(childRepository.find("child id 1"))
+        Mockito.when(childRepository.find("child id 1"))
                 .thenReturn(new Child("child id 1", "mother id 1", "male", new HashMap<String, String>()));
 
         allBeneficiaries.closeChild("child id 1");
 
-        verify(alertRepository).deleteAllAlertsForEntity("child id 1");
-        verify(timelineEventRepository).deleteAllTimelineEventsForEntity("child id 1");
-        verify(childRepository).close("child id 1");
+        Mockito.verify(alertRepository).deleteAllAlertsForEntity("child id 1");
+        Mockito.verify(timelineEventRepository).deleteAllTimelineEventsForEntity("child id 1");
+        Mockito.verify(childRepository).close("child id 1");
     }
 
     @Test
     public void shouldNotFailClosingMotherWhenECIsClosedAndDoesNotHaveAnyMothers() throws Exception {
-        when(motherRepository.findAllCasesForEC("ec id 1")).thenReturn(null);
-        when(motherRepository.findAllCasesForEC("ec id 1")).thenReturn(Collections.<Mother>emptyList());
+        Mockito.when(motherRepository.findAllCasesForEC("ec id 1")).thenReturn(null);
+        Mockito.when(motherRepository.findAllCasesForEC("ec id 1")).thenReturn(Collections.<Mother>emptyList());
 
         allBeneficiaries.closeAllMothersForEC("ec id 1");
 
-        verifyZeroInteractions(alertRepository);
-        verifyZeroInteractions(timelineEventRepository);
-        verify(motherRepository, times(0)).close(any(String.class));
+        Mockito.verifyZeroInteractions(alertRepository);
+        Mockito.verifyZeroInteractions(timelineEventRepository);
+        Mockito.verify(motherRepository, Mockito.times(0)).close(Mockito.any(String.class));
     }
 
     @Test
     public void shouldDelegateToChildRepositoryWhenUpdateChildIsCalled() throws Exception {
         allBeneficiaries.updateChild(child);
 
-        verify(childRepository).update(child);
+        Mockito.verify(childRepository).update(child);
     }
 
     @Test
     public void shouldDelegateToMotherRepositoryWhenUpdateMotherIsCalled() throws Exception {
         allBeneficiaries.updateMother(mother);
 
-        verify(motherRepository).update(mother);
+        Mockito.verify(motherRepository).update(mother);
     }
 }

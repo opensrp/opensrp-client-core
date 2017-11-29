@@ -12,7 +12,6 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -21,20 +20,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.commonregistry.CommonFtsObject;
-import org.smartregister.commonregistry.CommonPersonObject;
-import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.commonregistry.shared.FakeRepository;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.service.AlertService;
 import org.smartregister.view.activity.DrishtiApplication;
-
-import java.util.HashMap;
-
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -87,7 +76,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.onCreate(sqliteDatabase);
-        Mockito.verify(sqliteDatabase,Mockito.times(5)).execSQL(Mockito.anyString());
+        Mockito.verify(sqliteDatabase, Mockito.times(5)).execSQL(Mockito.anyString());
     }
 
     @Test
@@ -111,7 +100,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         Alert alert = new Alert("caseID", "scheduleName", "visitCode", AlertStatus.urgent, "startDate", "expiryDate", true);
         alertRepository.createAlert(alert);
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.isNull(String.class),org.mockito.ArgumentMatchers.any(ContentValues.class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
 
     }
 
@@ -125,7 +114,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         Alert alert = new Alert("caseID", "scheduleName", "visitCode", AlertStatus.urgent, "startDate", "expiryDate", true);
         alertRepository.createAlert(alert);
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -137,7 +126,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.changeAlertStatusToInProcess("caseID", "scheduleName");
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -149,7 +138,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.changeAlertStatusToComplete("caseID", "scheduleName");
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -161,7 +150,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.markAlertAsClosed("caseID", "scheduleName", "completionDate");
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -187,7 +176,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.deleteAllAlertsForEntity("caseID");
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -197,7 +186,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.deleteOfflineAlertsForEntity("caseID");
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -206,8 +195,8 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
-        alertRepository.deleteOfflineAlertsForEntity("caseID","name1","name2");
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
+        alertRepository.deleteOfflineAlertsForEntity("caseID", "name1", "name2");
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String [].class));
 
     }
 
@@ -217,7 +206,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         alertRepository.deleteAllAlerts();
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String [].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String [].class));
 
     }
 
@@ -240,7 +229,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
-        Assert.assertNotNull(alertRepository.findByEntityIdAndAlertNames("caseID","names1","names2"));
+        Assert.assertNotNull(alertRepository.findByEntityIdAndAlertNames("caseID", "names1", "names2"));
     }
 
     @Test
@@ -251,7 +240,7 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
-        Assert.assertNotNull(alertRepository.findOfflineByEntityIdAndName("caseID","names1","names2"));
+        Assert.assertNotNull(alertRepository.findOfflineByEntityIdAndName("caseID", "names1", "names2"));
     }
 
     @Test
@@ -261,10 +250,8 @@ public class AlertRepositoryTest extends BaseUnitTest {
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         alertRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class),org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
-        Assert.assertNotNull(alertRepository.findByEntityIdAndScheduleName("caseID","Schedulenames"));
+        Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
+        Assert.assertNotNull(alertRepository.findByEntityIdAndScheduleName("caseID", "Schedulenames"));
     }
-
-
 
 }

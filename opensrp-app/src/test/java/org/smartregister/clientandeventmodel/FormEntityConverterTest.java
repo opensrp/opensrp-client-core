@@ -27,28 +27,29 @@ import java.util.Map;
 
 public class FormEntityConverterTest extends BaseUnitTest {
 
-    FormEntityConverter formEntityConverter;
+    private FormEntityConverter formEntityConverter;
 
-    String FORMNAME = "child_enrollment";
-    String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
-    String model = "www/form/"+FORMNAME+"/model.xml";
-    String formJSON = "www/form/"+FORMNAME+"/form.json";
-    FormAttributeParser formAttributeParser;
+    private String FORMNAME = "child_enrollment";
+    private String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
+    private String model = "www/form/"+FORMNAME+"/model.xml";
+    private String formJSON = "www/form/"+FORMNAME+"/form.json";
+    private FormAttributeParser formAttributeParser;
     @Mock
-    AssetManager assetManager;
+    private AssetManager assetManager;
     @Mock
-    android.content.Context context;
+    private android.content.Context context;
+    
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         formAttributeParser = new FormAttributeParser(context);
-        formEntityConverter = new FormEntityConverter(formAttributeParser,context);
+        formEntityConverter = new FormEntityConverter(formAttributeParser, context);
     }
 
     @Test
     public void assertGetEventFromFormSubmission() throws Exception {
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("encounter_type","Child Vaccination Enrollment");
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("encounter_type", "Child Vaccination Enrollment");
         FormData fd = new FormData();
         fd.setBindType("pkchild");
         FormInstance formInstance = new FormInstance();
@@ -59,25 +60,25 @@ public class FormEntityConverterTest extends BaseUnitTest {
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.location_id.entity(), FormEntityConstants.Encounter.location_id.entityId()));
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.encounter_start.entity(), FormEntityConstants.Encounter.encounter_start.entityId()));
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.encounter_end.entity(), FormEntityConstants.Encounter.encounter_end.entityId()));
-        FormSubmissionMap fsmap = new FormSubmissionMap(fs,attributes,fields,null);
+        FormSubmissionMap fsmap = new FormSubmissionMap(fs, attributes, fields, null);
         Assert.assertNotNull(formEntityConverter.getEventFromFormSubmission(fsmap));
     }
 
     @Test
     public void assertGetEventFromFormSubmissionReturnsEvent() throws Exception {
-        Map<String,String> attributes = new HashMap<>();
-        attributes.put("encounter_type","Child Vaccination Enrollment");
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put("encounter_type", "Child Vaccination Enrollment");
         List<FormField> formFields = new ArrayList<FormField>();
-        formFields.add(new FormField("NULL","value","www/form/"));
-        formFields.add(new FormField("instanceID","value","www/form/"));
-        FormData fd = new FormData("bind_type", "www/form/", formFields,
+        formFields.add(new FormField("NULL", "value", "www/form/"));
+        formFields.add(new FormField("instanceID", "value", "www/form/"));
+        FormData fd = new FormData("bind_type", "www/form/", formFields, 
                 new ArrayList<SubFormData>());
         FormInstance formInstance = new FormInstance();
         formInstance.setForm(fd);
         FormSubmission fs = new FormSubmission("", "", FORMNAME, "entityId", 0l, "", formInstance, 0l);
-        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this,formDefinition));
-        InputStream modelStream = new FileInputStream(getFileFromPath(this,model));
-        InputStream formJSONStream = new FileInputStream(getFileFromPath(this,formJSON));
+        InputStream formDefinitionStream = new FileInputStream(getFileFromPath(this, formDefinition));
+        InputStream modelStream = new FileInputStream(getFileFromPath(this, model));
+        InputStream formJSONStream = new FileInputStream(getFileFromPath(this, formJSON));
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         Mockito.when(assetManager.open(formDefinition)).thenReturn(formDefinitionStream);
         Mockito.when(assetManager.open(model)).thenReturn(modelStream);
@@ -85,6 +86,7 @@ public class FormEntityConverterTest extends BaseUnitTest {
 
         Assert.assertNotNull(formEntityConverter.getEventFromFormSubmission(fs));
     }
+    
     private static File getFileFromPath(Object obj, String fileName) {
         ClassLoader classLoader = obj.getClass().getClassLoader();
         URL resource = classLoader.getResource(fileName);
@@ -92,21 +94,21 @@ public class FormEntityConverterTest extends BaseUnitTest {
     }
 
     public FormFieldMap getFormFieldMap(String entity, String entity_id) {
-        Map<String,String> attributes = new HashMap<>();
+        Map<String, String> attributes = new HashMap<>();
         attributes.put("openmrs_entity", "concept");
 
         attributes.put("openmrs_entity_id", entity_id);
 
-        Map<String,String>codes = new HashMap<>();
+        Map<String, String>codes = new HashMap<>();
 
-        codes.put("openmrs_code","CODE:RED");
+        codes.put("openmrs_code", "CODE:RED");
 
         return new FormFieldMap(entity, "2017-10-10", "", "", "", attributes, codes);
     }
 
     @Test
     public void assertGetEventFromFormSubmissionMock() throws Exception {
-        Map<String,String> attributes = Mockito.mock(HashMap.class);
+        Map<String, String> attributes = Mockito.mock(HashMap.class);
         FormSubmissionMap fs = Mockito.mock(FormSubmissionMap.class);
         Mockito.when(fs.entityId()).thenReturn("entityId");
         Mockito.when(fs.formAttributes()).thenReturn(attributes);

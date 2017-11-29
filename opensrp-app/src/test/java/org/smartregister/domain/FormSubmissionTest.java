@@ -18,9 +18,10 @@ import static org.smartregister.util.FormSubmissionBuilder.create;
 
 @RunWith(RobolectricTestRunner.class)
 public class FormSubmissionTest {
+    
     @Test
     public void shouldGetFieldValueByName() throws Exception {
-        FormInstance formInstance = new FormInstance(new FormData("entity", "default", asList(new FormField("field1", "value1", "source1"), new FormField("field2", "value2", "source2")),
+        FormInstance formInstance = new FormInstance(new FormData("entity", "default", asList(new FormField("field1", "value1", "source1"), new FormField("field2", "value2", "source2")), 
                 asList(new SubForm("sub form name"))), "1");
 
         FormSubmission formSubmission = create().withFormInstance(new Gson().toJson(formInstance)).build();
@@ -33,7 +34,7 @@ public class FormSubmissionTest {
     @Test
     public void shouldGetSubFormByName() throws Exception {
         SubForm subForm = new SubForm("sub form name");
-        FormInstance formInstance = new FormInstance(new FormData("entity", "default", asList(new FormField("field1", "value1", "source1"), new FormField("field2", "value2", "source2")),
+        FormInstance formInstance = new FormInstance(new FormData("entity", "default", asList(new FormField("field1", "value1", "source1"), new FormField("field2", "value2", "source2")), 
                 asList(subForm)), "1");
 
         FormSubmission formSubmission = create().withFormInstance(new Gson().toJson(formInstance)).build();

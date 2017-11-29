@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.EligibleCouple;
 
@@ -16,12 +17,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
 @RunWith(RobolectricTestRunner.class)
 public class AllEligibleCouplesTest {
+
     @Mock
     private EligibleCoupleRepository eligibleCoupleRepository;
     @Mock
@@ -33,19 +31,19 @@ public class AllEligibleCouplesTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository, alertRepository, timelineEventRepository);
     }
 
     @Test
     public void shouldFetchAllAlertsFromRepository() throws Exception {
-        List<EligibleCouple> expectedCouples = Arrays.asList(new EligibleCouple("Case X", "Wife 1", "Husband 1", "EC Number 1", "village", "subcenter", new HashMap<String, String>()),
+        List<EligibleCouple> expectedCouples = Arrays.asList(new EligibleCouple("Case X", "Wife 1", "Husband 1", "EC Number 1", "village", "subcenter", new HashMap<String, String>()), 
                 new EligibleCouple("Case Y", "Wife 2", "Husband 2", "EC Number 2", "village", "subcenter", new HashMap<String, String>()));
-        when(eligibleCoupleRepository.allEligibleCouples()).thenReturn(expectedCouples);
+        Mockito.when(eligibleCoupleRepository.allEligibleCouples()).thenReturn(expectedCouples);
 
         List<EligibleCouple> couples = allEligibleCouples.all();
 
-        assertEquals(expectedCouples, couples);
+        Assert.assertEquals(expectedCouples, couples);
     }
 
     @Test
@@ -71,27 +69,27 @@ public class AllEligibleCouplesTest {
 
     @Test
     public void assertUpdatePhotoPathCallsRepositoryUpdate() {
-        Mockito.doNothing().when(eligibleCoupleRepository).updatePhotoPath(Mockito.anyString(),Mockito.anyString());
-        allEligibleCouples.updatePhotoPath("","");
-        Mockito.verify(eligibleCoupleRepository,Mockito.times(1)).updatePhotoPath(Mockito.anyString(),Mockito.anyString());
+        Mockito.doNothing().when(eligibleCoupleRepository).updatePhotoPath(Mockito.anyString(), Mockito.anyString());
+        allEligibleCouples.updatePhotoPath("", "");
+        Mockito.verify(eligibleCoupleRepository, Mockito.times(1)).updatePhotoPath(Mockito.anyString(), Mockito.anyString());
     }
 
     @Test
     public void assertMergeDetailsCallsRepositoryUpdate() {
-        Mockito.doNothing().when(eligibleCoupleRepository).mergeDetails(Mockito.anyString(),Mockito.any(Map.class));
-        allEligibleCouples.mergeDetails("",new HashMap<String, String>());
-        Mockito.verify(eligibleCoupleRepository,Mockito.times(1)).mergeDetails(Mockito.anyString(),Mockito.any(Map.class));
+        Mockito.doNothing().when(eligibleCoupleRepository).mergeDetails(Mockito.anyString(), Mockito.any(Map.class));
+        allEligibleCouples.mergeDetails("", new HashMap<String, String>());
+        Mockito.verify(eligibleCoupleRepository, Mockito.times(1)).mergeDetails(Mockito.anyString(), Mockito.any(Map.class));
     }
     @Test
     public void assertCountreturnsLong() {
         Mockito.when(eligibleCoupleRepository.count()).thenReturn(0l);
-        Assert.assertEquals(allEligibleCouples.count(),0l);
+        Assert.assertEquals(allEligibleCouples.count(), 0l);
     }
 
     @Test
     public void assertFPCountreturnsLong() {
         Mockito.when(eligibleCoupleRepository.fpCount()).thenReturn(0l);
-        Assert.assertEquals(allEligibleCouples.fpCount(),0l);
+        Assert.assertEquals(allEligibleCouples.fpCount(), 0l);
     }
 
     @Test

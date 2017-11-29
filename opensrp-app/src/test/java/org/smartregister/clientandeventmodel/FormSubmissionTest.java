@@ -18,35 +18,40 @@ import java.util.List;
  */
 
 public class FormSubmissionTest extends BaseUnitTest {
-    FormSubmissionMock formSubmission;
+    
+    private FormSubmissionMock formSubmission;
     @Mock
-    FormInstance formInstance;
+    private FormInstance formInstance;
     @Mock
-    SubFormData subForm;
+    private SubFormData subForm;
+    
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        formSubmission = new FormSubmissionMock("", "", "", "",
+        formSubmission = new FormSubmissionMock("", "", "", "", 
                 "", 0l, formInstance);
         Mockito.when(formInstance.getSubFormByName(Mockito.anyString())).thenReturn(subForm);
     }
+    
     @Test
     public void clientVersion() {
-        Assert.assertEquals(formSubmission.clientVersion(),0l);
+        Assert.assertEquals(formSubmission.clientVersion(), 0l);
     }
+    
     @Test
     public void formDataDefinitionVersion() {
-        Assert.assertEquals(formSubmission.formDataDefinitionVersion(),"");
+        Assert.assertEquals(formSubmission.formDataDefinitionVersion(), "");
     }
+    
     @Test
     public void serverVersion() {
         formSubmission.setServerVersion(0l);
-        Assert.assertEquals(formSubmission.serverVersion(),0l);
+        Assert.assertEquals(formSubmission.serverVersion(), 0l);
     }
 
     @Test
     public void getField() {
-        Assert.assertEquals(formSubmission.getField(""),null);
+        Assert.assertEquals(formSubmission.getField(""), null);
     }
 
     @Test
@@ -55,22 +60,24 @@ public class FormSubmissionTest extends BaseUnitTest {
         fields.add("");
         Assert.assertNotNull(formSubmission.getFields(fields));
     }
+    
     @Test
     public void getInstanceId() {
-        Assert.assertEquals(formSubmission.getInstanceId(),"");
+        Assert.assertEquals(formSubmission.getInstanceId(), "");
     }
+    
     @Test
     public void getSubFormByName() {
         Assert.assertNotNull(formSubmission.getSubFormByName(""));
     }
 
     public void getMetadata() {
-        Assert.assertEquals(formSubmission.getMetadata(),null);
+        Assert.assertEquals(formSubmission.getMetadata(), null);
     }
 
     @Test
     public void assertequals() {
-        Assert.assertEquals(formSubmission.equals(formSubmission),true);
+        Assert.assertEquals(formSubmission.equals(formSubmission), true);
     }
 
     @Test
@@ -82,4 +89,5 @@ public class FormSubmissionTest extends BaseUnitTest {
     public void asserttoString() {
         Assert.assertNotNull(formSubmission.toString());
     }
+    
 }

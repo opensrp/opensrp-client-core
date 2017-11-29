@@ -9,7 +9,7 @@ import org.smartregister.BaseUnitTest;
  * Created by kaderchowdhury on 12/11/17.
  */
 
-public class FormSubmissionConvertorTest extends BaseUnitTest{
+public class FormSubmissionConvertorTest extends BaseUnitTest {
 
     @Test
     public void assertFormSubmissionConvertorInitializationNotNull() {

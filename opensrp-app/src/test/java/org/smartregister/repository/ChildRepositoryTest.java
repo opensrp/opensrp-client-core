@@ -4,12 +4,10 @@ import android.content.ContentValues;
 
 import junit.framework.Assert;
 
-import net.sqlcipher.DatabaseUtils;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -53,7 +51,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
     @Test
     public void assertOnCreateCallDatabaseExecSql() {
         childRepository.onCreate(sqLiteDatabase);
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).execSQL(Mockito.anyString());
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
     }
 
     @Test
@@ -61,7 +59,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         childRepository.add(getMockChild());
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).insert(Mockito.anyString(),Mockito.isNull(String.class),Mockito.any(ContentValues.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
 
     @Test
@@ -69,43 +67,43 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         childRepository.update(getMockChild());
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
 
     @Test
     public void assertAllChildReturnsListOfChilds() {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class))).thenReturn(getChildCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getChildCursor());
         Assert.assertNotNull(childRepository.all());
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
     }
 
     @Test
     public void assertFindChildReturnsListOfChilds() {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class))).thenReturn(getChildCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getChildCursor());
         Assert.assertNotNull(childRepository.find("0"));
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
     }
 
     @Test
     public void assertFindChildByMotherReturnsListOfChilds() {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class))).thenReturn(getChildCursor());
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getChildCursor());
         Assert.assertNotNull(childRepository.findByMotherCaseId("0"));
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).query(Mockito.anyString(),Mockito.any(String[].class),Mockito.anyString(),Mockito.any(String[].class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class),Mockito.isNull(String.class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
     }
 
     @Test
     public void assertFindChildSReturnsListOfChilds() {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(getChildCursor());
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getChildCursor());
         Assert.assertNotNull(childRepository.findChildrenByCaseIds(new String[]{"0"}));
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).rawQuery(Mockito.anyString(),Mockito.any(String[].class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
     }
 
     @Test
@@ -113,8 +111,8 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
-        childRepository.updateDetails("",new HashMap<String, String>());
+        Mockito.when(sqLiteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
+        childRepository.updateDetails("", new HashMap<String, String>());
     }
 
     @Test
@@ -122,7 +120,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
+        Mockito.when(sqLiteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
         childRepository.close("0");
     }
 
@@ -140,7 +138,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(),Mockito.isNull(String[].class))).thenReturn(getJoinCursor());
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.isNull(String[].class))).thenReturn(getJoinCursor());
         //throws Exception for cursor being null
         Assert.assertNotNull(childRepository.allChildrenWithMotherAndEC());
     }
@@ -150,7 +148,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(getJoinCursor());
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getJoinCursor());
         //throws Exception for cursor being null
         Assert.assertNotNull(childRepository.findAllChildrenByECId("0"));
     }
@@ -160,9 +158,9 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
-        childRepository.updatePhotoPath("/home/real","/home/kaderchowdhury");
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class));
+        Mockito.when(sqLiteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
+        childRepository.updatePhotoPath("/home/real", "/home/kaderchowdhury");
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
 
     @Test
@@ -170,14 +168,14 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.delete(Mockito.anyString(),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
+        Mockito.when(sqLiteDatabase.delete(Mockito.anyString(), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
         childRepository.delete("");
-        Mockito.verify(sqLiteDatabase,Mockito.times(1)).delete(Mockito.anyString(),Mockito.anyString(),Mockito.any(String[].class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).delete(Mockito.anyString(), Mockito.anyString(), Mockito.any(String[].class));
     }
 
     public MatrixCursor getJoinCursor() {
-        String[] columns = {"childid","childmotherCaseId","childthayiCardNumber","childdateOfBirth","childgender","childdetails","childisClosed","childphotoPath","motherid","motherecCaseId","motherthayiCardNumber","mothertype","motherreferenceDate","motherdetails","motherisClosed","eligible_coupleid","eligible_couplewifeName","eligible_couplehusbandName","eligible_coupleecNumber","eligible_couplevillage","eligible_couplesubCenter","eligible_coupleisOutOfArea","eligible_coupledetails","eligible_coupleisClosed","eligible_couplephotoPath"};
-        String[] row = {"childid","childmotherCaseId","childthayiCardNumber","childdateOfBirth","childgender","{\"details\":\"1\"}","childisClosed","childphotoPath","motherid","motherecCaseId","motherthayiCardNumber","mothertype","motherreferenceDate","{\"details\":\"1\"}","motherisClosed","eligible_coupleid","eligible_couplewifeName","eligible_couplehusbandName","eligible_coupleecNumber","eligible_couplevillage","eligible_couplesubCenter","eligible_coupleisOutOfArea","{\"details\":\"1\"}","eligible_coupleisClosed","eligible_couplephotoPath"};
+        String[] columns = {"childid", "childmotherCaseId", "childthayiCardNumber", "childdateOfBirth", "childgender", "childdetails", "childisClosed", "childphotoPath", "motherid", "motherecCaseId", "motherthayiCardNumber", "mothertype", "motherreferenceDate", "motherdetails", "motherisClosed", "eligible_coupleid", "eligible_couplewifeName", "eligible_couplehusbandName", "eligible_coupleecNumber", "eligible_couplevillage", "eligible_couplesubCenter", "eligible_coupleisOutOfArea", "eligible_coupledetails", "eligible_coupleisClosed", "eligible_couplephotoPath"};
+        String[] row = {"childid", "childmotherCaseId", "childthayiCardNumber", "childdateOfBirth", "childgender", "{\"details\":\"1\"}", "childisClosed", "childphotoPath", "motherid", "motherecCaseId", "motherthayiCardNumber", "mothertype", "motherreferenceDate", "{\"details\":\"1\"}", "motherisClosed", "eligible_coupleid", "eligible_couplewifeName", "eligible_couplehusbandName", "eligible_coupleecNumber", "eligible_couplevillage", "eligible_couplesubCenter", "eligible_coupleisOutOfArea", "{\"details\":\"1\"}", "eligible_coupleisClosed", "eligible_couplephotoPath"};
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(row);
         return cursor;
@@ -185,14 +183,14 @@ public class ChildRepositoryTest extends BaseUnitTest {
 
     public MatrixCursor getChildCursor() {
 
-        String[] columns = {ID_COLUMN, MOTHER_ID_COLUMN,THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
+        String[] columns = {ID_COLUMN, MOTHER_ID_COLUMN, THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"0","1","2","2017-10-10","M","{\"details\":\"1\"}","0","/home/real/"});
+        cursor.addRow(new Object[] {"0", "1", "2", "2017-10-10", "M", "{\"details\":\"1\"}", "0", "/home/real/"});
         return cursor;
     }
 
     public Child getMockChild(){
-        Child child = new Child("caseId","motherCaseId","thayiCardNumber","dateOfBirth","gender",new HashMap<String,String>());
+        Child child = new Child("caseId", "motherCaseId", "thayiCardNumber", "dateOfBirth", "gender", new HashMap<String, String>());
         return child;
     }
 }
