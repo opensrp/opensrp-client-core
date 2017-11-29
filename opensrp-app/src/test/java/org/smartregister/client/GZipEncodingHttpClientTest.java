@@ -129,7 +129,7 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
 
                     @Override
                     public void writeTo(OutputStream outputStream) throws IOException {
-
+                        System.out.println();
                     }
 
                     @Override
