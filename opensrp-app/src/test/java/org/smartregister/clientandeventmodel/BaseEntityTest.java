@@ -23,19 +23,19 @@ public class BaseEntityTest {
 
     private List<Address> addresses = new ArrayList<>();
 
-    private Map<String, Object> attributes = new HashMap<String,Object>();
+    private Map<String, Object> attributes = new HashMap<String, Object>();
     BaseEntityMock baseEntity;
 
     @Before
     public void setUp() {
-        baseEntity = new BaseEntityMock(baseEntityId,identifiers);
+        baseEntity = new BaseEntityMock(baseEntityId, identifiers);
     }
 
     @Test
-    public void assertConstructors(){
-        Assert.assertNotNull(new BaseEntityMock(baseEntityId,identifiers));
-        Assert.assertNotNull(new BaseEntityMock(baseEntityId,identifiers,attributes));
-        Assert.assertNotNull(new BaseEntityMock(baseEntityId,identifiers,attributes,addresses));
+    public void assertConstructors() {
+        Assert.assertNotNull(new BaseEntityMock(baseEntityId, identifiers));
+        Assert.assertNotNull(new BaseEntityMock(baseEntityId, identifiers, attributes));
+        Assert.assertNotNull(new BaseEntityMock(baseEntityId, identifiers, attributes, addresses));
     }
     
     public String getBaseEntityId() {
@@ -45,7 +45,7 @@ public class BaseEntityTest {
     @Test
     public void setBaseEntityId() {
         baseEntity.setBaseEntityId(baseEntityId);
-        Assert.assertEquals(getBaseEntityId(),baseEntityId);
+        Assert.assertEquals(getBaseEntityId(), baseEntityId);
     }
 
     
@@ -61,7 +61,7 @@ public class BaseEntityTest {
     @Test
     public void setAddresses() {
         baseEntity.setAddresses(addresses);
-        Assert.assertEquals(getAddresses(),addresses);
+        Assert.assertEquals(getAddresses(), addresses);
     }
 
     @Test
@@ -72,9 +72,9 @@ public class BaseEntityTest {
         addressesses.add(address);
         baseEntity.setAddresses(addressesses);
         baseEntity.addAddress(address);
-        Assert.assertEquals(getAddresses(),addressesses);
-        Assert.assertEquals(getAddress("type"),address);
-        Assert.assertEquals(getAddress("NULL"),null);
+        Assert.assertEquals(getAddresses(), addressesses);
+        Assert.assertEquals(getAddress("type"), address);
+        Assert.assertEquals(getAddress("NULL"), null);
     }
 
     
@@ -90,8 +90,7 @@ public class BaseEntityTest {
     @Test
     public void setAttributes() {
         baseEntity.setAttributes(attributes);
-        Assert.assertEquals(getAttributes(),attributes);
-
+        Assert.assertEquals(getAttributes(), attributes);
     }
 
     @Test
@@ -101,27 +100,24 @@ public class BaseEntityTest {
         baseEntity.setAttributes(null);
         baseEntity.addAttribute(name, value);
         baseEntity.setAttributes(null);
-        Assert.assertEquals(getAttribute(""),null);
+        Assert.assertEquals(getAttribute(""), null);
         Map<String, Object> attributes = new HashMap<>();
-        attributes.put(name,value);
+        attributes.put(name, value);
         baseEntity.setAttributes(attributes);
-        Assert.assertEquals(getAttribute(""),null);
+        Assert.assertEquals(getAttribute(""), null);
         baseEntity.addAttribute(name, value);
-        Assert.assertEquals(getAttribute("name"),value);
+        Assert.assertEquals(getAttribute("name"), value);
         baseEntity.removeAttribute("name");//attribute successfully added and removed
-        Assert.assertEquals(getAttribute("name"),null);
+        Assert.assertEquals(getAttribute("name"), null);
     }
 
-    
     public void removeAttribute(String name) {
         baseEntity.removeAttribute(name);
     }
 
-    
     public Map<String, String> getIdentifiers() {
         return baseEntity.getIdentifiers();
     }
-
     
     public String getIdentifier(String identifierType) {
         return baseEntity.getIdentifier(identifierType);
@@ -130,7 +126,7 @@ public class BaseEntityTest {
     @Test
     public void setIdentifiers() {
         baseEntity.setIdentifiers(identifiers);
-        Assert.assertEquals(getIdentifiers(),identifiers);
+        Assert.assertEquals(getIdentifiers(), identifiers);
     }
 
     String identifierType = "type";
@@ -139,15 +135,15 @@ public class BaseEntityTest {
     public void addIdentifier() {
         baseEntity.setIdentifiers(identifiers);
         baseEntity.addIdentifier(identifierType, identifier);
-        Assert.assertEquals(getIdentifier(identifierType),identifier);
+        Assert.assertEquals(getIdentifier(identifierType), identifier);
     }
 
     @Test
     public void removeIdentifier() {
-        identifiers.put(identifierType,identifier);
+        identifiers.put(identifierType, identifier);
         baseEntity.setIdentifiers(identifiers);
         baseEntity.removeIdentifier(identifierType);
-        Assert.assertEquals(getIdentifiers(),identifiers);
+        Assert.assertEquals(getIdentifiers(), identifiers);
     }
 
     @Test
@@ -188,11 +184,10 @@ public class BaseEntityTest {
         Assert.assertNotNull(baseEntity.withAttribute(name, value));
     }
 
-
     @Test
     public void assertequals() {
         Object o = new BaseEntity();
-        Assert.assertEquals(baseEntity.equals(o),false);
+        Assert.assertEquals(baseEntity.equals(o), false);
     }
 
     @Test

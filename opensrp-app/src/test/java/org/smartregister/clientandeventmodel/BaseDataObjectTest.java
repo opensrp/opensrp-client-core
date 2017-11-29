@@ -30,9 +30,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setCreator() {
         baseDataObject.setCreator(user);
-        Assert.assertEquals(getCreator(),user);
+        Assert.assertEquals(getCreator(), user);
     }
-
     
     public Date getDateCreated() {
         return baseDataObject.getDateCreated();
@@ -41,9 +40,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setDateCreated() {
         baseDataObject.setDateCreated(date);
-        Assert.assertEquals(getDateCreated(),date);
+        Assert.assertEquals(getDateCreated(), date);
     }
-
     
     public User getEditor() {
         return baseDataObject.getEditor();
@@ -52,9 +50,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setEditor() {
         baseDataObject.setEditor(user);
-        Assert.assertEquals(getEditor(),user);
+        Assert.assertEquals(getEditor(), user);
     }
-
     
     public Date getDateEdited() {
         return baseDataObject.getDateEdited();
@@ -63,9 +60,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setDateEdited() {
         baseDataObject.setDateEdited(date);
-        Assert.assertEquals(getDateEdited(),date);
+        Assert.assertEquals(getDateEdited(), date);
     }
-
     
     public Boolean getVoided() {
         return baseDataObject.getVoided();
@@ -74,9 +70,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setVoided() {
         baseDataObject.setVoided(Boolean.TRUE);
-        Assert.assertEquals(getVoided(),Boolean.TRUE);
+        Assert.assertEquals(getVoided(), Boolean.TRUE);
     }
-
     
     public Date getDateVoided() {
         return baseDataObject.getDateVoided();
@@ -85,9 +80,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setDateVoided() {
         baseDataObject.setDateVoided(date);
-        Assert.assertEquals(getDateVoided(),date);
+        Assert.assertEquals(getDateVoided(), date);
     }
-
     
     public User getVoider() {
         return baseDataObject.getVoider();
@@ -96,9 +90,8 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setVoider() {
         baseDataObject.setVoider(user);
-        Assert.assertEquals(getVoider(),user);
+        Assert.assertEquals(getVoider(), user);
     }
-
     
     public String getVoidReason() {
         return baseDataObject.getVoidReason();
@@ -107,7 +100,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
     @Test
     public void setVoidReason() {
         baseDataObject.setVoidReason("reason");
-        Assert.assertEquals(getVoidReason(),"reason");
+        Assert.assertEquals(getVoidReason(), "reason");
     }
 
     @Test
