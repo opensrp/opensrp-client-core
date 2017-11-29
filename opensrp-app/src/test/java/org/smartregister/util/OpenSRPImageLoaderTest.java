@@ -81,15 +81,15 @@ public class OpenSRPImageLoaderTest extends BaseUnitTest {
 
     @Test
     public void assertFragmentActivityConstructorInitializationNotNull() throws Exception {
-        OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(activity,-1);
+        OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(activity, -1);
         Assert.assertNotNull(openSRPImageLoader);
     }
 
     @Test
     public void assertServiceConstructorInitializationNotNull() throws Exception {
         PowerMockito.mockStatic(Volley.class);
-        PowerMockito.when(Volley.newRequestQueue(Mockito.any(android.content.Context.class),Mockito.any(HurlStack.class))).thenReturn(Mockito.mock(RequestQueue.class));
-        OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(Mockito.mock(Service.class),-1);
+        PowerMockito.when(Volley.newRequestQueue(Mockito.any(android.content.Context.class), Mockito.any(HurlStack.class))).thenReturn(Mockito.mock(RequestQueue.class));
+        OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(Mockito.mock(Service.class), -1);
         Assert.assertNotNull(openSRPImageLoader);
     }
 

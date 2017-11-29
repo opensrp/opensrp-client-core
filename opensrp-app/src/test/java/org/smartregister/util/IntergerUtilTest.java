@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class IntergerUtilTest {
+
     @Test
     public void shouldReturnCorrespondingIntegerValueWhenStringIsValidInteger() throws Exception {
         Assert.assertEquals((Object) 1, IntegerUtil.tryParse("1", 0));

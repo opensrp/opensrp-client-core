@@ -70,16 +70,16 @@ public class ClientProcessorTest extends BaseUnitTest {
     private ClientProcessor clientProcessor;
 
     @Mock
-    CoreLibrary coreLibrary;
+    private CoreLibrary coreLibrary;
 
     @Mock
-    DetailsRepository detailsRepository;
+    private DetailsRepository detailsRepository;
     @Mock
-    CloudantDataHandler cloudantDataHandler;
+    private CloudantDataHandler cloudantDataHandler;
     @Mock
-    CommonRepository cr;
+    private CommonRepository cr;
     @Mock
-    SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
 //    private ActivityController<MockActivity> controller;
 //    private MockActivity activity;
@@ -125,10 +125,6 @@ public class ClientProcessorTest extends BaseUnitTest {
         SharedPreferences.Editor edit = Mockito.mock(SharedPreferences.Editor.class);
         PowerMockito.when(sharedPreferences.edit()).thenReturn(edit);
         PowerMockito.when(edit.putLong(Mockito.anyString(), Mockito.anyLong())).thenReturn(MockEditor.getEditor());
-
-
-
-//        eventsAndAlerts.addAll(alertList);
 
         clientProcessor.processClient();
         clientProcessor.processClient(eventList);
@@ -246,8 +242,4 @@ public class ClientProcessorTest extends BaseUnitTest {
         Assert.assertEquals(Boolean.TRUE, b);
 
     }
-
-
-
-
 }
