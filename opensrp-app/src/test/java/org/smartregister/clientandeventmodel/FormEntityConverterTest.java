@@ -59,9 +59,7 @@ public class FormEntityConverterTest extends BaseUnitTest {
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.encounter_start.entity(), FormEntityConstants.Encounter.encounter_start.entityId()));
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.encounter_end.entity(), FormEntityConstants.Encounter.encounter_end.entityId()));
         FormSubmissionMap fsmap = new FormSubmissionMap(fs, attributes, fields, null);
-        Event event = formEntityConverter.getEventFromFormSubmission(fsmap);
-        Assert.assertNotNull(event);
-        Assert.assertEquals(formEntityConverter.getEventFromFormSubmission(fsmap),event);
+        Assert.assertNotNull(formEntityConverter.getEventFromFormSubmission(fsmap));
     }
 
     @Test
