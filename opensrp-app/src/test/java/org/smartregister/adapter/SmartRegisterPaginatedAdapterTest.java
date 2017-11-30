@@ -22,6 +22,7 @@ public class SmartRegisterPaginatedAdapterTest {
     private String NameZERO = "Name0";
     private String NameFOURTYNINE = "Name49";
     private int TWENTY = 20;
+    private int TWENTYONE = 21;
     private int THREE = 3;
     private int FOURTYNINE = 49;
     private int NINETEEN = 19;
@@ -31,9 +32,12 @@ public class SmartRegisterPaginatedAdapterTest {
     private int FIVE = 5;
     private int ZERO = 0;
     private int NINE = 9;
+    private int THIRTYNINE = 39;
+    private int ONE = 1;
+    private int TWO = 2;
     
     @Test
-    public void assertshouldReturn0PageCountFor0Clients() {
+    public void assertshouldReturnZEROPageCountForZEROClients() {
         SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(ZERO);
 
         Assert.assertEquals(adapter.getCount(), ZERO);
@@ -44,10 +48,10 @@ public class SmartRegisterPaginatedAdapterTest {
     }
 
     @Test
-    public void assertshouldReturn1PageCountFor20Clients() {
+    public void assertshouldReturnONEPageCountForTWENTYClients() {
         SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(TWENTY);
         Assert.assertEquals(adapter.getCount(), TWENTY);
-        Assert.assertEquals(adapter.pageCount(), 1);
+        Assert.assertEquals(adapter.pageCount(), ONE);
         Assert.assertEquals(adapter.currentPage(), ZERO);
         Assert.assertFalse(adapter.hasNextPage());
         Assert.assertFalse(adapter.hasPreviousPage());
@@ -55,17 +59,17 @@ public class SmartRegisterPaginatedAdapterTest {
 
     @Test
     public void assertshouldReturn2PageCountFor21Clients() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(21);
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(TWENTYONE);
         Assert.assertEquals(adapter.getCount(), TWENTY);
-        Assert.assertEquals(adapter.pageCount(), 2);
+        Assert.assertEquals(adapter.pageCount(), TWO);
         Assert.assertEquals(adapter.currentPage(), ZERO);
         Assert.assertTrue(adapter.hasNextPage());
         Assert.assertFalse(adapter.hasPreviousPage());
 
         adapter.nextPage();
 
-        Assert.assertEquals(adapter.getCount(), 1);
-        Assert.assertEquals(adapter.currentPage(), 1);
+        Assert.assertEquals(adapter.getCount(), ONE);
+        Assert.assertEquals(adapter.currentPage(), ONE);
         Assert.assertFalse(adapter.hasNextPage());
         Assert.assertTrue(adapter.hasPreviousPage());
 
@@ -94,7 +98,7 @@ public class SmartRegisterPaginatedAdapterTest {
         FakeClientsProvider fakeClientsProvider = new FakeClientsProvider(getSmartRegisterClients(FIFTY));
         SmartRegisterPaginatedAdapter adapter = getAdapter(fakeClientsProvider);
 
-        adapter.getView(0, null, null);
+        adapter.getView(ZERO, null, null);
         Assert.assertEquals(NameZERO, fakeClientsProvider.getViewCurrentClient.name());
 
         adapter.getView(FOURTYNINE, null, null);
@@ -110,7 +114,7 @@ public class SmartRegisterPaginatedAdapterTest {
         Assert.assertEquals(NINETEEN, adapter.getItemId(NINETEEN));
         adapter.nextPage();
         Assert.assertEquals(TWENTY, adapter.getItemId(ZERO));
-        Assert.assertEquals(39, adapter.getItemId(NINETEEN));
+        Assert.assertEquals(THIRTYNINE, adapter.getItemId(NINETEEN));
         adapter.nextPage();
         Assert.assertEquals(FOURTY, adapter.getItemId(ZERO));
         Assert.assertEquals(FOURTYNINE, adapter.getItemId(NINE));
@@ -124,14 +128,14 @@ public class SmartRegisterPaginatedAdapterTest {
 
         adapter.refreshList(null, null, null, null);
 
-        Assert.assertEquals(1, adapter.pageCount());
+        Assert.assertEquals(ONE, adapter.pageCount());
         Assert.assertEquals(FIVE, adapter.getCount());
     }
 
     @Test
     public void assertpaginationShouldWorkFor25ClientsPerPage() {
         SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(FIFTY, TWENTYFIVE);
-        Assert.assertEquals(2, adapter.pageCount());
+        Assert.assertEquals(TWO, adapter.pageCount());
         Assert.assertEquals(TWENTYFIVE, adapter.getCount());
     }
 
