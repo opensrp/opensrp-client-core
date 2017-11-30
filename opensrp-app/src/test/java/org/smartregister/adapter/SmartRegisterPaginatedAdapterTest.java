@@ -19,34 +19,36 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 @RunWith(RobolectricTestRunner.class)
 public class SmartRegisterPaginatedAdapterTest {
 
-    private String Name0 = "Name0";
-    private String Name49 = "Name49";
-    private int magic20 = 20;
-    private int magic3 = 3;
-    private int magic49 = 49;
-    private int magic19 = 19;
-    private int magic40 = 40;
-    private int magic50 = 50;
-    private int magic25 = 25;
-    private int magic5 = 5;
-
+    private String NameZERO = "Name0";
+    private String NameFOURTYNINE = "Name49";
+    private int TWENTY = 20;
+    private int THREE = 3;
+    private int FOURTYNINE = 49;
+    private int NINETEEN = 19;
+    private int FOURTY = 40;
+    private int FIFTY = 50;
+    private int TWENTYFIVE = 25;
+    private int FIVE = 5;
+    private int ZERO = 0;
+    private int NINE = 9;
+    
     @Test
     public void assertshouldReturn0PageCountFor0Clients() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(0);
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(ZERO);
 
-        Assert.assertEquals(adapter.getCount(), 0);
-        Assert.assertEquals(adapter.pageCount(), 0);
-        Assert.assertEquals(adapter.currentPage(), 0);
+        Assert.assertEquals(adapter.getCount(), ZERO);
+        Assert.assertEquals(adapter.pageCount(), ZERO);
+        Assert.assertEquals(adapter.currentPage(), ZERO);
         Assert.assertFalse(adapter.hasNextPage());
         Assert.assertFalse(adapter.hasPreviousPage());
     }
 
     @Test
     public void assertshouldReturn1PageCountFor20Clients() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(magic20);
-        Assert.assertEquals(adapter.getCount(), magic20);
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(TWENTY);
+        Assert.assertEquals(adapter.getCount(), TWENTY);
         Assert.assertEquals(adapter.pageCount(), 1);
-        Assert.assertEquals(adapter.currentPage(), 0);
+        Assert.assertEquals(adapter.currentPage(), ZERO);
         Assert.assertFalse(adapter.hasNextPage());
         Assert.assertFalse(adapter.hasPreviousPage());
     }
@@ -54,9 +56,9 @@ public class SmartRegisterPaginatedAdapterTest {
     @Test
     public void assertshouldReturn2PageCountFor21Clients() {
         SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(21);
-        Assert.assertEquals(adapter.getCount(), magic20);
+        Assert.assertEquals(adapter.getCount(), TWENTY);
         Assert.assertEquals(adapter.pageCount(), 2);
-        Assert.assertEquals(adapter.currentPage(), 0);
+        Assert.assertEquals(adapter.currentPage(), ZERO);
         Assert.assertTrue(adapter.hasNextPage());
         Assert.assertFalse(adapter.hasPreviousPage());
 
@@ -69,68 +71,68 @@ public class SmartRegisterPaginatedAdapterTest {
 
         adapter.previousPage();
 
-        Assert.assertEquals(adapter.currentPage(), 0);
+        Assert.assertEquals(adapter.currentPage(), ZERO);
         Assert.assertTrue(adapter.hasNextPage());
         Assert.assertFalse(adapter.hasPreviousPage());
     }
 
     @Test
     public void assertshouldReturn3PageCountFor50Clients() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(magic50);
-        Assert.assertEquals(adapter.pageCount(), magic3);
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(FIFTY);
+        Assert.assertEquals(adapter.pageCount(), THREE);
     }
 
     @Test
     public void assertgetItemShouldReturnRespectiveItem() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(magic50);
-        Assert.assertEquals(((ECClient) adapter.getItem(0)).name(), Name0);
-        Assert.assertEquals(((ECClient) adapter.getItem(magic49)).name(), Name49);
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(FIFTY);
+        Assert.assertEquals(((ECClient) adapter.getItem(ZERO)).name(), NameZERO);
+        Assert.assertEquals(((ECClient) adapter.getItem(FOURTYNINE)).name(), NameFOURTYNINE);
     }
 
     @Test
     public void assertgetViewShouldDelegateCallToProviderGetViewWithProperClient() {
-        FakeClientsProvider fakeClientsProvider = new FakeClientsProvider(getSmartRegisterClients(magic50));
+        FakeClientsProvider fakeClientsProvider = new FakeClientsProvider(getSmartRegisterClients(FIFTY));
         SmartRegisterPaginatedAdapter adapter = getAdapter(fakeClientsProvider);
 
         adapter.getView(0, null, null);
-        Assert.assertEquals(Name0, fakeClientsProvider.getViewCurrentClient.name());
+        Assert.assertEquals(NameZERO, fakeClientsProvider.getViewCurrentClient.name());
 
-        adapter.getView(magic49, null, null);
-        Assert.assertEquals(Name49, fakeClientsProvider.getViewCurrentClient.name());
+        adapter.getView(FOURTYNINE, null, null);
+        Assert.assertEquals(NameFOURTYNINE, fakeClientsProvider.getViewCurrentClient.name());
     }
 
     @Test
     public void assertgetItemIdShouldReturnTheActualPositionWithoutPagination() {
-        FakeClientsProvider fakeClientsProvider = new FakeClientsProvider(getSmartRegisterClients(magic50));
+        FakeClientsProvider fakeClientsProvider = new FakeClientsProvider(getSmartRegisterClients(FIFTY));
         SmartRegisterPaginatedAdapter adapter = getAdapter(fakeClientsProvider);
 
-        Assert.assertEquals(0, adapter.getItemId(0));
-        Assert.assertEquals(magic19, adapter.getItemId(magic19));
+        Assert.assertEquals(ZERO, adapter.getItemId(ZERO));
+        Assert.assertEquals(NINETEEN, adapter.getItemId(NINETEEN));
         adapter.nextPage();
-        Assert.assertEquals(magic20, adapter.getItemId(0));
-        Assert.assertEquals(39, adapter.getItemId(magic19));
+        Assert.assertEquals(TWENTY, adapter.getItemId(ZERO));
+        Assert.assertEquals(39, adapter.getItemId(NINETEEN));
         adapter.nextPage();
-        Assert.assertEquals(magic40, adapter.getItemId(0));
-        Assert.assertEquals(magic49, adapter.getItemId(9));
+        Assert.assertEquals(FOURTY, adapter.getItemId(ZERO));
+        Assert.assertEquals(FOURTYNINE, adapter.getItemId(NINE));
     }
 
     @Test
     public void assertupdateClientsShouldApplyFilterToShowOnlyFiveClients() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(magic50);
-        Assert.assertEquals(magic3, adapter.pageCount());
-        Assert.assertEquals(magic20, adapter.getCount());
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(FIFTY);
+        Assert.assertEquals(THREE, adapter.pageCount());
+        Assert.assertEquals(TWENTY, adapter.getCount());
 
         adapter.refreshList(null, null, null, null);
 
         Assert.assertEquals(1, adapter.pageCount());
-        Assert.assertEquals(magic5, adapter.getCount());
+        Assert.assertEquals(FIVE, adapter.getCount());
     }
 
     @Test
     public void assertpaginationShouldWorkFor25ClientsPerPage() {
-        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(magic50, magic25);
+        SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(FIFTY, TWENTYFIVE);
         Assert.assertEquals(2, adapter.pageCount());
-        Assert.assertEquals(magic25, adapter.getCount());
+        Assert.assertEquals(TWENTYFIVE, adapter.getCount());
     }
 
     private SmartRegisterPaginatedAdapter getAdapterWithFakeClients(int clientsCount) {
@@ -189,7 +191,7 @@ public class SmartRegisterPaginatedAdapterTest {
         public SmartRegisterClients updateClients(
                 FilterOption villageFilter, ServiceModeOption serviceModeOption,
                 FilterOption searchFilter, SortOption sortOption) {
-            return getSmartRegisterClients(magic5);
+            return getSmartRegisterClients(FIVE);
         }
 
         @Override

@@ -1,12 +1,9 @@
 package org.smartregister.clientandeventmodel;
 
 import android.content.res.AssetManager;
-
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,8 +15,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.mock.NodeListMock;
-import org.w3c.dom.NodeList;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -28,12 +23,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
-
-import static org.powermock.api.support.membermodification.MemberMatcher.method;
 
 /**
  * Created by kaderchowdhury on 22/11/17.

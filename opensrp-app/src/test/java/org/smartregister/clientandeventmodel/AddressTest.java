@@ -309,13 +309,13 @@ public class AddressTest extends BaseUnitTest {
 
     @Test
     public void assertwithLatitude() {
-        String latitude = "0";
+
         Assert.assertNotNull(address.withLatitude(latitude));
     }
 
     @Test
     public void assertwithLongitude() {
-        String longitude = "0";
+
         Assert.assertNotNull(address.withLongitude(longitude));
     }
 
