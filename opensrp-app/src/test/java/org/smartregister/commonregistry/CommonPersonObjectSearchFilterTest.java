@@ -1,20 +1,19 @@
 package org.smartregister.commonregistry;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
+import org.smartregister.util.EasyMap;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
-
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.util.EasyMap.create;
 
 /*
  by Raihan Ahmed
@@ -26,16 +25,16 @@ public class CommonPersonObjectSearchFilterTest {
     @Mock
     private AllBeneficiaries allBeneficiaries;
 
-    private CommonPersonObjectController controller;
+
     private Map<String, String> emptyDetails;
 
     private CommonObjectSearchFilterOption commonObjectSearchFilterOption;
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         emptyDetails = Collections.emptyMap();
-        controller = new CommonPersonObjectController(allCommonsRepository,
+        CommonPersonObjectController controller = new CommonPersonObjectController(allCommonsRepository,
                                                       allBeneficiaries,
                                                       new Cache<String>(),
                                                       new Cache<CommonPersonObjectClients>(),
@@ -58,9 +57,9 @@ public class CommonPersonObjectSearchFilterTest {
         commonObjectSearchFilterOption = new CommonObjectSearchFilterOption("Woman A",
                                                                             List_Of_Filters);
 
-        Map<String, String> column1 = create("name", "Woman A").map();
-        Map<String, String> column2 = create("name", "Woman B").map();
-        Map<String, String> column3 = create("name", "Woman C").map();
+        Map<String, String> column1 = EasyMap.create("name", "Woman A").map();
+        Map<String, String> column2 = EasyMap.create("name", "Woman B").map();
+        Map<String, String> column3 = EasyMap.create("name", "Woman C").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
                                                                                 emptyDetails,
@@ -75,9 +74,9 @@ public class CommonPersonObjectSearchFilterTest {
                                                                                 "Woman C");
         expectedClient3.setColumnmaps(column3);
 
-        assertEquals(true, commonObjectSearchFilterOption.filter(expectedClient1));
-        assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient2));
-        assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient3));
+        Assert.assertEquals(true, commonObjectSearchFilterOption.filter(expectedClient1));
+        Assert.assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient2));
+        Assert.assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient3));
     }
 
     @Test
@@ -92,10 +91,9 @@ public class CommonPersonObjectSearchFilterTest {
         List_Of_Filters.add(filterOptionsForSearch);
         commonObjectSearchFilterOption = new CommonObjectSearchFilterOption("Woman A",
                                                                             List_Of_Filters);
-
-        Map<String, String> detail1 = create("name", "Woman A").map();
-        Map<String, String> detail2 = create("name", "Woman B").map();
-        Map<String, String> detail3 = create("name", "Woman C").map();
+        Map<String, String> detail1 = EasyMap.create("name", "Woman A").map();
+        Map<String, String> detail2 = EasyMap.create("name", "Woman B").map();
+        Map<String, String> detail3 = EasyMap.create("name", "Woman C").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
                                                                                 detail1,
@@ -110,8 +108,8 @@ public class CommonPersonObjectSearchFilterTest {
                                                                                 "Woman C");
         expectedClient3.setColumnmaps(emptyDetails);
 
-        assertEquals(true, commonObjectSearchFilterOption.filter(expectedClient1));
-        assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient2));
-        assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient3));
+        Assert.assertEquals(true, commonObjectSearchFilterOption.filter(expectedClient1));
+        Assert.assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient2));
+        Assert.assertEquals(false, commonObjectSearchFilterOption.filter(expectedClient3));
     }
 }

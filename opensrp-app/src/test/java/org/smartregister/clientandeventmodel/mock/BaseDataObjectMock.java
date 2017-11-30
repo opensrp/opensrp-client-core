@@ -9,10 +9,6 @@ import java.util.Date;
  */
 public class BaseDataObjectMock extends BaseDataObject {
 
-    public BaseDataObjectMock() {
-        super();
-    }
-
     @Override
     public User getCreator() {
         return super.getCreator();

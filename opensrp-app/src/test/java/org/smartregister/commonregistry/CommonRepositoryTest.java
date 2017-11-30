@@ -3,54 +3,22 @@ package org.smartregister.commonregistry;
 import android.content.ContentValues;
 
 import junit.framework.Assert;
-
-import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
-
-import org.fest.assertions.api.ANDROID;
-import org.junit.Before;
-import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.api.support.membermodification.MemberModifier;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.commonregistry.shared.FakeRepository;
-import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.service.AlertService;
-import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
-
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static junit.framework.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -95,7 +63,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String [] tableColumns = new String[] {};
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
         CommonRepository commonRepository = new CommonRepository(tablename, tableColumns);
-        assertNotNull(commonRepository);
+        Assert.assertNotNull(commonRepository);
         Assert.assertNotNull(new CommonRepository(commonFtsObject, tablename, tableColumns));
     }
 
@@ -104,7 +72,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String tablename = "";
         String [] tableColumns = new String[] {CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
-        when(commonFtsObject.getCustomRelationalId(anyString())).thenReturn(CUSTOMRELATIONALID);
+        Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         Assert.assertNotNull(new CommonRepository(commonFtsObject, tablename, tableColumns));
     }
 
@@ -115,15 +83,15 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository = new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         commonRepository.add(new CommonPersonObject("", "", new HashMap<String, String>(), ""));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(anyString(), isNull(String.class), any(ContentValues.class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
 
     @Test
     public void findByCaseIDCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         String tablename = "";
@@ -131,7 +99,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.findByCaseID(""));
@@ -141,7 +109,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Test
     public void findByBaseEntityIdCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         String tablename = "";
@@ -149,7 +117,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.findByBaseEntityId(""));
@@ -159,7 +127,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Test
     public void findByGOBHHIDCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         String tablename = "";
@@ -167,7 +135,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.findHHByGOBHHID(""));
@@ -177,7 +145,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Test
     public void allcommonCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         String tablename = "";
@@ -185,7 +153,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.allcommon());
@@ -195,7 +163,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Test
     public void findByCaseIDsCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -204,17 +172,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.findByCaseIDs("caseID1", "caseID2"));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
     public void findByRelationalIDsCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -223,17 +191,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.findByRelationalIDs("relationalID", "relationalID2"));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
     public void findByRelational_IDsCallsDatabaseQuery1times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -242,17 +210,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.findByRelational_IDs("relationalID", "relationalID2"));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
     public void customQueryReturnsNotNUll() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -261,17 +229,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.customQuery("", new String[]{}, ""));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
     public void customQueryForCompleteRowReturnsNotNUll() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -280,17 +248,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.customQueryForCompleteRow("", new String[]{}, ""));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
     public void rawCustomQueryForAdapterRowReturnsNotNUll() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -299,17 +267,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.isNull(String[].class))).thenReturn(matrixCursor);
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String[].class))).thenReturn(matrixCursor);
         Assert.assertNotNull(commonRepository.rawCustomQueryForAdapter(""));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.isNull(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String[].class));
 
     }
 
     @Test
     public void readAllcommonforCursorAdapterReturnsNotNUll() throws Exception {
-        String[] columns = new String[] { "_id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "_id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -323,7 +291,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Test
     public void readAllcommonforFieldReturnsNotNUll() throws Exception {
-        String[] columns = new String[] { "_id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "_id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { 0, 0, 0, 0 });
         matrixCursor.addRow(new Object[] { 1, 1, 1, 1 });
@@ -331,13 +299,13 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String [] tableColumns = new String[] {};
         commonRepository =  new CommonRepository(tablename, tableColumns);
         matrixCursor.moveToFirst();
-        Assert.assertNotNull(commonRepository.readAllcommonForField(matrixCursor,""));
+        Assert.assertNotNull(commonRepository.readAllcommonForField(matrixCursor, ""));
 
     }
 
     @Test
     public void updateDetailsCallsDatabaseUpdate1Times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -346,18 +314,18 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         commonRepository.updateDetails("caseID", new HashMap<String, String>());
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
     public void mergeDetailsCallsDatabaseUpdate1Times() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor matrixCursor= new MatrixCursor(columns);
         matrixCursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         matrixCursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -366,12 +334,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository =  new CommonRepository(tablename, tableColumns);
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
         Mockito.when(sqliteDatabase.query(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.isNull(String.class))).thenReturn(matrixCursor);
         commonRepository.mergeDetails("caseID", new HashMap<String, String>());
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(ContentValues.class),org.mockito.ArgumentMatchers.anyString(),org.mockito.ArgumentMatchers.any(String[].class));
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
@@ -380,21 +348,21 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String tablename = "";
         String [] tableColumns = new String[] {CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
-        when(commonFtsObject.getCustomRelationalId(anyString())).thenReturn(CUSTOMRELATIONALID);
+        Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
         Assert.assertNotNull(commonRepository);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
         repository = Mockito.mock(Repository.class);
-        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.onCreate(sqliteDatabase);
-        Mockito.verify(sqliteDatabase,times(6)).execSQL(Mockito.anyString());
+        Mockito.verify(sqliteDatabase, Mockito.times(6)).execSQL(Mockito.anyString());
     }
 
 
     @Test
     public void assertExecuteInsertStatementReturnsId() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         cursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -402,7 +370,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String tablename = "table";
         String [] tableColumns = new String[] {CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
-        when(commonFtsObject.getCustomRelationalId(anyString())).thenReturn(CUSTOMRELATIONALID);
+        Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
         Assert.assertNotNull(commonRepository);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
@@ -412,19 +380,19 @@ public class CommonRepositoryTest extends BaseUnitTest {
                 "SELECT  * FROM " + tablename + " WHERE base_entity_id = '" + baseEntityId + "'";
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor);
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor);
         ContentValues cv = new ContentValues();
-        cv.put("base_entity_id","1");
+        cv.put("base_entity_id", "1");
         commonRepository.updateMasterRepository(repository);
         Long id = 0l;
-        Assert.assertEquals(commonRepository.executeInsertStatement(cv,tablename),id);
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insertWithOnConflict(Mockito.anyString(),Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyInt());
-        Mockito.verify(sqliteDatabase,Mockito.times(1)).rawQuery(query,null);
+        Assert.assertEquals(commonRepository.executeInsertStatement(cv, tablename), id);
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).insertWithOnConflict(Mockito.anyString(), Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyInt());
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(query, null);
     }
 
     @Test
     public void assertQueryTableReturnsCursor() throws Exception {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         cursor.addRow(new Object[] { "caseID2", "relationalID2", new HashMap<String, String>(), 0 });
@@ -432,7 +400,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String tablename = "table";
         String [] tableColumns = new String[] {CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
-        when(commonFtsObject.getCustomRelationalId(anyString())).thenReturn(CUSTOMRELATIONALID);
+        Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
         Assert.assertNotNull(commonRepository);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
@@ -442,10 +410,10 @@ public class CommonRepositoryTest extends BaseUnitTest {
                 "SELECT  * FROM " + tablename + " WHERE base_entity_id = '" + baseEntityId + "'";
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor);
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor);
         commonRepository.updateMasterRepository(repository);
-        org.junit.Assert.assertEquals(commonRepository.queryTable(query),cursor);
-        Mockito.verify(sqliteDatabase,Mockito.times(1)).rawQuery(query,null);
+        org.junit.Assert.assertEquals(commonRepository.queryTable(query), cursor);
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(query, null);
     }
 
     @Test
@@ -459,10 +427,10 @@ public class CommonRepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        commonRepository.closeCase(baseEntityId,tablename);
+        commonRepository.closeCase(baseEntityId, tablename);
         commonRepository.updateMasterRepository(repository);
-        commonRepository.closeCase(baseEntityId,tablename);
-        Mockito.verify(sqliteDatabase,Mockito.times(1)).execSQL(Mockito.anyString());
+        commonRepository.closeCase(baseEntityId, tablename);
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
     }
 
     @Test
@@ -476,16 +444,16 @@ public class CommonRepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Assert.assertEquals(commonRepository.deleteCase(baseEntityId,tablename),false);
-        Mockito.when(sqliteDatabase.delete(Mockito.anyString(),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
+        Assert.assertEquals(commonRepository.deleteCase(baseEntityId, tablename), false);
+        Mockito.when(sqliteDatabase.delete(Mockito.anyString(), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
         commonRepository.updateMasterRepository(repository);
-        Assert.assertEquals(commonRepository.deleteCase(baseEntityId,tablename),true);
+        Assert.assertEquals(commonRepository.deleteCase(baseEntityId, tablename), true);
 
     }
 
     @Test
     public void assertRawQueryReturnsMap() {
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[] { "caseID", "relationalID", "dd1", "0" });
         cursor.addRow(new Object[] { "caseID2", "relationalID2", "dd2", "0" });
@@ -493,7 +461,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         String tablename = "table";
         String [] tableColumns = new String[] {CommonRepository.Relational_Underscore_ID, CommonRepository.BASE_ENTITY_ID_COLUMN, ADDITIONALCOLUMN, CUSTOMRELATIONALID};
         commonFtsObject = Mockito.mock(CommonFtsObject.class);
-        when(commonFtsObject.getCustomRelationalId(anyString())).thenReturn(CUSTOMRELATIONALID);
+        Mockito.when(commonFtsObject.getCustomRelationalId(Mockito.anyString())).thenReturn(CUSTOMRELATIONALID);
         CommonRepository commonRepository = new CommonRepository(commonFtsObject, tablename, tableColumns);
         Assert.assertNotNull(commonRepository);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
@@ -503,21 +471,21 @@ public class CommonRepositoryTest extends BaseUnitTest {
                 "SELECT  * FROM " + tablename + " WHERE base_entity_id = '" + baseEntityId + "'";
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor);
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor);
         commonRepository.updateMasterRepository(repository);
         Assert.assertNotNull(commonRepository.rawQuery(query));
     }
 
     @Test
     public void assertPopulateSearchValuesByCaseIdReturnsContentValue(){
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor cursor= new MatrixCursor(columns);
         cursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         String tableName = "common";
         String [] tableColumns = new String[] {};
-        String [] tables = {"common","common2"};
+        String [] tables = {"common", "common2"};
         String [] mainConditions = {"details"};
-        String [] shortFields = {"id","alerts.relationalid","alerts.details","is_closed"};
+        String [] shortFields = {"id", "alerts.relationalid", "alerts.details", "is_closed"};
 
         String[] columns2 = new String[] { "id", "name"};
         MatrixCursor cursor2= new MatrixCursor(columns2);
@@ -539,20 +507,20 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
         tableName = "common2";
         String query = "PRAGMA table_info(" + tableName + ")";
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor2);
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor2);
         Assert.assertNotNull(commonRepository.populateSearchValues("caseID"));
     }
 
     @Test
     public void assertPopulateSearchValuesReturnsContentBoolean(){
-        String[] columns = new String[] { "id", "relationalid", "details","is_closed" };
+        String[] columns = new String[] { "id", "relationalid", "details", "is_closed" };
         MatrixCursor cursor= new MatrixCursor(columns);
         cursor.addRow(new Object[] { "caseID", "relationalID", new HashMap<String, String>(), 0 });
         String tableName = "common";
         String [] tableColumns = new String[] {};
         String [] tables = {"common"};
         String [] mainConditions = {"details"};
-        String [] shortFields = {"id","alerts.relationalid","alerts.details","is_closed"};
+        String [] shortFields = {"id", "alerts.relationalid", "alerts.details", "is_closed"};
 
         String[] columns2 = new String[] { "id", "name", CommonFtsObject.phraseColumn};
         MatrixCursor cursor2= new MatrixCursor(columns2);
@@ -574,12 +542,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
 
         String query = "SELECT object_id, field FROM common_search WHERE  object_id = 'caseID'";
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor2);
-        Assert.assertEquals(commonRepository.populateSearchValues("caseID","field","value",new String[]{"details"}),false);
-        Mockito.when(sqliteDatabase.update(Mockito.anyString(),Mockito.any(ContentValues.class),Mockito.anyString(),Mockito.any(String[].class))).thenReturn(1);
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor2);
+        Assert.assertEquals(commonRepository.populateSearchValues("caseID", "field", "value", new String[]{"details"}), false);
+        Mockito.when(sqliteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
         query = "SELECT object_id, phrase FROM common_search WHERE  object_id = 'caseID'";
-        Mockito.when(sqliteDatabase.rawQuery(query,null)).thenReturn(cursor2);
-        Assert.assertEquals(commonRepository.populateSearchValues("caseID",CommonFtsObject.phraseColumn,"hello_world",new String[]{"hello"}),true);
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor2);
+        Assert.assertEquals(commonRepository.populateSearchValues("caseID", CommonFtsObject.phraseColumn, "hello_world", new String[]{"hello"}), true);
     }
 
 }

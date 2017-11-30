@@ -56,19 +56,8 @@ public class CommonPersonObjectControllerTest {
 
     @Test
     public void assertConstructorsCreateNonNullObjectsOnInstantiation() throws Exception {
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository, 
-                allBeneficiaries, 
-                new Cache<String>(), 
-                new Cache<CommonPersonObjectClients>(), 
-                "name", 
-                "bindtype", 
-                "name", 
-                "filtervalue", 
-                CommonPersonObjectController.ByColumnAndByDetails.byDetails, 
-                "nullCheckKey", 
-                CommonPersonObjectController.ByColumnAndByDetails.byDetails));
 
-        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository, 
+        Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries, 
                 new Cache<String>(), 
                 new Cache<CommonPersonObjectClients>(), 
@@ -80,7 +69,7 @@ public class CommonPersonObjectControllerTest {
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails, 
                 Mockito.mock(SortOption.class)));
 
-        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository, 
+        Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries, 
                 new Cache<String>(), 
                 new Cache<CommonPersonObjectClients>(), 
@@ -93,7 +82,7 @@ public class CommonPersonObjectControllerTest {
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails, 
                 Mockito.mock(SortOption.class)));
 
-        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository, 
+        Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries, 
                 new Cache<String>(), 
                 new Cache<CommonPersonObjectClients>(), 
@@ -104,7 +93,7 @@ public class CommonPersonObjectControllerTest {
                 "null_check_key", 
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails));
 
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository, 
+        Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries, 
                 new Cache<String>(), 
                 new Cache<CommonPersonObjectClients>(), 
@@ -113,7 +102,7 @@ public class CommonPersonObjectControllerTest {
                 "nullCheckKey", 
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails));
 
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository, 
+        Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries, 
                 new Cache<String>(), 
                 new Cache<CommonPersonObjectClients>(), 
@@ -124,7 +113,7 @@ public class CommonPersonObjectControllerTest {
                 Mockito.mock(SortOption.class)
                 ));
 
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository, 
+        Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries, 
                 new Cache<String>(), 
                 new Cache<CommonPersonObjectClients>(), 

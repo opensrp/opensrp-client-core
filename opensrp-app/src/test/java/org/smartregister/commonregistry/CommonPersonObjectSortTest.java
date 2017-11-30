@@ -1,21 +1,20 @@
 package org.smartregister.commonregistry;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
+import org.smartregister.util.EasyMap;
 import org.smartregister.view.contract.SmartRegisterClients;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.util.EasyMap.create;
 
 /*
  by Raihan Ahmed
@@ -33,7 +32,7 @@ public class CommonPersonObjectSortTest {
     private CommonObjectSort commonObjectSort;
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository, allBeneficiaries, new Cache<String>(), new Cache<CommonPersonObjectClients>(),"name","bindtype","name", CommonPersonObjectController.ByColumnAndByDetails.byDetails);
     }
@@ -43,12 +42,9 @@ public class CommonPersonObjectSortTest {
 
         commonObjectSort = new CommonObjectSort(CommonObjectSort.ByColumnAndByDetails.byColumn,false,"name","name");
 
-        Map<String, String> column1 = create("name", "Woman A").map();
-        Map<String, String> column2 = create("name","Woman B").map();
-        Map<String, String> column3= create("name","Woman C").map();
-
-
-
+        Map<String, String> column1 = EasyMap.create("name", "Woman A").map();
+        Map<String, String> column2 = EasyMap.create("name","Woman B").map();
+        Map<String, String> column3= EasyMap.create("name","Woman C").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",emptyDetails,"Woman A");
         expectedClient1.setColumnmaps(column1);
@@ -61,14 +57,12 @@ public class CommonPersonObjectSortTest {
         clients.add(expectedClient2);
         clients.add(expectedClient3);
         clients.add(expectedClient1);
-
-
-//        Gson gson = new Gson();
+        //        Gson gson = new Gson();
 //        String objectlist = gson.toJson(asList(expectedClient1, expectedClient2, expectedClient3));
 
 //        List<CommonPersonObjectClient> actualClients = new Gson().fromJson(clients, new TypeToken<List<CommonPersonObjectClient>>() {
 //        }.getType());
-        assertEquals(asList(expectedClient1, expectedClient2, expectedClient3), commonObjectSort.sort(clients));
+        Assert.assertEquals(Arrays.asList(expectedClient1, expectedClient2, expectedClient3), commonObjectSort.sort(clients));
 //        assertEquals(objectlist,clients);
     }
 
@@ -77,12 +71,9 @@ public class CommonPersonObjectSortTest {
 
         commonObjectSort = new CommonObjectSort(CommonObjectSort.ByColumnAndByDetails.byDetails,false,"name","name");
 
-        Map<String, String> detail1 = create("name", "Woman A").map();
-        Map<String, String> detail2 = create("name","Woman B").map();
-        Map<String, String> detail3= create("name","Woman C").map();
-
-
-
+        Map<String, String> detail1 = EasyMap.create("name", "Woman A").map();
+        Map<String, String> detail2 = EasyMap.create("name","Woman B").map();
+        Map<String, String> detail3= EasyMap.create("name","Woman C").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",detail1,"Woman A");
         expectedClient1.setColumnmaps(emptyDetails);
@@ -96,7 +87,7 @@ public class CommonPersonObjectSortTest {
         clients.add(expectedClient3);
         clients.add(expectedClient1);
 
-        assertEquals(asList(expectedClient1, expectedClient2, expectedClient3), commonObjectSort.sort(clients));
+        Assert.assertEquals(Arrays.asList(expectedClient1, expectedClient2, expectedClient3), commonObjectSort.sort(clients));
 
     }
     @Test
@@ -104,12 +95,9 @@ public class CommonPersonObjectSortTest {
 
         commonObjectSort = new CommonObjectSort(CommonObjectSort.ByColumnAndByDetails.byDetails,true,"HID","HID");
 
-        Map<String, String> detail1 = create("HID", "1").map();
-        Map<String, String> detail2 = create("HID","2").map();
-        Map<String, String> detail3= create("HID","3").map();
-
-
-
+        Map<String, String> detail1 = EasyMap.create("HID", "1").map();
+        Map<String, String> detail2 = EasyMap.create("HID","2").map();
+        Map<String, String> detail3= EasyMap.create("HID","3").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",detail1,"Woman A");
         expectedClient1.setColumnmaps(emptyDetails);
@@ -123,17 +111,8 @@ public class CommonPersonObjectSortTest {
         clients.add(expectedClient3);
         clients.add(expectedClient1);
 
-
-        assertEquals(asList(expectedClient1, expectedClient2, expectedClient3), commonObjectSort.sort(clients));
+        Assert.assertEquals(Arrays.asList(expectedClient1, expectedClient2, expectedClient3), commonObjectSort.sort(clients));
 
     }
-
-
-
-
-
-
-
-
 
 }

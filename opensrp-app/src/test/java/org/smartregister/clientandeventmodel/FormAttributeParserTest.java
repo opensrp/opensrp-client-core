@@ -47,7 +47,6 @@ public class FormAttributeParserTest extends BaseUnitTest {
     private String FORMNAME = "child_enrollment";
     private String SUBFORMNAME = "magic_subform";
     private String SOURCE = "www/form/";
-    private String subFormDefinition = SOURCE+SUBFORMNAME+"/form_definition.json";
     private String formDefinition = SOURCE+FORMNAME+"/form_definition.json";
     private String model = SOURCE+FORMNAME+"/model.xml";
     private String formJSON = SOURCE+FORMNAME+"/form.json";
@@ -231,7 +230,6 @@ public class FormAttributeParserTest extends BaseUnitTest {
         FormInstance fi = new FormInstance();
         fi.setForm(fd);
         FormSubmission fs = new FormSubmission("", "", FORMNAME, "", 0l, "", fi, 0l);
-        FormAttributeParser parser = new FormAttributeParser(context);
         Mockito.when(context.getAssets()).thenReturn(assetManager);
         FileInputStream formDefinitionIS = (new FileInputStream(getFileFromPath(this, formDefinition)));
         String stringOfFormDefinition = getStringFromStream(formDefinitionIS);

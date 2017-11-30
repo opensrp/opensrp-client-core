@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +32,6 @@ public class FormEntityConverterTest extends BaseUnitTest {
     private String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
     private String model = "www/form/"+FORMNAME+"/model.xml";
     private String formJSON = "www/form/"+FORMNAME+"/form.json";
-    private FormAttributeParser formAttributeParser;
     @Mock
     private AssetManager assetManager;
     @Mock
@@ -42,7 +40,7 @@ public class FormEntityConverterTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        formAttributeParser = new FormAttributeParser(context);
+        FormAttributeParser formAttributeParser = new FormAttributeParser(context);
         formEntityConverter = new FormEntityConverter(formAttributeParser, context);
     }
 
@@ -61,7 +59,9 @@ public class FormEntityConverterTest extends BaseUnitTest {
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.encounter_start.entity(), FormEntityConstants.Encounter.encounter_start.entityId()));
         fields.add(getFormFieldMap(FormEntityConstants.Encounter.encounter_end.entity(), FormEntityConstants.Encounter.encounter_end.entityId()));
         FormSubmissionMap fsmap = new FormSubmissionMap(fs, attributes, fields, null);
-        Assert.assertNotNull(formEntityConverter.getEventFromFormSubmission(fsmap));
+        Event event = formEntityConverter.getEventFromFormSubmission(fsmap);
+        Assert.assertNotNull(event);
+        Assert.assertEquals(formEntityConverter.getEventFromFormSubmission(fsmap),event);
     }
 
     @Test
@@ -106,7 +106,6 @@ public class FormEntityConverterTest extends BaseUnitTest {
         return new FormFieldMap(entity, "2017-10-10", "", "", "", attributes, codes);
     }
 
-    @Test
     public void assertGetEventFromFormSubmissionMock() throws Exception {
         Map<String, String> attributes = Mockito.mock(HashMap.class);
         FormSubmissionMap fs = Mockito.mock(FormSubmissionMap.class);
@@ -114,14 +113,5 @@ public class FormEntityConverterTest extends BaseUnitTest {
         Mockito.when(fs.formAttributes()).thenReturn(attributes);
         Mockito.when(attributes.get("encounter_type")).thenReturn("Child Vaccination Enrollment");
         Mockito.when(fs.getFieldValue(Mockito.isNull(String.class))).thenReturn("2017-10-10");
-        List<FormFieldMap> fields = Mockito.mock(ArrayList.class);
-        FormFieldMap fl = Mockito.mock(FormFieldMap.class);
-//        fields.add(fl);
-//        Mockito.when(fs.fields()).thenReturn(fields);
-//        Mockito.when(fl.fieldAttributes()).thenReturn(attributes);
-//        Mockito.when(attributes.containsKey(Mockito.anyString())).thenReturn(true);
-//        Mockito.when(attributes.get(Mockito.anyString())).thenReturn("");
-
-//        formEntityConverter.getEventFromFormSubmission(fs);
     }
 }
