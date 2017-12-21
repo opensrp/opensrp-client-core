@@ -188,14 +188,16 @@ public class LocationSelectorDialogFragmentTestActivity extends SecuredNativeSma
         setContentView(linearLayout);
         startFragment();
     }
+
     public void startFragment() {
 
-        fragment = LocationSelectorDialogFragment.newInstance(this,DialogOptionModalMock.getDialogOptionModal(),"","");
+        fragment = LocationSelectorDialogFragment.newInstance(this, DialogOptionModalMock.getDialogOptionModal(), "", "");
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(fragment, null);
         fragmentTransaction.commit();
     }
+
     @Override
     public void OnLocationSelected(String locationSelected) {
 

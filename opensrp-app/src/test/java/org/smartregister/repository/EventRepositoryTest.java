@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -43,7 +44,7 @@ public class EventRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertcreateValuesForReturnsContentValues() {
-        HashMap<String, String>mockmap = new HashMap<>();
+        HashMap<String, String> mockmap = new HashMap<>();
         mockmap.put("key", "value");
         Event common = new Event(Relational_ID, mockmap, mockmap, mockmap, mockmap);
         Assert.assertNotNull(eventRepository.createValuesFor(common));

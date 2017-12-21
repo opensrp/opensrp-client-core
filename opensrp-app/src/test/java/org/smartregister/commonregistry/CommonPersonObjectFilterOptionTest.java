@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.mockito.Mock;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class CommonPersonObjectFilterOptionTest {
                 "name",
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails);
     }
-    
+
     // TODO : fix failing test
     /*
     @Test
@@ -91,4 +92,4 @@ public class CommonPersonObjectFilterOptionTest {
         assertEquals(false, commonObjectFilterOption.filter(expectedClient3));
     }
     */
-   }
+}

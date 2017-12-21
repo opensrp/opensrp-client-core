@@ -1,7 +1,9 @@
 package org.smartregister.view.activity;
 
 import android.content.Intent;
+
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -41,7 +43,7 @@ public class NativeECSmartRegisterActivityTestTwo extends BaseUnitTest {
     }
 
     @Test
-    public void assertTestingTestToSeeTestWorks(){
+    public void assertTestingTestToSeeTestWorks() {
         Assert.assertNotNull(activity);
     }
 

@@ -32,7 +32,7 @@ import java.util.Map;
 
 @RunWith(RobolectricTestRunner.class)
 public class ANCDetailControllerTest {
-    
+
     @Mock
     private Context context;
     @Mock

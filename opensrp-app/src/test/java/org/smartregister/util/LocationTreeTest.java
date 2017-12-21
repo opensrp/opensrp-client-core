@@ -32,7 +32,7 @@ public class LocationTreeTest {
     public void shouldShowLocationTree() throws Exception {
         locationTree = EntityUtils.fromJson(locationJSONString, LocationTree.class);
         Assert.assertNotNull(locationTree);
-        System.out.println("shouldShowLocationTree "+ new Gson().toJson(locationTree));
+        System.out.println("shouldShowLocationTree " + new Gson().toJson(locationTree));
     }
 
     @Test
@@ -41,7 +41,7 @@ public class LocationTreeTest {
         Location l = locationTree.findLocation("765cb701-9e61-4ead-afb9-a63c943f4f14");
         Assert.assertNotNull(l);
         Assert.assertEquals(l.getName(), "testloc4");
-        System.out.println("shouldFoundALocation " +new Gson().toJson(l));
+        System.out.println("shouldFoundALocation " + new Gson().toJson(l));
     }
 
     @After

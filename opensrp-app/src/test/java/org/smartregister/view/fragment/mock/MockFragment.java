@@ -17,7 +17,6 @@ import org.smartregister.view.dialog.EditOption;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
-import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
 
 /**
  * Created by kaderchowdhury on 14/11/17.

@@ -45,8 +45,8 @@ public class PNCClientPreProcessorTest {
         ServiceProvidedDTO expectedVisit2 = new ServiceProvidedDTO("PNC", 3, "2013-05-16");
         ServiceProvidedDTO expectedVisit3 = new ServiceProvidedDTO("PNC", 7, "2013-05-20");
         List<ServiceProvidedDTO> expectedVisits = Arrays.asList(expectedVisit1,
-                                                                expectedVisit2,
-                                                                expectedVisit3);
+                expectedVisit2,
+                expectedVisit3);
 
         PNCClient processedPNCClient = new PNCClientPreProcessor().preProcess(pncClient);
 
@@ -56,10 +56,10 @@ public class PNCClientPreProcessorTest {
     @Test
     public void shouldGenerateViewElementsWhenTodayIsTheDeliveryDate() throws Exception {
         PNCClient pncClient = new PNCClient("entityId",
-                                            "village",
-                                            "name",
-                                            "theyiNo",
-                                            DateUtil.today().toString());
+                "village",
+                "name",
+                "theyiNo",
+                DateUtil.today().toString());
         PNCClient processedClient = new PNCClientPreProcessor().preProcess(pncClient);
 
         List<PNCCircleDatum> expectedCircleData = Arrays.asList(
@@ -84,7 +84,7 @@ public class PNCClientPreProcessorTest {
         assertEquals(PNCStatusColor.GREEN, pncClient.pncVisitStatusColor());
         assertEquals(expectedTickData, pncClient.pncTickData());
         assertEquals(Arrays.asList(new PNCLineDatum(1, 7, PNCVisitType.EXPECTED)),
-                     pncClient.pncLineData());
+                pncClient.pncLineData());
         assertEquals(expectedVisitDaysData, pncClient.visitDaysData());
     }
 
@@ -116,7 +116,7 @@ public class PNCClientPreProcessorTest {
         );
         assertEquals(expectedCircleData, processedClient.pncCircleData());
         assertEquals(Arrays.asList(new PNCStatusDatum(1, PNCVisitStatus.MISSED)),
-                     processedClient.pncStatusData());
+                processedClient.pncStatusData());
         assertEquals(PNCStatusColor.RED, processedClient.pncVisitStatusColor());
         assertEquals(expectedTickData, processedClient.pncTickData());
         assertEquals(expectedLineData, processedClient.pncLineData());
@@ -125,12 +125,12 @@ public class PNCClientPreProcessorTest {
 
     @Test
     public void shouldGenerateViewElementsWhenTodayIs3DaysFromDeliveryDateAndServiceIsProvidedOnDay2()
-    throws Exception {
+            throws Exception {
         DateUtil.fakeIt(new LocalDate("2013-05-16"));
         PNCClient pncClient = new PNCClient("entityId", "village", "name", "thayiNo", "2013-05-13")
                 .withServicesProvided(Arrays.asList(new ServiceProvidedDTO("PNC",
-                                                                           "2013-05-15",
-                                                                           null)));
+                        "2013-05-15",
+                        null)));
 
         PNCClient processedClient = new PNCClientPreProcessor().preProcess(pncClient);
 
@@ -215,8 +215,8 @@ public class PNCClientPreProcessorTest {
         assertEquals("should create ticks on days 4, 5 and 6",
                 expectedTickData, processedClient.pncTickData());
         assertEquals("should create an actual line from 1 to 7",
-                Arrays.asList(new PNCLineDatum(1,7,PNCVisitType.ACTUAL)),
-                     processedClient.pncLineData());
+                Arrays.asList(new PNCLineDatum(1, 7, PNCVisitType.ACTUAL)),
+                processedClient.pncLineData());
         assertEquals("should show day nos 1, 2, 3 and 7 as actual",
                 expectedVisitDaysData, processedClient.visitDaysData());
     }
@@ -272,7 +272,7 @@ public class PNCClientPreProcessorTest {
 
         assertEquals(3, processedClient.recentlyProvidedServices().size());
         assertEquals(Arrays.asList(recentService1, recentService2, recentService3),
-                     processedClient.recentlyProvidedServices());
+                processedClient.recentlyProvidedServices());
 
         pncClient = new PNCClient("entityId", "village", "name", "thayino", "2014-07-01");
         pncClient.withServicesProvided(Arrays.asList(
@@ -285,7 +285,7 @@ public class PNCClientPreProcessorTest {
 
         assertEquals(2, processedClient.recentlyProvidedServices().size());
         assertEquals(Arrays.asList(recentService1, recentService3),
-                     processedClient.recentlyProvidedServices());
+                processedClient.recentlyProvidedServices());
 
         pncClient = new PNCClient("entityId", "village", "name", "thayino", "2014-07-01");
         pncClient.withServicesProvided(Arrays.asList(

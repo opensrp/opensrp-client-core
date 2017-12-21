@@ -32,9 +32,9 @@ public class ReportRepositoryTest extends BaseUnitTest {
     private static final String INDICATOR_COLUMN = "indicator";
     private static final String ANNUAL_TARGET_COLUMN = "annualTarget";
     private static final String MONTHLY_SUMMARIES_COLUMN = "monthlySummaries";
-    private static final String[] REPORT_TABLE_COLUMNS = {INDICATOR_COLUMN, ANNUAL_TARGET_COLUMN, 
+    private static final String[] REPORT_TABLE_COLUMNS = {INDICATOR_COLUMN, ANNUAL_TARGET_COLUMN,
             MONTHLY_SUMMARIES_COLUMN};
-    
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -66,7 +66,7 @@ public class ReportRepositoryTest extends BaseUnitTest {
     public void assertAllForReturnsReportList() {
         String[] columns = {"a", "b", "c"};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"", "", ""});
+        cursor.addRow(new Object[]{"", "", ""});
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(cursor);
         Assert.assertNotNull(reportRepository.allFor(new String[]{"", "", ""}));
     }
@@ -75,7 +75,7 @@ public class ReportRepositoryTest extends BaseUnitTest {
     public void assertAllReturnsAllReports() {
         String[] columns = {"a", "b", "c"};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"", "", ""});
+        cursor.addRow(new Object[]{"", "", ""});
         Mockito.when(sqLiteDatabase.query(REPORT_TABLE_NAME, REPORT_TABLE_COLUMNS, null, null, null, null, null)).thenReturn(cursor);
         Assert.assertNotNull(reportRepository.all());
     }

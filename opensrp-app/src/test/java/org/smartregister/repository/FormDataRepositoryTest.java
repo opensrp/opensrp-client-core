@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import junit.framework.Assert;
 
 import net.sqlcipher.MatrixCursor;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -57,7 +58,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     public static final String INSTANCE_ID_COLUMN = "instanceId";
     public static final String ENTITY_ID_COLUMN = "entityId";
     private static final String DETAILS_COLUMN_NAME = "details";
-    
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -88,7 +89,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     public void assertqueryList() {
         Assert.assertNotNull(formDataRepository.queryList("sql"));
     }
-    
+
     @Test
     public void assertqueryListWithdetails() {
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor2());
@@ -101,16 +102,16 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertsaveFormSubmissionCallsDatabaseInsert(){
+    public void assertsaveFormSubmissionCallsDatabaseInsert() {
         formDataRepository.saveFormSubmission(getFormSubmission());
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
-    
+
     @Test
     public void assertfetchFromSubmission() {
         Assert.assertNotNull(formDataRepository.fetchFromSubmission(""));
     }
-    
+
     @Test
     public void assertgetPendingFormSubmissions() {
         Assert.assertNotNull(formDataRepository.getPendingFormSubmissions());
@@ -123,12 +124,12 @@ public class FormDataRepositoryTest extends BaseUnitTest {
         formDataRepository.markFormSubmissionsAsSynced(list);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
-    
+
     @Test
     public void assertsubmissionExists() {
         Assert.assertEquals(formDataRepository.submissionExists("1"), true);
     }
-    
+
     @Test
     public void assertsaveEntity() {
 
@@ -139,7 +140,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     public void assertgetMapFromSQLQuery() {
         Assert.assertNotNull(formDataRepository.getMapFromSQLQuery(""));
     }
-    
+
     @Test
     public void assertupdateServerVersion() {
         formDataRepository.updateServerVersion("", "");
@@ -147,35 +148,35 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertOnCreateCallsDatabaseExec(){
+    public void assertOnCreateCallsDatabaseExec() {
         formDataRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
     }
-    
+
     public String getJsonObject() {
-        String object =  "{\"serverVersion\":\"1.1\", \"formDataDefinitionVersion\":\"0.1\", \"instanceId\":\"1\", \"instance\":\"3\", \"formName\":\"FORM\", \"entityId\":\"2\", \"version\":\"1.0\", \"syncStatus\":\"PENDING\"}";
+        String object = "{\"serverVersion\":\"1.1\", \"formDataDefinitionVersion\":\"0.1\", \"instanceId\":\"1\", \"instance\":\"3\", \"formName\":\"FORM\", \"entityId\":\"2\", \"version\":\"1.0\", \"syncStatus\":\"PENDING\"}";
         return object;
     }
-    
+
     public FormSubmission getFormSubmission() {
         return new FormSubmission("1", "2", "FORM", getJsonObject(), "1.0", SyncStatus.PENDING, "1");
     }
-    
+
     public MatrixCursor getCursor() {
-        String[] columns = {INSTANCE_ID_COLUMN, 
-                ENTITY_ID_COLUMN, FORM_NAME_COLUMN, INSTANCE_COLUMN, VERSION_COLUMN, 
+        String[] columns = {INSTANCE_ID_COLUMN,
+                ENTITY_ID_COLUMN, FORM_NAME_COLUMN, INSTANCE_COLUMN, VERSION_COLUMN,
                 SERVER_VERSION_COLUMN, FORM_DATA_DEFINITION_VERSION_COLUMN, SYNC_STATUS_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"1", "2", "FORM", getJsonObject(), "1.0", "1.1", "0.1", SyncStatus.PENDING.value()});
+        cursor.addRow(new Object[]{"1", "2", "FORM", getJsonObject(), "1.0", "1.1", "0.1", SyncStatus.PENDING.value()});
         return cursor;
     }
-    
+
     public MatrixCursor getCursor2() {
-        String[] columns = {INSTANCE_ID_COLUMN, 
-                ENTITY_ID_COLUMN, FORM_NAME_COLUMN, INSTANCE_COLUMN, VERSION_COLUMN, 
+        String[] columns = {INSTANCE_ID_COLUMN,
+                ENTITY_ID_COLUMN, FORM_NAME_COLUMN, INSTANCE_COLUMN, VERSION_COLUMN,
                 SERVER_VERSION_COLUMN, FORM_DATA_DEFINITION_VERSION_COLUMN, SYNC_STATUS_COLUMN, DETAILS_COLUMN_NAME};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"1", "2", "FORM", getJsonObject(), "1.0", "1.1", "0.1", SyncStatus.PENDING.value(), "{\"details\":\"form_submission_failed\"}"});
+        cursor.addRow(new Object[]{"1", "2", "FORM", getJsonObject(), "1.0", "1.1", "0.1", SyncStatus.PENDING.value(), "{\"details\":\"form_submission_failed\"}"});
         return cursor;
     }
 

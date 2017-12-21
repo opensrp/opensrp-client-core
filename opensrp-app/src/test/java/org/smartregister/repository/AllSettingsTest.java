@@ -9,11 +9,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+
 import java.util.Map;
 
 @RunWith(RobolectricTestRunner.class)
 public class AllSettingsTest {
-    
+
     @Mock
     private SettingsRepository settingsRepository;
     @Mock

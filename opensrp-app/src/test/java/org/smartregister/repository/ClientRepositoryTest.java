@@ -9,6 +9,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.processor.model.Client;
+
 import java.util.HashMap;
 
 /**
@@ -35,7 +36,7 @@ public class ClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void constructorNotNullCallsOnCreateDatabaseExec(){
+    public void constructorNotNullCallsOnCreateDatabaseExec() {
         Assert.assertNotNull(clientRepository);
         clientRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());

@@ -21,7 +21,7 @@ import org.smartregister.CoreLibrary;
  * Created by kaderchowdhury on 12/11/17.
  */
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
-public class SettingsActivityTest extends BaseUnitTest{
+public class SettingsActivityTest extends BaseUnitTest {
 
     private ActivityController<SettingsActivity> controller;
 
@@ -42,17 +42,17 @@ public class SettingsActivityTest extends BaseUnitTest{
         activity = controller.get();
         controller.setup();
         Preference baseUrlPreference = activity.findPreference("DRISHTI_BASE_URL");
-        if(baseUrlPreference != null){
+        if (baseUrlPreference != null) {
             EditTextPreference baseUrlEditTextPreference = (EditTextPreference)
                     baseUrlPreference;
             Preference.OnPreferenceChangeListener preferenceChangeListener = baseUrlEditTextPreference.getOnPreferenceChangeListener();
-            Assert.assertEquals(preferenceChangeListener.onPreferenceChange(baseUrlEditTextPreference,"http://127.0.0.1"),true);
+            Assert.assertEquals(preferenceChangeListener.onPreferenceChange(baseUrlEditTextPreference, "http://127.0.0.1"), true);
         }
 
     }
 
     @Test
-    public void assertTestingTestToSeeTestWorks(){
+    public void assertTestingTestToSeeTestWorks() {
         Assert.assertNotNull(activity);
     }
 }

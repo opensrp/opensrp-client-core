@@ -5,6 +5,7 @@ import org.smartregister.clientandeventmodel.AddressField;
 
 import java.util.Date;
 import java.util.Map;
+
 /**
  * Created by kaderchowdhury on 20/11/17.
  */

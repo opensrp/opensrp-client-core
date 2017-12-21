@@ -262,7 +262,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
 
     private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
                                                       .ClientsHeaderProvider headerProvider, View
-            view) {
+                                                      view) {
         LinearLayout clientsHeaderLayout = (LinearLayout) view
                 .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();

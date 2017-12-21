@@ -29,14 +29,14 @@ public class FormEntityConverterTest extends BaseUnitTest {
     private FormEntityConverter formEntityConverter;
 
     private String FORMNAME = "child_enrollment";
-    private String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
-    private String model = "www/form/"+FORMNAME+"/model.xml";
-    private String formJSON = "www/form/"+FORMNAME+"/form.json";
+    private String formDefinition = "www/form/" + FORMNAME + "/form_definition.json";
+    private String model = "www/form/" + FORMNAME + "/model.xml";
+    private String formJSON = "www/form/" + FORMNAME + "/form.json";
     @Mock
     private AssetManager assetManager;
     @Mock
     private android.content.Context context;
-    
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -69,7 +69,7 @@ public class FormEntityConverterTest extends BaseUnitTest {
         List<FormField> formFields = new ArrayList<FormField>();
         formFields.add(new FormField("NULL", "value", "www/form/"));
         formFields.add(new FormField("instanceID", "value", "www/form/"));
-        FormData fd = new FormData("bind_type", "www/form/", formFields, 
+        FormData fd = new FormData("bind_type", "www/form/", formFields,
                 new ArrayList<SubFormData>());
         FormInstance formInstance = new FormInstance();
         formInstance.setForm(fd);
@@ -84,7 +84,7 @@ public class FormEntityConverterTest extends BaseUnitTest {
 
         Assert.assertNotNull(formEntityConverter.getEventFromFormSubmission(fs));
     }
-    
+
     private static File getFileFromPath(Object obj, String fileName) {
         ClassLoader classLoader = obj.getClass().getClassLoader();
         URL resource = classLoader.getResource(fileName);
@@ -97,7 +97,7 @@ public class FormEntityConverterTest extends BaseUnitTest {
 
         attributes.put("openmrs_entity_id", entity_id);
 
-        Map<String, String>codes = new HashMap<>();
+        Map<String, String> codes = new HashMap<>();
 
         codes.put("openmrs_code", "CODE:RED");
 

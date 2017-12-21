@@ -10,7 +10,9 @@ import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.event.Listener;
 import org.smartregister.repository.FormDataRepository;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 import static org.smartregister.util.FormSubmissionBuilder.create;

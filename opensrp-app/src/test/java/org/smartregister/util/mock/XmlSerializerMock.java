@@ -46,7 +46,7 @@ public class XmlSerializerMock implements XmlSerializer {
             String FORMNAME = "birthnotificationpregnancystatusfollowup";
             String model = "www/form/" + FORMNAME + "/model.xml";
             writer.write(getStringFromStream(new FileInputStream(getFileFromPath(this, model))));
-        }catch(Exception e){
+        } catch (Exception e) {
 
         }
     }
@@ -145,6 +145,7 @@ public class XmlSerializerMock implements XmlSerializer {
     public void flush() throws IOException {
 
     }
+
     private static File getFileFromPath(Object obj, String fileName) {
         ClassLoader classLoader = obj.getClass().getClassLoader();
         URL resource = classLoader.getResource(fileName);

@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import net.sqlcipher.database.SQLiteDatabase;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,12 +14,13 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.mock.RepositoryMock;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
+
 import java.io.File;
 
 /**
  * Created by kaderchowdhury on 19/11/17.
  */
-@PrepareForTest({DrishtiApplication.class,SQLiteDatabase.class})
+@PrepareForTest({DrishtiApplication.class, SQLiteDatabase.class})
 public class RepositoryTest extends BaseUnitTest {
 
     @Rule

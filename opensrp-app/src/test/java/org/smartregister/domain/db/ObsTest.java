@@ -33,7 +33,7 @@ public class ObsTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        ob = new ObsMock(fieldType,fieldDataType,fieldCode,parentCode,values,comments,formSubmissionField);
+        ob = new ObsMock(fieldType, fieldDataType, fieldCode, parentCode, values, comments, formSubmissionField);
     }
 
     @Test
@@ -42,7 +42,6 @@ public class ObsTest extends BaseUnitTest {
     }
 
 
-    
     public String getFieldType() {
         return ob.getFieldType();
     }
@@ -50,10 +49,10 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFieldType() {
         ob.setFieldType(fieldType);
-        Assert.assertEquals(getFieldType(),fieldType);
+        Assert.assertEquals(getFieldType(), fieldType);
     }
 
-    
+
     public String getFieldDataType() {
         return ob.getFieldDataType();
     }
@@ -61,10 +60,10 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFieldDataType() {
         ob.setFieldDataType(fieldDataType);
-        Assert.assertEquals(getFieldDataType(),fieldDataType);
+        Assert.assertEquals(getFieldDataType(), fieldDataType);
     }
 
-    
+
     public String getFieldCode() {
         return ob.getFieldCode();
     }
@@ -72,10 +71,10 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFieldCode() {
         ob.setFieldCode(fieldCode);
-        Assert.assertEquals(getFieldCode(),fieldCode);
+        Assert.assertEquals(getFieldCode(), fieldCode);
     }
 
-    
+
     public String getParentCode() {
         return ob.getParentCode();
     }
@@ -83,10 +82,10 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setParentCode() {
         ob.setParentCode(parentCode);
-        Assert.assertEquals(getParentCode(),parentCode);
+        Assert.assertEquals(getParentCode(), parentCode);
     }
 
-    
+
     public Object getValue() {
         return ob.getValue();
     }
@@ -95,10 +94,10 @@ public class ObsTest extends BaseUnitTest {
     public void setValue() {
         Object value = new Object();
         ob.setValue(value);
-        Assert.assertEquals(getValue(),value);
+        Assert.assertEquals(getValue(), value);
     }
 
-    
+
     public List<Object> getValues() {
         return ob.getValues();
     }
@@ -106,10 +105,10 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setValues() {
         ob.setValues(values);
-        Assert.assertEquals(getValues(),values);
+        Assert.assertEquals(getValues(), values);
     }
 
-    
+
     public String getComments() {
         return ob.getComments();
     }
@@ -117,10 +116,10 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setComments() {
         ob.setComments(comments);
-        Assert.assertEquals(getComments(),comments);
+        Assert.assertEquals(getComments(), comments);
     }
 
-    
+
     public String getFormSubmissionField() {
         return ob.getFormSubmissionField();
     }
@@ -128,7 +127,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFormSubmissionField() {
         ob.setFormSubmissionField(formSubmissionField);
-        Assert.assertEquals(getFormSubmissionField(),formSubmissionField);
+        Assert.assertEquals(getFormSubmissionField(), formSubmissionField);
     }
 
     @Test

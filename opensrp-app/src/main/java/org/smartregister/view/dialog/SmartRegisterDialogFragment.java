@@ -29,7 +29,7 @@ public class SmartRegisterDialogFragment extends DialogFragment {
 
     public static SmartRegisterDialogFragment newInstance(SecuredNativeSmartRegisterActivity
                                                                   activity, DialogOptionModel
-            dialogOptionModel, Object tag) {
+                                                                  dialogOptionModel, Object tag) {
         return new SmartRegisterDialogFragment(activity, dialogOptionModel, tag);
     }
 

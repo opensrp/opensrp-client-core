@@ -2,15 +2,11 @@ package org.smartregister.util.mock;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Parcel;
 import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.util.DisplayMetrics;
 
 import java.io.FileDescriptor;
 
@@ -20,7 +16,7 @@ import java.io.FileDescriptor;
 
 public class MockService {
 
-    public static Service getService(){
+    public static Service getService() {
         return new Service() {
 
             @Nullable

@@ -37,47 +37,47 @@ public class SettingsRepositoryTest extends BaseUnitTest {
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
     }
-    
+
     @Test
     public void assertConstructorNotNull() {
         Assert.assertNotNull(settingsRepository);
     }
-    
+
     @Test
     public void assertOnCreate() {
         settingsRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
     }
-    
+
     @Test
     public void assertupdateSetting() {
         settingsRepository.updateSetting("KEY", "VALUE");
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
-    
+
     @Test
     public void assertupdateBLOB() {
         settingsRepository.updateBLOB("", new byte[]{});
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }
-    
+
     @Test
     public void assertquerySetting() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN});
-        matrixCursor.addRow(new String []{"KEY", "VALUE"});
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN});
+        matrixCursor.addRow(new String[]{"KEY", "VALUE"});
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.anyString())).thenReturn(matrixCursor);
         Assert.assertEquals(settingsRepository.querySetting("", ""), "KEY");
     }
-    
+
     @Test
     public void assertqueryBlob() {
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.anyString())).thenReturn(getCursor());
         Assert.assertEquals(settingsRepository.queryBLOB(""), null);
     }
-    
+
     public MatrixCursor getCursor() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN});
-        matrixCursor.addRow(new Object []{new byte[]{}, new byte[]{}});
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN});
+        matrixCursor.addRow(new Object[]{new byte[]{}, new byte[]{}});
         return matrixCursor;
     }
 }

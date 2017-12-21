@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.mock.AddressMock;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ public class AddressTest extends BaseUnitTest {
     private String mockString = "xd";
     private String latitude = "0";
     private String longitude = "1";
-    
+
     @Before
     public void setUp() {
         address = new AddressMock("", new Date(), new Date(), new HashMap<String, String>(), "", "", "", "", "");
@@ -45,7 +46,7 @@ public class AddressTest extends BaseUnitTest {
         address.setAddressType(addressType);
         Assert.assertEquals(getAddressType(), addressType);
     }
-    
+
     public Date getStartDate() {
         return address.getStartDate();
     }
@@ -71,7 +72,7 @@ public class AddressTest extends BaseUnitTest {
     public Map<String, String> getAddressFields() {
         return address.getAddressFields();
     }
-    
+
     public String getAddressField(String addressField) {
         return address.getAddressField(addressField);
     }
@@ -300,7 +301,7 @@ public class AddressTest extends BaseUnitTest {
 
     @Test
     public void assertthatwithAddressField() {
-        
+
         Assert.assertNotNull(address.withAddressField(field, value));
         address.setAddressFields(null);
         Assert.assertNotNull(address.withAddressField(field, value));

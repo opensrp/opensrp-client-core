@@ -5,10 +5,8 @@ import android.widget.TableRow;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 
 import java.text.SimpleDateFormat;
@@ -57,9 +55,9 @@ public class UtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertFillValueFromHashMapReturnsValue(){
+    public void assertFillValueFromHashMapReturnsValue() {
         android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
-        HashMap<String, String>map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         String field = "field";
         map.put(field, "2017-10-20");
         Utils.fillValue(view, map, field, true);
@@ -74,7 +72,7 @@ public class UtilsTest extends BaseUnitTest {
         android.widget.TextView view = new android.widget.TextView(RuntimeEnvironment.application);
 
         String field = "field";
-        HashMap<String, String>map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put(field, "2017-10-20");
         CommonPersonObjectClient cm = new CommonPersonObjectClient("", map, "NAME");
         Utils.fillValue(view, cm, field, true);
@@ -103,15 +101,15 @@ public class UtilsTest extends BaseUnitTest {
 
     @Test
     public void assertFormatValueObjectReturnsValue() {
-        Assert.assertEquals("", Utils.formatValue((Object)null, true));
-        Assert.assertEquals("Abc-def", Utils.formatValue((Object)new String("abc-def"), true));
-        Assert.assertEquals("abc-def", Utils.formatValue((Object)new String("abc-def"), false));
+        Assert.assertEquals("", Utils.formatValue((Object) null, true));
+        Assert.assertEquals("Abc-def", Utils.formatValue((Object) new String("abc-def"), true));
+        Assert.assertEquals("abc-def", Utils.formatValue((Object) new String("abc-def"), false));
     }
 
     @Test
     public void assertGetValueReturnsValue() {
         String field = "field";
-        HashMap<String, String>map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put(field, "2017-10-20");
         CommonPersonObjectClient cm = new CommonPersonObjectClient("", map, "NAME");
         Assert.assertEquals(Utils.getValue(cm, field, "default", true), "2017-10-20");
@@ -122,7 +120,7 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void assertGetValueMapReturnsValue() {
         String field = "field";
-        HashMap<String, String>map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put(field, "2017-10-20");
         Assert.assertEquals(Utils.getValue(map, field, "default", true), "2017-10-20");
         map.put(field, "");
@@ -132,7 +130,7 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void assertNotEmptyValueReturnsValue() {
         String field = "field";
-        HashMap<String, String>map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put(field, "2017-10-20");
         Assert.assertEquals(Utils.nonEmptyValue(map, false, true, new String[]{field}), "2017-10-20");
         map.put(field, "");
@@ -142,7 +140,7 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void assertHasEmptyValueReturnsBoolean() throws Exception {
         String field = "field";
-        HashMap<String, String>map = new HashMap<String, String>();
+        HashMap<String, String> map = new HashMap<String, String>();
         map.put(field, "");
         Assert.assertEquals(Utils.hasAnyEmptyValue(map, "", new String[]{field}), true);
         map.put(field, "2017-10-20");
@@ -160,7 +158,7 @@ public class UtilsTest extends BaseUnitTest {
         TableRow mockRow = new TableRow(RuntimeEnvironment.application);
         TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow);
         Assert.assertEquals(mockRow, row);
-        android.widget.TextView view = (android.widget.TextView)row.getChildAt(0);
+        android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         Assert.assertEquals(view.getText().toString(), "hello world");
     }
 
@@ -169,23 +167,25 @@ public class UtilsTest extends BaseUnitTest {
         TableRow mockRow = new TableRow(RuntimeEnvironment.application);
         TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow, 25);
         Assert.assertEquals(mockRow, row);
-        android.widget.TextView view = (android.widget.TextView)row.getChildAt(0);
+        android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         Assert.assertEquals(view.getText().toString(), "hello world");
     }
+
     @Test
     public void assertAddToRowcompatReturnsTableRow() {
         TableRow mockRow = new TableRow(RuntimeEnvironment.application);
         TableRow row = Utils.addToRow(RuntimeEnvironment.application, "hello world", mockRow, true);
         Assert.assertEquals(mockRow, row);
-        android.widget.TextView view = (android.widget.TextView)row.getChildAt(0);
+        android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         Assert.assertEquals(view.getText().toString(), "hello world");
     }
+
     @Test
     public void assertAddToRowWeightCompatReturnsTableRow() {
         TableRow mockRow = new TableRow(RuntimeEnvironment.application);
         TableRow row = Utils.addToRow(RuntimeEnvironment.application, "<b>hello world</b>", mockRow, true, 25);
         Assert.assertEquals(mockRow, row);
-        android.widget.TextView view = (android.widget.TextView)row.getChildAt(0);
+        android.widget.TextView view = (android.widget.TextView) row.getChildAt(0);
         Assert.assertEquals(view.getText().toString(), "hello world");
     }
 

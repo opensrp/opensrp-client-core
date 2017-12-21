@@ -215,5 +215,5 @@ public class UserTest extends BaseUnitTest {
     public void asserttoString() {
         Assert.assertNotNull(user.toString());
     }
-    
+
 }

@@ -35,7 +35,7 @@ public class SmartRegisterPaginatedAdapterTest {
     private int THIRTYNINE = 39;
     private int ONE = 1;
     private int TWO = 2;
-    
+
     @Test
     public void assertshouldReturnZEROPageCountForZEROClients() {
         SmartRegisterPaginatedAdapter adapter = getAdapterWithFakeClients(ZERO);

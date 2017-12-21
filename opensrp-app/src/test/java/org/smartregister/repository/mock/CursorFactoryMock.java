@@ -15,14 +15,14 @@ public class CursorFactoryMock implements SQLiteDatabase.CursorFactory {
     @Override
     public Cursor newCursor(SQLiteDatabase sqLiteDatabase, SQLiteCursorDriver sqLiteCursorDriver, String s, SQLiteQuery sqLiteQuery) {
 
-        return new MatrixCursor(new String[]{},0);
+        return new MatrixCursor(new String[]{}, 0);
     }
 
     public static SQLiteDatabase.CursorFactory getCursorFactory() {
-        return new SQLiteDatabase.CursorFactory(){
+        return new SQLiteDatabase.CursorFactory() {
             @Override
             public Cursor newCursor(SQLiteDatabase sqLiteDatabase, SQLiteCursorDriver sqLiteCursorDriver, String s, SQLiteQuery sqLiteQuery) {
-                return new MatrixCursor(new String[]{},0);
+                return new MatrixCursor(new String[]{}, 0);
             }
         };
     }

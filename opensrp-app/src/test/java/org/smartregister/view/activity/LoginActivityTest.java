@@ -1,8 +1,6 @@
 package org.smartregister.view.activity;
 
 import android.content.Intent;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import junit.framework.Assert;
@@ -12,8 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
@@ -61,12 +57,12 @@ public class LoginActivityTest extends BaseUnitTest {
 
     @Test
     public void assertLoginTest() {
-        EditText username = (EditText)activity.findViewById(R.id.login_userNameText);
-        EditText password = (EditText)activity.findViewById(R.id.login_passwordText);
+        EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
+        EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
         username.setText("admin");
         password.setText("password");
 //        Button login_button = (Button)activity.findViewById(R.id.login_loginButton);
-     //   login_button.performClick();
+        //   login_button.performClick();
         Assert.assertNotNull(activity);
     }
 

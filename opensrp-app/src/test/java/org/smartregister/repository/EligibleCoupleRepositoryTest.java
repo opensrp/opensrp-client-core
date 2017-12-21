@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.EligibleCouple;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -89,7 +90,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getECCursor());
-        HashMap<String, String>details = new HashMap<String, String>();
+        HashMap<String, String> details = new HashMap<String, String>();
         details.put("details", "1");
         eligibleCoupleRepository.updateDetails("0", details);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
@@ -101,7 +102,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getECCursor());
-        HashMap<String, String>details = new HashMap<String, String>();
+        HashMap<String, String> details = new HashMap<String, String>();
         details.put("details", "1");
         eligibleCoupleRepository.allEligibleCouples();
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
@@ -113,7 +114,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.query(Mockito.anyBoolean(), Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getECCursor());
-        HashMap<String, String>details = new HashMap<String, String>();
+        HashMap<String, String> details = new HashMap<String, String>();
         details.put("details", "1");
         Assert.assertNotNull(eligibleCoupleRepository.villages());
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyBoolean(), Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
@@ -134,7 +135,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getECCursor());
-        HashMap<String, String>details = new HashMap<String, String>();
+        HashMap<String, String> details = new HashMap<String, String>();
         details.put("details", "1");
         eligibleCoupleRepository.mergeDetails("0", details);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));
@@ -145,7 +146,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         eligibleCoupleRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        HashMap<String, String>details = new HashMap<String, String>();
+        HashMap<String, String> details = new HashMap<String, String>();
         details.put("details", "1");
         details.put("details", "2");
         ArrayList<HashMap<String, String>> detailsList = new ArrayList<HashMap<String, String>>();
@@ -154,11 +155,11 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         Assert.assertEquals(eligibleCoupleRepository.fpCount(), 0l);
     }
 
-    public MatrixCursor getDetailsCursor(){
+    public MatrixCursor getDetailsCursor() {
         String[] columns = {"details"};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"{\"details\":\"1\"}"});
-        cursor.addRow(new Object[] {"{\"details\":\"2\"}"});
+        cursor.addRow(new Object[]{"{\"details\":\"1\"}"});
+        cursor.addRow(new Object[]{"{\"details\":\"2\"}"});
         return cursor;
     }
 
@@ -166,11 +167,11 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
 
         String[] columns = {ID_COLUMN, WIFE_NAME_COLUMN, HUSBAND_NAME_COLUMN, EC_NUMBER_COLUMN, VILLAGE_NAME_COLUMN, SUBCENTER_NAME_COLUMN, IS_OUT_OF_AREA_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"0", "WIFE", "HUSBAND", "3", "VILLAGE", "SUBCENTER", "0", "{\"details\":\"1\"}", "0", "photopath"});
+        cursor.addRow(new Object[]{"0", "WIFE", "HUSBAND", "3", "VILLAGE", "SUBCENTER", "0", "{\"details\":\"1\"}", "0", "photopath"});
         return cursor;
     }
 
-    public EligibleCouple getMockEligibleCouple(){
+    public EligibleCouple getMockEligibleCouple() {
         EligibleCouple ec = new EligibleCouple("caseId", "wifeName", "husbandName", "ecNumber", "village", "subcenter", new HashMap<String, String>());
         return ec;
     }

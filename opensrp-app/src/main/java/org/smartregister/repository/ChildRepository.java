@@ -171,15 +171,15 @@ public class ChildRepository extends DrishtiRepository {
         List<Child> children = new ArrayList<Child>();
         while (!cursor.isAfterLast()) {
             children.add(new Child(cursor.getString(CASE_ID_IDX),
-                                   cursor.getString(MOTHER_CASE_ID_IDX),
-                                   cursor.getString(THAYI_CARD_NUMBER_IDX),
-                                   cursor.getString(DATE_OF_BIRTH_IDX),
-                                   cursor.getString(GENDER_IDX),
-                                   new Gson().<Map<String, String>>fromJson(cursor.getString(
-                                           DETAILS_IDX), new TypeToken<Map<String, String>>() {
-                                   }.getType())).setIsClosed(Boolean.valueOf(cursor.getString(6)))
-                                                .withPhotoPath(cursor.getString(
-                                                        cursor.getColumnIndex(PHOTO_PATH_COLUMN))));
+                    cursor.getString(MOTHER_CASE_ID_IDX),
+                    cursor.getString(THAYI_CARD_NUMBER_IDX),
+                    cursor.getString(DATE_OF_BIRTH_IDX),
+                    cursor.getString(GENDER_IDX),
+                    new Gson().<Map<String, String>>fromJson(cursor.getString(
+                            DETAILS_IDX), new TypeToken<Map<String, String>>() {
+                    }.getType())).setIsClosed(Boolean.valueOf(cursor.getString(6)))
+                    .withPhotoPath(cursor.getString(
+                            cursor.getColumnIndex(PHOTO_PATH_COLUMN))));
             cursor.moveToNext();
         }
         cursor.close();

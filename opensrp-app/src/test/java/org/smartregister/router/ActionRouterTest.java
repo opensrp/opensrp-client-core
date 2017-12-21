@@ -38,7 +38,7 @@ public class ActionRouterTest extends BaseUnitTest {
     private ActionRouter actionRouter;
 
     @Before
-    public void setUp()throws Exception {
+    public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(CoreLibrary.class);
         CoreLibrary.init(context);

@@ -9,7 +9,7 @@ import org.smartregister.repository.DrishtiRepository;
  */
 
 public class DrishtiRepositoryMock {
-    public static DrishtiRepository getDrishtiRepository(){
+    public static DrishtiRepository getDrishtiRepository() {
         return new DrishtiRepository() {
             @Override
             protected void onCreate(SQLiteDatabase database) {

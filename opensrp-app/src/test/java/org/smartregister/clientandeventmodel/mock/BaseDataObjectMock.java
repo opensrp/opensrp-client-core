@@ -4,6 +4,7 @@ import org.smartregister.clientandeventmodel.BaseDataObject;
 import org.smartregister.clientandeventmodel.User;
 
 import java.util.Date;
+
 /**
  * Created by kaderchowdhury on 20/11/17.
  */

@@ -185,11 +185,11 @@ public class ChildRepositoryTest extends BaseUnitTest {
 
         String[] columns = {ID_COLUMN, MOTHER_ID_COLUMN, THAYI_CARD_COLUMN, DATE_OF_BIRTH_COLUMN, GENDER_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN, PHOTO_PATH_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"0", "1", "2", "2017-10-10", "M", "{\"details\":\"1\"}", "0", "/home/real/"});
+        cursor.addRow(new Object[]{"0", "1", "2", "2017-10-10", "M", "{\"details\":\"1\"}", "0", "/home/real/"});
         return cursor;
     }
 
-    public Child getMockChild(){
+    public Child getMockChild() {
         Child child = new Child("caseId", "motherCaseId", "thayiCardNumber", "dateOfBirth", "gender", new HashMap<String, String>());
         return child;
     }

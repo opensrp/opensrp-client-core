@@ -43,7 +43,7 @@ public class ChildDetailController {
 
     public ChildDetailController(Context context, String caseId, AllEligibleCouples
             allEligibleCouples, AllBeneficiaries allBeneficiaries, AllTimelineEvents
-            allTimelineEvents) {
+                                         allTimelineEvents) {
         this.context = context;
         this.caseId = caseId;
         this.allEligibleCouples = allEligibleCouples;

@@ -1,6 +1,7 @@
 package org.smartregister.view.dialog;
 
 import android.util.Log;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ import org.smartregister.view.dialog.mock.LocationSelectorDialogFragmentTestActi
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
 @Config(shadows = {FontTextViewShadow.class})
-public class LocationSelectorDialogFragmentTest extends BaseUnitTest{
+public class LocationSelectorDialogFragmentTest extends BaseUnitTest {
     private ActivityController<LocationSelectorDialogFragmentTestActivity> controller;
 
     @InjectMocks

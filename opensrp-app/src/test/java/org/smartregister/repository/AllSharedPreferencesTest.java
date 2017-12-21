@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,6 +53,7 @@ public class AllSharedPreferencesTest extends TestCase {
     public void assertFetchServerTimeZone() {
         Assert.assertEquals(str, allSharedPreferences.fetchServerTimeZone());
     }
+
     @Test
     public void assertSaveServerTimeZone() {
         allSharedPreferences.saveServerTimeZone("");
@@ -77,7 +79,7 @@ public class AllSharedPreferencesTest extends TestCase {
     }
 
     @Test
-    public void assertfetchLastUpdatedAtDate(){
+    public void assertfetchLastUpdatedAtDate() {
         Assert.assertEquals(allSharedPreferences.fetchLastUpdatedAtDate(0l), new Long(0l));
     }
 
@@ -86,6 +88,7 @@ public class AllSharedPreferencesTest extends TestCase {
         allSharedPreferences.saveLastUpdatedAtDate(0l);
         Mockito.verify(preferences, Mockito.times(1)).edit();
     }
+
     @Test
     public void assertfetchCurrentLocality() {
         Assert.assertEquals(allSharedPreferences.fetchCurrentLocality(), str);
@@ -152,7 +155,7 @@ public class AllSharedPreferencesTest extends TestCase {
     }
 
     @Test
-    public void assertfetchPort(){
+    public void assertfetchPort() {
         Assert.assertEquals(allSharedPreferences.fetchPort(new Integer(80)), new Integer(8080));
     }
 

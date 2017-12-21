@@ -21,7 +21,7 @@ import java.util.HashMap;
  * Created by kaderchowdhury on 21/11/17.
  */
 
-public class ServiceProvidedRepositoryTest extends BaseUnitTest{
+public class ServiceProvidedRepositoryTest extends BaseUnitTest {
 
     private ServiceProvidedRepository serviceProvidedRepository;
 
@@ -65,21 +65,21 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest{
     public static final String DATA_ID_COLUMN = "data";
 
     @Test
-    public void assertAllfindByEntityIdAndServiceNames(){
+    public void assertAllfindByEntityIdAndServiceNames() {
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor());
         Assert.assertNotNull(serviceProvidedRepository.findByEntityIdAndServiceNames(ENTITY_ID_COLUMN, new String[]{"a", "b"}));
     }
-    
+
     @Test
     public void assertAllReturnsList() {
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.anyString())).thenReturn(getCursor());
         Assert.assertNotNull(serviceProvidedRepository.all());
     }
-    
+
     public MatrixCursor getCursor() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {ENTITY_ID_COLUMN, 
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{ENTITY_ID_COLUMN,
                 NAME_ID_COLUMN, DATE_ID_COLUMN, DATA_ID_COLUMN});
-        matrixCursor.addRow(new String []{"1", "2", "3", "{\"json\":\"data\"}"});
+        matrixCursor.addRow(new String[]{"1", "2", "3", "{\"json\":\"data\"}"});
         return matrixCursor;
     }
 

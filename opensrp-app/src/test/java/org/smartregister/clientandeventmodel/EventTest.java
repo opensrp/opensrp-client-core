@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.mock.EventMock;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import java.util.Map;
  */
 
 public class EventTest extends BaseUnitTest {
-    
+
     private EventMock event;
 
     private String baseEntityId = "baseEntityId";
@@ -43,7 +44,7 @@ public class EventTest extends BaseUnitTest {
         Assert.assertNotNull(event);
         Assert.assertNotNull(new EventMock(baseEntityId, new HashMap<String, String>(), eventId, eventType, eventDate, entityType, providerId, locationId, formSubmissionId));
     }
-    
+
     public List<Obs> getObs() {
         return event.getObs();
     }
@@ -64,7 +65,7 @@ public class EventTest extends BaseUnitTest {
         event.addObs(observation);
         Assert.assertEquals(getObs().get(0), observation);
     }
-    
+
     public String getBaseEntityId() {
         return event.getBaseEntityId();
     }
@@ -74,7 +75,7 @@ public class EventTest extends BaseUnitTest {
         event.setBaseEntityId(baseEntityId);
         Assert.assertEquals(getBaseEntityId(), baseEntityId);
     }
-    
+
     public String getLocationId() {
         return event.getLocationId();
     }
@@ -84,7 +85,7 @@ public class EventTest extends BaseUnitTest {
         event.setLocationId(locationId);
         Assert.assertEquals(getLocationId(), locationId);
     }
-    
+
     public Date getEventDate() {
         return event.getEventDate();
     }
@@ -94,7 +95,7 @@ public class EventTest extends BaseUnitTest {
         event.setEventDate(eventDate);
         Assert.assertEquals(getEventDate(), eventDate);
     }
-    
+
     public String getEventType() {
         return event.getEventType();
     }
@@ -104,7 +105,7 @@ public class EventTest extends BaseUnitTest {
         event.setEventType(eventType);
         Assert.assertEquals(getEventType(), eventType);
     }
-    
+
     public String getFormSubmissionId() {
         return event.getFormSubmissionId();
     }
@@ -114,7 +115,7 @@ public class EventTest extends BaseUnitTest {
         event.setFormSubmissionId(formSubmissionId);
         Assert.assertEquals(getFormSubmissionId(), formSubmissionId);
     }
-    
+
     public String getProviderId() {
         return event.getProviderId();
     }
@@ -124,7 +125,7 @@ public class EventTest extends BaseUnitTest {
         event.setProviderId(providerId);
         Assert.assertEquals(getProviderId(), providerId);
     }
-    
+
     public String getEventId() {
         return event.getEventId();
     }
@@ -134,7 +135,7 @@ public class EventTest extends BaseUnitTest {
         event.setEventId(eventId);
         Assert.assertEquals(getEventId(), eventId);
     }
-    
+
     public String getEntityType() {
         return event.getEntityType();
     }
@@ -144,11 +145,11 @@ public class EventTest extends BaseUnitTest {
         event.setEntityType(entityType);
         Assert.assertEquals(getEntityType(), entityType);
     }
-    
+
     public Map<String, String> getDetails() {
         return event.getDetails();
     }
-    
+
     @Test
     public void assertsetDetails() {
         event.setDetails(details);
@@ -161,7 +162,7 @@ public class EventTest extends BaseUnitTest {
         event.addDetails("key", "val");
         Assert.assertEquals(event.getDetails().get("key"), "val");
     }
-    
+
     public long getVersion() {
         return event.getVersion();
     }
@@ -229,7 +230,7 @@ public class EventTest extends BaseUnitTest {
         event.setIdentifiers(identifiers);
         Assert.assertEquals(getIdentifiers(), identifiers);
     }
-        
+
     @Test
     public void assertwithIdentifiers() {
         Assert.assertNotNull(event.withIdentifiers(identifiers));

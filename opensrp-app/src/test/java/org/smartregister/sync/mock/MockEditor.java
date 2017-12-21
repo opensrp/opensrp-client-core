@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class MockEditor {
 
-    public static SharedPreferences.Editor getEditor(){
+    public static SharedPreferences.Editor getEditor() {
         return new SharedPreferences.Editor() {
             @Override
             public SharedPreferences.Editor putString(String s, @Nullable String s1) {

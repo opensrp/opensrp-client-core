@@ -9,7 +9,7 @@ import java.util.Map;
  * Created by kaderchowdhury on 20/11/17.
  */
 
-public class AddressMock extends Address{
+public class AddressMock extends Address {
     public AddressMock() {
         super();
     }

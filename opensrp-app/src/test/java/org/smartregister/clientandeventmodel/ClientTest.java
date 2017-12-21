@@ -1,6 +1,7 @@
 package org.smartregister.clientandeventmodel;
 
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
@@ -53,7 +54,7 @@ public class ClientTest extends BaseUnitTest {
         client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender);
         Assert.assertNotNull(client);
     }
-    
+
     @Test
     public void assertconstructor3() {
         client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, identifierType, identifier);
@@ -75,7 +76,7 @@ public class ClientTest extends BaseUnitTest {
         client.setFirstName(firstName);
         Assert.assertEquals(getFirstName(), firstName);
     }
-    
+
     public String getMiddleName() {
         return client.getMiddleName();
     }
@@ -85,7 +86,7 @@ public class ClientTest extends BaseUnitTest {
         client.setMiddleName(middleName);
         Assert.assertEquals(getMiddleName(), middleName);
     }
-    
+
     public String getLastName() {
         return client.getLastName();
     }
@@ -95,7 +96,7 @@ public class ClientTest extends BaseUnitTest {
         client.setLastName(lastName);
         Assert.assertEquals(getLastName(), lastName);
     }
-    
+
     public Date getBirthdate() {
         return client.getBirthdate();
     }
@@ -105,7 +106,7 @@ public class ClientTest extends BaseUnitTest {
         client.setBirthdate(birthdate);
         Assert.assertEquals(getBirthdate(), birthdate);
     }
-    
+
     public Date getDeathdate() {
         return client.getDeathdate();
     }
@@ -115,7 +116,7 @@ public class ClientTest extends BaseUnitTest {
         client.setDeathdate(deathdate);
         Assert.assertEquals(getDeathdate(), deathdate);
     }
-    
+
     public Boolean getBirthdateApprox() {
         return client.getBirthdateApprox();
     }
@@ -125,7 +126,7 @@ public class ClientTest extends BaseUnitTest {
         client.setBirthdateApprox(birthdateApprox);
         Assert.assertEquals(getBirthdateApprox(), birthdateApprox);
     }
-    
+
     public Boolean getDeathdateApprox() {
         return client.getDeathdateApprox();
     }
@@ -135,7 +136,7 @@ public class ClientTest extends BaseUnitTest {
         client.setDeathdateApprox(deathdateApprox);
         Assert.assertEquals(getDeathdateApprox(), deathdateApprox);
     }
-    
+
     public String getGender() {
         return client.getGender();
     }

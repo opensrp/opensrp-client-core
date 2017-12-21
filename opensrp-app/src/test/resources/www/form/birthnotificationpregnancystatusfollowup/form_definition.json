@@ -121,11 +121,12 @@
         "name": "FWBNFLB",
         "bind": "/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB"
       },
-       {
+      {
         "name": "FWBNFSMSRSN",
         "bind": "/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFSMSRSN"
       }
-    ],"sub_forms": [
+    ],
+    "sub_forms": [
       {
         "name": "child_registration",
         "bind_type": "mcarechild",
@@ -163,7 +164,8 @@
           {
             "name": "FWBNFDOB",
             "bind": "/model/instance/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFDOB"
-          },{
+          },
+          {
             "name": "mother_entity_id",
             "source": "mcaremother.id",
             "shouldLoadValue": true

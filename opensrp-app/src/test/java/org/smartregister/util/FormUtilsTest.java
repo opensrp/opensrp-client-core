@@ -29,7 +29,6 @@ import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.sync.CloudantDataHandler;
 import org.smartregister.util.mock.XmlSerializerMock;
-import org.xmlpull.v1.XmlSerializer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,10 +44,10 @@ public class FormUtilsTest extends BaseUnitTest {
 
     private FormUtils formUtils;
     private String FORMNAME = "birthnotificationpregnancystatusfollowup";
-    private String formDefinition = "www/form/"+FORMNAME+"/form_definition.json";
-    private String model = "www/form/"+FORMNAME+"/model.xml";
-    private String formJSON = "www/form/"+FORMNAME+"/form.json";
-    private String formMultiJSON = "www/form/"+FORMNAME+"/form_multi.json";
+    private String formDefinition = "www/form/" + FORMNAME + "/form_definition.json";
+    private String model = "www/form/" + FORMNAME + "/model.xml";
+    private String formJSON = "www/form/" + FORMNAME + "/form.json";
+    private String formMultiJSON = "www/form/" + FORMNAME + "/form_multi.json";
     private String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
     private String formSubmissionXML = "www/form/form_submission/form_submission_xml.xml";
     private String formSubmissionJSON = "www/form/form_submission/form_submission_json.json";
@@ -102,7 +101,7 @@ public class FormUtilsTest extends BaseUnitTest {
         Mockito.when(mockobject.getString(Mockito.anyString())).thenReturn("val");
         formUtils.retrieveValueForLinkedRecord("household.elco", mockobject);
     }
-    
+
     @Test
     public void assertgenerateXMLInputForFormWithEntityId() throws Exception {
         formUtils = new FormUtils(context_);
@@ -142,13 +141,13 @@ public class FormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertWithEntityIdReturnsFormSubmissionBuilder() {
-        FormSubmissionBuilder builder= new FormSubmissionBuilder();
+        FormSubmissionBuilder builder = new FormSubmissionBuilder();
         Assert.assertNotNull(builder.withEntityId("baseEntityId"));
     }
-    
+
     @Test
     public void assertWithSyncStatusReturnsFormSubmissionBuilder() {
-        FormSubmissionBuilder builder= new FormSubmissionBuilder();
+        FormSubmissionBuilder builder = new FormSubmissionBuilder();
         SyncStatus syncStatus = null;
         Assert.assertNotNull(builder.withSyncStatus(syncStatus));
     }

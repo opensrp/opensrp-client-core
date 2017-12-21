@@ -6,7 +6,6 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.domain.db.Address;
 import org.smartregister.domain.db.mock.ClientMock;
 
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import java.util.Map;
  * Created by kaderchowdhury on 20/11/17.
  */
 
-public class ClientTest extends BaseUnitTest{
+public class ClientTest extends BaseUnitTest {
 
     ClientMock client;
     String baseEntityId = "baseEntityId";
@@ -42,27 +41,29 @@ public class ClientTest extends BaseUnitTest{
     }
 
     @Test
-    public void constructor1(){
+    public void constructor1() {
         client = new ClientMock(baseEntityId);
     }
 
     @Test
-    public void constructor2(){
-        client = new ClientMock(baseEntityId,firstName,middleName, lastName,birthdate, deathdate, birthdateApprox, deathdateApprox,gender);
-        Assert.assertNotNull(client);
-    }
-    @Test
-    public void constructor3(){
-        client = new ClientMock(baseEntityId,firstName,middleName, lastName,birthdate, deathdate, birthdateApprox, deathdateApprox,gender,identifierType,identifier);
-        Assert.assertNotNull(client);
-    }
-    @Test
-    public void constructor4(){
-        client = new ClientMock(baseEntityId,firstName,middleName, lastName,birthdate, deathdate, birthdateApprox, deathdateApprox,gender,addresses,identifiers,attributes);
+    public void constructor2() {
+        client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender);
         Assert.assertNotNull(client);
     }
 
-    
+    @Test
+    public void constructor3() {
+        client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, identifierType, identifier);
+        Assert.assertNotNull(client);
+    }
+
+    @Test
+    public void constructor4() {
+        client = new ClientMock(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, addresses, identifiers, attributes);
+        Assert.assertNotNull(client);
+    }
+
+
     public String getFirstName() {
         return client.getFirstName();
     }
@@ -70,10 +71,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setFirstName() {
         client.setFirstName(firstName);
-        Assert.assertEquals(getFirstName(),firstName);
+        Assert.assertEquals(getFirstName(), firstName);
     }
 
-    
+
     public String getMiddleName() {
         return client.getMiddleName();
     }
@@ -81,10 +82,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setMiddleName() {
         client.setMiddleName(middleName);
-        Assert.assertEquals(getMiddleName(),middleName);
+        Assert.assertEquals(getMiddleName(), middleName);
     }
 
-    
+
     public String getLastName() {
         return client.getLastName();
     }
@@ -92,10 +93,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setLastName() {
         client.setLastName(lastName);
-        Assert.assertEquals(getLastName(),lastName);
+        Assert.assertEquals(getLastName(), lastName);
     }
 
-    
+
     public DateTime getBirthdate() {
         return client.getBirthdate();
     }
@@ -103,10 +104,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setBirthdate() {
         client.setBirthdate(birthdate);
-        Assert.assertEquals(getBirthdate(),birthdate);
+        Assert.assertEquals(getBirthdate(), birthdate);
     }
 
-    
+
     public DateTime getDeathdate() {
         return client.getDeathdate();
     }
@@ -114,10 +115,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setDeathdate() {
         client.setDeathdate(deathdate);
-        Assert.assertEquals(getDeathdate(),deathdate);
+        Assert.assertEquals(getDeathdate(), deathdate);
     }
 
-    
+
     public Boolean getBirthdateApprox() {
         return client.getBirthdateApprox();
     }
@@ -125,10 +126,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setBirthdateApprox() {
         client.setBirthdateApprox(birthdateApprox);
-        Assert.assertEquals(getBirthdateApprox(),birthdateApprox);
+        Assert.assertEquals(getBirthdateApprox(), birthdateApprox);
     }
 
-    
+
     public Boolean getDeathdateApprox() {
         return client.getDeathdateApprox();
     }
@@ -136,10 +137,10 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setDeathdateApprox() {
         client.setDeathdateApprox(deathdateApprox);
-        Assert.assertEquals(getDeathdateApprox(),deathdateApprox);
+        Assert.assertEquals(getDeathdateApprox(), deathdateApprox);
     }
 
-    
+
     public String getGender() {
         return client.getGender();
     }
@@ -147,7 +148,7 @@ public class ClientTest extends BaseUnitTest{
     @Test
     public void setGender() {
         client.setGender(gender);
-        Assert.assertEquals(getGender(),gender);
+        Assert.assertEquals(getGender(), gender);
     }
 
 
@@ -156,10 +157,11 @@ public class ClientTest extends BaseUnitTest{
     }
 
     Map<String, List<String>> relationships = new HashMap<String, List<String>>();
+
     @Test
     public void setRelationships() {
         client.setRelationships(relationships);
-        Assert.assertEquals(getRelationships(),relationships);
+        Assert.assertEquals(getRelationships(), relationships);
     }
 
     @Test
@@ -206,7 +208,7 @@ public class ClientTest extends BaseUnitTest{
     public void findRelatives() {
         client.setRelationships(null);
         Assert.assertNull(client.findRelatives(null));
-        relationships.put(identifierType,new ArrayList<String>());
+        relationships.put(identifierType, new ArrayList<String>());
         client.setRelationships(relationships);
         Assert.assertNotNull(client.findRelatives(identifierType));
     }
@@ -220,7 +222,7 @@ public class ClientTest extends BaseUnitTest{
 
     @Test
     public void getRelationshipsReturnsList() {
-        relationships.put(baseEntityId,new ArrayList<String>());
+        relationships.put(baseEntityId, new ArrayList<String>());
         client.setRelationships(relationships);
         Assert.assertNotNull(client.getRelationships(baseEntityId));
     }

@@ -100,7 +100,7 @@ public class FormDataRepositoryTest extends AndroidTestCase {
     }
 
     public void testShouldCheckForSyncStatusWhenSavingFormSubmission() throws Exception {
-        Map<String, String> params = create("instanceId", "id 1").put("entityId", "entity id 1").put("formName", "form name").put( "sync_status", SYNCED.value()).map();
+        Map<String, String> params = create("instanceId", "id 1").put("entityId", "entity id 1").put("formName", "form name").put("sync_status", SYNCED.value()).map();
         String paramsJSON = new Gson().toJson(params);
 
         FormInstance instance = new FormInstance(new FormData("entity 1", "default", asList(new FormField("field1.1", "value1.1", "source1.1")), null), "1");

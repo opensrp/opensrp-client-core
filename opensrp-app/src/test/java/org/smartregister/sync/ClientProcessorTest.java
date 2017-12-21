@@ -1,7 +1,6 @@
 package org.smartregister.sync;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -22,36 +21,20 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
-import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.repository.DetailsRepository;
-import org.smartregister.repository.EventClientRepository;
-import org.smartregister.sync.mock.MockActivity;
 import org.smartregister.sync.mock.MockEditor;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * Created by raihan on 11/6/17.
@@ -81,7 +64,8 @@ public class ClientProcessorTest extends BaseUnitTest {
     @Mock
     private SharedPreferences sharedPreferences;
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
-//    private ActivityController<MockActivity> controller;
+
+    //    private ActivityController<MockActivity> controller;
 //    private MockActivity activity;
     @Before
     public void setUp() throws Exception {
@@ -92,7 +76,7 @@ public class ClientProcessorTest extends BaseUnitTest {
         PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
         PowerMockito.when(coreLibrary.context()).thenReturn(context);
         PowerMockito.when(context.commonrepository(Mockito.anyString())).thenReturn(cr);
-        PowerMockito.when(cr.executeInsertStatement(Mockito.any(ContentValues.class),Mockito.anyString())).thenReturn(1l);
+        PowerMockito.when(cr.executeInsertStatement(Mockito.any(ContentValues.class), Mockito.anyString())).thenReturn(1l);
 
         PowerMockito.mockStatic(AssetHandler.class);
         PowerMockito.when(AssetHandler.readFileFromAssetsFolder("ec_client_classification.json", context.applicationContext())).thenReturn(ClientData.clientClassificationJson);
@@ -104,12 +88,12 @@ public class ClientProcessorTest extends BaseUnitTest {
     public void processClientTest() throws Exception {
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
+        for (int i = 0; i < eventArray.length(); i++) {
             eventList.add(eventArray.getJSONObject(i));
         }
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
+        for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
 
@@ -135,19 +119,19 @@ public class ClientProcessorTest extends BaseUnitTest {
         final JSONObject fieldObject = new JSONObject(ClientData.ec_client_fields_json);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
-        for(int i = 0;i<eventArray.length();i++){
+        for (int i = 0; i < eventArray.length(); i++) {
             eventList.add(eventArray.getJSONObject(i));
         }
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
+        for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
         PowerMockito.mockStatic(CloudantDataHandler.class);
         PowerMockito.when(CloudantDataHandler.getInstance(context.applicationContext())).thenReturn(cloudantDataHandler);
         clientProcessor = new ClientProcessor(context.applicationContext());
         JSONArray fieldArray = fieldObject.getJSONArray("bindobjects");
-        Assert.assertEquals(clientProcessor.processField(fieldArray.getJSONObject(0),eventList.get(0),clientList.get(0)),Boolean.TRUE);
+        Assert.assertEquals(clientProcessor.processField(fieldArray.getJSONObject(0), eventList.get(0), clientList.get(0)), Boolean.TRUE);
 //        for(int i=0;i<fieldArray.length();i++){
 //            JSONArray columns = fieldArray.getJSONObject(i).getJSONArray("columns");
 //            for(int j =0;j<columns.length();j++){
@@ -172,15 +156,15 @@ public class ClientProcessorTest extends BaseUnitTest {
         clientProcessor = new ClientProcessor(context.applicationContext());
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
+        for (int i = 0; i < eventArray.length(); i++) {
             eventList.add(eventArray.getJSONObject(i));
         }
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
+        for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
-        Assert.assertNotNull(clientProcessor.processEvent(eventList.get(0),clientList.get(0),new JSONObject(ClientData.clientClassificationJson)));
+        Assert.assertNotNull(clientProcessor.processEvent(eventList.get(0), clientList.get(0), new JSONObject(ClientData.clientClassificationJson)));
 
     }
 
@@ -189,12 +173,12 @@ public class ClientProcessorTest extends BaseUnitTest {
         clientProcessor = new ClientProcessor(context.applicationContext());
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
+        for (int i = 0; i < eventArray.length(); i++) {
             eventList.add(eventArray.getJSONObject(i));
         }
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
+        for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
         Assert.assertNotNull(clientProcessor.getClientAddressAsMap(clientList.get(0)));
@@ -206,17 +190,17 @@ public class ClientProcessorTest extends BaseUnitTest {
         clientProcessor = new ClientProcessor(context.applicationContext());
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
+        for (int i = 0; i < eventArray.length(); i++) {
             eventList.add(eventArray.getJSONObject(i));
         }
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
+        for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
         ClientProcessor clientProcessorspy = Mockito.spy(clientProcessor);
-        clientProcessorspy.updateClientDetailsTable(eventList.get(0),clientList.get(0));
-        Mockito.verify(clientProcessorspy,Mockito.atLeastOnce()).saveClientDetails(anyString(),ArgumentMatchers.<String, String>anyMap(),anyLong());
+        clientProcessorspy.updateClientDetailsTable(eventList.get(0), clientList.get(0));
+        Mockito.verify(clientProcessorspy, Mockito.atLeastOnce()).saveClientDetails(anyString(), ArgumentMatchers.<String, String>anyMap(), anyLong());
 
     }
 
@@ -225,12 +209,12 @@ public class ClientProcessorTest extends BaseUnitTest {
         clientProcessor = new ClientProcessor(context.applicationContext());
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
-        for(int i = 0;i<eventArray.length();i++){
+        for (int i = 0; i < eventArray.length(); i++) {
             eventList.add(eventArray.getJSONObject(i));
         }
         JSONArray clientArray = new JSONArray(ClientData.clientJsonArray);
         ArrayList<JSONObject> clientList = new ArrayList<JSONObject>();
-        for(int i = 0;i<clientArray.length();i++){
+        for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
 //        ClientProcessor clientProcessorspy = Mockito.spy(clientProcessor);

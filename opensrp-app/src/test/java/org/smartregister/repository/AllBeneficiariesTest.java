@@ -11,6 +11,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.Mother;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -140,13 +141,13 @@ public class AllBeneficiariesTest {
     }
 
     @Test
-    public void assertAllANCsWithECReturnsList () {
+    public void assertAllANCsWithECReturnsList() {
         Mockito.when(motherRepository.allMothersOfATypeWithEC(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
         Assert.assertNotNull(allBeneficiaries.allANCsWithEC());
     }
 
     @Test
-    public void assertAllPNCsWithECReturnsList () {
+    public void assertAllPNCsWithECReturnsList() {
         Mockito.when(motherRepository.allMothersOfATypeWithEC(Mockito.anyString())).thenReturn(Mockito.mock(List.class));
         Assert.assertNotNull(allBeneficiaries.allPNCsWithEC());
     }

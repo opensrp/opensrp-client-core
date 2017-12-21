@@ -146,14 +146,14 @@ public class MotherRepositoryTest extends BaseUnitTest {
     }
 
     @Test(expected = Exception.class)
-    public void assertAllMothersOfATypeWithECReturnsNull(){
+    public void assertAllMothersOfATypeWithECReturnsNull() {
         motherRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Assert.assertNull(motherRepository.allMothersOfATypeWithEC("type"));
     }
 
     @Test
-    public void assertAllMothersOfATypeWithECReturnsAllMother(){
+    public void assertAllMothersOfATypeWithECReturnsAllMother() {
         motherRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.isNull(String[].class))).thenReturn(getJoinCursor());
@@ -161,7 +161,7 @@ public class MotherRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertCloseAllCasesForECCallsDatabaseUpdate(){
+    public void assertCloseAllCasesForECCallsDatabaseUpdate() {
         motherRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
@@ -169,7 +169,7 @@ public class MotherRepositoryTest extends BaseUnitTest {
         motherRepository.closeAllCasesForEC("0");
     }
 
-    public Mother getMockMother(){
+    public Mother getMockMother() {
         Mother mother = new Mother("caseId", "ecCaseId", "thayiCardNumber", "referenceDate");
         return mother;
     }
@@ -187,7 +187,7 @@ public class MotherRepositoryTest extends BaseUnitTest {
 
         String[] columns = {ID_COLUMN, EC_CASEID_COLUMN, THAYI_CARD_NUMBER_COLUMN, TYPE_COLUMN, REF_DATE_COLUMN, DETAILS_COLUMN, IS_CLOSED_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"0", "1", "2", "3", "2017-10-10", "{\"details\":\"1\"}", "0"});
+        cursor.addRow(new Object[]{"0", "1", "2", "3", "2017-10-10", "{\"details\":\"1\"}", "0"});
         return cursor;
     }
 

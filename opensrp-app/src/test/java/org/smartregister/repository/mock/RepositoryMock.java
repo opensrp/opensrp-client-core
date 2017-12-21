@@ -59,13 +59,11 @@ public class RepositoryMock extends Repository {
         super.deleteRepository();
     }
 
-    public Repository getInstance1(){
+    public Repository getInstance1() {
         try {
             //Libraryname without .so!!
             System.loadLibrary("sqlcipher");
-        }
-        catch(UnsatisfiedLinkError ex)
-        {
+        } catch (UnsatisfiedLinkError ex) {
             //Not found
         }
         Session session = new Session();

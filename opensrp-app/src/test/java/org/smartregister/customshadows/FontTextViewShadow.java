@@ -2,6 +2,7 @@ package org.smartregister.customshadows;
 
 import android.content.Context;
 import android.util.AttributeSet;
+
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowTextView;
 import org.smartregister.view.customcontrols.CustomFontTextView;

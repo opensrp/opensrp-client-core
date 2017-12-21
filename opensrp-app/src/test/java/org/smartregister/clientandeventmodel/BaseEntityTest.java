@@ -41,7 +41,7 @@ public class BaseEntityTest {
         Assert.assertNotNull(new BaseEntityMock(baseEntityId, identifiers, attributes));
         Assert.assertNotNull(new BaseEntityMock(baseEntityId, identifiers, attributes, addresses));
     }
-    
+
     public String getBaseEntityId() {
         return baseEntity.getBaseEntityId();
     }
@@ -51,7 +51,7 @@ public class BaseEntityTest {
         baseEntity.setBaseEntityId(baseEntityId);
         Assert.assertEquals(getBaseEntityId(), baseEntityId);
     }
-    
+
     public List<Address> getAddresses() {
         return baseEntity.getAddresses();
     }
@@ -70,7 +70,7 @@ public class BaseEntityTest {
     public void assertaddAddress() {
         Address address = new Address();
         address.setAddressType(identifierType);
-        List<Address>addressesses = new ArrayList<>();
+        List<Address> addressesses = new ArrayList<>();
         addressesses.add(address);
         baseEntity.setAddresses(addressesses);
         baseEntity.addAddress(address);
@@ -78,11 +78,11 @@ public class BaseEntityTest {
         Assert.assertEquals(getAddress(identifierType), address);
         Assert.assertEquals(getAddress("NULL"), null);
     }
-    
+
     public Map<String, Object> getAttributes() {
         return baseEntity.getAttributes();
     }
-    
+
     public Object getAttribute(String name) {
         return baseEntity.getAttribute(name);
     }
@@ -117,7 +117,7 @@ public class BaseEntityTest {
     public Map<String, String> getIdentifiers() {
         return baseEntity.getIdentifiers();
     }
-    
+
     public String getIdentifier(String identifierType) {
         return baseEntity.getIdentifier(identifierType);
     }

@@ -48,10 +48,10 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
     }
 
     public MatrixCursor getCursor() {
-        String[] columns = {ID_COLUMN, 
+        String[] columns = {ID_COLUMN,
                 FORM_NAME_COLUMN, FORM_DIR_NAME_COLUMN, VERSION_COLUMN, SYNC_STATUS_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"1", "name", "dir", "1.0", SyncStatus.PENDING});
+        cursor.addRow(new Object[]{"1", "name", "dir", "1.0", SyncStatus.PENDING});
         return cursor;
     }
 
@@ -98,7 +98,7 @@ public class FormsVersionRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertAddFormVersion() {
-        HashMap<String, String>data = new HashMap<String, String>();
+        HashMap<String, String> data = new HashMap<String, String>();
         data.put(FORM_NAME_COLUMN, "form_name");
         data.put(VERSION_COLUMN, "1.0");
         data.put(FORM_DIR_NAME_COLUMN, "dir");

@@ -6,14 +6,13 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.domain.db.BaseDataObject;
 import org.smartregister.domain.db.mock.BaseDataObjectMock;
 
 /**
  * Created by kaderchowdhury on 20/11/17.
  */
 
-public class BaseDataObjectTest extends BaseUnitTest{
+public class BaseDataObjectTest extends BaseUnitTest {
 
     private BaseDataObjectMock baseDataObject;
 
@@ -30,7 +29,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void assertSetCreator() {
         String creator = "creator;";
         baseDataObject.setCreator(creator);
-        Assert.assertEquals(getCreator(),creator);
+        Assert.assertEquals(getCreator(), creator);
     }
 
 
@@ -42,7 +41,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void assertSetDateCreated() {
         DateTime dateCreated = new DateTime(0l);
         baseDataObject.setDateCreated(dateCreated);
-        Assert.assertEquals(getDateCreated(),dateCreated);
+        Assert.assertEquals(getDateCreated(), dateCreated);
     }
 
 
@@ -54,7 +53,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void assertSetEditor() {
         String editor = "editor";
         baseDataObject.setEditor(editor);
-        Assert.assertEquals(getEditor(),editor);
+        Assert.assertEquals(getEditor(), editor);
     }
 
 
@@ -66,7 +65,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void setDateEdited() {
         DateTime dateEdited = new DateTime(0l);
         baseDataObject.setDateEdited(dateEdited);
-        Assert.assertEquals(getDateEdited(),dateEdited);
+        Assert.assertEquals(getDateEdited(), dateEdited);
     }
 
 
@@ -78,7 +77,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void setVoided() {
         Boolean voided = Boolean.TRUE;
         baseDataObject.setVoided(voided);
-        Assert.assertEquals(getVoided(),voided);
+        Assert.assertEquals(getVoided(), voided);
     }
 
 
@@ -90,7 +89,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void setDateVoided() {
         DateTime dateVoided = new DateTime(0l);
         baseDataObject.setDateVoided(dateVoided);
-        Assert.assertEquals(getDateVoided(),dateVoided);
+        Assert.assertEquals(getDateVoided(), dateVoided);
     }
 
 
@@ -102,7 +101,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void assertSetVoider() {
         String voider = "voder";
         baseDataObject.setVoider(voider);
-        Assert.assertEquals(getVoider(),voider);
+        Assert.assertEquals(getVoider(), voider);
     }
 
 
@@ -114,7 +113,7 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void assertsetVoidReason() {
         String voidReason = "voidreadsom";
         baseDataObject.setVoidReason(voidReason);
-        Assert.assertEquals(getVoidReason(),voidReason);
+        Assert.assertEquals(getVoidReason(), voidReason);
     }
 
 
@@ -126,56 +125,56 @@ public class BaseDataObjectTest extends BaseUnitTest{
     public void assertSetServerVersion() {
         long serverVersion = 0l;
         baseDataObject.setServerVersion(serverVersion);
-        Assert.assertEquals(getServerVersion(),serverVersion);
+        Assert.assertEquals(getServerVersion(), serverVersion);
     }
 
-    
+
     public BaseDataObject withCreator(String creator) {
         return baseDataObject.withCreator(creator);
     }
 
-    
+
     public BaseDataObject withDateCreated(DateTime dateCreated) {
         return baseDataObject.withDateCreated(dateCreated);
     }
 
-    
+
     public BaseDataObject withEditor(String editor) {
         return baseDataObject.withEditor(editor);
     }
 
-    
+
     public BaseDataObject withDateEdited(DateTime dateEdited) {
         return baseDataObject.withDateEdited(dateEdited);
     }
 
-    
+
     public BaseDataObject withVoided(Boolean voided) {
         return baseDataObject.withVoided(voided);
     }
 
-    
+
     public BaseDataObject withDateVoided(DateTime dateVoided) {
         return baseDataObject.withDateVoided(dateVoided);
     }
 
-    
+
     public BaseDataObject withVoider(String voider) {
         return baseDataObject.withVoider(voider);
     }
 
-    
+
     public BaseDataObject withVoidReason(String voidReason) {
         return baseDataObject.withVoidReason(voidReason);
     }
 
-    
+
     public BaseDataObject withServerVersion(long serverVersion) {
         return baseDataObject.withServerVersion(serverVersion);
     }
 
     @Test
-    public void assertBaseObjectNotNull(){
+    public void assertBaseObjectNotNull() {
         Assert.assertNotNull(withCreator(""));
         Assert.assertNotNull(withDateCreated(new DateTime(0l)));
         Assert.assertNotNull(withDateEdited(new DateTime(0l)));

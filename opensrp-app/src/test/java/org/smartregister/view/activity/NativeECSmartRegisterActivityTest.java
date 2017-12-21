@@ -19,9 +19,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowIntent;
-import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.setup.DrishtiTestRunner;
 import org.smartregister.shadows.ShadowContext;
@@ -31,10 +28,13 @@ import org.smartregister.view.contract.Village;
 import org.smartregister.view.contract.Villages;
 import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
-import org.smartregister.view.viewholder.NativeECSmartRegisterViewHolder;
 
-import static org.junit.Assert.*;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(DrishtiTestRunner.class)
 @Config(shadows = {ShadowContext.class})

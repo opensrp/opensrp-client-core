@@ -23,7 +23,7 @@ import java.util.Map;
  */
 
 public class DetailsRepositoryTest extends BaseUnitTest {
-    
+
     private DetailsRepository detailsRepository;
     @Mock
     private Repository repository;
@@ -50,7 +50,7 @@ public class DetailsRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertOnCreateCallsDatabaseExec(){
+    public void assertOnCreateCallsDatabaseExec() {
         detailsRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
     }
@@ -95,7 +95,7 @@ public class DetailsRepositoryTest extends BaseUnitTest {
     public MatrixCursor getCursor() {
         String[] columns = {BASE_ENTITY_ID_COLUMN, KEY_COLUMN, VALUE_COLUMN, EVENT_DATE_COLUMN};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"1", "key", "value", "2017-10-10"});
+        cursor.addRow(new Object[]{"1", "key", "value", "2017-10-10"});
         return cursor;
     }
 }

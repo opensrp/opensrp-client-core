@@ -18,31 +18,31 @@ import java.util.List;
  */
 
 public class FormSubmissionTest extends BaseUnitTest {
-    
+
     private FormSubmissionMock formSubmission;
     @Mock
     private FormInstance formInstance;
     @Mock
     private SubFormData subForm;
-    
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        formSubmission = new FormSubmissionMock("", "", "", "", 
+        formSubmission = new FormSubmissionMock("", "", "", "",
                 "", 0l, formInstance);
         Mockito.when(formInstance.getSubFormByName(Mockito.anyString())).thenReturn(subForm);
     }
-    
+
     @Test
     public void clientVersion() {
         Assert.assertEquals(formSubmission.clientVersion(), 0l);
     }
-    
+
     @Test
     public void formDataDefinitionVersion() {
         Assert.assertEquals(formSubmission.formDataDefinitionVersion(), "");
     }
-    
+
     @Test
     public void serverVersion() {
         formSubmission.setServerVersion(0l);
@@ -56,16 +56,16 @@ public class FormSubmissionTest extends BaseUnitTest {
 
     @Test
     public void getFields() {
-        List<String>fields = new ArrayList<>();
+        List<String> fields = new ArrayList<>();
         fields.add("");
         Assert.assertNotNull(formSubmission.getFields(fields));
     }
-    
+
     @Test
     public void getInstanceId() {
         Assert.assertEquals(formSubmission.getInstanceId(), "");
     }
-    
+
     @Test
     public void getSubFormByName() {
         Assert.assertNotNull(formSubmission.getSubFormByName(""));
@@ -89,5 +89,5 @@ public class FormSubmissionTest extends BaseUnitTest {
     public void asserttoString() {
         Assert.assertNotNull(formSubmission.toString());
     }
-    
+
 }

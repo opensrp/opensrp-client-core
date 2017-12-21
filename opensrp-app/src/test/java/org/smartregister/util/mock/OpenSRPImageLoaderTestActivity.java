@@ -25,9 +25,10 @@ public class OpenSRPImageLoaderTestActivity extends FragmentActivity {
         setContentView(linearLayout);
     }
 
-    public OpenSRPImageLoaderTestActivity getInstance(){
+    public OpenSRPImageLoaderTestActivity getInstance() {
         return this;
     }
+
     @Override
     protected void onStart() {
         super.onStart();

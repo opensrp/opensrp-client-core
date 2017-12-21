@@ -10,7 +10,7 @@ import org.smartregister.util.BitmapImageCache;
 
 public class MockBitmapImageCache {
     public static BitmapImageCache getBitmapImageCache() {
-        return new BitmapImageCache(1){
+        return new BitmapImageCache(1) {
             @Override
             public void addBitmapToCache(String data, Bitmap bitmap) {
                 super.addBitmapToCache(data, bitmap);

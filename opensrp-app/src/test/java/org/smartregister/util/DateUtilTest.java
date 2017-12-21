@@ -17,7 +17,7 @@ public class DateUtilTest {
 
     @Test
     public void assertDateUtilNotNUll() {
-     org.junit.Assert.assertNotNull(new DateUtil());
+        org.junit.Assert.assertNotNull(new DateUtil());
     }
 
     @Test

@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.FetchStatus.fetched;
@@ -115,7 +114,7 @@ public class UpdateActionsTaskTest {
             }
         });
 
-       // verifyZeroInteractions(actionService);
+        // verifyZeroInteractions(actionService);
     }
 
     @Test

@@ -26,7 +26,7 @@ import java.util.Map;
 
 @RunWith(RobolectricTestRunner.class)
 public class ChildServiceTest {
-    
+
     @Mock
     private AllTimelineEvents allTimelineEvents;
     @Mock

@@ -20,7 +20,7 @@ import java.util.List;
  */
 @RunWith(RobolectricTestRunner.class)
 public class AllCommonsRepositoryTest {
-    
+
     @Mock
     private CommonRepository personRepository;
     @Mock
@@ -29,21 +29,21 @@ public class AllCommonsRepositoryTest {
     private AlertRepository alertRepository;
 
     private AllCommonsRepository allCommonsRepository;
-    
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        allCommonsRepository = new AllCommonsRepository(personRepository, 
-                                                        alertRepository, 
-                                                        timelineEventRepository);
+        allCommonsRepository = new AllCommonsRepository(personRepository,
+                alertRepository,
+                timelineEventRepository);
     }
 
     @Test
     public void ShouldReturnAllPersonObjectOfaCertainTypeFromRepository() {
         List<CommonPersonObject> expectedpersonobjects = Arrays.asList(new CommonPersonObject(
-                "case1", 
-                "relationid1", 
-                new HashMap<String, String>(), 
+                "case1",
+                "relationid1",
+                new HashMap<String, String>(),
                 ""));
         Mockito.when(personRepository.allcommon()).thenReturn(expectedpersonobjects);
         Assert.assertEquals(expectedpersonobjects, personRepository.allcommon());

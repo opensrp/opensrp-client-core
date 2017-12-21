@@ -74,7 +74,7 @@ public class ImageRepositoryTest extends BaseUnitTest {
         imageRepository.close("1");
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
     }
-    
+
     @Test
     public void assertfindAllUnSynced() {
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
@@ -100,10 +100,10 @@ public class ImageRepositoryTest extends BaseUnitTest {
     }
 
     public MatrixCursor getCursor() {
-        MatrixCursor matrixCursor= new MatrixCursor(new String [] {ID_COLUMN, anm_ID_COLUMN, 
-                entityID_COLUMN, contenttype_COLUMN, filepath_COLUMN, syncStatus_COLUMN, 
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{ID_COLUMN, anm_ID_COLUMN,
+                entityID_COLUMN, contenttype_COLUMN, filepath_COLUMN, syncStatus_COLUMN,
                 filecategory_COLUMN});
-        matrixCursor.addRow(new String []{"1", "2", "3", "4", "5", "6", "7"});
+        matrixCursor.addRow(new String[]{"1", "2", "3", "4", "5", "6", "7"});
         return matrixCursor;
     }
 }

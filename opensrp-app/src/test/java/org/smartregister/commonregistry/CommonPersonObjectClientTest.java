@@ -2,8 +2,10 @@ package org.smartregister.commonregistry;
 
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 

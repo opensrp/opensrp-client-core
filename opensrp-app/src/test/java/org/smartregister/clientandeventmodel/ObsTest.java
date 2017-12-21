@@ -1,10 +1,12 @@
 package org.smartregister.clientandeventmodel;
 
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.mock.ObsMock;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
  */
 
 public class ObsTest extends BaseUnitTest {
-    
+
     private List<Object> humanReadableValues = new ArrayList<>();
     private String fieldType = "filedType";
 
@@ -40,7 +42,7 @@ public class ObsTest extends BaseUnitTest {
     public void assertConstructorNotNull() {
         Assert.assertNotNull(ob);
     }
-        
+
     public String getFieldType() {
         return ob.getFieldType();
     }
@@ -60,7 +62,7 @@ public class ObsTest extends BaseUnitTest {
         ob.setFieldDataType(fieldDataType);
         Assert.assertEquals(getFieldDataType(), fieldDataType);
     }
-    
+
     public String getFieldCode() {
         return ob.getFieldCode();
     }
@@ -70,7 +72,7 @@ public class ObsTest extends BaseUnitTest {
         ob.setFieldCode(fieldCode);
         Assert.assertEquals(getFieldCode(), fieldCode);
     }
-    
+
     public String getParentCode() {
         return ob.getParentCode();
     }
@@ -80,7 +82,7 @@ public class ObsTest extends BaseUnitTest {
         ob.setParentCode(parentCode);
         Assert.assertEquals(getParentCode(), parentCode);
     }
-    
+
     public Object getValue() {
         return ob.getValue();
     }
@@ -91,7 +93,7 @@ public class ObsTest extends BaseUnitTest {
         ob.setValue(value);
         Assert.assertEquals(getValue(), value);
     }
-    
+
     public List<Object> getValues() {
         return ob.getValues();
     }
@@ -101,7 +103,7 @@ public class ObsTest extends BaseUnitTest {
         ob.setValues(values);
         Assert.assertEquals(getValues(), values);
     }
-    
+
     public String getComments() {
         return ob.getComments();
     }
@@ -111,7 +113,7 @@ public class ObsTest extends BaseUnitTest {
         ob.setComments(comments);
         Assert.assertEquals(getComments(), comments);
     }
-    
+
     public String getFormSubmissionField() {
         return ob.getFormSubmissionField();
     }
@@ -168,11 +170,11 @@ public class ObsTest extends BaseUnitTest {
     public void withFormSubmissionField() {
         Assert.assertNotNull(ob.withFormSubmissionField(formSubmissionField));
     }
-    
+
     public List<Object> getHumanReadableValues() {
         return ob.getHumanReadableValues();
     }
-    
+
     @Test
     public void setHumanReadableValues() {
         ob.setHumanReadableValues(humanReadableValues);

@@ -83,10 +83,11 @@ public class IntegerUtilTest extends BaseUnitTest {
     public void assertInitializationNotNull() {
         Assert.assertNotNull(new IntegerUtil());
     }
+
     @Test
     public void assertIntegerCompareReturnsInt() {
-        Assert.assertEquals(IntegerUtil.compare(1,2),-1);
-        Assert.assertEquals(IntegerUtil.compare(2,2),0);
-        Assert.assertEquals(IntegerUtil.compare(3,2),1);
+        Assert.assertEquals(IntegerUtil.compare(1, 2), -1);
+        Assert.assertEquals(IntegerUtil.compare(2, 2), 0);
+        Assert.assertEquals(IntegerUtil.compare(3, 2), 1);
     }
 }

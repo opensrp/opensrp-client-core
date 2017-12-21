@@ -28,16 +28,16 @@ public class StringUtilTest {
 
     @Test
     public void assertReplaceAndHumanizeCallsHumanize() throws Exception {
-        org.junit.Assert.assertEquals("Abc def", StringUtil.replaceAndHumanize("abc def"," ","_"));
+        org.junit.Assert.assertEquals("Abc def", StringUtil.replaceAndHumanize("abc def", " ", "_"));
     }
 
     @Test
     public void assertReplaceAndHumanizeWithInitCapTextCallsHumanize() throws Exception {
-        org.junit.Assert.assertEquals("Abc def", StringUtil.replaceAndHumanizeWithInitCapText("abc def"," ","_"));
+        org.junit.Assert.assertEquals("Abc def", StringUtil.replaceAndHumanizeWithInitCapText("abc def", " ", "_"));
     }
 
     @Test
     public void assertHumanizeAndUppercase() throws Exception {
-        org.junit.Assert.assertEquals("ABC DEF",StringUtil.humanizeAndUppercase("abc def",new String[]{" "}));
+        org.junit.Assert.assertEquals("ABC DEF", StringUtil.humanizeAndUppercase("abc def", new String[]{" "}));
     }
 }

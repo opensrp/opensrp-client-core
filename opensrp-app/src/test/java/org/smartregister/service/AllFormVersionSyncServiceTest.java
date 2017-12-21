@@ -56,9 +56,9 @@ public class AllFormVersionSyncServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        service = Mockito.spy(new AllFormVersionSyncService(httpAgent, 
-                                                            configuration, 
-                                                            formsVersionRepository));
+        service = Mockito.spy(new AllFormVersionSyncService(httpAgent,
+                configuration,
+                formsVersionRepository));
         expectedFormDefinitionVersion = Arrays.asList(new FormDefinitionVersion("form_ec", "ec_dir", "2"));
         Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
     }
@@ -81,14 +81,14 @@ public class AllFormVersionSyncServiceTest {
         Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 this.expectedFormDefinitionVersion);
         Mockito.when(httpAgent.downloadFromUrl("http://opensrp_base_url/form/form-files?formDirName=ec_dir",
-                                       "ec_dir.zip")).thenReturn(DownloadStatus.downloaded);
+                "ec_dir.zip")).thenReturn(DownloadStatus.downloaded);
 
         DownloadStatus status = service.downloadAllPendingFormFromServer();
 
         Assert.assertEquals(status, DownloadStatus.downloaded);
         Mockito.verify(formsVersionRepository).getAllFormWithSyncStatus(SyncStatus.PENDING);
         Mockito.verify(httpAgent).downloadFromUrl(
-                "http://opensrp_base_url/form/form-files?formDirName=ec_dir", 
+                "http://opensrp_base_url/form/form-files?formDirName=ec_dir",
                 "ec_dir.zip");
     }
 
@@ -110,18 +110,18 @@ public class AllFormVersionSyncServiceTest {
         File[] formFiles = new File[]{file1};
 
         Map<String, String> repoFile1 = EasyMap.create("formName", "ec_registration")
-                                               .put("formDirName", "ec_registration")
-                                               .put("formDataDefinitionVersion", "1")
-                                               .put("id", "1")
-                                               .put("syncStatus", "SYNCED")
-                                               .map();
+                .put("formDirName", "ec_registration")
+                .put("formDataDefinitionVersion", "1")
+                .put("id", "1")
+                .put("syncStatus", "SYNCED")
+                .map();
 
         Map<String, String> repoFile2 = EasyMap.create("formName", "anc_registration")
-                                               .put("formDirName", "anc_registration")
-                                               .put("formDataDefinitionVersion", "1")
-                                               .put("id", "1")
-                                               .put("syncStatus", "SYNCED")
-                                               .map();
+                .put("formDirName", "anc_registration")
+                .put("formDataDefinitionVersion", "1")
+                .put("id", "1")
+                .put("syncStatus", "SYNCED")
+                .map();
 
         Mockito.when(service.listFormFiles()).thenReturn(formFiles);
         Mockito.when(formsVersionRepository.getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED)).thenReturn(
@@ -139,12 +139,12 @@ public class AllFormVersionSyncServiceTest {
 
         File[] formFiles = new File[]{file1, file2};
 
-        FormDefinitionVersion f1 = new FormDefinitionVersion("ec_registration", 
-                                                             "ec_registration", 
-                                                             "1");
-        FormDefinitionVersion f2 = new FormDefinitionVersion("anc_registration", 
-                                                             "anc_registration", 
-                                                             "1");
+        FormDefinitionVersion f1 = new FormDefinitionVersion("ec_registration",
+                "ec_registration",
+                "1");
+        FormDefinitionVersion f2 = new FormDefinitionVersion("anc_registration",
+                "anc_registration",
+                "1");
 
         Mockito.when(service.listFormFiles()).thenReturn(formFiles);
         Mockito.doReturn(f1).when(service).getFormDefinitionFromFile(file1);
@@ -167,21 +167,21 @@ public class AllFormVersionSyncServiceTest {
                 + "\"ec_dir\", \"formDataDefinitionVersion\": \"3\"}] }";
         Mockito.when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
                 new Response<String>(
-                    success, 
-                    jsonObject));
+                        success,
+                        jsonObject));
 
         List<FormDefinitionVersion> repoForm = Arrays.asList(new FormDefinitionVersion("form_ec",
-                                                                                "ec_dir", 
-                                                                                "1"));
+                "ec_dir",
+                "1"));
 
         Mockito.when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
         Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 repoForm);
         Mockito.when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
-                    new FormDefinitionVersion(
-                    "EC_ENGAN", 
-                    "ec_dir", 
-                    "1"));
+                new FormDefinitionVersion(
+                        "EC_ENGAN",
+                        "ec_dir",
+                        "1"));
         Mockito.when(formsVersionRepository.getVersion("ec_dir")).thenReturn("1");
 
         FetchStatus fetchStatus = service.pullFormDefinitionFromServer();
@@ -201,21 +201,21 @@ public class AllFormVersionSyncServiceTest {
                 + " \"ec_dir\", \"formDataDefinitionVersion\": \"2\"}] }";
         Mockito.when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
                 new Response<String>(
-                    success, 
-                    jsonObject));
+                        success,
+                        jsonObject));
 
         List<FormDefinitionVersion> repoForm = Arrays.asList(new FormDefinitionVersion("form_ec",
-                                                                                "ec_dir", 
-                                                                                "3"));
+                "ec_dir",
+                "3"));
 
         Mockito.when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
         Mockito.when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 repoForm);
         Mockito.when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
                 new FormDefinitionVersion(
-                    "EC_ENGAN", 
-                    "ec_dir", 
-                    "3"));
+                        "EC_ENGAN",
+                        "ec_dir",
+                        "3"));
         Mockito.when(formsVersionRepository.getVersion("ec_dir")).thenReturn("3");
 
         FetchStatus fetchStatus = service.pullFormDefinitionFromServer();

@@ -3,12 +3,6 @@ package org.smartregister.util;
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.os.IBinder;
-import android.os.IInterface;
-import android.os.Parcel;
-import android.os.RemoteException;
-import android.support.annotation.Nullable;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.HurlStack;
@@ -16,7 +10,6 @@ import com.android.volley.toolbox.Volley;
 
 import junit.framework.Assert;
 
-import org.apache.maven.model.Resource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,12 +25,8 @@ import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.util.mock.MockContext;
-import org.smartregister.util.mock.MockService;
 import org.smartregister.util.mock.OpenSRPImageLoaderTestActivity;
 import org.smartregister.view.activity.DrishtiApplication;
-
-import java.io.FileDescriptor;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -59,7 +48,7 @@ public class OpenSRPImageLoaderTest extends BaseUnitTest {
     private ActivityController<OpenSRPImageLoaderTestActivity> controller;
 
     @Before
-    public void setUp()throws Exception {
+    public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
         Intent intent = new Intent(RuntimeEnvironment.application, OpenSRPImageLoaderTestActivity.class);
         controller = Robolectric.buildActivity(OpenSRPImageLoaderTestActivity.class, intent);
@@ -69,7 +58,7 @@ public class OpenSRPImageLoaderTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertActivityNotNull(){
+    public void assertActivityNotNull() {
         Assert.assertNotNull(activity);
     }
 

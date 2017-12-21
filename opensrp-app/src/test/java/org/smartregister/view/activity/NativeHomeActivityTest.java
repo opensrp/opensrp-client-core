@@ -6,12 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowActivity;
 import org.smartregister.R;
 import org.smartregister.setup.DrishtiTestRunner;
 import org.smartregister.shadows.ShadowContext;
-
-import static org.junit.Assert.assertEquals;
 
 @RunWith(DrishtiTestRunner.class)
 @Config(shadows = {ShadowContext.class})

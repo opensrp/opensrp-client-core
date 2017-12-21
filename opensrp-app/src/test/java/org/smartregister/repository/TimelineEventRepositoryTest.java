@@ -62,8 +62,8 @@ public class TimelineEventRepositoryTest extends BaseUnitTest {
     public void assertAllFor() {
         String[] columns = {"id", "name", "date", "a", "b", "c"};
         MatrixCursor cursor = new MatrixCursor(columns);
-        cursor.addRow(new Object[] {"", "", "2017-10-10", "", "", ""});
-        cursor.addRow(new Object[] {"", "", "2017-10-10", "", "", ""});
+        cursor.addRow(new Object[]{"", "", "2017-10-10", "", "", ""});
+        cursor.addRow(new Object[]{"", "", "2017-10-10", "", "", ""});
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(cursor);
         timelineEventRepository.allFor("0");
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class));

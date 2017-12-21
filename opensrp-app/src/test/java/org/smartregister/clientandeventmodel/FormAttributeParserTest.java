@@ -1,9 +1,12 @@
 package org.smartregister.clientandeventmodel;
 
 import android.content.res.AssetManager;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,6 +18,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.mock.NodeListMock;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.namespace.QName;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathFactory;
@@ -47,16 +52,16 @@ public class FormAttributeParserTest extends BaseUnitTest {
     private String FORMNAME = "child_enrollment";
     private String SUBFORMNAME = "magic_subform";
     private String SOURCE = "www/form/";
-    private String formDefinition = SOURCE+FORMNAME+"/form_definition.json";
-    private String model = SOURCE+FORMNAME+"/model.xml";
-    private String formJSON = SOURCE+FORMNAME+"/form.json";
-    private String formMultiJSON = SOURCE+FORMNAME+"/form_multi.json";
+    private String formDefinition = SOURCE + FORMNAME + "/form_definition.json";
+    private String model = SOURCE + FORMNAME + "/model.xml";
+    private String formJSON = SOURCE + FORMNAME + "/form.json";
+    private String formMultiJSON = SOURCE + FORMNAME + "/form_multi.json";
     private String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
     private String VALUES = "1 2 3 4";
     private String instanceId = "instanceID";
     private String birth_date_known = "birth_date_known";
     private String pkchild = "pkchild";
-    
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -71,7 +76,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         List<FormField> formFields = new ArrayList<FormField>();
         formFields.add(new FormField("NULL", VALUES, SOURCE));
         formFields.add(new FormField(instanceId, VALUES, SOURCE));
-        FormData fd = new FormData("bind_type", SOURCE, formFields, 
+        FormData fd = new FormData("bind_type", SOURCE, formFields,
                 new ArrayList<SubFormData>());
 
         FormInstance fi = new FormInstance();
@@ -94,7 +99,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         formFields.add(new FormField(birth_date_known, VALUES, SOURCE));
         formFields.add(new FormField(instanceId, VALUES, SOURCE));
 
-        List<SubFormData>subFormData = new ArrayList<SubFormData>();
+        List<SubFormData> subFormData = new ArrayList<SubFormData>();
         SubFormData sf = new SubFormData();
         sf.setName(SUBFORMNAME);
         List<Map<String, String>> instances = new ArrayList<>();
@@ -126,7 +131,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         Mockito.when(assetManager.open(formJSON)).thenReturn(formJSONStream);
         Assert.assertNotNull(parser.createFormSubmissionMap(fs));
     }
-    
+
     @Test
     public void assertGetFieldname() throws Exception {
         Map<String, String> attributes = new HashMap<>();
@@ -141,7 +146,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         formFields.add(new FormField(birth_date_known, VALUES, SOURCE));
         formFields.add(new FormField(instanceId, VALUES, SOURCE));
 
-        List<SubFormData>subFormData = new ArrayList<SubFormData>();
+        List<SubFormData> subFormData = new ArrayList<SubFormData>();
         SubFormData sf = new SubFormData();
         sf.setName(SUBFORMNAME);
         List<Map<String, String>> instances = new ArrayList<>();
@@ -202,7 +207,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         formFields.add(new FormField(birth_date_known, VALUES, SOURCE));
         formFields.add(new FormField(instanceId, VALUES, SOURCE));
 
-        List<SubFormData>subFormData = new ArrayList<SubFormData>();
+        List<SubFormData> subFormData = new ArrayList<SubFormData>();
         SubFormData sf = new SubFormData();
         sf.setName(SUBFORMNAME);
         List<Map<String, String>> instances = new ArrayList<>();

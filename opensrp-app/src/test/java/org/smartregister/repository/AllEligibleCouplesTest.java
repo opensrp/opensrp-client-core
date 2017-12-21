@@ -37,7 +37,7 @@ public class AllEligibleCouplesTest {
 
     @Test
     public void shouldFetchAllAlertsFromRepository() throws Exception {
-        List<EligibleCouple> expectedCouples = Arrays.asList(new EligibleCouple("Case X", "Wife 1", "Husband 1", "EC Number 1", "village", "subcenter", new HashMap<String, String>()), 
+        List<EligibleCouple> expectedCouples = Arrays.asList(new EligibleCouple("Case X", "Wife 1", "Husband 1", "EC Number 1", "village", "subcenter", new HashMap<String, String>()),
                 new EligibleCouple("Case Y", "Wife 2", "Husband 2", "EC Number 2", "village", "subcenter", new HashMap<String, String>()));
         Mockito.when(eligibleCoupleRepository.allEligibleCouples()).thenReturn(expectedCouples);
 
@@ -80,6 +80,7 @@ public class AllEligibleCouplesTest {
         allEligibleCouples.mergeDetails("", new HashMap<String, String>());
         Mockito.verify(eligibleCoupleRepository, Mockito.times(1)).mergeDetails(Mockito.anyString(), Mockito.any(Map.class));
     }
+
     @Test
     public void assertCountreturnsLong() {
         Mockito.when(eligibleCoupleRepository.count()).thenReturn(0l);

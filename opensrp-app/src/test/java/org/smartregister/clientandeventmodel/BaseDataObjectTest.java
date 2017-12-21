@@ -24,7 +24,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
     public void setUp() {
         baseDataObject = new BaseDataObjectMock();
     }
-    
+
     public User getCreator() {
         return baseDataObject.getCreator();
     }
@@ -34,7 +34,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setCreator(user);
         Assert.assertEquals(getCreator(), user);
     }
-    
+
     public Date getDateCreated() {
         return baseDataObject.getDateCreated();
     }
@@ -44,7 +44,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setDateCreated(date);
         Assert.assertEquals(getDateCreated(), date);
     }
-    
+
     public User getEditor() {
         return baseDataObject.getEditor();
     }
@@ -54,7 +54,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setEditor(user);
         Assert.assertEquals(getEditor(), user);
     }
-    
+
     public Date getDateEdited() {
         return baseDataObject.getDateEdited();
     }
@@ -64,7 +64,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setDateEdited(date);
         Assert.assertEquals(getDateEdited(), date);
     }
-    
+
     public Boolean getVoided() {
         return baseDataObject.getVoided();
     }
@@ -74,7 +74,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setVoided(Boolean.TRUE);
         Assert.assertEquals(getVoided(), Boolean.TRUE);
     }
-    
+
     public Date getDateVoided() {
         return baseDataObject.getDateVoided();
     }
@@ -84,7 +84,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setDateVoided(date);
         Assert.assertEquals(getDateVoided(), date);
     }
-    
+
     public User getVoider() {
         return baseDataObject.getVoider();
     }
@@ -94,7 +94,7 @@ public class BaseDataObjectTest extends BaseUnitTest {
         baseDataObject.setVoider(user);
         Assert.assertEquals(getVoider(), user);
     }
-    
+
     public String getVoidReason() {
         return baseDataObject.getVoidReason();
     }

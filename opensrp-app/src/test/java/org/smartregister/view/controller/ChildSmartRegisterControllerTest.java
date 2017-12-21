@@ -35,7 +35,7 @@ import java.util.Map;
 
 @RunWith(RobolectricTestRunner.class)
 public class ChildSmartRegisterControllerTest {
-    
+
     public static final String[] CHILD_ALERTS = new String[]{
             "bcg",
             "measles", "measlesbooster",

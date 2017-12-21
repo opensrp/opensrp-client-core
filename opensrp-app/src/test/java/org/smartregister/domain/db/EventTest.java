@@ -31,7 +31,7 @@ public class EventTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        event = new EventMock(baseEntityId,eventId,eventType,eventDate,entityType,providerId,locationId,formSubmissionId);
+        event = new EventMock(baseEntityId, eventId, eventType, eventDate, entityType, providerId, locationId, formSubmissionId);
     }
 
     @Test
@@ -39,7 +39,7 @@ public class EventTest extends BaseUnitTest {
         Assert.assertNotNull(event);
     }
 
-    
+
     public List<Obs> getObs() {
         return event.getObs();
     }
@@ -50,7 +50,7 @@ public class EventTest extends BaseUnitTest {
         List<Obs> obs = new ArrayList<>();
         Assert.assertNotNull(getObs());
         event.setObs(obs);
-        Assert.assertEquals(getObs(),obs);
+        Assert.assertEquals(getObs(), obs);
     }
 
     @Test
@@ -58,10 +58,10 @@ public class EventTest extends BaseUnitTest {
         event.setObs(null);
         Obs observation = new Obs();
         event.addObs(observation);
-        Assert.assertEquals(getObs().get(0),observation);
+        Assert.assertEquals(getObs().get(0), observation);
     }
 
-    
+
     public String getBaseEntityId() {
         return event.getBaseEntityId();
     }
@@ -69,10 +69,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setBaseEntityId() {
         event.setBaseEntityId(baseEntityId);
-        Assert.assertEquals(getBaseEntityId(),baseEntityId);
+        Assert.assertEquals(getBaseEntityId(), baseEntityId);
     }
 
-    
+
     public String getLocationId() {
         return event.getLocationId();
     }
@@ -80,10 +80,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setLocationId() {
         event.setLocationId(locationId);
-        Assert.assertEquals(getLocationId(),locationId);
+        Assert.assertEquals(getLocationId(), locationId);
     }
 
-    
+
     public DateTime getEventDate() {
         return event.getEventDate();
     }
@@ -91,10 +91,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setEventDate() {
         event.setEventDate(eventDate);
-        Assert.assertEquals(getEventDate(),eventDate);
+        Assert.assertEquals(getEventDate(), eventDate);
     }
 
-    
+
     public String getEventType() {
         return event.getEventType();
     }
@@ -102,10 +102,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setEventType() {
         event.setEventType(eventType);
-        Assert.assertEquals(getEventType(),eventType);
+        Assert.assertEquals(getEventType(), eventType);
     }
 
-    
+
     public String getFormSubmissionId() {
         return event.getFormSubmissionId();
     }
@@ -113,10 +113,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setFormSubmissionId() {
         event.setFormSubmissionId(formSubmissionId);
-        Assert.assertEquals(getFormSubmissionId(),formSubmissionId);
+        Assert.assertEquals(getFormSubmissionId(), formSubmissionId);
     }
 
-    
+
     public String getProviderId() {
         return event.getProviderId();
     }
@@ -124,10 +124,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setProviderId() {
         event.setProviderId(providerId);
-        Assert.assertEquals(getProviderId(),providerId);
+        Assert.assertEquals(getProviderId(), providerId);
     }
 
-    
+
     public String getEventId() {
         return event.getEventId();
     }
@@ -135,10 +135,10 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setEventId() {
         event.setEventId(eventId);
-        Assert.assertEquals(getEventId(),eventId);
+        Assert.assertEquals(getEventId(), eventId);
     }
 
-    
+
     public String getEntityType() {
         return event.getEntityType();
     }
@@ -146,28 +146,30 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setEntityType() {
         event.setEntityType(entityType);
-        Assert.assertEquals(getEntityType(),entityType);
+        Assert.assertEquals(getEntityType(), entityType);
     }
 
-    
+
     public Map<String, String> getDetails() {
         return event.getDetails();
     }
+
     Map<String, String> details = new HashMap<>();
+
     @Test
     public void setDetails() {
         event.setDetails(details);
-        Assert.assertEquals(getDetails(),details);
+        Assert.assertEquals(getDetails(), details);
     }
 
     @Test
     public void addDetails() {
         event.setDetails(null);
         event.addDetails("key", "val");
-        Assert.assertEquals(event.getDetails().get("key"),"val");
+        Assert.assertEquals(event.getDetails().get("key"), "val");
     }
 
-    
+
     public long getVersion() {
         return event.getVersion();
     }
@@ -175,25 +177,25 @@ public class EventTest extends BaseUnitTest {
     @Test
     public void setVersion() {
         event.setVersion(0l);
-        Assert.assertEquals(getVersion(),0l);
+        Assert.assertEquals(getVersion(), 0l);
     }
 
     @Test
     public void findObs() {
         String parentId = "P";
         boolean nonEmpty = true;
-        String[] fieldIds = {"f1","f2"};
+        String[] fieldIds = {"f1", "f2"};
         Obs observation = new Obs();
         observation.setFieldCode("x");
         observation.setFormSubmissionField("x");
         observation.setParentCode("x");
-        List<Obs>obslist = new ArrayList<>();
+        List<Obs> obslist = new ArrayList<>();
         obslist.add(observation);
         event.setObs(obslist);
 
-        Assert.assertNull(event.findObs(parentId,true,fieldIds));
+        Assert.assertNull(event.findObs(parentId, true, fieldIds));
         observation = new Obs();
-        List<Object>objectlist = new ArrayList<>();
+        List<Object> objectlist = new ArrayList<>();
         obslist = new ArrayList<>();
         objectlist.add(observation);
         observation.setValues(objectlist);
@@ -203,8 +205,8 @@ public class EventTest extends BaseUnitTest {
         obslist.add(observation);
         event.setObs(obslist);
 
-        Assert.assertNotNull(event.findObs(parentId,true,fieldIds));
-        Assert.assertEquals(event.findObs(parentId,true,fieldIds),observation);
+        Assert.assertNotNull(event.findObs(parentId, true, fieldIds));
+        Assert.assertEquals(event.findObs(parentId, true, fieldIds), observation);
     }
 
     @Test

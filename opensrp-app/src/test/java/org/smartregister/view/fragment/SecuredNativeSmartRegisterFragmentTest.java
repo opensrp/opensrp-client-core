@@ -3,27 +3,17 @@ package org.smartregister.view.fragment;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.util.FragmentTestUtil;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.customshadows.FontTextViewShadow;
-import org.smartregister.view.activity.LoginActivity;
-import org.smartregister.view.fragment.mock.MockFragment;
 import org.smartregister.view.fragment.mock.SecuredNativeSmartRegisterFragmentActivityMock;
-
-import static org.mockito.Mockito.when;
 
 /**
  * Created by kaderchowdhury on 14/11/17.

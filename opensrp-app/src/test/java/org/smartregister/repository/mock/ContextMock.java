@@ -23,10 +23,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.UserHandle;
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.annotation.StyleRes;
 import android.view.Display;
 
@@ -42,8 +40,8 @@ import java.io.InputStream;
  */
 
 public class ContextMock {
-    
-    public static Context getContext(){
+
+    public static Context getContext() {
         return new Context() {
             @Override
             public AssetManager getAssets() {
@@ -386,7 +384,7 @@ public class ContextMock {
             }
 
             @Override
-            public boolean bindService(Intent intent, @NonNull ServiceConnection serviceConnection,  int i) {
+            public boolean bindService(Intent intent, @NonNull ServiceConnection serviceConnection, int i) {
                 return false;
             }
 
@@ -446,42 +444,42 @@ public class ContextMock {
             }
 
             @Override
-            public int checkUriPermission(Uri uri, int i, int i1,  int i2) {
+            public int checkUriPermission(Uri uri, int i, int i1, int i2) {
                 return 0;
             }
 
             @Override
-            public int checkCallingUriPermission(Uri uri,  int i) {
+            public int checkCallingUriPermission(Uri uri, int i) {
                 return 0;
             }
 
             @Override
-            public int checkCallingOrSelfUriPermission(Uri uri,  int i) {
+            public int checkCallingOrSelfUriPermission(Uri uri, int i) {
                 return 0;
             }
 
             @Override
-            public int checkUriPermission(@Nullable Uri uri, @Nullable String s, @Nullable String s1, int i, int i1,  int i2) {
+            public int checkUriPermission(@Nullable Uri uri, @Nullable String s, @Nullable String s1, int i, int i1, int i2) {
                 return 0;
             }
 
             @Override
-            public void enforceUriPermission(Uri uri, int i, int i1,  int i2, String s) {
+            public void enforceUriPermission(Uri uri, int i, int i1, int i2, String s) {
                 System.out.println();
             }
 
             @Override
-            public void enforceCallingUriPermission(Uri uri,  int i, String s) {
+            public void enforceCallingUriPermission(Uri uri, int i, String s) {
                 System.out.println();
             }
 
             @Override
-            public void enforceCallingOrSelfUriPermission(Uri uri,  int i, String s) {
+            public void enforceCallingOrSelfUriPermission(Uri uri, int i, String s) {
                 System.out.println();
             }
 
             @Override
-            public void enforceUriPermission(@Nullable Uri uri, @Nullable String s, @Nullable String s1, int i, int i1,  int i2, @Nullable String s2) {
+            public void enforceUriPermission(@Nullable Uri uri, @Nullable String s, @Nullable String s1, int i, int i1, int i2, @Nullable String s2) {
                 System.out.println();
             }
 
