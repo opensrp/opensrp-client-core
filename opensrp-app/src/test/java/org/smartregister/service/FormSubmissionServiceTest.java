@@ -13,7 +13,9 @@ import org.smartregister.repository.FormDataRepository;
 import java.util.List;
 
 import static java.util.Arrays.asList;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.SyncStatus.SYNCED;
 import static org.smartregister.util.EasyMap.create;

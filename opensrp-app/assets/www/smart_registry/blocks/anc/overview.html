@@ -10,8 +10,10 @@
                         ng-if="schedule === 'tt' && client.visits[schedule].next && (client.visits[schedule].next.name === 'TT 1' || client.visits[schedule].next.name === 'TT Booster')"
                         ng-class="client.visits[schedule].next.status"
                         ng-click='client.visits[schedule].next.status === "inProcess" || openFormWithFieldOverridesAndMetaData("tt", client.entityId, {"entityId": client.entityId, "alertName": client.visits[schedule].next.name});'>
-                    <span class="text-bold text-upper" ng-if='client.visits[schedule].next.status === "complete"'>{{client.visits[schedule].next.name}}</span>
-                    <span class="text-bold text-upper" ng-if='client.visits[schedule].next.status != "complete"'>TT</span>
+                    <span class="text-bold text-upper"
+                          ng-if='client.visits[schedule].next.status === "complete"'>{{client.visits[schedule].next.name}}</span>
+                    <span class="text-bold text-upper"
+                          ng-if='client.visits[schedule].next.status != "complete"'>TT</span>
                     <br/>
                         <span ng-if="client.visits[schedule].next.status == 'normal'
                                 || client.visits[schedule].next.status == 'urgent'
@@ -78,7 +80,8 @@
 </div>
 
 <div class="span1 full-height span-no-margin width-without-margins span-content">
-    <button class="btn btn-primary btn-large normal btn-sr full-height" ng-click="openANCFormModal(client)">
+    <button class="btn btn-primary btn-large normal btn-sr full-height"
+            ng-click="openANCFormModal(client)">
         <center><i class="icon-pencil icon-large"></i></center>
     </button>
 </div>

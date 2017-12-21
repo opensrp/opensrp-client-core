@@ -34,7 +34,12 @@ import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
 import org.smartregister.view.viewholder.NativeECSmartRegisterViewHolder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
 
 @RunWith(DrishtiTestRunner.class)
@@ -301,9 +306,9 @@ public class NativeECSmartRegisterActivityTest {
         assertEquals(EligibleCoupleDetailActivity.class.getName(),
                 shadowIntent.getComponent().getClassName());
         assertEquals((
-                (ECClient) ((NativeECSmartRegisterViewHolder) item1.getTag())
-                        .profileInfoLayout()
-                        .getTag()).entityId(),
+                        (ECClient) ((NativeECSmartRegisterViewHolder) item1.getTag())
+                                .profileInfoLayout()
+                                .getTag()).entityId(),
                 shadowIntent.getStringExtra(AllConstants.CASE_ID));
     }
 

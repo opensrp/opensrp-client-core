@@ -26,10 +26,10 @@ public class FakeRepository extends Repository {
         super(context, dbName, version, session, commonFtsObject, repositories);
     }
 
-    public void setRepositories(DrishtiRepository... repositoriestoAssign) throws Exception{
+    public void setRepositories(DrishtiRepository... repositoriestoAssign) throws Exception {
         Field field = FakeRepository.class.getDeclaredField("repositories");
         field.setAccessible(true);
-        field.set(this,repositoriestoAssign);
+        field.set(this, repositoriestoAssign);
 //        Object value = field.get(this);
         field.setAccessible(false);
     }

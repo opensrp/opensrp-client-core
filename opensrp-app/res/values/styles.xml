@@ -14,7 +14,7 @@
         <item name="android:textSize">17sp</item>
     </style>
 
-    <style name="CustomFontTextViewStyle.ListView.Normal.Bold" >
+    <style name="CustomFontTextViewStyle.ListView.Normal.Bold">
         <item name="fontVariant">bold</item>
     </style>
 
@@ -49,6 +49,7 @@
         <!--<item name="android:paddingLeft">10dp</item>-->
         <item name="android:ellipsize">none</item>
     </style>
+
     <style name="CustomFontTextViewStyle.ListView.Small.paddingNoHeight" parent="@android:style/Widget.TextView">
         <item name="fontVariant">medium</item>
         <item name="android:textColor">@android:color/black</item>
@@ -141,6 +142,7 @@
     <style name="CustomFontTextViewStyle.StatusBar.Bold">
         <item name="fontVariant">bold</item>
     </style>
+
     <style name="CustomFontTextViewStyle.StatusBar.Bold.NoPadding">
         <item name="fontVariant">bold</item>
         <item name="android:paddingLeft">0dp</item>
@@ -217,9 +219,9 @@
     </style>
 
 
-        <style name="TreeNodeStyle">
-            <item name="android:paddingLeft">20dp</item>
-        </style>
+    <style name="TreeNodeStyle">
+        <item name="android:paddingLeft">20dp</item>
+    </style>
 
     <style name="TreeNodeStyleDivided">
         <item name="android:showDividers">middle</item>

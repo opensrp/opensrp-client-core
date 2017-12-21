@@ -11,7 +11,8 @@
                 <span class="text-bold">{{client.deliveryDateSmallFormat}}</span>
             </p>
         </div>
-        <div class="span8 span-no-margin width-without-margins line-right span-content vertical-ellipsis">{{pncComplications(client.pncComplications) |
+        <div class="span8 span-no-margin width-without-margins line-right span-content vertical-ellipsis">
+            {{pncComplications(client.pncComplications) |
             camelCase | commaSeparated | humanize}}
         </div>
     </div>

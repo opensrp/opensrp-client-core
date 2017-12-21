@@ -62,8 +62,8 @@ public class AllFormVersionSyncServiceTest {
     public void setUp() throws Exception {
         initMocks(this);
         service = Mockito.spy(new AllFormVersionSyncService(httpAgent,
-                                                            configuration,
-                                                            formsVersionRepository));
+                configuration,
+                formsVersionRepository));
         expectedFormDefinitionVersion = asList(new FormDefinitionVersion("form_ec", "ec_dir", "2"));
         when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
     }
@@ -86,7 +86,7 @@ public class AllFormVersionSyncServiceTest {
         when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 this.expectedFormDefinitionVersion);
         when(httpAgent.downloadFromUrl("http://opensrp_base_url/form/form-files?formDirName=ec_dir",
-                                       "ec_dir.zip")).thenReturn(DownloadStatus.downloaded);
+                "ec_dir.zip")).thenReturn(DownloadStatus.downloaded);
 
         DownloadStatus status = service.downloadAllPendingFormFromServer();
 
@@ -115,18 +115,18 @@ public class AllFormVersionSyncServiceTest {
         File[] formFiles = new File[]{file1};
 
         Map<String, String> repoFile1 = EasyMap.create("formName", "ec_registration")
-                                               .put("formDirName", "ec_registration")
-                                               .put("formDataDefinitionVersion", "1")
-                                               .put("id", "1")
-                                               .put("syncStatus", "SYNCED")
-                                               .map();
+                .put("formDirName", "ec_registration")
+                .put("formDataDefinitionVersion", "1")
+                .put("id", "1")
+                .put("syncStatus", "SYNCED")
+                .map();
 
         Map<String, String> repoFile2 = EasyMap.create("formName", "anc_registration")
-                                               .put("formDirName", "anc_registration")
-                                               .put("formDataDefinitionVersion", "1")
-                                               .put("id", "1")
-                                               .put("syncStatus", "SYNCED")
-                                               .map();
+                .put("formDirName", "anc_registration")
+                .put("formDataDefinitionVersion", "1")
+                .put("id", "1")
+                .put("syncStatus", "SYNCED")
+                .map();
 
         when(service.listFormFiles()).thenReturn(formFiles);
         when(formsVersionRepository.getAllFormWithSyncStatusAsMap(SyncStatus.SYNCED)).thenReturn(
@@ -145,11 +145,11 @@ public class AllFormVersionSyncServiceTest {
         File[] formFiles = new File[]{file1, file2};
 
         FormDefinitionVersion f1 = new FormDefinitionVersion("ec_registration",
-                                                             "ec_registration",
-                                                             "1");
+                "ec_registration",
+                "1");
         FormDefinitionVersion f2 = new FormDefinitionVersion("anc_registration",
-                                                             "anc_registration",
-                                                             "1");
+                "anc_registration",
+                "1");
 
         when(service.listFormFiles()).thenReturn(formFiles);
         doReturn(f1).when(service).getFormDefinitionFromFile(file1);
@@ -172,21 +172,21 @@ public class AllFormVersionSyncServiceTest {
                 + "\"ec_dir\", \"formDataDefinitionVersion\": \"3\"}] }";
         when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
                 new Response<String>(
-                    success,
-                    jsonObject));
+                        success,
+                        jsonObject));
 
         List<FormDefinitionVersion> repoForm = asList(new FormDefinitionVersion("form_ec",
-                                                                                "ec_dir",
-                                                                                "1"));
+                "ec_dir",
+                "1"));
 
         when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
         when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 repoForm);
         when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
-                    new FormDefinitionVersion(
-                    "EC_ENGAN",
-                    "ec_dir",
-                    "1"));
+                new FormDefinitionVersion(
+                        "EC_ENGAN",
+                        "ec_dir",
+                        "1"));
         when(formsVersionRepository.getVersion("ec_dir")).thenReturn("1");
 
         FetchStatus fetchStatus = service.pullFormDefinitionFromServer();
@@ -206,21 +206,21 @@ public class AllFormVersionSyncServiceTest {
                 + " \"ec_dir\", \"formDataDefinitionVersion\": \"2\"}] }";
         when(httpAgent.fetch("http://opensrp_base_url/form/latest-form-versions")).thenReturn(
                 new Response<String>(
-                    success,
-                    jsonObject));
+                        success,
+                        jsonObject));
 
         List<FormDefinitionVersion> repoForm = asList(new FormDefinitionVersion("form_ec",
-                                                                                "ec_dir",
-                                                                                "3"));
+                "ec_dir",
+                "3"));
 
         when(formsVersionRepository.formExists("ec_dir")).thenReturn(true);
         when(formsVersionRepository.getAllFormWithSyncStatus(SyncStatus.PENDING)).thenReturn(
                 repoForm);
         when(formsVersionRepository.getFormByFormDirName("ec_dir")).thenReturn(
                 new FormDefinitionVersion(
-                    "EC_ENGAN",
-                    "ec_dir",
-                    "3"));
+                        "EC_ENGAN",
+                        "ec_dir",
+                        "3"));
         when(formsVersionRepository.getVersion("ec_dir")).thenReturn("3");
 
         FetchStatus fetchStatus = service.pullFormDefinitionFromServer();

@@ -45,7 +45,7 @@ public class Client extends BaseEntity {
 
     public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
             birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
-            gender) {
+                          gender) {
         super(baseEntityId);
         this.firstName = firstName;
         this.middleName = middleName;
@@ -59,7 +59,7 @@ public class Client extends BaseEntity {
 
     public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
             birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
-            gender, String identifierType, String identifier) {
+                          gender, String identifierType, String identifier) {
         super(baseEntityId);
         this.firstName = firstName;
         this.middleName = middleName;
@@ -74,8 +74,8 @@ public class Client extends BaseEntity {
 
     public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
             birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
-            gender, List<Address> addresses, Map<String, String> identifiers, Map<String, Object>
-            attributes) {
+                          gender, List<Address> addresses, Map<String, String> identifiers, Map<String, Object>
+                          attributes) {
         super(baseEntityId);
         this.firstName = firstName;
         this.middleName = middleName;

@@ -49,7 +49,7 @@ public class Address {
 
     public Address(String addressType, Date startDate, Date endDate, Map<String, String>
             addressFields, String latitude, String longitude, String postalCode, String
-            stateProvince, String country) {
+                           stateProvince, String country) {
         this.addressType = addressType;
         this.startDate = startDate;
         this.endDate = endDate;

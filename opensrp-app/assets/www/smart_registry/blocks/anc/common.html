@@ -1,4 +1,5 @@
-<div id="name" ng-click="openProfile(client.entityId)" class="span6 client-details line-right grid-content-padding span-no-margin width-without-margins">
+<div id="name" ng-click="openProfile(client.entityId)"
+     class="span6 client-details line-right grid-content-padding span-no-margin width-without-margins">
     <ng:include src="'blocks/client_name.html'"></ng:include>
     <div class="flag-container">
         <div ng-if="client.isHighRisk" class="flag flag-hrp"></div>
@@ -22,7 +23,8 @@
              ng-class="{'text-due': client.days_past_edd > -30 && client.days_past_edd < 0,
              'text-past-due': client.days_past_edd >= 0}">
             <!--weeks pregnant-->
-            <div ng-if="client.days_past_edd <= 0" style="margin-top: 4px"><b><span style="font-size: 24px">{{weeksPregnant(client)}}</span></b>
+            <div ng-if="client.days_past_edd <= 0" style="margin-top: 4px"><b><span
+                    style="font-size: 24px">{{weeksPregnant(client)}}</span></b>
                 <b><span style="font-size: 20px">weeks</span></b>
             </div>
             <div ng-if="client.days_past_edd <= 0" style="margin-top: 2px" class="text-bold">
@@ -31,7 +33,8 @@
             <div style="margin-top: 2px" class="text-bold">
                 EDD: {{client.eddLongFormat}}
             </div>
-            <div ng-if="client.days_past_edd > 0" style="margin-top: 4px"><b><span style="font-size: 20px">{{client.days_past_edd}}</span></b>
+            <div ng-if="client.days_past_edd > 0" style="margin-top: 4px"><b><span
+                    style="font-size: 20px">{{client.days_past_edd}}</span></b>
                 <b><span style="font-size: 16px">day(s) past due</span></b>
             </div>
         </div>

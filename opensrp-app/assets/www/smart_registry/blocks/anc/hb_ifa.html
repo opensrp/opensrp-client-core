@@ -4,7 +4,8 @@
             <div class="row-fluid full-height">
                 <div class="span7 full-height span-no-margin width-without-margins span-content">
                     <div ng-if="client.visits.hb['Hb Test']"
-                         data-ng-repeat="hb in client.visits.hb['Hb Test'] | orderBy:'-visit_date' | limitTo: 3" class="row-fluid hb">
+                         data-ng-repeat="hb in client.visits.hb['Hb Test'] | orderBy:'-visit_date' | limitTo: 3"
+                         class="row-fluid hb">
                         <div class="span1 width-without-margins hb-legend"
                              ng-class="hbLegendClass(hb.data.hbLevel)">
                         </div>
@@ -53,12 +54,13 @@
                     <!--IFA-->
                     <button class="btn btn-done btn-sr btn-new-form full-height"
                             ng-if="(!client.visits.ifa['IFA'] && !client.visits.ifa.next)"
-                            ng-click="openForm('ifa', client.entityId, {'entityId': client.entityId})">IFA
+                            ng-click="openForm('ifa', client.entityId, {'entityId': client.entityId})">
+                        IFA
                     </button>
                     <button class="btn btn-primary btn-sr full-height"
-                       ng-if="client.visits.ifa.next && client.visits.ifa.next.status != 'complete'"
-                       ng-class="client.visits.ifa.next.status"
-                       ng-click="openForm('ifa', client.entityId, {'entityId': client.entityId, 'alertName': client.visits.ifa.next.name})">
+                            ng-if="client.visits.ifa.next && client.visits.ifa.next.status != 'complete'"
+                            ng-class="client.visits.ifa.next.status"
+                            ng-click="openForm('ifa', client.entityId, {'entityId': client.entityId, 'alertName': client.visits.ifa.next.name})">
                         <div class="button-text-container">
                             <span class="text-bold">IFA Tablets</span>
                             <br/>

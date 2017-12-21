@@ -7,10 +7,7 @@ import org.smartregister.view.activity.NativeECSmartRegisterActivity;
 import org.smartregister.view.activity.ReportsActivity;
 import org.smartregister.view.activity.VideosActivity;
 
-import static org.smartregister.view.controller.ProfileNavigationController.navigateToANCProfile;
-import static org.smartregister.view.controller.ProfileNavigationController.navigateToChildProfile;
 import static org.smartregister.view.controller.ProfileNavigationController.navigateToECProfile;
-import static org.smartregister.view.controller.ProfileNavigationController.navigateToPNCProfile;
 
 public class NavigationController {
     private Activity activity;

@@ -14,7 +14,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 
-public class ReportRepositoryTest extends AndroidTestCase{
+public class ReportRepositoryTest extends AndroidTestCase {
     private ReportRepository repository;
 
     @Override

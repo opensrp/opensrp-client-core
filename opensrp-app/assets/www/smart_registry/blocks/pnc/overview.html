@@ -18,7 +18,8 @@
     {{client.deliveryComplications |
     camelCase | commaSeparated | humanize}}
 </div>
-<div class="span2 span-no-margin width-without-margins line-right span-content" ng-if="client.fp_method">
+<div class="span2 span-no-margin width-without-margins line-right span-content"
+     ng-if="client.fp_method">
     <span class="text-bold">{{client.fp_method | fpMethodName:ecsWithFPMethodServiceModeOptions.options }}</span>
     <br/>
     <span>{{client.family_planning_method_change_date}}</span>
@@ -34,8 +35,10 @@
         <span ng-switch-when="centchroman">No. Strips: {{client.numberOfCentchromanPillsDelivered}}</span>
     </ng:switch>
 </div>
-<div class="span2 span-no-margin width-without-margins line-right span-content" ng-if="!client.fp_method">
-    <button class="btn btn-large btn-sr btn-fill-cell btn-done btn-new-form" ng-if="!client.fp_method"
+<div class="span2 span-no-margin width-without-margins line-right span-content"
+     ng-if="!client.fp_method">
+    <button class="btn btn-large btn-sr btn-fill-cell btn-done btn-new-form"
+            ng-if="!client.fp_method"
             ng-click="openForm('postpartum_family_planning', client.entityId);" style="">PP FP
     </button>
 </div>
@@ -51,7 +54,8 @@
     </div>
 </div>
 <div class="span1 span-no-margin width-without-margins full-height span-content">
-    <button class="btn btn-primary btn-large normal btn-sr full-height" ng-click="openPNCFormModal(client.entityId)">
+    <button class="btn btn-primary btn-large normal btn-sr full-height"
+            ng-click="openPNCFormModal(client.entityId)">
         <center><i class="icon-pencil icon-large"></i></center>
     </button>
 </div>

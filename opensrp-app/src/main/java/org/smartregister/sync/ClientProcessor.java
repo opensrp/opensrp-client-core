@@ -465,7 +465,7 @@ public class ClientProcessor {
                         fieldName = fieldNameArray[1];
                         fieldValue = jsonMapping.has("concept") ? jsonMapping.getString("concept")
                                 : (jsonMapping.has("formSubmissionField") ? jsonMapping
-                                        .getString("formSubmissionField") : null);
+                                .getString("formSubmissionField") : null);
                         if (fieldValue != null) {
                             responseKey = VALUES_KEY;
                         }

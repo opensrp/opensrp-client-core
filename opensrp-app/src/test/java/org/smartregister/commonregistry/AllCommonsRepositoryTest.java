@@ -15,6 +15,7 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
+
 /*
  by Raihan Ahmed
  */
@@ -28,12 +29,13 @@ public class AllCommonsRepositoryTest {
     private AlertRepository alertRepository;
 
     private AllCommonsRepository allCommonsRepository;
+
     @Before
-    public void setUp() throws Exception{
+    public void setUp() throws Exception {
         initMocks(this);
         allCommonsRepository = new AllCommonsRepository(personRepository,
-                                                        alertRepository,
-                                                        timelineEventRepository);
+                alertRepository,
+                timelineEventRepository);
     }
 
     @Test

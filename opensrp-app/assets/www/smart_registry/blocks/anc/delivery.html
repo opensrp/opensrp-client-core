@@ -55,7 +55,8 @@
             <span>ASHA:</span>
             <br/>
             <ng:switch on="client.ashaPhoneNumber">
-                <span ng-switch-when="client.ashaPhoneNumber" class="">{{client.ashaPhoneNumber}}</span>
+                <span ng-switch-when="client.ashaPhoneNumber"
+                      class="">{{client.ashaPhoneNumber}}</span>
                 <span ng-switch-default>none</span>
             </ng:switch>
         </div>
@@ -66,7 +67,7 @@
             <span>Contact:</span>
             <ng:switch on="client.visits.delivery_plan['Delivery Plan'].data.phoneNumber">
                 <span ng-switch-default class="">none</span>
-                <span ng-switch-when ="client.visits.delivery_plan['Delivery Plan'].data.phoneNumber" >
+                <span ng-switch-when="client.visits.delivery_plan['Delivery Plan'].data.phoneNumber">
                     {{client.visits.delivery_plan['Delivery Plan'].data.phoneNumber}}</span>
             </ng:switch>
         </div>

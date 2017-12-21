@@ -3,7 +3,8 @@
 <head>
     <link href="../../css/smart_registry/reset.css" media="all" rel="stylesheet" type="text/css"/>
     <link href="../../css/smart_registry/styles.css" media="all" rel="stylesheet" type="text/css"/>
-    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet"
+          type="text/css"/>
     <link href="../../css/flat-bootstrap.css" rel="stylesheet">
     <link href="../../css/custom.css" rel="stylesheet">
     <script src="../../js/lib/angular.min.js" type="text/javascript"></script>
@@ -28,8 +29,11 @@
     <div modal="isFPChangeModalOpen" close="closeFPChangeModal()">
         <div class="modal-body modal-row">
             <ul class="nav nav-tabs nav-stacked">
-                <li><a ng-click="openForm('fp_change', currentClientEntityId);closeFPChangeModal()">Change FP</a></li>
-                <li><a ng-click="openForm('record_ecps', currentClientEntityId);closeFPChangeModal()">Record ECP</a>
+                <li><a ng-click="openForm('fp_change', currentClientEntityId);closeFPChangeModal()">Change
+                    FP</a></li>
+                <li>
+                    <a ng-click="openForm('record_ecps', currentClientEntityId);closeFPChangeModal()">Record
+                        ECP</a>
                 </li>
             </ul>
         </div>
@@ -44,7 +48,8 @@
                         </a>
                     </li>
                     <li class="separator"></li>
-                    <li><a class="brand" href="#">FP: {{reportingPeriodStart}} - {{reportingPeriodEnd}}</a>
+                    <li><a class="brand" href="#">FP: {{reportingPeriodStart}} -
+                        {{reportingPeriodEnd}}</a>
                     </li>
                 </ul>
                 <div class="nav-collapse collapse">
@@ -64,11 +69,15 @@
                             </a>
                         </li>
                         <li class="separator"></li>
-                        <li><a ng-click="openModal(sortOptions)"><i class="icon-sort-custom icon-white"></i></a></li>
+                        <li><a ng-click="openModal(sortOptions)"><i
+                                class="icon-sort-custom icon-white"></i></a></li>
                         <li class="separator"></li>
-                        <li><a ng-click="openModal(villageOptions)"><i class="icon-village icon-white"></i></a></li>
+                        <li><a ng-click="openModal(villageOptions)"><i
+                                class="icon-village icon-white"></i></a></li>
                         <li class="separator"></li>
-                        <li><a ng-click='openFormWithFieldOverrides("ec_registration", null, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}")'><i class="icon-plus icon-white"></i></a></li>
+                        <li>
+                            <a ng-click='openFormWithFieldOverrides("ec_registration", null, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}")'><i
+                                    class="icon-plus icon-white"></i></a></li>
                         <li class="separator"></li>
                     </ul>
                 </div>
@@ -85,7 +94,8 @@
                     <div class="row-fluid" ng-include="'blocks/fp/common_header.html'"></div>
                 </div>
                 <div class="span7 full-height span-no-margin width-without-margins">
-                    <div class="row-fluid" ng-include="'blocks/fp/'+ contentTemplate + '_header.html'"></div>
+                    <div class="row-fluid"
+                         ng-include="'blocks/fp/'+ contentTemplate + '_header.html'"></div>
                 </div>
             </div>
         </div>
@@ -139,7 +149,8 @@
                     <div class="row-fluid full-height" ng-include="'blocks/fp/common.html'"></div>
                 </div>
                 <div class="span7 full-height span-no-margin width-without-margins">
-                    <div class="row-fluid full-height" ng-include="'blocks/fp/'+ contentTemplate + '.html'"></div>
+                    <div class="row-fluid full-height"
+                         ng-include="'blocks/fp/'+ contentTemplate + '.html'"></div>
                 </div>
             </div>
             <ng:include src="'blocks/pagination.html'">

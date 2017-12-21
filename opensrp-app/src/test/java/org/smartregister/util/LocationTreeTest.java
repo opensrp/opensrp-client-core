@@ -26,7 +26,7 @@ public class LocationTreeTest {
     private String locationJSONString;
 
     @Before
-    public void setUp() throws Exception{
+    public void setUp() throws Exception {
         locationJSONString = "{\"locationsHierarchy\":{\"map\" : {\"765cb701-9e61-4ead-afb9-a63c943f4f14\":{\"id\":\"765cb701-9e61-4ead-afb9-a63c943f4f14\",\"label\":\"testloc4\",\"node\":{\"creator\":null,\"dateCreated\":null,\"editor\":null,\"dateEdited\":null,\"voided\":false,\"dateVoided\":null,\"voider\":null,\"voidReason\":null,\"locationId\":\"765cb701-9e61-4ead-afb9-a63c943f4f14\",\"name\":\"testloc4\",\"address\":null,\"identifiers\":null,\"parentLocation\":null,\"tags\":null,\"attributes\":null},\"children\":null,\"parent\":null}}}}";
 
     }
@@ -35,7 +35,7 @@ public class LocationTreeTest {
     public void shouldShowLocationTree() throws Exception {
         locationTree = EntityUtils.fromJson(locationJSONString, LocationTree.class);
         assertNotNull(locationTree);
-        System.out.println("shouldShowLocationTree "+ new Gson().toJson(locationTree));
+        System.out.println("shouldShowLocationTree " + new Gson().toJson(locationTree));
     }
 
     @Test
@@ -44,7 +44,7 @@ public class LocationTreeTest {
         Location l = locationTree.findLocation("765cb701-9e61-4ead-afb9-a63c943f4f14");
         assertNotNull(l);
         assertEquals(l.getName(), "testloc4");
-        System.out.println("shouldFoundALocation " +new Gson().toJson(l));
+        System.out.println("shouldFoundALocation " + new Gson().toJson(l));
     }
 
     @After

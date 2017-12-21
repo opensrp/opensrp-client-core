@@ -41,34 +41,34 @@ public class CommonPersonObjectDateSortTest {
     @Test
     public void shouldSortCommonObjectsByColumnName() throws Exception {
         controller = new CommonPersonObjectController(allCommonsRepository,
-                                                      allBeneficiaries,
-                                                      new Cache<String>(),
-                                                      new Cache<CommonPersonObjectClients>(),
-                                                      "name",
-                                                      "bindtype",
-                                                      "nullkey",
-                                                      CommonPersonObjectController
-                                                              .ByColumnAndByDetails.byDetails);
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "nullkey",
+                CommonPersonObjectController
+                        .ByColumnAndByDetails.byDetails);
 
         commonObjectdateSort = new CommonObjectDateSort(CommonObjectDateSort.ByColumnAndByDetails
-                                                                .byColumn,
-                                                        "date");
+                .byColumn,
+                "date");
 
         Map<String, String> column1 = create("date", "2015-06-06").map();
         Map<String, String> column2 = create("date", "2015-07-07").map();
         Map<String, String> column3 = create("date", "2015-01-01").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
-                                                                                emptyDetails,
-                                                                                "Woman A");
+                emptyDetails,
+                "Woman A");
         expectedClient1.setColumnmaps(column1);
         CommonPersonObjectClient expectedClient2 = new CommonPersonObjectClient("entity id 2",
-                                                                                emptyDetails,
-                                                                                "Woman B");
+                emptyDetails,
+                "Woman B");
         expectedClient2.setColumnmaps(column2);
         CommonPersonObjectClient expectedClient3 = new CommonPersonObjectClient("entity id 3",
-                                                                                emptyDetails,
-                                                                                "Woman C");
+                emptyDetails,
+                "Woman C");
         expectedClient3.setColumnmaps(column3);
 
         SmartRegisterClients clients = new SmartRegisterClients();
@@ -76,7 +76,7 @@ public class CommonPersonObjectDateSortTest {
         clients.add(expectedClient2);
         clients.add(expectedClient3);
         assertEquals(asList(expectedClient3, expectedClient1, expectedClient2),
-                     commonObjectdateSort.sort(clients));
+                commonObjectdateSort.sort(clients));
 
     }
 
@@ -101,16 +101,16 @@ public class CommonPersonObjectDateSortTest {
         Map<String, String> detail3 = create("date", "2015-01-01").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
-                                                                                detail1,
-                                                                                "Woman A");
+                detail1,
+                "Woman A");
         expectedClient1.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient2 = new CommonPersonObjectClient("entity id 2",
-                                                                                detail2,
-                                                                                "Woman B");
+                detail2,
+                "Woman B");
         expectedClient2.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient3 = new CommonPersonObjectClient("entity id 3",
-                                                                                detail3,
-                                                                                "Woman C");
+                detail3,
+                "Woman C");
         expectedClient3.setColumnmaps(emptyDetails);
 
         SmartRegisterClients clients = new SmartRegisterClients();
@@ -118,7 +118,7 @@ public class CommonPersonObjectDateSortTest {
         clients.add(expectedClient3);
         clients.add(expectedClient1);
         assertEquals(asList(expectedClient3, expectedClient1, expectedClient2),
-                     commonObjectdateSort.sort(clients));
+                commonObjectdateSort.sort(clients));
 
     }
 }

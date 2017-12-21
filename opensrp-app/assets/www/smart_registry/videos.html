@@ -3,7 +3,8 @@
 <head>
     <link href="../../css/smart_registry/reset.css" media="all" rel="stylesheet" type="text/css"/>
     <link href="../../css/smart_registry/styles.css" media="all" rel="stylesheet" type="text/css"/>
-    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet"
+          type="text/css"/>
     <link href="../../css/flat-bootstrap.css" rel="stylesheet">
     <link href="../../css/custom.css" rel="stylesheet">
     <script src="../../js/lib/angular.min.js" type="text/javascript"></script>
@@ -21,6 +22,7 @@
         body {
             background: #4D4D4D;
         }
+
     </style>
 </head>
 <body>
@@ -42,18 +44,22 @@
         <div class="row-fluid">
             <div class="span3 video-categories">
                 <ul class="nav nav-tabs nav-stacked">
-                    <li data-ng-repeat="category in videoCategories" data-ng-class="category.css_class">
+                    <li data-ng-repeat="category in videoCategories"
+                        data-ng-class="category.css_class">
                         <a ng-click="setCurrentCategory(category.id)"
-                            ng-class="{active: currentCategoryId == category.id}">{{category.title}} ({{category.num_videos}}) <i class="icon-chevron-right" style="float: right"></i></a>
+                           ng-class="{active: currentCategoryId == category.id}">{{category.title}}
+                            ({{category.num_videos}}) <i class="icon-chevron-right"
+                                                         style="float: right"></i></a>
                     </li>
                 </ul>
             </div>
             <div class="span9 videos-container">
                 <ul class="thumbnails video-list">
-                    <li data-ng-repeat="video in videoList | filter:{category: currentCategoryId}" class="video-item"
+                    <li data-ng-repeat="video in videoList | filter:{category: currentCategoryId}"
+                        class="video-item"
                         ng-click="videoClicked(video.id)">
                         <div class="thumbnail">
-                            <img ng-src="{{video.previewImageUrl}}" class="video-thumbnail-image" />
+                            <img ng-src="{{video.previewImageUrl}}" class="video-thumbnail-image"/>
                             <div class="caption">
                                 <p class="video-title text-bold">{{video.title}}</p>
                                 <p class="video-time">{{video.time}}</p>

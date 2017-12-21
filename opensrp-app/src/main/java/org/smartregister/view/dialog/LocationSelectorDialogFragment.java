@@ -37,7 +37,7 @@ public class LocationSelectorDialogFragment extends DialogFragment {
 
     public static LocationSelectorDialogFragment newInstance(SecuredNativeSmartRegisterActivity
                                                                      activity, DialogOptionModel
-            dialogOptionModel, String locationJSONString, String formname) {
+                                                                     dialogOptionModel, String locationJSONString, String formname) {
 
         LocationSelectorDialogFragment lsd = new LocationSelectorDialogFragment();
         Bundle bundle = new Bundle(2);

@@ -3,7 +3,8 @@
 <head>
     <link href="../../css/smart_registry/reset.css" media="all" rel="stylesheet" type="text/css"/>
     <link href="../../css/smart_registry/styles.css" media="all" rel="stylesheet" type="text/css"/>
-    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet"
+          type="text/css"/>
     <link href="../../css/flat-bootstrap.css" rel="stylesheet">
     <link href="../../css/custom.css" rel="stylesheet">
     <script src="../../js/lib/angular.min.js" type="text/javascript"></script>
@@ -30,12 +31,15 @@
     <div modal="isPNCFormModalOpen" close="closePNCFormModal()">
         <div class="modal-body modal-row">
             <ul class="nav nav-tabs nav-stacked">
-                <li><a ng-click="openForm('pnc_visit', currentClientEntityId);closePNCFormModal();">PNC Visit</a>
+                <li><a ng-click="openForm('pnc_visit', currentClientEntityId);closePNCFormModal();">PNC
+                    Visit</a>
                 </li>
-                <li><a ng-click="openForm('postpartum_family_planning', currentClientEntityId);closePNCFormModal();">Postpartum
-                    family planning</a>
+                <li>
+                    <a ng-click="openForm('postpartum_family_planning', currentClientEntityId);closePNCFormModal();">Postpartum
+                        family planning</a>
                 </li>
-                <li><a ng-click="openForm('pnc_close', currentClientEntityId);closePNCFormModal();">PNC Close</a>
+                <li><a ng-click="openForm('pnc_close', currentClientEntityId);closePNCFormModal();">PNC
+                    Close</a>
                 </li>
             </ul>
         </div>
@@ -58,7 +62,8 @@
                 <ul class="nav" ng-click="goBack()">
                     <li><a href="#" class="btn-back"><i class="icon-white"></i></a></li>
                     <li class="separator"></li>
-                    <li><a class="brand" href="#">PNC: {{reportingPeriodStart}} - {{reportingPeriodEnd}}</a></li>
+                    <li><a class="brand" href="#">PNC: {{reportingPeriodStart}} -
+                        {{reportingPeriodEnd}}</a></li>
                 </ul>
                 <div class="nav-collapse collapse">
                     <form class="navbar-search pull-right">
@@ -71,11 +76,15 @@
                         <li><a ng-click="openModal(pncServiceOptions)">{{serviceModeOption.label}}<i
                                 class="icon-white icon-caret-down"></i></a></li>
                         <li class="separator"></li>
-                        <li><a ng-click="openModal(sortOptions)"><i class="icon-sort-custom icon-white"></i></a></li>
+                        <li><a ng-click="openModal(sortOptions)"><i
+                                class="icon-sort-custom icon-white"></i></a></li>
                         <li class="separator"></li>
-                        <li><a ng-click="openModal(villageOptions)"><i class="icon-village icon-white"></i></a></li>
+                        <li><a ng-click="openModal(villageOptions)"><i
+                                class="icon-village icon-white"></i></a></li>
                         <li class="separator"></li>
-                        <li><a ng-click='openFormWithFieldOverrides("pnc_registration_oa", null, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}")'><i class="icon-plus icon-white"></i></a>
+                        <li>
+                            <a ng-click='openFormWithFieldOverrides("pnc_registration_oa", null, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}")'><i
+                                    class="icon-plus icon-white"></i></a>
                         <li class="separator"></li>
                         </li>
                     </ul>
@@ -93,7 +102,8 @@
                     <div class="row-fluid" ng-include="'blocks/pnc/common_header.html'"></div>
                 </div>
                 <div class="span8 full-height span-no-margin width-without-margins">
-                    <div class="row-fluid" ng-include="'blocks/pnc/'+ contentTemplate + '_header.html'"></div>
+                    <div class="row-fluid"
+                         ng-include="'blocks/pnc/'+ contentTemplate + '_header.html'"></div>
                 </div>
             </div>
         </div>
@@ -108,7 +118,8 @@
                     <div class="row-fluid full-height" ng-include="'blocks/pnc/common.html'"></div>
                 </div>
                 <div class="span8 full-height span-no-margin width-without-margins">
-                    <div class="row-fluid full-height" ng-include="'blocks/pnc/'+ contentTemplate + '.html'"></div>
+                    <div class="row-fluid full-height"
+                         ng-include="'blocks/pnc/'+ contentTemplate + '.html'"></div>
                 </div>
             </div>
             <ng:include src="'blocks/pagination.html'">

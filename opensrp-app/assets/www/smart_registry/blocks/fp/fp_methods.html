@@ -1,4 +1,5 @@
-<div id="method" class="span4 line-right full-height span-no-margin width-without-margins span-content">
+<div id="method"
+     class="span4 line-right full-height span-no-margin width-without-margins span-content">
     <div class="row-fluid full-height">
         <div class="span8 full-height">
             <span class="text-bold">{{client.fp_method | fpMethodName:ecsWithFPMethodServiceModeOptions.options }}</span>
@@ -23,7 +24,8 @@
         </div>
     </div>
 </div>
-<div id="sideeffects" class="span4 full-height span-no-margin width-without-margins span-content line-right">
+<div id="sideeffects"
+     class="span4 full-height span-no-margin width-without-margins span-content line-right">
     <div class="row-fluid full-height">
         <div class="span8 full-height">
             <span ng-if="client.complication_date" class="text-bold">
@@ -31,18 +33,21 @@
                 <br/>
             </span>
             <ng-switch on="client.refill_follow_ups.type">
-                <span ng-switch-when="referral" class="text-past-due text-bold"><i class="icon-warning-sign"></i> Referred</span>
+                <span ng-switch-when="referral" class="text-past-due text-bold"><i
+                        class="icon-warning-sign"></i> Referred</span>
                 <span ng-switch-default>{{getSideEffect(client) | camelCase | commaSeparated | humanize}}</span>
             </ng-switch>
         </div>
         <div class="span4 full-height">
             <button class="btn btn-done btn-sr btn-new-form full-height"
-                    ng-click="openForm('fp_complications', client.entityId)"><span>Side Effects</span>
+                    ng-click="openForm('fp_complications', client.entityId)">
+                <span>Side Effects</span>
             </button>
         </div>
     </div>
 </div>
-<div id="followUpAndRefill" class="span4 full-height span-no-margin width-without-margins span-content"
+<div id="followUpAndRefill"
+     class="span4 full-height span-no-margin width-without-margins span-content"
      ng-if="client.refill_follow_ups">
     <div class="row-fluid full-height">
         <div class="span12 full-height">

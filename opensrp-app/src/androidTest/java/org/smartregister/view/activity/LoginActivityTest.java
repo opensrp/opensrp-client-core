@@ -2,8 +2,6 @@ package org.smartregister.view.activity;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import org.smartregister.Context;
-
 import java.util.Date;
 
 import static org.smartregister.domain.LoginResponse.SUCCESS;

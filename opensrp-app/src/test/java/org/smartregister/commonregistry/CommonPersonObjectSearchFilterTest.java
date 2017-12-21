@@ -36,14 +36,14 @@ public class CommonPersonObjectSearchFilterTest {
         initMocks(this);
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository,
-                                                      allBeneficiaries,
-                                                      new Cache<String>(),
-                                                      new Cache<CommonPersonObjectClients>(),
-                                                      "name",
-                                                      "bindtype",
-                                                      "name",
-                                                      CommonPersonObjectController
-                                                              .ByColumnAndByDetails.byDetails);
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "name",
+                CommonPersonObjectController
+                        .ByColumnAndByDetails.byDetails);
     }
 
     @Test
@@ -56,23 +56,23 @@ public class CommonPersonObjectSearchFilterTest {
                 ArrayList<CommonObjectSearchFilterOption.FilterOptionsForSearch>();
         List_Of_Filters.add(filterOptionsForSearch);
         commonObjectSearchFilterOption = new CommonObjectSearchFilterOption("Woman A",
-                                                                            List_Of_Filters);
+                List_Of_Filters);
 
         Map<String, String> column1 = create("name", "Woman A").map();
         Map<String, String> column2 = create("name", "Woman B").map();
         Map<String, String> column3 = create("name", "Woman C").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
-                                                                                emptyDetails,
-                                                                                "Woman A");
+                emptyDetails,
+                "Woman A");
         expectedClient1.setColumnmaps(column1);
         CommonPersonObjectClient expectedClient2 = new CommonPersonObjectClient("entity id 2",
-                                                                                emptyDetails,
-                                                                                "Woman B");
+                emptyDetails,
+                "Woman B");
         expectedClient2.setColumnmaps(column2);
         CommonPersonObjectClient expectedClient3 = new CommonPersonObjectClient("entity id 3",
-                                                                                emptyDetails,
-                                                                                "Woman C");
+                emptyDetails,
+                "Woman C");
         expectedClient3.setColumnmaps(column3);
 
         assertEquals(true, commonObjectSearchFilterOption.filter(expectedClient1));
@@ -91,23 +91,23 @@ public class CommonPersonObjectSearchFilterTest {
                 ArrayList<CommonObjectSearchFilterOption.FilterOptionsForSearch>();
         List_Of_Filters.add(filterOptionsForSearch);
         commonObjectSearchFilterOption = new CommonObjectSearchFilterOption("Woman A",
-                                                                            List_Of_Filters);
+                List_Of_Filters);
 
         Map<String, String> detail1 = create("name", "Woman A").map();
         Map<String, String> detail2 = create("name", "Woman B").map();
         Map<String, String> detail3 = create("name", "Woman C").map();
 
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
-                                                                                detail1,
-                                                                                "Woman A");
+                detail1,
+                "Woman A");
         expectedClient1.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient2 = new CommonPersonObjectClient("entity id 2",
-                                                                                detail2,
-                                                                                "Woman B");
+                detail2,
+                "Woman B");
         expectedClient2.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient3 = new CommonPersonObjectClient("entity id 3",
-                                                                                detail3,
-                                                                                "Woman C");
+                detail3,
+                "Woman C");
         expectedClient3.setColumnmaps(emptyDetails);
 
         assertEquals(true, commonObjectSearchFilterOption.filter(expectedClient1));

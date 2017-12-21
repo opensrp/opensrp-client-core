@@ -12,7 +12,9 @@ import org.smartregister.repository.AlertRepository;
 
 import java.util.HashMap;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.AlertStatus.normal;
 import static org.smartregister.domain.AlertStatus.urgent;

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_height="fill_parent"
     android:layout_width="fill_parent"
     android:id="@+id/login_layout"
@@ -20,7 +19,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/logo_spacer_above"
             android:layout_weight="1"
-            android:contentDescription="@string/spacer"/>
+            android:contentDescription="@string/spacer" />
 
         <ImageView
             android:id="@+id/login_logo"
@@ -29,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="0"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <TextView
             android:id="@+id/login_build"
@@ -40,14 +39,14 @@
             android:typeface="sans"
             android:layout_marginBottom="5dp"
             android:layout_weight="0"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/logo_spacer_below"
             android:layout_weight="1"
-            android:contentDescription="@string/spacer"/>
+            android:contentDescription="@string/spacer" />
     </LinearLayout>
 
     <LinearLayout
@@ -61,7 +60,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/form_spacer_above"
             android:layout_weight="1"
-            android:contentDescription="@string/spacer"/>
+            android:contentDescription="@string/spacer" />
 
         <EditText
             android:id="@+id/login_userNameText"
@@ -80,7 +79,7 @@
             android:textColorHint="#bfbfbf"
             android:textColor="#666666"
             android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"/>
+            android:layout_marginRight="40dp" />
 
         <EditText
             android:id="@+id/login_passwordText"
@@ -100,7 +99,7 @@
             android:textColorHint="#bfbfbf"
             android:textColor="#666666"
             android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"/>
+            android:layout_marginRight="40dp" />
 
         <Button
             android:id="@+id/login_loginButton"
@@ -120,14 +119,14 @@
             android:layout_gravity="center"
             android:layout_weight="0"
             android:layout_marginLeft="40dp"
-            android:layout_marginRight="40dp"/>
+            android:layout_marginRight="40dp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/form_spacer_below"
             android:layout_weight="1"
-            android:contentDescription="@string/spacer"/>
+            android:contentDescription="@string/spacer" />
     </LinearLayout>
 
 </LinearLayout>

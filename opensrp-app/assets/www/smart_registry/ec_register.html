@@ -3,7 +3,8 @@
 <head>
     <link href="../../css/smart_registry/reset.css" media="all" rel="stylesheet" type="text/css"/>
     <link href="../../css/smart_registry/styles.css" media="all" rel="stylesheet" type="text/css"/>
-    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet" type="text/css"/>
+    <link href="../../css/smart_registry/smart_registry.css" media="all" rel="stylesheet"
+          type="text/css"/>
     <link href="../../css/flat-bootstrap.css" rel="stylesheet">
     <link href="../../css/custom.css" rel="stylesheet">
     <script src="../../js/lib/angular.min.js" type="text/javascript"></script>
@@ -28,13 +29,19 @@
     <div modal="isECFormModalOpen" close="closeECFormModal()">
         <div class="modal-body modal-row">
             <ul class="nav nav-tabs nav-stacked">
-                <li><a ng-click="openForm('anc_registration', currentClientEntityId);closeECFormModal();">Register
-                    ANC</a></li>
-                <li><a ng-click="openForm('fp_change', currentClientEntityId);closeECFormModal();">Register FP</a></li>
-                <li><a ng-click="openForm('child_registration_ec', currentClientEntityId);closeECFormModal();">Register
-                    Child</a></li>
-                <li><a ng-click='openFormWithFieldOverrides("ec_edit", currentClientEntityId, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}");closeECFormModal();'>Edit EC</a></li>
-                <li><a ng-click="openForm('ec_close', currentClientEntityId);closeECFormModal();">Close EC</a></li>
+                <li>
+                    <a ng-click="openForm('anc_registration', currentClientEntityId);closeECFormModal();">Register
+                        ANC</a></li>
+                <li><a ng-click="openForm('fp_change', currentClientEntityId);closeECFormModal();">Register
+                    FP</a></li>
+                <li>
+                    <a ng-click="openForm('child_registration_ec', currentClientEntityId);closeECFormModal();">Register
+                        Child</a></li>
+                <li>
+                    <a ng-click='openFormWithFieldOverrides("ec_edit", currentClientEntityId, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}");closeECFormModal();'>Edit
+                        EC</a></li>
+                <li><a ng-click="openForm('ec_close', currentClientEntityId);closeECFormModal();">Close
+                    EC</a></li>
             </ul>
         </div>
     </div>
@@ -69,9 +76,11 @@
                     <ul class="nav pull-right">
                         <li><a>{{serviceModeOption.label}}</a></li>
                         <li class="separator"></li>
-                        <li><a ng-click="openModal(sortOptions)"><i class="icon-sort-custom icon-white"></i></a></li>
+                        <li><a ng-click="openModal(sortOptions)"><i
+                                class="icon-sort-custom icon-white"></i></a></li>
                         <li class="separator"></li>
-                        <li><a ng-click="openModal(villageOptions)"><i class="icon-village icon-white"></i></a></li>
+                        <li><a ng-click="openModal(villageOptions)"><i
+                                class="icon-village icon-white"></i></a></li>
                         <li class="separator"></li>
                         <li>
                             <a ng-click='openFormWithFieldOverrides("ec_registration", null, "{\"district\":\""+anmLocation.district+"\",\"phc\":\""+anmLocation.phcIdentifier+"\",\"subCenter\":\""+anmLocation.subCenter+"\"}")'>
@@ -92,7 +101,8 @@
                     <div class="row-fluid" ng-include="'blocks/ec/common_header.html'"></div>
                 </div>
                 <div class="span7 full-height span-no-margin width-without-margins">
-                    <div class="row-fluid" ng-include="'blocks/ec/'+ contentTemplate + '_header.html'"></div>
+                    <div class="row-fluid"
+                         ng-include="'blocks/ec/'+ contentTemplate + '_header.html'"></div>
                 </div>
             </div>
         </div>
@@ -107,7 +117,8 @@
                     <div class="row-fluid full-height" ng-include="'blocks/ec/common.html'"></div>
                 </div>
                 <div class="span7 full-height span-no-margin width-without-margins">
-                    <div class="row-fluid full-height" ng-include="'blocks/ec/'+ contentTemplate + '.html'"></div>
+                    <div class="row-fluid full-height"
+                         ng-include="'blocks/ec/'+ contentTemplate + '.html'"></div>
                 </div>
             </div>
         </div>

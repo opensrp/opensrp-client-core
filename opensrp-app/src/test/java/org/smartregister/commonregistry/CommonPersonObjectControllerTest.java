@@ -45,19 +45,19 @@ public class CommonPersonObjectControllerTest {
         CoreLibrary.init(context);
         emptyDetails = Collections.emptyMap();
         controller = new CommonPersonObjectController(allCommonsRepository,
-                                                      allBeneficiaries,
-                                                      new Cache<String>(),
-                                                      new Cache<CommonPersonObjectClients>(),
-                                                      "name",
-                                                      "bindtype",
-                                                      "name",
-                                                      CommonPersonObjectController
-                                                              .ByColumnAndByDetails.byDetails);
+                allBeneficiaries,
+                new Cache<String>(),
+                new Cache<CommonPersonObjectClients>(),
+                "name",
+                "bindtype",
+                "name",
+                CommonPersonObjectController
+                        .ByColumnAndByDetails.byDetails);
     }
 
     @Test
     public void assertConstructorsCreateNonNullObjectsOnInstantiation() throws Exception {
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries,
                 new Cache<String>(),
                 new Cache<CommonPersonObjectClients>(),
@@ -105,7 +105,7 @@ public class CommonPersonObjectControllerTest {
                 "null_check_key",
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails));
 
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries,
                 new Cache<String>(),
                 new Cache<CommonPersonObjectClients>(),
@@ -114,7 +114,7 @@ public class CommonPersonObjectControllerTest {
                 "nullCheckKey",
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails));
 
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries,
                 new Cache<String>(),
                 new Cache<CommonPersonObjectClients>(),
@@ -123,9 +123,9 @@ public class CommonPersonObjectControllerTest {
                 "nullCheckKey",
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails,
                 Mockito.mock(SortOption.class)
-                ));
+        ));
 
-        org.junit.Assert.assertNotNull( new CommonPersonObjectController(allCommonsRepository,
+        org.junit.Assert.assertNotNull(new CommonPersonObjectController(allCommonsRepository,
                 allBeneficiaries,
                 new Cache<String>(),
                 new Cache<CommonPersonObjectClients>(),
@@ -148,33 +148,33 @@ public class CommonPersonObjectControllerTest {
         Map<String, String> personDetails3 = create("name", "Woman C").map();
 
         CommonPersonObject cpo2 = new CommonPersonObject("entity id 2",
-                                                         "relational id 2",
-                                                         personDetails2,
-                                                         "bindtype");
+                "relational id 2",
+                personDetails2,
+                "bindtype");
         cpo2.setColumnmaps(emptyDetails);
         CommonPersonObject cpo3 = new CommonPersonObject("entity id 3",
-                                                         "relational id 3",
-                                                         personDetails3,
-                                                         "bindtype");
+                "relational id 3",
+                personDetails3,
+                "bindtype");
         cpo3.setColumnmaps(emptyDetails);
         CommonPersonObject cpo1 = new CommonPersonObject("entity id 1",
-                                                         "relational id 1",
-                                                         personDetails1,
-                                                         "bindtype");
+                "relational id 1",
+                personDetails1,
+                "bindtype");
         cpo1.setColumnmaps(emptyDetails);
 
         when(allCommonsRepository.all()).thenReturn(asList(cpo2, cpo3, cpo1));
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
-                                                                                personDetails1,
-                                                                                "Woman A");
+                personDetails1,
+                "Woman A");
         expectedClient1.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient2 = new CommonPersonObjectClient("entity id 2",
-                                                                                personDetails2,
-                                                                                "Woman B");
+                personDetails2,
+                "Woman B");
         expectedClient2.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient3 = new CommonPersonObjectClient("entity id 3",
-                                                                                personDetails3,
-                                                                                "Woman C");
+                personDetails3,
+                "Woman C");
         expectedClient3.setColumnmaps(emptyDetails);
 
         String clients = controller.get();
@@ -189,9 +189,9 @@ public class CommonPersonObjectControllerTest {
         Map<String, String> details = create("name", "Woman A").map();
 
         CommonPersonObject commonpersonobject = new CommonPersonObject("entity id 1",
-                                                                       "relational id 1",
-                                                                       details,
-                                                                       "bindtype");
+                "relational id 1",
+                details,
+                "bindtype");
         commonpersonobject.setColumnmaps(emptyDetails);
         when(allCommonsRepository.all()).thenReturn(asList(commonpersonobject));
         CommonPersonObjectClient expectedCommonObjectClient = new CommonPersonObjectClient(
@@ -212,33 +212,33 @@ public class CommonPersonObjectControllerTest {
         Map<String, String> personDetails3 = emptyDetails;
 
         CommonPersonObject cpo2 = new CommonPersonObject("entity id 2",
-                                                         "relational id 2",
-                                                         personDetails2,
-                                                         "bindtype");
+                "relational id 2",
+                personDetails2,
+                "bindtype");
         cpo2.setColumnmaps(emptyDetails);
         CommonPersonObject cpo3 = new CommonPersonObject("entity id 3",
-                                                         "relational id 3",
-                                                         personDetails3,
-                                                         "bindtype");
+                "relational id 3",
+                personDetails3,
+                "bindtype");
         cpo3.setColumnmaps(emptyDetails);
         CommonPersonObject cpo1 = new CommonPersonObject("entity id 1",
-                                                         "relational id 1",
-                                                         personDetails1,
-                                                         "bindtype");
+                "relational id 1",
+                personDetails1,
+                "bindtype");
         cpo1.setColumnmaps(emptyDetails);
 
         when(allCommonsRepository.all()).thenReturn(asList(cpo2, cpo3, cpo1));
         CommonPersonObjectClient expectedClient1 = new CommonPersonObjectClient("entity id 1",
-                                                                                personDetails1,
-                                                                                "Woman A");
+                personDetails1,
+                "Woman A");
         expectedClient1.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient2 = new CommonPersonObjectClient("entity id 2",
-                                                                                personDetails2,
-                                                                                "Woman B");
+                personDetails2,
+                "Woman B");
         expectedClient2.setColumnmaps(emptyDetails);
         CommonPersonObjectClient expectedClient3 = new CommonPersonObjectClient("entity id 3",
-                                                                                personDetails3,
-                                                                                "Woman C");
+                personDetails3,
+                "Woman C");
         expectedClient3.setColumnmaps(emptyDetails);
 
         String clients = controller.get();
