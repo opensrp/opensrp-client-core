@@ -67,6 +67,8 @@ public class FormEntityConverter {
                               FormSubmissionMap fs) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
+        String team = getFieldName(Encounter.team, fs);
+        String teamId = getFieldName(Encounter.teamId, fs);
 
         //TODO
         String encounterStart = getFieldName(Encounter.encounter_start, fs);
@@ -86,6 +88,8 @@ public class FormEntityConverter {
                 .withLocationId(fs.getFieldValue(encounterLocation)).withProviderId(fs.providerId())
                 .withEntityType(fs.bindType()).withFormSubmissionId(fs.instanceId())
                 .withDateCreated(new Date());
+
+        e.withTeam(fs.getFieldValue(team)).withTeamId(fs.getFieldValue(teamId));
 
         for (FormFieldMap fl : fields) {
             Map<String, String> fat = fl.fieldAttributes();
