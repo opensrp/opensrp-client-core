@@ -28,9 +28,6 @@
             android:name=".service.ImageUploadSyncService"></service>
 
         <activity
-            android:name=".view.activity.HomeActivity"
-            android:screenOrientation="landscape" />
-        <activity
             android:name=".view.activity.ReportsActivity"
             android:theme="@style/AppThemeNoTitle"
             android:screenOrientation="landscape" />

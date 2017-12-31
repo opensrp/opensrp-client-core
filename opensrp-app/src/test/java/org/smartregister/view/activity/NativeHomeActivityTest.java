@@ -1,30 +1,85 @@
 package org.smartregister.view.activity;
 
+import android.content.Context;
+import android.content.ContextWrapper;
+import android.content.Intent;
+
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.service.ZiggyService;
 import org.smartregister.setup.DrishtiTestRunner;
+import org.smartregister.shadows.SecuredActivityShadow;
 import org.smartregister.shadows.ShadowContext;
+import org.smartregister.view.activity.mock.NativeHomeActivityMock;
 
-@RunWith(DrishtiTestRunner.class)
-@Config(shadows = {ShadowContext.class})
-public class NativeHomeActivityTest {
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
-    private NativeHomeActivity homeActivity;
+@RunWith(PowerMockRunner.class)
+@Config(shadows = {ShadowContext.class,SecuredActivityShadow.class})
+@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
+@PrepareForTest({CoreLibrary.class})
+public class NativeHomeActivityTest extends BaseUnitTest{
+
+    @Rule
+    public PowerMockRule rule = new PowerMockRule();
+
+    private NativeHomeActivityMock homeActivity;
+
+    @Mock
+    private org.smartregister.Context context_;
+
+    @Mock
+    private ZiggyService ziggyService;
+
+    @Mock
+    private CoreLibrary coreLibrary;
 
     @Before
     public void setUp() {
-        homeActivity = Robolectric.buildActivity(NativeHomeActivity.class)
+        org.mockito.MockitoAnnotations.initMocks(this);
+        CoreLibrary.init(context_);
+        PowerMockito.mockStatic(CoreLibrary.class);
+        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+        when(coreLibrary.context()).thenReturn(context_);
+        when(context_.updateApplicationContext(any(Context.class))).thenReturn(context_);
+        when(context_.ziggyService()).thenReturn(ziggyService);
+        Intent intent = new Intent(RuntimeEnvironment.application,NativeHomeActivityMock.class);
+         homeActivity = Robolectric.buildActivity(NativeHomeActivityMock.class)
                 .create()
                 .start()
                 .resume()
                 .visible()
                 .get();
+
+
+
     }
+
+    @Test
+    public void assertHomeActivityNotNull() {
+        Assert.assertNotNull(homeActivity);
+    }
+
 
     @Ignore // FIXME Failing test
     @Test

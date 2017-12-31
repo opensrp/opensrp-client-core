@@ -14,13 +14,13 @@ import static org.smartregister.util.FakeContext.setupService;
 import static org.smartregister.util.Wait.waitForFilteringToFinish;
 import static org.smartregister.util.Wait.waitForProgressBarToGoAway;
 
-public class SettingsActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+public class SettingsActivityTest extends ActivityInstrumentationTestCase2<NativeHomeActivity> {
     private DrishtiSolo solo;
     private FakeDrishtiService drishtiService;
     private FakeUserService userService;
 
     public SettingsActivityTest() {
-        super("org.ei.drishti.test", HomeActivity.class);
+        super("org.ei.drishti.test", NativeHomeActivity.class);
         drishtiService = new FakeDrishtiService("Default");
         userService = new FakeUserService();
     }

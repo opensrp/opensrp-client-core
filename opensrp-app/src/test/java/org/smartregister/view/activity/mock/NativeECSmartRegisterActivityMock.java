@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.widget.LinearLayout;
 
+import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -15,7 +16,7 @@ import org.smartregister.view.activity.NativeECSmartRegisterActivity;
 
 public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActivity {
 
-//    NativeECSmartRegisterActivity activity;
+    static Context mockactivitycontext;
 
     @Override
     protected void onStart() {
@@ -32,9 +33,6 @@ public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActi
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme); //we need this here
         super.onCreate(savedInstanceState);
-        LinearLayout linearLayout;
-        linearLayout = new LinearLayout(this);
-        setContentView(linearLayout);
     }
 
     @Override
@@ -85,5 +83,14 @@ public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActi
     @Override
     public void startRegistration() {
         super.startRegistration();
+    }
+
+    @Override
+    protected Context context() {
+        return mockactivitycontext;
+    }
+
+    public static void setContext(Context context){
+        mockactivitycontext = context;
     }
 }

@@ -199,6 +199,27 @@ makeJar.dependsOn(clearJar, build)
 
 import org.apache.commons.lang3.StringUtils
 
+def package_namespace = "org.smartregister"
+def package_namespace_path = package_namespace.replaceAll("\\.", "/")
+
+afterEvaluate { project ->
+    android.libraryVariants.each { variant ->
+        // workaround for missing R class for aar dependencies
+        def copyTaskName = "copy${variant.name.capitalize()}AppCompat"
+        task(copyTaskName, type:Copy) {
+            dependsOn "process${variant.name.capitalize()}Resources"
+            from { "build/generated/source/r/${variant.name}/$package_namespace_path" }
+//            into { "build/generated/source/r/${variant.name}/android/support/v7/appcompat" }
+            into { "src/test/java/android/support/v7/appcompat" }
+            include 'R.java'
+            filter { line -> line.contains("package ${package_namespace};") ? 'package android.support.v7.appcompat;' : line }
+            outputs.upToDateWhen { false }
+        }
+        System.out.println("adding ${copyTaskName}")
+        tasks.getByName("compile${variant.name.capitalize()}UnitTestJava") dependsOn copyTaskName
+    }
+}
+
 gradle.projectsEvaluated {
     def variants = android.libraryVariants.collect()
 

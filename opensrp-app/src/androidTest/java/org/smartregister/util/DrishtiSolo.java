@@ -5,8 +5,8 @@ import android.app.Instrumentation;
 
 import com.jayway.android.robotium.solo.Solo;
 
-import org.smartregister.view.activity.HomeActivity;
 import org.smartregister.view.activity.LoginActivity;
+import org.smartregister.view.activity.NativeHomeActivity;
 
 import static org.smartregister.util.Wait.waitForFilteringToFinish;
 import static org.smartregister.util.Wait.waitForProgressBarToGoAway;
@@ -21,7 +21,7 @@ public class DrishtiSolo extends Solo {
         enterText(0, userName);
         enterText(1, password);
         clickOnButton(0);
-        waitForActivity(HomeActivity.class.getSimpleName());
+        waitForActivity(NativeHomeActivity.class.getSimpleName());
         waitForFilteringToFinish();
         return this;
     }
