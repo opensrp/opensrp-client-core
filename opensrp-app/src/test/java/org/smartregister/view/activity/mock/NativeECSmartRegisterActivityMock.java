@@ -9,12 +9,13 @@ import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.NativeECSmartRegisterActivity;
+import org.smartregister.view.dialog.LocationSelectorDialogFragment;
 
 /**
  * Created by kaderchowdhury on 11/11/17.
  */
 
-public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActivity {
+public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActivity implements LocationSelectorDialogFragment.OnLocationSelectedListener {
 
     static Context mockactivitycontext;
 
@@ -81,16 +82,16 @@ public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActi
     }
 
     @Override
-    public void startRegistration() {
-        super.startRegistration();
-    }
-
-    @Override
     protected Context context() {
         return mockactivitycontext;
     }
 
     public static void setContext(Context context){
         mockactivitycontext = context;
+    }
+
+    @Override
+    public void OnLocationSelected(String locationSelected) {
+
     }
 }

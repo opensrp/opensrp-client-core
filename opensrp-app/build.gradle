@@ -199,7 +199,7 @@ makeJar.dependsOn(clearJar, build)
 
 import org.apache.commons.lang3.StringUtils
 
-def package_namespace = "org.smartregister"
+def package_namespace = "org."
 def package_namespace_path = package_namespace.replaceAll("\\.", "/")
 
 afterEvaluate { project ->
