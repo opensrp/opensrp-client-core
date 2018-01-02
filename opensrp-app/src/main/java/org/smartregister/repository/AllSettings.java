@@ -9,6 +9,7 @@ public class AllSettings {
     public static final String PREVIOUS_FORM_SYNC_INDEX_SETTING_KEY = "previousFormSyncIndex";
     private static final String ANM_PASSWORD_PREFERENCE_KEY = "anmPassword";
     private static final String ANM_LOCATION = "anmLocation";
+    private static final String ANM_TEAM = "anmTeam";
     private static final String USER_INFORMATION = "userInformation";
 
     protected AllSharedPreferences preferences;
@@ -55,6 +56,10 @@ public class AllSettings {
 
     public void saveANMLocation(String anmLocation) {
         settingsRepository.updateSetting(ANM_LOCATION, anmLocation);
+    }
+
+    public void saveANMTeam(String anmTeam) {
+        settingsRepository.updateSetting(ANM_TEAM, anmTeam);
     }
 
     public String fetchANMLocation() {

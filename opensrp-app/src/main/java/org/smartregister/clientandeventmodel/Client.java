@@ -246,6 +246,11 @@ public class Client extends BaseEntity {
         return this;
     }
 
+    public Client withClientType(String clientType) {
+        this.clientType = clientType;
+        return this;
+    }
+
     /**
      * Overrides the existing data
      */
