@@ -18,7 +18,7 @@ public class SaveANMTeamTask {
         this.allSettings = allSettings;
         task = new LockingBackgroundTask(new ProgressIndicator() {
             @Override
-            public void setVisible() {
+            public void setVisible() {//Do nothing
             }
 
             @Override
@@ -37,7 +37,7 @@ public class SaveANMTeamTask {
             }
 
             @Override
-            public void postExecuteInUIThread(String result) {
+            public void postExecuteInUIThread(String result) {//Do nothing
             }
         });
     }
