@@ -56,6 +56,10 @@ public class Event extends BaseDataObject {
     private long version;
     @JsonProperty
     private List<Photo> photos;
+    @JsonProperty
+    private String team;
+    @JsonProperty
+    private String teamId;
 
     public Event() {
         this.version = System.currentTimeMillis();
@@ -207,6 +211,22 @@ public class Event extends BaseDataObject {
         this.version = version;
     }
 
+    public String getTeam() {
+        return team;
+    }
+
+    public void setTeam(String team) {
+        this.team = team;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
+    }
+
     public Event withBaseEntityId(String baseEntityId) {
         this.baseEntityId = baseEntityId;
         return this;
@@ -244,6 +264,16 @@ public class Event extends BaseDataObject {
 
     public Event withEntityType(String entityType) {
         this.entityType = entityType;
+        return this;
+    }
+
+    public Event withTeam(String team) {
+        this.team = team;
+        return this;
+    }
+
+    public Event withTeamId(String teamId) {
+        this.teamId = teamId;
         return this;
     }
 

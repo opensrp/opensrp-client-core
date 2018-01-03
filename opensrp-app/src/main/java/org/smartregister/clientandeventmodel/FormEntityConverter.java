@@ -67,6 +67,8 @@ public class FormEntityConverter {
                               FormSubmissionMap fs) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
+        String team = getFieldName(Encounter.team, fs);
+        String teamId = getFieldName(Encounter.teamId, fs);
 
         //TODO
         String encounterStart = getFieldName(Encounter.encounter_start, fs);
@@ -86,6 +88,8 @@ public class FormEntityConverter {
                 .withLocationId(fs.getFieldValue(encounterLocation)).withProviderId(fs.providerId())
                 .withEntityType(fs.bindType()).withFormSubmissionId(fs.instanceId())
                 .withDateCreated(new Date());
+
+        e.withTeam(fs.getFieldValue(team)).withTeamId(fs.getFieldValue(teamId));
 
         for (FormFieldMap fl : fields) {
             Map<String, String> fat = fl.fieldAttributes();
@@ -366,6 +370,7 @@ public class FormEntityConverter {
         String dd = fs.getFieldValue(getFieldName(Person.deathdate, fs));
         DateTime deathdate = dd == null ? null : new DateTime(dd).withTimeAtStartOfDay();
         String aproxbd = fs.getFieldValue(getFieldName(Person.birthdate_estimated, fs));
+        String clientType = fs.getFieldValue(getFieldName(Person.client_type, fs));
         Boolean birthdateApprox = false;
         if (!StringUtils.isEmpty(aproxbd) && NumberUtils.isNumber(aproxbd)) {
             int bde = 0;
@@ -397,6 +402,8 @@ public class FormEntityConverter {
                 .withDeathdate(deathdate != null ? deathdate.toDate() : null, deathdateApprox)
                 .withGender(gender).withDateCreated(new Date());
 
+        c.withClientType(clientType);
+
         c.withAddresses(addresses).withAttributes(extractAttributes(fs))
                 .withIdentifiers(extractIdentifiers(fs));
         return c;
@@ -424,6 +431,7 @@ public class FormEntityConverter {
         String dd = subf.getFieldValue(getFieldName(Person.deathdate, subf));
         DateTime deathdate = dd == null ? null : new DateTime(dd).withTimeAtStartOfDay();
         String aproxbd = subf.getFieldValue(getFieldName(Person.birthdate_estimated, subf));
+        String clientType = subf.getFieldValue(getFieldName(Person.client_type, subf));
         Boolean birthdateApprox = false;
         if (!StringUtils.isEmpty(aproxbd) && NumberUtils.isNumber(aproxbd)) {
             int bde = 0;
@@ -453,6 +461,8 @@ public class FormEntityConverter {
                 .withBirthdate(new DateTime(birthdate).toDate(), birthdateApprox)
                 .withDeathdate(new DateTime(deathdate).toDate(), deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
+
+        c.withClientType(clientType);
 
         c.withAddresses(addresses).withAttributes(extractAttributes(subf)).withIdentifiers(idents);
 
