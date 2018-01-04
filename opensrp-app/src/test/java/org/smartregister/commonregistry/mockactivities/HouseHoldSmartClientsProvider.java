@@ -89,19 +89,19 @@ public class HouseHoldSmartClientsProvider implements SmartRegisterCLientsProvid
 //            viewHolder.profilepic.setImageDrawable(context.getResources().getDrawable(R.mipmap.household_profile_thumb));
 //        }
 
-        viewHolder.follow_up.setOnClickListener(onClickListener);
-        viewHolder.follow_up.setTag(smartRegisterClient);
-        viewHolder.profilelayout.setOnClickListener(onClickListener);
-        viewHolder.profilelayout.setTag(smartRegisterClient);
+//        viewHolder.follow_up.setOnClickListener(onClickListener);
+//        viewHolder.follow_up.setTag(smartRegisterClient);
+//        viewHolder.profilelayout.setOnClickListener(onClickListener);
+//        viewHolder.profilelayout.setTag(smartRegisterClient);
         CommonPersonObjectClient pc = (CommonPersonObjectClient) smartRegisterClient;
 
-        List<Alert> alertlist_for_client = alertService.findByEntityIdAndAlertNames(pc.entityId(), "FW CENSUS");
+//        List<Alert> alertlist_for_client = alertService.findByEntityIdAndAlertNames(pc.entityId(), "FW CENSUS");
 
-        AllCommonsRepository householdrep = org.smartregister.Context.getInstance().allCommonsRepositoryobjects("ec_household");
-        CommonPersonObject householdobject = householdrep.findByCaseID(pc.entityId());
-
-        DetailsRepository detailsRepository = org.smartregister.Context.getInstance().detailsRepository();
-        detailsRepository.updateDetails(pc);
+//        AllCommonsRepository householdrep = org.smartregister.Context.getInstance().allCommonsRepositoryobjects("ec_household");
+//        CommonPersonObject householdobject = householdrep.findByCaseID(pc.entityId());
+//
+//        DetailsRepository detailsRepository = org.smartregister.Context.getInstance().detailsRepository();
+//        detailsRepository.updateDetails(pc);
     }
 
     @Override

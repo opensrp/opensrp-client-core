@@ -35,7 +35,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+
+import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -109,6 +115,12 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     }
 
     @Test
+    public void assertExtracIdentifiersWithBindTypeReturnNotNull() throws Exception {
+        JSONObject formjson = new JSONObject(formresultJson);
+        Assert.assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson),bindtype));
+    }
+
+    @Test
     public void assertExtracAddressesReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
         Assert.assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson)));
@@ -119,6 +131,31 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         JSONObject formjson = new JSONObject(formresultJson);
         Assert.assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson),bindtype));
     }
+
+    @Test
+    public void formatDateReturnsinRequiredFormat() throws Exception {
+        Date date = new Date();
+        String dateInFormat = dd_MM_yyyy.format(date);
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+        String dateinFMT = fmt.format(dd_MM_yyyy.parse(dateInFormat));
+        String returnedDateinString = (JsonFormUtils.formatDate(dateInFormat));
+        Assert.assertEquals(dateinFMT,returnedDateinString);
+    }
+
+    @Test
+    public void formatDateReturnsDate() throws Exception {
+        SimpleDateFormat yyyy_MM_dd = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = dd_MM_yyyy.parse("22-05-1988");
+        String dateInFormat = dd_MM_yyyy.format(date);
+        String dateInFormat2 = yyyy_MM_dd.format(date);
+        Date datereturned = (JsonFormUtils.formatDate(dateInFormat,true));
+        Date datereturned2 = (JsonFormUtils.formatDate(dateInFormat2,true));
+        long diff = date.getTime() - datereturned.getTime();
+        long diff2 = date.getTime() - datereturned2.getTime();
+        Assert.assertEquals(diff,0l);
+        Assert.assertEquals(diff2,0l);
+    }
+
 
 
 }
