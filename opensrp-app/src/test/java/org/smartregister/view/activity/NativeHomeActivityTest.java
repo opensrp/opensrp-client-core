@@ -19,8 +19,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowActivity;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -30,6 +32,7 @@ import org.smartregister.shadows.SecuredActivityShadow;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.view.activity.mock.NativeHomeActivityMock;
 
+import static junit.framework.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
@@ -80,8 +83,6 @@ public class NativeHomeActivityTest extends BaseUnitTest{
         Assert.assertNotNull(homeActivity);
     }
 
-
-    @Ignore // FIXME Failing test
     @Test
     public void shouldLaunchEcRegisterOnPressingEcRegisterButton() {
         verifyLaunchOfActivityOnPressingButton(R.id.btn_ec_register, NativeECSmartRegisterActivity.class);
@@ -100,12 +101,11 @@ public class NativeHomeActivityTest extends BaseUnitTest{
     }
 
     public <T> void verifyLaunchOfActivityOnPressingButton(int buttonId, Class<T> clazz) {
-//        ShadowActivity shadowHome = Robolectric.shadowOf(homeActivity);
+//        ShadowActivity shadowHome = Shadows.shadowOf(homeActivity);
 
         homeActivity.findViewById(buttonId).performClick();
 
-//        assertEquals(clazz.getName(),
-//                shadowHome.getNextStartedActivity().getComponent().getClassName());
+//        assertEquals(clazz.getName(),getNextStartedActivity().getComponent().getClassName());
     }
 
 
