@@ -1,12 +1,9 @@
 package org.smartregister.view.activity;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.hardware.input.InputManager;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,28 +12,27 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowSystemClock;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
+import org.smartregister.domain.LoginResponse;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.AlarmManagerShadow;
+import org.smartregister.shadows.MyShadowAsyncTask;
 import org.smartregister.shadows.PendingIntentShadow;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.sync.DrishtiSyncScheduler;
@@ -44,11 +40,8 @@ import org.smartregister.view.activity.mock.LoginActivityMock;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -56,8 +49,8 @@ import static org.mockito.Mockito.when;
  */
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
-@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, PendingIntentShadow.class, AlarmManagerShadow.class})
-public class LoginActivityTest extends BaseUnitTest {
+@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, PendingIntentShadow.class, AlarmManagerShadow.class, MyShadowAsyncTask.class})
+public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
 
     private ActivityController<LoginActivityMock> controller;
 
@@ -77,7 +70,7 @@ public class LoginActivityTest extends BaseUnitTest {
     private LoginActivityMock activity;
 
     @Mock
-    private org.smartregister.Context context_;
+    private Context context_;
 
     @Mock
     private UserService userService;
@@ -118,22 +111,6 @@ public class LoginActivityTest extends BaseUnitTest {
         Assert.assertNotNull(activity);
     }
 
-    @Test
-    public void localLoginTest() {
-        when(userService.hasARegisteredUser()).thenReturn(true);
-        when(userService.isValidLocalLogin(anyString(),anyString())).thenReturn(true);
-        when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
-        EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
-        EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
-        username.setText("admin");
-        password.setText("password");
-        Button login_button = (Button)activity.findViewById(R.id.login_loginButton);
-           login_button.performClick();
-        Mockito.verify(userService,Mockito.atLeastOnce()).localLogin(anyString(),anyString());
-        destroyController();
-
-    }
-
     private void destroyController() {
         try {
             activity.finish();
@@ -144,6 +121,24 @@ public class LoginActivityTest extends BaseUnitTest {
         }
 
         System.gc();
+    }
+
+    @Test
+    public void remoteLoginTest() {
+       when(userService.hasARegisteredUser()).thenReturn(false);
+        when(userService.isValidLocalLogin(anyString(),anyString())).thenReturn(true);
+        when(userService.isValidRemoteLogin(anyString(),anyString())).thenReturn(LoginResponse.SUCCESS);
+        when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
+        when(allSharedPreferences.fetchBaseURL(anyString())).thenReturn("base url");
+        EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
+        EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
+        username.setText("admin");
+        password.setText("password");
+        Button login_button = (Button)activity.findViewById(R.id.login_loginButton);
+        login_button.performClick();
+        Mockito.verify(userService,Mockito.atLeastOnce()).remoteLogin(anyString(),anyString(),isNull(String.class));
+        destroyController();
+
     }
 
 }
