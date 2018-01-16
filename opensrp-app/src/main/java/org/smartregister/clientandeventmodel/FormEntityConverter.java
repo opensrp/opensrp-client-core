@@ -93,28 +93,33 @@ public class FormEntityConverter {
 
         for (FormFieldMap fl : fields) {
             Map<String, String> fat = fl.fieldAttributes();
-            if (!fl.values().isEmpty() && !StringUtils.isEmpty(fl.values().get(0)) && fat
-                    .containsKey("openmrs_entity") && fat.get("openmrs_entity")
-                    .equalsIgnoreCase("concept")) {
-                List<Object> vall = new ArrayList<>();
-                List<Object> humanReadableValues = new ArrayList<>();
-                for (String vl : fl.values()) {
-                    String val = fl.valueCodes(vl) == null ? null
-                            : fl.valueCodes(vl).get("openmrs_code");
-                    // String hval=fl.getValues()==null?null:fl.getValues();
-                    val = StringUtils.isEmpty(val) ? vl : val;
-                    vall.add(val);
+            List<Object> vall = new ArrayList<>();
+            if (!fl.values().isEmpty() && !StringUtils.isEmpty(fl.values().get(0)))
+                if (fat.containsKey("openmrs_entity") && fat.get("openmrs_entity")
+                        .equalsIgnoreCase("concept")) {
+                    List<Object> humanReadableValues = new ArrayList<>();
+                    for (String vl : fl.values()) {
+                        String val = fl.valueCodes(vl) == null ? null
+                                : fl.valueCodes(vl).get("openmrs_code");
+                        // String hval=fl.getValues()==null?null:fl.getValues();
+                        val = StringUtils.isEmpty(val) ? vl : val;
+                        vall.add(val);
 
-                    if (fl.valueCodes(vl) != null && fl.valueCodes(vl).get("openmrs_code")
-                            != null) {// this value is in concept id form
-                        String hval = fl.getValues() == null ? null : fl.getValues().get(0);
-                        humanReadableValues.add(hval);
+                        if (fl.valueCodes(vl) != null && fl.valueCodes(vl).get("openmrs_code")
+                                != null) {// this value is in concept id form
+                            String hval = fl.getValues() == null ? null : fl.getValues().get(0);
+                            humanReadableValues.add(hval);
+                        }
                     }
+                    e.addObs(new Obs("concept", fl.type(), fat.get("openmrs_entity_id"),
+                            fat.get("openmrs_entity_parent"), vall, humanReadableValues, null,
+                            fl.name()));
+                } else if (!fat.containsKey("openmrs_entity") && StringUtils.isNotEmpty(fl.type())) {
+                    for (String value : fl.getValues())
+                        vall.add(value);
+                    e.addObs(new Obs("formsubmissionField", fl.type(), fl.getName(),
+                            "", vall, new ArrayList<>(), null, fl.name()));
                 }
-                e.addObs(new Obs("concept", fl.type(), fat.get("openmrs_entity_id"),
-                        fat.get("openmrs_entity_parent"), vall, humanReadableValues, null,
-                        fl.name()));
-            }
         }
         return e;
     }
