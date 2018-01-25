@@ -13,10 +13,10 @@ import java.util.List;
  */
 
 public class ModelXMLHandler extends DefaultHandler {
-    Boolean currentElement = false;
-    String currentValue = "";
-    List<Model> tags;
-    Model model;
+    private Boolean currentElement = false;
+    private String currentValue = "";
+    private List<Model> tags;
+    private Model model;
     private String eventType;
 
     // Called when tag starts
@@ -26,7 +26,7 @@ public class ModelXMLHandler extends DefaultHandler {
 
         currentElement = true;
         currentValue = "";
-        if (localName.equals("instance"))
+        if ("instance".equals(localName))
             tags = new ArrayList<>();
         else if (tags != null && tags.isEmpty() && StringUtils.isNotEmpty(attributes.getValue("encounter_type"))) {
             eventType = attributes.getValue("encounter_type");
@@ -43,7 +43,7 @@ public class ModelXMLHandler extends DefaultHandler {
             throws SAXException {
 
         currentElement = false;
-        if (localName.equals("instance")) {
+        if ("instance".equals(localName)) {
             throw new SAXTerminationException("Finished processing model");
         } else {
             tags.add(model);
