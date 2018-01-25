@@ -762,7 +762,7 @@ public class CommonRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-
+            Log.i(getClass().getName(), e.getMessage(), e);
         } finally {
             if (cursor != null) {
                 cursor.close();

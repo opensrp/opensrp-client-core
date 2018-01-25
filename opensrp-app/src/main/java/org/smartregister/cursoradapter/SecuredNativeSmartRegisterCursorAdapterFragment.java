@@ -280,7 +280,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
 
     private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
                                                       .ClientsHeaderProvider headerProvider, View
-            view) {
+                                                      view) {
         LinearLayout clientsHeaderLayout = (LinearLayout) view
                 .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
@@ -481,20 +481,25 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
+                Log.i(getClass().getName(), query);
+
                 List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN);
-                query = sqb.Endquery(query);
+                totalcount = ids.size();
+                Log.v("total count here", "" + totalcount);
+
+
             } else {
                 sqb.addCondition(filters);
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(query);
+
+                Log.i(getClass().getName(), query);
+                c = commonRepository().rawCustomQueryForAdapter(query);
+                c.moveToFirst();
+                totalcount = c.getInt(0);
+                Log.v("total count here", "" + totalcount);
             }
 
-            Log.i(getClass().getName(), query);
-            c = commonRepository().rawCustomQueryForAdapter(query);
-            c.moveToFirst();
-            totalcount = c.getInt(0);
-            Log.v("total count here", "" + totalcount);
             currentlimit = 20;
             currentoffset = 0;
 
