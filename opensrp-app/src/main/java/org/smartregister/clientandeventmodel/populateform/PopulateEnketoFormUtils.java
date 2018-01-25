@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.form.FieldOverrides;
 import org.smartregister.repository.EventClientRepository;
@@ -52,6 +53,7 @@ public class PopulateEnketoFormUtils {
     private static PopulateEnketoFormUtils instance;
 
     private static List<String> personProperties = new ArrayList<>();
+    private static List<String> addressProperties = new ArrayList<>();
 
     private EventClientRepository eventClientRepository;
 
@@ -66,6 +68,8 @@ public class PopulateEnketoFormUtils {
             instance = new PopulateEnketoFormUtils(context, eventClientRepository);
             for (Person property : Person.values())
                 personProperties.add(property.name());
+            for (FormEntityConstants.Address property : FormEntityConstants.Address.values())
+                addressProperties.add(property.name());
         }
         return instance;
     }
@@ -168,47 +172,51 @@ public class PopulateEnketoFormUtils {
     private String retrieveAddressPropertyValue(Address address, Model tag) {
         if (address == null)
             return null;
-        switch (tag.getOpenMRSEntityId()) {
-            case "start_date":
-            case "startDate":
+        else if (!addressProperties.contains(tag.getOpenMRSEntityId()))
+            return address.getAddressField(tag.getOpenMRSEntityId());
+        FormEntityConstants.Address addressProperty = FormEntityConstants.Address.valueOf(tag.getOpenMRSEntityId());
+        switch (addressProperty) {
+            case start_date:
+            case startDate:
                 return dateFormat.format(address.getStartDate());
-            case "end_date":
-            case "endDate":
+            case end_date:
+            case endDate:
                 return dateFormat.format(address.getEndDate());
-            case "latitude":
+            case latitude:
                 return address.getLatitude();
-            case "longitute":
+            case longitute:
                 return address.getLongitude();
-            case "geopoint":
+            case geopoint:
                 return address.getGeopoint();
-            case "postal_code":
-            case "postalCode":
+            case postal_code:
+            case postalCode:
                 return address.getPostalCode();
-            case "sub_town":
-            case "subTown":
+            case sub_town:
+            case subTown:
                 return address.getSubTown();
-            case "town":
+            case town:
                 return address.getTown();
-            case "sub_district":
-            case "subDistrict":
+            case sub_district:
+            case subDistrict:
                 return address.getSubDistrict();
-            case "district":
-            case "county":
-            case "county_district":
+            case district:
+            case county:
+            case county_district:
+            case countyDistrict:
                 return address.getCountyDistrict();
-            case "city":
-            case "village":
-            case "cityVillage":
-            case "city_village":
+            case city:
+            case village:
+            case cityVillage:
+            case city_village:
                 return address.getCityVillage();
-            case "state":
-            case "state_province":
-            case "stateProvince":
+            case state:
+            case state_province:
+            case stateProvince:
                 return address.getStateProvince();
-            case "country":
+            case country:
                 return address.getCountry();
             default:
-                return address.getAddressField(tag.getOpenMRSEntityId());
+                return null;
         }
     }
 
