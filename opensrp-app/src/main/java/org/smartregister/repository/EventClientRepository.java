@@ -1405,6 +1405,22 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
+    public static void dropIndexes(SQLiteDatabase db, Table table) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = 'index'"
+                    + " AND sql is not null AND tbl_name = ?", new String[]{table.name()});
+            while (cursor.moveToNext()) {
+                db.execSQL("DROP INDEX " + cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Log.e(EventClientRepository.class.getName(), "SQLException", e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+    }
+
     public Object getValue(Cursor cur, Column c) throws JSONException, ParseException {
         int ind = cur.getColumnIndex(c.name());
         if (cur.isNull(ind)) {
