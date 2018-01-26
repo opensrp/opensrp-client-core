@@ -483,8 +483,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
                 Log.i(getClass().getName(), query);
 
-                List<String> ids = commonRepository().findSearchIds(sql);
-                totalcount = ids.size();
+                totalcount = commonRepository().countSearchIds(sql);
                 Log.v("total count here", "" + totalcount);
 
 
