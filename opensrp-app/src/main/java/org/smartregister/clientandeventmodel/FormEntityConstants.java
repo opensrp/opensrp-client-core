@@ -19,7 +19,7 @@ public class FormEntityConstants {
 
     public enum Person implements FormEntity {
         first_name, middle_name, last_name, gender, birthdate, birthdate_estimated, dead,
-        deathdate, deathdate_estimated;
+        deathdate, deathdate_estimated,client_type;
 
         public String entity() {
             return "person";
@@ -43,7 +43,7 @@ public class FormEntityConstants {
     }
 
     public enum Encounter implements FormEntity {
-        encounter_date, location_id, encounter_start, encounter_end;
+        encounter_date, location_id, encounter_start, encounter_end, team, teamId;
 
         public String entity() {
             return "encounter";

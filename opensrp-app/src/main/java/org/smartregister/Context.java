@@ -78,6 +78,7 @@ import org.smartregister.service.formsubmissionhandler.RenewFPProductHandler;
 import org.smartregister.service.formsubmissionhandler.TTHandler;
 import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
 import org.smartregister.sync.SaveANMLocationTask;
+import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
@@ -187,6 +188,7 @@ public class Context {
     private ANCInvestigationsHandler ancInvestigationsHandler;
     private SaveANMLocationTask saveANMLocationTask;
     private SaveUserInfoTask saveUserInfoTask;
+    private SaveANMTeamTask saveANMTeamTask;
     private ANMController anmController;
     private ANMLocationController anmLocationController;
     private CommonFtsObject commonFtsObject;
@@ -678,7 +680,7 @@ public class Context {
             repository = initRepository();
             userService = new UserService(repository, allSettings(), allSharedPreferences(),
                     httpAgent(), session(), configuration(), saveANMLocationTask(),
-                    saveUserInfoTask());
+                    saveUserInfoTask(),saveANMTeamTask());
         }
         return userService;
     }
@@ -695,6 +697,13 @@ public class Context {
             saveUserInfoTask = new SaveUserInfoTask(allSettings());
         }
         return saveUserInfoTask;
+    }
+
+    private SaveANMTeamTask saveANMTeamTask() {
+        if (saveANMTeamTask == null) {
+            saveANMTeamTask = new SaveANMTeamTask(allSettings());
+        }
+        return saveANMTeamTask;
     }
 
     public AlertService alertService() {
