@@ -525,16 +525,12 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                 return new CursorLoader(getActivity()) {
                     @Override
                     public Cursor loadInBackground() {
-                        String query = filterandSortQuery();
-                        Cursor cursor = commonRepository().rawCustomQueryForAdapter(query);
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                hideProgressView();
-                            }
-                        });
+                        // Count query
+                        CountExecute();
 
-                        return cursor;
+                        // Select register query
+                        String query = filterandSortQuery();
+                        return commonRepository().rawCustomQueryForAdapter(query);
                     }
                 };
             default:
@@ -547,6 +543,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         clientAdapter.swapCursor(cursor);
+
+        hideProgressView();
+        refresh();
     }
 
     @Override
