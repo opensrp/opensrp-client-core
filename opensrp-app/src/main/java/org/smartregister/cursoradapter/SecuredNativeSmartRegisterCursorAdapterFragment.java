@@ -85,6 +85,8 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     private Button nextPageView;
     private Button previousPageView;
 
+    private static final String COUNT = "count_execute";
+
     public String getTablename() {
         return tablename;
     }
@@ -319,8 +321,8 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     public void onFilterSelection(FilterOption filter) {
         appliedVillageFilterView.setText(filter.name());
         filters = ((CursorFilterOption) filter).filter();
-        CountExecute();
-        filterandSortExecute();
+
+        filterandSortExecute(countBundle());
     }
 
     protected void onEditSelection(EditOption editOption, SmartRegisterClient client) {
@@ -406,7 +408,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     public void filterandSortInInitializeQueries() {
         if (isPausedOrRefreshList()) {
             this.showProgressView();
-            this.filterandSortExecute();
+            this.filterandSortExecute(countBundle());
         } else {
             this.initialFilterandSortExecute();
         }
@@ -416,16 +418,21 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
         Loader<Cursor> loader = getLoaderManager().getLoader(LOADER_ID);
         showProgressView();
         if (loader != null) {
-            filterandSortExecute();
+            filterandSortExecute(countBundle());
         } else {
-            getLoaderManager().initLoader(LOADER_ID, null, this);
+            getLoaderManager().initLoader(LOADER_ID, countBundle(), this);
         }
     }
 
-    public void filterandSortExecute() {
+    public void filterandSortExecute(Bundle args) {
         refresh();
 
-        getLoaderManager().restartLoader(LOADER_ID, null, this);
+        getLoaderManager().restartLoader(LOADER_ID, args, this);
+    }
+
+
+    public void filterandSortExecute() {
+        filterandSortExecute(null);
     }
 
     public void showProgressView() {
@@ -517,6 +524,12 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                 .startsWithIgnoreCase(filters.trim(), "and ");
     }
 
+    public Bundle countBundle() {
+        Bundle args = new Bundle();
+        args.putBoolean(COUNT, true);
+        return args;
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, final Bundle args) {
         switch (id) {
@@ -526,7 +539,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                     @Override
                     public Cursor loadInBackground() {
                         // Count query
-                        CountExecute();
+                        if (args != null && args.getBoolean(COUNT)) {
+                            CountExecute();
+                        }
 
                         // Select register query
                         String query = filterandSortQuery();
