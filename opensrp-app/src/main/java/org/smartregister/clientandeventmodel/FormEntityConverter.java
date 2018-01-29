@@ -67,6 +67,8 @@ public class FormEntityConverter {
                               FormSubmissionMap fs) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
+        String team = getFieldName(Encounter.team, fs);
+        String teamId = getFieldName(Encounter.teamId, fs);
 
         //TODO
         String encounterStart = getFieldName(Encounter.encounter_start, fs);
@@ -87,30 +89,37 @@ public class FormEntityConverter {
                 .withEntityType(fs.bindType()).withFormSubmissionId(fs.instanceId())
                 .withDateCreated(new Date());
 
+        e.withTeam(fs.getFieldValue(team)).withTeamId(fs.getFieldValue(teamId));
+
         for (FormFieldMap fl : fields) {
             Map<String, String> fat = fl.fieldAttributes();
-            if (!fl.values().isEmpty() && !StringUtils.isEmpty(fl.values().get(0)) && fat
-                    .containsKey("openmrs_entity") && fat.get("openmrs_entity")
-                    .equalsIgnoreCase("concept")) {
-                List<Object> vall = new ArrayList<>();
-                List<Object> humanReadableValues = new ArrayList<>();
-                for (String vl : fl.values()) {
-                    String val = fl.valueCodes(vl) == null ? null
-                            : fl.valueCodes(vl).get("openmrs_code");
-                    // String hval=fl.getValues()==null?null:fl.getValues();
-                    val = StringUtils.isEmpty(val) ? vl : val;
-                    vall.add(val);
+            List<Object> vall = new ArrayList<>();
+            if (!fl.values().isEmpty() && !StringUtils.isEmpty(fl.values().get(0)))
+                if (fat.containsKey("openmrs_entity") && fat.get("openmrs_entity")
+                        .equalsIgnoreCase("concept")) {
+                    List<Object> humanReadableValues = new ArrayList<>();
+                    for (String vl : fl.values()) {
+                        String val = fl.valueCodes(vl) == null ? null
+                                : fl.valueCodes(vl).get("openmrs_code");
+                        // String hval=fl.getValues()==null?null:fl.getValues();
+                        val = StringUtils.isEmpty(val) ? vl : val;
+                        vall.add(val);
 
-                    if (fl.valueCodes(vl) != null && fl.valueCodes(vl).get("openmrs_code")
-                            != null) {// this value is in concept id form
-                        String hval = fl.getValues() == null ? null : fl.getValues().get(0);
-                        humanReadableValues.add(hval);
+                        if (fl.valueCodes(vl) != null && fl.valueCodes(vl).get("openmrs_code")
+                                != null) {// this value is in concept id form
+                            String hval = fl.getValues() == null ? null : fl.getValues().get(0);
+                            humanReadableValues.add(hval);
+                        }
                     }
+                    e.addObs(new Obs("concept", fl.type(), fat.get("openmrs_entity_id"),
+                            fat.get("openmrs_entity_parent"), vall, humanReadableValues, null,
+                            fl.name()));
+                } else if (!fat.containsKey("openmrs_entity") && StringUtils.isNotEmpty(fl.type())) {
+                    for (String value : fl.getValues())
+                        vall.add(value);
+                    e.addObs(new Obs("formsubmissionField", fl.type(), fl.getName(),
+                            "", vall, new ArrayList<>(), null, fl.name()));
                 }
-                e.addObs(new Obs("concept", fl.type(), fat.get("openmrs_entity_id"),
-                        fat.get("openmrs_entity_parent"), vall, humanReadableValues, null,
-                        fl.name()));
-            }
         }
         return e;
     }
@@ -366,6 +375,7 @@ public class FormEntityConverter {
         String dd = fs.getFieldValue(getFieldName(Person.deathdate, fs));
         DateTime deathdate = dd == null ? null : new DateTime(dd).withTimeAtStartOfDay();
         String aproxbd = fs.getFieldValue(getFieldName(Person.birthdate_estimated, fs));
+        String clientType = fs.getFieldValue(getFieldName(Person.client_type, fs));
         Boolean birthdateApprox = false;
         if (!StringUtils.isEmpty(aproxbd) && NumberUtils.isNumber(aproxbd)) {
             int bde = 0;
@@ -397,6 +407,8 @@ public class FormEntityConverter {
                 .withDeathdate(deathdate != null ? deathdate.toDate() : null, deathdateApprox)
                 .withGender(gender).withDateCreated(new Date());
 
+        c.withClientType(clientType);
+
         c.withAddresses(addresses).withAttributes(extractAttributes(fs))
                 .withIdentifiers(extractIdentifiers(fs));
         return c;
@@ -424,6 +436,7 @@ public class FormEntityConverter {
         String dd = subf.getFieldValue(getFieldName(Person.deathdate, subf));
         DateTime deathdate = dd == null ? null : new DateTime(dd).withTimeAtStartOfDay();
         String aproxbd = subf.getFieldValue(getFieldName(Person.birthdate_estimated, subf));
+        String clientType = subf.getFieldValue(getFieldName(Person.client_type, subf));
         Boolean birthdateApprox = false;
         if (!StringUtils.isEmpty(aproxbd) && NumberUtils.isNumber(aproxbd)) {
             int bde = 0;
@@ -453,6 +466,8 @@ public class FormEntityConverter {
                 .withBirthdate(new DateTime(birthdate).toDate(), birthdateApprox)
                 .withDeathdate(new DateTime(deathdate).toDate(), deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
+
+        c.withClientType(clientType);
 
         c.withAddresses(addresses).withAttributes(extractAttributes(subf)).withIdentifiers(idents);
 

@@ -16,6 +16,7 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.SaveANMLocationTask;
+import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -67,13 +68,14 @@ public class UserService {
     private Session session;
     private DristhiConfiguration configuration;
     private SaveANMLocationTask saveANMLocationTask;
+    private SaveANMTeamTask saveANMTeamTask;
     private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
     public UserService(Repository repositoryArg, AllSettings allSettingsArg, AllSharedPreferences
             allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
                        DristhiConfiguration configurationArg, SaveANMLocationTask
-                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg) {
+                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg,SaveANMTeamTask saveANMTeamTaskArg) {
         repository = repositoryArg;
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;
@@ -82,6 +84,7 @@ public class UserService {
         configuration = configurationArg;
         saveANMLocationTask = saveANMLocationTaskArg;
         saveUserInfoTask = saveUserInfoTaskArg;
+        saveANMTeamTask = saveANMTeamTaskArg;
         initKeyStore();
     }
 
@@ -341,8 +344,11 @@ public class UserService {
         allSharedPreferences.saveForceRemoteLogin(false);
         loginWith(userName, password);
         saveAnmLocation(getUserLocation(userInfo));
+        saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
         saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
+        saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
+        saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
     }
 
@@ -370,9 +376,53 @@ public class UserService {
         }
     }
 
+    public String getUserTeam(String userInfo) {
+        try {
+            JSONObject userLocationJSON = new JSONObject(userInfo);
+            return userLocationJSON.getString("team");
+        } catch (JSONException e) {
+            Log.v("Error : ", e.getMessage());
+            return null;
+        }
+    }
+
     public void saveDefaultLocationId(String userName, String locationId) {
         if (userName != null) {
             allSharedPreferences.saveDefaultLocalityId(userName, locationId);
+        }
+    }
+
+    public String getUserDefaultTeam(String userInfo) {
+        try {
+            JSONObject userInfoJSON = new JSONObject(userInfo);
+            return userInfoJSON.getJSONObject("team").getJSONObject("team").getString("teamName");
+        } catch (JSONException e) {
+            Log.v("Error : ", e.getMessage());
+        }
+
+        return null;
+    }
+
+    public void saveDefaultTeam(String userName, String team) {
+        if (userName != null) {
+            allSharedPreferences.saveDefaultTeam(userName, team);
+        }
+    }
+
+    public String getUserDefaultTeamId(String userInfo) {
+        try {
+            JSONObject userInfoJSON = new JSONObject(userInfo);
+            return userInfoJSON.getJSONObject("team").getJSONObject("team").getString("uuid");
+        } catch (JSONException e) {
+            Log.v("Error : ", e.getMessage());
+        }
+
+        return null;
+    }
+
+    public void saveDefaultTeamId(String userName, String teamId) {
+        if (userName != null) {
+            allSharedPreferences.saveDefaultTeamId(userName, teamId);
         }
     }
 
@@ -390,6 +440,10 @@ public class UserService {
 
     public void saveAnmLocation(String anmLocation) {
         saveANMLocationTask.save(anmLocation);
+    }
+
+    public void saveAnmTeam(String anmTeam) {
+        saveANMTeamTask.save(anmTeam);
     }
 
     public void saveUserInfo(String userInfo) {
