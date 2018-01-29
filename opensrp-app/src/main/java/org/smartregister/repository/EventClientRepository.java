@@ -1055,6 +1055,35 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+    public JSONObject getEventsByBaseEntityIdAndEventType(String baseEntityId, String eventType) {
+        if (StringUtils.isBlank(baseEntityId)) {
+            return null;
+        }
+
+        Cursor cursor = null;
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT json FROM "
+                    + Table.event.name()
+                    + " WHERE "
+                    + event_column.baseEntityId.name()
+                    + "= ? AND " + event_column.eventType.name() + "= ? ", new String[]{baseEntityId, eventType});
+            if (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+                return new JSONObject(jsonEventStr);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject) {
         Cursor cursor = null;
         try {
@@ -1362,7 +1391,7 @@ public class EventClientRepository extends BaseRepository {
             for (Column cc : columns) {
                 if (cc.column().index()) {
                     String create_id = "CREATE INDEX "
-                            + cc.name()
+                            + table.name() + "_" + cc.name()
                             + "_index ON "
                             + table.name()
                             + " ("
@@ -1373,6 +1402,22 @@ public class EventClientRepository extends BaseRepository {
             }
         } catch (Exception e) {
             Log.e(EventClientRepository.class.getName(), "Exception", e);
+        }
+    }
+
+    public static void dropIndexes(SQLiteDatabase db, Table table) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = 'index'"
+                    + " AND sql is not null AND tbl_name = ?", new String[]{table.name()});
+            while (cursor.moveToNext()) {
+                db.execSQL("DROP INDEX " + cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Log.e(EventClientRepository.class.getName(), "SQLException", e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
         }
     }
 
