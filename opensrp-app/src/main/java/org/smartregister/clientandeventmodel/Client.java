@@ -34,6 +34,8 @@ public class Client extends BaseEntity {
     //This is an id field used to link a client to other clients or parent
     @JsonProperty
     private String relationalBaseEntityId;
+    @JsonProperty
+    private String clientType;
 
     protected Client() {
 
@@ -88,6 +90,28 @@ public class Client extends BaseEntity {
         setIdentifiers(identifiers);
         setAddresses(addresses);
         setAttributes(attributes);
+    }
+
+    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
+            birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
+                          gender, String clientType) {
+        this(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender);
+        setClientType(clientType);
+    }
+
+    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
+            birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
+                          gender, String identifierType, String identifier, String clientType) {
+        this(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, identifierType, identifier);
+        setClientType(clientType);
+    }
+
+    public Client(String baseEntityId, String firstName, String middleName, String lastName, Date
+            birthdate, Date deathdate, Boolean birthdateApprox, Boolean deathdateApprox, String
+                          gender, List<Address> addresses, Map<String, String> identifiers, Map<String, Object>
+                          attributes, String clientType) {
+        this(baseEntityId, firstName, middleName, lastName, birthdate, deathdate, birthdateApprox, deathdateApprox, gender, addresses, identifiers, attributes);
+        setClientType(clientType);
     }
 
     public String getRelationalBaseEntityId() {
@@ -170,6 +194,14 @@ public class Client extends BaseEntity {
         this.relationships = relationships;
     }
 
+    public String getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(String clientType) {
+        this.clientType = clientType;
+    }
+
     public Client withFirstName(String firstName) {
         this.firstName = firstName;
         return this;
@@ -211,6 +243,11 @@ public class Client extends BaseEntity {
 
     public Client withGender(Gender gender) {
         this.gender = gender.name();
+        return this;
+    }
+
+    public Client withClientType(String clientType) {
+        this.clientType = clientType;
         return this;
     }
 

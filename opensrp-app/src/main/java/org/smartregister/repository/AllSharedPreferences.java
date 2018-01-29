@@ -8,6 +8,8 @@ import java.net.URL;
 import static org.smartregister.AllConstants.CURRENT_LOCALITY;
 import static org.smartregister.AllConstants.DEFAULT_LOCALE;
 import static org.smartregister.AllConstants.DEFAULT_LOCALITY_ID_PREFIX;
+import static org.smartregister.AllConstants.DEFAULT_TEAM_ID_PREFIX;
+import static org.smartregister.AllConstants.DEFAULT_TEAM_PREFIX;
 import static org.smartregister.AllConstants.DRISHTI_BASE_URL;
 import static org.smartregister.AllConstants.ENCRYPTED_GROUP_ID_PREFIX;
 import static org.smartregister.AllConstants.ENCRYPTED_PASSWORD_PREFIX;
@@ -86,6 +88,34 @@ public class AllSharedPreferences {
     public String fetchDefaultLocalityId(String username) {
         if (username != null) {
             return preferences.getString(DEFAULT_LOCALITY_ID_PREFIX + username, null);
+        }
+        return null;
+    }
+
+    public void saveDefaultTeam(String username, String team) {
+        if (username != null) {
+            preferences.edit().putString(DEFAULT_TEAM_PREFIX + username, team)
+                    .commit();
+        }
+    }
+
+    public String fetchDefaultTeam(String username) {
+        if (username != null) {
+            return preferences.getString(DEFAULT_TEAM_PREFIX + username, null);
+        }
+        return null;
+    }
+
+    public void saveDefaultTeamId(String username, String teamId) {
+        if (username != null) {
+            preferences.edit().putString(DEFAULT_TEAM_ID_PREFIX + username, teamId)
+                    .commit();
+        }
+    }
+
+    public String fetchDefaultTeamId(String username) {
+        if (username != null) {
+            return preferences.getString(DEFAULT_TEAM_ID_PREFIX + username, null);
         }
         return null;
     }
