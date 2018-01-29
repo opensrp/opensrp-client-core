@@ -41,6 +41,7 @@ import org.smartregister.shadows.PendingIntentShadow;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.view.activity.mock.LoginActivityMock;
+import org.smartregister.view.activity.mock.MenuItemTestVersion;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
