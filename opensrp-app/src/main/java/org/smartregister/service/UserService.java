@@ -75,7 +75,7 @@ public class UserService {
     public UserService(Repository repositoryArg, AllSettings allSettingsArg, AllSharedPreferences
             allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
                        DristhiConfiguration configurationArg, SaveANMLocationTask
-                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg,SaveANMTeamTask saveANMTeamTaskArg) {
+                               saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg, SaveANMTeamTask saveANMTeamTaskArg) {
         repository = repositoryArg;
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;

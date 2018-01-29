@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.view.activity.CameraLaunchActivity;
 import org.smartregister.view.activity.VideosActivity;
 
 /**
@@ -27,7 +26,7 @@ public class VideoActivityMock extends VideosActivity {
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

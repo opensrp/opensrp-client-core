@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.view.activity.EligibleCoupleDetailActivity;
-import org.smartregister.view.activity.ReportsActivity;
 
 /**
  * Created by Raihan Ahmed on 11/11/17.
@@ -27,7 +26,7 @@ public class EligibleCoupleDetailActivityMock extends EligibleCoupleDetailActivi
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

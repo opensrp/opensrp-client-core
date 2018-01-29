@@ -16,7 +16,6 @@ import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.ZiggyService;
-import org.smartregister.view.activity.mock.CameraActivityMock;
 import org.smartregister.view.activity.mock.VideoActivityMock;
 import org.smartregister.view.controller.ANMLocationController;
 

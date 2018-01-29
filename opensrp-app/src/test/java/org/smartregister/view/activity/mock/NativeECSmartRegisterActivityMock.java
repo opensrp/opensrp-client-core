@@ -2,7 +2,6 @@ package org.smartregister.view.activity.mock;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.widget.LinearLayout;
 
 import org.smartregister.Context;
 import org.smartregister.R;
@@ -86,7 +85,7 @@ public class NativeECSmartRegisterActivityMock extends NativeECSmartRegisterActi
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

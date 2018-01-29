@@ -2,13 +2,10 @@ package org.smartregister.shadows;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Intent;
 
-import org.mockito.Mockito;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.shadows.ShadowAlarmManager;
-import org.robolectric.shadows.ShadowPendingIntent;
 
 /**
  * Created by Raihan Ahmed on 17/12/17.

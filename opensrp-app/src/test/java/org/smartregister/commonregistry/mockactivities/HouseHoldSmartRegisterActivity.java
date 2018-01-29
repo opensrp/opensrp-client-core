@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 
-
 import org.json.JSONObject;
 import org.smartregister.Context;
 import org.smartregister.R;
@@ -30,9 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterActivity {
@@ -52,7 +48,7 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
         setTheme(R.style.AppTheme); //we need this here
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mPager = (OpenSRPViewPager)findViewById(R.id.view_pager);
+        mPager = (OpenSRPViewPager) findViewById(R.id.view_pager);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
 
@@ -73,28 +69,38 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
         ziggyService = context().ziggyService();
     }
-    public void onPageChanged(int page){
+
+    public void onPageChanged(int page) {
         setRequestedOrientation(page == 0 ? ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE : ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
     }
 
     @Override
-    protected DefaultOptionsProvider getDefaultOptionsProvider() {return null;}
+    protected DefaultOptionsProvider getDefaultOptionsProvider() {
+        return null;
+    }
 
     @Override
-    protected void setupViews() {}
+    protected void setupViews() {
+    }
 
     @Override
-    protected void onResumption(){}
+    protected void onResumption() {
+    }
 
     @Override
-    protected NavBarOptionsProvider getNavBarOptionsProvider() {return null;}
+    protected NavBarOptionsProvider getNavBarOptionsProvider() {
+        return null;
+    }
 
     @Override
-    protected SmartRegisterClientsProvider clientsProvider() {return null;}
+    protected SmartRegisterClientsProvider clientsProvider() {
+        return null;
+    }
 
     @Override
-    protected void onInitialization() {}
+    protected void onInitialization() {
+    }
 
     @Override
     public void startRegistration() {
@@ -102,12 +108,12 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
     public DialogOption[] getEditOptions() {
 
-        HashMap <String,String> overridemap = new HashMap<String,String>();
+        HashMap<String, String> overridemap = new HashMap<String, String>();
         String alertstate = "";
 
-            return new DialogOption[]{
-                    new OpenFormOption("census_enrollment_form", "census_enrollment_form", formController, overridemap, OpenFormOption.ByColumnAndByDetails.bydefault)
-            };
+        return new DialogOption[]{
+                new OpenFormOption("census_enrollment_form", "census_enrollment_form", formController, overridemap, OpenFormOption.ByColumnAndByDetails.bydefault)
+        };
 
     }
 
@@ -126,16 +132,16 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
                 }
             }
             return alertstate;
-        }catch (Exception e){
+        } catch (Exception e) {
             return "";
         }
     }
 
     @Override
-    public void saveFormSubmission(String formSubmission, String id, String formName, JSONObject fieldOverrides){
+    public void saveFormSubmission(String formSubmission, String id, String formName, JSONObject fieldOverrides) {
         Log.v("fieldoverride", fieldOverrides.toString());
         // save the form
-        try{
+        try {
             FormUtils formUtils = FormUtils.getInstance(getApplicationContext());
             FormSubmission submission = formUtils.generateFormSubmisionFromXMLString(id, formSubmission, formName, fieldOverrides);
             ziggyService.saveForm(getParams(submission), submission.instance());
@@ -146,7 +152,7 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
             //switch to forms list fragment
             switchToBaseFragment(formSubmission); // Unnecessary!! passing on data
 
-        }catch (Exception e){
+        } catch (Exception e) {
             // TODO: show error dialog on the formfragment if the submission fails
 
             e.printStackTrace();
@@ -158,11 +164,11 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
         Log.v("fieldoverride", metaData);
         try {
             int formIndex = FormUtils.getIndexForFormName(formName, formNames) + 1; // add the offset
-            if (entityId != null || metaData != null){
+            if (entityId != null || metaData != null) {
                 String data = null;
                 //check if there is previously saved data for the form
                 data = getPreviouslySavedDataForForm(formName, metaData, entityId);
-                if (data == null){
+                if (data == null) {
                     data = FormUtils.getInstance(getApplicationContext()).generateXMLInputForFormWithEntityId(entityId, formName, metaData);
                 }
 
@@ -176,13 +182,13 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
             mPager.setCurrentItem(formIndex, false); //Don't animate the view on orientation change the view disapears
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
 
-    public void switchToBaseFragment(final String data){
+    public void switchToBaseFragment(final String data) {
         final int prevPageIndex = currentPage;
         runOnUiThread(new Runnable() {
             @Override
@@ -214,7 +220,7 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
 
     @Override
     public void onBackPressed() {
-        if (currentPage != 0){
+        if (currentPage != 0) {
             retrieveAndSaveUnsubmittedFormData();
             String BENGALI_LOCALE = "bn";
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(Context.getInstance().applicationContext()));
@@ -239,7 +245,7 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
                                     }
                                 })
                         .show();
-            }else{
+            } else {
                 new AlertDialog.Builder(this)
                         .setMessage("Cancek Form Launch")
                         .setTitle("cancel")
@@ -260,12 +266,12 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
                         .show();
             }
 
-        }else if (currentPage == 0) {
+        } else if (currentPage == 0) {
             super.onBackPressed(); // allow back key only if we are
         }
     }
 
-    private String[] buildFormNameList(){
+    private String[] buildFormNameList() {
         List<String> formNames = new ArrayList<String>();
         formNames.add("new_household_registration");
         formNames.add("census_enrollment_form");
@@ -282,14 +288,14 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
         retrieveAndSaveUnsubmittedFormData();
     }
 
-    public void retrieveAndSaveUnsubmittedFormData(){
-        if (currentActivityIsShowingForm()){
+    public void retrieveAndSaveUnsubmittedFormData() {
+        if (currentActivityIsShowingForm()) {
 //            DisplayFormFragment formFragment = getDisplayFormFragmentAtIndex(currentPage);
 //            formFragment.saveCurrentFormData();
         }
     }
 
-    private boolean currentActivityIsShowingForm(){
+    private boolean currentActivityIsShowingForm() {
         return currentPage != 0;
     }
 
@@ -298,7 +304,7 @@ public class HouseHoldSmartRegisterActivity extends SecuredNativeSmartRegisterAc
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

@@ -5,17 +5,13 @@ import android.support.annotation.Nullable;
 
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
-import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.FormActivity;
-import org.smartregister.view.activity.NativeECSmartRegisterActivity;
-import org.smartregister.view.dialog.LocationSelectorDialogFragment;
 
 /**
  * Created by kaderchowdhury on 11/11/17.
  */
 
-public class FormActivityMock extends FormActivity{
+public class FormActivityMock extends FormActivity {
 
     static Context mockactivitycontext;
 
@@ -30,7 +26,7 @@ public class FormActivityMock extends FormActivity{
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

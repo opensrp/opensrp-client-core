@@ -11,7 +11,6 @@ import android.widget.EditText;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -95,7 +94,7 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
         when(context_.userService()).thenReturn(userService);
         when(applicationContext.getSystemService(android.content.Context.ALARM_SERVICE)).thenReturn(alarmManager);
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("admin");
-        when(inputManager.hideSoftInputFromWindow(isNull(IBinder.class),anyInt())).thenReturn(true);
+        when(inputManager.hideSoftInputFromWindow(isNull(IBinder.class), anyInt())).thenReturn(true);
         Intent intent = new Intent(RuntimeEnvironment.application, LoginActivityMock.class);
         controller = Robolectric.buildActivity(LoginActivityMock.class, intent);
         controller.create()
@@ -107,7 +106,7 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
 
 
     @Test
-    public void assertActivityNotNull(){
+    public void assertActivityNotNull() {
         Assert.assertNotNull(activity);
     }
 
@@ -125,18 +124,18 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
 
     @Test
     public void remoteLoginTest() {
-       when(userService.hasARegisteredUser()).thenReturn(false);
-        when(userService.isValidLocalLogin(anyString(),anyString())).thenReturn(true);
-        when(userService.isValidRemoteLogin(anyString(),anyString())).thenReturn(LoginResponse.SUCCESS);
+        when(userService.hasARegisteredUser()).thenReturn(false);
+        when(userService.isValidLocalLogin(anyString(), anyString())).thenReturn(true);
+        when(userService.isValidRemoteLogin(anyString(), anyString())).thenReturn(LoginResponse.SUCCESS);
         when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchBaseURL(anyString())).thenReturn("base url");
         EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
         EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
         username.setText("admin");
         password.setText("password");
-        Button login_button = (Button)activity.findViewById(R.id.login_loginButton);
+        Button login_button = (Button) activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
-        Mockito.verify(userService,Mockito.atLeastOnce()).remoteLogin(anyString(),anyString(),isNull(String.class));
+        Mockito.verify(userService, Mockito.atLeastOnce()).remoteLogin(anyString(), anyString(), isNull(String.class));
         destroyController();
 
     }

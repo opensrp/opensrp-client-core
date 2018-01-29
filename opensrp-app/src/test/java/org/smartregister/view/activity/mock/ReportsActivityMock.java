@@ -5,14 +5,13 @@ import android.support.annotation.Nullable;
 
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.view.activity.FormActivity;
 import org.smartregister.view.activity.ReportsActivity;
 
 /**
  * Created by Raihan Ahmed on 11/11/17.
  */
 
-public class ReportsActivityMock extends ReportsActivity{
+public class ReportsActivityMock extends ReportsActivity {
 
     static Context mockactivitycontext;
 
@@ -27,7 +26,7 @@ public class ReportsActivityMock extends ReportsActivity{
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

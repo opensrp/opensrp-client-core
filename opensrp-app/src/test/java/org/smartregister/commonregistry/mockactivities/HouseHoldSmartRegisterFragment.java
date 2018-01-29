@@ -2,15 +2,11 @@ package org.smartregister.commonregistry.mockactivities;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.database.Cursor;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import org.opensrp.api.domain.Location;
 import org.opensrp.api.util.EntityUtils;
@@ -28,7 +24,6 @@ import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.SmartRegisterClient;
-import org.smartregister.view.contract.SmartRegisterClients;
 import org.smartregister.view.controller.VillageController;
 import org.smartregister.view.dialog.AllClientsFilter;
 import org.smartregister.view.dialog.AllEligibleCoupleServiceMode;
@@ -61,6 +56,7 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
 
     private final ClientActionHandler clientActionHandler = new ClientActionHandler();
     private String locationDialogTAG = "locationDialogTAG";
+
     @Override
     protected void onCreation() {
         //
@@ -107,20 +103,20 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
 
                 ArrayList<DialogOption> dialogOptionslist = new ArrayList<DialogOption>();
 
-                dialogOptionslist.add(new CursorCommonObjectFilterOption(getString(R.string.filter_by_all_label),filterStringForAll()));
+                dialogOptionslist.add(new CursorCommonObjectFilterOption(getString(R.string.filter_by_all_label), filterStringForAll()));
 
                 String locationjson = context().anmLocationController().get();
                 LocationTree locationTree = EntityUtils.fromJson(locationjson, LocationTree.class);
 
-                Map<String,TreeNode<String, Location>> locationMap =
+                Map<String, TreeNode<String, Location>> locationMap =
                         locationTree.getLocationsHierarchy();
-                addChildToList(dialogOptionslist,locationMap);
+                addChildToList(dialogOptionslist, locationMap);
                 DialogOption[] dialogOptions = new DialogOption[dialogOptionslist.size()];
-                for (int i = 0;i < dialogOptionslist.size();i++){
+                for (int i = 0; i < dialogOptionslist.size(); i++) {
                     dialogOptions[i] = dialogOptionslist.get(i);
                 }
 
-                return  dialogOptions;
+                return dialogOptions;
             }
 
             @Override
@@ -155,7 +151,7 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
     }
 
     private DialogOption[] getEditOptions() {
-        return ((HouseHoldSmartRegisterActivity)getActivity()).getEditOptions();
+        return ((HouseHoldSmartRegisterActivity) getActivity()).getEditOptions();
     }
 
     @Override
@@ -177,7 +173,7 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
     }
 
     private String sortByAlertmethod() {
-       return " CASE WHEN FW_CENSUS = 'urgent' THEN '1'\n" +
+        return " CASE WHEN FW_CENSUS = 'urgent' THEN '1'\n" +
                 "WHEN FW_CENSUS = 'upcoming' THEN '2'\n" +
                 "WHEN FW_CENSUS = 'normal' THEN '3'\n" +
                 "WHEN FW_CENSUS = 'expired' THEN '4'\n" +
@@ -185,16 +181,16 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
                 "Else FW_CENSUS END ASC";
     }
 
-    public String houseHoldMainCount(){
+    public String houseHoldMainCount() {
         return "Select Count(*) from (Select *, " +
                 "(Select count(*)  from ec_elco where ec_elco.relational_id = ec_household.base_entity_id) as ELCO " +
                 "from ec_household) ec_household ";
     }
 
-    public void initializeQueries(){
+    public void initializeQueries() {
         try {
-            HouseHoldSmartClientsProvider hhscp = new HouseHoldSmartClientsProvider(getActivity(),clientActionHandler,context().alertService());
-            clientAdapter = new SmartRegisterPaginatedCursorAdapter(getActivity(), null, hhscp, new CommonRepository("ec_household",new String []{"FWHOHFNAME", "FWGOBHHID","FWJIVHHID","existing_Mauzapara", "ELCO"}));
+            HouseHoldSmartClientsProvider hhscp = new HouseHoldSmartClientsProvider(getActivity(), clientActionHandler, context().alertService());
+            clientAdapter = new SmartRegisterPaginatedCursorAdapter(getActivity(), null, hhscp, new CommonRepository("ec_household", new String[]{"FWHOHFNAME", "FWGOBHHID", "FWJIVHHID", "existing_Mauzapara", "ELCO"}));
             clientsView.setAdapter(clientAdapter);
 
             setTablename("ec_household");
@@ -220,10 +216,9 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
             updateSearchView();
             refresh();
 //        checkforNidMissing(view);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
+        } finally {
         }
 
 
@@ -240,11 +235,11 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
         ft.addToBackStack(null);
         LocationSelectorDialogFragment
                 .newInstance((HouseHoldSmartRegisterActivity) getActivity(), new
-                        EditDialogOptionModel(), context().anmLocationController().get(),
+                                EditDialogOptionModel(), context().anmLocationController().get(),
                         "new_household_registration")
                 .show(ft, locationDialogTAG);
     }
-    
+
     private class ClientActionHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
@@ -259,23 +254,28 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
     }
 
 
-    private String filterStringForOneOrMoreElco(){
+    private String filterStringForOneOrMoreElco() {
         return " and ELCO > 0";
     }
-    private String filterStringForNoElco(){
+
+    private String filterStringForNoElco() {
         return " and ELCO = 0";
     }
-    private String filterStringForAll(){
+
+    private String filterStringForAll() {
         return "";
     }
+
     private String householdSortByName() {
         return " FWHOHFNAME COLLATE NOCASE ASC";
     }
-    private String householdSortByFWGOBHHID(){
+
+    private String householdSortByFWGOBHHID() {
         return " FWGOBHHID ASC";
     }
-    private String householdSortByFWJIVHHID(){
-      return " FWJIVHHID ASC";
+
+    private String householdSortByFWJIVHHID() {
+        return " FWJIVHHID ASC";
     }
 
     private class EditDialogOptionModel implements DialogOptionModel {
@@ -294,18 +294,19 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
     protected void onResumption() {
 //        super.onResumption();
         getDefaultOptionsProvider();
-        if(isPausedOrRefreshList()) {
+        if (isPausedOrRefreshList()) {
             initializeQueries();
         }
 //        updateSearchView();
 //
-        try{
+        try {
 //            LoginActivity.setLanguage();
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
     }
+
     @Override
     public void setupSearchView(View view) {
         searchView = (EditText) view.findViewById(org.smartregister.R.id.edt_search);
@@ -337,7 +338,7 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
         searchCancelView.setOnClickListener(searchCancelHandler);
     }
 
-    public void updateSearchView(){
+    public void updateSearchView() {
         getSearchView().addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -362,13 +363,14 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
             }
         });
     }
-    public void addChildToList(ArrayList<DialogOption> dialogOptionslist,Map<String,TreeNode<String, Location>> locationMap){
-        for(Map.Entry<String, TreeNode<String, Location>> entry : locationMap.entrySet()) {
 
-            if(entry.getValue().getChildren() != null) {
-                addChildToList(dialogOptionslist,entry.getValue().getChildren());
+    public void addChildToList(ArrayList<DialogOption> dialogOptionslist, Map<String, TreeNode<String, Location>> locationMap) {
+        for (Map.Entry<String, TreeNode<String, Location>> entry : locationMap.entrySet()) {
 
-            }else{
+            if (entry.getValue().getChildren() != null) {
+                addChildToList(dialogOptionslist, entry.getValue().getChildren());
+
+            } else {
 //                StringUtil.humanize(entry.getValue().getLabel());
 //                String name = StringUtil.humanize(entry.getValue().getLabel());
 //                dialogOptionslist.add(new HHMauzaCommonObjectFilterOption(name, "location_name", name, "ec_household"));
@@ -376,7 +378,6 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
             }
         }
     }
-
 
 
     private boolean anyNIdmissing(CommonPersonObjectController controller) {
@@ -415,7 +416,7 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
         c.moveToFirst();
         int missingnidCount = c.getInt(0);
         c.close();
-        if(missingnidCount>0){
+        if (missingnidCount > 0) {
             toreturn = true;
         }
         return toreturn;

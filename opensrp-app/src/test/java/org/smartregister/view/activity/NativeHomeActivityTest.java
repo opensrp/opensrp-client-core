@@ -1,7 +1,6 @@
 package org.smartregister.view.activity;
 
 import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 
 import junit.framework.Assert;
@@ -19,29 +18,23 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.Shadows;
-import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowActivity;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.service.ZiggyService;
-import org.smartregister.setup.DrishtiTestRunner;
 import org.smartregister.shadows.SecuredActivityShadow;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.view.activity.mock.NativeHomeActivityMock;
 
-import static junit.framework.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@Config(shadows = {ShadowContext.class,SecuredActivityShadow.class})
+@Config(shadows = {ShadowContext.class, SecuredActivityShadow.class})
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
-public class NativeHomeActivityTest extends BaseUnitTest{
+public class NativeHomeActivityTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();
@@ -66,14 +59,13 @@ public class NativeHomeActivityTest extends BaseUnitTest{
         when(coreLibrary.context()).thenReturn(context_);
         when(context_.updateApplicationContext(any(Context.class))).thenReturn(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
-        Intent intent = new Intent(RuntimeEnvironment.application,NativeHomeActivityMock.class);
-         homeActivity = Robolectric.buildActivity(NativeHomeActivityMock.class)
+        Intent intent = new Intent(RuntimeEnvironment.application, NativeHomeActivityMock.class);
+        homeActivity = Robolectric.buildActivity(NativeHomeActivityMock.class)
                 .create()
                 .start()
                 .resume()
                 .visible()
                 .get();
-
 
 
     }

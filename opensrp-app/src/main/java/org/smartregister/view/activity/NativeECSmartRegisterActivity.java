@@ -2,7 +2,6 @@ package org.smartregister.view.activity;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.provider.Settings;
 import android.view.View;
 
 import org.smartregister.R;

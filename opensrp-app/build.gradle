@@ -206,7 +206,7 @@ afterEvaluate { project ->
     android.libraryVariants.each { variant ->
         // workaround for missing R class for aar dependencies
         def copyTaskName = "copy${variant.name.capitalize()}AppCompat"
-        task(copyTaskName, type:Copy) {
+        task(copyTaskName, type: Copy) {
             dependsOn "process${variant.name.capitalize()}Resources"
             from { "build/generated/source/r/${variant.name}/$package_namespace_path" }
 //            into { "build/generated/source/r/${variant.name}/android/support/v7/appcompat" }

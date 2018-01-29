@@ -1,12 +1,9 @@
 package org.smartregister.commonregistry.mockactivities;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -16,13 +13,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.smartregister.R;
-import org.smartregister.commonregistry.AllCommonsRepository;
-import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonPersonObjectController;
 import org.smartregister.cursoradapter.SmartRegisterCLientsProviderForCursorAdapter;
-import org.smartregister.domain.Alert;
-import org.smartregister.repository.DetailsRepository;
 import org.smartregister.service.AlertService;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
@@ -30,13 +23,6 @@ import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.viewholder.OnClickFormLauncher;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.List;
 
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
@@ -54,9 +40,10 @@ public class HouseHoldSmartClientsProvider implements SmartRegisterCLientsProvid
     protected CommonPersonObjectController controller;
 
     AlertService alertService;
+
     public HouseHoldSmartClientsProvider(Context context,
                                          View.OnClickListener onClickListener,
-                                          AlertService alertService) {
+                                         AlertService alertService) {
         this.onClickListener = onClickListener;
 //        this.controller = controller;
         this.context = context;
@@ -70,8 +57,7 @@ public class HouseHoldSmartClientsProvider implements SmartRegisterCLientsProvid
     }
 
 
-
-//    @Override
+    //    @Override
     public SmartRegisterClients getClients() {
         return controller.getClients();
     }
@@ -133,20 +119,19 @@ public class HouseHoldSmartClientsProvider implements SmartRegisterCLientsProvid
 
     class ViewHolder {
 
-         TextView gobhhid ;
-         TextView jvitahhid ;
-         TextView village;
-         TextView headofhouseholdname;
-         TextView no_of_mwra;
-         TextView last_visit_date;
-         TextView due_visit_date;
-         ImageButton follow_up;
-         LinearLayout profilelayout;
-         ImageView profilepic;
-         FrameLayout due_date_holder;
-         Button warnbutton;
+        TextView gobhhid;
+        TextView jvitahhid;
+        TextView village;
+        TextView headofhouseholdname;
+        TextView no_of_mwra;
+        TextView last_visit_date;
+        TextView due_visit_date;
+        ImageButton follow_up;
+        LinearLayout profilelayout;
+        ImageView profilepic;
+        FrameLayout due_date_holder;
+        Button warnbutton;
     }
-
 
 
 }

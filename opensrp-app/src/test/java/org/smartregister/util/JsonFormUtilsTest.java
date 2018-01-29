@@ -14,32 +14,21 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.clientandeventmodel.*;
+import org.smartregister.clientandeventmodel.Address;
+import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.cloudant.models.Client;
 import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.ANM;
-import org.smartregister.domain.SyncStatus;
-import org.smartregister.repository.DetailsRepository;
-import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.sync.CloudantDataHandler;
-import org.smartregister.util.mock.XmlSerializerMock;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.net.URL;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -112,7 +101,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     @Test
     public void assertFillAttributesWithBindTypeNotReturnNullReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractAttributes(JsonFormUtils.fields(formjson),bindtype));
+        Assert.assertNotNull(JsonFormUtils.extractAttributes(JsonFormUtils.fields(formjson), bindtype));
     }
 
     @Test
@@ -124,7 +113,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     @Test
     public void assertExtracIdentifiersWithBindTypeReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson),bindtype));
+        Assert.assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson), bindtype));
     }
 
     @Test
@@ -136,7 +125,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     @Test
     public void assertExtracAddressesWithBindTypeReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson),bindtype));
+        Assert.assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson), bindtype));
     }
 
     @Test
@@ -146,7 +135,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
         String dateinFMT = fmt.format(dd_MM_yyyy.parse(dateInFormat));
         String returnedDateinString = (JsonFormUtils.formatDate(dateInFormat));
-        Assert.assertEquals(dateinFMT,returnedDateinString);
+        Assert.assertEquals(dateinFMT, returnedDateinString);
     }
 
     @Test
@@ -155,12 +144,12 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         Date date = dd_MM_yyyy.parse("22-05-1988");
         String dateInFormat = dd_MM_yyyy.format(date);
         String dateInFormat2 = yyyy_MM_dd.format(date);
-        Date datereturned = (JsonFormUtils.formatDate(dateInFormat,true));
-        Date datereturned2 = (JsonFormUtils.formatDate(dateInFormat2,true));
+        Date datereturned = (JsonFormUtils.formatDate(dateInFormat, true));
+        Date datereturned2 = (JsonFormUtils.formatDate(dateInFormat2, true));
         long diff = date.getTime() - datereturned.getTime();
         long diff2 = date.getTime() - datereturned2.getTime();
-        Assert.assertEquals(diff,0l);
-        Assert.assertEquals(diff2,0l);
+        Assert.assertEquals(diff, 0l);
+        Assert.assertEquals(diff2, 0l);
     }
 
     @Test
@@ -168,8 +157,8 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         String observationJsonObjectString = "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0.1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
         org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
-        JsonFormUtils.addObservation(event,observationJsonObject);
-        Mockito.verify(event,Mockito.atLeastOnce()).addObs(any(Obs.class));
+        JsonFormUtils.addObservation(event, observationJsonObject);
+        Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
     }
 
     @Test
@@ -177,241 +166,242 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         String observationJsonObjectString = "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0.1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
         org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
-        JsonFormUtils.addObservation(event,observationJsonObject);
-        Mockito.verify(event,Mockito.atLeastOnce()).addObs(any(Obs.class));
+        JsonFormUtils.addObservation(event, observationJsonObject);
+        Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
     }
 
     @Test
     public void assertfilladdressStartDateAddsStartDate() throws Exception {
         String addressJsonWithStartDateString = "{\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"startDate\",\"hint\":\"address of household start date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartDateString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime()-org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(),0);
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartDateString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime() - org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfilladdressEndDateAddsEndDate() throws Exception {
         String addressJsonWithEndDateString = "{\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"end_date\",\"hint\":\"address of household end date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithEndDateString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime()-org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(),0);
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithEndDateString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime() - org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfilladdressLongitudeAddsLongitude() throws Exception {
         String addressJsonWithLongitudeString = "{\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"longitude\",\"hint\":\"address of household longitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithLongitudeString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getLongitude(),"34.044494");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithLongitudeString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getLongitude(), "34.044494");
     }
 
     @Test
     public void assertfilladdresslatitudeAddslatitude() throws Exception {
         String addressJsonWithStartlatitudeString = "{\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"latitude\",\"hint\":\"address of household latitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartlatitudeString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getLatitude(),"34.044494");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartlatitudeString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getLatitude(), "34.044494");
     }
 
     @Test
     public void assertfilladdressGeopointAddsGeopoint() throws Exception {
         String addressJsonWithGeopointString = "{\"value\":\"34.044494 -84.695704 4 76 = lat lon alt prec\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"geopoint\",\"hint\":\"address of household geopoint\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithGeopointString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getGeopoint(),"34.044494 -84.695704 4 76 = lat lon alt prec");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithGeopointString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getGeopoint(), "34.044494 -84.695704 4 76 = lat lon alt prec");
     }
 
     @Test
     public void assertfilladdressPostal_codeAddsPostal_code() throws Exception {
         String addressJsonWithStartPostal_code = "{\"value\":\"4021\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"postal_code\",\"hint\":\"address of household postal_code\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"postal_code\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartPostal_code),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getPostalCode(),"4021");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartPostal_code), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getPostalCode(), "4021");
     }
 
     @Test
     public void assertfilladdressSub_townAddsSub_town() throws Exception {
         String addressJsonWithSub_townString = "{\"value\":\"Kotwali\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_town\",\"hint\":\"address of household sub_town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_town\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithSub_townString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getSubTown(),"Kotwali");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithSub_townString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getSubTown(), "Kotwali");
     }
 
     @Test
     public void assertfilladdressTownAddsTown() throws Exception {
         String addressJsonWithTownString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"town\",\"hint\":\"address of household town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"town\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithTownString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getTown(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithTownString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getTown(), "Chittagong");
     }
 
     @Test
     public void assertfilladdressSub_districtAddsSub_district() throws Exception {
         String addressJsonWithsub_districtString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_district\",\"hint\":\"address of household sub_district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_district\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithsub_districtString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getSubDistrict(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithsub_districtString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getSubDistrict(), "Chittagong");
     }
 
     @Test
     public void assertfilladdressDistrictAddsDistrict() throws Exception {
         String addressJsonWithDistrictString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"district\",\"hint\":\"address of household district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"district\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithDistrictString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getCountyDistrict(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithDistrictString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getCountyDistrict(), "Chittagong");
     }
 
     @Test
     public void assertfilladdressCityVillageAddsCityVillage() throws Exception {
         String addressJsonWithCityVillageString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"cityVillage\",\"hint\":\"address of household cityVillage\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCityVillageString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getCityVillage(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCityVillageString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getCityVillage(), "Chittagong");
     }
 
     @Test
     public void assertfilladdressStateAddsState() throws Exception {
         String addressJsonWithStateString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"state\",\"hint\":\"address of household state\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"state\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStateString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getStateProvince(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStateString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getStateProvince(), "Chittagong");
     }
 
     @Test
     public void assertfilladdressCountryAddsCountry() throws Exception {
         String addressJsonWithCountryString = "{\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCountryString),addressHashMap);
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getCountry(),"Bangladesh");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCountryString), addressHashMap);
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getCountry(), "Bangladesh");
     }
+
     @Test
     public void assertfillSubformaddressStartDateAddsStartDate() throws Exception {
         String addressJsonWithStartDateString = "{\"entity_id\":\"mother\",\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"startDate\",\"hint\":\"address of household start date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartDateString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime()-org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(),0);
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartDateString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime() - org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfillSubFormaddressEndDateAddsEndDate() throws Exception {
         String addressJsonWithEndDateString = "{\"entity_id\":\"mother\",\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"end_date\",\"hint\":\"address of household end date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithEndDateString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime()-org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(),0);
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithEndDateString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime() - org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfillSubFormaddressLongitudeAddsLongitude() throws Exception {
         String addressJsonWithLongitudeString = "{\"entity_id\":\"mother\",\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"longitude\",\"hint\":\"address of household longitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithLongitudeString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getLongitude(),"34.044494");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithLongitudeString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getLongitude(), "34.044494");
     }
 
     @Test
     public void assertfillSubFormaddresslatitudeAddslatitude() throws Exception {
         String addressJsonWithStartlatitudeString = "{\"entity_id\":\"mother\",\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"latitude\",\"hint\":\"address of household latitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartlatitudeString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getLatitude(),"34.044494");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartlatitudeString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getLatitude(), "34.044494");
     }
 
     @Test
     public void assertfillSubFormaddressGeopointAddsGeopoint() throws Exception {
         String addressJsonWithGeopointString = "{\"entity_id\":\"mother\",\"value\":\"34.044494 -84.695704 4 76 = lat lon alt prec\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"geopoint\",\"hint\":\"address of household geopoint\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithGeopointString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getGeopoint(),"34.044494 -84.695704 4 76 = lat lon alt prec");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithGeopointString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getGeopoint(), "34.044494 -84.695704 4 76 = lat lon alt prec");
     }
 
     @Test
     public void assertfillSubFormaddressPostal_codeAddsPostal_code() throws Exception {
         String addressJsonWithStartPostal_code = "{\"entity_id\":\"mother\",\"value\":\"4021\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"postal_code\",\"hint\":\"address of household postal_code\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"postal_code\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartPostal_code),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getPostalCode(),"4021");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartPostal_code), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getPostalCode(), "4021");
     }
 
     @Test
     public void assertfillSubFormaddressSub_townAddsSub_town() throws Exception {
         String addressJsonWithSub_townString = "{\"entity_id\":\"mother\",\"value\":\"Kotwali\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_town\",\"hint\":\"address of household sub_town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_town\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithSub_townString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getSubTown(),"Kotwali");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithSub_townString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getSubTown(), "Kotwali");
     }
 
     @Test
     public void assertfillSubFormaddressTownAddsTown() throws Exception {
         String addressJsonWithTownString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"town\",\"hint\":\"address of household town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"town\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithTownString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getTown(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithTownString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getTown(), "Chittagong");
     }
 
     @Test
     public void assertfillSubformaddressSub_districtAddsSub_district() throws Exception {
         String addressJsonWithsub_districtString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_district\",\"hint\":\"address of household sub_district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_district\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithsub_districtString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getSubDistrict(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithsub_districtString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getSubDistrict(), "Chittagong");
     }
 
     @Test
     public void assertfillSubformaddressDistrictAddsDistrict() throws Exception {
         String addressJsonWithDistrictString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"district\",\"hint\":\"address of household district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"district\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithDistrictString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getCountyDistrict(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithDistrictString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getCountyDistrict(), "Chittagong");
     }
 
     @Test
     public void assertfillSubformaddressCityVillageAddsCityVillage() throws Exception {
         String addressJsonWithCityVillageString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"cityVillage\",\"hint\":\"address of household cityVillage\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCityVillageString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getCityVillage(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCityVillageString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getCityVillage(), "Chittagong");
     }
 
     @Test
     public void assertfillSubformaddressStateAddsState() throws Exception {
         String addressJsonWithStateString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"state\",\"hint\":\"address of household state\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"state\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStateString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getStateProvince(),"Chittagong");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStateString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getStateProvince(), "Chittagong");
     }
 
     @Test
     public void assertfillSubformaddressCountryAddsCountry() throws Exception {
         String addressJsonWithCountryString = "{\"entity_id\":\"mother\",\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
-        HashMap<String,Address> addressHashMap = new HashMap<String,Address>();
-        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCountryString),addressHashMap,"mother");
-        Assert.assertTrue(addressHashMap.size()>0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getCountry(),"Bangladesh");
+        HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
+        JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCountryString), addressHashMap, "mother");
+        Assert.assertTrue(addressHashMap.size() > 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getCountry(), "Bangladesh");
     }
 
     @Test
@@ -421,9 +411,9 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         JSONObject updatedExpected = new JSONObject(addressJsonWithCountryString);
         JSONObject original = new JSONObject(originalString);
         JSONObject toMerge = new JSONObject();
-        toMerge.put("entity_id","mother");
-        JSONObject updated = JsonFormUtils.merge(original,toMerge);
-        Assert.assertTrue(areEqual(updated,updatedExpected));
+        toMerge.put("entity_id", "mother");
+        JSONObject updated = JsonFormUtils.merge(original, toMerge);
+        Assert.assertTrue(areEqual(updated, updatedExpected));
 
     }
 

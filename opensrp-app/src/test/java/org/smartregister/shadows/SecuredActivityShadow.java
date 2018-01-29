@@ -18,12 +18,12 @@ import org.smartregister.view.activity.SecuredActivity;
 @Implements(SecuredActivity.class)
 public class SecuredActivityShadow extends ShadowActivity {
     public SecuredActivityShadow() {
-        
+
     }
 
     @Implementation
     protected void onCreate(Bundle savedInstanceState) {
-        
+
     }
 
     @Implementation

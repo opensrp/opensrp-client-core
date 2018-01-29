@@ -1,9 +1,7 @@
 package org.smartregister.view.activity;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -15,25 +13,15 @@ import android.widget.TextView;
 
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.internal.exceptions.MockitoLimitations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.Shadows;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowActivity;
-import org.robolectric.shadows.ShadowIntent;
 import org.robolectric.shadows.ShadowLooper;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
@@ -41,8 +29,6 @@ import org.smartregister.R;
 import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.service.ZiggyService;
-import org.smartregister.setup.DrishtiTestRunner;
-import org.smartregister.shadows.SecuredActivityShadow;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.view.activity.mock.NativeECSmartRegisterActivityMock;
 import org.smartregister.view.contract.ECClient;
@@ -55,20 +41,16 @@ import org.smartregister.view.controller.VillageController;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.FormNames.EC_REGISTRATION;
 
 @Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class})
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
-public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
+public class NativeECSmartRegisterActivityTest extends BaseUnitTest {
 
     private NativeECSmartRegisterActivityMock ecActivity;
 
@@ -108,7 +90,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
     }
 
     @Test
-    @Config(shadows = {ShadowECSmartRegisterControllerWithZeroClients.class,FontTextViewShadow.class})
+    @Config(shadows = {ShadowECSmartRegisterControllerWithZeroClients.class, FontTextViewShadow.class})
     public void clientsHeaderShouldContain7Columns() {
         ViewGroup header = (ViewGroup) ecActivity.findViewById(R.id.clients_header_layout);
 
@@ -148,7 +130,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
     public void listViewShouldHavePagingFor21Items() throws InterruptedException {
         final ListView list = (ListView) ecActivity.findViewById(R.id.list);
 
-        ViewGroup footer = (ViewGroup)tryGetAdapter(list).getView(20, null, null);
+        ViewGroup footer = (ViewGroup) tryGetAdapter(list).getView(20, null, null);
         Button nextButton = (Button) footer.findViewById(R.id.btn_next_page);
         Button previousButton = (Button) footer.findViewById(R.id.btn_previous_page);
         TextView info = (TextView) footer.findViewById(R.id.txt_page_info);
@@ -187,7 +169,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
     public void listViewHeaderAndListViewItemWeightsShouldMatch() throws InterruptedException {
         final ListView list = (ListView) ecActivity.findViewById(R.id.list);
 
-        LinearLayout listItem = (LinearLayout) list.getAdapter().getView(list.getFirstVisiblePosition(),null,list);
+        LinearLayout listItem = (LinearLayout) list.getAdapter().getView(list.getFirstVisiblePosition(), null, list);
         LinearLayout header = (LinearLayout) ecActivity.findViewById(R.id.clients_header_layout);
 
         assertEquals(2, tryGetAdapter(list).getCount());
@@ -283,7 +265,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
 //        assertEquals("EC Number", sortedByInStatusBar.getText());
     }
 
-//    @Ignore
+    //    @Ignore
     @Test
     @Config(shadows = {ShadowECSmartRegisterControllerWithZeroClients.class, ShadowVillageController.class})
     public void pressingFilterOptionButtonShouldOpenDialogFragmentWithOptionsAndSelectingAnOptionShouldUpdateStatusBar() {
@@ -316,15 +298,15 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
         assertNull(ecActivity.getFragmentManager().findFragmentByTag("dialog"));
     }
 
-     @Test
-     @Config(shadows = {ShadowECSmartRegisterControllerWithZeroClients.class})
-     public void pressingNewRegisterButtonShouldOpenECRegistrationFormActivity() {
-         NativeECSmartRegisterActivityMock nativeECSmartRegisterActivityMock = Mockito.spy(ecActivity);
-         nativeECSmartRegisterActivityMock.findViewById(R.id.register_client)
-                 .performClick();
+    @Test
+    @Config(shadows = {ShadowECSmartRegisterControllerWithZeroClients.class})
+    public void pressingNewRegisterButtonShouldOpenECRegistrationFormActivity() {
+        NativeECSmartRegisterActivityMock nativeECSmartRegisterActivityMock = Mockito.spy(ecActivity);
+        nativeECSmartRegisterActivityMock.findViewById(R.id.register_client)
+                .performClick();
 
 //         Mockito.verify(nativeECSmartRegisterActivityMock,Mockito.atLeastOnce()).startRegistration();
-     }
+    }
 
     @Ignore
     @Test
@@ -347,7 +329,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
 //                shadowIntent.getStringExtra(AllConstants.CASE_ID));
     }
 
-//    @Ignore
+    //    @Ignore
     @Test
     @Config(shadows = {ShadowECSmartRegisterControllerFor1Clients.class})
     public void pressingClientEditOptionShouldOpenDialogFragmentAndSelectingAnOptionShouldLaunchRespectiveActivity() {

@@ -21,6 +21,7 @@ public class BaseRegisterActivityPagerAdapter extends FragmentPagerAdapter {
         this.mBaseFragment = baseFragment;
         offset += 1;
     }
+
     public BaseRegisterActivityPagerAdapter(FragmentManager fragmentManager, String[] dialogOptions, Fragment baseFragment, Fragment mProfileFragment) {
         super(fragmentManager);
         this.dialogOptions = dialogOptions;
@@ -38,7 +39,7 @@ public class BaseRegisterActivityPagerAdapter extends FragmentPagerAdapter {
                 fragment = mBaseFragment;
                 break;
             case 1:
-                if(mProfileFragment != null) {
+                if (mProfileFragment != null) {
                     fragment = mProfileFragment;
                     break;
                 }

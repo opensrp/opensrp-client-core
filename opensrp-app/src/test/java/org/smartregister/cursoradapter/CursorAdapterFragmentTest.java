@@ -1,12 +1,9 @@
 package org.smartregister.cursoradapter;
 
-import android.app.Fragment;
 import android.content.Context;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,10 +13,8 @@ import junit.framework.Assert;
 import net.sqlcipher.MatrixCursor;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.Robolectric;
@@ -37,8 +32,6 @@ import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowContext;
-import org.smartregister.view.activity.NativeECSmartRegisterActivityTest;
-import org.smartregister.view.activity.mock.NativeECSmartRegisterActivityMock;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.Village;
@@ -47,13 +40,7 @@ import org.smartregister.view.controller.ANMLocationController;
 import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
 
-import java.util.HashMap;
-
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -61,7 +48,7 @@ import static org.mockito.Mockito.when;
 @Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class})
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
-public class CursorAdapterFragmentTest extends BaseUnitTest{
+public class CursorAdapterFragmentTest extends BaseUnitTest {
 
     private HouseHoldSmartRegisterActivity ecActivity;
 
@@ -90,12 +77,12 @@ public class CursorAdapterFragmentTest extends BaseUnitTest{
         org.mockito.MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context_);
         HouseHoldSmartRegisterActivity.setContext(context_);
-        String [] columns = new String []{"_id","relationalid","FWHOHFNAME", "FWGOBHHID","FWJIVHHID","existing_Mauzapara", "ELCO"};
+        String[] columns = new String[]{"_id", "relationalid", "FWHOHFNAME", "FWGOBHHID", "FWJIVHHID", "existing_Mauzapara", "ELCO"};
         MatrixCursor matrixCursor = new MatrixCursor(columns);
-        matrixCursor.addRow(new Object[]{"1","relationalid1","FWHOHFNAME1", "FWGOBHHID1","FWJIVHHID1","existing_Mauzapara1", "ELCO1"});
-        matrixCursor.addRow(new Object[]{"2","relationalid2","FWHOHFNAME2", "FWGOBHHID2","FWJIVHHID2","existing_Mauzapara2", "ELCO2"});
-        for(int i = 3;i<22;i++){
-        matrixCursor.addRow(new Object[]{""+i,"relationalid"+i,"FWHOHFNAME"+i, "FWGOBHHID"+i,"FWJIVHHID+i","existing_Mauzapara"+i, "ELCO"+i});
+        matrixCursor.addRow(new Object[]{"1", "relationalid1", "FWHOHFNAME1", "FWGOBHHID1", "FWJIVHHID1", "existing_Mauzapara1", "ELCO1"});
+        matrixCursor.addRow(new Object[]{"2", "relationalid2", "FWHOHFNAME2", "FWGOBHHID2", "FWJIVHHID2", "existing_Mauzapara2", "ELCO2"});
+        for (int i = 3; i < 22; i++) {
+            matrixCursor.addRow(new Object[]{"" + i, "relationalid" + i, "FWHOHFNAME" + i, "FWGOBHHID" + i, "FWJIVHHID+i", "existing_Mauzapara" + i, "ELCO" + i});
         }
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
@@ -113,7 +100,7 @@ public class CursorAdapterFragmentTest extends BaseUnitTest{
 
 
     @Test
-    public void assertBaseFragmentNotNullandIsSecuredNativeSmartRegisterCursorAdapterFragment(){
+    public void assertBaseFragmentNotNullandIsSecuredNativeSmartRegisterCursorAdapterFragment() {
         Assert.assertNotNull(ecActivity.mBaseFragment);
         Assert.assertTrue(ecActivity.mBaseFragment instanceof SecuredNativeSmartRegisterCursorAdapterFragment);
     }
@@ -133,7 +120,7 @@ public class CursorAdapterFragmentTest extends BaseUnitTest{
 
     @Test
     public void listViewNavigationShouldWorkIfClientsSpanMoreThanOnePage() throws InterruptedException {
-        ((HouseHoldSmartRegisterFragment)ecActivity.mBaseFragment).refresh();
+        ((HouseHoldSmartRegisterFragment) ecActivity.mBaseFragment).refresh();
         final ListView list = (ListView) ecActivity.findViewById(R.id.list);
         ViewGroup footer = (ViewGroup) tryGetAdapter(list).getView(20, null, null);
         Button nextButton = (Button) ecActivity.findViewById(R.id.btn_next_page);
@@ -144,7 +131,6 @@ public class CursorAdapterFragmentTest extends BaseUnitTest{
         assertEquals("Page 1 of 1", info.getText());
         previousButton.performClick();
     }
-
 
 
     private ListAdapter tryGetAdapter(final ListView list) {

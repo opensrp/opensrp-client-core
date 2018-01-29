@@ -2,8 +2,6 @@ package org.smartregister.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.preference.EditTextPreference;
-import android.preference.Preference;
 
 import junit.framework.Assert;
 
@@ -65,7 +63,7 @@ public class FormActivityTest extends BaseUnitTest {
         Intent intent = new Intent(RuntimeEnvironment.application, FormActivity.class);
         intent.putExtra(FORM_NAME_PARAM, "birthnotificationpregnancystatusfollowup");
         intent.putExtra(ENTITY_ID_PARAM, "entityID");
-        intent.putExtra(FIELD_OVERRIDES_PARAM,"");
+        intent.putExtra(FIELD_OVERRIDES_PARAM, "");
         controller = Robolectric.buildActivity(FormActivityMock.class, intent);
         activity = controller.get();
         controller.create()

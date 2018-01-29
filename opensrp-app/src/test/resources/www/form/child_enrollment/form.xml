@@ -1965,8 +1965,9 @@
 
         <span class="question-label active"
             data-itext-id="/Child_Vaccination_Enrollment/address:label" lang="en">Address:<span
-            class="or-output" data-value=" /Child_Vaccination_Enrollment/address1 "></span>,<span
-            class="or-output" data-value=" /Child_Vaccination_Enrollment/union_councilname "></span>
+            class="or-output" data-value=" /Child_Vaccination_Enrollment/address1 "></span>,
+            <span class="or-output"
+                data-value=" /Child_Vaccination_Enrollment/union_councilname "></span>
             ,<span class="or-output" data-value=" /Child_Vaccination_Enrollment/townname "></span>,
             <span class="or-output"
                 data-value=" /Child_Vaccination_Enrollment/city_villagename "></span>,

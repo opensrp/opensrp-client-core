@@ -1,12 +1,9 @@
 package org.smartregister.view.activity;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.hardware.input.InputManager;
 import android.os.IBinder;
 import android.util.Log;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,22 +11,17 @@ import android.widget.EditText;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadows.ShadowSystemClock;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.customshadows.AndroidTreeViewShadow;
@@ -41,15 +33,11 @@ import org.smartregister.shadows.PendingIntentShadow;
 import org.smartregister.shadows.ShadowContext;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.view.activity.mock.LoginActivityMock;
-import org.smartregister.view.activity.mock.MenuItemTestVersion;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 /**
@@ -103,7 +91,7 @@ public class LoginActivityTest extends BaseUnitTest {
         when(context_.userService()).thenReturn(userService);
         when(applicationContext.getSystemService(android.content.Context.ALARM_SERVICE)).thenReturn(alarmManager);
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("admin");
-        when(inputManager.hideSoftInputFromWindow(isNull(IBinder.class),anyInt())).thenReturn(true);
+        when(inputManager.hideSoftInputFromWindow(isNull(IBinder.class), anyInt())).thenReturn(true);
         Intent intent = new Intent(RuntimeEnvironment.application, LoginActivityMock.class);
         controller = Robolectric.buildActivity(LoginActivityMock.class, intent);
         controller.create()
@@ -115,22 +103,22 @@ public class LoginActivityTest extends BaseUnitTest {
 
 
     @Test
-    public void assertActivityNotNull(){
+    public void assertActivityNotNull() {
         Assert.assertNotNull(activity);
     }
 
     @Test
     public void localLoginTest() {
         when(userService.hasARegisteredUser()).thenReturn(true);
-        when(userService.isValidLocalLogin(anyString(),anyString())).thenReturn(true);
+        when(userService.isValidLocalLogin(anyString(), anyString())).thenReturn(true);
         when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
         EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
         EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
         username.setText("admin");
         password.setText("password");
-        Button login_button = (Button)activity.findViewById(R.id.login_loginButton);
-           login_button.performClick();
-        Mockito.verify(userService,Mockito.atLeastOnce()).localLogin(anyString(),anyString());
+        Button login_button = (Button) activity.findViewById(R.id.login_loginButton);
+        login_button.performClick();
+        Mockito.verify(userService, Mockito.atLeastOnce()).localLogin(anyString(), anyString());
         destroyController();
 
     }

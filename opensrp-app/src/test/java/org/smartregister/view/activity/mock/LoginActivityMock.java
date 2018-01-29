@@ -1,6 +1,5 @@
 package org.smartregister.view.activity.mock;
 
-import android.hardware.input.InputManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -8,7 +7,6 @@ import android.view.inputmethod.InputMethodManager;
 
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.view.activity.CameraLaunchActivity;
 import org.smartregister.view.activity.LoginActivity;
 
 /**
@@ -29,9 +27,9 @@ public class LoginActivityMock extends LoginActivity {
 
     @Override
     public Object getSystemService(String name) {
-        if(name.equalsIgnoreCase(INPUT_METHOD_SERVICE)){
+        if (name.equalsIgnoreCase(INPUT_METHOD_SERVICE)) {
             return inputManager;
-        }else {
+        } else {
             return super.getSystemService(name);
         }
     }

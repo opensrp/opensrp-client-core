@@ -16,7 +16,6 @@ import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.ZiggyService;
-import org.smartregister.view.activity.mock.FormActivityMock;
 import org.smartregister.view.activity.mock.ReportsActivityMock;
 import org.smartregister.view.controller.ANMLocationController;
 
@@ -64,7 +63,7 @@ public class ReportsActivityTest extends BaseUnitTest {
         Intent intent = new Intent(RuntimeEnvironment.application, ReportsActivityMock.class);
         intent.putExtra(FORM_NAME_PARAM, "birthnotificationpregnancystatusfollowup");
         intent.putExtra(ENTITY_ID_PARAM, "entityID");
-        intent.putExtra(FIELD_OVERRIDES_PARAM,"");
+        intent.putExtra(FIELD_OVERRIDES_PARAM, "");
         controller = Robolectric.buildActivity(ReportsActivityMock.class, intent);
         activity = controller.get();
         controller.create()

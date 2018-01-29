@@ -26,7 +26,7 @@ public class CameraActivityMock extends CameraLaunchActivity {
         return mockactivitycontext;
     }
 
-    public static void setContext(Context context){
+    public static void setContext(Context context) {
         mockactivitycontext = context;
     }
 

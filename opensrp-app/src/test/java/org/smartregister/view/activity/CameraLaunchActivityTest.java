@@ -17,13 +17,9 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.activity.mock.CameraActivityMock;
-import org.smartregister.view.activity.mock.EligibleCoupleDetailActivityMock;
 import org.smartregister.view.controller.ANMLocationController;
 
 import static org.mockito.Mockito.when;
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
 import static org.smartregister.view.activity.NativeECSmartRegisterActivityTest.locationJson;
 
 /**

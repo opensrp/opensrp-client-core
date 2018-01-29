@@ -3,12 +3,8 @@ package org.smartregister.view.activity.mock;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.Menu;
-import android.widget.LinearLayout;
 
 import org.smartregister.R;
-import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
-import org.smartregister.provider.SmartRegisterClientsProvider;
-import org.smartregister.view.activity.NativeECSmartRegisterActivity;
 import org.smartregister.view.activity.NativeHomeActivity;
 
 /**
