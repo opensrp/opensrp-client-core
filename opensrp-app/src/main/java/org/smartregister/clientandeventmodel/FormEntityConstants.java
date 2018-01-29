@@ -59,4 +59,12 @@ public class FormEntityConstants {
 
         String entityId();
     }
+
+    public enum Address {
+        start_date, startDate, end_date, endDate, latitude, longitute, geopoint, postal_code,
+        postalCode, sub_town, subTown, town, sub_district, subDistrict, district, county,
+        county_district,countyDistrict, city, village, cityVillage, city_village, state,
+        state_province, stateProvince, country
+    }
 }
+
