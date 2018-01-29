@@ -23,6 +23,7 @@ import org.smartregister.service.AlertService;
 import org.smartregister.util.AssetHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -174,11 +175,14 @@ public class ClientProcessor {
         }
     }
 
-    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject
-            clientClassificationJson) throws Exception {
+    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson) throws Exception {
+
+        return processEvent(event, client, clientClassificationJson, Arrays.asList(new String[]{"deathdate"}));
+    }
+
+    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson, List<String> skipFields) throws Exception {
 
         try {
-            String baseEntityId = event.getString(baseEntityIdJSONKey);
             if (event.has("creator")) {
                 Log.i(TAG, "EVENT from openmrs");
             }
@@ -196,10 +200,13 @@ public class ClientProcessor {
                 return false;
             }
 
-            // Check if child is deceased and skip
-            if (client.has("deathdate") && !client.getString("deathdate").isEmpty()) {
-
-                return false;
+            if (skipFields != null && skipFields.size() > 0) {
+                for (String field : skipFields) {
+                    // Check if field set and skip
+                    if (client.has(field) && !client.getString(field).isEmpty()) {
+                        return false;
+                    }
+                }
             }
 
             for (int i = 0; i < clientClasses.length(); i++) {
@@ -465,7 +472,7 @@ public class ClientProcessor {
                         fieldName = fieldNameArray[1];
                         fieldValue = jsonMapping.has("concept") ? jsonMapping.getString("concept")
                                 : (jsonMapping.has("formSubmissionField") ? jsonMapping
-                                        .getString("formSubmissionField") : null);
+                                .getString("formSubmissionField") : null);
                         if (fieldValue != null) {
                             responseKey = VALUES_KEY;
                         }
