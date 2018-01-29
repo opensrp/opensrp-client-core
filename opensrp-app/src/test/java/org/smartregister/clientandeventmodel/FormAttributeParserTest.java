@@ -240,7 +240,7 @@ public class FormAttributeParserTest extends BaseUnitTest {
         String stringOfFormDefinition = getStringFromStream(formDefinitionIS);
         JsonParser jsonparser = new JsonParser();
         Object obj = jsonparser.parse(stringOfFormDefinition);
-        PowerMockito.doReturn((JsonObject) obj).when(spyparser).getFormDefinitionData(FORMNAME);
+        PowerMockito.doReturn(obj).when(spyparser).getFormDefinitionData(FORMNAME);
         Mockito.when(assetManager.open(model)).thenReturn(new FileInputStream(getFileFromPath(this, model)));
         Mockito.when(assetManager.open(formJSON)).thenReturn(new FileInputStream(getFileFromPath(this, formMultiJSON)));
         PowerMockito.mockStatic(XPathFactory.class);

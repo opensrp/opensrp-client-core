@@ -125,7 +125,7 @@ public class EligibleCoupleRepositoryTest extends BaseUnitTest {
         eligibleCoupleRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getECCursor());
-        Assert.assertNotNull(eligibleCoupleRepository.findByCaseIDs(new String[]{"0"}));
+        Assert.assertNotNull(eligibleCoupleRepository.findByCaseIDs("0"));
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
     }
 

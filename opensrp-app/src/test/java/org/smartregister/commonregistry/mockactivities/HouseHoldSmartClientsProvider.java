@@ -126,7 +126,7 @@ public class HouseHoldSmartClientsProvider implements SmartRegisterCLientsProvid
 
     @Override
     public View inflatelayoutForCursorAdapter() {
-        View View = (ViewGroup) inflater().inflate(R.layout.smart_register_ec_client, null);
+        View View = inflater().inflate(R.layout.smart_register_ec_client, null);
         return View;
     }
 

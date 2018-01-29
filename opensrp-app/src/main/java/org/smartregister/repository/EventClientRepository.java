@@ -1489,7 +1489,7 @@ public class EventClientRepository extends BaseRepository {
             return columns;
         }
 
-        private Table(Column[] columns) {
+        Table(Column[] columns) {
             this.columns = columns;
         }
     }
@@ -1522,7 +1522,7 @@ public class EventClientRepository extends BaseRepository {
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true);
 
-        private client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+        client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
 
@@ -1551,7 +1551,7 @@ public class EventClientRepository extends BaseRepository {
         stateProvince(ColumnAttribute.Type.text, false, false),
         country(ColumnAttribute.Type.text, false, false);
 
-        private address_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+        address_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
 
@@ -1588,7 +1588,7 @@ public class EventClientRepository extends BaseRepository {
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true);
 
-        private event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+        event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
 
@@ -1623,7 +1623,7 @@ public class EventClientRepository extends BaseRepository {
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true);
 
-        private report_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+        report_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
 
@@ -1644,7 +1644,7 @@ public class EventClientRepository extends BaseRepository {
         comments(ColumnAttribute.Type.text, false, false),
         formSubmissionField(ColumnAttribute.Type.text, false, true);
 
-        private obs_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+        obs_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
 

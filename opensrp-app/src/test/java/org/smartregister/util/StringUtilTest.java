@@ -38,6 +38,6 @@ public class StringUtilTest {
 
     @Test
     public void assertHumanizeAndUppercase() throws Exception {
-        org.junit.Assert.assertEquals("ABC DEF", StringUtil.humanizeAndUppercase("abc def", new String[]{" "}));
+        org.junit.Assert.assertEquals("ABC DEF", StringUtil.humanizeAndUppercase("abc def", " "));
     }
 }

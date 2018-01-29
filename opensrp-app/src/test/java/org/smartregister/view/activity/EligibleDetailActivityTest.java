@@ -59,7 +59,7 @@ public class EligibleDetailActivityTest extends BaseUnitTest {
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
-        activity.setContext(context_);
+        EligibleCoupleDetailActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
         Intent intent = new Intent(RuntimeEnvironment.application, EligibleCoupleDetailActivityMock.class);
         intent.putExtra("caseId", "caseID");

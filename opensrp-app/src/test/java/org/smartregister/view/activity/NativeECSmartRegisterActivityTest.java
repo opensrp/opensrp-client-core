@@ -96,7 +96,7 @@ public class NativeECSmartRegisterActivityTest extends BaseUnitTest{
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
-        ecActivity.setContext(context_);
+        NativeECSmartRegisterActivityMock.setContext(context_);
 
         when(context_.ziggyService()).thenReturn(ziggyService);
         ecActivity = Robolectric.buildActivity(NativeECSmartRegisterActivityMock.class)

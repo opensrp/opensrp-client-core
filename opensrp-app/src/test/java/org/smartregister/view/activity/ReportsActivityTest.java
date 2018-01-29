@@ -59,7 +59,7 @@ public class ReportsActivityTest extends BaseUnitTest {
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
-        activity.setContext(context_);
+        ReportsActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
         Intent intent = new Intent(RuntimeEnvironment.application, ReportsActivityMock.class);
         intent.putExtra(FORM_NAME_PARAM, "birthnotificationpregnancystatusfollowup");

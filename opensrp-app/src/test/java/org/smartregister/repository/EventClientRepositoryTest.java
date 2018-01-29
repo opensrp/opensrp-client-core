@@ -306,7 +306,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
                 count++;
             }
         }
-        eventClientRepository.createTable(sqliteDatabase, EventClientRepository.Table.client, EventClientRepository.client_column.values());
+        EventClientRepository.createTable(sqliteDatabase, EventClientRepository.Table.client, EventClientRepository.client_column.values());
         Mockito.verify(sqliteDatabase, Mockito.times(count)).execSQL(Mockito.anyString());
     }
 

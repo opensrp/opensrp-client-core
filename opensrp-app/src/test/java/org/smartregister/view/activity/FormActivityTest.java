@@ -60,7 +60,7 @@ public class FormActivityTest extends BaseUnitTest {
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
-        activity.setContext(context_);
+        FormActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
         Intent intent = new Intent(RuntimeEnvironment.application, FormActivity.class);
         intent.putExtra(FORM_NAME_PARAM, "birthnotificationpregnancystatusfollowup");

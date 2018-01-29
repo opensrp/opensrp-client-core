@@ -6252,5 +6252,5 @@ containing a value of this type.
           @attr name org.smartregister:fontVariant
         */
         public static int org_ei_drishti_view_customControls_CustomFontTextView_fontVariant = 0;
-    };
+    }
 }

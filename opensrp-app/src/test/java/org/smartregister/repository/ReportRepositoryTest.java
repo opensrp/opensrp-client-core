@@ -68,7 +68,7 @@ public class ReportRepositoryTest extends BaseUnitTest {
         MatrixCursor cursor = new MatrixCursor(columns);
         cursor.addRow(new Object[]{"", "", ""});
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(cursor);
-        Assert.assertNotNull(reportRepository.allFor(new String[]{"", "", ""}));
+        Assert.assertNotNull(reportRepository.allFor("", "", ""));
     }
 
     @Test

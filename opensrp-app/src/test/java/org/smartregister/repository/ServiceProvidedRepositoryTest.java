@@ -67,7 +67,7 @@ public class ServiceProvidedRepositoryTest extends BaseUnitTest {
     @Test
     public void assertAllfindByEntityIdAndServiceNames() {
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor());
-        Assert.assertNotNull(serviceProvidedRepository.findByEntityIdAndServiceNames(ENTITY_ID_COLUMN, new String[]{"a", "b"}));
+        Assert.assertNotNull(serviceProvidedRepository.findByEntityIdAndServiceNames(ENTITY_ID_COLUMN, "a", "b"));
     }
 
     @Test

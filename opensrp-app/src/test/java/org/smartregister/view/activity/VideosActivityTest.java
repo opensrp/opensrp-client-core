@@ -56,7 +56,7 @@ public class VideosActivityTest extends BaseUnitTest {
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
         when(anmLocationController.get()).thenReturn(locationJson);
-        activity.setContext(context_);
+        VideoActivityMock.setContext(context_);
         when(context_.ziggyService()).thenReturn(ziggyService);
         Intent intent = new Intent(RuntimeEnvironment.application, VideoActivityMock.class);
         controller = Robolectric.buildActivity(VideoActivityMock.class, intent);

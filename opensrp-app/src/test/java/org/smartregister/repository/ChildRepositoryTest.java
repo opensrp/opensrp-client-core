@@ -102,7 +102,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getChildCursor());
-        Assert.assertNotNull(childRepository.findChildrenByCaseIds(new String[]{"0"}));
+        Assert.assertNotNull(childRepository.findChildrenByCaseIds("0"));
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
     }
 
