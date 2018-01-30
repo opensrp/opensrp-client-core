@@ -467,8 +467,8 @@ public class FormEntityConverter {
 
         Client c = (Client) new Client(subf.getFieldValue("id")).withFirstName(firstName)
                 .withMiddleName(middleName).withLastName(lastName)
-                .withBirthdate(new DateTime(birthdate).toDate(), birthdateApprox)
-                .withDeathdate(new DateTime(deathdate).toDate(), deathdateApprox).withGender(gender)
+                .withBirthdate((birthdate != null ? birthdate.toDate() : null), birthdateApprox)
+                .withDeathdate(deathdate != null ? deathdate.toDate() : null, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
 
         c.withClientType(clientType);
