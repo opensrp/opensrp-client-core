@@ -67,6 +67,11 @@ public class FormEntityConverter {
 
     private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
                               FormSubmissionMap fs) throws ParseException {
+        return createEvent(entityId,eventType,fields,fs,fs.bindType());
+    }
+
+    private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
+                              FormSubmissionMap fs,String bindType) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
         String team = getFieldName(Encounter.team, fs);
@@ -88,7 +93,7 @@ public class FormEntityConverter {
                 // and subform
                 .withEventDate(encounterDate).withEventType(eventType)
                 .withLocationId(fs.getFieldValue(encounterLocation)).withProviderId(fs.providerId())
-                .withEntityType(fs.bindType()).withFormSubmissionId(fs.instanceId())
+                .withEntityType(bindType).withFormSubmissionId(fs.instanceId())
                 .withDateCreated(new Date());
 
         e.withTeam(fs.getFieldValue(team)).withTeamId(fs.getFieldValue(teamId));
@@ -149,7 +154,7 @@ public class FormEntityConverter {
             subformInstance) throws ParseException {
         return createEvent(subformInstance.entityId(),
                 subformInstance.formAttributes().get("openmrs_entity_id"), subformInstance.fields(),
-                fs);
+                fs,subformInstance.bindType());
     }
 
     /**
