@@ -214,12 +214,12 @@ public class SmartRegisterQueryBuilder {
     public String countQueryFts(String tablename, String searchJoinTable, String mainCondition,
                                 String searchFilter) {
         if (StringUtils.isNotBlank(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {
-            String query = "SELECT " + CommonFtsObject.idColumn + " FROM " + CommonFtsObject
+            String query = "SELECT COUNT(" + CommonFtsObject.idColumn + ") FROM " + CommonFtsObject
                     .searchTableName(tablename) + phraseClause(searchJoinTable, mainCondition,
                     searchFilter);
             return query;
         }
-        String query = "SELECT " + CommonFtsObject.idColumn + " FROM " + CommonFtsObject
+        String query = "SELECT COUNT(" + CommonFtsObject.idColumn + ") FROM " + CommonFtsObject
                 .searchTableName(tablename) + phraseClause(mainCondition, searchFilter);
         return query;
     }

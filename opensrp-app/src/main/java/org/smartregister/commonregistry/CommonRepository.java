@@ -762,13 +762,37 @@ public class CommonRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-
+            Log.i(getClass().getName(), e.getMessage(), e);
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
         return ids;
+    }
+
+    public int countSearchIds(String query) {
+
+        int count = 0;
+        Cursor cursor = null;
+        try {
+            SQLiteDatabase database = masterRepository.getReadableDatabase();
+
+            Log.i(getClass().getName(), query);
+            cursor = database.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                count = cursor.getInt(0);
+            }
+
+        } catch (Exception e) {
+            Log.i(getClass().getName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return count;
     }
 
     public boolean isFts() {
