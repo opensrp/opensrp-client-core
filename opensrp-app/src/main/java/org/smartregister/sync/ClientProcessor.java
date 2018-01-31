@@ -19,6 +19,7 @@ import org.smartregister.domain.AlertStatus;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.DetailsRepository;
+import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.AlertService;
 import org.smartregister.util.AssetHandler;
 
@@ -38,7 +39,7 @@ public class ClientProcessor {
     public static final String baseEntityIdJSONKey = "baseEntityId";
     protected static final String providerIdJSONKey = "providerId";
     protected static final String VALUES_KEY = "values";
-    private static final String TAG = "ClientProcessor";
+    private static final String TAG = ClientProcessor.class.getCanonicalName();
     private static final String detailsUpdated = "detailsUpdated";
     private static final String[] openmrs_gen_ids = {"zeir_id"};
     private static ClientProcessor instance;
@@ -144,7 +145,7 @@ public class ClientProcessor {
             }
 
             // Check if child is deceased and skip
-            if (client.has("deathdate") && !client.getString("deathdate").isEmpty()) {
+            if (client.has(org.smartregister.cloudant.models.Client.death_date_key) && !client.getString(org.smartregister.cloudant.models.Client.death_date_key).isEmpty()) {
                 return false;
             }
 
@@ -177,17 +178,17 @@ public class ClientProcessor {
 
     public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson) throws Exception {
 
-        return processEvent(event, client, clientClassificationJson, Arrays.asList(new String[]{"deathdate"}));
+        return processEvent(event, client, clientClassificationJson, Arrays.asList(new String[]{org.smartregister.cloudant.models.Client.death_date_key}));
     }
 
     public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson, List<String> skipFields) throws Exception {
 
         try {
+            String baseEntityId = event.getString(baseEntityIdJSONKey);
+
             if (event.has("creator")) {
                 Log.i(TAG, "EVENT from openmrs");
             }
-            // For data integrity check if a client exists, if not pull one from cloudant and
-            // insert in drishti sqlite db
 
             if (isNullOrEmptyJSONObject(client)) {
                 return false;
@@ -204,6 +205,7 @@ public class ClientProcessor {
                 for (String field : skipFields) {
                     // Check if field set and skip
                     if (client.has(field) && !client.getString(field).isEmpty()) {
+                        purgeClientByBaseEntityId(baseEntityId);
                         return false;
                     }
                 }
@@ -999,4 +1001,42 @@ public class ClientProcessor {
     public Context getContext() {
         return mContext;
     }
+
+    private boolean purgeClientByBaseEntityId(String baseEntityId) {
+        try {
+
+            if (baseEntityId == null || baseEntityId.isEmpty()) {
+                return false;
+            }
+
+            DetailsRepository detailsRepository = org.smartregister.CoreLibrary.getInstance().context().detailsRepository();
+            EventClientRepository eventClientRepository = org.smartregister.CoreLibrary.getInstance().context().eventClientRepository();
+
+
+            boolean eventDeleted = eventClientRepository.deleteEventsByBaseEntityId(baseEntityId);
+            boolean clientDeleted = eventClientRepository.deleteClient(baseEntityId);
+            Log.d(TAG, "EVENT_DELETED: " + eventDeleted);
+            Log.d(TAG, "CLIENT_DELETED: " + clientDeleted);
+
+            boolean detailsDeleted = detailsRepository.deleteDetails(baseEntityId);
+            Log.d(TAG, "DETAILS_DELETED: " + detailsDeleted);
+
+            List<String> clientCaseTables = eventClientRepository.getClientCaseTables();
+            for (int i = 0; i < clientCaseTables.size(); i++) {
+
+                String tableName = clientCaseTables.get(i);
+                boolean caseDeleted = deleteCase(tableName, baseEntityId);
+                Log.d(TAG, "CASE_DELETED: " + caseDeleted + ", TABLE: " + tableName);
+            }
+
+
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+
+        return false;
+    }
+
 }

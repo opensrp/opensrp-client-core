@@ -1755,4 +1755,42 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
+    public boolean deleteEventsByBaseEntityId(String baseEntityId) {
+
+        try {
+            int rowsAffected = getWritableDatabase().delete(Table.event.name(),
+                    event_column.baseEntityId.name()
+                            + " = ?",
+                    new String[]{baseEntityId});
+            if (rowsAffected > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return false;
+    }
+
+    public List<String> getClientCaseTables() {
+        List<String> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT name FROM  sqlite_master " +
+                    "where type = 'table' " +
+                    "and sql like '%base_entity_id%'  " +
+                    "and sql not like '%c0base_entity_id%' " +
+                    "group by tbl_name ", null);
+
+            while (cursor.moveToNext()) {
+                list.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            return list;
+        }
+    }
 }
