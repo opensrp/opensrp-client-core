@@ -25,11 +25,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
-import static org.smartregister.clientandeventmodel.FormEntityConstants.*;
+import static org.smartregister.clientandeventmodel.FormEntityConstants.FORM_DATE;
 
 public class FormEntityConverter {
     private static final String TAG = "FormEntityConverter";
@@ -67,11 +68,11 @@ public class FormEntityConverter {
 
     private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
                               FormSubmissionMap fs) throws ParseException {
-        return createEvent(entityId,eventType,fields,fs,fs.bindType());
+        return createEvent(entityId,eventType,fields,fs,fs.bindType(),fs.instanceId());
     }
 
     private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
-                              FormSubmissionMap fs,String bindType) throws ParseException {
+                              FormSubmissionMap fs,String bindType,String formSubmissionId) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
         String team = getFieldName(Encounter.team, fs);
@@ -93,7 +94,7 @@ public class FormEntityConverter {
                 // and subform
                 .withEventDate(encounterDate).withEventType(eventType)
                 .withLocationId(fs.getFieldValue(encounterLocation)).withProviderId(fs.providerId())
-                .withEntityType(bindType).withFormSubmissionId(fs.instanceId())
+                .withEntityType(bindType).withFormSubmissionId(formSubmissionId)
                 .withDateCreated(new Date());
 
         e.withTeam(fs.getFieldValue(team)).withTeamId(fs.getFieldValue(teamId));
@@ -150,11 +151,12 @@ public class FormEntityConverter {
      * @return
      * @throws ParseException
      */
-    private Event getEventForSubform(FormSubmissionMap fs, String eventType, SubformMap
+    private Event getEventForSubform(FormSubmissionMap fs, SubformMap
             subformInstance) throws ParseException {
+        String formSubmissionId= UUID.randomUUID().toString();
         return createEvent(subformInstance.entityId(),
                 subformInstance.formAttributes().get("openmrs_entity_id"), subformInstance.fields(),
-                fs,subformInstance.bindType());
+                fs,subformInstance.bindType(),formSubmissionId);
     }
 
     /**
@@ -545,7 +547,7 @@ public class FormEntityConverter {
 
                     if (subformClient != null) {
                         cne.put("client", subformClient);
-                        cne.put("event", getEventForSubform(fs, att.get("openmrs_entity_id"), sbf));
+                        cne.put("event", getEventForSubform(fs, sbf));
 
                         map.put(sbf.entityId(), cne);
                     }
