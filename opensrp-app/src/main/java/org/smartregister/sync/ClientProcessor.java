@@ -182,7 +182,6 @@ public class ClientProcessor {
     }
 
     public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson, List<String> skipFields) throws Exception {
-
         try {
             String baseEntityId = event.getString(baseEntityIdJSONKey);
 
@@ -204,7 +203,7 @@ public class ClientProcessor {
             if (skipFields != null && skipFields.size() > 0) {
                 for (String field : skipFields) {
                     // Check if field set and skip
-                    if (client.has(field) && !client.getString(field).isEmpty()) {
+                    if (isClientRemoved(client, field)) {
                         purgeClientByBaseEntityId(baseEntityId);
                         return false;
                     }
@@ -229,6 +228,23 @@ public class ClientProcessor {
 
             return null;
         }
+    }
+
+    private boolean isClientRemoved(JSONObject client, String field) throws JSONException {
+        if (field.contains(".")) {
+
+            String key = field.substring(0, field.indexOf('.'));
+            String newJsonObjectString = client.get(key).toString();
+
+            JSONObject jsonObject = new JSONObject(newJsonObjectString);
+            String newKey = field.substring(field.indexOf('.') + 1);
+
+            return isClientRemoved(jsonObject, newKey);
+
+        } else {
+            return client.has(field) && !client.getString(field).isEmpty();
+        }
+
     }
 
     public Boolean processClientClass(JSONObject clientClass, JSONObject event, JSONObject client) {
