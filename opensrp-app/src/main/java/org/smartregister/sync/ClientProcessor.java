@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -873,8 +875,22 @@ public class ClientProcessor {
     }
 
     public boolean deleteCase(String tableName, String baseEntityId) {
-        CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
-        return cr.deleteCase(baseEntityId, tableName);
+        SQLiteDatabase db = null;
+        try {
+            CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
+            if (cr != null) {
+                cr.deleteCase(baseEntityId, tableName);
+                cr.deleteSearchRecord(baseEntityId);
+            } else {
+                org.smartregister.CoreLibrary.getInstance().context().eventClientRepository().deleteFromTableByBaseEntityId(tableName, baseEntityId);
+
+
+            }
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+            return false;
+        }
     }
 
     public void executeInsertAlert(ContentValues contentValues) {
@@ -1018,7 +1034,7 @@ public class ClientProcessor {
         return mContext;
     }
 
-    private boolean purgeClientByBaseEntityId(String baseEntityId) {
+    public boolean purgeClientByBaseEntityId(String baseEntityId) {
         try {
 
             if (baseEntityId == null || baseEntityId.isEmpty()) {
@@ -1054,5 +1070,6 @@ public class ClientProcessor {
 
         return false;
     }
+
 
 }
