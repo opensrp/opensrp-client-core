@@ -127,7 +127,7 @@ configurations.all {
 }
 
 dependencies {
-    compile 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
+    compile 'net.zetetic:android-database-sqlcipher:3.5.9@aar'
     compile 'com.android.support:multidex:1.0.0'
     compile 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
     compile 'com.android.support:appcompat-v7:21.0.3'
