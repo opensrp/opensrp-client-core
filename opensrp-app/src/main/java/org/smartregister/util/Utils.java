@@ -79,8 +79,6 @@ public class Utils {
     private Utils() {
     }
 
-    ;
-
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
             return UI_DF.format(DB_DF.parse(date));
@@ -315,11 +313,7 @@ public class Utils {
     public static boolean isConnectedToNetwork(Context context) {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if (networkInfo != null && networkInfo.isConnected()) {
-            return true;
-        } else {
-            return false;
-        }
+        return networkInfo != null && networkInfo.isConnected();
     }
 
 

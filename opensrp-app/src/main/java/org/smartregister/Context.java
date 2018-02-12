@@ -680,7 +680,7 @@ public class Context {
             repository = initRepository();
             userService = new UserService(repository, allSettings(), allSharedPreferences(),
                     httpAgent(), session(), configuration(), saveANMLocationTask(),
-                    saveUserInfoTask(),saveANMTeamTask());
+                    saveUserInfoTask(), saveANMTeamTask());
         }
         return userService;
     }

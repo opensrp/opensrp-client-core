@@ -78,7 +78,7 @@ public class FormsVersionRepositoryTest extends AndroidTestCase {
         FormDefinitionVersion actualData1 = repository.fetchVersionByFormDirName("ec_dir_name");
         assertEquals("1", actualData1.getVersion());
 
-        if(repository.formExists("ec_dir_name")) {
+        if (repository.formExists("ec_dir_name")) {
             repository.updateServerVersion("ec_dir_name", "2");
         }
 

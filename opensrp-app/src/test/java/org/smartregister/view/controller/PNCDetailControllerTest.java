@@ -5,10 +5,13 @@ import android.content.Context;
 import com.google.gson.Gson;
 
 import org.joda.time.LocalDate;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -22,17 +25,13 @@ import org.smartregister.view.contract.LocationDetails;
 import org.smartregister.view.contract.PregnancyOutcomeDetails;
 import org.smartregister.view.contract.pnc.PNCDetail;
 
+import java.util.Arrays;
 import java.util.HashMap;
-
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class PNCDetailControllerTest {
     @Mock
-    Context context;
+    private Context context;
     @Mock
     private AllEligibleCouples allEligibleCouples;
     @Mock
@@ -45,7 +44,7 @@ public class PNCDetailControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         DateUtil.fakeIt(new LocalDate(2012, 8, 1));
         controller = new PNCDetailController(context, caseId, allEligibleCouples, allBeneficiaries, allTimelineEvents);
     }
@@ -61,24 +60,24 @@ public class PNCDetailControllerTest {
         details.put("isHighRisk", "yes");
         details.put("highRiskReason", "Anaemia");
 
-        when(allBeneficiaries.findMotherWithOpenStatus(caseId)).thenReturn(new Mother(caseId, "EC CASE 1", "TC 1", "2012-07-28").withDetails(details));
+        Mockito.when(allBeneficiaries.findMotherWithOpenStatus(caseId)).thenReturn(new Mother(caseId, "EC CASE 1", "TC 1", "2012-07-28").withDetails(details));
         HashMap<String, String> ecDetails = new HashMap<String, String>();
         ecDetails.put("caste", "c_others");
         ecDetails.put("economicStatus", "apl");
-        when(allEligibleCouples.findByCaseID("EC CASE 1")).thenReturn(new EligibleCouple("EC CASE 1", "Woman 1", "Husband 1", "EC Number 1", "Village 1", "Subcenter 1", ecDetails).withPhotoPath("photo path"));
-        when(allTimelineEvents.forCase(caseId)).thenReturn(asList(pregnancyEvent, ancEvent, eventVeryCloseToCurrentDate));
+        Mockito.when(allEligibleCouples.findByCaseID("EC CASE 1")).thenReturn(new EligibleCouple("EC CASE 1", "Woman 1", "Husband 1", "EC Number 1", "Village 1", "Subcenter 1", ecDetails).withPhotoPath("photo path"));
+        Mockito.when(allTimelineEvents.forCase(caseId)).thenReturn(Arrays.asList(pregnancyEvent, ancEvent, eventVeryCloseToCurrentDate));
 
         PNCDetail expectedDetail = new PNCDetail(caseId, "TC 1",
                 new CoupleDetails("Woman 1", "Husband 1", "EC Number 1", false).withCaste("c_others").withEconomicStatus("apl").withPhotoPath("photo path"),
                 new LocationDetails("Village 1", "Subcenter 1"),
                 new PregnancyOutcomeDetails("2012-07-28", 4))
-                .addTimelineEvents(asList(eventFor(eventVeryCloseToCurrentDate, "29-07-2012"), eventFor(ancEvent, "22-12-2011"), eventFor(pregnancyEvent, "21-10-2011")))
+                .addTimelineEvents(Arrays.asList(eventFor(eventVeryCloseToCurrentDate, "29-07-2012"), eventFor(ancEvent, "22-12-2011"), eventFor(pregnancyEvent, "21-10-2011")))
                 .addExtraDetails(details);
 
         String actualJson = controller.get();
 
         PNCDetail actualDetail = new Gson().fromJson(actualJson, PNCDetail.class);
-        assertEquals(expectedDetail, actualDetail);
+        Assert.assertEquals(expectedDetail, actualDetail);
     }
 
     private org.smartregister.view.contract.TimelineEvent eventFor(TimelineEvent pregnancyEvent, String expectedRelativeTime) {

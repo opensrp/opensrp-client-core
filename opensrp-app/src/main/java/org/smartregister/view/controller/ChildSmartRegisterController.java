@@ -102,7 +102,7 @@ public class ChildSmartRegisterController {
                                             ? AllConstants
                                             .DEFAULT_GIRL_INFANT_IMAGE_PLACEHOLDER_PATH
                                             : AllConstants
-                                                    .DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH)
+                                            .DEFAULT_BOY_INFANT_IMAGE_PLACEHOLDER_PATH)
                                     : child.photoPath();
                             List<AlertDTO> alerts = getAlerts(child.caseId());
                             List<ServiceProvidedDTO> servicesProvided = getServicesProvided(

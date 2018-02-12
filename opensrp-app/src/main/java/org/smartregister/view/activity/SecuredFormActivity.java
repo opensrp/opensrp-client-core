@@ -8,7 +8,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 
 import org.apache.commons.io.IOUtils;
-import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 
 import java.io.IOException;

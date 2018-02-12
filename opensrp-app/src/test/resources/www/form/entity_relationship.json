@@ -1,0 +1,42 @@
+[
+  {
+    "parent": "household",
+    "child": "elco",
+    "field": "wife",
+    "kind": "one_to_many",
+    "from": "household.id",
+    "to": "elco.relationalid"
+  },
+  {
+    "parent": "elco",
+    "child": "mcaremother",
+    "field": "child",
+    "kind": "one_to_many",
+    "from": "elco.id",
+    "to": "mcaremother.relationalid"
+  },
+  {
+    "parent": "mcaremother",
+    "child": "mcarechild",
+    "field": "child",
+    "kind": "one_to_many",
+    "from": "mcaremother.id",
+    "to": "mcarechild.relationalid"
+  },
+  {
+    "parent": "eligible_couple",
+    "child": "mother",
+    "field": "wife",
+    "kind": "one_to_one",
+    "from": "eligible_couple.id",
+    "to": "mother.ecCaseId"
+  },
+  {
+    "parent": "mother",
+    "child": "child",
+    "field": "children",
+    "kind": "one_to_many",
+    "from": "mother.id",
+    "to": "child.motherCaseId"
+  }
+]

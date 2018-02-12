@@ -1,0 +1,85 @@
+<BirthNotificationFollowUp encounter_type="Birth Notification Followup form"
+    id="BirthNotificationPregnancyStatusFollowUp" version="201706040714"
+    _id="8e94453b-a307-484c-a149-98806cd9dfe3" relationalid="8e94453b-a307-484c-a149-98806cd9dfe3">
+    <formhub _id="d2242c04-dc3e-43a5-8e42-0a0e10025768"
+        relationalid="8e94453b-a307-484c-a149-98806cd9dfe3">
+        <uuid>18dcbca863ab41df8ada739b45d53234</uuid>
+    </formhub>
+    <version />
+    <changes />
+    <existing_gobhhid>9999</existing_gobhhid>
+    <existing_jivhhid>6155</existing_jivhhid>
+    <existing_wom_bid />
+    <existing_wom_nid>3219144530006</existing_wom_nid>
+    <existing_first_name>SOPNA BAGUM</existing_first_name>
+    <existing_husname>SOHEDUL MIA</existing_husname>
+    <existing_psrlmp>2017-03-22</existing_psrlmp>
+    <existing_location openmrs_entity="encounter" openmrs_entity_id="location_id" />
+    <today openmrs_entity="encounter" openmrs_entity_id="encounter_date">2017-11-15</today>
+    <start openmrs_entity="concept" openmrs_entity_id="163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+        2017-11-15T17:50:55.000+06:00
+    </start>
+    <end openmrs_entity="concept" openmrs_entity_id="163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+        2017-11-15T17:50:55.000+06:00
+    </end>
+    <FWBNFDATE openmrs_entity="concept" openmrs_entity_id="160753AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+        2017-11-15
+    </FWBNFDATE>
+    <FWCONFIRMATION />
+    <FWGESTATIONALAGE openmrs_entity="concept"
+        openmrs_entity_id="1438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">34
+    </FWGESTATIONALAGE>
+    <FWEDD openmrs_entity="concept" openmrs_entity_id="5596AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+        2017-12-6
+    </FWEDD>
+    <FWBNFSTS openmrs_entity="concept" openmrs_entity_id="161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">3
+    </FWBNFSTS>
+    <FWDISPLAYTEXT1 />
+    <outcome_occured _id="11f2cf64-7c22-43f2-ab14-e02c8c631657"
+        relationalid="8e94453b-a307-484c-a149-98806cd9dfe3">
+        <FWBNFWOMVITSTS openmrs_entity="concept"
+            openmrs_entity_id="1856AAAAAAAAAAAAAAAAAAAAAAAAAAAA">1
+        </FWBNFWOMVITSTS>
+        <FWBNFDTOO openmrs_entity="concept"
+            openmrs_entity_id="5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">2017-11-14T22:45:00.000+06:00
+        </FWBNFDTOO>
+        <FWBNFLB openmrs_entity="concept" openmrs_entity_id="160601AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+            1
+        </FWBNFLB>
+        <FWBNCHLDVITSTS openmrs_entity="person" openmrs_entity_id="Child Vital Status"
+            _id="ad5a30a4-e9ba-41f2-a94e-47ed419c08bc"
+            relationalid="11f2cf64-7c22-43f2-ab14-e02c8c631657">
+            <FWBNFGEN openmrs_entity="concept" openmrs_entity_id="1587AAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+                1
+            </FWBNFGEN>
+            <FWBNFCHLDVITSTS openmrs_entity="concept"
+                openmrs_entity_id="159926AAAAAAAAAAAAAAAAAAAAAAAAAA">1
+            </FWBNFCHLDVITSTS>
+            <FWBNFNAMECHECK>1</FWBNFNAMECHECK>
+            <FWBNFNAME>raihan</FWBNFNAME>
+            <FWBNFCHILDNAME openmrs_entity="concept"
+                openmrs_entity_id="1586AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">raihan
+            </FWBNFCHILDNAME>
+            <FWBNFDOB>2017-11-14</FWBNFDOB>
+            <add_child />
+            <user_type openmrs_entity="concept"
+                openmrs_entity_id="163229AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">FWA
+            </user_type>
+            <external_user_ID openmrs_entity="concept"
+                openmrs_entity_id="163161AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+        </FWBNCHLDVITSTS>
+    </outcome_occured>
+    <Is_PNC>1</Is_PNC>
+    <user_type openmrs_entity="concept" openmrs_entity_id="163229AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA">
+        FWA
+    </user_type>
+    <external_user_ID openmrs_entity="concept"
+        openmrs_entity_id="163161AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" />
+    <relationalid>8e94453b-a307-484c-a149-98806cd9dfe3</relationalid>
+    <bnf_current_formStatus />
+    <meta _id="ad61d92b-b881-4093-b044-1453bc202343"
+        relationalid="8e94453b-a307-484c-a149-98806cd9dfe3">
+        <instanceID>uuid:d4a0e49a-3924-4ab5-adef-2697fd26fecf</instanceID>
+        <deprecatedID />
+    </meta>
+</BirthNotificationFollowUp>

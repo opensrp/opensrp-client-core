@@ -26,8 +26,7 @@ public class UserInfoTest {
 
     @Before
     public void setUp() {
-        responseJSON = "{\"location\":{\"locationId\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\",\"name\":\"testloc\",\"voided\":false},\"user\":{\"username\":\"admin\",\"roles\":[\"Provider\",\"System Developer\"],\"baseEntityId\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\",\"baseEntity\":{\"id\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\",\"firstName\":\"Super User\",\"middleName\":\"\",\"lastName\":\"\",\"gender\":\"M\",\"attributes\":{\"Location\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\",\"Health Center\":\"2\"},\"voided\":false},\"voided\":false}}";
-
+        responseJSON = "{\"location\":{\"locationId\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\", \"name\":\"testloc\", \"voided\":false}, \"user\":{\"username\":\"admin\", \"roles\":[\"Provider\", \"System Developer\"], \"baseEntityId\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\", \"baseEntity\":{\"id\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\", \"firstName\":\"Super User\", \"middleName\":\"\", \"lastName\":\"\", \"gender\":\"M\", \"attributes\":{\"Location\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\", \"Health Center\":\"2\"}, \"voided\":false}, \"voided\":false}}";
     }
 
     @Test

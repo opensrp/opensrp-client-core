@@ -81,8 +81,8 @@ public class ChildService {
 
     public ChildService(AllBeneficiaries allBeneficiariesArg, MotherRepository
             motherRepositoryArg, ChildRepository childRepositoryArg, AllTimelineEvents
-            allTimelineEventsArg, ServiceProvidedService serviceProvidedServiceArg, AllAlerts
-            allAlertsArg) {
+                                allTimelineEventsArg, ServiceProvidedService serviceProvidedServiceArg, AllAlerts
+                                allAlertsArg) {
         allBeneficiaries = allBeneficiariesArg;
         childRepository = childRepositoryArg;
         motherRepository = motherRepositoryArg;

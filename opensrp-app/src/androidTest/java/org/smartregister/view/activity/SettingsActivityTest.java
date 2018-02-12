@@ -3,7 +3,7 @@ package org.smartregister.view.activity;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.Suppress;
 
-import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.DrishtiSolo;
@@ -14,13 +14,13 @@ import static org.smartregister.util.FakeContext.setupService;
 import static org.smartregister.util.Wait.waitForFilteringToFinish;
 import static org.smartregister.util.Wait.waitForProgressBarToGoAway;
 
-public class SettingsActivityTest extends ActivityInstrumentationTestCase2<HomeActivity> {
+public class SettingsActivityTest extends ActivityInstrumentationTestCase2<NativeHomeActivity> {
     private DrishtiSolo solo;
     private FakeDrishtiService drishtiService;
     private FakeUserService userService;
 
     public SettingsActivityTest() {
-        super("org.ei.drishti.test", HomeActivity.class);
+        super("org.ei.drishti.test", NativeHomeActivity.class);
         drishtiService = new FakeDrishtiService("Default");
         userService = new FakeUserService();
     }
