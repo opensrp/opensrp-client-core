@@ -29,11 +29,13 @@ public class ObsTest extends BaseUnitTest {
     private String comments = "good job";
 
     private String formSubmissionField = "FSField";
+
+    private List<Object> humanReadableValues = new ArrayList<>();
     ObsMock ob;
 
     @Before
     public void setUp() {
-        ob = new ObsMock(fieldType, fieldDataType, fieldCode, parentCode, values, comments, formSubmissionField);
+        ob = new ObsMock(fieldType, fieldDataType, fieldCode, parentCode, values, comments, formSubmissionField, humanReadableValues);
     }
 
     @Test

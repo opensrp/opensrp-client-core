@@ -18,6 +18,7 @@ import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.Event;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.util.JsonFormUtils;
 
 import java.lang.reflect.Field;
@@ -317,11 +318,18 @@ public class EventClientRepository extends BaseRepository {
         if (jo == null) {
             return null;
         }
+        return convert(jo.toString(), t);
+    }
+
+    public <T> T convert(String jsonString, Class<T> t) {
+        if (StringUtils.isBlank(jsonString)) {
+            return null;
+        }
         try {
-            return JsonFormUtils.gson.fromJson(jo.toString(), t);
+            return JsonFormUtils.gson.fromJson(jsonString, t);
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
-            Log.e(getClass().getName(), "Unable to convert: " + jo.toString());
+            Log.e(getClass().getName(), "Unable to convert: " + jsonString);
             return null;
         }
     }
@@ -369,6 +377,49 @@ public class EventClientRepository extends BaseRepository {
                     ev.put("client", cl);
                 }
                 list.add(ev);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+    public List<EventClient> fetchEventClients(long startServerVersion, long lastServerVersion) {
+        List<EventClient> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+                            + Table.event.name()
+                            + " WHERE "
+                            + event_column.serverVersion.name()
+                            + " > "
+                            + startServerVersion
+                            + " AND "
+                            + event_column.serverVersion.name()
+                            + " <= "
+                            + lastServerVersion
+                            + " ORDER BY "
+                            + event_column.serverVersion.name(),
+                    null);
+            while (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+                if (StringUtils.isBlank(jsonEventStr)
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
+                    continue;
+                }
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+                Event event = convert(jsonEventStr, Event.class);
+
+                String baseEntityId = event.getBaseEntityId();
+                Client client = fetchClientByBaseEntityId(baseEntityId);
+
+                EventClient eventClient = new EventClient(event, client);
+                list.add(eventClient);
             }
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
@@ -590,6 +641,54 @@ public class EventClientRepository extends BaseRepository {
         });
 
         return eventAndAlerts;
+    }
+
+    public List<EventClient> fetchEventClients(Date lastSyncDate, String syncStatus) {
+
+        List<EventClient> list = new ArrayList<>();
+        String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
+
+        String query = "select "
+                + event_column.json
+                + ","
+                + event_column.updatedAt
+                + " from "
+                + Table.event.name()
+                + " where "
+                + event_column.syncStatus
+                + " = ? and "
+                + event_column.updatedAt
+                + " > ? ORDER BY "
+                + event_column.serverVersion.name();
+
+        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{syncStatus, lastSyncString});
+
+        try {
+            while (cursor.moveToNext()) {
+                String jsonEventStr = (cursor.getString(0));
+                // String jsonEventStr = new String(json, "UTF-8");
+                if (StringUtils.isBlank(jsonEventStr)
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
+                    continue;
+                }
+
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+                Event event = convert(jsonEventStr, Event.class);
+
+                String baseEntityId = event.getBaseEntityId();
+                Client client = fetchClientByBaseEntityId(baseEntityId);
+
+                EventClient eventClient = new EventClient(event, client);
+                list.add(eventClient);
+
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            cursor.close();
+        }
+        return list;
     }
 
     public Map<String, Object> getUnSyncedEvents(int limit) {
@@ -1017,6 +1116,31 @@ public class EventClientRepository extends BaseRepository {
                 String jsonString = cursor.getString(0);
                 jsonString = jsonString.replaceAll("'", "");
                 return new JSONObject(jsonString);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public Client fetchClientByBaseEntityId(String baseEntityId) {
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT "
+                    + client_column.json
+                    + " FROM "
+                    + Table.client.name()
+                    + " WHERE "
+                    + client_column.baseEntityId.name()
+                    + " = ? ", new String[]{baseEntityId});
+            if (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+                return convert(jsonString, Client.class);
             }
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
