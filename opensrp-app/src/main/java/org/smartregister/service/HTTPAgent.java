@@ -169,12 +169,12 @@ public class HTTPAgent {
                         + userName + " using " + requestURL);
                 return UNKNOWN_RESPONSE;
             }
+        } catch (ConnectionPoolTimeoutException e) {
+            logError(e.getMessage());
+            return TIMEOUT;
         } catch (IOException e) {
             logError("Failed to check credentials of: " + userName + " using " + requestURL + ". "
                     + "" + "" + "Error: " + e.toString());
-            if (e instanceof ConnectionPoolTimeoutException) {
-                return TIMEOUT;
-            }
             return NO_INTERNET_CONNECTIVITY;
         } catch (IllegalArgumentException e) {
             logError(e.getMessage());
