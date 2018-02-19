@@ -94,7 +94,7 @@ public class FormAttributeParser {
                 } else {
                     Map<String, String> valueCodes = bindPath == null ? null
                             : getInstanceAttributesForFormFieldAndValue(bindPath, fsf.value(),
-                                    jsonForm);
+                            jsonForm);
                     fields.add(
                             new FormFieldMap(fsf.name(), fsf.value(), fsf.source(), bindPath, type,
                                     fieldAttributes, valueCodes));
@@ -138,7 +138,7 @@ public class FormAttributeParser {
                         } else {
                             Map<String, String> valueCodes = bindPath == null ? null
                                     : getInstanceAttributesForFormFieldAndValue(bindPath,
-                                            sffl.getValue(), jsonForm);
+                                    sffl.getValue(), jsonForm);
                             sfFields.add(new FormFieldMap(sffl.getKey(), sffl.getValue(), source,
                                     bindPath, type, attributes, valueCodes));
                         }
@@ -589,7 +589,7 @@ public class FormAttributeParser {
      */
     public Map<String, String> getInstanceAttributesForFormFieldAndValue(String fieldName, String
             fieldVal, String subForm, String formName, JsonObject formDefinition, JsonObject
-            jsonForm) throws JsonSyntaxException, IOException {
+                                                                                 jsonForm) throws JsonSyntaxException, IOException {
         String bindPath = null;
         if (StringUtils.isEmpty(subForm)) {
             bindPath = getPropertyBindFromFormDefinition(fieldName, formDefinition);

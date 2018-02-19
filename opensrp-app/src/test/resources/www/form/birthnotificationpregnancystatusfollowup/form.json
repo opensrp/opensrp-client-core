@@ -1,0 +1,605 @@
+{
+  "name": "BirthNotificationPregnancyStatusFollowUp",
+  "title": "বার্থ নোটিফিক্যাশন ফলোআপ ফর্ম",
+  "sms_keyword": "BirthNotificationFollowUp",
+  "default_language": "Bengali",
+  "instance": {
+    "encounter_type": "Birth Notification Followup form"
+  },
+  "version": "201602280846",
+  "id_string": "BirthNotificationFollowUp",
+  "type": "survey",
+  "children": [
+    {
+      "type": "hidden",
+      "name": "version",
+      "label": {
+        "English": "TechVersion: v1.0 July 26, 2015\nFormVersion: v1.0"
+      }
+    },
+    {
+      "type": "hidden",
+      "name": "changes",
+      "label": {
+        "English": "NN: 16-Feb\n1. Added 'Is_PNC\" for dev purpose\nNN (24 Feb):\n1. Added 'relationalid' for dev purpose"
+      }
+    },
+    {
+      "type": "hidden",
+      "name": "existing_gobhhid"
+    },
+    {
+      "type": "hidden",
+      "name": "existing_jivhhid"
+    },
+    {
+      "type": "hidden",
+      "name": "existing_wom_bid"
+    },
+    {
+      "type": "hidden",
+      "name": "existing_wom_nid"
+    },
+    {
+      "type": "hidden",
+      "name": "existing_first_name"
+    },
+    {
+      "type": "hidden",
+      "name": "existing_husname"
+    },
+    {
+      "type": "hidden",
+      "name": "existing_psrlmp"
+    },
+    {
+      "instance": {
+        "openmrs_entity_id": "location_id",
+        "openmrs_entity": "encounter"
+      },
+      "type": "hidden",
+      "name": "existing_location"
+    },
+    {
+      "instance": {
+        "openmrs_entity_id": "encounter_date",
+        "openmrs_entity": "encounter"
+      },
+      "type": "today",
+      "name": "today"
+    },
+    {
+      "instance": {
+        "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      },
+      "type": "start",
+      "name": "start"
+    },
+    {
+      "instance": {
+        "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      },
+      "type": "end",
+      "name": "end"
+    },
+    {
+      "name": "FWBNFDATE",
+      "hint": {
+        "Bengali": "আজকের তারিখ দিন",
+        "English": "Please Confirm Today’s date is correct"
+      },
+      "bind": {
+        "required": "yes",
+        "constraint": ".<=${today}"
+      },
+      "label": {
+        "Bengali": "সাক্ষাতকারের তারিখ",
+        "English": "Date of Interview"
+      },
+      "instance": {
+        "openmrs_entity_id": "160753AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      },
+      "type": "date"
+    },
+    {
+      "bind": {
+        "readonly": "yes"
+      },
+      "type": "note",
+      "name": "FWCONFIRMATION",
+      "label": {
+        "Bengali": "মহিলার নাম, সরকারী খানা নম্বর জীবিতা খানা নম্বর সঠিক কিনা তা নিশ্চিত করুন - \nমহিলার নাম: ${existing_first_name}\nGoB HHID: ${existing_gobhhid}\nJiVitA HHID: ${existing_jivhhid}",
+        "English": "Confirm woman’s name, GoB HHID and JiVitA HHID are correct:\n\nName: ${existing_first_name}\nGoB HHID: ${existing_gobhhid}\nJiVitA HHID: ${existing_jivhhid}"
+      }
+    },
+    {
+      "bind": {
+        "calculate": "round(((${today}-${existing_psrlmp}) div 7),0)"
+      },
+      "type": "calculate",
+      "name": "FWGESTATIONALAGE",
+      "instance": {
+        "openmrs_entity_id": "1438AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      }
+    },
+    {
+      "bind": {
+        "calculate": "${existing_psrlmp}+259"
+      },
+      "type": "calculate",
+      "name": "FWEDD",
+      "instance": {
+        "openmrs_entity_id": "5596AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      }
+    },
+    {
+      "name": "FWBNFSTS",
+      "bind": {
+        "required": "yes"
+      },
+      "label": {
+        "Bengali": "BNF ভিজিট স্ট্যাটাস",
+        "English": "BNF Status"
+      },
+      "instance": {
+        "openmrs_entity_id": "161641AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      },
+      "type": "select one",
+      "children": [
+        {
+          "instance": {
+            "openmrs_code": "1434AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "1",
+          "label": {
+            "Bengali": "দেখা হয়েছে এবং গর্ভবতী",
+            "English": "Met and pregnant"
+          }
+        },
+        {
+          "instance": {
+            "openmrs_code": "1899AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "2",
+          "label": {
+            "Bengali": "দেখা হয়নি",
+            "English": "Not met"
+          }
+        },
+        {
+          "instance": {
+            "openmrs_code": "151849AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "3",
+          "label": {
+            "Bengali": "জীবিত বাচ্চা জন্ম দিয়েছেন",
+            "English": "Woman had live birth"
+          }
+        },
+        {
+          "instance": {
+            "openmrs_code": "125872AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "4",
+          "label": {
+            "Bengali": "গর্ভনষ্ট হয়েছে / মৃতবাচ্চা প্রসব হয়েছে",
+            "English": "Stillbirth"
+          }
+        },
+        {
+          "instance": {
+            "openmrs_code": "128453AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "6",
+          "label": {
+            "Bengali": "উত্তর দিতে অসম্মতি\nজানিয়েছেন",
+            "English": "Refused"
+          }
+        },
+        {
+          "instance": {
+            "openmrs_code": "160415AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "7",
+          "label": {
+            "Bengali": "একবারেই এলাকা\nছেড়ে চলে গেছেন",
+            "English": "Permanently moved"
+          }
+        },
+        {
+          "instance": {
+            "openmrs_code": "148629AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "name": "9",
+          "label": {
+            "Bengali": "বাচ্চা জন্ম দেওয়ার আগেই মহিলা মারা গেছেন",
+            "English": "Woman died before birth"
+          }
+        }
+      ]
+    },
+    {
+      "bind": {
+        "readonly": "yes",
+        "relevant": "selected(${FWBNFSTS}, '1')"
+      },
+      "type": "note",
+      "name": "FWDISPLAYTEXT1",
+      "label": {
+        "Bengali": "মহিলা এবং তার পরিবারের সদস্যদের গর্ভের যে কোন ফলাফল হওয়ার সাথে সাথে বা বাচ্চা জন্মানোর সাথে সাথে খবর দেয়ার কথা মনে করিয়ে দিন। পাশাপাশি বাচ্চা এবং মায়ের সুস্বাস্থ্যের জন্য বাচ্চা হওয়ার সাথেসাথেই স্বাস্থ্যকর্মীকে জানানো যে কতটা জরুরী তা বুঝিয়ে বলুন।",
+        "English": "Remind the woman to send a birth notification SMS immediately following the birth and emphasize the importance of immediately notifying a health worker of the birth for the health of the baby and mother."
+      }
+    },
+    {
+      "bind": {
+        "relevant": "${FWBNFSTS} ='3' or ${FWBNFSTS} ='4'",
+        "required": "yes"
+      },
+      "label": {
+        "Bengali": "ভাইটাল স্ট্যাটাস আপডেট",
+        "English": "Vital Status Update"
+      },
+      "type": "group",
+      "children": [
+        {
+          "name": "FWBNFWOMVITSTS",
+          "bind": {
+            "required": "yes"
+          },
+          "label": {
+            "Bengali": "মহিলার ভাইটাল স্ট্যাটাস",
+            "English": "Vital Status of the Woman"
+          },
+          "instance": {
+            "openmrs_entity_id": "1856AAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity": "concept"
+          },
+          "type": "select one",
+          "children": [
+            {
+              "instance": {
+                "openmrs_code": "159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "0",
+              "label": {
+                "Bengali": "মারা গেছেন",
+                "English": "Deceased"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "160429AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "1",
+              "label": {
+                "Bengali": "বেঁচে আছেন",
+                "English": "Alive"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "9",
+              "label": {
+                "Bengali": "জানিনা",
+                "English": "Don't know"
+              }
+            }
+          ]
+        },
+        {
+          "bind": {
+            "required": "yes",
+            "constraint": ".<=${start}"
+          },
+          "type": "dateTime",
+          "instance": {
+            "openmrs_entity_id": "5599AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity": "concept"
+          },
+          "name": "FWBNFDTOO",
+          "label": {
+            "Bengali": "আউটকামের তারিখ এবং সময় (ঘণ্টা)",
+            "English": "What was the date and time of the outcome?"
+          }
+        },
+        {
+          "bind": {
+            "relevant": "selected(${FWBNFSTS}, '3')",
+            "required": "yes"
+          },
+          "type": "integer",
+          "instance": {
+            "openmrs_entity_id": "160601AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity": "concept"
+          },
+          "name": "FWBNFLB",
+          "label": {
+            "Bengali": "জীবিত বাচ্চার সংখ্যা",
+            "English": "Number of live births"
+          }
+        },
+        {
+          "bind": {
+            "relevant": "selected(${FWBNFSTS}, '3')"
+          },
+          "type": "repeat",
+          "instance": {
+            "openmrs_entity_id": "Child Vital Status",
+            "openmrs_entity": "person"
+          },
+          "children": [
+            {
+              "name": "FWBNFGEN",
+              "bind": {
+                "required": "yes"
+              },
+              "label": {
+                "Bengali": "বাচ্চার লিঙ্গ",
+                "English": "Gender of baby"
+              },
+              "instance": {
+                "openmrs_entity_id": "1587AAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "openmrs_entity": "concept"
+              },
+              "type": "select one",
+              "children": [
+                {
+                  "instance": {
+                    "openmrs_code": "1534AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                  },
+                  "name": "1",
+                  "label": {
+                    "Bengali": "ছেলে",
+                    "English": "Male"
+                  }
+                },
+                {
+                  "instance": {
+                    "openmrs_code": "1535AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                  },
+                  "name": "2",
+                  "label": {
+                    "Bengali": "মেয়ে",
+                    "English": "Female"
+                  }
+                },
+                {
+                  "instance": {
+                    "openmrs_code": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                  },
+                  "name": "9",
+                  "label": {
+                    "Bengali": "জানিনা",
+                    "English": "Don't know"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "FWBNFCHLDVITSTS",
+              "bind": {
+                "required": "yes"
+              },
+              "label": {
+                "Bengali": "বাচ্চার ভাইটাল স্ট্যাটাস",
+                "English": "Child’s vital status"
+              },
+              "instance": {
+                "openmrs_entity_id": "159926AAAAAAAAAAAAAAAAAAAAAAAAAA",
+                "openmrs_entity": "concept"
+              },
+              "type": "select one",
+              "children": [
+                {
+                  "instance": {
+                    "openmrs_code": "159AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                  },
+                  "name": "0",
+                  "label": {
+                    "Bengali": "মারা গেছেন",
+                    "English": "Deceased"
+                  }
+                },
+                {
+                  "instance": {
+                    "openmrs_code": "160429AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                  },
+                  "name": "1",
+                  "label": {
+                    "Bengali": "বেঁচে আছেন",
+                    "English": "Alive"
+                  }
+                },
+                {
+                  "instance": {
+                    "openmrs_code": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+                  },
+                  "name": "9",
+                  "label": {
+                    "Bengali": "জানিনা",
+                    "English": "Don't know"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "note",
+              "name": "add_child",
+              "label": {
+                "Bengali": "যদি জীবিত বাচ্চার সংখ্যা একের বেশি হয়, তাহলে '+' অপশনটি নির্বাচন করুন এবং একই প্রক্রিয়ায় পরবর্তী বাচ্চাকে নিবন্ধন করুন",
+                "English": "If there were any additional children born of this pregnancy, select the \"+\" below to register the next child's vital status."
+              }
+            }
+          ],
+          "name": "FWBNCHLDVITSTS"
+        },
+        {
+          "name": "FWBNFSMSRSN",
+          "bind": {
+            "required": "yes",
+            "constraint": "count-selected(.)=3"
+          },
+          "label": {
+            "Bengali": "আপনার গর্ভের যে কোন ফলাফল হওয়ার সাথে সাথে বা বাচ্চা জন্মানোর সাথে সাথে খবর না দেয়ার ৩ টি প্রাথমিক কারণ কি কি?",
+            "English": "What is / are the 3 primary reason(s) that you did not send a birth / outcome notification SMS?"
+          },
+          "instance": {
+            "openmrs_entity_id": "162953AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "openmrs_entity": "concept"
+          },
+          "type": "select all that apply",
+          "children": [
+            {
+              "instance": {
+                "openmrs_code": "162951AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "1",
+              "label": {
+                "Bengali": "জানা ছিল না",
+                "English": "Lack of knowledge"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "162954AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "2",
+              "label": {
+                "Bengali": "মনে ছিলনা",
+                "English": "Did not remember"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "162952AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "3",
+              "label": {
+                "Bengali": "সময় ছিলনা",
+                "English": "No time"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "162955AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "4",
+              "label": {
+                "Bengali": "মোবাইল ফোন ছিল না",
+                "English": "No mobile phone available"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "159712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "5",
+              "label": {
+                "Bengali": "পারিবারিক সমস্যা (মেসেজ পাঠানোর অনুমতি ছিল না)",
+                "English": "Family issues (not permitted to send SMS)"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "160063AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "6",
+              "label": {
+                "Bengali": "আর্থিক সমস্যা",
+                "English": "Financial constraints"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "162969AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "7",
+              "label": {
+                "Bengali": "মেসেজ পাঠিয়েছিল কিন্তু পাওয়া যায় নাই",
+                "English": "Did send SMS, not received"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "8",
+              "label": {
+                "Bengali": "অন্যান্য",
+                "English": "Other"
+              }
+            },
+            {
+              "instance": {
+                "openmrs_code": "1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+              },
+              "name": "9",
+              "label": {
+                "Bengali": "জানি না",
+                "English": "Don’t know"
+              }
+            }
+          ]
+        }
+      ],
+      "name": "outcome_occured"
+    },
+    {
+      "bind": {
+        "calculate": "if(\n(selected(${FWBNFWOMVITSTS},'1') and selected(${FWBNFCHLDVITSTS},'1')) or \n(selected(${FWBNFSTS}, '4') and selected(${FWBNFWOMVITSTS},'1')) or \n(selected(${FWBNFWOMVITSTS},'1') and (selected(${FWBNFCHLDVITSTS},'0') or selected(${FWBNFCHLDVITSTS}, '9'))), '1',' 0')"
+      },
+      "type": "calculate",
+      "name": "Is_PNC"
+    },
+    {
+      "default": "FWA",
+      "instance": {
+        "openmrs_entity_id": "163229AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      },
+      "type": "hidden",
+      "name": "user_type"
+    },
+    {
+      "instance": {
+        "openmrs_entity_id": "163161AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "openmrs_entity": "concept"
+      },
+      "type": "hidden",
+      "name": "external_user_ID"
+    },
+    {
+      "type": "hidden",
+      "name": "relationalid"
+    },
+    {
+      "type": "hidden",
+      "name": "bnf_current_formStatus"
+    },
+    {
+      "control": {
+        "bodyless": true
+      },
+      "type": "group",
+      "children": [
+        {
+          "bind": {
+            "readonly": "true()",
+            "calculate": "concat('uuid:', uuid())"
+          },
+          "type": "calculate",
+          "name": "instanceID"
+        }
+      ],
+      "name": "meta"
+    }
+  ]
+}

@@ -2,12 +2,12 @@
 <resources>
     <declare-styleable name="org.ei.drishti.view.customControls.CustomFontTextView">
         <attr name="fontVariant" format="enum">
-            <enum name="thin" value="0"/>
-            <enum name="light" value="1"/>
-            <enum name="regular" value="2"/>
-            <enum name="medium" value="3"/>
-            <enum name="bold" value="4"/>
-            <enum name="black" value="5"/>
+            <enum name="thin" value="0" />
+            <enum name="light" value="1" />
+            <enum name="regular" value="2" />
+            <enum name="medium" value="3" />
+            <enum name="bold" value="4" />
+            <enum name="black" value="5" />
         </attr>
     </declare-styleable>
 </resources>

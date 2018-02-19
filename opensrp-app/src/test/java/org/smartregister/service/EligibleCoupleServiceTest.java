@@ -4,6 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.TimelineEvent;
 import org.smartregister.domain.form.FormSubmission;
@@ -12,13 +14,11 @@ import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.EligibleCoupleRepository;
 import org.smartregister.repository.TimelineEventRepository;
-
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.util.EasyMap.mapOf;
+import org.smartregister.util.EasyMap;
 
 @RunWith(RobolectricTestRunner.class)
 public class EligibleCoupleServiceTest {
+
     @Mock
     private EligibleCoupleRepository eligibleCoupleRepository;
     @Mock
@@ -34,68 +34,68 @@ public class EligibleCoupleServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         service = new EligibleCoupleService(allEligibleCouples, allTimelineEvents, allBeneficiaries);
     }
 
     @Test
     public void shouldCreateTimelineEventWhenECIsRegistered() throws Exception {
-        FormSubmission submission = mock(FormSubmission.class);
-        when(submission.entityId()).thenReturn("entity id 1");
-        when(submission.getFieldValue("submissionDate")).thenReturn("2012-01-01");
+        FormSubmission submission = Mockito.mock(FormSubmission.class);
+        Mockito.when(submission.entityId()).thenReturn("entity id 1");
+        Mockito.when(submission.getFieldValue("submissionDate")).thenReturn("2012-01-01");
 
         service.register(submission);
 
-        verify(allTimelineEvents).add(TimelineEvent.forECRegistered("entity id 1", "2012-01-01"));
+        Mockito.verify(allTimelineEvents).add(TimelineEvent.forECRegistered("entity id 1", "2012-01-01"));
     }
 
     @Test
     public void shouldCloseEC() throws Exception {
-        FormSubmission submission = mock(FormSubmission.class);
-        when(submission.entityId()).thenReturn("entity id 1");
+        FormSubmission submission = Mockito.mock(FormSubmission.class);
+        Mockito.when(submission.entityId()).thenReturn("entity id 1");
 
         service.closeEligibleCouple(submission);
 
-        verify(allEligibleCouples).close("entity id 1");
-        verify(allBeneficiaries).closeAllMothersForEC("entity id 1");
+        Mockito.verify(allEligibleCouples).close("entity id 1");
+        Mockito.verify(allBeneficiaries).closeAllMothersForEC("entity id 1");
     }
 
     @Test
     public void shouldNotCreateTimelineEventWhenECIsRegisteredWithoutSubmissionDate() throws Exception {
-        FormSubmission submission = mock(FormSubmission.class);
-        when(submission.entityId()).thenReturn("entity id 1");
-        when(submission.getFieldValue("submissionDate")).thenReturn(null);
+        FormSubmission submission = Mockito.mock(FormSubmission.class);
+        Mockito.when(submission.entityId()).thenReturn("entity id 1");
+        Mockito.when(submission.getFieldValue("submissionDate")).thenReturn(null);
 
         service.register(submission);
 
-        verifyZeroInteractions(allTimelineEvents);
+        Mockito.verifyZeroInteractions(allTimelineEvents);
     }
 
     @Test
     public void shouldCreateTimelineEventAndUpdateEntityWhenFPChangeIsReported() throws Exception {
-        FormSubmission submission = mock(FormSubmission.class);
-        when(submission.entityId()).thenReturn("entity id 1");
-        when(submission.getFieldValue("currentMethod")).thenReturn("condom");
-        when(submission.getFieldValue("newMethod")).thenReturn("ocp");
-        when(submission.getFieldValue("familyPlanningMethodChangeDate")).thenReturn("2012-01-01");
+        FormSubmission submission = Mockito.mock(FormSubmission.class);
+        Mockito.when(submission.entityId()).thenReturn("entity id 1");
+        Mockito.when(submission.getFieldValue("currentMethod")).thenReturn("condom");
+        Mockito.when(submission.getFieldValue("newMethod")).thenReturn("ocp");
+        Mockito.when(submission.getFieldValue("familyPlanningMethodChangeDate")).thenReturn("2012-01-01");
 
         service.fpChange(submission);
 
-        verify(allTimelineEvents).add(TimelineEvent.forChangeOfFPMethod("entity id 1", "condom", "ocp", "2012-01-01"));
-        verify(allEligibleCouples).mergeDetails("entity id 1", mapOf("currentMethod", "ocp"));
+        Mockito.verify(allTimelineEvents).add(TimelineEvent.forChangeOfFPMethod("entity id 1", "condom", "ocp", "2012-01-01"));
+        Mockito.verify(allEligibleCouples).mergeDetails("entity id 1", EasyMap.mapOf("currentMethod", "ocp"));
     }
 
     @Test
     public void shouldUseFormSubmissionDateAsChangeDateWhenFPMethodIsChangedAndChangeDateIsBlank() throws Exception {
-        FormSubmission submission = mock(FormSubmission.class);
-        when(submission.entityId()).thenReturn("entity id 1");
-        when(submission.getFieldValue("currentMethod")).thenReturn("condom");
-        when(submission.getFieldValue("newMethod")).thenReturn("none");
-        when(submission.getFieldValue("submissionDate")).thenReturn("2012-02-01");
+        FormSubmission submission = Mockito.mock(FormSubmission.class);
+        Mockito.when(submission.entityId()).thenReturn("entity id 1");
+        Mockito.when(submission.getFieldValue("currentMethod")).thenReturn("condom");
+        Mockito.when(submission.getFieldValue("newMethod")).thenReturn("none");
+        Mockito.when(submission.getFieldValue("submissionDate")).thenReturn("2012-02-01");
 
         service.fpChange(submission);
 
-        verify(allTimelineEvents).add(TimelineEvent.forChangeOfFPMethod("entity id 1", "condom", "none", "2012-02-01"));
-        verify(allEligibleCouples).mergeDetails("entity id 1", mapOf("currentMethod", "none"));
+        Mockito.verify(allTimelineEvents).add(TimelineEvent.forChangeOfFPMethod("entity id 1", "condom", "none", "2012-02-01"));
+        Mockito.verify(allEligibleCouples).mergeDetails("entity id 1", EasyMap.mapOf("currentMethod", "none"));
     }
 }
