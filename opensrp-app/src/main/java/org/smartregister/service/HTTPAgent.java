@@ -11,6 +11,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -47,6 +49,7 @@ import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
@@ -61,6 +64,8 @@ public class HTTPAgent {
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
 
+    public static final int CONNECTION_TIMEOUT = 60000;
+
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
         this.context = context;
@@ -71,6 +76,8 @@ public class HTTPAgent {
         BasicHttpParams basicHttpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
+
+        ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
 
         SchemeRegistry registry = new SchemeRegistry();
         OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
@@ -165,6 +172,9 @@ public class HTTPAgent {
         } catch (IOException e) {
             logError("Failed to check credentials of: " + userName + " using " + requestURL + ". "
                     + "" + "" + "Error: " + e.toString());
+            if (e instanceof ConnectionPoolTimeoutException) {
+                return TIMEOUT;
+            }
             return NO_INTERNET_CONNECTIVITY;
         } catch (IllegalArgumentException e) {
             logError(e.getMessage());
