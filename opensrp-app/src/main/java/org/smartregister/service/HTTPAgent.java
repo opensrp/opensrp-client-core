@@ -43,6 +43,9 @@ import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
+import java.util.concurrent.TimeoutException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
@@ -169,7 +172,7 @@ public class HTTPAgent {
                         + userName + " using " + requestURL);
                 return UNKNOWN_RESPONSE;
             }
-        } catch (ConnectionPoolTimeoutException e) {
+        } catch (ConnectionPoolTimeoutException | SocketTimeoutException e) {
             logError(e.getMessage());
             return TIMEOUT;
         } catch (IOException e) {
