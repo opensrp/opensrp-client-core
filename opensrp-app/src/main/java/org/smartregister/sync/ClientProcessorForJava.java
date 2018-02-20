@@ -18,10 +18,10 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.db.Obs;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
-import org.smartregister.util.StringUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -289,143 +289,16 @@ public class ClientProcessorForJava {
 
                 JSONObject columnMappings = getColumnMappings(clientType);
                 JSONArray columns = columnMappings.getJSONArray("columns");
-                String baseEntityId = client.getBaseEntityId();
-                String expectedEncounterType = event.getEventType();
+                String baseEntityId = client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
 
                 ContentValues contentValues = new ContentValues();
                 //Add the base_entity_id
                 contentValues.put("base_entity_id", baseEntityId);
                 contentValues.put("is_closed", 0);
 
-                final String FORM_SUBMISSION_FIELD = "formSubmissionField";
-
                 for (int i = 0; i < columns.length(); i++) {
                     JSONObject colObject = columns.getJSONObject(i);
-                    String docType = colObject.getString("type");
-                    String columnName = colObject.getString("column_name");
-                    JSONObject jsonMapping = colObject.getJSONObject("json_mapping");
-                    String dataSegment = null;
-                    String fieldName = jsonMapping.getString(FIELD);
-                    String fieldValue = null;
-                    String responseKey = null;
-
-                    if (fieldName != null && fieldName.contains(".")) {
-                        String fieldNameArray[] = fieldName.split("\\.");
-                        dataSegment = fieldNameArray[0];
-                        fieldName = fieldNameArray[1];
-                        fieldValue = jsonMapping.has(CONCEPT) ? jsonMapping.getString(CONCEPT)
-                                : (jsonMapping.has(FORM_SUBMISSION_FIELD) ? jsonMapping
-                                .getString(FORM_SUBMISSION_FIELD) : null);
-                        if (fieldValue != null) {
-                            responseKey = VALUES_KEY;
-                        }
-                    }
-
-                    Object document = docType.equalsIgnoreCase("Event") ? event : client;
-
-                    Object docSegment;
-
-                    if (StringUtils.isNotBlank(dataSegment)) {
-                        // pick data from a specific section of the doc
-                        docSegment = getValue(document, dataSegment);
-                    } else {
-                        // else the use the main doc as the doc segment
-                        docSegment = document;
-                    }
-
-                    // special handler needed to process address,
-                    if (dataSegment != null && dataSegment.equalsIgnoreCase("addresses")) {
-                        Map<String, String> addressMap = getClientAddressAsMap(client);
-                        if (addressMap.containsKey(fieldName)) {
-                            contentValues.put(columnName, addressMap.get(fieldName));
-                        }
-                        continue;
-                    }
-
-                    // special handler for relationalid
-                    if (dataSegment != null && dataSegment.equalsIgnoreCase("relationships") && document instanceof Client) {
-                        Map<String, List<String>> relationshipMap = client.getRelationships();
-
-                        List<String> relationShipIds = relationshipMap.get(fieldName);
-                        if (relationShipIds != null && !relationShipIds.isEmpty()) {
-                            contentValues.put(columnName, relationShipIds.get(0));
-                        }
-
-                        continue;
-                    }
-
-                    final String EVENT_TYPE = "event_type";
-                    String encounterType =
-                            jsonMapping.has(EVENT_TYPE) ? jsonMapping.getString(EVENT_TYPE)
-                                    : null;
-
-                    if (docSegment instanceof List) {
-
-                        List docSegmentList = (List) docSegment;
-
-                        for (Object segment : docSegmentList) {
-                            String columnValue = null;
-
-                            if (fieldValue == null) {
-                                // This means field_value and response_key are null so pick the
-                                // value from the json object for the field_name
-                                columnValue = getValueAsString(segment, fieldName);
-                            } else {
-                                // this means field_value and response_key are not null e.g when
-                                // retrieving some value in the events obs section
-                                String expectedFieldValue = getValueAsString(segment, fieldName);
-                                // some events can only be differentiated by the event_type value
-                                // eg pnc1,pnc2, anc1,anc2
-                                // check if encountertype (the one in ec_client_fields.json) is
-                                // null or it matches the encounter type from the ec doc we're
-                                // processing
-                                boolean encounterTypeMatches =
-                                        (encounterType == null) || (encounterType
-                                                .equalsIgnoreCase(expectedEncounterType));
-
-                                if (encounterTypeMatches && expectedFieldValue
-                                        .equalsIgnoreCase(fieldValue)) {
-
-                                    Object values = getValue(segment, responseKey);
-                                    if (values instanceof List) {
-                                        columnValue = getValues((List) values).get(0);
-                                    }
-                                }
-                            }
-
-                            // after successfully retrieving the column name and value store it
-                            // in Content value
-                            if (columnValue != null) {
-                                columnValue = getHumanReadableConceptResponse(columnValue, segment);
-                                contentValues.put(columnName, columnValue);
-                            }
-                        }
-
-                    } else if (docSegment instanceof Map) {
-                        Map map = (Map) docSegment;
-                        if (fieldValue == null) {
-                            // This means field_value and response_key are null so pick the
-                            // value from the json object for the field_name
-                            if (map.containsKey(fieldName)) {
-                                Object mapValue = map.get(fieldName);
-                                if (mapValue != null && mapValue instanceof String) {
-                                    String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
-                                    contentValues.put(columnName, columnValue);
-                                }
-                            }
-                        }
-                    } else {
-                        //e.g client attributes section
-                        String columnValue = getValueAsString(docSegment, fieldName);
-
-                        // after successfully retrieving the column name and value store it in
-                        // Content value
-                        if (columnValue != null) {
-                            columnValue = getHumanReadableConceptResponse(columnValue,
-                                    docSegment);
-                            contentValues.put(columnName, columnValue);
-                        }
-                    }
+                    processCaseModel(event, client, colObject, contentValues);
                 }
 
                 // Modify openmrs generated identifier, Remove hyphen if it exists
@@ -449,6 +322,149 @@ public class ClientProcessorForJava {
         }
     }
 
+    public void processCaseModel(Event event, Client client, JSONObject colObject, ContentValues contentValues) {
+        final String FORM_SUBMISSION_FIELD = "formSubmissionField";
+        final String TYPE = "type";
+        final String VALUE_FIELD = "value_field";
+        try {
+            String expectedEncounterType = event.getEventType();
+            String docType = colObject.has(TYPE) ? colObject.getString(TYPE) : null;
+            String columnName = colObject.getString("column_name");
+            JSONObject jsonMapping = colObject.getJSONObject("json_mapping");
+            String dataSegment = null;
+            String fieldName = jsonMapping.getString(FIELD);
+            String fieldValue = null;
+            String responseKey = null;
+
+            String valueField = jsonMapping.has(VALUE_FIELD) ? jsonMapping.getString(VALUE_FIELD) : null;
+
+            if (fieldName != null && fieldName.contains(".")) {
+                String fieldNameArray[] = fieldName.split("\\.");
+                dataSegment = fieldNameArray[0];
+                fieldName = fieldNameArray[1];
+                fieldValue = jsonMapping.has(CONCEPT) ? jsonMapping.getString(CONCEPT)
+                        : (jsonMapping.has(FORM_SUBMISSION_FIELD) ? jsonMapping
+                        .getString(FORM_SUBMISSION_FIELD) : null);
+                if (fieldValue != null) {
+                    responseKey = VALUES_KEY;
+                }
+            }
+
+            Object document = docType == null ? event : docType.equalsIgnoreCase("Event") ? event : client;
+
+            Object docSegment;
+
+            if (StringUtils.isNotBlank(dataSegment)) {
+                // pick data from a specific section of the doc
+                docSegment = getValue(document, dataSegment);
+            } else {
+                // else the use the main doc as the doc segment
+                docSegment = document;
+            }
+
+            // special handler needed to process address,
+            if (dataSegment != null && dataSegment.equalsIgnoreCase("addresses")) {
+                Map<String, String> addressMap = getClientAddressAsMap(client);
+                if (addressMap.containsKey(fieldName)) {
+                    contentValues.put(columnName, addressMap.get(fieldName));
+                }
+                return;
+            }
+
+            // special handler for relationalid
+            if (dataSegment != null && dataSegment.equalsIgnoreCase("relationships") && document instanceof Client) {
+                Map<String, List<String>> relationshipMap = client.getRelationships();
+
+                List<String> relationShipIds = relationshipMap.get(fieldName);
+                if (relationShipIds != null && !relationShipIds.isEmpty()) {
+                    contentValues.put(columnName, relationShipIds.get(0));
+                }
+
+                return;
+            }
+
+            final String EVENT_TYPE = "event_type";
+            String encounterType =
+                    jsonMapping.has(EVENT_TYPE) ? jsonMapping.getString(EVENT_TYPE)
+                            : null;
+
+            if (docSegment instanceof List) {
+
+                List docSegmentList = (List) docSegment;
+
+                for (Object segment : docSegmentList) {
+                    String columnValue = null;
+
+                    if (fieldValue == null) {
+                        // This means field_value and response_key are null so pick the
+                        // value from the json object for the field_name
+                        columnValue = getValueAsString(segment, fieldName);
+                    } else {
+                        // this means field_value and response_key are not null e.g when
+                        // retrieving some value in the events obs section
+                        String expectedFieldValue = getValueAsString(segment, fieldName);
+                        // some events can only be differentiated by the event_type value
+                        // eg pnc1,pnc2, anc1,anc2
+                        // check if encountertype (the one in ec_client_fields.json) is
+                        // null or it matches the encounter type from the ec doc we're
+                        // processing
+                        boolean encounterTypeMatches =
+                                (encounterType == null) || (encounterType
+                                        .equalsIgnoreCase(expectedEncounterType));
+
+                        if (encounterTypeMatches && expectedFieldValue
+                                .equalsIgnoreCase(fieldValue)) {
+
+                            if (StringUtils.isNotBlank(valueField)) {
+                                columnValue = getValueAsString(segment, valueField);
+                            }
+
+                            if (columnValue == null) {
+                                Object values = getValue(segment, responseKey);
+                                if (values instanceof List) {
+                                    columnValue = getValues((List) values).get(0);
+                                }
+                            }
+                        }
+                    }
+
+                    // after successfully retrieving the column name and value store it
+                    // in Content value
+                    if (columnValue != null) {
+                        columnValue = getHumanReadableConceptResponse(columnValue, segment);
+                        contentValues.put(columnName, columnValue);
+                    }
+                }
+
+            } else if (docSegment instanceof Map) {
+                Map map = (Map) docSegment;
+                if (fieldValue == null) {
+                    // This means field_value and response_key are null so pick the
+                    // value from the json object for the field_name
+                    if (map.containsKey(fieldName)) {
+                        Object mapValue = map.get(fieldName);
+                        if (mapValue != null && mapValue instanceof String) {
+                            String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
+                            contentValues.put(columnName, columnValue);
+                        }
+                    }
+                }
+            } else {
+                //e.g client attributes section
+                String columnValue = getValueAsString(docSegment, fieldName);
+
+                // after successfully retrieving the column name and value store it in
+                // Content value
+                if (columnValue != null) {
+                    columnValue = getHumanReadableConceptResponse(columnValue,
+                            docSegment);
+                    contentValues.put(columnName, columnValue);
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+    }
 
     /**
      * Save the populated content values to details table
@@ -599,33 +615,44 @@ public class ClientProcessorForJava {
      * @return
      * @throws Exception
      */
-    protected String getHumanReadableConceptResponse(String value, Object object)
-            throws Exception {
+    protected String getHumanReadableConceptResponse(String value, Object object) {
 
-        final String HUMAN_READABLE_VALUES = "humanReadableValues";
-        List humanReadableValues = new ArrayList();
-        Object humanReadableObject = getValue(object, HUMAN_READABLE_VALUES);
-        if (humanReadableObject != null && humanReadableObject instanceof List) {
-            humanReadableValues = (List) humanReadableObject;
-        }
-
-        if (object == null || humanReadableValues.isEmpty()) {
-            String humanReadableValue = org.smartregister.CoreLibrary.getInstance().context().
-                    customHumanReadableConceptResponse().get(value);
-
-            if (StringUtils.isNotBlank(humanReadableValue)) {
-                return humanReadableValue;
+        try {
+            if (StringUtils.isBlank(value) || (object != null && !(object instanceof Obs))) {
+                return value;
             }
 
-            return value;
-        }
+            final String HUMAN_READABLE_VALUES = "humanReadableValues";
+            List humanReadableValues = new ArrayList();
+            Object humanReadableObject = getValue(object, HUMAN_READABLE_VALUES);
+            if (humanReadableObject != null && humanReadableObject instanceof List) {
+                humanReadableValues = (List) humanReadableObject;
+            }
 
-        return humanReadableValues.size() == 1 ? humanReadableValues.get(0).toString()
-                : humanReadableValues.toString();
+            if (object == null || humanReadableValues.isEmpty()) {
+                String humanReadableValue = org.smartregister.CoreLibrary.getInstance().context().
+                        customHumanReadableConceptResponse().get(value);
+
+                if (StringUtils.isNotBlank(humanReadableValue)) {
+                    return humanReadableValue;
+                }
+
+                return value;
+            }
+
+            return humanReadableValues.size() == 1 ? humanReadableValues.get(0).toString()
+                    : humanReadableValues.toString();
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+        return value;
     }
 
     public Map<String, String> getClientAddressAsMap(Client client) {
         Map<String, String> addressMap = new HashMap<String, String>();
+        if (client == null) {
+            return addressMap;
+        }
         try {
             final String addressFieldsKey = "addressFields";
 
@@ -639,7 +666,7 @@ public class ClientProcessorForJava {
                     }
                 }
 
-                Field[] fields = address.getClass().getDeclaredFields();
+                List<Field> fields = getFields(address.getClass());
                 for (Field classField : fields) {
                     String fieldName = classField.getName();
                     if (!fieldName.equals(addressFieldsKey)) {
@@ -729,12 +756,13 @@ public class ClientProcessorForJava {
             return null;
         }
         try {
-            Field field = instance.getClass().getDeclaredField(fieldName);
+            Field field = getField(instance.getClass(), fieldName);
+            if (field == null) {
+                return null;
+            }
             field.setAccessible(true);
             return field.get(instance);
         } catch (IllegalAccessException e) {
-            return null;
-        } catch (NoSuchFieldException e) {
             return null;
         }
     }
@@ -755,6 +783,46 @@ public class ClientProcessorForJava {
             return eventDate.getMillis();
         }
     }
+
+    private List<Field> getFields(Class clazz) {
+        List<Field> fields = new ArrayList<>();
+        if (instance == null) {
+            return new ArrayList<>();
+        }
+
+
+        Class current = clazz;
+        while (current != null) { // we don't want to process Object.class
+            // do something with current's fields
+            Field[] fieldArray = current.getDeclaredFields();
+            if (fieldArray != null) {
+                fields.addAll(Arrays.asList(fieldArray));
+            }
+
+            current = current.getSuperclass();
+        }
+
+        return fields;
+    }
+
+    private Field getField(Class clazz, String fieldName) {
+        if (clazz == null || StringUtils.isBlank(fieldName)) {
+            return null;
+        }
+
+        Field field = null;
+        try {
+            field = clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            // No need to log this, log will be to big
+        }
+        if (field != null) {
+            return field;
+        }
+
+        return getField(clazz.getSuperclass(), fieldName);
+    }
+
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
         Log.i(TAG, "Starting updateFTSsearch table: " + tableName);
