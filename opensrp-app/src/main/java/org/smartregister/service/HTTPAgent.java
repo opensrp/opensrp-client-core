@@ -43,9 +43,7 @@ import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ConnectException;
 import java.net.SocketTimeoutException;
-import java.util.concurrent.TimeoutException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
