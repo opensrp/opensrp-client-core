@@ -6,9 +6,6 @@ import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.db.Address;
@@ -16,8 +13,16 @@ import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.db.Obs;
+import org.smartregister.domain.jsonmapping.ClassificationRule;
+import org.smartregister.domain.jsonmapping.ClientClassification;
+import org.smartregister.domain.jsonmapping.ClientField;
+import org.smartregister.domain.jsonmapping.Column;
+import org.smartregister.domain.jsonmapping.JsonMapping;
+import org.smartregister.domain.jsonmapping.Rule;
+import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
+import org.smartregister.util.JsonFormUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -35,11 +40,9 @@ public class ClientProcessorForJava {
 
     protected static final String VALUES_KEY = "values";
     private static final String detailsUpdated = "detailsUpdated";
-    private static final String FIELD = "field";
-    private static final String CONCEPT = "concept";
-
 
     private String[] openmrsGenIds = {};
+    private Map<String, Object> jsonMap;
 
     private static ClientProcessorForJava instance;
     private Context mContext;
@@ -59,27 +62,22 @@ public class ClientProcessorForJava {
     public synchronized void processClient(List<EventClient> eventClientList) throws Exception {
 
         final String EC_CLIENT_CLASSIFICATION = "ec_client_classification.json";
-        String clientClassificationStr = getFileContents(EC_CLIENT_CLASSIFICATION);
+        ClientClassification clientClassification = assetJsonToJava(EC_CLIENT_CLASSIFICATION, ClientClassification.class);
+        if (clientClassification == null) {
+            return;
+        }
 
         if (!eventClientList.isEmpty()) {
             for (EventClient eventClient : eventClientList) {
-
-                JSONObject clientClassificationJson = new JSONObject(clientClassificationStr);
-                if (isNullOrEmptyJSONObject(clientClassificationJson)) {
-                    continue;
-                }
-
                 // Iterate through the events
                 if (eventClient.getClient() != null) {
-                    processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassificationJson);
+                    processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassification);
                 }
             }
         }
-
     }
 
-    public Boolean processEvent(Event event, Client client, JSONObject clientClassificationJson) throws Exception {
-
+    public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
         try {
             String baseEntityId = event.getBaseEntityId();
             if (event.getCreator() != null) {
@@ -94,9 +92,8 @@ public class ClientProcessorForJava {
 
             final String CASE_CLASSIFICATION_RULES = "case_classification_rules";
             // Get the client type classification
-            JSONArray clientClasses = clientClassificationJson
-                    .getJSONArray(CASE_CLASSIFICATION_RULES);
-            if (isNullOrEmptyJSONArray(clientClasses)) {
+            List<ClassificationRule> clientClasses = clientClassification.case_classification_rules;
+            if (clientClasses == null || clientClasses.isEmpty()) {
                 return false;
             }
 
@@ -105,8 +102,7 @@ public class ClientProcessorForJava {
                 return false;
             }
 
-            for (int i = 0; i < clientClasses.length(); i++) {
-                JSONObject clientClass = clientClasses.getJSONObject(i);
+            for (ClassificationRule clientClass : clientClasses) {
                 processClientClass(clientClass, event, client);
             }
 
@@ -119,15 +115,13 @@ public class ClientProcessorForJava {
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
-
             return null;
         }
     }
 
-    public Boolean processClientClass(JSONObject clientClass, Event event, Client client) {
-
+    public Boolean processClientClass(ClassificationRule clientClass, Event event, Client client) {
         try {
-            if (clientClass == null || clientClass.length() == 0) {
+            if (clientClass == null) {
                 return false;
             }
 
@@ -139,12 +133,11 @@ public class ClientProcessorForJava {
                 return false;
             }
 
-            JSONObject ruleObject = clientClass.getJSONObject("rule");
-            JSONArray fields = ruleObject.getJSONArray("fields");
+            Rule rule = clientClass.rule;
+            List<org.smartregister.domain.jsonmapping.Field> fields = rule.fields;
 
-            for (int i = 0; i < fields.length(); i++) {
-                JSONObject fieldJson = fields.getJSONObject(i);
-                processField(fieldJson, event, client);
+            for (org.smartregister.domain.jsonmapping.Field field : fields) {
+                processField(field, event, client);
             }
             return true;
         } catch (Exception e) {
@@ -153,27 +146,24 @@ public class ClientProcessorForJava {
         }
     }
 
-    public Boolean processField(JSONObject fieldJson, Event event, Client client) {
-
+    public Boolean processField(org.smartregister.domain.jsonmapping.Field field, Event event, Client client) {
         try {
-            if (fieldJson == null || fieldJson.length() == 0) {
+            if (field == null) {
                 return false;
             }
 
-            final String FIELD_VALUE = "field_value";
             // keep checking if the event data matches the values expected by each rule, break the
             // moment the rule fails
             String dataSegment = null;
-            String fieldName = fieldJson.has(FIELD) ? fieldJson.getString(FIELD) : null;
-            String fieldValue =
-                    fieldJson.has(FIELD_VALUE) ? fieldJson.getString(FIELD_VALUE) : null;
+            String fieldName = field.field;
+            String fieldValue = field.field_value;
             String responseKey = null;
 
             if (fieldName != null && fieldName.contains(".")) {
                 String fieldNameArray[] = fieldName.split("\\.");
                 dataSegment = fieldNameArray[0];
                 fieldName = fieldNameArray[1];
-                String concept = fieldJson.has(CONCEPT) ? fieldJson.getString(CONCEPT) : null;
+                String concept = field.concept;
 
                 if (concept != null) {
                     fieldValue = concept;
@@ -181,20 +171,12 @@ public class ClientProcessorForJava {
                 }
             }
 
-            final String CREATES_CASE = "creates_case";
-            final String CLOSES_CASE = "closes_case";
-            JSONArray createsCase =
-                    fieldJson.has(CREATES_CASE) ? fieldJson.getJSONArray(CREATES_CASE) : null;
-            JSONArray closesCase =
-                    fieldJson.has(CLOSES_CASE) ? fieldJson.getJSONArray(CLOSES_CASE) : null;
+            List<String> createsCase = field.creates_case;
+            List<String> closesCase = field.closes_case;
 
             // some fields are in the main doc e.g event_type so fetch them from the main doc
             if (StringUtils.isNotBlank(dataSegment)) {
-
-                JSONArray responseValue =
-                        fieldJson.has(responseKey) ? fieldJson.getJSONArray(responseKey) : null;
-                List<String> responseValues = getValues(responseValue);
-
+                List<String> responseValues = field.values;
                 Object dataSegmentObject = getValue(event, dataSegment);
                 if (dataSegmentObject != null) {
                     if (dataSegmentObject instanceof List) {
@@ -250,45 +232,39 @@ public class ClientProcessorForJava {
             return true;
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
-
             return null;
         }
     }
 
-    public Boolean closeCase(Client client, JSONArray closesCase) {
+    public Boolean closeCase(Client client, List<String> closesCase) {
         try {
-            if (closesCase == null || closesCase.length() == 0) {
+            if (closesCase == null || closesCase.isEmpty()) {
                 return false;
             }
 
             String baseEntityId = client.getBaseEntityId();
 
-            for (int i = 0; i < closesCase.length(); i++) {
-                String tableName = closesCase.getString(i);
+            for (String tableName : closesCase) {
                 closeCase(tableName, baseEntityId);
                 updateFTSsearch(tableName, baseEntityId, null);
             }
 
             return true;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
-
             return null;
         }
     }
 
-    public Boolean processCaseModel(Event event, Client client, JSONArray createsCase) {
+    public Boolean processCaseModel(Event event, Client client, List<String> createsCase) {
         try {
 
-            if (createsCase == null || createsCase.length() == 0) {
+            if (createsCase == null || createsCase.isEmpty()) {
                 return false;
             }
-            for (int openCase = 0; openCase < createsCase.length(); openCase++) {
-
-                String clientType = createsCase.getString(openCase);
-
-                JSONObject columnMappings = getColumnMappings(clientType);
-                JSONArray columns = columnMappings.getJSONArray("columns");
+            for (String clientType : createsCase) {
+                Table table = getColumnMappings(clientType);
+                List<Column> columns = table.columns;
                 String baseEntityId = client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
 
                 ContentValues contentValues = new ContentValues();
@@ -296,8 +272,7 @@ public class ClientProcessorForJava {
                 contentValues.put("base_entity_id", baseEntityId);
                 contentValues.put("is_closed", 0);
 
-                for (int i = 0; i < columns.length(); i++) {
-                    JSONObject colObject = columns.getJSONObject(i);
+                for (Column colObject : columns) {
                     processCaseModel(event, client, colObject, contentValues);
                 }
 
@@ -306,7 +281,6 @@ public class ClientProcessorForJava {
 
                 // save the values to db
                 Long id = executeInsertStatement(contentValues, clientType);
-                Log.i(TAG, "inserted id:" + id);
 
                 updateFTSsearch(clientType, baseEntityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
@@ -322,29 +296,26 @@ public class ClientProcessorForJava {
         }
     }
 
-    public void processCaseModel(Event event, Client client, JSONObject colObject, ContentValues contentValues) {
-        final String FORM_SUBMISSION_FIELD = "formSubmissionField";
-        final String TYPE = "type";
-        final String VALUE_FIELD = "value_field";
+    public void processCaseModel(Event event, Client client, Column column, ContentValues contentValues) {
         try {
             String expectedEncounterType = event.getEventType();
-            String docType = colObject.has(TYPE) ? colObject.getString(TYPE) : null;
-            String columnName = colObject.getString("column_name");
-            JSONObject jsonMapping = colObject.getJSONObject("json_mapping");
+            String docType = column.type;
+            String columnName = column.column_name;
+            JsonMapping jsonMapping = column.json_mapping;
             String dataSegment = null;
-            String fieldName = jsonMapping.getString(FIELD);
+            String fieldName = jsonMapping.field;
             String fieldValue = null;
             String responseKey = null;
 
-            String valueField = jsonMapping.has(VALUE_FIELD) ? jsonMapping.getString(VALUE_FIELD) : null;
+            String valueField = jsonMapping.value_field;
 
             if (fieldName != null && fieldName.contains(".")) {
                 String fieldNameArray[] = fieldName.split("\\.");
                 dataSegment = fieldNameArray[0];
                 fieldName = fieldNameArray[1];
-                fieldValue = jsonMapping.has(CONCEPT) ? jsonMapping.getString(CONCEPT)
-                        : (jsonMapping.has(FORM_SUBMISSION_FIELD) ? jsonMapping
-                        .getString(FORM_SUBMISSION_FIELD) : null);
+                fieldValue = StringUtils.isNotBlank(jsonMapping.concept) ? jsonMapping.concept
+                        : (StringUtils.isNotBlank(jsonMapping.formSubmissionField) ? jsonMapping
+                        .formSubmissionField : null);
                 if (fieldValue != null) {
                     responseKey = VALUES_KEY;
                 }
@@ -383,10 +354,7 @@ public class ClientProcessorForJava {
                 return;
             }
 
-            final String EVENT_TYPE = "event_type";
-            String encounterType =
-                    jsonMapping.has(EVENT_TYPE) ? jsonMapping.getString(EVENT_TYPE)
-                            : null;
+            String encounterType = jsonMapping.event_type;
 
             if (docSegment instanceof List) {
 
@@ -616,7 +584,6 @@ public class ClientProcessorForJava {
      * @throws Exception
      */
     protected String getHumanReadableConceptResponse(String value, Object object) {
-
         try {
             if (StringUtils.isBlank(value) || (object != null && !(object instanceof Obs))) {
                 return value;
@@ -701,17 +668,15 @@ public class ClientProcessorForJava {
         return cr.deleteCase(baseEntityId, tableName);
     }
 
-    public JSONObject getColumnMappings(String registerName) {
-
+    public Table getColumnMappings(String registerName) {
         try {
-            String clientClassificationStr = getFileContents("ec_client_fields.json");
-            JSONObject clientClassificationJson = new JSONObject(clientClassificationStr);
-            JSONArray bindObjects = clientClassificationJson.getJSONArray("bindobjects");
-
-            for (int i = 0; i < bindObjects.length(); i++) {
-                JSONObject bindObject = bindObjects.getJSONObject(i);
-
-                if (bindObject.getString("name").equalsIgnoreCase(registerName)) {
+            ClientField clientField = assetJsonToJava("ec_client_fields.json", ClientField.class);
+            if (clientField == null) {
+                return null;
+            }
+            List<Table> bindObjects = clientField.bindobjects;
+            for (Table bindObject : bindObjects) {
+                if (bindObject.name.equalsIgnoreCase(registerName)) {
                     return bindObject;
                 }
             }
@@ -721,11 +686,34 @@ public class ClientProcessorForJava {
         return null;
     }
 
-    protected String getFileContents(String fileName) {
-        return AssetHandler.readFileFromAssetsFolder(fileName, mContext);
+    protected <T> T assetJsonToJava(String fileName, Class<T> clazz) {
+        try {
+            if (jsonMap == null) {
+                jsonMap = new HashMap<>();
+            }
+
+            if (jsonMap.containsKey(fileName)) {
+                Object o = jsonMap.get(fileName);
+                if (clazz.isAssignableFrom(o.getClass())) {
+                    return clazz.cast(jsonMap.get(fileName));
+                }
+            }
+
+            String jsonString = AssetHandler.readFileFromAssetsFolder(fileName, mContext);
+            if (StringUtils.isBlank(jsonString)) {
+                return null;
+            }
+
+            T t = JsonFormUtils.gson.fromJson(jsonString, clazz);
+            jsonMap.put(fileName, t);
+            return t;
+        }catch (Exception e){
+            Log.e(TAG, e.toString(), e);
+            return null;
+        }
     }
 
-    protected List<String> getValues(List list) throws JSONException {
+    protected List<String> getValues(List list) {
         List<String> values = new ArrayList<String>();
         if (list == null) {
             return values;
@@ -733,19 +721,6 @@ public class ClientProcessorForJava {
         for (Object o : list) {
             if (o instanceof String) {
                 values.add(o.toString());
-            }
-        }
-
-        return values;
-    }
-
-    protected List<String> getValues(JSONArray jsonArray) throws JSONException {
-        List<String> values = new ArrayList<String>();
-        if (jsonArray == null) {
-            return values;
-        } else {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                values.add(jsonArray.get(i).toString());
             }
         }
         return values;
@@ -839,14 +814,6 @@ public class ClientProcessorForJava {
 
     protected void updateRegisterCount(String entityId) {
         FORM_SUBMITTED.notifyListeners(entityId);
-    }
-
-    protected boolean isNullOrEmptyJSONObject(JSONObject jsonObject) {
-        return (jsonObject == null || jsonObject.length() == 0);
-    }
-
-    private boolean isNullOrEmptyJSONArray(JSONArray jsonArray) {
-        return (jsonArray == null || jsonArray.length() == 0);
     }
 
     /**
