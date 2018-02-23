@@ -79,7 +79,6 @@ public class ClientProcessorForJava {
 
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
         try {
-            String baseEntityId = event.getBaseEntityId();
             if (event.getCreator() != null) {
                 Log.i(TAG, "EVENT from openmrs");
             }
@@ -90,7 +89,6 @@ public class ClientProcessorForJava {
                 return false;
             }
 
-            final String CASE_CLASSIFICATION_RULES = "case_classification_rules";
             // Get the client type classification
             List<ClassificationRule> clientClasses = clientClassification.case_classification_rules;
             if (clientClasses == null || clientClasses.isEmpty()) {
@@ -280,7 +278,7 @@ public class ClientProcessorForJava {
                 updateIdenitifier(contentValues);
 
                 // save the values to db
-                Long id = executeInsertStatement(contentValues, clientType);
+                executeInsertStatement(contentValues, clientType);
 
                 updateFTSsearch(clientType, baseEntityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
@@ -406,15 +404,13 @@ public class ClientProcessorForJava {
 
             } else if (docSegment instanceof Map) {
                 Map map = (Map) docSegment;
-                if (fieldValue == null) {
-                    // This means field_value and response_key are null so pick the
-                    // value from the json object for the field_name
-                    if (map.containsKey(fieldName)) {
-                        Object mapValue = map.get(fieldName);
-                        if (mapValue != null && mapValue instanceof String) {
-                            String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
-                            contentValues.put(columnName, columnValue);
-                        }
+                // This means field_value and response_key are null so pick the
+                // value from the json object for the field_name
+                if (fieldValue == null && map.containsKey(fieldName)) {
+                    Object mapValue = map.get(fieldName);
+                    if (mapValue != null && mapValue instanceof String) {
+                        String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
+                        contentValues.put(columnName, columnValue);
                     }
                 }
             } else {
@@ -707,7 +703,7 @@ public class ClientProcessorForJava {
             T t = JsonFormUtils.gson.fromJson(jsonString, clazz);
             jsonMap.put(fileName, t);
             return t;
-        }catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
             return null;
         }
