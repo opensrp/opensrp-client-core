@@ -686,12 +686,13 @@ public class ClientProcessorForJava {
         try {
             if (jsonMap == null) {
                 jsonMap = new HashMap<>();
-            }
 
-            if (jsonMap.containsKey(fileName)) {
+            } else if (jsonMap.containsKey(fileName)) {
                 Object o = jsonMap.get(fileName);
                 if (clazz.isAssignableFrom(o.getClass())) {
                     return clazz.cast(jsonMap.get(fileName));
+                } else {
+                    return null;
                 }
             }
 
