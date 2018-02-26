@@ -13,8 +13,8 @@ public class ObsMock extends Obs {
         super();
     }
 
-    public ObsMock(String fieldType, String fieldDataType, String fieldCode, String parentCode, List<Object> values, String comments, String formSubmissionField) {
-        super(fieldType, fieldDataType, fieldCode, parentCode, values, comments, formSubmissionField);
+    public ObsMock(String fieldType, String fieldDataType, String fieldCode, String parentCode, List<Object> values, String comments, String formSubmissionField, List<Object> humanReadableValues) {
+        super(fieldType, fieldDataType, fieldCode, parentCode, values, comments, formSubmissionField, humanReadableValues);
     }
 
     @Override
@@ -98,6 +98,26 @@ public class ObsMock extends Obs {
     }
 
     @Override
+    public Object getHumanReadableValue() {
+        return super.getHumanReadableValue();
+    }
+
+    @Override
+    public void setHumanReadableValue(Object humanReadableValue) {
+        super.setHumanReadableValue(humanReadableValue);
+    }
+
+    @Override
+    public List<Object> getHumanReadableValues() {
+        return super.getHumanReadableValues();
+    }
+
+    @Override
+    public void setHumanReadableValues(List<Object> humanReadableValues) {
+        super.setHumanReadableValues(humanReadableValues);
+    }
+
+    @Override
     public Obs withFieldType(String fieldType) {
         return super.withFieldType(fieldType);
     }
@@ -133,6 +153,11 @@ public class ObsMock extends Obs {
     }
 
     @Override
+    public Obs addToHumanReadableValuesList(Object humanReadableValue) {
+        return super.addToHumanReadableValuesList(humanReadableValue);
+    }
+
+    @Override
     public Obs withComments(String comments) {
         return super.withComments(comments);
     }
@@ -141,4 +166,15 @@ public class ObsMock extends Obs {
     public Obs withFormSubmissionField(String formSubmissionField) {
         return super.withFormSubmissionField(formSubmissionField);
     }
+
+    @Override
+    public Obs withHumanReadableValue(Object humanReadableValue) {
+        return super.withHumanReadableValue(humanReadableValue);
+    }
+
+    @Override
+    public Obs withHumanReadableValues(List<Object> humanReadableValues) {
+        return super.withHumanReadableValues(humanReadableValues);
+    }
+
 }

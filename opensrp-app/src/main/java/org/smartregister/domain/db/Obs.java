@@ -19,11 +19,13 @@ public class Obs {
 
     private String formSubmissionField;
 
+    private List<Object> humanReadableValues;
+
     public Obs() {
     }
 
     public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode,
-               List<Object> values, String comments, String formSubmissionField) {
+               List<Object> values, String comments, String formSubmissionField, List<Object> humanReadableValues) {
         this.setFieldType(fieldType);
         this.fieldDataType = fieldDataType;
         this.fieldCode = fieldCode;
@@ -31,6 +33,7 @@ public class Obs {
         this.values = values;
         this.comments = comments;
         this.formSubmissionField = formSubmissionField;
+        this.humanReadableValues = humanReadableValues;
     }
 
     public String getFieldType() {
@@ -105,6 +108,29 @@ public class Obs {
         this.formSubmissionField = formSubmissionField;
     }
 
+    public Object getHumanReadableValue() {
+        if (humanReadableValues.size() > 1) {
+            throw new RuntimeException("Multiset values can not be handled like single valued fields. Use function getValues");
+        }
+        if (humanReadableValues == null || humanReadableValues.size() == 0) {
+            return null;
+        }
+
+        return humanReadableValues.get(0);
+    }
+
+    public void setHumanReadableValue(Object humanReadableValue) {
+        addToHumanReadableValuesList(humanReadableValue);
+    }
+
+    public List<Object> getHumanReadableValues() {
+        return humanReadableValues;
+    }
+
+    public void setHumanReadableValues(List<Object> humanReadableValues) {
+        this.humanReadableValues = humanReadableValues;
+    }
+
     public Obs withFieldType(String fieldType) {
         this.fieldType = fieldType;
         return this;
@@ -142,6 +168,14 @@ public class Obs {
         return this;
     }
 
+    public Obs addToHumanReadableValuesList(Object humanReadableValue) {
+        if (humanReadableValues == null) {
+            humanReadableValues = new ArrayList<Object>();
+        }
+        humanReadableValues.add(humanReadableValue);
+        return this;
+    }
+
     public Obs withComments(String comments) {
         this.comments = comments;
         return this;
@@ -149,6 +183,15 @@ public class Obs {
 
     public Obs withFormSubmissionField(String formSubmissionField) {
         this.formSubmissionField = formSubmissionField;
+        return this;
+    }
+
+    public Obs withHumanReadableValue(Object humanReadableValue) {
+        return addToHumanReadableValuesList(humanReadableValue);
+    }
+
+    public Obs withHumanReadableValues(List<Object> humanReadableValues) {
+        this.humanReadableValues = humanReadableValues;
         return this;
     }
 }
