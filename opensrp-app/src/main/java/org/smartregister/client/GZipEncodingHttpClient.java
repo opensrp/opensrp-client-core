@@ -9,6 +9,7 @@ import org.smartregister.util.HttpResponseUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 
@@ -19,7 +20,7 @@ public class GZipEncodingHttpClient {
         this.httpClient = httpClient;
     }
 
-    public InputStream fetchContent(HttpGet request) throws IOException {
+    public InputStream fetchContent(HttpGet request) throws IOException, ParseException {
         if (!request.containsHeader("Accept-Encoding")) {
             request.addHeader("Accept-Encoding", "gzip");
         }

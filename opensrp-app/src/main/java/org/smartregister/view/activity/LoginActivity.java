@@ -18,12 +18,14 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.Log;
@@ -181,17 +183,6 @@ public class LoginActivity extends Activity {
         dialog.show();
     }
 
-    private void getLocation() {
-        tryGetLocation(new Listener<Response<String>>() {
-            @Override
-            public void onEvent(Response<String> data) {
-                if (data.status() == ResponseStatus.success) {
-                    context.userService().saveAnmLocation(data.payload());
-                }
-            }
-        });
-    }
-
     private void tryGetLocation(final Listener<Response<String>> afterGet) {
         LockingBackgroundTask task = new LockingBackgroundTask(new ProgressIndicator() {
             @Override
@@ -261,7 +252,7 @@ public class LoginActivity extends Activity {
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }
 
-    private void remoteLoginWith(String userName, String password, String userInfo) {
+    private void remoteLoginWith(String userName, String password, LoginResponseData userInfo) {
         context.userService().remoteLogin(userName, password, userInfo);
         goToHome();
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
