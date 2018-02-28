@@ -22,7 +22,6 @@ import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
-import org.smartregister.util.JsonFormUtils;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -42,7 +41,7 @@ public class ClientProcessorForJava {
     private static final String detailsUpdated = "detailsUpdated";
 
     private String[] openmrsGenIds = {};
-    private Map<String, Object> jsonMap;
+    private Map<String, Object> jsonMap = new HashMap<>();
 
     private static ClientProcessorForJava instance;
     private Context mContext;
@@ -683,31 +682,7 @@ public class ClientProcessorForJava {
     }
 
     protected <T> T assetJsonToJava(String fileName, Class<T> clazz) {
-        try {
-            if (jsonMap == null) {
-                jsonMap = new HashMap<>();
-
-            } else if (jsonMap.containsKey(fileName)) {
-                Object o = jsonMap.get(fileName);
-                if (clazz.isAssignableFrom(o.getClass())) {
-                    return clazz.cast(jsonMap.get(fileName));
-                } else {
-                    return null;
-                }
-            }
-
-            String jsonString = AssetHandler.readFileFromAssetsFolder(fileName, mContext);
-            if (StringUtils.isBlank(jsonString)) {
-                return null;
-            }
-
-            T t = JsonFormUtils.gson.fromJson(jsonString, clazz);
-            jsonMap.put(fileName, t);
-            return t;
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            return null;
-        }
+        return AssetHandler.assetJsonToJava(jsonMap, mContext, fileName, clazz);
     }
 
     protected List<String> getValues(List list) {
