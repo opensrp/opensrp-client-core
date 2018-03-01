@@ -26,13 +26,13 @@ public class UserInfoTest {
 
     @Before
     public void setUp() {
-        responseJSON = "{\"location\":{\"locationId\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\", \"name\":\"testloc\", \"voided\":false}, \"user\":{\"username\":\"admin\", \"roles\":[\"Provider\", \"System Developer\"], \"baseEntityId\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\", \"baseEntity\":{\"id\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\", \"firstName\":\"Super User\", \"middleName\":\"\", \"lastName\":\"\", \"gender\":\"M\", \"attributes\":{\"Location\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\", \"Health Center\":\"2\"}, \"voided\":false}, \"voided\":false}}";
+        responseJSON = "{\"teamLocation\":{\"locationId\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\", \"name\":\"testloc\", \"voided\":false}, \"user\":{\"username\":\"admin\", \"roles\":[\"Provider\", \"System Developer\"], \"baseEntityId\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\", \"baseEntity\":{\"id\":\"baa5c5d3-cebe-11e4-9a12-040144de7001\", \"firstName\":\"Super User\", \"middleName\":\"\", \"lastName\":\"\", \"gender\":\"M\", \"attributes\":{\"TeamLocation\":\"cd4ed528-87cd-42ee-a175-5e7089521ebd\", \"Health Center\":\"2\"}, \"voided\":false}, \"voided\":false}}";
     }
 
     @Test
     public void shouldBeAbleParseTree() {
         Map<String, String> tree = new GsonBuilder().create().fromJson(responseJSON, Map.class);
-        Assert.assertNotNull(tree.get("location"));
+        Assert.assertNotNull(tree.get("teamLocation"));
         Assert.assertNotNull(tree.get("user"));
     }
 
@@ -53,7 +53,7 @@ public class UserInfoTest {
     @Test
     public void shouldAbleToReadUserLocation() {
         Map<String, String> tree = EntityUtils.fromJson(responseJSON, Map.class);
-        String userLocationJSONString = new Gson().toJson(tree.get("location"));
+        String userLocationJSONString = new Gson().toJson(tree.get("teamLocation"));
 
         Location user = EntityUtils.fromJson(userLocationJSONString, Location.class);
 

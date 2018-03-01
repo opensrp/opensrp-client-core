@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * The registered location which needs to be identified uniquely across the system
+ * The registered teamLocation which needs to be identified uniquely across the system
  */
 public class Location extends BaseDataObject {
 

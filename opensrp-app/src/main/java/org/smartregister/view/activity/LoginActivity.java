@@ -191,7 +191,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void setInvisible() {
-                Log.logInfo("Successfully get location");
+                Log.logInfo("Successfully get teamLocation");
             }
         });
 

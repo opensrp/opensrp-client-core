@@ -42,7 +42,7 @@ public class AllConstants {
     public static final String ALL_FORM_VERSION_URL = "/form/latest-form-versions";
     public static final String AUTHENTICATE_USER_URL_PATH = "/anm-villages?anm-id=";
     public static final String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
-    public static final String OPENSRP_LOCATION_URL_PATH = "/location/location-tree";
+    public static final String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree";
 
     public static final String FORM_NAME_PARAM = "formName";
     public static final String INSTANCE_ID_PARAM = "instanceId";

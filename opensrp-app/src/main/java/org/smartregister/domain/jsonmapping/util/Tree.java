@@ -1,33 +1,34 @@
 package org.smartregister.domain.jsonmapping.util;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 
 public class Tree<K, T> {
 
-    Map<K, TreeNode<K, T>> map;
-    Map<K, Set<K>> parentChildren;
+    LinkedHashMap<K, TreeNode<K, T>> map;
+    LinkedHashMap<K, LinkedHashSet<K>> parentChildren;
 
-    public Map<K, TreeNode<K, T>> getTree() {
-        return Collections.unmodifiableMap(map);
+    public LinkedHashMap<K, TreeNode<K, T>> getTree() {
+        return map;
     }
 
-    public Map<K, Set<K>> getChildParent() {
-        return Collections.unmodifiableMap(parentChildren);
+    public LinkedHashMap<K, LinkedHashSet<K>> getChildParent() {
+        return parentChildren;
     }
 
     public Tree() {
-        map = new HashMap<K, TreeNode<K, T>>();
-        parentChildren = new HashMap<>();
+        map = new LinkedHashMap<K, TreeNode<K, T>>();
+        parentChildren = new LinkedHashMap<>();
     }
 
     private void addToParentChildRelation(K parent, K id) {
         if (parentChildren == null) {
-            parentChildren = new HashMap<>();
+            parentChildren = new LinkedHashMap<>();
         }
 
-        Set<K> kids = parentChildren.get(parent);
+        LinkedHashSet<K> kids = parentChildren.get(parent);
         if (kids == null) {
-            kids = new HashSet<>();
+            kids = new LinkedHashSet<>();
         }
 
         kids.add(id);
@@ -36,7 +37,7 @@ public class Tree<K, T> {
 
     public void addNode(K id, String label, T node, K parentId) {
         if (map == null) {
-            map = new HashMap<K, TreeNode<K, T>>();
+            map = new LinkedHashMap<>();
         }
 
         // if node exists we should break since user should write optimized code and also tree can not have duplicates
@@ -63,7 +64,7 @@ public class Tree<K, T> {
             map.put(id, n);
         }
 
-        Set<K> kids = parentChildren.get(id);
+        LinkedHashSet<K> kids = parentChildren.get(id);
         // move all its child nodes preexisting
         if (kids != null) {
             for (K kid : kids) {

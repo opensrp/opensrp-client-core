@@ -2,13 +2,13 @@ package org.smartregister.domain.jsonmapping.util;
 
 public class Team {
 
-    public Integer teamId;
-
-    public String teamIdentifier;
-
     public String teamName;
 
-    public Location location;
+    public String display;
+
+    public TeamLocation location;
+
+    public String teamIdentifier;
 
     public String uuid;
 }

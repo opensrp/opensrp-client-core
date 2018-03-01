@@ -1,14 +1,13 @@
 package org.smartregister.domain.jsonmapping.util;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class TreeNode<K, T> {
 
     private K id;
     private String label;
     private T node;
-    private Map<K, TreeNode<K, T>> children;
+    private LinkedHashMap<K, TreeNode<K, T>> children;
     private K parent;
 
     public TreeNode(K id, String label, T node, K parent) {
@@ -18,7 +17,7 @@ public class TreeNode<K, T> {
         this.parent = parent;
     }
 
-    public TreeNode(K id, String label, T node, K parent, Map<K, TreeNode<K, T>> children) {
+    public TreeNode(K id, String label, T node, K parent, LinkedHashMap<K, TreeNode<K, T>> children) {
         this.id = id;
         this.label = label;
         this.node = node;
@@ -28,7 +27,7 @@ public class TreeNode<K, T> {
 
     public void addChild(TreeNode<K, T> node) {
         if (children == null) {
-            children = new HashMap<>();
+            children = new LinkedHashMap<>();
         }
         children.put(node.getId(), node);
     }
@@ -77,7 +76,7 @@ public class TreeNode<K, T> {
         return parent;
     }
 
-    public Map<K, TreeNode<K, T>> getChildren() {
+    public LinkedHashMap<K, TreeNode<K, T>> getChildren() {
         return children;
     }
 

@@ -459,7 +459,7 @@ public class ClientProcessorForJava {
      */
     public void updateClientDetailsTable(Event event, Client client) {
         try {
-            Log.i(TAG, "Started updateClientDetailsTable");
+            Log.d(TAG, "Started updateClientDetailsTable");
 
             String baseEntityId = client.getBaseEntityId();
             Long timestamp = getEventDate(event.getEventDate());
@@ -478,7 +478,7 @@ public class ClientProcessorForJava {
 
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
 
-            Log.i(TAG, "Finished updateClientDetailsTable");
+            Log.d(TAG, "Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
@@ -772,7 +772,7 @@ public class ClientProcessorForJava {
 
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
-        Log.i(TAG, "Starting updateFTSsearch table: " + tableName);
+        Log.d(TAG, "Starting updateFTSsearch table: " + tableName);
         AllCommonsRepository allCommonsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 allCommonsRepositoryobjects(tableName);
 
@@ -781,7 +781,7 @@ public class ClientProcessorForJava {
             updateRegisterCount(entityId);
         }
 
-        Log.i(TAG, "Finished updateFTSsearch table: " + tableName);
+        Log.d(TAG, "Finished updateFTSsearch table: " + tableName);
     }
 
     protected void updateRegisterCount(String entityId) {

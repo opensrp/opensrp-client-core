@@ -1,6 +1,6 @@
 package org.smartregister.domain.jsonmapping.util;
 
-public class Location {
+public class TeamLocation {
 
     public String uuid;
 
