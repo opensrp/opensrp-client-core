@@ -43,10 +43,10 @@ import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
-import org.opensrp.api.domain.Location;
-import org.opensrp.api.util.TreeNode;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.util.TreeNode;
 
 import java.io.BufferedReader;
 import java.io.IOException;

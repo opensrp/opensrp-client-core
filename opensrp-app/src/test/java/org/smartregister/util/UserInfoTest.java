@@ -8,11 +8,10 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensrp.api.domain.Location;
-import org.opensrp.api.domain.User;
-import org.opensrp.api.util.EntityUtils;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.User;
 
 import java.util.Map;
 
@@ -38,10 +37,10 @@ public class UserInfoTest {
 
     @Test
     public void shouldAbleToReadUserInfo() {
-        Map<String, String> tree = EntityUtils.fromJson(responseJSON, Map.class);
+        Map<String, String> tree = AssetHandler.jsonStringToJava(responseJSON, Map.class);
         String userJSONString = new Gson().toJson(tree.get("user"));
 
-        User user = EntityUtils.fromJson(userJSONString, User.class);
+        User user = AssetHandler.jsonStringToJava(userJSONString, User.class);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getUsername(), "admin");
@@ -52,10 +51,10 @@ public class UserInfoTest {
 
     @Test
     public void shouldAbleToReadUserLocation() {
-        Map<String, String> tree = EntityUtils.fromJson(responseJSON, Map.class);
+        Map<String, String> tree = AssetHandler.jsonStringToJava(responseJSON, Map.class);
         String userLocationJSONString = new Gson().toJson(tree.get("teamLocation"));
 
-        Location user = EntityUtils.fromJson(userLocationJSONString, Location.class);
+        Location user = AssetHandler.jsonStringToJava(userLocationJSONString, Location.class);
 
         Assert.assertNotNull(user);
         Assert.assertEquals(user.getName(), "testloc");

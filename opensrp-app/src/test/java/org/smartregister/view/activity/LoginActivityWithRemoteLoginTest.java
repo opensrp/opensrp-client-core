@@ -28,6 +28,7 @@ import org.smartregister.R;
 import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.AlarmManagerShadow;
@@ -126,7 +127,7 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
     public void remoteLoginTest() {
         when(userService.hasARegisteredUser()).thenReturn(false);
         when(userService.isValidLocalLogin(anyString(), anyString())).thenReturn(true);
-        when(userService.isValidRemoteLogin(anyString(), anyString())).thenReturn(LoginResponse.SUCCESS);
+        when(userService.isValidRemoteLogin(anyString(), anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(new LoginResponseData()));
         when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchBaseURL(anyString())).thenReturn("base url");
         EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
@@ -135,8 +136,9 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
         password.setText("password");
         Button login_button = (Button) activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
-        Mockito.verify(userService, Mockito.atLeastOnce()).remoteLogin(anyString(), anyString(), isNull(String.class));
+        Mockito.verify(userService, Mockito.atLeastOnce()).remoteLogin(anyString(), anyString(), any(LoginResponseData.class));
         destroyController();
+
 
     }
 

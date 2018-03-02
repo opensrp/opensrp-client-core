@@ -8,10 +8,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.EditText;
 
-import org.opensrp.api.domain.Location;
-import org.opensrp.api.util.EntityUtils;
-import org.opensrp.api.util.LocationTree;
-import org.opensrp.api.util.TreeNode;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObjectController;
@@ -20,7 +16,11 @@ import org.smartregister.cursoradapter.CursorCommonObjectFilterOption;
 import org.smartregister.cursoradapter.SecuredNativeSmartRegisterCursorAdapterFragment;
 import org.smartregister.cursoradapter.SmartRegisterPaginatedCursorAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
+import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.AssetHandler;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -106,7 +106,7 @@ public class HouseHoldSmartRegisterFragment extends SecuredNativeSmartRegisterCu
                 dialogOptionslist.add(new CursorCommonObjectFilterOption(getString(R.string.filter_by_all_label), filterStringForAll()));
 
                 String locationjson = context().anmLocationController().get();
-                LocationTree locationTree = EntityUtils.fromJson(locationjson, LocationTree.class);
+                LocationTree locationTree = AssetHandler.jsonStringToJava(locationjson, LocationTree.class);
 
                 Map<String, TreeNode<String, Location>> locationMap =
                         locationTree.getLocationsHierarchy();
