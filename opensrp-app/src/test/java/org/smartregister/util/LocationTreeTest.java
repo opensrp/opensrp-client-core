@@ -8,11 +8,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.opensrp.api.domain.Location;
-import org.opensrp.api.util.EntityUtils;
-import org.opensrp.api.util.LocationTree;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
 
 /**
  * Created by Dimas Ciputra on 3/23/15.
@@ -30,14 +29,14 @@ public class LocationTreeTest {
 
     @Test
     public void shouldShowLocationTree() throws Exception {
-        locationTree = EntityUtils.fromJson(locationJSONString, LocationTree.class);
+        locationTree = AssetHandler.jsonStringToJava(locationJSONString, LocationTree.class);
         Assert.assertNotNull(locationTree);
         System.out.println("shouldShowLocationTree " + new Gson().toJson(locationTree));
     }
 
     @Test
     public void shouldFoundALocation() throws Exception {
-        locationTree = EntityUtils.fromJson(locationJSONString, LocationTree.class);
+        locationTree = AssetHandler.jsonStringToJava(locationJSONString, LocationTree.class);
         Location l = locationTree.findLocation("765cb701-9e61-4ead-afb9-a63c943f4f14");
         Assert.assertNotNull(l);
         Assert.assertEquals(l.getName(), "testloc4");

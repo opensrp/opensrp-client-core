@@ -6,18 +6,22 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
+import org.smartregister.domain.jsonmapping.Time;
+import org.smartregister.domain.jsonmapping.User;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
+import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -52,7 +56,6 @@ import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
-    private static final String TIME = "time";
     private static final String TAG = UserService.class.getCanonicalName();
     private static final String KEYSTORE = "AndroidKeyStore";
     private static final String CIPHER = "RSA/ECB/PKCS1Padding";
@@ -97,13 +100,14 @@ public class UserService {
         return Calendar.getInstance().getTime();
     }
 
-    public static TimeZone getServerTimeZone(String userInfo) {
+    public static TimeZone getServerTimeZone(LoginResponseData userInfo) {
         if (userInfo != null) {
             try {
-                JSONObject userInfoData = new JSONObject(userInfo);
-                TimeZone timeZone = TimeZone.getTimeZone(userInfoData.getJSONObject(TIME).
-                        getString("timeZone"));
-                return timeZone;
+                Time time = userInfo.time;
+                if (time != null) {
+                    TimeZone timeZone = TimeZone.getTimeZone(time.getTimeZone());
+                    return timeZone;
+                }
             } catch (Exception e) {
                 Log.e(TAG, Log.getStackTraceString(e));
             }
@@ -112,11 +116,13 @@ public class UserService {
         return null;
     }
 
-    private static Date getServerTime(String userInfo) {
+    private static Date getServerTime(LoginResponseData userInfo) {
         if (userInfo != null) {
             try {
-                JSONObject userInfoData = new JSONObject(userInfo);
-                return DATE_FORMAT.parse(userInfoData.getJSONObject(TIME).getString(TIME));
+                Time time = userInfo.time;
+                if (time != null) {
+                    return DATE_FORMAT.parse(time.getTime());
+                }
             } catch (Exception e) {
                 Log.e(TAG, Log.getStackTraceString(e));
             }
@@ -160,7 +166,7 @@ public class UserService {
         return result;
     }
 
-    private void saveServerTimeZone(String userInfo) {
+    private void saveServerTimeZone(LoginResponseData userInfo) {
         TimeZone serverTimeZone = getServerTimeZone(userInfo);
         String timeZoneId = null;
         if (serverTimeZone != null) {
@@ -170,7 +176,7 @@ public class UserService {
         allSharedPreferences.saveServerTimeZone(timeZoneId);
     }
 
-    public TimeStatus validateDeviceTime(String userInfo, long serverTimeThreshold) {
+    public TimeStatus validateDeviceTime(LoginResponseData userInfo, long serverTimeThreshold) {
         TimeZone serverTimeZone = getServerTimeZone(userInfo);
         TimeZone deviceTimeZone = getDeviceTimeZone();
         Date serverTime = getServerTime(userInfo);
@@ -285,7 +291,10 @@ public class UserService {
 
         LoginResponse loginResponse = httpAgent
                 .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
-        saveUserGroup(userName, password, loginResponse.payload());
+
+        if (loginResponse.equals(LoginResponse.SUCCESS)) {
+            saveUserGroup(userName, password, loginResponse.payload());
+        }
 
         return loginResponse;
     }
@@ -340,7 +349,7 @@ public class UserService {
         loginWith(userName, password);
     }
 
-    public void remoteLogin(String userName, String password, String userInfo) {
+    public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
         allSharedPreferences.saveForceRemoteLogin(false);
         loginWith(userName, password);
         saveAnmLocation(getUserLocation(userInfo));
@@ -356,34 +365,37 @@ public class UserService {
         allSharedPreferences.saveForceRemoteLogin(true);
     }
 
-    public String getUserData(String userInfo) {
+    public User getUserData(LoginResponseData userInfo) {
         try {
-            JSONObject userInfoJson = new JSONObject(userInfo);
-            return userInfoJson.getString("user");
-        } catch (JSONException e) {
+            if (userInfo != null) {
+                return userInfo.user;
+            }
+        } catch (Exception e) {
             Log.v("Error : ", e.getMessage());
-            return null;
         }
+        return null;
     }
 
-    public String getUserLocation(String userInfo) {
+    public LocationTree getUserLocation(LoginResponseData userInfo) {
         try {
-            JSONObject userLocationJSON = new JSONObject(userInfo);
-            return userLocationJSON.getString("locations");
-        } catch (JSONException e) {
+            if (userInfo != null) {
+                return userInfo.locations;
+            }
+        } catch (Exception e) {
             Log.v("Error : ", e.getMessage());
-            return null;
         }
+        return null;
     }
 
-    public String getUserTeam(String userInfo) {
+    public TeamMember getUserTeam(LoginResponseData userInfo) {
         try {
-            JSONObject userLocationJSON = new JSONObject(userInfo);
-            return userLocationJSON.getString("team");
-        } catch (JSONException e) {
+            if (userInfo != null) {
+                return userInfo.team;
+            }
+        } catch (Exception e) {
             Log.v("Error : ", e.getMessage());
-            return null;
         }
+        return null;
     }
 
     public void saveDefaultLocationId(String userName, String locationId) {
@@ -392,14 +404,14 @@ public class UserService {
         }
     }
 
-    public String getUserDefaultTeam(String userInfo) {
+    public String getUserDefaultTeam(LoginResponseData userInfo) {
         try {
-            JSONObject userInfoJSON = new JSONObject(userInfo);
-            return userInfoJSON.getJSONObject("team").getJSONObject("team").getString("teamName");
-        } catch (JSONException e) {
+            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
+                return userInfo.team.team.teamName;
+            }
+        } catch (Exception e) {
             Log.v("Error : ", e.getMessage());
         }
-
         return null;
     }
 
@@ -409,11 +421,12 @@ public class UserService {
         }
     }
 
-    public String getUserDefaultTeamId(String userInfo) {
+    public String getUserDefaultTeamId(LoginResponseData userInfo) {
         try {
-            JSONObject userInfoJSON = new JSONObject(userInfo);
-            return userInfoJSON.getJSONObject("team").getJSONObject("team").getString("uuid");
-        } catch (JSONException e) {
+            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
+                return userInfo.team.team.uuid;
+            }
+        } catch (Exception e) {
             Log.v("Error : ", e.getMessage());
         }
 
@@ -426,39 +439,40 @@ public class UserService {
         }
     }
 
-    public String getUserDefaultLocationId(String userInfo) {
+    public String getUserDefaultLocationId(LoginResponseData userInfo) {
         try {
-            JSONObject userLocationJSON = new JSONObject(userInfo);
-            return userLocationJSON.getJSONObject("team").getJSONObject("team")
-                    .getJSONObject("location").getString("uuid");
-        } catch (JSONException e) {
+            if (userInfo != null && userInfo.team != null && userInfo.team.team != null && userInfo.team.team.location != null) {
+                return userInfo.team.team.location.uuid;
+            }
+        } catch (Exception e) {
             Log.v("Error : ", e.getMessage());
         }
-
         return null;
     }
 
-    public void saveAnmLocation(String anmLocation) {
-        saveANMLocationTask.save(anmLocation);
+    public void saveAnmLocation(LocationTree anmLocation) {
+        String amnLocationString = AssetHandler.javaToJsonString(anmLocation);
+        saveANMLocationTask.save(amnLocationString);
     }
 
-    public void saveAnmTeam(String anmTeam) {
-        saveANMTeamTask.save(anmTeam);
+    public void saveAnmTeam(TeamMember anmTeam) {
+        String anmTeamString = AssetHandler.javaToJsonString(anmTeam);
+        saveANMTeamTask.save(anmTeamString);
     }
 
-    public void saveUserInfo(String userInfo) {
+    public void saveUserInfo(User user) {
         try {
-            JSONObject userInfoObject = new JSONObject(userInfo);
-            if (userInfoObject.has("preferredName")) {
-                String preferredName = userInfoObject.getString("preferredName");
-                String userName = userInfoObject.getString("username");
+            if (user != null && user.getPreferredName() != null) {
+                String preferredName = user.getPreferredName();
+                String userName = user.getUsername();
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
         }
 
-        saveUserInfoTask.save(userInfo);
+        String userInfoString = AssetHandler.javaToJsonString(user);
+        saveUserInfoTask.save(userInfoString);
     }
 
     /**
@@ -470,30 +484,23 @@ public class UserService {
      * @param userInfo The user's info from the
      *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
-    public void saveUserGroup(String userName, String password, String userInfo) {
+    public void saveUserGroup(String userName, String password, LoginResponseData userInfo) {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
-                if (privateKeyEntry != null) {
-                    JSONObject userInfoObject = new JSONObject(userInfo);
-                    if (userInfoObject.has("team") && userInfoObject.getJSONObject("team")
-                            .has("team") && userInfoObject.getJSONObject("team")
-                            .getJSONObject("team").
-                                    has("uuid")) {
-                        // First save the encrypted password
-                        String encryptedPassword = encryptString(privateKeyEntry, password);
-                        allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
+                if (privateKeyEntry != null && userInfo.team != null && userInfo.team.team != null && userInfo.team.team.uuid != null) {
+                    // First save the encrypted password
+                    String encryptedPassword = encryptString(privateKeyEntry, password);
+                    allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
 
-                        // Then save the encrypted group
-                        String groupId = userInfoObject.getJSONObject("team").getJSONObject("team")
-                                .getString("uuid");
-                        String encryptedGroupId = encryptString(privateKeyEntry, groupId);
-                        allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
+                    // Then save the encrypted group
+                    String groupId = userInfo.team.team.uuid;
+                    String encryptedGroupId = encryptString(privateKeyEntry, groupId);
+                    allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 
-                        // Finally, save the pioneer user
-                        if (allSharedPreferences.fetchPioneerUser() == null) {
-                            allSharedPreferences.savePioneerUser(userName);
-                        }
+                    // Finally, save the pioneer user
+                    if (allSharedPreferences.fetchPioneerUser() == null) {
+                        allSharedPreferences.savePioneerUser(userName);
                     }
                 }
             } catch (Exception e) {

@@ -1,19 +1,22 @@
 package org.smartregister.util;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.http.HeaderElement;
 import org.apache.http.HttpResponse;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.zip.GZIPInputStream;
 
 import static java.text.MessageFormat.format;
 import static org.smartregister.util.Log.logError;
 
 public class HttpResponseUtil {
-    public static InputStream getResponseStream(HttpResponse response) throws IOException {
+    public static InputStream getResponseStream(HttpResponse response) throws IOException, ParseException {
         if (response.getEntity() != null && response.getEntity().getContentEncoding() != null) {
             HeaderElement[] codecs = response.getEntity().getContentEncoding().getElements();
             for (HeaderElement codec : codecs) {
@@ -25,14 +28,18 @@ public class HttpResponseUtil {
         return response.getEntity().getContent();
     }
 
-    public static String getResponseBody(HttpResponse response) {
+    public static LoginResponseData getResponseBody(HttpResponse response) {
         try {
             InputStream responseStream = getResponseStream(response);
-            return IOUtils.toString(responseStream);
-        } catch (IOException e) {
-            logError(format("Cannot read anm location from response due to exception: {0}. Stack "
+            String responseString = IOUtils.toString(responseStream);
+            if (StringUtils.isBlank(responseString)) {
+                return null;
+            }
+            return AssetHandler.jsonStringToJava(responseString, LoginResponseData.class);
+        } catch (Exception e) {
+            logError(format("Cannot read data from response due to exception: {0}. Stack "
                     + "" + "" + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
         }
-        return "";
+        return null;
     }
 }

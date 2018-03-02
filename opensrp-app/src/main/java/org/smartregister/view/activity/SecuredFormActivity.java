@@ -118,7 +118,7 @@ public abstract class SecuredFormActivity extends SecuredWebActivity {
         @Override
         public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions
                 .Callback callback) {
-            // Always grant permission since the app itself requires location
+            // Always grant permission since the app itself requires teamLocation
             // permission and the user has therefore already granted it
             callback.invoke(origin, true, false);
         }

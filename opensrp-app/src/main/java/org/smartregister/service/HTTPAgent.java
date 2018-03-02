@@ -34,6 +34,7 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
@@ -44,9 +45,11 @@ import org.smartregister.util.HttpResponseUtil;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
+import static org.smartregister.domain.LoginResponse.EMPTY_REPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
@@ -161,7 +164,12 @@ public class HTTPAgent {
             HttpResponse response = httpClient.execute(new HttpGet(requestURL));
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
-                return SUCCESS.withPayload(getResponseBody(response));
+                LoginResponseData responseData = getResponseBody(response);
+                if (responseData == null) {
+                    logError("Empty Response using " + requestURL);
+                    return EMPTY_REPONSE;
+                }
+                return SUCCESS.withPayload(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 logError("Invalid credentials for: " + userName + " using " + requestURL);
                 return UNAUTHORIZED;
@@ -201,7 +209,7 @@ public class HTTPAgent {
         try {
             String responseContent = IOUtils.toString(httpClient.fetchContent(new HttpGet(uri)));
             return new Response<>(ResponseStatus.success, responseContent);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             logError("Failed to fetch unique id");
             return new Response<>(ResponseStatus.failure, null);
         }
