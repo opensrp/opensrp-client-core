@@ -1,7 +1,5 @@
 package org.smartregister.util;
 
-import android.content.Context;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -12,7 +10,6 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.zip.GZIPInputStream;
 
 import static java.text.MessageFormat.format;

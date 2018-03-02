@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class LocationTree {
 
-    Tree<String, Location> locationsHierarchy;
+    private Tree<String, Location> locationsHierarchy;
 
     public LocationTree() {
         this.locationsHierarchy = new Tree<String, Location>();

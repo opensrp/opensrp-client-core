@@ -80,15 +80,15 @@ public class TreeNode<K, T> {
         return children;
     }
 
-    void setLabel(String label) {
+    public void setLabel(String label) {
         this.label = label;
     }
 
-    void setNode(T node) {
+    public void setNode(T node) {
         this.node = node;
     }
 
-    void setParent(K parent) {
+    public void setParent(K parent) {
         this.parent = parent;
     }
 }

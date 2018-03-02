@@ -488,21 +488,19 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
-                if (privateKeyEntry != null) {
-                    if (userInfo.team != null && userInfo.team.team != null && userInfo.team.team.uuid != null) {
-                        // First save the encrypted password
-                        String encryptedPassword = encryptString(privateKeyEntry, password);
-                        allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
+                if (privateKeyEntry != null && userInfo.team != null && userInfo.team.team != null && userInfo.team.team.uuid != null) {
+                    // First save the encrypted password
+                    String encryptedPassword = encryptString(privateKeyEntry, password);
+                    allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
 
-                        // Then save the encrypted group
-                        String groupId = userInfo.team.team.uuid;
-                        String encryptedGroupId = encryptString(privateKeyEntry, groupId);
-                        allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
+                    // Then save the encrypted group
+                    String groupId = userInfo.team.team.uuid;
+                    String encryptedGroupId = encryptString(privateKeyEntry, groupId);
+                    allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 
-                        // Finally, save the pioneer user
-                        if (allSharedPreferences.fetchPioneerUser() == null) {
-                            allSharedPreferences.savePioneerUser(userName);
-                        }
+                    // Finally, save the pioneer user
+                    if (allSharedPreferences.fetchPioneerUser() == null) {
+                        allSharedPreferences.savePioneerUser(userName);
                     }
                 }
             } catch (Exception e) {

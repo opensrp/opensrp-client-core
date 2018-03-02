@@ -28,7 +28,7 @@ public class User extends BaseEntity {
 
     private String preferredName;
 
-    protected User() {
+    public User() {
 
     }
 
@@ -129,20 +129,6 @@ public class User extends BaseEntity {
                     return true;
                 }
             }
-        return false;
-    }
-
-    public boolean isDefaultAdmin() {
-        if ((username.equalsIgnoreCase("admin") || username.equalsIgnoreCase("administrator")) && (hasRole("admin") || hasRole("administrator"))) {
-            return true;
-        }
-        return false;
-    }
-
-    public boolean hasAdminRights() {
-        if (isDefaultAdmin() || hasRole("admin") || hasRole("administrator")) {
-            return true;
-        }
         return false;
     }
 

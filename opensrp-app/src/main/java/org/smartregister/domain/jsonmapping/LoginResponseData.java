@@ -3,8 +3,6 @@ package org.smartregister.domain.jsonmapping;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 
-import java.util.Map;
-
 /**
  * Created by keyman on 2/28/2018.
  */

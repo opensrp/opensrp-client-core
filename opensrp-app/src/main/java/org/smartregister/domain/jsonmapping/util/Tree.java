@@ -5,8 +5,8 @@ import java.util.LinkedHashSet;
 
 public class Tree<K, T> {
 
-    LinkedHashMap<K, TreeNode<K, T>> map;
-    LinkedHashMap<K, LinkedHashSet<K>> parentChildren;
+    private LinkedHashMap<K, TreeNode<K, T>> map;
+    private LinkedHashMap<K, LinkedHashSet<K>> parentChildren;
 
     public LinkedHashMap<K, TreeNode<K, T>> getTree() {
         return map;
@@ -97,7 +97,7 @@ public class Tree<K, T> {
         return null;
     }
 
-    TreeNode<K, T> removeNode(K id) {
+    private TreeNode<K, T> removeNode(K id) {
         // Check if id is any root node
         if (map.containsKey(id)) {
             return map.remove(id);

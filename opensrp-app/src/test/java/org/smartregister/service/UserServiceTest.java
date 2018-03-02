@@ -20,6 +20,7 @@ import org.smartregister.repository.Repository;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -75,7 +76,7 @@ public class UserServiceTest {
 
     @Test
     public void shouldUseHttpAgentToDoRemoteLoginCheck() {
-        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload("{}");
+        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload(null);
         when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
         String httpAuthenticateUrl = "http://dristhi_base_url/security/authenticate";
         String user = "user";
@@ -100,12 +101,18 @@ public class UserServiceTest {
 
     @Test
     public void shouldSaveUserInformationRemoteLoginIsSuccessful() {
-        userService.saveUserInfo("user info");
-        verify(saveUserInfoTask).save("user info");
+        org.smartregister.domain.jsonmapping.User user = new org.smartregister.domain.jsonmapping.User();
+        user.setPreferredName("Test");
+        userService.saveUserInfo(user);
+
+        String userInfoString = AssetHandler.javaToJsonString(user);
+        verify(saveUserInfoTask).save(userInfoString);
     }
 
     @Test
     public void shouldSaveANMLocation() {
+        org.smartregister.domain.jsonmapping.util.LocationTree locationTree = new org.smartregister.domain.jsonmapping.util.LocationTree();
+        locationTree.addLocation();
         userService.saveAnmLocation("anm teamLocation");
         verify(saveANMLocationTask).save("anm teamLocation");
     }
