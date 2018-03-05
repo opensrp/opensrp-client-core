@@ -84,7 +84,6 @@ public class HTTPAgent {
         BasicHttpParams basicHttpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
-        HttpConnectionParams.setStaleCheckingEnabled(basicHttpParams, true);
 
         ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
 
