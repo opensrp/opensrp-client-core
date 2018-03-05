@@ -62,7 +62,7 @@ import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
     private static final String TAG = HTTPAgent.class.getCanonicalName();
-    private final GZipEncodingHttpClient httpClient;
+    private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
@@ -77,6 +77,10 @@ public class HTTPAgent {
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
 
+        setupHttpClient();
+    }
+
+    public void setupHttpClient() {
         BasicHttpParams basicHttpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
