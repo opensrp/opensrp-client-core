@@ -81,6 +81,10 @@ public class AlertService {
         updateFtsSearchAfterStatusChange(entityId, alertName);
     }
 
+    public void deleteAlert(String entityId, String visitCode) {
+        repository.deleteVaccineAlertForEntity(entityId, visitCode);
+    }
+
     public void deleteOfflineAlerts(String entityId) {
         repository.deleteOfflineAlertsForEntity(entityId);
     }

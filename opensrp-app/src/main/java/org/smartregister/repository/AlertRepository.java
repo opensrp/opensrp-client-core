@@ -112,6 +112,12 @@ public class AlertRepository extends DrishtiRepository {
                 caseAndVisitCodeColumnValues);
     }
 
+    public void deleteVaccineAlertForEntity(String caseId, String visitCode) {
+        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + " = ? AND " + ALERTS_VISIT_CODE_COLUMN + " = ? "
+                , new String[]{caseId, visitCode});
+    }
+
     public void deleteAllAlertsForEntity(String caseId) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         database.delete(ALERTS_TABLE_NAME, ALERTS_CASEID_COLUMN + "= ?  COLLATE NOCASE ",
