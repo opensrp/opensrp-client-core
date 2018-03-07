@@ -216,7 +216,7 @@ public class JsonFormUtils {
                     ad.setEndDate(DateUtil.parseDate(value));
                 } else if (addressField.equalsIgnoreCase("latitude")) {
                     ad.setLatitude(value);
-                } else if (addressField.equalsIgnoreCase("longitute")) {
+                } else if (addressField.equalsIgnoreCase("longitude")) {
                     ad.setLongitude(value);
                 } else if (addressField.equalsIgnoreCase("geopoint")) {
                     // example geopoint 34.044494 -84.695704 4 76 = lat lon alt prec
@@ -385,7 +385,7 @@ public class JsonFormUtils {
                     ad.setEndDate(DateUtil.parseDate(value));
                 } else if (addressField.equalsIgnoreCase("latitude")) {
                     ad.setLatitude(value);
-                } else if (addressField.equalsIgnoreCase("longitute")) {
+                } else if (addressField.equalsIgnoreCase("longitude")) {
                     ad.setLongitude(value);
                 } else if (addressField.equalsIgnoreCase("geopoint")) {
                     // example geopoint 34.044494 -84.695704 4 76 = lat lon alt prec

@@ -19,7 +19,7 @@ public class SaveANMLocationTask {
 
             @Override
             public void setInvisible() {
-                Log.logInfo("Successfully saved ANM Location information");
+                Log.logInfo("Successfully saved ANM TeamLocation information");
             }
         });
     }

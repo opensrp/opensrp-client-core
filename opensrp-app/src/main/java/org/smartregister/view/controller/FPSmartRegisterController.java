@@ -46,7 +46,7 @@ public class FPSmartRegisterController {
 
     public FPSmartRegisterController(AllEligibleCouples allEligibleCouples, AllBeneficiaries
             allBeneficiaries, AlertService alertService, Cache<String> cache, Cache<FPClients>
-            fpClientsCache) {
+                                             fpClientsCache) {
         this.allEligibleCouples = allEligibleCouples;
         this.allBeneficiaries = allBeneficiaries;
         this.alertService = alertService;

@@ -1,27 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/txt_status_type"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/str_pnc"
-            style="@style/CustomFontTextViewStyle.ListView.Medium"/>
+        android:id="@+id/txt_status_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/str_pnc"
+        style="@style/CustomFontTextViewStyle.ListView.Medium" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/status_delivery"
-            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/status_delivery"
+        style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/txt_status_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/CustomFontTextViewStyle.ListView.Normal"/>
+        android:id="@+id/txt_status_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="@style/CustomFontTextViewStyle.ListView.Normal" />
 </LinearLayout>
     

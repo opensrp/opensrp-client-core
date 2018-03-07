@@ -11,10 +11,10 @@ import android.widget.LinearLayout;
 import com.google.common.base.Strings;
 
 import org.json.JSONObject;
-import org.opensrp.api.domain.Location;
-import org.opensrp.api.util.EntityUtils;
-import org.opensrp.api.util.LocationTree;
 import org.smartregister.R;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
+import org.smartregister.util.AssetHandler;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 
 import java.util.Map;
@@ -37,7 +37,7 @@ public class LocationSelectorDialogFragment extends DialogFragment {
 
     public static LocationSelectorDialogFragment newInstance(SecuredNativeSmartRegisterActivity
                                                                      activity, DialogOptionModel
-            dialogOptionModel, String locationJSONString, String formname) {
+                                                                     dialogOptionModel, String locationJSONString, String formname) {
 
         LocationSelectorDialogFragment lsd = new LocationSelectorDialogFragment();
         Bundle bundle = new Bundle(2);
@@ -70,10 +70,9 @@ public class LocationSelectorDialogFragment extends DialogFragment {
         ViewGroup dialogView = new LinearLayout(getActivity());
         TreeNode root = TreeNode.root();
 
-        LocationTree locationTree = EntityUtils
-                .fromJson(getArguments().getString(LocationJSONString), LocationTree.class);
+        LocationTree locationTree = AssetHandler.jsonStringToJava(getArguments().getString(LocationJSONString), LocationTree.class);
 
-        Map<String, org.opensrp.api.util.TreeNode<String, Location>> locationMap = locationTree
+        Map<String, org.smartregister.domain.jsonmapping.util.TreeNode<String, Location>> locationMap = locationTree
                 .getLocationsHierarchy();
 
         // creating the tree
@@ -136,10 +135,10 @@ public class LocationSelectorDialogFragment extends DialogFragment {
         });
     }
 
-    public void locationTreeToTreNode(TreeNode node, Map<String, org.opensrp.api.util
-            .TreeNode<String, Location>> location, String formName) {
+    public void locationTreeToTreNode(TreeNode node, Map<String,
+            org.smartregister.domain.jsonmapping.util.TreeNode<String, Location>> location, String formName) {
 
-        for (Map.Entry<String, org.opensrp.api.util.TreeNode<String, Location>> entry : location
+        for (Map.Entry<String, org.smartregister.domain.jsonmapping.util.TreeNode<String, Location>> entry : location
                 .entrySet()) {
             String locationTag = entry.getValue().getNode().getTags().iterator().next();
             TreeNode tree = createNode(

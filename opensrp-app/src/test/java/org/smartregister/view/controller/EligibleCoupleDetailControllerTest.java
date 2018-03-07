@@ -5,10 +5,13 @@ import android.content.Context;
 import com.google.gson.Gson;
 
 import org.joda.time.LocalDate;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.TimelineEvent;
@@ -20,17 +23,13 @@ import org.smartregister.view.contract.CoupleDetails;
 import org.smartregister.view.contract.ECDetail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-
-import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class EligibleCoupleDetailControllerTest {
     @Mock
-    Context context;
+    private Context context;
     @Mock
     private AllEligibleCouples allEligibleCouples;
     @Mock
@@ -41,7 +40,7 @@ public class EligibleCoupleDetailControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         DateUtil.fakeIt(new LocalDate(2012, 8, 1));
         controller = new EligibleCoupleDetailController(context, caseId, allEligibleCouples, allTimelineEvents);
     }
@@ -56,16 +55,16 @@ public class EligibleCoupleDetailControllerTest {
         details.put("ashaName", "Shiwani");
         details.put("isHighPriority", "1");
 
-        when(allEligibleCouples.findByCaseID(caseId)).thenReturn(new EligibleCouple("EC CASE 1", "Woman 1", "Husband 1", "EC Number 1", "Village 1", "Subcenter 1", details));
-        when(allTimelineEvents.forCase(caseId)).thenReturn(asList(pregnancyEvent, fpEvent, eventVeryCloseToCurrentDate));
+        Mockito.when(allEligibleCouples.findByCaseID(caseId)).thenReturn(new EligibleCouple("EC CASE 1", "Woman 1", "Husband 1", "EC Number 1", "Village 1", "Subcenter 1", details));
+        Mockito.when(allTimelineEvents.forCase(caseId)).thenReturn(Arrays.asList(pregnancyEvent, fpEvent, eventVeryCloseToCurrentDate));
 
         ECDetail expectedDetail = new ECDetail(caseId, "Village 1", "Subcenter 1", "EC Number 1", true, null, null, new ArrayList<Child>(), new CoupleDetails("Woman 1", "Husband 1", "EC Number 1", false), details)
-                .addTimelineEvents(asList(eventFor(eventVeryCloseToCurrentDate, "29-07-2012"), eventFor(fpEvent, "22-12-2011"), eventFor(pregnancyEvent, "21-10-2011")));
+                .addTimelineEvents(Arrays.asList(eventFor(eventVeryCloseToCurrentDate, "29-07-2012"), eventFor(fpEvent, "22-12-2011"), eventFor(pregnancyEvent, "21-10-2011")));
 
         String actualJson = controller.get();
         ECDetail actualDetail = new Gson().fromJson(actualJson, ECDetail.class);
 
-        assertEquals(expectedDetail, actualDetail);
+        Assert.assertEquals(expectedDetail, actualDetail);
     }
 
     private org.smartregister.view.contract.TimelineEvent eventFor(TimelineEvent pregnancyEvent, String expectedRelativeTime) {

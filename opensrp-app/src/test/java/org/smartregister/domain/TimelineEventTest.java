@@ -1,25 +1,13 @@
 package org.smartregister.domain;
 
 import org.joda.time.LocalDate;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.smartregister.util.EasyMap;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.assertTrue;
-import static org.smartregister.domain.TimelineEvent.forChildBirthInChildProfile;
-import static org.smartregister.domain.TimelineEvent.forChildBirthInECProfile;
-import static org.smartregister.domain.TimelineEvent.forChildBirthInMotherProfile;
-import static org.smartregister.domain.TimelineEvent.forChildImmunization;
-import static org.smartregister.domain.TimelineEvent.forDeliveryPlan;
-import static org.smartregister.domain.TimelineEvent.forFPCondomRenew;
-import static org.smartregister.domain.TimelineEvent.forFPDMPARenew;
-import static org.smartregister.domain.TimelineEvent.forFPIUDRenew;
-import static org.smartregister.domain.TimelineEvent.forFPOCPRenew;
-import static org.smartregister.util.EasyMap.create;
 
 public class TimelineEventTest {
 
@@ -46,14 +34,14 @@ public class TimelineEventTest {
     @Test
     public void shouldCreateTimelineEventForANCVisitWithDetails() throws Exception {
         TimelineEvent timelineEvent = TimelineEvent.forANCCareProvided("CASE A",
-                                                                       "1",
-                                                                       "2012-01-01",
-                                                                       detailsWithData);
+                "1",
+                "2012-01-01",
+                detailsWithData);
 
-        assertTrue(timelineEvent.detail1().contains("BP: 120/80"));
-        assertTrue(timelineEvent.detail1().contains("Temp: 98 °F"));
-        assertTrue(timelineEvent.detail1().contains("Weight: 48 kg"));
-        assertTrue(timelineEvent.detail1().contains("Hb Level: 11"));
+        Assert.assertTrue(timelineEvent.detail1().contains("BP: 120/80"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Temp: 98 °F"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Weight: 48 kg"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Hb Level: 11"));
     }
 
     @Test
@@ -61,11 +49,11 @@ public class TimelineEventTest {
             () throws
             Exception {
         TimelineEvent timelineEvent = TimelineEvent.forStartOfPregnancy("CASE A",
-                                                                        "2012-01-02",
-                                                                        "2012-01-01");
+                "2012-01-02",
+                "2012-01-01");
 
-        assertEquals(LocalDate.parse("2012-01-02"), timelineEvent.referenceDate());
-        assertTrue(timelineEvent.detail1().contains("LMP Date: 01-01-2012"));
+        Assert.assertEquals(LocalDate.parse("2012-01-02"), timelineEvent.referenceDate());
+        Assert.assertTrue(timelineEvent.detail1().contains("LMP Date: 01-01-2012"));
     }
 
     @Test
@@ -73,42 +61,42 @@ public class TimelineEventTest {
     shouldCreateTimelineEventForStartOfPregnancyForECWithReferenceDateAndRegistrationDate() throws
             Exception {
         TimelineEvent timelineEvent = TimelineEvent.forStartOfPregnancyForEC("CASE A",
-                                                                             "1234567",
-                                                                             "2012-01-02",
-                                                                             "2012-01-01");
+                "1234567",
+                "2012-01-02",
+                "2012-01-01");
 
-        assertEquals(LocalDate.parse("2012-01-02"), timelineEvent.referenceDate());
-        assertTrue(timelineEvent.detail1().contains("LMP Date: 01-01-2012"));
+        Assert.assertEquals(LocalDate.parse("2012-01-02"), timelineEvent.referenceDate());
+        Assert.assertTrue(timelineEvent.detail1().contains("LMP Date: 01-01-2012"));
     }
 
     @Test
     public void shouldCreateTimelineEventForANCVisitExcludingThoseDetailsWhichDoNotHaveValue()
-    throws
+            throws
             Exception {
         TimelineEvent timelineEvent = TimelineEvent.forANCCareProvided("CASE A",
-                                                                       "1",
-                                                                       "2012-01-01",
-                                                                       detailsWithoutData);
+                "1",
+                "2012-01-01",
+                detailsWithoutData);
 
-        assertFalse(timelineEvent.detail1().contains("BP:"));
-        assertFalse(timelineEvent.detail1().contains("Temp:"));
-        assertFalse(timelineEvent.detail1().contains("Weight:"));
-        assertFalse(timelineEvent.detail1().contains("Hb Level:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("BP:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Temp:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Weight:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Hb Level:"));
     }
 
     @Test
     public void shouldCreateTimelineEventForMotherPNCVisitWithDetails() throws Exception {
         TimelineEvent timelineEvent = TimelineEvent.forMotherPNCVisit("CASE A",
-                                                                      "1",
-                                                                      "2012-01-01",
-                                                                      "120",
-                                                                      "80",
-                                                                      "98",
-                                                                      "11");
+                "1",
+                "2012-01-01",
+                "120",
+                "80",
+                "98",
+                "11");
 
-        assertTrue(timelineEvent.detail1().contains("BP: 120/80"));
-        assertTrue(timelineEvent.detail1().contains("Temp: 98 °F"));
-        assertTrue(timelineEvent.detail1().contains("Hb Level: 11"));
+        Assert.assertTrue(timelineEvent.detail1().contains("BP: 120/80"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Temp: 98 °F"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Hb Level: 11"));
     }
 
     @Test
@@ -116,28 +104,28 @@ public class TimelineEventTest {
     shouldCreateTimelineEventForMotherPNCVisitExcludingThoseDetailsWhichDoNotHaveValue() throws
             Exception {
         TimelineEvent timelineEvent = TimelineEvent.forMotherPNCVisit("CASE A",
-                                                                      "1",
-                                                                      "2012-01-01",
-                                                                      null,
-                                                                      null,
-                                                                      null,
-                                                                      null);
+                "1",
+                "2012-01-01",
+                null,
+                null,
+                null,
+                null);
 
-        assertFalse(timelineEvent.detail1().contains("BP:"));
-        assertFalse(timelineEvent.detail1().contains("Temp:"));
-        assertFalse(timelineEvent.detail1().contains("Hb Level:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("BP:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Temp:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Hb Level:"));
     }
 
     @Test
     public void shouldCreateTimelineEventForChildPNCVisitWithDetails() throws Exception {
         TimelineEvent timelineEvent = TimelineEvent.forChildPNCVisit("CASE A",
-                                                                     "1",
-                                                                     "2012-01-01",
-                                                                     "4",
-                                                                     "98");
+                "1",
+                "2012-01-01",
+                "4",
+                "98");
 
-        assertTrue(timelineEvent.detail1().contains("Temp: 98 °F"));
-        assertTrue(timelineEvent.detail1().contains("Weight: 4 kg"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Temp: 98 °F"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Weight: 4 kg"));
     }
 
     @Test
@@ -145,45 +133,45 @@ public class TimelineEventTest {
             () throws
             Exception {
         TimelineEvent timelineEvent = TimelineEvent.forChildPNCVisit("CASE A",
-                                                                     "1",
-                                                                     "2012-01-01",
-                                                                     null,
-                                                                     null);
+                "1",
+                "2012-01-01",
+                null,
+                null);
 
-        assertFalse(timelineEvent.detail1().contains("Temp:"));
-        assertFalse(timelineEvent.detail1().contains("Weight:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Temp:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Weight:"));
     }
 
     @Test
     public void shouldCreateTimelineEventForChildBirthInMotherProfileWithDetails() throws
             Exception {
-        TimelineEvent timelineEvent = forChildBirthInMotherProfile("CASE A",
-                                                                   "2012-08-01",
-                                                                   "male",
-                                                                   "2012-08-01",
-                                                                   "Govt Hospital");
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInMotherProfile("CASE A",
+                "2012-08-01",
+                "male",
+                "2012-08-01",
+                "Govt Hospital");
 
-        assertTrue(timelineEvent.detail1().contains("On: 01-08-2012"));
-        assertTrue(timelineEvent.detail1().contains("At: Govt Hospital"));
+        Assert.assertTrue(timelineEvent.detail1().contains("On: 01-08-2012"));
+        Assert.assertTrue(timelineEvent.detail1().contains("At: Govt Hospital"));
     }
 
     @Test
     public void shouldCreateTimelineEventWithTitleBasedOnSex() throws Exception {
-        TimelineEvent timelineEvent = forChildBirthInMotherProfile("CASE A",
-                                                                   "2012-08-01",
-                                                                   "male",
-                                                                   "2012-08-01",
-                                                                   "Govt Hospital");
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInMotherProfile("CASE A",
+                "2012-08-01",
+                "male",
+                "2012-08-01",
+                "Govt Hospital");
 
-        assertTrue(timelineEvent.title().contains("Boy Delivered"));
+        Assert.assertTrue(timelineEvent.title().contains("Boy Delivered"));
 
-        timelineEvent = forChildBirthInMotherProfile("CASE A",
-                                                     "2012-08-01",
-                                                     "female",
-                                                     "2012-08-01",
-                                                     "Govt Hospital");
+        timelineEvent = TimelineEvent.forChildBirthInMotherProfile("CASE A",
+                "2012-08-01",
+                "female",
+                "2012-08-01",
+                "Govt Hospital");
 
-        assertTrue(timelineEvent.title().contains("Girl Delivered"));
+        Assert.assertTrue(timelineEvent.title().contains("Girl Delivered"));
     }
 
     @Test
@@ -191,49 +179,49 @@ public class TimelineEventTest {
     shouldCreateTimelineEventForChildBirthInMotherProfileExcludingThoseDetailsWhichDoNotHaveValue
             () throws
             Exception {
-        TimelineEvent timelineEvent = forChildBirthInMotherProfile("CASE A",
-                                                                   "2012-01-01",
-                                                                   "male",
-                                                                   null,
-                                                                   null);
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInMotherProfile("CASE A",
+                "2012-01-01",
+                "male",
+                null,
+                null);
 
-        assertFalse(timelineEvent.detail1().contains("On:"));
-        assertFalse(timelineEvent.detail1().contains("At:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("On:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("At:"));
     }
 
     @Test
     public void shouldCreateTimelineEventForChildBirthInECProfileWithDetails() throws Exception {
-        TimelineEvent timelineEvent = forChildBirthInECProfile("CASE A",
-                                                               "2012-08-01",
-                                                               "male",
-                                                               "2012-08-01");
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInECProfile("CASE A",
+                "2012-08-01",
+                "male",
+                "2012-08-01");
 
-        assertTrue(timelineEvent.detail1().contains("On: 01-08-2012"));
+        Assert.assertTrue(timelineEvent.detail1().contains("On: 01-08-2012"));
     }
 
     @Test
     public void
     shouldCreateTimelineEventForChildBirthInECProfileExcludingThoseDetailsWhichDoNotHaveValue()
-    throws
+            throws
             Exception {
-        TimelineEvent timelineEvent = forChildBirthInMotherProfile("CASE A",
-                                                                   "2012-01-01",
-                                                                   "male",
-                                                                   null,
-                                                                   null);
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInMotherProfile("CASE A",
+                "2012-01-01",
+                "male",
+                null,
+                null);
 
-        assertFalse(timelineEvent.detail1().contains("On:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("On:"));
     }
 
     @Test
     public void shouldCreateTimelineEventForChildBirthInChildProfileWithDetails() throws Exception {
-        TimelineEvent timelineEvent = forChildBirthInChildProfile("CASE A",
-                                                                  "2012-08-01",
-                                                                  "4",
-                                                                  "bcg opv_0 hepb_0");
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInChildProfile("CASE A",
+                "2012-08-01",
+                "4",
+                "bcg opv_0 hepb_0");
 
-        assertTrue(timelineEvent.detail1().contains("Weight: 4 kg"));
-        assertTrue(timelineEvent.detail1().contains("Immunizations: BCG, OPV 0, HepB 0"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Weight: 4 kg"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Immunizations: BCG, OPV 0, HepB 0"));
     }
 
     @Test
@@ -241,93 +229,93 @@ public class TimelineEventTest {
     shouldCreateTimelineEventForChildBirthInChildProfileExcludingThoseDetailsWhichDoNotHaveValue
             () throws
             Exception {
-        TimelineEvent timelineEvent = forChildBirthInChildProfile("CASE A",
-                                                                  "2012-01-01",
-                                                                  null,
-                                                                  null);
+        TimelineEvent timelineEvent = TimelineEvent.forChildBirthInChildProfile("CASE A",
+                "2012-01-01",
+                null,
+                null);
 
-        assertFalse(timelineEvent.detail1().contains("Weight:"));
-        assertFalse(timelineEvent.detail1().contains("Immunizations:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Weight:"));
+        Assert.assertFalse(timelineEvent.detail1().contains("Immunizations:"));
     }
 
     @Test
     public void shouldCreateTimelineEventForUpdateImmunization() throws Exception {
-        TimelineEvent timelineEvent = forChildImmunization("CASE A", "bcg opv_0", "2012-08-01");
+        TimelineEvent timelineEvent = TimelineEvent.forChildImmunization("CASE A", "bcg opv_0", "2012-08-01");
 
-        assertTrue(timelineEvent.detail1().contains("BCG, OPV 0"));
+        Assert.assertTrue(timelineEvent.detail1().contains("BCG, OPV 0"));
     }
 
     @Test
     public void shouldCreateTimelineEventForFPCondomRenew() throws Exception {
-        Map<String, String> details = create("Key 1", "Value 1").put("currentMethod", "condom")
-                                                                .put("familyPlanningMethodChangeDate",
-                                                                     "2012-03-03")
-                                                                .put("fpUpdate", "renew_fp_product")
-                                                                .put("numberOfCondomsSupplied",
-                                                                     "30")
-                                                                .map();
+        Map<String, String> details = EasyMap.create("Key 1", "Value 1").put("currentMethod", "condom")
+                .put("familyPlanningMethodChangeDate",
+                        "2012-03-03")
+                .put("fpUpdate", "renew_fp_product")
+                .put("numberOfCondomsSupplied",
+                        "30")
+                .map();
 
-        TimelineEvent timelineEvent = forFPCondomRenew("CASE A", details);
+        TimelineEvent timelineEvent = TimelineEvent.forFPCondomRenew("CASE A", details);
 
-        assertTrue(timelineEvent.detail1().contains("Condoms given: 30"));
+        Assert.assertTrue(timelineEvent.detail1().contains("Condoms given: 30"));
     }
 
     @Test
     public void shouldCreateTimelineEventForFPOCPRenew() throws Exception {
-        Map<String, String> details = create("Key 1", "Value 1").put("currentMethod", "ocp")
-                                                                .put("familyPlanningMethodChangeDate",
-                                                                     "2012-03-03")
-                                                                .put("fpUpdate", "renew_fp_product")
-                                                                .put("numberOfOCPDelivered", "2")
-                                                                .map();
+        Map<String, String> details = EasyMap.create("Key 1", "Value 1").put("currentMethod", "ocp")
+                .put("familyPlanningMethodChangeDate",
+                        "2012-03-03")
+                .put("fpUpdate", "renew_fp_product")
+                .put("numberOfOCPDelivered", "2")
+                .map();
 
-        TimelineEvent timelineEvent = forFPOCPRenew("CASE A", details);
+        TimelineEvent timelineEvent = TimelineEvent.forFPOCPRenew("CASE A", details);
 
-        assertTrue(timelineEvent.detail1().contains("OCP cycles given: 2"));
+        Assert.assertTrue(timelineEvent.detail1().contains("OCP cycles given: 2"));
     }
 
     @Test
     public void shouldCreateTimelineEventForFPIUDRenew() throws Exception {
-        Map<String, String> details = create("Key 1", "Value 1").put("currentMethod", "iud")
-                                                                .put("familyPlanningMethodChangeDate",
-                                                                     "2012-03-03")
-                                                                .put("fpUpdate", "renew_fp_product")
-                                                                .map();
+        Map<String, String> details = EasyMap.create("Key 1", "Value 1").put("currentMethod", "iud")
+                .put("familyPlanningMethodChangeDate",
+                        "2012-03-03")
+                .put("fpUpdate", "renew_fp_product")
+                .map();
 
-        TimelineEvent timelineEvent = forFPIUDRenew("CASE A", details);
+        TimelineEvent timelineEvent = TimelineEvent.forFPIUDRenew("CASE A", details);
 
-        assertTrue(timelineEvent.detail1().contains("New IUD insertion date: 2012-03-03"));
+        Assert.assertTrue(timelineEvent.detail1().contains("New IUD insertion date: 2012-03-03"));
     }
 
     @Test
     public void shouldCreateTimelineEventForFPDMPARenew() throws Exception {
-        Map<String, String> details = create("Key 1", "Value 1").put("currentMethod", "dmpa")
-                                                                .put("familyPlanningMethodChangeDate",
-                                                                     "2012-03-03")
-                                                                .put("fpUpdate", "renew_fp_product")
-                                                                .map();
+        Map<String, String> details = EasyMap.create("Key 1", "Value 1").put("currentMethod", "dmpa")
+                .put("familyPlanningMethodChangeDate",
+                        "2012-03-03")
+                .put("fpUpdate", "renew_fp_product")
+                .map();
 
-        TimelineEvent timelineEvent = forFPDMPARenew("CASE A", details);
+        TimelineEvent timelineEvent = TimelineEvent.forFPDMPARenew("CASE A", details);
 
-        assertTrue(timelineEvent.detail1().contains("DMPA injection date: 2012-03-03"));
+        Assert.assertTrue(timelineEvent.detail1().contains("DMPA injection date: 2012-03-03"));
     }
 
     @Test
     public void shouldCreateTimelineEventForDeliveryPlan() throws Exception {
 
-        TimelineEvent timelineEvent = forDeliveryPlan("Case 1",
-                                                      "Delivery Facility Name",
-                                                      "Transportation Plan",
-                                                      "Birth Companion",
-                                                      "1234567890",
-                                                      "Contact Number",
-                                                      "High Risk Reason",
-                                                      "2012-03-03");
-        assertTrue(timelineEvent.detail1().contains("High Risk Reason: "));
-        assertTrue(timelineEvent.detail1().contains("Phone Number: "));
-        assertTrue(timelineEvent.detail1().contains("Asha Phone Number: "));
-        assertTrue(timelineEvent.detail1().contains("Birth Companion: "));
-        assertTrue(timelineEvent.detail1().contains("Transportation Plan: "));
-        assertTrue(timelineEvent.detail1().contains("Delivery Facility Name: "));
+        TimelineEvent timelineEvent = TimelineEvent.forDeliveryPlan("Case 1",
+                "Delivery Facility Name",
+                "Transportation Plan",
+                "Birth Companion",
+                "1234567890",
+                "Contact Number",
+                "High Risk Reason",
+                "2012-03-03");
+        Assert.assertTrue(timelineEvent.detail1().contains("High Risk Reason: "));
+        Assert.assertTrue(timelineEvent.detail1().contains("Phone Number: "));
+        Assert.assertTrue(timelineEvent.detail1().contains("Asha Phone Number: "));
+        Assert.assertTrue(timelineEvent.detail1().contains("Birth Companion: "));
+        Assert.assertTrue(timelineEvent.detail1().contains("Transportation Plan: "));
+        Assert.assertTrue(timelineEvent.detail1().contains("Delivery Facility Name: "));
     }
 }

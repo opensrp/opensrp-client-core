@@ -22,11 +22,9 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
-import org.smartregister.domain.Response;
-import org.smartregister.domain.ResponseStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.DrishtiSyncScheduler;
-import org.smartregister.util.Log;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
@@ -181,42 +179,6 @@ public class LoginActivity extends Activity {
         dialog.show();
     }
 
-    private void getLocation() {
-        tryGetLocation(new Listener<Response<String>>() {
-            @Override
-            public void onEvent(Response<String> data) {
-                if (data.status() == ResponseStatus.success) {
-                    context.userService().saveAnmLocation(data.payload());
-                }
-            }
-        });
-    }
-
-    private void tryGetLocation(final Listener<Response<String>> afterGet) {
-        LockingBackgroundTask task = new LockingBackgroundTask(new ProgressIndicator() {
-            @Override
-            public void setVisible() {
-            }
-
-            @Override
-            public void setInvisible() {
-                Log.logInfo("Successfully get location");
-            }
-        });
-
-        task.doActionInBackground(new BackgroundAction<Response<String>>() {
-            @Override
-            public Response<String> actionToDoInBackgroundThread() {
-                return context.userService().getLocationInformation();
-            }
-
-            @Override
-            public void postExecuteInUIThread(Response<String> result) {
-                afterGet.onEvent(result);
-            }
-        });
-    }
-
     private void tryRemoteLogin(final String userName, final String password, final
     Listener<LoginResponse> afterLoginCheck) {
         LockingBackgroundTask task = new LockingBackgroundTask(new ProgressIndicator() {
@@ -261,7 +223,7 @@ public class LoginActivity extends Activity {
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }
 
-    private void remoteLoginWith(String userName, String password, String userInfo) {
+    private void remoteLoginWith(String userName, String password, LoginResponseData userInfo) {
         context.userService().remoteLogin(userName, password, userInfo);
         goToHome();
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());

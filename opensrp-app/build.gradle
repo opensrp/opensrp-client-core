@@ -144,7 +144,6 @@ dependencies {
     compile 'com.github.bmelnychuk:atv:1.2.9'
     compile 'com.github.johnkil.print:print:1.2.3'
     compile 'ch.acra:acra:4.5.0'
-
     compile 'com.google.guava:guava:18.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile fileTree(include: ['*.jar'], dir: 'libs')
@@ -155,14 +154,35 @@ dependencies {
 dependencies {
     androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3'
     androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
-    androidTestCompile 'junit:junit:4.11'
+    androidTestCompile 'junit:junit:4.12'
 
     testCompile group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
-    testCompile 'junit:junit:4.11'
     testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
-    testCompile 'org.robolectric:robolectric:2.4'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    testCompile('org.robolectric:robolectric:3.4.2') {
+
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'org.apache.maven', module: 'maven-model'
+        exclude group: 'com.android.support'
+        exclude group: 'com.thoughtworks.xstream', module: 'xstream'
+    }
+    testCompile('org.robolectric:shadows-multidex:3.4-rc2') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.+') {
+
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'junit', module: 'junit'
+    }
+    // PowerMock
+    def powerMockVersion = '1.7.1'
+    testCompile "org.powermock:powermock-module-junit4:$powerMockVersion"
+    testCompile "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
+    testCompile "org.powermock:powermock-api-mockito2:$powerMockVersion"
+    testCompile("org.powermock:powermock-classloading-xstream:$powerMockVersion")
+
 }
 task clearJar(type: Delete) {
     delete 'build/libs/myCompiledLibrary.jar'
@@ -178,6 +198,27 @@ task makeJar(type: Copy) {
 makeJar.dependsOn(clearJar, build)
 
 import org.apache.commons.lang3.StringUtils
+
+def package_namespace = "org."
+def package_namespace_path = package_namespace.replaceAll("\\.", "/")
+
+afterEvaluate { project ->
+    android.libraryVariants.each { variant ->
+        // workaround for missing R class for aar dependencies
+        def copyTaskName = "copy${variant.name.capitalize()}AppCompat"
+        task(copyTaskName, type: Copy) {
+            dependsOn "process${variant.name.capitalize()}Resources"
+            from { "build/generated/source/r/${variant.name}/$package_namespace_path" }
+//            into { "build/generated/source/r/${variant.name}/android/support/v7/appcompat" }
+            into { "src/test/java/android/support/v7/appcompat" }
+            include 'R.java'
+            filter { line -> line.contains("package ${package_namespace};") ? 'package android.support.v7.appcompat;' : line }
+            outputs.upToDateWhen { false }
+        }
+        System.out.println("adding ${copyTaskName}")
+        tasks.getByName("compile${variant.name.capitalize()}UnitTestJava") dependsOn copyTaskName
+    }
+}
 
 gradle.projectsEvaluated {
     def variants = android.libraryVariants.collect()

@@ -6,19 +6,15 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Alert;
+import org.smartregister.domain.AlertStatus;
 import org.smartregister.repository.AlertRepository;
+import org.smartregister.util.ActionBuilder;
 
 import java.util.HashMap;
-
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.domain.AlertStatus.urgent;
-import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
-import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
-import static org.smartregister.util.ActionBuilder.actionForDeleteAllAlert;
 
 @RunWith(RobolectricTestRunner.class)
 public class AlertServiceTest {
@@ -29,38 +25,38 @@ public class AlertServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         service = new AlertService(alertRepository);
     }
 
     @Test
     public void shouldAddAnAlertIntoAlertRepositoryForMotherCreateAlertAction() throws Exception {
-        Action actionForMother = actionForCreateAlert("Case X", normal.value(), BeneficiaryType.mother.value(), "Schedule 1", "ANC 1", "2012-01-01", "2012-01-22", "0");
+        Action actionForMother = ActionBuilder.actionForCreateAlert("Case X", AlertStatus.normal.value(), BeneficiaryType.mother.value(), "Schedule 1", "ANC 1", "2012-01-01", "2012-01-22", "0");
 
         service.create(actionForMother);
 
-        verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "ANC 1", normal, "2012-01-01", "2012-01-22"));
-        verifyNoMoreInteractions(alertRepository);
+        Mockito.verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22"));
+        Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
     @Test
     public void shouldAddAnAlertIntoAlertRepositoryForECCreateAlertAction() throws Exception {
-        Action actionForEC = actionForCreateAlert("Case X", normal.value(), BeneficiaryType.ec.value(), "Schedule 1", "Milestone 1", "2012-01-01", "2012-01-22", "0");
+        Action actionForEC = ActionBuilder.actionForCreateAlert("Case X", AlertStatus.normal.value(), BeneficiaryType.ec.value(), "Schedule 1", "Milestone 1", "2012-01-01", "2012-01-22", "0");
 
         service.create(actionForEC);
 
-        verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "Milestone 1", normal, "2012-01-01", "2012-01-22"));
-        verifyNoMoreInteractions(alertRepository);
+        Mockito.verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "Milestone 1", AlertStatus.normal, "2012-01-01", "2012-01-22"));
+        Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
     @Test
     public void shouldAddAnAlertIntoAlertRepositoryForECCreateAlertActionWhenThereIsNoMother() throws Exception {
-        Action actionForEC = actionForCreateAlert("Case X", normal.value(), BeneficiaryType.ec.value(), "Schedule 1", "Milestone 1", "2012-01-01", "2012-01-22", "0");
+        Action actionForEC = ActionBuilder.actionForCreateAlert("Case X", AlertStatus.normal.value(), BeneficiaryType.ec.value(), "Schedule 1", "Milestone 1", "2012-01-01", "2012-01-22", "0");
 
         service.create(actionForEC);
 
-        verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "Milestone 1", normal, "2012-01-01", "2012-01-22"));
-        verifyNoMoreInteractions(alertRepository);
+        Mockito.verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "Milestone 1", AlertStatus.normal, "2012-01-01", "2012-01-22"));
+        Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
     @Test
@@ -69,42 +65,42 @@ public class AlertServiceTest {
 
         service.create(actionForMother);
 
-        verifyZeroInteractions(alertRepository);
+        Mockito.verifyZeroInteractions(alertRepository);
     }
 
     @Test
     public void shouldAddAnAlertIntoAlertRepositoryForChildCreateAlertAction() throws Exception {
-        Action actionForMother = actionForCreateAlert("Case X", urgent.value(), BeneficiaryType.child.value(), "Schedule 1", "Milestone 1", "2012-01-01", "2012-01-22", "0");
+        Action actionForMother = ActionBuilder.actionForCreateAlert("Case X", AlertStatus.urgent.value(), BeneficiaryType.child.value(), "Schedule 1", "Milestone 1", "2012-01-01", "2012-01-22", "0");
 
         service.create(actionForMother);
 
-        verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "Milestone 1", urgent, "2012-01-01", "2012-01-22"));
-        verifyNoMoreInteractions(alertRepository);
+        Mockito.verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "Milestone 1", AlertStatus.urgent, "2012-01-01", "2012-01-22"));
+        Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
     @Test
     public void shouldMarkAlertAsClosedInRepositoryForCloseActions() throws Exception {
-        Action firstAction = actionForCloseAlert("Case X", "ANC 1", "2012-01-01", "0");
-        Action secondAction = actionForCloseAlert("Case Y", "ANC 2", "2012-01-01", "0");
+        Action firstAction = ActionBuilder.actionForCloseAlert("Case X", "ANC 1", "2012-01-01", "0");
+        Action secondAction = ActionBuilder.actionForCloseAlert("Case Y", "ANC 2", "2012-01-01", "0");
 
         service.close(firstAction);
         service.close(secondAction);
 
-        verify(alertRepository).markAlertAsClosed("Case X", "ANC 1", "2012-01-01");
-        verify(alertRepository).markAlertAsClosed("Case Y", "ANC 2", "2012-01-01");
-        verifyNoMoreInteractions(alertRepository);
+        Mockito.verify(alertRepository).markAlertAsClosed("Case X", "ANC 1", "2012-01-01");
+        Mockito.verify(alertRepository).markAlertAsClosed("Case Y", "ANC 2", "2012-01-01");
+        Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
     @Test
     public void shouldDeleteAllFromRepositoryForDeleteAllActions() throws Exception {
-        Action firstAction = actionForDeleteAllAlert("Case X");
-        Action secondAction = actionForDeleteAllAlert("Case Y");
+        Action firstAction = ActionBuilder.actionForDeleteAllAlert("Case X");
+        Action secondAction = ActionBuilder.actionForDeleteAllAlert("Case Y");
 
         service.deleteAll(firstAction);
         service.deleteAll(secondAction);
 
-        verify(alertRepository).deleteAllAlertsForEntity("Case X");
-        verify(alertRepository).deleteAllAlertsForEntity("Case Y");
-        verifyNoMoreInteractions(alertRepository);
+        Mockito.verify(alertRepository).deleteAllAlertsForEntity("Case X");
+        Mockito.verify(alertRepository).deleteAllAlertsForEntity("Case Y");
+        Mockito.verifyNoMoreInteractions(alertRepository);
     }
 }

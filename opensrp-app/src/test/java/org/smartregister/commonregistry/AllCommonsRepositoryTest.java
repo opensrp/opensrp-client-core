@@ -1,9 +1,12 @@
 package org.smartregister.commonregistry;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.repository.TimelineEventRepository;
@@ -12,14 +15,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 /*
  by Raihan Ahmed
  */
 @RunWith(RobolectricTestRunner.class)
 public class AllCommonsRepositoryTest {
+
     @Mock
     private CommonRepository personRepository;
     @Mock
@@ -28,12 +29,13 @@ public class AllCommonsRepositoryTest {
     private AlertRepository alertRepository;
 
     private AllCommonsRepository allCommonsRepository;
+
     @Before
-    public void setUp() throws Exception{
-        initMocks(this);
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         allCommonsRepository = new AllCommonsRepository(personRepository,
-                                                        alertRepository,
-                                                        timelineEventRepository);
+                alertRepository,
+                timelineEventRepository);
     }
 
     @Test
@@ -43,14 +45,14 @@ public class AllCommonsRepositoryTest {
                 "relationid1",
                 new HashMap<String, String>(),
                 ""));
-        when(personRepository.allcommon()).thenReturn(expectedpersonobjects);
-        assertEquals(expectedpersonobjects, personRepository.allcommon());
+        Mockito.when(personRepository.allcommon()).thenReturn(expectedpersonobjects);
+        Assert.assertEquals(expectedpersonobjects, personRepository.allcommon());
     }
 
     @Test
     public void ShouldShowcount() throws Exception {
-        when(personRepository.count()).thenReturn((long) 8);
-        assertEquals(personRepository.count(), (long) 8);
+        Mockito.when(personRepository.count()).thenReturn((long) 8);
+        Assert.assertEquals(personRepository.count(), (long) 8);
 
     }
 //    public List<CommonPersonObject> findByCaseIDs(List<String> caseIds) {

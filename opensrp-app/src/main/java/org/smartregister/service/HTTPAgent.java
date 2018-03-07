@@ -11,6 +11,8 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -32,6 +34,7 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
@@ -41,12 +44,16 @@ import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
+import static org.smartregister.domain.LoginResponse.EMPTY_REPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
@@ -55,11 +62,13 @@ import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
     private static final String TAG = HTTPAgent.class.getCanonicalName();
-    private final GZipEncodingHttpClient httpClient;
+    private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
+
+    public static final int CONNECTION_TIMEOUT = 60000;
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -68,9 +77,15 @@ public class HTTPAgent {
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
 
+        setupHttpClient();
+    }
+
+    public void setupHttpClient() {
         BasicHttpParams basicHttpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
+
+        ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
 
         SchemeRegistry registry = new SchemeRegistry();
         OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
@@ -153,7 +168,12 @@ public class HTTPAgent {
             HttpResponse response = httpClient.execute(new HttpGet(requestURL));
             int statusCode = response.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
-                return SUCCESS.withPayload(getResponseBody(response));
+                LoginResponseData responseData = getResponseBody(response);
+                if (responseData == null) {
+                    logError("Empty Response using " + requestURL);
+                    return EMPTY_REPONSE;
+                }
+                return SUCCESS.withPayload(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 logError("Invalid credentials for: " + userName + " using " + requestURL);
                 return UNAUTHORIZED;
@@ -162,6 +182,9 @@ public class HTTPAgent {
                         + userName + " using " + requestURL);
                 return UNKNOWN_RESPONSE;
             }
+        } catch (ConnectionPoolTimeoutException | SocketTimeoutException e) {
+            logError(e.getMessage());
+            return TIMEOUT;
         } catch (IOException e) {
             logError("Failed to check credentials of: " + userName + " using " + requestURL + ". "
                     + "" + "" + "Error: " + e.toString());
@@ -190,7 +213,7 @@ public class HTTPAgent {
         try {
             String responseContent = IOUtils.toString(httpClient.fetchContent(new HttpGet(uri)));
             return new Response<>(ResponseStatus.success, responseContent);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             logError("Failed to fetch unique id");
             return new Response<>(ResponseStatus.failure, null);
         }

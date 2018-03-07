@@ -15,12 +15,12 @@ public interface PNCSmartRegisterClient extends BaseFPSmartRegisterClient {
 
     Comparator<SmartRegisterClient> DATE_OF_DELIVERY_COMPARATOR = new
             Comparator<SmartRegisterClient>() {
-        @Override
-        public int compare(SmartRegisterClient lhs, SmartRegisterClient rhs) {
-            return ((PNCSmartRegisterClient) rhs).deliveryDate()
-                    .compareTo(((PNCSmartRegisterClient) lhs).deliveryDate());
-        }
-    };
+                @Override
+                public int compare(SmartRegisterClient lhs, SmartRegisterClient rhs) {
+                    return ((PNCSmartRegisterClient) rhs).deliveryDate()
+                            .compareTo(((PNCSmartRegisterClient) lhs).deliveryDate());
+                }
+            };
 
     String thayiNumber();
 

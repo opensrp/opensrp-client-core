@@ -62,14 +62,14 @@ public class PNCSmartRegisterController {
 
     public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService
             alertService, AllEligibleCouples allEligibleCouples, AllBeneficiaries
-            allBeneficiaries, Cache<String> cache, Cache<PNCClients> pncClientsCache) {
+                                              allBeneficiaries, Cache<String> cache, Cache<PNCClients> pncClientsCache) {
         this(serviceProvidedService, alertService, allEligibleCouples, allBeneficiaries, cache,
                 pncClientsCache, new PNCClientPreProcessor());
     }
 
     public PNCSmartRegisterController(ServiceProvidedService serviceProvidedService, AlertService
             alertService, AllEligibleCouples allEligibleCouples, AllBeneficiaries
-            allBeneficiaries, Cache<String> cache, Cache<PNCClients> pncClientsCache,
+                                              allBeneficiaries, Cache<String> cache, Cache<PNCClients> pncClientsCache,
                                       PNCClientPreProcessor pncClientPreProcessor) {
         this.allEligibleCouples = allEligibleCouples;
         this.allBeneficiaries = allBeneficiaries;

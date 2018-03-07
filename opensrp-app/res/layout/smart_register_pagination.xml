@@ -14,7 +14,7 @@
         android:text="@string/str_previous"
         android:textSize="@dimen/pagination_bar_text_size"
         android:focusable="true"
-        android:clickable="true"/>
+        android:clickable="true" />
 
     <TextView
         android:id="@+id/txt_page_info"
@@ -34,6 +34,6 @@
         android:text="@string/str_next"
         android:textSize="@dimen/pagination_bar_text_size"
         android:focusable="true"
-        android:clickable="true"/>
+        android:clickable="true" />
 </RelativeLayout>
     

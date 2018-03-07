@@ -1,9 +1,14 @@
 package org.smartregister.util;
 
 import android.content.Context;
+import android.util.Log;
+
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.Map;
 
 /**
  * Created by koros on 3/24/16.
@@ -28,4 +33,85 @@ public class AssetHandler {
         //Log.d("File", fileContents);
         return fileContents;
     }
+
+    public static <T> T assetJsonToJava(Map<String, Object> jsonMap, Context context, String fileName, Class<T> clazz, Type type) {
+        try {
+            if (clazz == null) {
+                return null;
+            }
+
+            if (jsonMap == null) {
+                return null;
+            } else if (jsonMap.containsKey(fileName)) {
+                Object o = jsonMap.get(fileName);
+                if (clazz.isAssignableFrom(o.getClass())) {
+                    return clazz.cast(jsonMap.get(fileName));
+                } else {
+                    return null;
+                }
+            }
+
+            String jsonString = readFileFromAssetsFolder(fileName, context);
+            if (StringUtils.isBlank(jsonString)) {
+                return null;
+            }
+
+            T t;
+            if (type == null) {
+                t = jsonStringToJava(jsonString, clazz);
+            } else {
+                t = jsonStringToJava(jsonString, type);
+            }
+
+            if (t != null) {
+                jsonMap.put(fileName, t);
+            }
+            return t;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+            return null;
+        }
+    }
+
+    public static <T> T assetJsonToJava(Map<String, Object> jsonMap, Context context, String fileName, Class<T> clazz) {
+        return assetJsonToJava(jsonMap, context, fileName, clazz, null);
+    }
+
+    public static <T> T jsonStringToJava(String jsonString, Class<T> clazz) {
+        try {
+            return JsonFormUtils.gson.fromJson(jsonString, clazz);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+            return null;
+        }
+    }
+
+    public static <T> T jsonStringToJava(String jsonString, Type type) {
+        try {
+            return JsonFormUtils.gson.fromJson(jsonString, type);
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+            return null;
+        }
+    }
+
+    public static <T> String javaToJsonString(T t) {
+        return javaToJsonString(t, null);
+    }
+
+    public static <T> String javaToJsonString(T t, Type type) {
+        try {
+            String s;
+            if (type == null)
+                s = JsonFormUtils.gson.toJson(t);
+            else
+                s = JsonFormUtils.gson.toJson(t, type);
+            return s;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+            return null;
+        }
+    }
+
+
 }
