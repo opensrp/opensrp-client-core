@@ -22,3 +22,5 @@ build/
 opensrp-path/fabric.properties
 opensrp-path/reports/
 opensrp-app/reports/
+myapplication/
+mylibrary/
