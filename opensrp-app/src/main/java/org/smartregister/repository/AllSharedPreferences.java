@@ -27,7 +27,7 @@ public class AllSharedPreferences {
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
-    private static final String LAST_UPDATED_AT_DATE = "last_updated_at_date";
+    private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
