@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class EventClientRepository extends BaseRepository {
     private static final String TAG = BaseRepository.class.getCanonicalName();
-    public DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String ORDER_BY = " order by ";
 
     public EventClientRepository(Repository repository) {
@@ -1508,7 +1508,7 @@ public class EventClientRepository extends BaseRepository {
         try {
             for (Column cc : columns) {
                 if (cc.column().index()) {
-                    String create_id = "CREATE INDEX "
+                    String create_id = "CREATE INDEX IF NOT EXISTS "
                             + table.name() + "_" + cc.name()
                             + "_index ON "
                             + table.name()
@@ -1743,7 +1743,7 @@ public class EventClientRepository extends BaseRepository {
         locationId(ColumnAttribute.Type.text, false, false),
         eventDate(ColumnAttribute.Type.date, false, true),
         eventType(ColumnAttribute.Type.text, false, true),
-        formSubmissionId(ColumnAttribute.Type.text, false, false),
+        formSubmissionId(ColumnAttribute.Type.text, false, true),
         providerId(ColumnAttribute.Type.text, false, false),
         entityType(ColumnAttribute.Type.text, false, false),
         details(ColumnAttribute.Type.map, false, false),
