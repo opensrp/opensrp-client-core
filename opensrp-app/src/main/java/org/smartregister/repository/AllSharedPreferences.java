@@ -15,6 +15,7 @@ import static org.smartregister.AllConstants.ENCRYPTED_GROUP_ID_PREFIX;
 import static org.smartregister.AllConstants.ENCRYPTED_PASSWORD_PREFIX;
 import static org.smartregister.AllConstants.FORCE_REMOTE_LOGIN;
 import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
+import static org.smartregister.AllConstants.IS_SYNC_INITIAL_KEY;
 import static org.smartregister.AllConstants.LANGUAGE_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.PIONEER_USER;
 import static org.smartregister.AllConstants.SERVER_TIMEZONE;
@@ -26,7 +27,7 @@ public class AllSharedPreferences {
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
-    private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
+    private static final String LAST_UPDATED_AT_DATE = "last_updated_at_date";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -234,6 +235,14 @@ public class AllSharedPreferences {
 
     public String getANMPreferredName(String userName) {
         return preferences.getString(userName, "");
+    }
+
+    public void saveIsSyncInitial(boolean initialSynStatus) {
+        preferences.edit().putBoolean(IS_SYNC_INITIAL_KEY, initialSynStatus).commit();
+    }
+
+    public Boolean fetchIsSyncInitial() {
+        return preferences.getBoolean(IS_SYNC_INITIAL_KEY, false);
     }
 
 }
