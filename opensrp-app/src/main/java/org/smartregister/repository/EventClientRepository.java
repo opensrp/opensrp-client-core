@@ -38,7 +38,7 @@ import java.util.Map;
  */
 public class EventClientRepository extends BaseRepository {
     private static final String TAG = BaseRepository.class.getCanonicalName();
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final String ORDER_BY = " order by ";
 
     public EventClientRepository(Repository repository) {
@@ -252,10 +252,9 @@ public class EventClientRepository extends BaseRepository {
             return 0l;
         }
 
+        // TODO Batch Insert using prepared statements
         try {
             long lastServerVersion = 0l;
-
-            getWritableDatabase().beginTransaction();
 
             for (int i = 0; i < array.length(); i++) {
                 Object o = array.get(i);
@@ -271,8 +270,6 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
 
-            getWritableDatabase().setTransactionSuccessful();
-            getWritableDatabase().endTransaction();
             return lastServerVersion;
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
@@ -285,11 +282,10 @@ public class EventClientRepository extends BaseRepository {
             return 0l;
         }
 
+        // TODO Batch Insert using prepared statements
         try {
 
             long lastServerVersion = serverVersion;
-
-            getWritableDatabase().beginTransaction();
 
             for (int i = 0; i < array.length(); i++) {
                 Object o = array.get(i);
@@ -305,8 +301,6 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
 
-            getWritableDatabase().setTransactionSuccessful();
-            getWritableDatabase().endTransaction();
             return lastServerVersion;
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
