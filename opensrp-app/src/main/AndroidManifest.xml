@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.smartregister"
+    android:installLocation="auto"
     android:versionCode="32"
-    android:versionName="3.0.1"
-    android:installLocation="auto">
+    android:versionName="3.0.1">
 
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,54 +15,54 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
-    <uses-sdk
-        android:minSdkVersion="16"
-        android:targetSdkVersion="16" />
+    <!--<uses-sdk-->
+        <!--android:minSdkVersion="16"-->
+        <!--android:targetSdkVersion="16" />-->
 
     <application
-        android:label="@string/app_name"
         android:clearTaskOnLaunch="true"
+        android:label="@string/app_name"
         android:largeHeap="true">
         <service
-            android:enabled="true"
-            android:name=".service.ImageUploadSyncService"></service>
+            android:name=".service.ImageUploadSyncService"
+            android:enabled="true" />
 
         <activity
             android:name=".view.activity.ReportsActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.VideosActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.ReportIndicatorListViewActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.ReportIndicatorDetailActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.ReportIndicatorCaseListActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.EligibleCoupleDetailActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.CameraLaunchActivity"
-            android:theme="@android:style/Theme.Holo.NoActionBar"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.NoActionBar" />
         <activity
             android:name=".view.activity.FormActivity"
-            android:theme="@style/AppThemeNoTitle"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoTitle" />
         <activity
             android:name=".view.activity.MicroFormActivity"
-            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
-            android:screenOrientation="landscape" />
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar" />
         <activity
             android:name=".view.activity.NativeECSmartRegisterActivity"
             android:screenOrientation="landscape"
@@ -71,7 +71,7 @@
 
         <activity
             android:name=".view.activity.NativeHomeActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
 
         <receiver android:name=".view.receiver.SyncBroadcastReceiver" />
         <receiver android:name=".view.receiver.ConnectivityChangeReceiver">
@@ -81,8 +81,8 @@
         </receiver>
         <receiver android:name=".view.receiver.TimeChangedBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.TIME_SET"></action>
-                <action android:name="android.intent.action.TIMEZONE_CHANGED"></action>
+                <action android:name="android.intent.action.TIME_SET"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
             </intent-filter>
         </receiver>
 

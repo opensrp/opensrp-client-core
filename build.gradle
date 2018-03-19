@@ -1,3 +1,22 @@
+//buildscript {
+//    repositories {
+//        jcenter()
+//        google()
+//    }
+//    dependencies {
+//        classpath "com.android.tools.build:gradle:3.0.1"
+//    }
+//}
+//
+//repositories {
+//    jcenter()
+//    mavenCentral()
+//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+//    mavenLocal()
+//
+//    google()
+//}
+
 configure(allprojects) { project ->
 
     version = VERSION_NAME
@@ -9,6 +28,13 @@ configure(allprojects) { project ->
             mavenCentral()
             maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
             mavenLocal()
+            google()
+
+        }
+
+        dependencies {
+            classpath "com.android.tools.build:gradle:3.0.1"
+            classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
         }
     }
 }
@@ -19,14 +45,15 @@ subprojects {
 
     group = 'org.smartregister'
 
-    ext.androidToolsBuildGradle = '21.1.2'
-    ext.androidBuildToolsVersion = '26.0.1'
+//    ext.androidToolsBuildGradle = '21.1.2'
+    ext.androidBuildToolsVersion = '27.0.3'
     ext.androidMinSdkVersion = 16
-    ext.androidCompileSdkVersion = 21
-    ext.androidTargetSdkVersion = 21
+    ext.androidCompileSdkVersion = 26
+    ext.androidTargetSdkVersion = 26
+    ext.androidSupportVersion = '27.0.2'
 
-    ext.androidAnnotationsVersion = '3.0.1';
-    ext.androidAnnotationsAPIVersion = '3.0.1';
+    ext.androidAnnotationsVersion = '3.0.1'
+    ext.androidAnnotationsAPIVersion = '3.0.1'
 
     repositories {
         jcenter()
@@ -45,6 +72,8 @@ subprojects {
             url "${projectDir}/opensrp-app-it/../libs/"
         }
         mavenLocal()
+        google()
+
     }
 
     // Improve build server performance by allowing disabling of pre-dexing
