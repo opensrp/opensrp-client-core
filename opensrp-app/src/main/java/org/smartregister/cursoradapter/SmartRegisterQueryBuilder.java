@@ -171,8 +171,9 @@ public class SmartRegisterQueryBuilder {
         return res;
     }
 
-    public String toStringFts(List<String> ids, String tableName, String idColumn, String sort) {
+    public String toStringFts(List<String> foundIds, String tableName, String idColumn, String sort) {
         String res = Selectquery;
+        List<String> ids = foundIds;
 
         if (StringUtils.containsIgnoreCase(res, "JOIN") && StringUtils.isNotBlank(tableName)) {
             idColumn = tableName + "." + idColumn;
