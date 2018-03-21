@@ -171,9 +171,19 @@ public class SmartRegisterQueryBuilder {
         return res;
     }
 
-    public String toStringFts(List<String> ids, String idColumn, String sort) {
+    public String toStringFts(List<String> foundIds, String tName, String idCol, String sortBy) {
         String res = Selectquery;
+        List<String> ids = foundIds;
+        String tableName = tName;
+        String idColumn = idCol;
+        String sort = sortBy;
 
+        if (StringUtils.containsIgnoreCase(res, "JOIN") && StringUtils.isNotBlank(tableName)) {
+            idColumn = tableName + "." + idColumn;
+            if (StringUtils.isNotBlank(sort)) {
+                sort = tableName + "." + sort;
+            }
+        }
         // Remove where clause, Already used when fetching ids
         if (StringUtils.containsIgnoreCase(res, "WHERE")) {
             res = res.substring(0, res.toUpperCase().lastIndexOf("WHERE"));
@@ -186,11 +196,7 @@ public class SmartRegisterQueryBuilder {
             res += String.format(" WHERE %s IN (%s) ", idColumn, joinedIds);
 
             if (StringUtils.isNotBlank(sort)) {
-                res += " ORDER BY CASE " + idColumn;
-                for (int i = 0; i < ids.size(); i++) {
-                    res += " WHEN '" + ids.get(i) + "' THEN " + i;
-                }
-                res += " END ";
+                res += " ORDER BY " + sort;
             }
         }
 

@@ -464,7 +464,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                         .searchQueryFts(tablename, joinTable, mainCondition, filters, Sortqueries,
                                 currentlimit, currentoffset);
                 List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename + "." + CommonRepository.ID_COLUMN,
+                query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
                         Sortqueries);
                 query = sqb.Endquery(query);
             } else {
