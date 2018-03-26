@@ -1,5 +1,8 @@
 package org.smartregister.client;
 
+import android.util.Log;
+
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.HttpGet;
@@ -14,24 +17,34 @@ import java.text.ParseException;
 import static org.apache.http.HttpStatus.SC_OK;
 
 public class GZipEncodingHttpClient {
+    private static final String TAG = GZipEncodingHttpClient.class.getCanonicalName();
+
     private DefaultHttpClient httpClient;
 
     public GZipEncodingHttpClient(DefaultHttpClient httpClient) {
         this.httpClient = httpClient;
     }
 
-    public InputStream fetchContent(HttpGet request) throws IOException, ParseException {
-        if (!request.containsHeader("Accept-Encoding")) {
-            request.addHeader("Accept-Encoding", "gzip");
-        }
+    public String fetchContent(HttpGet request) throws IOException, ParseException {
+        String responseContent = null;
+        HttpResponse response = null;
+        try {
+            if (!request.containsHeader("Accept-Encoding")) {
+                request.addHeader("Accept-Encoding", "gzip");
+            }
 
-        HttpResponse response = httpClient.execute(request);
-        if (response.getStatusLine().getStatusCode() != SC_OK) {
-            throw new IOException(
-                    "Invalid status code: " + response.getStatusLine().getStatusCode());
-        }
+            response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() != SC_OK) {
+                throw new IOException(
+                        "Invalid status code: " + response.getStatusLine().getStatusCode());
+            }
 
-        return HttpResponseUtil.getResponseStream(response);
+            InputStream inputStream = HttpResponseUtil.getResponseStream(response);
+            responseContent = IOUtils.toString(inputStream);
+        } finally {
+            consumeResponse(response);
+        }
+        return responseContent;
     }
 
     public HttpResponse execute(HttpGet request) throws IOException {
@@ -45,5 +58,18 @@ public class GZipEncodingHttpClient {
     public HttpResponse postContent(HttpPost request) throws IOException {
         HttpResponse response = httpClient.execute(request);
         return response;
+    }
+
+    public void consumeResponse(HttpResponse httpResponse) {
+        try {
+            if (httpResponse == null || httpResponse.getEntity() == null) {
+                return;
+            }
+
+            httpResponse.getEntity().consumeContent();
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
     }
 }
