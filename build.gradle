@@ -1,22 +1,3 @@
-//buildscript {
-//    repositories {
-//        jcenter()
-//        google()
-//    }
-//    dependencies {
-//        classpath "com.android.tools.build:gradle:3.0.1"
-//    }
-//}
-//
-//repositories {
-//    jcenter()
-//    mavenCentral()
-//    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-//    mavenLocal()
-//
-//    google()
-//}
-
 configure(allprojects) { project ->
 
     version = VERSION_NAME
@@ -50,7 +31,7 @@ subprojects {
     ext.androidMinSdkVersion = 16
     ext.androidCompileSdkVersion = 26
     ext.androidTargetSdkVersion = 26
-    ext.androidSupportVersion = '27.0.2'
+    ext.androidSupportVersion = '27.1.0'
 
     ext.androidAnnotationsVersion = '3.0.1'
     ext.androidAnnotationsAPIVersion = '3.0.1'
