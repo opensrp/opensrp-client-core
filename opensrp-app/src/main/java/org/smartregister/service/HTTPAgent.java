@@ -3,7 +3,6 @@ package org.smartregister.service;
 import android.content.Context;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
@@ -41,7 +40,6 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 import org.smartregister.util.FileUtilities;
-import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
