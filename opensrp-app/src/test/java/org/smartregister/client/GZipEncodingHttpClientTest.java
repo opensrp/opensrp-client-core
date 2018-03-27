@@ -27,7 +27,7 @@ public class GZipEncodingHttpClientTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        gZipEncodingHttpClient = new GZipEncodingHttpClient(defaultHttpClient);
+        gZipEncodingHttpClient = new GZipEncodingHttpClientImpl(defaultHttpClient);
     }
 
     @Test

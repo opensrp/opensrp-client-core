@@ -135,7 +135,6 @@ public class HTTPAgent {
             ResponseStatus responseStatus =
                     httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
                             ? ResponseStatus.success : ResponseStatus.failure;
-            httpResponse.getEntity().consumeContent();
             response = new Response<>(responseStatus, null);
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
@@ -164,7 +163,7 @@ public class HTTPAgent {
             if (httpResponse.getStatusLine().getStatusCode() != SC_OK) {
                 return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
             } else {
-                String payload = IOUtils.toString(HttpResponseUtil.getResponseStream(httpResponse));
+                String payload = httpClient.retrieveStringResponse(httpResponse);
                 response = new Response<>(ResponseStatus.success, payload);
             }
         } catch (Exception e) {
@@ -268,12 +267,15 @@ public class HTTPAgent {
                 httpResponse = httpClient.postContent(httpost);
                 responseString = EntityUtils.toString(httpResponse.getEntity());
                 Log.v("response so many", responseString);
+
+                //TODO if response status is not 200 or 201 ?
+                /*
                 int RESPONSE_OK = 200;
                 int RESPONSE_OK_ = 201;
-
                 if (httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK_
                         && httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK) {
                 }
+                */
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);

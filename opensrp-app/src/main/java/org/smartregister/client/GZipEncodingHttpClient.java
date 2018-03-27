@@ -39,8 +39,7 @@ public class GZipEncodingHttpClient {
                         "Invalid status code: " + response.getStatusLine().getStatusCode());
             }
 
-            InputStream inputStream = HttpResponseUtil.getResponseStream(response);
-            responseContent = IOUtils.toString(inputStream);
+            responseContent = retrieveStringResponse(response);
         } finally {
             consumeResponse(response);
         }
@@ -56,8 +55,7 @@ public class GZipEncodingHttpClient {
     }
 
     public HttpResponse postContent(HttpPost request) throws IOException {
-        HttpResponse response = httpClient.execute(request);
-        return response;
+        return httpClient.execute(request);
     }
 
     public void consumeResponse(HttpResponse httpResponse) {
@@ -71,5 +69,13 @@ public class GZipEncodingHttpClient {
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+    }
+
+    public String retrieveStringResponse(HttpResponse httpResponse) throws IOException, ParseException {
+        if (httpResponse == null) {
+            return null;
+        }
+        InputStream inputStream = HttpResponseUtil.getResponseStream(httpResponse);
+        return IOUtils.toString(inputStream);
     }
 }
