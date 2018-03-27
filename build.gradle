@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.11.0"
+    }
+}
+
 configure(allprojects) { project ->
 
     version = VERSION_NAME
@@ -60,6 +70,7 @@ subprojects {
 
 apply plugin: 'java'
 apply plugin: 'build-dashboard'
+apply plugin: 'io.codearte.nexus-staging'
 
 buildDashboard {
     reports.html.destination = "build/"
