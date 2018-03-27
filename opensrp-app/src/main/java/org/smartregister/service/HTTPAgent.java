@@ -49,7 +49,13 @@ import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
-import static org.smartregister.domain.LoginResponse.EMPTY_REPONSE;
+import static org.smartregister.domain.LoginResponse.EMPTY_RESPONSE;
+import static org.smartregister.domain.LoginResponse.ERROR_IN_RESPONSE;
+import static org.smartregister.domain.LoginResponse.ERROR_IN_TEAM_DETAILS;
+import static org.smartregister.domain.LoginResponse.ERROR_IN_TEAM_LOCATION;
+import static org.smartregister.domain.LoginResponse.ERROR_IN_TEAM_UUID;
+import static org.smartregister.domain.LoginResponse.ERROR_IN_USER_DETAILS;
+import static org.smartregister.domain.LoginResponse.ERROR_IN_USER_LOCATION;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
@@ -61,14 +67,13 @@ import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
+    public static final int CONNECTION_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();
     private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
-
-    public static final int CONNECTION_TIMEOUT = 60000;
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -171,7 +176,27 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(response);
                 if (responseData == null) {
                     logError("Empty Response using " + requestURL);
-                    return EMPTY_REPONSE;
+                    return EMPTY_RESPONSE;
+                }
+                if (responseData.team == null && responseData.team.team == null && responseData.team.team.location == null
+                        && responseData.locations == null && responseData.user == null && responseData.team.team.uuid == null) {
+                    logError("Empty Response  " + ERROR_IN_RESPONSE.name());
+                    return ERROR_IN_RESPONSE;
+                } else if (responseData.team.team == null) {
+                    logError("Empty Response in " + ERROR_IN_TEAM_DETAILS.name());
+                    return ERROR_IN_TEAM_DETAILS;
+                } else if (responseData.team.team.location == null) {
+                    logError("Empty Response in " + ERROR_IN_TEAM_LOCATION.name());
+                    return ERROR_IN_TEAM_LOCATION;
+                } else if (responseData.locations == null) {
+                    logError("Empty Response in " + ERROR_IN_USER_LOCATION.name());
+                    return ERROR_IN_USER_LOCATION;
+                } else if (responseData.user != null) {
+                    logError("Empty Response in " + ERROR_IN_USER_DETAILS.name());
+                    return ERROR_IN_USER_DETAILS;
+                } else if (responseData.team.team.uuid == null) {
+                    logError("Empty Response in " + ERROR_IN_TEAM_UUID.name());
+                    return ERROR_IN_TEAM_UUID;
                 }
                 return SUCCESS.withPayload(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
