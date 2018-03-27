@@ -3,6 +3,7 @@ package org.smartregister.view.activity;
 import android.app.Application;
 import android.os.Build;
 import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -21,7 +22,7 @@ import java.util.Locale;
 
 import static org.smartregister.util.Log.logError;
 
-public abstract class DrishtiApplication extends Application {
+public abstract class DrishtiApplication extends MultiDexApplication {
     private static final String TAG = "DrishtiApplication";
     protected static DrishtiApplication mInstance;
     private static BitmapImageCache memoryImageCache;
