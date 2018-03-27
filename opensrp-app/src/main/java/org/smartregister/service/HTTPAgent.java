@@ -48,10 +48,22 @@ import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
-import static org.smartregister.domain.LoginResponse.EMPTY_REPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
 import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
@@ -59,14 +71,13 @@ import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 import static org.smartregister.util.Log.logError;
 
 public class HTTPAgent {
+    public static final int CONNECTION_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();
     private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
-
-    public static final int CONNECTION_TIMEOUT = 60000;
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -185,11 +196,7 @@ public class HTTPAgent {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 LoginResponseData responseData = getResponseBody(httpResponse);
-                if (responseData == null) {
-                    logError("Empty Response using " + requestURL);
-                    loginResponse = EMPTY_REPONSE;
-                }
-                loginResponse = SUCCESS.withPayload(responseData);
+                return retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 logError("Invalid credentials for: " + userName + " using " + requestURL);
                 loginResponse = UNAUTHORIZED;
@@ -282,6 +289,57 @@ public class HTTPAgent {
         }
         return responseString;
     }
+    
+    private LoginResponse retrieveResponse(LoginResponseData responseData) {
+        if (responseData == null) {
+            logError("Empty Response using " + SUCCESS_WITH_EMPTY_RESPONSE.name());
+            return SUCCESS_WITH_EMPTY_RESPONSE;
+        }
 
+        if (responseData.team == null || responseData.team.team == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_DETAILS.name());
+            return SUCCESS_WITHOUT_TEAM_DETAILS.withPayload(responseData);
+        } else if (responseData.team.team.location == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION.name());
+            return SUCCESS_WITHOUT_TEAM_LOCATION.withPayload(responseData);
+        } else if (responseData.team.team.location.uuid == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
+            return SUCCESS_WITHOUT_TEAM_LOCATION_UUID.withPayload(responseData);
+        } else if (responseData.team.team.uuid == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_UUID.name());
+            return SUCCESS_WITHOUT_TEAM_UUID.withPayload(responseData);
+        } else if (responseData.team.team.teamName == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_NAME.name());
+            return SUCCESS_WITHOUT_TEAM_NAME.withPayload(responseData);
+        }
+
+        if (responseData.user == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_DETAILS.name());
+            return SUCCESS_WITHOUT_USER_DETAILS.withPayload(responseData);
+        } else if (responseData.user.getUsername() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_USERNAME.name());
+            return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
+        } else if (responseData.user.getPreferredName() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
+            return SUCCESS_WITHOUT_USER_PREFERREDNAME.withPayload(responseData);
+        }
+
+        if (responseData.locations == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_LOCATION.name());
+            return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
+        }
+        if (responseData.time == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_DETAILS.name());
+            return SUCCESS_WITHOUT_TIME_DETAILS.withPayload(responseData);
+        } else if (responseData.time.getTime() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TIME.name());
+            return SUCCESS_WITHOUT_TIME.withPayload(responseData);
+        } else if (responseData.time.getTimeZone() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_ZONE.name());
+            return SUCCESS_WITHOUT_TIME_ZONE.withPayload(responseData);
+        }
+
+        return SUCCESS.withPayload(responseData);
+    }
 
 }

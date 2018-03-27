@@ -9,7 +9,19 @@ public enum LoginResponse {
     UNKNOWN_RESPONSE("Dristhi login failed. Try later"),
     UNAUTHORIZED("Please check the credentials"),
     TIMEOUT("The server could not be reached. Try again"),
-    EMPTY_REPONSE("The server returned an empty response. Try Again");
+    SUCCESS_WITH_EMPTY_RESPONSE("The server returned an empty response. Try Again"),
+    SUCCESS_WITHOUT_USER_DETAILS("User information was not Accessible Try Again"),
+    SUCCESS_WITHOUT_USER_USERNAME("Username was not Accessible Try Again"),
+    SUCCESS_WITHOUT_USER_PREFERREDNAME("User preferred name was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TEAM_DETAILS("User team information was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TEAM_LOCATION("User team location was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TEAM_LOCATION_UUID("User team location uuid was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TEAM_UUID("User team UUID was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TEAM_NAME("User team name was not Accessible Try Again"),
+    SUCCESS_WITHOUT_USER_LOCATION("User location was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TIME_DETAILS("Time Details was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TIME("Server time was not Accessible Try Again"),
+    SUCCESS_WITHOUT_TIME_ZONE("Server time zone was not Accessible Try Again");
 
     private LoginResponseData payload;
     private String message;
