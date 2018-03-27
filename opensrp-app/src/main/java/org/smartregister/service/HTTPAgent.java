@@ -3,7 +3,6 @@ package org.smartregister.service;
 import android.content.Context;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
@@ -13,6 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -40,7 +40,6 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 import org.smartregister.util.FileUtilities;
-import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +69,6 @@ import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
@@ -97,6 +95,12 @@ public class HTTPAgent {
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
 
         ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
+        // how much connections do we need? - default: 20
+        ConnManagerParams.setMaxTotalConnections
+                (basicHttpParams, 20);
+        // connections per host (2 default)
+        ConnManagerParams.setMaxConnectionsPerRoute
+                (basicHttpParams, new ConnPerRouteBean(20));
 
         SchemeRegistry registry = new SchemeRegistry();
         OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
@@ -105,6 +109,7 @@ public class HTTPAgent {
 
         ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(basicHttpParams,
                 registry);
+
         httpClient = new GZipEncodingHttpClient(
                 new DefaultHttpClient(connectionManager, basicHttpParams));
     }
@@ -112,16 +117,17 @@ public class HTTPAgent {
     public Response<String> fetch(String requestURLPath) {
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            String responseContent = IOUtils
-                    .toString(httpClient.fetchContent(new HttpGet(requestURLPath)));
+            String responseContent = httpClient.fetchContent(new HttpGet(requestURLPath));
             return new Response<>(ResponseStatus.success, responseContent);
         } catch (Exception e) {
-            logWarn(e.toString());
+            Log.e(TAG, e.toString(), e);
             return new Response<>(ResponseStatus.failure, null);
         }
     }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
+        HttpResponse httpResponse = null;
+        Response<String> response = null;
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
             HttpPost httpPost = new HttpPost(postURLPath);
@@ -133,20 +139,24 @@ public class HTTPAgent {
             entity.setContentType("application/json; charset=utf-8");
             httpPost.setEntity(entity);
 
-            HttpResponse response = httpClient.postContent(httpPost);
+            httpResponse = httpClient.postContent(httpPost);
 
             ResponseStatus responseStatus =
-                    response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
+                    httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
                             ? ResponseStatus.success : ResponseStatus.failure;
-            response.getEntity().consumeContent();
-            return new Response<>(responseStatus, null);
+            response = new Response<>(responseStatus, null);
         } catch (Exception e) {
-            logWarn(e.toString());
-            return new Response<>(ResponseStatus.failure, null);
+            Log.e(TAG, e.toString(), e);
+            response = new Response<>(ResponseStatus.failure, null);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
+        return response;
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
+        HttpResponse httpResponse = null;
+        Response<String> response = null;
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
             HttpPost httpPost = new HttpPost(postURLPath);
@@ -158,51 +168,57 @@ public class HTTPAgent {
             entity.setContentType("application/json; charset=utf-8");
             httpPost.setEntity(entity);
 
-            HttpResponse response = httpClient.postContent(httpPost);
-            if (response.getStatusLine().getStatusCode() != SC_OK) {
-                return new Response<>(ResponseStatus.failure, "Invalid status code: " + response.getStatusLine().getStatusCode());
+            httpResponse = httpClient.postContent(httpPost);
+            if (httpResponse.getStatusLine().getStatusCode() != SC_OK) {
+                return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
             } else {
-                String payload = IOUtils.toString(HttpResponseUtil.getResponseStream(response));
-                return new Response<>(ResponseStatus.success, payload);
+                String payload = httpClient.retrieveStringResponse(httpResponse);
+                response = new Response<>(ResponseStatus.success, payload);
             }
         } catch (Exception e) {
-            logWarn(e.toString());
-            return new Response<>(ResponseStatus.failure, null);
+            Log.e(TAG, e.toString(), e);
+            response = new Response<>(ResponseStatus.failure, null);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
+        return response;
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
                                                             String password) {
-        setCredentials(userName, password);
+        HttpResponse httpResponse = null;
+        LoginResponse loginResponse = null;
+
         try {
+            setCredentials(userName, password);
             requestURL = requestURL.replaceAll("\\s+", "");
-            HttpResponse response = httpClient.execute(new HttpGet(requestURL));
-            int statusCode = response.getStatusLine().getStatusCode();
+            httpResponse = httpClient.execute(new HttpGet(requestURL));
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
-                LoginResponseData responseData = getResponseBody(response);
-
+                LoginResponseData responseData = getResponseBody(httpResponse);
                 return retrieveResponse(responseData);
-
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 logError("Invalid credentials for: " + userName + " using " + requestURL);
-                return UNAUTHORIZED;
+                loginResponse = UNAUTHORIZED;
             } else {
                 logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
                         + userName + " using " + requestURL);
-                return UNKNOWN_RESPONSE;
+                loginResponse = UNKNOWN_RESPONSE;
             }
         } catch (ConnectionPoolTimeoutException | SocketTimeoutException e) {
-            logError(e.getMessage());
-            return TIMEOUT;
+            Log.e(TAG, e.getMessage(), e);
+            loginResponse = TIMEOUT;
         } catch (IOException e) {
-            logError("Failed to check credentials of: " + userName + " using " + requestURL + ". "
-                    + "" + "" + "Error: " + e.toString());
-            return NO_INTERNET_CONNECTIVITY;
+            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
+                    + "" + "" + "Error: " + e.toString(), e);
+            loginResponse = NO_INTERNET_CONNECTIVITY;
         } catch (IllegalArgumentException e) {
-            logError(e.getMessage());
-            return MALFORMED_URL;
-
+            Log.e(TAG, e.getMessage(), e);
+            loginResponse = MALFORMED_URL;
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
+        return loginResponse;
     }
 
     public DownloadStatus downloadFromUrl(String url, String filename) {
@@ -220,7 +236,7 @@ public class HTTPAgent {
     public Response<String> fetchWithCredentials(String uri, String username, String password) {
         setCredentials(username, password);
         try {
-            String responseContent = IOUtils.toString(httpClient.fetchContent(new HttpGet(uri)));
+            String responseContent = httpClient.fetchContent(new HttpGet(uri));
             return new Response<>(ResponseStatus.success, responseContent);
         } catch (IOException | ParseException e) {
             logError("Failed to fetch unique id");
@@ -230,6 +246,7 @@ public class HTTPAgent {
 
     public String httpImagePost(String url, ProfileImage image) {
 
+        HttpResponse httpResponse = null;
         String responseString = "";
         try {
             File uploadFile = new File(image.getFilepath());
@@ -252,31 +269,27 @@ public class HTTPAgent {
                 ContentBody cbFile = new FileBody(uploadFile, "image/jpeg");
                 entity.addPart("file", cbFile);
                 httpost.setEntity(entity);
-                String authToken = null;
-                HttpResponse response = httpClient.postContent(httpost);
-                responseString = EntityUtils.toString(response.getEntity());
+                httpResponse = httpClient.postContent(httpost);
+                responseString = EntityUtils.toString(httpResponse.getEntity());
                 Log.v("response so many", responseString);
+
+                //TODO if response status is not 200 or 201 ?
+                /*
                 int RESPONSE_OK = 200;
                 int RESPONSE_OK_ = 201;
-
-                if (response.getStatusLine().getStatusCode() != RESPONSE_OK_
-                        && response.getStatusLine().getStatusCode() != RESPONSE_OK) {
+                if (httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK_
+                        && httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK) {
                 }
+                */
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
         return responseString;
     }
-
-    private String nullToLiteral(String s) {
-        if (s == null) {
-            return "";
-        }
-        return s;
-
-    }
-
+    
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {
             logError("Empty Response using " + SUCCESS_WITH_EMPTY_RESPONSE.name());
@@ -328,6 +341,5 @@ public class HTTPAgent {
 
         return SUCCESS.withPayload(responseData);
     }
-
 
 }
