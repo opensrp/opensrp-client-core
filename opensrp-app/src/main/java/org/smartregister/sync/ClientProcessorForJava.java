@@ -407,9 +407,14 @@ public class ClientProcessorForJava {
                 // value from the json object for the field_name
                 if (fieldValue == null && map.containsKey(fieldName)) {
                     Object mapValue = map.get(fieldName);
-                    if (mapValue != null && mapValue instanceof String) {
-                        String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
-                        contentValues.put(columnName, columnValue);
+                    if (mapValue != null) {
+                        if (mapValue instanceof String) {
+                            String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
+                            contentValues.put(columnName, columnValue);
+                        } else if(mapValue instanceof Boolean) {
+                            boolean columnValue = (boolean) mapValue;
+                            contentValues.put(columnName, columnValue);
+                        }
                     }
                 }
             } else {
@@ -521,8 +526,12 @@ public class ClientProcessorForJava {
             Map<String, Object> clientAttributes = client.getAttributes();
             for (Map.Entry<String, Object> entry : clientAttributes.entrySet()) {
                 Object value = entry.getValue();
+                //TODO check for nulls, primitive types
                 if (value instanceof String) {
                     attributes.put(entry.getKey(), value.toString());
+                } else if(value instanceof Boolean) {
+                    boolean columnValue = (boolean) value;
+                    attributes.put(entry.getKey(), String.valueOf(columnValue));
                 }
             }
         } catch (Exception e) {
@@ -693,6 +702,8 @@ public class ClientProcessorForJava {
         for (Object o : list) {
             if (o instanceof String) {
                 values.add(o.toString());
+            } else if (o instanceof Boolean) {
+                values.add(String.valueOf(o));
             }
         }
         return values;
@@ -796,12 +807,17 @@ public class ClientProcessorForJava {
     private void updateIdenitifier(ContentValues values) {
         try {
             for (String identifier : getOpenmrsGenIds()) {
-                Object value = values.get(identifier);
-                if (value != null && value instanceof String) {
-                    String sValue = value.toString();
-                    if (StringUtils.isNotBlank(sValue)) {
+                Object value = values.get(identifier); //TODO
+                if (value != null) {
+                    if (value instanceof String) {
+                        String sValue = value.toString();
+                        if (StringUtils.isNotBlank(sValue)) {
+                            values.remove(identifier);
+                            values.put(identifier, sValue.replace("-", ""));
+                        }
+                    } else if (value instanceof Boolean) {
                         values.remove(identifier);
-                        values.put(identifier, sValue.replace("-", ""));
+                        values.put(identifier, ((Boolean) value));
                     }
                 }
             }
