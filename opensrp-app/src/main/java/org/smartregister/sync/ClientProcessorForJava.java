@@ -800,7 +800,7 @@ public class ClientProcessorForJava {
     }
 
     /**
-     * Update given identifier, removes hyphen
+     * Update given OPENMRS identifier, removes hyphen
      *
      * @param values
      */
@@ -809,15 +809,10 @@ public class ClientProcessorForJava {
             for (String identifier : getOpenmrsGenIds()) {
                 Object value = values.get(identifier); //TODO
                 if (value != null) {
-                    if (value instanceof String) {
-                        String sValue = value.toString();
-                        if (StringUtils.isNotBlank(sValue)) {
-                            values.remove(identifier);
-                            values.put(identifier, sValue.replace("-", ""));
-                        }
-                    } else if (value instanceof Boolean) {
+                    String sValue = value.toString();
+                    if (value instanceof String && StringUtils.isNotBlank(sValue)) {
                         values.remove(identifier);
-                        values.put(identifier, ((Boolean) value));
+                        values.put(identifier, sValue.replace("-", ""));
                     }
                 }
             }
