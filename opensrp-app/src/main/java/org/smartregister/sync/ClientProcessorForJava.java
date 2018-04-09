@@ -412,8 +412,7 @@ public class ClientProcessorForJava {
                             String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
                             contentValues.put(columnName, columnValue);
                         } else if(mapValue instanceof Boolean) {
-                            boolean columnValue = (boolean) mapValue;
-                            contentValues.put(columnName, columnValue);
+                            contentValues.put(columnName, String.valueOf(mapValue));
                         }
                     }
                 }
@@ -526,12 +525,22 @@ public class ClientProcessorForJava {
             Map<String, Object> clientAttributes = client.getAttributes();
             for (Map.Entry<String, Object> entry : clientAttributes.entrySet()) {
                 Object value = entry.getValue();
+                String key = entry.getKey();
                 //TODO check for nulls, primitive types
                 if (value instanceof String) {
-                    attributes.put(entry.getKey(), value.toString());
+                    attributes.put(key, value.toString());
                 } else if(value instanceof Boolean) {
                     boolean columnValue = (boolean) value;
-                    attributes.put(entry.getKey(), String.valueOf(columnValue));
+                    attributes.put(key, String.valueOf(columnValue));
+                } else if(value instanceof Long) {
+                    long columnValue = (long) value;
+                    attributes.put(key, String.valueOf(columnValue));
+                } else if(value instanceof Integer) {
+                    int columnValue = (int) value;
+                    attributes.put(key, String.valueOf(columnValue));
+                } else if(value instanceof Float) {
+                    float columnValue = (float) value;
+                    attributes.put(key, String.valueOf(columnValue));
                 }
             }
         } catch (Exception e) {
@@ -702,8 +711,8 @@ public class ClientProcessorForJava {
         for (Object o : list) {
             if (o instanceof String) {
                 values.add(o.toString());
-            } else if (o instanceof Boolean) {
-                values.add(String.valueOf(o));
+            } else if (o instanceof Boolean || o instanceof Integer || o instanceof Long || o instanceof Float) {
+                values.add(o.toString());
             }
         }
         return values;
