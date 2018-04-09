@@ -114,6 +114,16 @@ public class ContextMock {
             }
 
             @Override
+            public boolean moveSharedPreferencesFrom(Context context, String s) {
+                return false;
+            }
+
+            @Override
+            public boolean deleteSharedPreferences(String s) {
+                return false;
+            }
+
+            @Override
             public FileInputStream openFileInput(String s) throws FileNotFoundException {
                 return null;
             }
@@ -130,6 +140,11 @@ public class ContextMock {
 
             @Override
             public File getFileStreamPath(String s) {
+                return null;
+            }
+
+            @Override
+            public File getDataDir() {
                 return null;
             }
 
@@ -208,6 +223,11 @@ public class ContextMock {
             @Override
             public SQLiteDatabase openOrCreateDatabase(String s, int i, SQLiteDatabase.CursorFactory cursorFactory, @Nullable DatabaseErrorHandler databaseErrorHandler) {
                 return null;
+            }
+
+            @Override
+            public boolean moveDatabaseFrom(Context context, String s) {
+                return false;
             }
 
             @Override
@@ -363,7 +383,19 @@ public class ContextMock {
 
             @Nullable
             @Override
+            public Intent registerReceiver(@Nullable BroadcastReceiver broadcastReceiver, IntentFilter intentFilter, int i) {
+                return null;
+            }
+
+            @Nullable
+            @Override
             public Intent registerReceiver(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter, @Nullable String s, @Nullable Handler handler) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Intent registerReceiver(BroadcastReceiver broadcastReceiver, IntentFilter intentFilter, @Nullable String s, @Nullable Handler handler, int i) {
                 return null;
             }
 
@@ -375,6 +407,12 @@ public class ContextMock {
             @Nullable
             @Override
             public ComponentName startService(Intent intent) {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public ComponentName startForegroundService(Intent intent) {
                 return null;
             }
 
@@ -403,6 +441,12 @@ public class ContextMock {
                 return null;
             }
 
+            @Nullable
+            @Override
+            public String getSystemServiceName(@NonNull Class<?> aClass) {
+                return null;
+            }
+
             @Override
             public int checkPermission(@NonNull String s, int i, int i1) {
                 return PackageManager.PERMISSION_GRANTED;
@@ -416,6 +460,11 @@ public class ContextMock {
             @Override
             public int checkCallingOrSelfPermission(@NonNull String s) {
                 return PackageManager.PERMISSION_GRANTED;
+            }
+
+            @Override
+            public int checkSelfPermission(@NonNull String s) {
+                return 0;
             }
 
             @Override
@@ -441,6 +490,11 @@ public class ContextMock {
             @Override
             public void revokeUriPermission(Uri uri, int i) {
                 System.out.println();
+            }
+
+            @Override
+            public void revokeUriPermission(String s, Uri uri, int i) {
+
             }
 
             @Override
@@ -489,6 +543,11 @@ public class ContextMock {
             }
 
             @Override
+            public Context createContextForSplit(String s) throws PackageManager.NameNotFoundException {
+                return null;
+            }
+
+            @Override
             public Context createConfigurationContext(@NonNull Configuration configuration) {
                 return null;
             }
@@ -496,6 +555,16 @@ public class ContextMock {
             @Override
             public Context createDisplayContext(@NonNull Display display) {
                 return null;
+            }
+
+            @Override
+            public Context createDeviceProtectedStorageContext() {
+                return null;
+            }
+
+            @Override
+            public boolean isDeviceProtectedStorage() {
+                return false;
             }
         };
     }
