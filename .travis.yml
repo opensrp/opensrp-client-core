@@ -7,7 +7,7 @@ dist: precise
 
 env:
   matrix:
-    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-24 ANDROID_ABI=armeabi-v7a
   global:
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
@@ -16,6 +16,8 @@ env:
 android:
   components:
     # tools required
+    - tools
+    - platform-tools
     - tools
     # The BuildTools version used by your project
     - build-tools-27.0.0
@@ -30,7 +32,7 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-android-24
 
 addons:
   apt_packages:
