@@ -8,7 +8,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.3.2'
         classpath 'org.apache.commons:commons-lang3:3.3.2'
 //        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
     }
 }
 
@@ -25,6 +25,10 @@ apply plugin: 'com.android.library'
 //apply plugin: 'org.robolectric'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
+
+jacoco {
+    toolVersion = "0.7.6.201602180812"
+}
 
 android {
     compileSdkVersion androidCompileSdkVersion
@@ -104,6 +108,13 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
     }
+    testOptions {
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+            }
+        }
+    }
 }
 
 def filesToCopy = copySpec {
@@ -163,7 +174,7 @@ dependencies {
     testCompile 'org.mockito:mockito-core:1.9.5'
     testCompile('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile('org.robolectric:robolectric:3.4.2') {
+    testCompile('org.robolectric:robolectric:3.4.1') {
 
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
