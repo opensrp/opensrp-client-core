@@ -3,7 +3,6 @@ package org.smartregister.service;
 import android.content.Context;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -45,12 +44,12 @@ import org.smartregister.util.FileUtilities;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
@@ -70,7 +69,6 @@ import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE
 import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
-import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 import static org.smartregister.util.HttpResponseUtil.getResponseString;
 import static org.smartregister.util.Log.logError;
