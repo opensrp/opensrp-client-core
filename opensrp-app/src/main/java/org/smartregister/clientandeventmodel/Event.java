@@ -22,6 +22,8 @@ public class Event extends BaseDataObject {
     @JsonProperty
     private String locationId;
     @JsonProperty
+    private String childLocationId;
+    @JsonProperty
     private Date eventDate;
     @JsonProperty
     private String eventType;
@@ -138,6 +140,14 @@ public class Event extends BaseDataObject {
 
     public void setLocationId(String locationId) {
         this.locationId = locationId;
+    }
+
+    public String getChildLocationId() {
+        return childLocationId;
+    }
+
+    public void setChildLocationId(String childLocationId) {
+        this.childLocationId = childLocationId;
     }
 
     public Date getEventDate() {
