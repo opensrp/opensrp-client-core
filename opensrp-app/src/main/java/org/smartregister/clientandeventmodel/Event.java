@@ -252,6 +252,11 @@ public class Event extends BaseDataObject {
         return this;
     }
 
+    public Event withChildLocationId(String childLocationId) {
+        this.childLocationId = childLocationId;
+        return this;
+    }
+
     public Event withEventDate(Date eventDate) {
         this.eventDate = eventDate;
         return this;
