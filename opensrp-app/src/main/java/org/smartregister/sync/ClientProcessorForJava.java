@@ -407,9 +407,13 @@ public class ClientProcessorForJava {
                 // value from the json object for the field_name
                 if (fieldValue == null && map.containsKey(fieldName)) {
                     Object mapValue = map.get(fieldName);
-                    if (mapValue != null && mapValue instanceof String) {
-                        String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
-                        contentValues.put(columnName, columnValue);
+                    if (mapValue != null) {
+                        if (mapValue instanceof String) {
+                            String columnValue = getHumanReadableConceptResponse(mapValue.toString(), docSegment);
+                            contentValues.put(columnName, columnValue);
+                        } else {
+                            contentValues.put(columnName, String.valueOf(mapValue));
+                        }
                     }
                 }
             } else {
@@ -521,8 +525,10 @@ public class ClientProcessorForJava {
             Map<String, Object> clientAttributes = client.getAttributes();
             for (Map.Entry<String, Object> entry : clientAttributes.entrySet()) {
                 Object value = entry.getValue();
-                if (value instanceof String) {
-                    attributes.put(entry.getKey(), value.toString());
+                String key = entry.getKey();
+
+                if (value != null) {
+                    attributes.put(key, value.toString());
                 }
             }
         } catch (Exception e) {
@@ -691,7 +697,7 @@ public class ClientProcessorForJava {
             return values;
         }
         for (Object o : list) {
-            if (o instanceof String) {
+            if (o != null) {
                 values.add(o.toString());
             }
         }
@@ -789,17 +795,17 @@ public class ClientProcessorForJava {
     }
 
     /**
-     * Update given identifier, removes hyphen
+     * Update given OPENMRS identifier, removes hyphen
      *
      * @param values
      */
     private void updateIdenitifier(ContentValues values) {
         try {
             for (String identifier : getOpenmrsGenIds()) {
-                Object value = values.get(identifier);
-                if (value != null && value instanceof String) {
+                Object value = values.get(identifier); //TODO
+                if (value != null) {
                     String sValue = value.toString();
-                    if (StringUtils.isNotBlank(sValue)) {
+                    if (value instanceof String && StringUtils.isNotBlank(sValue)) {
                         values.remove(identifier);
                         values.put(identifier, sValue.replace("-", ""));
                     }

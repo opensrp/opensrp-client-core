@@ -3,6 +3,7 @@ package org.smartregister.service;
 import android.content.Context;
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
@@ -48,6 +49,7 @@ import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
@@ -68,6 +70,7 @@ import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
+import static org.smartregister.util.HttpResponseUtil.getResponseString;
 import static org.smartregister.util.Log.logError;
 
 public class HTTPAgent {
@@ -196,14 +199,25 @@ public class HTTPAgent {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode == HttpStatus.SC_OK) {
                 LoginResponseData responseData = getResponseBody(httpResponse);
-                return retrieveResponse(responseData);
-            } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                logError("Invalid credentials for: " + userName + " using " + requestURL);
-                loginResponse = UNAUTHORIZED;
+                loginResponse = retrieveResponse(responseData);
             } else {
-                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
-                        + userName + " using " + requestURL);
-                loginResponse = UNKNOWN_RESPONSE;
+                if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                    logError("Invalid credentials for: " + userName + " using " + requestURL);
+                    loginResponse = UNAUTHORIZED;
+                } else {
+                    logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
+                            + userName + " using " + requestURL);
+                    loginResponse = UNKNOWN_RESPONSE;
+                }
+
+                String responseString = getResponseString(httpResponse);
+                if (StringUtils.isNotBlank(responseString)) {
+                    responseString = StringUtils.substringBetween(responseString, "<p><b>message</b>", "</u></p>");
+                    if (StringUtils.isNotBlank(responseString)) {
+                        responseString = responseString.replace("<u>", "").trim();
+                        loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
+                    }
+                }
             }
         } catch (ConnectionPoolTimeoutException | SocketTimeoutException e) {
             Log.e(TAG, e.getMessage(), e);
@@ -289,7 +303,7 @@ public class HTTPAgent {
         }
         return responseString;
     }
-    
+
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {
             logError("Empty Response using " + SUCCESS_WITH_EMPTY_RESPONSE.name());
