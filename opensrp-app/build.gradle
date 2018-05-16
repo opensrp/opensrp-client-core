@@ -30,13 +30,13 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
 jacoco {
-    toolVersion = "0.7.6.201602180812"
+    toolVersion = "0.8.0"
 }
 
 android {
     compileSdkVersion androidCompileSdkVersion
     buildToolsVersion '27.0.3'
-    useLibrary  'org.apache.http.legacy'
+    useLibrary 'org.apache.http.legacy'
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
@@ -117,6 +117,10 @@ android {
     }
 }
 
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+}
+
 def filesToCopy = copySpec {
     from "${projectDir}/src/test/resources"
 }
@@ -156,7 +160,7 @@ dependencies {
     implementation 'joda-time:joda-time:2.3'
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation 'com.github.johnkil.print:print:1.2.3'
-    implementation ('ch.acra:acra:4.5.0'){
+    implementation('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
 
@@ -214,47 +218,6 @@ task makeJar(type: Copy) {
 }
 
 makeJar.dependsOn(clearJar, build)
-
-import org.apache.commons.lang3.StringUtils
-
-gradle.projectsEvaluated {
-    def variants = android.libraryVariants.collect()
-
-    tasks.withType(Test) { task ->
-        try {
-            variants.each { variant ->
-                def buildTypeName = variant.buildType.name.capitalize()
-
-                def productFlavorNames = variant.productFlavors.collect { it.name.capitalize() }
-                if (productFlavorNames.isEmpty()) {
-                    productFlavorNames = [""]
-                }
-                def productFlavorName = productFlavorNames.join('')
-
-                def variationName = "${productFlavorName}${buildTypeName}"
-
-                if (task.name.contains(variationName)) {
-                    def variationPath = variant.buildType.name;
-
-                    if (StringUtils.isNotEmpty(productFlavorName)) {
-                        variationPath = StringUtils.uncapitalize(productFlavorName) + "/" + variationPath
-                    }
-
-                    def copyResourcesTask = project.tasks.create("copy${variationName}Resources", Copy)
-                    copyResourcesTask.from("${projectDir}/src/test/resources")
-                    copyResourcesTask.into("${buildDir}/intermediates/classes/test/${variationPath}")
-
-                    task.dependsOn(copyResourcesTask)
-
-                    variants.remove(variant)
-
-                    throw new Exception("Break") // Breaking the loop
-                }
-            }
-        } catch (Exception e) {
-        } // Just drop the exception
-    }
-}
 
 task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
