@@ -111,13 +111,10 @@ android {
         exclude 'META-INF/ASL2.0'
     }
     testOptions {
-        unitTests.all {
-            jacoco {
-                includeNoLocationClasses = true
-            }
+        unitTests {
+            includeAndroidResources = true
         }
     }
-
 }
 
 def filesToCopy = copySpec {
@@ -181,6 +178,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.9.5'
     testImplementation('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
     testImplementation('org.robolectric:robolectric:3.4.1') {
 
         exclude group: 'com.google.guava', module: 'guava'
@@ -218,27 +216,6 @@ task makeJar(type: Copy) {
 makeJar.dependsOn(clearJar, build)
 
 import org.apache.commons.lang3.StringUtils
-
-def package_namespace = "org."
-def package_namespace_path = package_namespace.replaceAll("\\.", "/")
-
-afterEvaluate { project ->
-    android.libraryVariants.each { variant ->
-        // workaround for missing R class for aar dependencies
-        def copyTaskName = "copy${variant.name.capitalize()}AppCompat"
-        task(copyTaskName, type: Copy) {
-            dependsOn "process${variant.name.capitalize()}Resources"
-            from { "build/generated/source/r/${variant.name}/$package_namespace_path" }
-//            into { "build/generated/source/r/${variant.name}/android/support/v7/appcompat" }
-            into { "src/test/java/android/support/v7/appcompat" }
-            include 'R.java'
-            filter { line -> line.contains("package ${package_namespace};") ? 'package android.support.v7.appcompat;' : line }
-            outputs.upToDateWhen { false }
-        }
-        System.out.println("adding ${copyTaskName}")
-        tasks.getByName("compile${variant.name.capitalize()}UnitTestJavaWithJavac") dependsOn copyTaskName
-    }
-}
 
 gradle.projectsEvaluated {
     def variants = android.libraryVariants.collect()
