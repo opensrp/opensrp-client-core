@@ -55,9 +55,6 @@ subprojects {
         maven {
             url "${projectDir}/opensrp-app/../libs/"
         }
-        maven {
-            url "${projectDir}/opensrp-app-it/../libs/"
-        }
         mavenLocal()
     }
 
