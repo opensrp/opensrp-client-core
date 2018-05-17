@@ -1,14 +1,16 @@
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:1.2.3"
-        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
+        classpath 'com.android.tools.build:gradle:3.1.2'
+//        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
     }
 }
 
 repositories {
+    google()
     jcenter()
     mavenCentral()
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
@@ -19,15 +21,15 @@ apply plugin: 'com.android.application'
 
 dependencies {
 
-    compile project(':opensrp-app')
+    implementation project(':opensrp-app')
 
-    compile('com.android.support:design:22.2.1') {
+    implementation('com.android.support:design:22.2.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
 
     }
 
-    testCompile 'junit:junit:4.12'
-    testCompile('org.robolectric:robolectric:3.4') {
+    testImplementation 'junit:junit:4.12'
+    testImplementation('org.robolectric:robolectric:3.4') {
 
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
@@ -35,17 +37,17 @@ dependencies {
         exclude group: 'com.android.support'
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
-    testCompile("org.robolectric:shadows-multidex:3.4-rc2") {
+    testImplementation("org.robolectric:shadows-multidex:3.4-rc2") {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
+    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
 }
 
 
 android {
 
-    compileSdkVersion 22
-    buildToolsVersion "26.0.1"
+    compileSdkVersion 27
+    buildToolsVersion "27.0.3"
 
     defaultConfig {
         applicationId "org.smartregister.sample"
@@ -57,7 +59,6 @@ android {
     }
 
     dexOptions {
-        incremental = true
         preDexLibraries = false
         javaMaxHeapSize "4g"
     }

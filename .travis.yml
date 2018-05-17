@@ -7,21 +7,23 @@ dist: precise
 
 env:
   matrix:
-    - ANDROID_TARGET=android-22 ANDROID_ABI=armeabi-v7a
+    - ANDROID_TARGET=android-21 ANDROID_ABI=armeabi-v7a
   global:
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
     - MALLOC_ARENA_MAX=2
 
 android:
+  update_sdk: true
   components:
     # tools required
     - tools
+    - platform-tools
+    - tools
     # The BuildTools version used by your project
-    - build-tools-26.0.1
+    - build-tools-27.0.3
     # The SDK version used to compile your projects
-    - android-21
-    - android-22
+    - android-27
     # Additional components
     - extra-google-google_play_services
     - extra-google-m2repository
@@ -30,7 +32,7 @@ android:
 
     # Specify at least one system image,
     # if you need to run emulator(s) during your tests
-    - sys-img-armeabi-v7a-android-22
+    - sys-img-armeabi-v7a-android-21
 
 addons:
   apt_packages:
