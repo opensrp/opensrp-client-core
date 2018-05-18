@@ -23,7 +23,7 @@ dependencies {
 
     implementation project(':opensrp-app')
 
-    implementation('com.android.support:design:22.2.1') {
+    implementation('com.android.support:design:27.1.1') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
 
     }
@@ -52,7 +52,7 @@ android {
     defaultConfig {
         applicationId "org.smartregister.sample"
         minSdkVersion 18
-        targetSdkVersion 21
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         multiDexEnabled true

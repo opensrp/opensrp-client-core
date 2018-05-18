@@ -77,7 +77,7 @@ android {
         multiDexEnabled true
         //applicationId "org.smartregister"
         minSdkVersion 16
-        targetSdkVersion 21
+        targetSdkVersion 27
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -147,7 +147,7 @@ dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
     implementation 'com.android.support:multidex:1.0.0'
     implementation 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
-    implementation 'com.android.support:appcompat-v7:21.0.3'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation "org.apache.httpcomponents:httpmime:4.2.3"
     implementation 'com.google.code.gson:gson:2.3'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.1'
