@@ -1,6 +1,7 @@
 package org.smartregister.cursoradapter;
 
 import android.content.Context;
+import android.os.Build;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,7 +18,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
@@ -32,6 +32,7 @@ import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowContext;
+import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.Village;
@@ -44,13 +45,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import static org.robolectric.shadows.support.v4.SupportFragmentTestUtil.startFragment;
 
-@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class})
+@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
 public class CursorAdapterFragmentTest extends BaseUnitTest {
-
-    private HouseHoldSmartRegisterActivity ecActivity;
 
     @Mock
     private org.smartregister.Context context_;
@@ -90,28 +90,30 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
         when(commonRepository.rawCustomQueryForAdapter(anyString())).thenReturn(matrixCursor);
         when(anmLocationController.get()).thenReturn(locationJson);
         when(context_.ziggyService()).thenReturn(ziggyService);
-        ecActivity = Robolectric.buildActivity(HouseHoldSmartRegisterActivity.class)
-                .create()
-                .start()
-                .resume()
-                .visible()
-                .get();
+
     }
 
 
     @Test
     public void assertBaseFragmentNotNullandIsSecuredNativeSmartRegisterCursorAdapterFragment() {
-        Assert.assertNotNull(ecActivity.mBaseFragment);
-        Assert.assertTrue(ecActivity.mBaseFragment instanceof SecuredNativeSmartRegisterCursorAdapterFragment);
+        HouseHoldSmartRegisterFragment mBaseFragment = new HouseHoldSmartRegisterFragment();
+        startFragment(mBaseFragment, HouseHoldSmartRegisterActivity.class);
+
+        Assert.assertNotNull(mBaseFragment);
+        Assert.assertTrue(mBaseFragment instanceof SecuredNativeSmartRegisterCursorAdapterFragment);
     }
 
     @Test
     public void pressingSearchCancelButtonShouldClearSearchTextAndLoadAllClients() {
-        final ListView list = (ListView) ecActivity.findViewById(R.id.list);
-        EditText searchText = (EditText) ecActivity.findViewById(R.id.edt_search);
+
+        HouseHoldSmartRegisterFragment mBaseFragment = new HouseHoldSmartRegisterFragment();
+        startFragment(mBaseFragment, HouseHoldSmartRegisterActivity.class);
+
+        final ListView list = (ListView) mBaseFragment.getView().findViewById(R.id.list);
+        EditText searchText = (EditText) mBaseFragment.getActivity().findViewById(R.id.edt_search);
         searchText.setText("FWHOHFNAME1");
         assertTrue("FWHOHFNAME1".equalsIgnoreCase(searchText.getText().toString()));
-        ecActivity
+        mBaseFragment.getView()
                 .findViewById(R.id.btn_search_cancel)
                 .performClick();
         assertEquals("", searchText.getText().toString());
@@ -120,12 +122,14 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
 
     @Test
     public void listViewNavigationShouldWorkIfClientsSpanMoreThanOnePage() throws InterruptedException {
-        ((HouseHoldSmartRegisterFragment) ecActivity.mBaseFragment).refresh();
-        final ListView list = (ListView) ecActivity.findViewById(R.id.list);
+        HouseHoldSmartRegisterFragment mBaseFragment = new HouseHoldSmartRegisterFragment();
+        startFragment(mBaseFragment, HouseHoldSmartRegisterActivity.class);
+
+        final ListView list = (ListView) mBaseFragment.getView().findViewById(R.id.list);
         ViewGroup footer = (ViewGroup) tryGetAdapter(list).getView(20, null, null);
-        Button nextButton = (Button) ecActivity.findViewById(R.id.btn_next_page);
-        Button previousButton = (Button) ecActivity.findViewById(R.id.btn_previous_page);
-        TextView info = (TextView) ecActivity.findViewById(R.id.txt_page_info);
+        Button nextButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_next_page);
+        Button previousButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_previous_page);
+        TextView info = (TextView) mBaseFragment.getView().findViewById(R.id.txt_page_info);
         int count = tryGetAdapter(list).getCount();
         nextButton.performClick();
         assertEquals("Page 1 of 1", info.getText());

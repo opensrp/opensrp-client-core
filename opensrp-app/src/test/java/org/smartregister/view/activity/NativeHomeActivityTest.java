@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 
 import junit.framework.Assert;
 
@@ -25,13 +26,14 @@ import org.smartregister.R;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.SecuredActivityShadow;
 import org.smartregister.shadows.ShadowContext;
+import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 import org.smartregister.view.activity.mock.NativeHomeActivityMock;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@Config(shadows = {ShadowContext.class, SecuredActivityShadow.class})
+@Config(shadows = {ShadowContext.class, SecuredActivityShadow.class,  ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
 public class NativeHomeActivityTest extends BaseUnitTest {

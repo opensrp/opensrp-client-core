@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,6 +31,7 @@ import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowContext;
+import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 import org.smartregister.view.activity.mock.NativeECSmartRegisterActivityMock;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
@@ -47,7 +49,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
-@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class})
+@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class,  ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
 public class NativeECSmartRegisterActivityTest extends BaseUnitTest {

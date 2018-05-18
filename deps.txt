@@ -1,0 +1,41 @@
+PROCESSING MAVEN LOCAL SNAPSHOT BUILD VERSION 1.3.1-SNAPSHOT...
+:opensrp-app:dependencies
+
+------------------------------------------------------------
+Project :opensrp-app - OpenSRP core client library
+------------------------------------------------------------
+
+androidJacocoAnt - The Jacoco agent to use to get coverage data.
+\--- org.jacoco:org.jacoco.ant:0.7.9
+     +--- org.jacoco:org.jacoco.core:0.7.9
+     |    \--- org.ow2.asm:asm-debug-all:5.2
+     +--- org.jacoco:org.jacoco.report:0.7.9
+     |    +--- org.jacoco:org.jacoco.core:0.7.9 (*)
+     |    \--- org.ow2.asm:asm-debug-all:5.2
+     \--- org.jacoco:org.jacoco.agent:0.7.9
+
+androidTestAnnotationProcessor - Classpath for the annotation processor for 'androidTest'. (n)
+No dependencies
+
+androidTestApi - API dependencies for 'androidTest' sources. (n)
+No dependencies
+
+androidTestCompile - Compile dependencies for 'androidTest' sources (deprecated: use 'androidTestImplementation' instead). (n)
+No dependencies
+
+androidTestCompileOnly - Compile only dependencies for 'androidTest' sources. (n)
+No dependencies
+
+androidTestDebugAnnotationProcessor - Classpath for the annotation processor for 'androidTestDebug'. (n)
+No dependencies
+
+androidTestDebugApi - API dependencies for 'androidTestDebug' sources. (n)
+No dependencies
+
+androidTestDebugCompile - Compile dependencies for 'androidTestDebug' sources (deprecated: use 'androidTestDebugImplementation' instead). (n)
+No dependencies
+
+androidTestDebugCompileOnly - Compile only dependencies for 'androidTestDebug' sources. (n)
+No dependencies
+
+androidTestDebugImplementation - Implementation only dependencies for 'androidTestDebug' sources.
