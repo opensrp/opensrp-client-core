@@ -186,7 +186,7 @@ public abstract class SecuredActivity extends AppCompatActivity {
     }
 
     private boolean isSuccessfulFormSubmission(int resultCode) {
-        return resultCode == AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
+        return resultCode == FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
     }
 
     private boolean hasMetadata() {

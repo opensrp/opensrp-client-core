@@ -13,8 +13,6 @@ import static android.os.Build.VERSION_CODES.N;
 
 @Implements(className = "android.content.res.ResourcesImpl", inheritImplementationMethods = true, isInAndroidSdk = false, minSdk = N)
 public class ShadowDrawableResourcesImpl extends ShadowResourcesImpl {
-    public ShadowDrawableResourcesImpl() {
-    }
 
     @Implementation
     @Override
