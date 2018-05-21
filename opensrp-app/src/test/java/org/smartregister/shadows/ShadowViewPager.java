@@ -23,7 +23,7 @@ import static org.robolectric.shadow.api.Shadow.directlyOn;
 public class ShadowViewPager extends ShadowViewGroup {
 
     @RealObject
-    ViewPager realViewPager;
+    private ViewPager realViewPager;
 
     @Implementation
     public void setAdapter(PagerAdapter adapter) {
