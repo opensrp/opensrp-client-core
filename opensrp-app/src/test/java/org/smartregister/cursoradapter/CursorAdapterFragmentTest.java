@@ -130,7 +130,6 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
     public void listViewNavigationShouldWorkIfClientsSpanMoreThanOnePage() throws InterruptedException {
         Fragment mBaseFragment = ecActivity.mBaseFragment;
 
-        final ListView list = (ListView) mBaseFragment.getView().findViewById(R.id.list);
         Button nextButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_next_page);
         Button previousButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_previous_page);
         TextView info = (TextView) mBaseFragment.getView().findViewById(R.id.txt_page_info);
@@ -139,15 +138,6 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
         previousButton.performClick();
     }
 
-
-    private ListAdapter tryGetAdapter(final ListView list) {
-        ListAdapter adapter = list.getAdapter();
-        while (adapter.getCount() == 0) {
-            ShadowLooper.idleMainLooper(1000);
-            adapter = list.getAdapter();
-        }
-        return adapter;
-    }
 
     public static ECClients createClients(int clientCount) {
         ECClients clients = new ECClients();
