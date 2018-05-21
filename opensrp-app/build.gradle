@@ -202,7 +202,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
         exclude group: 'junit', module: 'junit'
     }
-    testCompile "org.robolectric:shadows-support-v4:3.3.2"
+    testImplementation "org.robolectric:shadows-support-v4:3.3.2"
     // PowerMock
     def powerMockVersion = '1.7.1'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
