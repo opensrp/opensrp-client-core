@@ -1,14 +1,12 @@
 package org.smartregister.cursoradapter;
 
 import android.content.Context;
-import android.view.ViewGroup;
+import android.os.Build;
+import android.support.v4.app.Fragment;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
+import android.widget.ImageButton;
 import android.widget.TextView;
-
-import junit.framework.Assert;
 
 import net.sqlcipher.MatrixCursor;
 
@@ -21,17 +19,18 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
-import org.robolectric.shadows.ShadowLooper;
+import org.robolectric.shadows.ShadowView;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.mockactivities.HouseHoldSmartRegisterActivity;
-import org.smartregister.commonregistry.mockactivities.HouseHoldSmartRegisterFragment;
 import org.smartregister.customshadows.AndroidTreeViewShadow;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowContext;
+import org.smartregister.shadows.ShadowDrawableResourcesImpl;
+import org.smartregister.shadows.ShadowViewPager;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.Village;
@@ -41,11 +40,12 @@ import org.smartregister.view.controller.ECSmartRegisterController;
 import org.smartregister.view.controller.VillageController;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class})
+@Config(shadows = {ShadowContext.class, FontTextViewShadow.class, AndroidTreeViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowViewPager.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 @PrepareForTest({CoreLibrary.class})
 public class CursorAdapterFragmentTest extends BaseUnitTest {
@@ -63,9 +63,6 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
 
     @Mock
     private CommonRepository commonRepository;
-
-    @Mock
-    private CoreLibrary coreLibrary;
 
     @Mock
     private ANMLocationController anmLocationController;
@@ -90,57 +87,54 @@ public class CursorAdapterFragmentTest extends BaseUnitTest {
         when(commonRepository.rawCustomQueryForAdapter(anyString())).thenReturn(matrixCursor);
         when(anmLocationController.get()).thenReturn(locationJson);
         when(context_.ziggyService()).thenReturn(ziggyService);
+
         ecActivity = Robolectric.buildActivity(HouseHoldSmartRegisterActivity.class)
                 .create()
                 .start()
                 .resume()
                 .visible()
                 .get();
+
     }
 
 
     @Test
     public void assertBaseFragmentNotNullandIsSecuredNativeSmartRegisterCursorAdapterFragment() {
-        Assert.assertNotNull(ecActivity.mBaseFragment);
-        Assert.assertTrue(ecActivity.mBaseFragment instanceof SecuredNativeSmartRegisterCursorAdapterFragment);
+        Fragment mBaseFragment = ecActivity.mBaseFragment;
+
+        assertNotNull(mBaseFragment);
+        assertTrue(mBaseFragment instanceof SecuredNativeSmartRegisterCursorAdapterFragment);
     }
 
     @Test
-    public void pressingSearchCancelButtonShouldClearSearchTextAndLoadAllClients() {
-        final ListView list = (ListView) ecActivity.findViewById(R.id.list);
-        EditText searchText = (EditText) ecActivity.findViewById(R.id.edt_search);
+    public void pressingSearchCancelButtonShouclickOnldClearSearchTextAndLoadAllClients() {
+        Fragment mBaseFragment = ecActivity.mBaseFragment;
+
+        EditText searchText = (EditText) mBaseFragment.getActivity().findViewById(R.id.edt_search);
         searchText.setText("FWHOHFNAME1");
         assertTrue("FWHOHFNAME1".equalsIgnoreCase(searchText.getText().toString()));
-        ecActivity
-                .findViewById(R.id.btn_search_cancel)
-                .performClick();
+
+        ImageButton cancel = mBaseFragment.getView()
+                .findViewById(R.id.btn_search_cancel);
+        assertNotNull(cancel);
+        assertTrue(ShadowView.clickOn(cancel));
+
         assertEquals("", searchText.getText().toString());
 //        assertEquals(2, tryGetAdapter(list).getCount());
     }
 
     @Test
     public void listViewNavigationShouldWorkIfClientsSpanMoreThanOnePage() throws InterruptedException {
-        ((HouseHoldSmartRegisterFragment) ecActivity.mBaseFragment).refresh();
-        final ListView list = (ListView) ecActivity.findViewById(R.id.list);
-        ViewGroup footer = (ViewGroup) tryGetAdapter(list).getView(20, null, null);
-        Button nextButton = (Button) ecActivity.findViewById(R.id.btn_next_page);
-        Button previousButton = (Button) ecActivity.findViewById(R.id.btn_previous_page);
-        TextView info = (TextView) ecActivity.findViewById(R.id.txt_page_info);
-        int count = tryGetAdapter(list).getCount();
+        Fragment mBaseFragment = ecActivity.mBaseFragment;
+
+        Button nextButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_next_page);
+        Button previousButton = (Button) mBaseFragment.getView().findViewById(R.id.btn_previous_page);
+        TextView info = (TextView) mBaseFragment.getView().findViewById(R.id.txt_page_info);
         nextButton.performClick();
         assertEquals("Page 1 of 1", info.getText());
         previousButton.performClick();
     }
 
-
-    private ListAdapter tryGetAdapter(final ListView list) {
-        ListAdapter adapter = list.getAdapter();
-        while (adapter.getCount() == 0) {
-            ShadowLooper.idleMainLooper(1000);
-            adapter = list.getAdapter();
-        }
-        return adapter;
-    }
 
     public static ECClients createClients(int clientCount) {
         ECClients clients = new ECClients();
