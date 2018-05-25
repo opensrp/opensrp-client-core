@@ -7,17 +7,16 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.2'
-        classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
+        classpath 'org.apache.commons:commons-lang3:3.7'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
     }
 }
 
-
-
 allprojects {
     repositories {
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
+        mavenCentral()
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         google()
         jcenter()
     }
@@ -32,9 +31,12 @@ jacoco {
     toolVersion = "0.8.0"
 }
 
+def cfg = rootProject.ext.configuration
+def libs = rootProject.ext.libraries
+
 android {
-    compileSdkVersion androidCompileSdkVersion
-    buildToolsVersion '27.0.3'
+    compileSdkVersion cfg.compileVersion
+    buildToolsVersion cfg.buildToolsVersion
     useLibrary 'org.apache.http.legacy'
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
@@ -75,8 +77,8 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         //applicationId "org.smartregister"
-        minSdkVersion 16
-        targetSdkVersion 27
+        minSdkVersion cfg.minSdk
+        targetSdkVersion cfg.targetSdk
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -139,51 +141,48 @@ afterEvaluate {
     assembleDebug.dependsOn(copyTestResources)
 }
 configurations.all {
-    resolutionStrategy.force 'commons-codec:commons-codec:1.10'
+    resolutionStrategy.force "commons-codec:commons-codec:${libs.commonscodec}"
 }
 
 dependencies {
-    implementation 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
-    implementation 'com.android.support:multidex:1.0.0'
-    implementation 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation "org.apache.httpcomponents:httpmime:4.2.3"
-    implementation 'com.google.code.gson:gson:2.3'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.1'
-    implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
-    implementation group: 'com.google.guava', name: 'guava', version: '20.0'
-    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
-    implementation 'org.apache.commons:commons-lang3:3.2'
-    implementation 'org.mozilla:rhino:1.7R4'
-    implementation 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
-    implementation 'joda-time:joda-time:2.3'
-    implementation 'com.github.bmelnychuk:atv:1.2.9'
-    implementation 'com.github.johnkil.print:print:1.2.3'
-    implementation('ch.acra:acra:4.5.0') {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api "net.zetetic:android-database-sqlcipher:${libs.sqlcipher}"
+    implementation group: 'org.ei.drishti', name: 'drishti-interface', version: "${libs.drishti}"
+    implementation group: 'com.android.support', name: 'appcompat-v7', version: "${libs.supportVersion}"
+    implementation group: 'org.apache.httpcomponents', name: 'httpmime', version: "${libs.httpmime}"
+    implementation group: 'com.google.code.gson', name:'gson', version: "${libs.gson}"
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: "${libs.fasterxml}"
+    implementation group: 'commons-codec', name: 'commons-codec', version: "${libs.commonscodec}"
+    implementation group: 'commons-io', name: 'commons-io', version: "${libs.commonsio}"
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: "${libs.lang3}"
+    implementation group: 'org.mozilla', name: 'rhino', version: "${libs.rhino}"
+    implementation group: 'com.ocpsoft', name: 'ocpsoft-pretty-time', version: "${libs.prettytime}"
+    implementation group: 'joda-time', name: 'joda-time', version: "${libs.jodatime}"
+    implementation group: 'com.github.bmelnychuk', name: 'atv', version: "${libs.bmelnychuk}"
+    implementation group: 'com.github.johnkil.print', name: 'print', version: "${libs.print}"
+    implementation group: 'com.mcxiaoke.volley', name: 'library', version: "${libs.volley}"
+    implementation group: 'com.cloudant', name: 'cloudant-http', version: "${libs.cloudant}"
+    implementation("ch.acra:acra:${libs.acra}") {
         exclude group: 'org.json', module: 'json'
     }
 
-    implementation 'com.google.guava:guava:18.0'
-    implementation 'com.mcxiaoke.volley:library:1.0.19'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation group: 'com.google.guava', name: 'guava', version: '20.0'
+
     annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
-    implementation 'com.cloudant:cloudant-http:2.7.0'
 
 }
 
 dependencies {
     androidTestImplementation 'com.jayway.android.robotium:robotium-solo:4.3'
-    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.2'
     androidTestImplementation 'junit:junit:4.12'
 
     testImplementation group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
-    testImplementation 'org.mockito:mockito-core:1.9.5'
+    testImplementation 'org.mockito:mockito-core:2.8.9'
     testImplementation('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
     testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
     testImplementation('org.robolectric:robolectric:3.8') {
-
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'

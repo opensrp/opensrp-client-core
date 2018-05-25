@@ -19,7 +19,7 @@ import atv.model.TreeNode;
 public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
     private TextView tvValue;
     private CheckBox nodeSelector;
-    private TextView levelValue;
+//    private TextView levelValue;
     private String level;
     private com.github.johnkil.print.PrintView arrowView;
     private Context context;
@@ -35,13 +35,13 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         final LayoutInflater inflater = LayoutInflater.from(context);
         final View view = inflater.inflate(R.layout.layout_selectable_item, null, false);
 
-        tvValue = (TextView) view.findViewById(R.id.node_value);
-        tvValue.setText(level + " " + value);
-        arrowView = (com.github.johnkil.print.PrintView) view.findViewById(R.id.arrowview);
+        tvValue = view.findViewById(R.id.node_value);
+        tvValue.setText(String.format("%s %s", level, value));
+        arrowView = view.findViewById(R.id.arrowview);
 //        levelValue = (TextView) view.findViewById(R.id.treenodetext);
 //        levelValue.setText("\\u2605");
 
-        nodeSelector = (CheckBox) view.findViewById(R.id.node_selector);
+        nodeSelector = view.findViewById(R.id.node_selector);
         nodeSelector.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -56,7 +56,7 @@ public class SelectableItemHolder extends TreeNode.BaseNodeViewHolder<String> {
         view.findViewById(R.id.bot_line).setVisibility(View.INVISIBLE);
         if (node.isLeaf()) {
             ((PrintView) view.findViewById(R.id.arrowview))
-                    .setIconText(R.string.ic_check_circle_blank);
+                    .setIconTextRes(R.string.ic_check_circle_blank);
         }
 //        if(node.isFirstChild()){
 //            view.findViewById(R.id.top_line).setVisibility(View.INVISIBLE);
