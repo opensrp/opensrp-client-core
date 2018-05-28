@@ -15,6 +15,8 @@ public class Event extends BaseDataObject {
 
     private String locationId;
 
+    private String childLocationId;
+
     private DateTime eventDate;
 
     private String eventType;
@@ -160,6 +162,14 @@ public class Event extends BaseDataObject {
         this.version = version;
     }
 
+    public String getChildLocationId() {
+        return childLocationId;
+    }
+
+    public void setChildLocationId(String childLocationId) {
+        this.childLocationId = childLocationId;
+    }
+
     public Obs findObs(String parentId, boolean nonEmpty, String... fieldIds) {
         Obs res = null;
         for (String f : fieldIds) {
@@ -216,6 +226,11 @@ public class Event extends BaseDataObject {
 
     public Event withEntityType(String entityType) {
         this.entityType = entityType;
+        return this;
+    }
+
+    public Event withChildLocationId(String childLocationId) {
+        this.childLocationId = childLocationId;
         return this;
     }
 
