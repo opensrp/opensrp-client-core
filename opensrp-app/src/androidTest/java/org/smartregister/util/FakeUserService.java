@@ -42,7 +42,7 @@ public class FakeUserService extends UserService {
         assertExpectedCredentials(userName, password);
     }
 
-    @Override
+
     public void remoteLogin(String userName, String password, String anmLocation) {
         super.setupContextForLogin(userName, password);
         actualCalls.add("login");

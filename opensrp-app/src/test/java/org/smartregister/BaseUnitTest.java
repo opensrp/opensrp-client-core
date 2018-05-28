@@ -1,5 +1,6 @@
 package org.smartregister;
 
+import android.os.Build;
 import android.view.View;
 
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.customshadows.FontTextViewShadow;
+import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +22,7 @@ import java.util.Collection;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(RobolectricTestRunner.class)
-@Config(constants = BuildConfig.class, shadows = {FontTextViewShadow.class})
+@Config(constants = BuildConfig.class, shadows = {FontTextViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 public abstract class BaseUnitTest {
     public void resetWindowManager() {
