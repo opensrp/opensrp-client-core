@@ -6,7 +6,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class PermissionUtils {
 
@@ -46,4 +48,26 @@ public class PermissionUtils {
         return false;
 
     }
+
+    public static boolean verifyPermissionGranted(String permissions[], int[] grantResults, String... permissionsToVerify) {
+        Map<String, Integer> perms = new HashMap<>();
+        // Initialize the map with both permissions
+        for (String permission : permissionsToVerify) {
+            perms.put(permission, PackageManager.PERMISSION_GRANTED);
+        }
+        // Fill with actual results from user
+        for (int i = 0; i < permissions.length; i++) {
+            perms.put(permissions[i], grantResults[i]);
+        }
+
+        for(String permission:permissionsToVerify){
+            if (perms.get(permission) != PackageManager.PERMISSION_GRANTED){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
 }
