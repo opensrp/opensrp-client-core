@@ -11,7 +11,10 @@ import java.util.List;
 public class PermissionUtils {
 
     public static final int CAMERA_PERMISSION_REQUEST_CODE = 15141;
-    public static final int PHONE_STATE_PERMISSION_REQUEST_CODE = 14151;
+    public static final int PHONE_STATE_PERMISSION_REQUEST_CODE = 15142;
+    public static final int READ_EXTERNAL_STORAGE_REQUEST_CODE = 15143;
+    public static final int WRITE_EXTERNAL_STORAGE_REQUEST_CODE = 15144;
+    public static final int ACCESS_FINE_LOCATION_REQUEST_CODE = 15145;
 
 
     public static boolean isPermissionGranted(Activity context, String permission, int requestCode) {
