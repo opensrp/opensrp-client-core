@@ -2,26 +2,22 @@ package org.smartregister.service;
 
 import org.apache.commons.io.IOUtils;
 import org.ei.drishti.dto.Action;
+import org.ei.drishti.dto.AlertStatus;
+import org.ei.drishti.dto.BeneficiaryType;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.util.ActionBuilder;
 
+import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.ei.drishti.dto.AlertStatus.normal;
-import static org.ei.drishti.dto.BeneficiaryType.mother;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
-import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
 
 @RunWith(RobolectricTestRunner.class)
 public class DrishtiServiceTest {
@@ -33,59 +29,59 @@ public class DrishtiServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         drishtiService = new DrishtiService(httpAgent, "http://base.drishti.url");
     }
 
     @Test
     public void shouldFetchAlertActions() throws Exception {
-        when(httpAgent.fetch(EXPECTED_URL)).thenReturn(new Response<String>(ResponseStatus.success, IOUtils.toString(getClass().getResource("/alerts.json"))));
+        Mockito.when(httpAgent.fetch(EXPECTED_URL)).thenReturn(new Response<String>(ResponseStatus.success, IOUtils.toString(getClass().getResource("/alerts.json"))));
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        verify(httpAgent).fetch(EXPECTED_URL);
-        assertEquals(asList(actionForCreateAlert("Case X", normal.value(), mother.value(), "Ante Natal Care - Normal", "ANC 1", "2012-01-01", "2012-01-11", "1333695798583"),
-                actionForCloseAlert("Case Y", "ANC 1", "2012-01-01", "1333695798644")), actions.payload());
-        assertEquals(ResponseStatus.success, actions.status());
+        Mockito.verify(httpAgent).fetch(EXPECTED_URL);
+        Assert.assertEquals(Arrays.asList(ActionBuilder.actionForCreateAlert("Case X", AlertStatus.normal.value(), BeneficiaryType.mother.value(), "Ante Natal Care - Normal", "ANC 1", "2012-01-01", "2012-01-11", "1333695798583"),
+                ActionBuilder.actionForCloseAlert("Case Y", "ANC 1", "2012-01-01", "1333695798644")), actions.payload());
+        Assert.assertEquals(ResponseStatus.success, actions.status());
     }
 
     @Test
     public void shouldFetchNoAlertActionsWhenJsonIsForEmptyList() throws Exception {
-        when(httpAgent.fetch(EXPECTED_URL)).thenReturn(new Response<String>(ResponseStatus.success, "[]"));
+        Mockito.when(httpAgent.fetch(EXPECTED_URL)).thenReturn(new Response<String>(ResponseStatus.success, "[]"));
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        assertTrue(actions.payload().isEmpty());
+        Assert.assertTrue(actions.payload().isEmpty());
     }
 
     @Test
     public void shouldFetchNoAlertActionsWhenHTTPCallFails() throws Exception {
-        when(httpAgent.fetch(EXPECTED_URL)).thenReturn(new Response<String>(ResponseStatus.failure, null));
+        Mockito.when(httpAgent.fetch(EXPECTED_URL)).thenReturn(new Response<String>(ResponseStatus.failure, null));
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("anm1", "0");
 
-        assertTrue(actions.payload().isEmpty());
-        assertEquals(ResponseStatus.failure, actions.status());
+        Assert.assertTrue(actions.payload().isEmpty());
+        Assert.assertEquals(ResponseStatus.failure, actions.status());
     }
 
     @Test
     public void shouldURLEncodeTheANMIdentifierPartWhenItHasASpace() {
         String expectedURLWithSpaces = "http://base.drishti.url/actions?anmIdentifier=ANM+WITH+SPACE&timeStamp=0";
-        when(httpAgent.fetch(expectedURLWithSpaces)).thenReturn(new Response<String>(ResponseStatus.success, "[]"));
+        Mockito.when(httpAgent.fetch(expectedURLWithSpaces)).thenReturn(new Response<String>(ResponseStatus.success, "[]"));
 
         drishtiService.fetchNewActions("ANM WITH SPACE", "0");
 
-        verify(httpAgent).fetch(expectedURLWithSpaces);
+        Mockito.verify(httpAgent).fetch(expectedURLWithSpaces);
     }
 
     @Test
     public void shouldReturnFailureResponseWhenJsonIsMalformed() {
         String expectedURLWithSpaces = "http://base.drishti.url/actions?anmIdentifier=ANMX&timeStamp=0";
-        when(httpAgent.fetch(expectedURLWithSpaces)).thenReturn(new Response<String>(ResponseStatus.success, "[{\"anmIdentifier\": \"ANMX\", "));
+        Mockito.when(httpAgent.fetch(expectedURLWithSpaces)).thenReturn(new Response<String>(ResponseStatus.success, "[{\"anmIdentifier\": \"ANMX\", "));
 
         Response<List<Action>> actions = drishtiService.fetchNewActions("ANMX", "0");
 
-        assertTrue(actions.payload().isEmpty());
-        assertEquals(ResponseStatus.failure, actions.status());
+        Assert.assertTrue(actions.payload().isEmpty());
+        Assert.assertEquals(ResponseStatus.failure, actions.status());
     }
 }

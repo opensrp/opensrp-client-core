@@ -50,7 +50,7 @@ public class FakeDrishtiService extends DrishtiService {
     }
 
     private static Map<String, String> dataForCreateAction(String scheduleName, String visitCode, String dueDate) {
-        return createAlert(BeneficiaryType.mother, scheduleName,visitCode, AlertStatus.normal, new DateTime(dueDate), new DateTime("2012-01-11")).data();
+        return createAlert(BeneficiaryType.mother, scheduleName, visitCode, AlertStatus.normal, new DateTime(dueDate), new DateTime("2012-01-11")).data();
     }
 
     private class Expectation {

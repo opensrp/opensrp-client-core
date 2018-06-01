@@ -5,11 +5,11 @@ def sonatypeRepositoryURL
 def mavenLocalFlag = hasProperty('mavenLocal') ? mavenLocal.toBoolean() : true;
 
 if (isReleaseBuild()) {
-    println 'PROCESSING MAVEN '+(mavenLocalFlag?'LOCAL':'REMOTE')+' RELEASE BUILD VERSION '+project.VERSION_NAME+'...'
+    println 'PROCESSING MAVEN ' + (mavenLocalFlag ? 'LOCAL' : 'REMOTE') + ' RELEASE BUILD VERSION ' + project.VERSION_NAME + '...'
     sonatypeRepositoryURL = hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
             : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 } else {
-    println 'PROCESSING MAVEN '+(mavenLocalFlag?'LOCAL':'REMOTE')+' SNAPSHOT BUILD VERSION '+project.VERSION_NAME+'...'
+    println 'PROCESSING MAVEN ' + (mavenLocalFlag ? 'LOCAL' : 'REMOTE') + ' SNAPSHOT BUILD VERSION ' + project.VERSION_NAME + '...'
     sonatypeRepositoryURL = hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
             : "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -122,8 +122,13 @@ afterEvaluate { project ->
         classifier = 'sources'
     }
 
-    artifacts { 
+    artifacts {
         archives androidSourcesJar
         archives androidJavadocsJar
+    }
+
+    nexusStaging {
+        username getRepositoryUsername()
+        password getRepositoryPassword()
     }
 }

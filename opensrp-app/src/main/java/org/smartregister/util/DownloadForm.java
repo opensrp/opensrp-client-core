@@ -27,7 +27,7 @@ public class DownloadForm {
     public static Response<DownloadStatus> DownloadFromURL(String downloadURL, String fileName,
                                                            final GZipEncodingHttpClient
                                                                    httpClient) {
-
+        HttpResponse httpResponse = null;
         try {
 
             File dir = new File(FormPathService.sdcardPathDownload);
@@ -44,17 +44,17 @@ public class DownloadForm {
             Log.d("DownloadFormService", "download file name: " + fileName);
 
             /* Open connection to URL */
-            HttpResponse response = httpClient.execute(new HttpGet(downloadURL));
+            httpResponse = httpClient.execute(new HttpGet(downloadURL));
 
             /* expect HTTP 200 OK */
-            int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode != HttpStatus.SC_OK) {
                 Log.d("DownloadFormService", "Server returned HTTP " + statusCode);
                 return new Response<DownloadStatus>(ResponseStatus.failure,
                         DownloadStatus.failedDownloaded);
             }
 
-            HttpEntity entity = response.getEntity();
+            HttpEntity entity = httpResponse.getEntity();
 
             /* Define InputStreams to read from the URLConnections */
             InputStream is = entity.getContent();
@@ -91,6 +91,8 @@ public class DownloadForm {
             Log.d("DownloadFormService", "download error : " + e);
             return new Response<DownloadStatus>(ResponseStatus.success,
                     DownloadStatus.failedDownloaded);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
 
         return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.downloaded);

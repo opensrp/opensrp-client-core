@@ -25,9 +25,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
+
+import static org.smartregister.clientandeventmodel.FormEntityConstants.FORM_DATE;
 
 public class FormEntityConverter {
     private static final String TAG = "FormEntityConverter";
@@ -65,6 +68,11 @@ public class FormEntityConverter {
 
     private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
                               FormSubmissionMap fs) throws ParseException {
+        return createEvent(entityId,eventType,fields,fs,fs.bindType(),fs.instanceId());
+    }
+
+    private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
+                              FormSubmissionMap fs,String bindType,String formSubmissionId) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
         String team = getFieldName(Encounter.team, fs);
@@ -74,11 +82,11 @@ public class FormEntityConverter {
         String encounterStart = getFieldName(Encounter.encounter_start, fs);
         String encounterEnd = getFieldName(Encounter.encounter_end, fs);
 
-        Date encounterDate = new DateTime(FormEntityConstants.FORM_DATE.format(new Date()))
+        Date encounterDate = new DateTime(FORM_DATE.format(new Date()))
                 .toDate();
         if (fs.getFieldValue(encounterDateField) != null) {
             encounterDate = new DateTime(
-                    FormEntityConstants.FORM_DATE.parse(fs.getFieldValue(encounterDateField)))
+                    FORM_DATE.parse(fs.getFieldValue(encounterDateField)))
                     .toDate();
         }
 
@@ -86,7 +94,7 @@ public class FormEntityConverter {
                 // and subform
                 .withEventDate(encounterDate).withEventType(eventType)
                 .withLocationId(fs.getFieldValue(encounterLocation)).withProviderId(fs.providerId())
-                .withEntityType(fs.bindType()).withFormSubmissionId(fs.instanceId())
+                .withEntityType(bindType).withFormSubmissionId(formSubmissionId)
                 .withDateCreated(new Date());
 
         e.withTeam(fs.getFieldValue(team)).withTeamId(fs.getFieldValue(teamId));
@@ -143,11 +151,12 @@ public class FormEntityConverter {
      * @return
      * @throws ParseException
      */
-    private Event getEventForSubform(FormSubmissionMap fs, String eventType, SubformMap
+    private Event getEventForSubform(FormSubmissionMap fs, SubformMap
             subformInstance) throws ParseException {
+        String formSubmissionId= UUID.randomUUID().toString();
         return createEvent(subformInstance.entityId(),
                 subformInstance.formAttributes().get("openmrs_entity_id"), subformInstance.fields(),
-                fs);
+                fs,subformInstance.bindType(),formSubmissionId);
     }
 
     /**
@@ -242,17 +251,17 @@ public class FormEntityConverter {
                 ad = new Address(addressType, null, null, null, null, null, null, null, null);
             }
 
-            if (addressField.equalsIgnoreCase("startDate") || addressField
-                    .equalsIgnoreCase("start_date")) {
+            if (addressField.equalsIgnoreCase(FormEntityConstants.Address.startDate.name()) || addressField
+                    .equalsIgnoreCase(FormEntityConstants.Address.start_date.name())) {
                 ad.setStartDate(DateUtil.parseDate(fl.value()));
-            } else if (addressField.equalsIgnoreCase("endDate") || addressField
-                    .equalsIgnoreCase("end_date")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.endDate.name()) || addressField
+                    .equalsIgnoreCase(FormEntityConstants.Address.end_date.name())) {
                 ad.setEndDate(DateUtil.parseDate(fl.value()));
-            } else if (addressField.equalsIgnoreCase("latitude")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.latitude.name())) {
                 ad.setLatitude(fl.value());
-            } else if (addressField.equalsIgnoreCase("longitute")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.longitute.name())) {
                 ad.setLongitude(fl.value());
-            } else if (addressField.equalsIgnoreCase("geopoint")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.geopoint.name())) {
                 // example geopoint 34.044494 -84.695704 4 76 = lat lon alt prec
                 String geopoint = fl.value();
                 if (!StringUtils.isEmpty(geopoint)) {
@@ -261,30 +270,32 @@ public class FormEntityConverter {
                     ad.setLongitude(g[1]);
                     ad.setGeopoint(geopoint);
                 }
-            } else if (addressField.equalsIgnoreCase("postal_code") || addressField
-                    .equalsIgnoreCase("postalCode")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.postal_code.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.postalCode.name())) {
                 ad.setPostalCode(fl.value());
-            } else if (addressField.equalsIgnoreCase("sub_town") || addressField
-                    .equalsIgnoreCase("subTown")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.sub_town.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.subTown.name())) {
                 ad.setSubTown(fl.value());
-            } else if (addressField.equalsIgnoreCase("town")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.town.name())) {
                 ad.setTown(fl.value());
-            } else if (addressField.equalsIgnoreCase("sub_district") || addressField
-                    .equalsIgnoreCase("subDistrict")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.sub_district.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.subDistrict.name())) {
                 ad.setSubDistrict(fl.value());
-            } else if (addressField.equalsIgnoreCase("district") || addressField
-                    .equalsIgnoreCase("county") || addressField.equalsIgnoreCase("county_district")
-                    || addressField.equalsIgnoreCase("countyDistrict")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.district.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.county.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.county_district.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.countyDistrict.name())) {
                 ad.setCountyDistrict(fl.value());
-            } else if (addressField.equalsIgnoreCase("city") || addressField
-                    .equalsIgnoreCase("village") || addressField.equalsIgnoreCase("cityVillage")
-                    || addressField.equalsIgnoreCase("city_village")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.city.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.village.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.cityVillage.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.city_village.name())) {
                 ad.setCityVillage(fl.value());
-            } else if (addressField.equalsIgnoreCase("state") || addressField
-                    .equalsIgnoreCase("state_province") || addressField
-                    .equalsIgnoreCase("stateProvince")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.state.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.state_province.name())
+                    || addressField.equalsIgnoreCase(FormEntityConstants.Address.stateProvince.name())) {
                 ad.setStateProvince(fl.value());
-            } else if (addressField.equalsIgnoreCase("country")) {
+            } else if (addressField.equalsIgnoreCase(FormEntityConstants.Address.country.name())) {
                 ad.setCountry(fl.value());
             } else {
                 ad.addAddressField(addressField, fl.value());
@@ -463,8 +474,8 @@ public class FormEntityConverter {
 
         Client c = (Client) new Client(subf.getFieldValue("id")).withFirstName(firstName)
                 .withMiddleName(middleName).withLastName(lastName)
-                .withBirthdate(new DateTime(birthdate).toDate(), birthdateApprox)
-                .withDeathdate(new DateTime(deathdate).toDate(), deathdateApprox).withGender(gender)
+                .withBirthdate((birthdate != null ? birthdate.toDate() : null), birthdateApprox)
+                .withDeathdate(deathdate != null ? deathdate.toDate() : null, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
 
         c.withClientType(clientType);
@@ -536,7 +547,7 @@ public class FormEntityConverter {
 
                     if (subformClient != null) {
                         cne.put("client", subformClient);
-                        cne.put("event", getEventForSubform(fs, att.get("openmrs_entity_id"), sbf));
+                        cne.put("event", getEventForSubform(fs, sbf));
 
                         map.put(sbf.entityId(), cne);
                     }

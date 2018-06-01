@@ -8,7 +8,6 @@ import org.smartregister.util.Cache;
 import java.util.Collections;
 import java.util.Map;
 
-
 /*
  by Raihan Ahmed
  */
@@ -25,6 +24,7 @@ public class CommonPersonObjectFilterOptionTest {
     private Map<String, String> emptyDetails;
 
     private CommonObjectFilterOption commonObjectFilterOption;
+
     @Before
     public void setUp() throws Exception {
         //initMocks(this);
@@ -39,7 +39,7 @@ public class CommonPersonObjectFilterOptionTest {
                 "name",
                 CommonPersonObjectController.ByColumnAndByDetails.byDetails);
     }
-    
+
     // TODO : fix failing test
     /*
     @Test
@@ -92,4 +92,4 @@ public class CommonPersonObjectFilterOptionTest {
         assertEquals(false, commonObjectFilterOption.filter(expectedClient3));
     }
     */
-   }
+}

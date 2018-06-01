@@ -1,19 +1,18 @@
 package org.smartregister.view.contract;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 
 import java.util.Arrays;
-
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
 
 @RunWith(RobolectricTestRunner.class)
 public class FPClientTest {
@@ -25,7 +24,7 @@ public class FPClientTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context);
         fpClient = new FPClient("entity id 1", "woman name", "husband name", "village name", "ec no 1");
     }
@@ -36,7 +35,7 @@ public class FPClientTest {
                 , new AlertDTO("OCP Refill", "urgent", "2013-02-02")
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")
         )).withFPMethod("female_sterilization");
-        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_referral)).thenReturn("referral");
+        Mockito.when(CoreLibrary.getInstance().context().getStringResource(R.string.str_referral)).thenReturn("referral");
 
         fpClient.setRefillFollowUp();
 
@@ -50,11 +49,11 @@ public class FPClientTest {
         RefillFollowUps expectedRefillFollowUps = expectedFPClient.refillFollowUps();
         RefillFollowUps refillFollowUps = fpClient.refillFollowUps();
 
-        assertEquals(expectedRefillFollowUps.name(), refillFollowUps.name());
-        assertEquals(expectedRefillFollowUps.type(), refillFollowUps.type());
-        assertEquals(expectedRefillFollowUps.alert().name(), refillFollowUps.alert().name());
-        assertEquals(expectedRefillFollowUps.alert().status(), refillFollowUps.alert().status());
-        assertEquals(expectedRefillFollowUps.alert().date(), refillFollowUps.alert().date());
+        Assert.assertEquals(expectedRefillFollowUps.name(), refillFollowUps.name());
+        Assert.assertEquals(expectedRefillFollowUps.type(), refillFollowUps.type());
+        Assert.assertEquals(expectedRefillFollowUps.alert().name(), refillFollowUps.alert().name());
+        Assert.assertEquals(expectedRefillFollowUps.alert().status(), refillFollowUps.alert().status());
+        Assert.assertEquals(expectedRefillFollowUps.alert().date(), refillFollowUps.alert().date());
     }
 
     @Test
@@ -63,7 +62,7 @@ public class FPClientTest {
                 , new AlertDTO("FP Followup", "normal", "2013-02-02")
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")))
                 .withFPMethod("female_sterilization");
-        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
+        Mockito.when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
 
         fpClient.setRefillFollowUp();
 
@@ -74,7 +73,7 @@ public class FPClientTest {
                 .withFPMethod("female_sterilization")
                 .withRefillFollowUps(new RefillFollowUps("FP Followup", new AlertDTO("FP Followup", "normal", "2013-02-02"), "follow-up"));
 
-        assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+        Assert.assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
     }
 
     @Test
@@ -83,7 +82,7 @@ public class FPClientTest {
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")))
                 .withFPMethod("female_sterilization");
 
-        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
+        Mockito.when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
 
         fpClient.setRefillFollowUp();
 
@@ -93,7 +92,7 @@ public class FPClientTest {
                 .withFPMethod("female_sterilization")
                 .withRefillFollowUps(new RefillFollowUps("Female sterilization Followup 1", new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02"), "follow-up"));
 
-        assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+        Assert.assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
     }
 
     @Test
@@ -101,7 +100,7 @@ public class FPClientTest {
         fpClient.withAlerts(Arrays.asList(new AlertDTO("Male Sterilization Followup", "urgent", "2013-02-02")
                 , new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02")))
                 .withFPMethod("female_sterilization");
-        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
+        Mockito.when(CoreLibrary.getInstance().context().getStringResource(R.string.str_follow_up)).thenReturn("follow-up");
 
         fpClient.setRefillFollowUp();
 
@@ -111,7 +110,7 @@ public class FPClientTest {
                 .withFPMethod("female_sterilization")
                 .withRefillFollowUps(new RefillFollowUps("Female sterilization Followup 1", new AlertDTO("Female sterilization Followup 1", "urgent", "2013-02-02"), "follow-up"));
 
-        assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+        Assert.assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
     }
 
     @Test
@@ -120,7 +119,7 @@ public class FPClientTest {
                 , new AlertDTO("Condom Refill", "urgent", "2013-02-02")))
                 .withFPMethod("condom");
 
-        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_refill)).thenReturn("refill");
+        Mockito.when(CoreLibrary.getInstance().context().getStringResource(R.string.str_refill)).thenReturn("refill");
 
         fpClient.setRefillFollowUp();
 
@@ -130,7 +129,7 @@ public class FPClientTest {
                 .withFPMethod("condom")
                 .withRefillFollowUps(new RefillFollowUps("Condom Refill", new AlertDTO("Condom Refill", "urgent", "2013-02-02"), "refill"));
 
-        assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+        Assert.assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
     }
 
     @Test
@@ -139,7 +138,7 @@ public class FPClientTest {
                 , new AlertDTO("Condom Refill", "urgent", "2013-02-02")))
                 .withFPMethod("condom");
 
-        when(CoreLibrary.getInstance().context().getStringResource(R.string.str_refill)).thenReturn("refill");
+        Mockito.when(CoreLibrary.getInstance().context().getStringResource(R.string.str_refill)).thenReturn("refill");
 
         fpClient.setRefillFollowUp();
 
@@ -149,6 +148,6 @@ public class FPClientTest {
                 .withFPMethod("condom")
                 .withRefillFollowUps(new RefillFollowUps("Condom Refill", new AlertDTO("Condom Refill", "urgent", "2013-02-02"), "refill"));
 
-        assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+        Assert.assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
     }
 }

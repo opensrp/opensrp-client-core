@@ -21,31 +21,31 @@ class CommonObjectSort implements SortOption {
     private String sortOptionName;
     private Comparator<SmartRegisterClient> commonComparator = new
             Comparator<SmartRegisterClient>() {
-        @Override
-        public int compare(SmartRegisterClient smartRegisterClient, SmartRegisterClient
-                smartRegisterClient2) {
-            CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
-            CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
-            boolean isDetails;
+                @Override
+                public int compare(SmartRegisterClient smartRegisterClient, SmartRegisterClient
+                        smartRegisterClient2) {
+                    CommonPersonObjectClient client = (CommonPersonObjectClient) smartRegisterClient;
+                    CommonPersonObjectClient client2 = (CommonPersonObjectClient) smartRegisterClient2;
+                    boolean isDetails;
 
-            switch (byColumnAndByDetails) {
-                case byColumn:
-                    isDetails = false;
-                    break;
-                case byDetails:
-                    isDetails = true;
-                    break;
-                default:
-                    return 0;
-            }
+                    switch (byColumnAndByDetails) {
+                        case byColumn:
+                            isDetails = false;
+                            break;
+                        case byDetails:
+                            isDetails = true;
+                            break;
+                        default:
+                            return 0;
+                    }
 
-            String fieldValue = getFieldValue(client, isDetails);
-            String fieldValue2 = getFieldValue(client2, isDetails);
+                    String fieldValue = getFieldValue(client, isDetails);
+                    String fieldValue2 = getFieldValue(client2, isDetails);
 
-            return isInteger ? Integer.valueOf(fieldValue).compareTo(Integer.valueOf(fieldValue2))
-                    : fieldValue.compareTo(fieldValue2);
-        }
-    };
+                    return isInteger ? Integer.valueOf(fieldValue).compareTo(Integer.valueOf(fieldValue2))
+                            : fieldValue.compareTo(fieldValue2);
+                }
+            };
 
     CommonObjectSort(ByColumnAndByDetails byColumnAndByDetailsArg, boolean isIntegerArg, String
             fieldArg, String sortOptionNameArg) {

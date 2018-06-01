@@ -3,7 +3,7 @@ package org.smartregister.service;
 import android.content.Context;
 import android.util.Log;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.auth.AuthScope;
@@ -11,6 +11,9 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.ConnectionPoolTimeoutException;
+import org.apache.http.conn.params.ConnManagerParams;
+import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -32,30 +35,48 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 import org.smartregister.util.FileUtilities;
-import org.smartregister.util.HttpResponseUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.text.ParseException;
 
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_LOCATION_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_NAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TEAM_UUID;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_TIME_ZONE;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_DETAILS;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_LOCATION;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_PREFERREDNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITHOUT_USER_USERNAME;
+import static org.smartregister.domain.LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE;
+import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
+import static org.smartregister.util.HttpResponseUtil.getResponseString;
 import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logWarn;
 
 public class HTTPAgent {
+    public static final int CONNECTION_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();
-    private final GZipEncodingHttpClient httpClient;
+    private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
@@ -68,9 +89,21 @@ public class HTTPAgent {
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
 
+        setupHttpClient();
+    }
+
+    public void setupHttpClient() {
         BasicHttpParams basicHttpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
         HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
+
+        ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
+        // how much connections do we need? - default: 20
+        ConnManagerParams.setMaxTotalConnections
+                (basicHttpParams, 20);
+        // connections per host (2 default)
+        ConnManagerParams.setMaxConnectionsPerRoute
+                (basicHttpParams, new ConnPerRouteBean(20));
 
         SchemeRegistry registry = new SchemeRegistry();
         OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
@@ -79,6 +112,7 @@ public class HTTPAgent {
 
         ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(basicHttpParams,
                 registry);
+
         httpClient = new GZipEncodingHttpClient(
                 new DefaultHttpClient(connectionManager, basicHttpParams));
     }
@@ -86,16 +120,17 @@ public class HTTPAgent {
     public Response<String> fetch(String requestURLPath) {
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            String responseContent = IOUtils
-                    .toString(httpClient.fetchContent(new HttpGet(requestURLPath)));
+            String responseContent = httpClient.fetchContent(new HttpGet(requestURLPath));
             return new Response<>(ResponseStatus.success, responseContent);
         } catch (Exception e) {
-            logWarn(e.toString());
+            Log.e(TAG, e.toString(), e);
             return new Response<>(ResponseStatus.failure, null);
         }
     }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
+        HttpResponse httpResponse = null;
+        Response<String> response = null;
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
             HttpPost httpPost = new HttpPost(postURLPath);
@@ -107,20 +142,24 @@ public class HTTPAgent {
             entity.setContentType("application/json; charset=utf-8");
             httpPost.setEntity(entity);
 
-            HttpResponse response = httpClient.postContent(httpPost);
+            httpResponse = httpClient.postContent(httpPost);
 
             ResponseStatus responseStatus =
-                    response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
+                    httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
                             ? ResponseStatus.success : ResponseStatus.failure;
-            response.getEntity().consumeContent();
-            return new Response<>(responseStatus, null);
+            response = new Response<>(responseStatus, null);
         } catch (Exception e) {
-            logWarn(e.toString());
-            return new Response<>(ResponseStatus.failure, null);
+            Log.e(TAG, e.toString(), e);
+            response = new Response<>(ResponseStatus.failure, null);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
+        return response;
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
+        HttpResponse httpResponse = null;
+        Response<String> response = null;
         try {
             setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
             HttpPost httpPost = new HttpPost(postURLPath);
@@ -132,45 +171,68 @@ public class HTTPAgent {
             entity.setContentType("application/json; charset=utf-8");
             httpPost.setEntity(entity);
 
-            HttpResponse response = httpClient.postContent(httpPost);
-            if (response.getStatusLine().getStatusCode() != SC_OK) {
-                return new Response<>(ResponseStatus.failure, "Invalid status code: " + response.getStatusLine().getStatusCode());
+            httpResponse = httpClient.postContent(httpPost);
+            if (httpResponse.getStatusLine().getStatusCode() != SC_OK) {
+                return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
             } else {
-                String payload = IOUtils.toString(HttpResponseUtil.getResponseStream(response));
-                return new Response<>(ResponseStatus.success, payload);
+                String payload = httpClient.retrieveStringResponse(httpResponse);
+                response = new Response<>(ResponseStatus.success, payload);
             }
         } catch (Exception e) {
-            logWarn(e.toString());
-            return new Response<>(ResponseStatus.failure, null);
+            Log.e(TAG, e.toString(), e);
+            response = new Response<>(ResponseStatus.failure, null);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
+        return response;
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
                                                             String password) {
-        setCredentials(userName, password);
-        try {
-            requestURL = requestURL.replaceAll("\\s+", "");
-            HttpResponse response = httpClient.execute(new HttpGet(requestURL));
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                return SUCCESS.withPayload(getResponseBody(response));
-            } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                logError("Invalid credentials for: " + userName + " using " + requestURL);
-                return UNAUTHORIZED;
-            } else {
-                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
-                        + userName + " using " + requestURL);
-                return UNKNOWN_RESPONSE;
-            }
-        } catch (IOException e) {
-            logError("Failed to check credentials of: " + userName + " using " + requestURL + ". "
-                    + "" + "" + "Error: " + e.toString());
-            return NO_INTERNET_CONNECTIVITY;
-        } catch (IllegalArgumentException e) {
-            logError(e.getMessage());
-            return MALFORMED_URL;
+        HttpResponse httpResponse = null;
+        LoginResponse loginResponse = null;
 
+        try {
+            setCredentials(userName, password);
+            requestURL = requestURL.replaceAll("\\s+", "");
+            httpResponse = httpClient.execute(new HttpGet(requestURL));
+            int statusCode = httpResponse.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
+                LoginResponseData responseData = getResponseBody(httpResponse);
+                loginResponse = retrieveResponse(responseData);
+            } else {
+                if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                    logError("Invalid credentials for: " + userName + " using " + requestURL);
+                    loginResponse = UNAUTHORIZED;
+                } else {
+                    logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
+                            + userName + " using " + requestURL);
+                    loginResponse = UNKNOWN_RESPONSE;
+                }
+
+                String responseString = getResponseString(httpResponse);
+                if (StringUtils.isNotBlank(responseString)) {
+                    responseString = StringUtils.substringBetween(responseString, "<p><b>message</b>", "</u></p>");
+                    if (StringUtils.isNotBlank(responseString)) {
+                        responseString = responseString.replace("<u>", "").trim();
+                        loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
+                    }
+                }
+            }
+        } catch (ConnectionPoolTimeoutException | SocketTimeoutException e) {
+            Log.e(TAG, e.getMessage(), e);
+            loginResponse = TIMEOUT;
+        } catch (IOException e) {
+            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
+                    + "" + "" + "Error: " + e.toString(), e);
+            loginResponse = NO_INTERNET_CONNECTIVITY;
+        } catch (IllegalArgumentException e) {
+            Log.e(TAG, e.getMessage(), e);
+            loginResponse = MALFORMED_URL;
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
+        return loginResponse;
     }
 
     public DownloadStatus downloadFromUrl(String url, String filename) {
@@ -188,9 +250,9 @@ public class HTTPAgent {
     public Response<String> fetchWithCredentials(String uri, String username, String password) {
         setCredentials(username, password);
         try {
-            String responseContent = IOUtils.toString(httpClient.fetchContent(new HttpGet(uri)));
+            String responseContent = httpClient.fetchContent(new HttpGet(uri));
             return new Response<>(ResponseStatus.success, responseContent);
-        } catch (IOException e) {
+        } catch (IOException | ParseException e) {
             logError("Failed to fetch unique id");
             return new Response<>(ResponseStatus.failure, null);
         }
@@ -198,6 +260,7 @@ public class HTTPAgent {
 
     public String httpImagePost(String url, ProfileImage image) {
 
+        HttpResponse httpResponse = null;
         String responseString = "";
         try {
             File uploadFile = new File(image.getFilepath());
@@ -220,30 +283,77 @@ public class HTTPAgent {
                 ContentBody cbFile = new FileBody(uploadFile, "image/jpeg");
                 entity.addPart("file", cbFile);
                 httpost.setEntity(entity);
-                String authToken = null;
-                HttpResponse response = httpClient.postContent(httpost);
-                responseString = EntityUtils.toString(response.getEntity());
+                httpResponse = httpClient.postContent(httpost);
+                responseString = EntityUtils.toString(httpResponse.getEntity());
                 Log.v("response so many", responseString);
+
+                //TODO if response status is not 200 or 201 ?
+                /*
                 int RESPONSE_OK = 200;
                 int RESPONSE_OK_ = 201;
-
-                if (response.getStatusLine().getStatusCode() != RESPONSE_OK_
-                        && response.getStatusLine().getStatusCode() != RESPONSE_OK) {
+                if (httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK_
+                        && httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK) {
                 }
+                */
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            httpClient.consumeResponse(httpResponse);
         }
         return responseString;
     }
 
-    private String nullToLiteral(String s) {
-        if (s == null) {
-            return "";
+    private LoginResponse retrieveResponse(LoginResponseData responseData) {
+        if (responseData == null) {
+            logError("Empty Response using " + SUCCESS_WITH_EMPTY_RESPONSE.name());
+            return SUCCESS_WITH_EMPTY_RESPONSE;
         }
-        return s;
 
+        if (responseData.team == null || responseData.team.team == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_DETAILS.name());
+            return SUCCESS_WITHOUT_TEAM_DETAILS.withPayload(responseData);
+        } else if (responseData.team.team.location == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION.name());
+            return SUCCESS_WITHOUT_TEAM_LOCATION.withPayload(responseData);
+        } else if (responseData.team.team.location.uuid == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
+            return SUCCESS_WITHOUT_TEAM_LOCATION_UUID.withPayload(responseData);
+        } else if (responseData.team.team.uuid == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_UUID.name());
+            return SUCCESS_WITHOUT_TEAM_UUID.withPayload(responseData);
+        } else if (responseData.team.team.teamName == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_NAME.name());
+            return SUCCESS_WITHOUT_TEAM_NAME.withPayload(responseData);
+        }
+
+        if (responseData.user == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_DETAILS.name());
+            return SUCCESS_WITHOUT_USER_DETAILS.withPayload(responseData);
+        } else if (responseData.user.getUsername() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_USERNAME.name());
+            return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
+        } else if (responseData.user.getPreferredName() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
+            return SUCCESS_WITHOUT_USER_PREFERREDNAME.withPayload(responseData);
+        }
+
+        if (responseData.locations == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_USER_LOCATION.name());
+            return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
+        }
+        if (responseData.time == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_DETAILS.name());
+            return SUCCESS_WITHOUT_TIME_DETAILS.withPayload(responseData);
+        } else if (responseData.time.getTime() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TIME.name());
+            return SUCCESS_WITHOUT_TIME.withPayload(responseData);
+        } else if (responseData.time.getTimeZone() == null) {
+            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_ZONE.name());
+            return SUCCESS_WITHOUT_TIME_ZONE.withPayload(responseData);
+        }
+
+        return SUCCESS.withPayload(responseData);
     }
-
 
 }

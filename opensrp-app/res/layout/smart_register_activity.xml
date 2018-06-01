@@ -6,9 +6,9 @@
     android:orientation="vertical"
     android:background="@color/client_list_header_dark_grey">
 
-    <include layout="@layout/smart_register_nav_bar"/>
+    <include layout="@layout/smart_register_nav_bar" />
 
-    <include layout="@layout/smart_register_status_bar"/>
+    <include layout="@layout/smart_register_status_bar" />
 
     <LinearLayout
         android:id="@+id/clients_upper_header_layout"
@@ -17,7 +17,7 @@
         android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
         android:layout_marginRight="@dimen/list_view_margin_left_and_right"
         android:visibility="gone"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/clients_header_layout"
@@ -25,7 +25,7 @@
         android:layout_height="@dimen/list_header_height"
         android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
         android:layout_marginRight="@dimen/list_view_margin_left_and_right"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/clients_lower_header_layout"
@@ -34,12 +34,12 @@
         android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
         android:layout_marginRight="@dimen/list_view_margin_left_and_right"
         android:visibility="gone"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="@dimen/smart_register_client_divider_height"
-        android:src="@color/smart_register_client_divider_color"/>
+        android:src="@color/smart_register_client_divider_color" />
 
     <FrameLayout
         android:layout_width="fill_parent"
@@ -55,7 +55,7 @@
             android:layout_height="fill_parent"
             android:divider="@color/smart_register_client_divider_color"
             android:dividerHeight="@dimen/smart_register_client_divider_height"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <ProgressBar
             android:id="@+id/client_list_progress"

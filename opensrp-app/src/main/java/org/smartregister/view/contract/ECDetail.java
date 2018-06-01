@@ -23,7 +23,7 @@ public class ECDetail {
 
     public ECDetail(String caseId, String village, String subcenter, String ecNumber, boolean
             isHighPriority, String address, String photoPath, List<Child> children, CoupleDetails
-            coupleDetails, Map<String, String> details) {
+                            coupleDetails, Map<String, String> details) {
         this.caseId = caseId;
         this.coupleDetails = coupleDetails;
         this.village = village;

@@ -1,17 +1,15 @@
 package org.smartregister.util;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.event.Event;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.fetchedFailed;
 
 @RunWith(RobolectricTestRunner.class)
 public class CacheTest {
@@ -20,48 +18,48 @@ public class CacheTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void shouldGetAndCacheValueOnlyWhenItDoesNotExist() throws Exception {
         Cache<String> cache = new Cache<String>();
-        when(cacheableData.fetch()).thenReturn("value");
+        Mockito.when(cacheableData.fetch()).thenReturn("value");
 
-        assertEquals("value", cache.get("key", cacheableData));
+        Assert.assertEquals("value", cache.get("key", cacheableData));
 
-        verify(cacheableData).fetch();
+        Mockito.verify(cacheableData).fetch();
 
-        assertEquals("value", cache.get("key", cacheableData));
+        Assert.assertEquals("value", cache.get("key", cacheableData));
 
-        verify(cacheableData, times(1)).fetch();
+        Mockito.verify(cacheableData, Mockito.times(1)).fetch();
     }
 
     @Test
     public void shouldClearCacheWhenActionsAreUpdated() throws Exception {
         Cache<String> cache = new Cache<String>();
-        when(cacheableData.fetch()).thenReturn("value");
+        Mockito.when(cacheableData.fetch()).thenReturn("value");
 
         cache.get("key", cacheableData);
-        Event.ON_DATA_FETCHED.notifyListeners(fetched);
+        Event.ON_DATA_FETCHED.notifyListeners(FetchStatus.fetched);
 
-        assertEquals("value", cache.get("key", cacheableData));
-        verify(cacheableData, times(2)).fetch();
+        Assert.assertEquals("value", cache.get("key", cacheableData));
+        Mockito.verify(cacheableData, Mockito.times(2)).fetch();
 
-        Event.ON_DATA_FETCHED.notifyListeners(fetchedFailed);
-        assertEquals("value", cache.get("key", cacheableData));
-        verify(cacheableData, times(2)).fetch();
+        Event.ON_DATA_FETCHED.notifyListeners(FetchStatus.fetchedFailed);
+        Assert.assertEquals("value", cache.get("key", cacheableData));
+        Mockito.verify(cacheableData, Mockito.times(2)).fetch();
     }
 
     @Test
     public void shouldClearCacheWhenFormIsSubmitted() throws Exception {
         Cache<String> cache = new Cache<String>();
-        when(cacheableData.fetch()).thenReturn("value");
+        Mockito.when(cacheableData.fetch()).thenReturn("value");
 
         cache.get("key", cacheableData);
         Event.FORM_SUBMITTED.notifyListeners("ec_registration");
 
-        assertEquals("value", cache.get("key", cacheableData));
-        verify(cacheableData, times(2)).fetch();
+        Assert.assertEquals("value", cache.get("key", cacheableData));
+        Mockito.verify(cacheableData, Mockito.times(2)).fetch();
     }
 }

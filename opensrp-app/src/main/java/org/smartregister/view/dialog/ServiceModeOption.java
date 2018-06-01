@@ -23,5 +23,4 @@ public abstract class ServiceModeOption implements DialogOption {
     public abstract ClientsHeaderProvider getHeaderProvider();
 
 
-
 }

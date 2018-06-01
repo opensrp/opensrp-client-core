@@ -206,6 +206,14 @@ public class Context {
         return context;
     }
 
+    public static Context setInstance(Context mContext) {
+        if (mContext != null) {
+            context = mContext;
+            return context;
+        }
+        return null;
+    }
+
     public android.content.Context applicationContext() {
         return applicationContext;
     }
@@ -680,7 +688,7 @@ public class Context {
             repository = initRepository();
             userService = new UserService(repository, allSettings(), allSharedPreferences(),
                     httpAgent(), session(), configuration(), saveANMLocationTask(),
-                    saveUserInfoTask(),saveANMTeamTask());
+                    saveUserInfoTask(), saveANMTeamTask());
         }
         return userService;
     }

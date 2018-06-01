@@ -19,7 +19,7 @@ public class FormEntityConstants {
 
     public enum Person implements FormEntity {
         first_name, middle_name, last_name, gender, birthdate, birthdate_estimated, dead,
-        deathdate, deathdate_estimated,client_type;
+        deathdate, deathdate_estimated, client_type;
 
         public String entity() {
             return "person";
@@ -59,4 +59,12 @@ public class FormEntityConstants {
 
         String entityId();
     }
+
+    public enum Address {
+        start_date, startDate, end_date, endDate, latitude, longitute, geopoint, postal_code,
+        postalCode, sub_town, subTown, town, sub_district, subDistrict, district, county,
+        county_district,countyDistrict, city, village, cityVillage, city_village, state,
+        state_province, stateProvince, country
+    }
 }
+

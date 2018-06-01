@@ -34,6 +34,7 @@ public class AllConstants {
     public static final String ENGLISH_LANGUAGE = "English";
     public static final String KANNADA_LANGUAGE = "Kannada";
     public static final String IS_SYNC_IN_PROGRESS_PREFERENCE_KEY = "isSyncInProgress";
+    public static final String IS_SYNC_INITIAL_KEY = "isSyncInitial";
     public static final String TYPE = "type";
     public static final String WOMAN_TYPE = "woman";
     public static final String CHILD_TYPE = "child";
@@ -42,7 +43,7 @@ public class AllConstants {
     public static final String ALL_FORM_VERSION_URL = "/form/latest-form-versions";
     public static final String AUTHENTICATE_USER_URL_PATH = "/anm-villages?anm-id=";
     public static final String OPENSRP_AUTH_USER_URL_PATH = "/security/authenticate";
-    public static final String OPENSRP_LOCATION_URL_PATH = "/location/location-tree";
+    public static final String OPENSRP_LOCATION_URL_PATH = "/teamLocation/teamLocation-tree";
 
     public static final String FORM_NAME_PARAM = "formName";
     public static final String INSTANCE_ID_PARAM = "instanceId";

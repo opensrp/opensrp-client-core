@@ -10,7 +10,8 @@ public class Wait {
 
     public static void waitForProgressBarToGoAway(Activity activity, int numberOfMillisecondsToWait) {
         waitForProgressBarVisibilityToBe(activity, 500, View.VISIBLE);
-        if (waitForProgressBarVisibilityToBe(activity, numberOfMillisecondsToWait, View.INVISIBLE)) return;
+        if (waitForProgressBarVisibilityToBe(activity, numberOfMillisecondsToWait, View.INVISIBLE))
+            return;
         throw new RuntimeException("Timed out. Progress bar is still visible after " + numberOfMillisecondsToWait + " milliseconds.");
     }
 
