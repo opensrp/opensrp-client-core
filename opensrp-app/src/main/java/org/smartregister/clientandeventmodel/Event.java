@@ -63,12 +63,6 @@ public class Event extends BaseDataObject {
     @JsonProperty
     private String teamId;
 
-    @JsonProperty
-    private Integer clientApplicationVersion;
-
-    @JsonProperty
-    private Integer clientDatabaseVersion;
-
     public Event() {
         this.version = System.currentTimeMillis();
     }
@@ -298,16 +292,6 @@ public class Event extends BaseDataObject {
         return this;
     }
 
-    public Event withClientApplicationVersion(Integer clientApplicationVersion) {
-        this.clientApplicationVersion = clientApplicationVersion;
-        return this;
-    }
-
-    public Event withClientDatabaseVersion(Integer clientDatabaseVersion) {
-        this.clientDatabaseVersion = clientDatabaseVersion;
-        return this;
-    }
-
     /**
      * WARNING: Overrides all existing obs
      *
@@ -348,22 +332,6 @@ public class Event extends BaseDataObject {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public Integer getClientApplicationVersion() {
-        return clientApplicationVersion;
-    }
-
-    public void setClientApplicationVersion(Integer clientApplicationVersion) {
-        this.clientApplicationVersion = clientApplicationVersion;
-    }
-
-    public Integer getClientDatabaseVersion() {
-        return clientDatabaseVersion;
-    }
-
-    public void setClientDatabaseVersion(Integer clientDatabaseVersion) {
-        this.clientDatabaseVersion = clientDatabaseVersion;
     }
 }
 
