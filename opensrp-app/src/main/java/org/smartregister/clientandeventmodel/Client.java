@@ -36,10 +36,6 @@ public class Client extends BaseEntity {
     private String relationalBaseEntityId;
     @JsonProperty
     private String clientType;
-    @JsonProperty
-    private Integer clientApplicationVersion;
-    @JsonProperty
-    private Integer clientDatabaseVersion;
 
     protected Client() {
 
@@ -255,16 +251,6 @@ public class Client extends BaseEntity {
         return this;
     }
 
-    public Client withClientApplicationVersion(Integer clientApplicationVersion) {
-        this.clientApplicationVersion = clientApplicationVersion;
-        return this;
-    }
-
-    public Client withClientDatabaseVersion(Integer clientDatabaseVersion) {
-        this.clientDatabaseVersion = clientDatabaseVersion;
-        return this;
-    }
-
     /**
      * Overrides the existing data
      */
@@ -317,23 +303,6 @@ public class Client extends BaseEntity {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
-    }
-
-
-    public Integer getClientApplicationVersion() {
-        return clientApplicationVersion;
-    }
-
-    public void setClientApplicationVersion(Integer clientApplicationVersion) {
-        this.clientApplicationVersion = clientApplicationVersion;
-    }
-
-    public Integer getClientDatabaseVersion() {
-        return clientDatabaseVersion;
-    }
-
-    public void setClientDatabaseVersion(Integer clientDatabaseVersion) {
-        this.clientDatabaseVersion = clientDatabaseVersion;
     }
 }
 

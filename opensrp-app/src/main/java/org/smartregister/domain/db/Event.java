@@ -33,9 +33,6 @@ public class Event extends BaseDataObject {
 
     private long version;
 
-    private Integer clientApplicationVersion;
-
-    private Integer clientDatabaseVersion;
 
     public Event() {
         this.version = System.currentTimeMillis();
@@ -238,16 +235,6 @@ public class Event extends BaseDataObject {
         return this;
     }
 
-    public Event withClientApplicationVersion(Integer clientApplicationVersion) {
-        this.clientApplicationVersion = clientApplicationVersion;
-        return this;
-    }
-
-    public Event withClientDatabaseVersion(Integer clientDatabaseVersion) {
-        this.clientDatabaseVersion = clientDatabaseVersion;
-        return this;
-    }
-
     /**
      * WARNING: Overrides all existing obs
      *
@@ -265,21 +252,5 @@ public class Event extends BaseDataObject {
         }
         obs.add(observation);
         return this;
-    }
-
-    public Integer getClientApplicationVersion() {
-        return clientApplicationVersion;
-    }
-
-    public void setClientApplicationVersion(Integer clientApplicationVersion) {
-        this.clientApplicationVersion = clientApplicationVersion;
-    }
-
-    public Integer getClientDatabaseVersion() {
-        return clientDatabaseVersion;
-    }
-
-    public void setClientDatabaseVersion(Integer clientDatabaseVersion) {
-        this.clientDatabaseVersion = clientDatabaseVersion;
     }
 }
