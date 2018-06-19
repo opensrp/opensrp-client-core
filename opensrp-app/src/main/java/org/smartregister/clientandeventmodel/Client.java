@@ -304,6 +304,5 @@ public class Client extends BaseEntity {
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
     }
-
 }
 

@@ -231,5 +231,4 @@ public class Client extends BaseEntity {
         }
         return relations;
     }
-
 }

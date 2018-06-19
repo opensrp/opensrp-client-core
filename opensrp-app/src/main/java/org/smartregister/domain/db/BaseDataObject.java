@@ -22,6 +22,10 @@ public abstract class BaseDataObject {
 
     private long serverVersion;
 
+    private Integer clientApplicationVersion;
+
+    private Integer clientDatabaseVersion;
+
     public BaseDataObject() {
     }
 
@@ -97,6 +101,22 @@ public abstract class BaseDataObject {
         this.serverVersion = serverVersion;
     }
 
+    public Integer getClientApplicationVersion() {
+        return clientApplicationVersion;
+    }
+
+    public void setClientApplicationVersion(Integer clientApplicationVersion) {
+        this.clientApplicationVersion = clientApplicationVersion;
+    }
+
+    public Integer getClientDatabaseVersion() {
+        return clientDatabaseVersion;
+    }
+
+    public void setClientDatabaseVersion(Integer clientDatabaseVersion) {
+        this.clientDatabaseVersion = clientDatabaseVersion;
+    }
+
     public BaseDataObject withCreator(String creator) {
         this.creator = creator;
         return this;
@@ -139,6 +159,16 @@ public abstract class BaseDataObject {
 
     public BaseDataObject withServerVersion(long serverVersion) {
         this.serverVersion = serverVersion;
+        return this;
+    }
+
+    public BaseDataObject withClientApplicationVersion(Integer clientApplicationVersion) {
+        this.clientApplicationVersion = clientApplicationVersion;
+        return this;
+    }
+
+    public BaseDataObject withClientDatabaseVersion(Integer clientDatabaseVersion) {
+        this.clientDatabaseVersion = clientDatabaseVersion;
         return this;
     }
 }

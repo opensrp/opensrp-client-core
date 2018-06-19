@@ -23,6 +23,10 @@ public abstract class BaseDataObject extends MotechBaseDataObject {
     private User voider;
     @JsonProperty
     private String voidReason;
+    @JsonProperty
+    private Integer clientApplicationVersion;
+    @JsonProperty
+    private Integer clientDatabaseVersion;
 
     public BaseDataObject() {
     }
@@ -91,6 +95,22 @@ public abstract class BaseDataObject extends MotechBaseDataObject {
         this.voidReason = voidReason;
     }
 
+    public Integer getClientApplicationVersion() {
+        return clientApplicationVersion;
+    }
+
+    public void setClientApplicationVersion(Integer clientApplicationVersion) {
+        this.clientApplicationVersion = clientApplicationVersion;
+    }
+
+    public Integer getClientDatabaseVersion() {
+        return clientDatabaseVersion;
+    }
+
+    public void setClientDatabaseVersion(Integer clientDatabaseVersion) {
+        this.clientDatabaseVersion = clientDatabaseVersion;
+    }
+
     public BaseDataObject withCreator(User creator) {
         this.creator = creator;
         return this;
@@ -128,6 +148,16 @@ public abstract class BaseDataObject extends MotechBaseDataObject {
 
     public BaseDataObject withVoidReason(String voidReason) {
         this.voidReason = voidReason;
+        return this;
+    }
+
+    public BaseDataObject withClientApplicationVersion(Integer clientApplicationVersion) {
+        this.clientApplicationVersion = clientApplicationVersion;
+        return this;
+    }
+
+    public BaseDataObject withClientDatabaseVersion(Integer clientDatabaseVersion) {
+        this.clientDatabaseVersion = clientDatabaseVersion;
         return this;
     }
 

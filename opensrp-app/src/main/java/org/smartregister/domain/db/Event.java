@@ -33,6 +33,7 @@ public class Event extends BaseDataObject {
 
     private long version;
 
+
     public Event() {
         this.version = System.currentTimeMillis();
     }
@@ -252,5 +253,4 @@ public class Event extends BaseDataObject {
         obs.add(observation);
         return this;
     }
-
 }
