@@ -1658,32 +1658,12 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public enum client_column implements Column {
-        creator(ColumnAttribute.Type.text, false, false),
-        dateCreated(ColumnAttribute.Type.date, false, true),
-        editor(ColumnAttribute.Type.text, false, false),
-        dateEdited(ColumnAttribute.Type.date, false, true),
-        voided(ColumnAttribute.Type.bool, false, false),
-        dateVoided(ColumnAttribute.Type.date, false, false),
-        voider(ColumnAttribute.Type.text, false, false),
-        voidReason(ColumnAttribute.Type.text, false, false),
 
         baseEntityId(ColumnAttribute.Type.text, true, true),
         syncStatus(ColumnAttribute.Type.text, false, true),
         validationStatus(ColumnAttribute.Type.text, false, true),
         json(ColumnAttribute.Type.text, false, false),
-        identifiers(ColumnAttribute.Type.map, false, true),
-        attributes(ColumnAttribute.Type.map, false, true),
-        firstName(ColumnAttribute.Type.text, false, false),
-        middleName(ColumnAttribute.Type.text, false, false),
-        lastName(ColumnAttribute.Type.text, false, false),
-        birthdate(ColumnAttribute.Type.date, false, false),
-        deathdate(ColumnAttribute.Type.date, false, false),
-        birthdateApprox(ColumnAttribute.Type.bool, false, false),
-        deathdateApprox(ColumnAttribute.Type.bool, false, false),
-        gender(ColumnAttribute.Type.text, false, false),
-        relationships(ColumnAttribute.Type.map, false, false),
-        updatedAt(ColumnAttribute.Type.date, false, true),
-        serverVersion(ColumnAttribute.Type.longnum, false, true);
+        updatedAt(ColumnAttribute.Type.date, false, true);
 
         client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
@@ -1726,14 +1706,8 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public enum event_column implements Column {
-        creator(ColumnAttribute.Type.text, false, false),
         dateCreated(ColumnAttribute.Type.date, false, true),
-        editor(ColumnAttribute.Type.text, false, false),
         dateEdited(ColumnAttribute.Type.date, false, false),
-        voided(ColumnAttribute.Type.bool, false, false),
-        dateVoided(ColumnAttribute.Type.date, false, false),
-        voider(ColumnAttribute.Type.text, false, false),
-        voidReason(ColumnAttribute.Type.text, false, false),
 
         eventId(ColumnAttribute.Type.text, true, true),
         baseEntityId(ColumnAttribute.Type.text, false, true),
@@ -1745,10 +1719,6 @@ public class EventClientRepository extends BaseRepository {
         eventDate(ColumnAttribute.Type.date, false, true),
         eventType(ColumnAttribute.Type.text, false, true),
         formSubmissionId(ColumnAttribute.Type.text, false, true),
-        providerId(ColumnAttribute.Type.text, false, false),
-        entityType(ColumnAttribute.Type.text, false, false),
-        details(ColumnAttribute.Type.map, false, false),
-        version(ColumnAttribute.Type.text, false, false),
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true);
 
