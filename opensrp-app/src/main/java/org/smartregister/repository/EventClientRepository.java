@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -252,23 +253,51 @@ public class EventClientRepository extends BaseRepository {
             return 0l;
         }
 
-        // TODO Batch Insert using prepared statements
         try {
             long lastServerVersion = 0l;
+            getWritableDatabase().beginTransaction();
+            String insertQuery = "INSERT  INTO " + Table.client.name() + " ( " + client_column.json.name()
+                    + "," + client_column.updatedAt.name() + "," + client_column.syncStatus.name()
+                    + "," + client_column.baseEntityId.name() + " ) VALUES ( ?, ? , ? ,? )";
+
+            String updateQuery = "UPDATE  " + Table.client.name() +
+                    " SET " + client_column.json.name() + " = ? ," +
+                    client_column.updatedAt.name() + " = ? " +
+                    client_column.syncStatus.name() + " = ? " +
+                    "WHERE " + client_column.baseEntityId.name() + " = ? ";
+
+            SQLiteStatement insertStatement = getWritableDatabase().compileStatement(insertQuery);
+
+            SQLiteStatement updateStatement = getWritableDatabase().compileStatement(updateQuery);
 
             for (int i = 0; i < array.length(); i++) {
-                Object o = array.get(i);
-                if (o instanceof JSONObject) {
-                    JSONObject jo = (JSONObject) o;
-                    Client c = convert(jo, Client.class);
-                    if (c != null) {
-                        insert(getWritableDatabase(), c, jo);
-                        if (c.getServerVersion() > 0l) {
-                            lastServerVersion = c.getServerVersion();
-                        }
+                JSONObject jsonObject = array.getJSONObject(i);
+                Client c = convert(jsonObject, Client.class);
+                if (c != null) {
+                    if (checkIfExists(Table.client, c.getBaseEntityId())) {
+                        updateStatement.clearBindings();
+                        updateStatement.bindString(1, jsonObject.toString());
+                        updateStatement.bindString(2, dateFormat.format(new Date()));
+                        updateStatement.bindString(3, BaseRepository.TYPE_Unsynced);
+                        updateStatement.bindString(4, c.getBaseEntityId());
+                        updateStatement.executeUpdateDelete();
+
+                    } else {
+                        insertStatement.clearBindings();
+                        insertStatement.bindString(1, jsonObject.toString());
+                        insertStatement.bindString(2, dateFormat.format(new Date()));
+                        insertStatement.bindString(3, BaseRepository.TYPE_Unsynced);
+                        insertStatement.bindString(2, c.getBaseEntityId());
+                        insertStatement.executeInsert();
+                    }
+
+                    if (c.getServerVersion() > lastServerVersion) {
+                        lastServerVersion = c.getServerVersion();
                     }
                 }
             }
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
 
             return lastServerVersion;
         } catch (Exception e) {
@@ -1203,25 +1232,16 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject) {
-        Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT baseEntityId FROM "
-                    + Table.client.name()
-                    + " WHERE "
-                    + client_column.baseEntityId.name()
-                    + " = ? ", new String[]{baseEntityId});
-            if (cursor.moveToNext()) {
-                String beid = cursor.getString(0);
-                if (beid != null) {
-                    ContentValues values = new ContentValues();
-                    values.put(client_column.json.name(), jsonObject.toString());
-                    values.put(client_column.updatedAt.name(), dateFormat.format(new Date()));
-                    values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-                    getWritableDatabase().update(Table.client.name(),
-                            values,
-                            client_column.baseEntityId.name() + " = ?",
-                            new String[]{baseEntityId});
-                }
+            if (checkIfExists(Table.client, baseEntityId)) {
+                ContentValues values = new ContentValues();
+                values.put(client_column.json.name(), jsonObject.toString());
+                values.put(client_column.updatedAt.name(), dateFormat.format(new Date()));
+                values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
+                getWritableDatabase().update(Table.client.name(),
+                        values,
+                        client_column.baseEntityId.name() + " = ?",
+                        new String[]{baseEntityId});
             } else {
                 ContentValues values = new ContentValues();
                 values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
@@ -1234,10 +1254,6 @@ public class EventClientRepository extends BaseRepository {
             }
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
     }
 
@@ -1714,8 +1730,6 @@ public class EventClientRepository extends BaseRepository {
         syncStatus(ColumnAttribute.Type.text, false, true),
         validationStatus(ColumnAttribute.Type.text, false, true),
         json(ColumnAttribute.Type.text, false, false),
-        locationId(ColumnAttribute.Type.text, false, false),
-        childLocationId(ColumnAttribute.Type.text, false, false),
         eventDate(ColumnAttribute.Type.date, false, true),
         eventType(ColumnAttribute.Type.text, false, true),
         formSubmissionId(ColumnAttribute.Type.text, false, true),
