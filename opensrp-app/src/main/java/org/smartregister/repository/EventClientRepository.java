@@ -52,9 +52,7 @@ public class EventClientRepository extends BaseRepository {
                        Column[] cols,
                        Object o,
                        JSONObject serverJsonObject) throws
-            IllegalAccessException,
-            IllegalArgumentException,
-            NoSuchFieldException {
+            IllegalArgumentException {
         insert(db, cls, table, cols, null, null, o, serverJsonObject);
     }
 
@@ -66,31 +64,29 @@ public class EventClientRepository extends BaseRepository {
                        String referenceValue,
                        Object o,
                        JSONObject serverJsonObject) throws
-            IllegalAccessException,
-            IllegalArgumentException,
-            NoSuchFieldException {
+            IllegalArgumentException {
         try {
-            Map<Column, Object> fm = new HashMap<Column, Object>();
+            ContentValues cv = new ContentValues();
             if (!table.name().equalsIgnoreCase("obs") && !table.name()
                     .equalsIgnoreCase("address")) {
-                fm.put(client_column.json, serverJsonObject);
-                fm.put(client_column.baseEntityId,
+                cv.put(client_column.json.name(), serverJsonObject.toString());
+                cv.put(client_column.baseEntityId.name(),
                         serverJsonObject.getString(client_column.baseEntityId.name()));
-                fm.put(client_column.syncStatus, BaseRepository.TYPE_Synced);
-                fm.put(client_column.validationStatus, BaseRepository.TYPE_Valid);
-                fm.put(client_column.updatedAt, new DateTime(new Date().getTime()));
+                cv.put(client_column.syncStatus.name(), BaseRepository.TYPE_Synced);
+                cv.put(client_column.validationStatus.name(), BaseRepository.TYPE_Valid);
+                cv.put(client_column.updatedAt.name(), dateFormat.format(new Date()));
                 if (table.name().equalsIgnoreCase("event")) {
-                    fm.put(event_column.eventId, serverJsonObject.getString("id"));
+                    cv.put(event_column.eventId.name(), serverJsonObject.getString("id"));
                 }
             } else {
                 return;
             }
 
             for (Column c : cols) {
-                if (c.name().equalsIgnoreCase(referenceColumn)) {
-                    continue; // skip reference column as it is already appended
+                if (c.name().equalsIgnoreCase(referenceColumn) || cv.containsKey(c.name())) {
+                    continue; // skip column as it is already appended
                 }
-                Field f = null;
+                Field f;
                 try {
                     f = cls.getDeclaredField(c.name()); // 1st level
                 } catch (NoSuchFieldException e) {
@@ -104,28 +100,19 @@ public class EventClientRepository extends BaseRepository {
                 f.setAccessible(true);
                 Object v = f.get(o);
                 if (c.name().equalsIgnoreCase(event_column.eventId.name())) {
-                    fm.put(c, serverJsonObject.getString("id"));
+                    cv.put(c.name(), serverJsonObject.getString("id"));
                 } else {
-                    fm.put(c, v);
+                    cv.put(c.name(), formatValueRemoveSingleQuote(v, c.column()));
                 }
             }
 
-            String columns = referenceColumn == null ? "" : ("`" + referenceColumn + "`,");
-            String values = referenceColumn == null ? "" : ("'" + referenceValue + "',");
-            ContentValues cv = new ContentValues();
+            if (referenceColumn != null)
+                cv.put(referenceColumn, referenceValue);
 
-            for (Column c : fm.keySet()) {
-                columns += "`" + c.name() + "`,";
-                values += formatValue(fm.get(c), c.column()) + ",";
-
-                // These Fields should be your String values of actual column names
-                cv.put(c.name(), formatValueRemoveSingleQuote(fm.get(c), c.column()));
-
-            }
-            String beid = fm.get(client_column.baseEntityId).toString();
+            String beid = cv.get(client_column.baseEntityId.name()).toString();
             String formSubmissionId = null;
             if (table.name().equalsIgnoreCase("event")) {
-                formSubmissionId = fm.get(event_column.formSubmissionId).toString();
+                formSubmissionId = cv.get(event_column.formSubmissionId.name()).toString();
 
             }
 
@@ -154,18 +141,7 @@ public class EventClientRepository extends BaseRepository {
                         new String[]{formSubmissionId});
 
             } else {
-                //for events just insert
-                columns = removeEndingComma(columns);
-                values = removeEndingComma(values);
-
-                String sql = "INSERT INTO "
-                        + table.name()
-                        + " ("
-                        + columns
-                        + ") VALUES ("
-                        + values
-                        + ")";
-                db.execSQL(sql);
+                db.insert(table.name(), null, cv);
             }
 
         } catch (Exception e) {
@@ -252,7 +228,8 @@ public class EventClientRepository extends BaseRepository {
         if (array == null || array.length() == 0) {
             return 0l;
         }
-
+        SQLiteStatement insertStatement = null;
+        SQLiteStatement updateStatement = null;
         try {
             long lastServerVersion = 0l;
             getWritableDatabase().beginTransaction();
@@ -262,13 +239,13 @@ public class EventClientRepository extends BaseRepository {
 
             String updateQuery = "UPDATE  " + Table.client.name() +
                     " SET " + client_column.json.name() + " = ? ," +
-                    client_column.updatedAt.name() + " = ? " +
+                    client_column.updatedAt.name() + " = ? , " +
                     client_column.syncStatus.name() + " = ? " +
                     "WHERE " + client_column.baseEntityId.name() + " = ? ";
 
-            SQLiteStatement insertStatement = getWritableDatabase().compileStatement(insertQuery);
+            insertStatement = getWritableDatabase().compileStatement(insertQuery);
 
-            SQLiteStatement updateStatement = getWritableDatabase().compileStatement(updateQuery);
+            updateStatement = getWritableDatabase().compileStatement(updateQuery);
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
@@ -287,7 +264,7 @@ public class EventClientRepository extends BaseRepository {
                         insertStatement.bindString(1, jsonObject.toString());
                         insertStatement.bindString(2, dateFormat.format(new Date()));
                         insertStatement.bindString(3, BaseRepository.TYPE_Unsynced);
-                        insertStatement.bindString(2, c.getBaseEntityId());
+                        insertStatement.bindString(4, c.getBaseEntityId());
                         insertStatement.executeInsert();
                     }
 
@@ -303,6 +280,11 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
             return 0l;
+        } finally {
+            if (insertStatement != null)
+                insertStatement.close();
+            if (updateStatement != null)
+                updateStatement.close();
         }
     }
 
