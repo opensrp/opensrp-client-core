@@ -263,6 +263,8 @@ public class EventClientRepository extends BaseRepository {
                     } else {
                         statement.bindString(columns.indexOf(column) + 1, value.toString());
                     }
+                } else {
+                    statement.bindNull(columns.indexOf(column) + 1);
                 }
             }
             return true;
