@@ -20,9 +20,7 @@ import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.util.JsonFormUtils;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -37,8 +35,6 @@ import java.util.Map;
  */
 public class EventClientRepository extends BaseRepository {
     private static final String TAG = BaseRepository.class.getCanonicalName();
-    public static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final String ORDER_BY = " order by ";
 
     public EventClientRepository(Repository repository) {
         super(repository);
@@ -737,49 +733,6 @@ public class EventClientRepository extends BaseRepository {
         return result;
     }
 
-    public List<JSONObject> getUnSyncedReports(int limit) {
-        List<JSONObject> reports = new ArrayList<JSONObject>();
-
-        String query = "select "
-                + report_column.json
-                + ","
-                + report_column.syncStatus
-                + " from "
-                + Table.path_reports.name()
-                + " where "
-                + report_column.syncStatus
-                + " = ?  and length("
-                + report_column.json
-                + ")>2 order by "
-                + report_column.updatedAt
-                + " asc limit "
-                + limit;
-        Cursor cursor = null;
-        try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced});
-
-            while (cursor.moveToNext()) {
-                String jsonEventStr = (cursor.getString(0));
-                if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
-                    continue;
-                }
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-                JSONObject jsonObectEvent = new JSONObject(jsonEventStr);
-                reports.add(jsonObectEvent);
-
-            }
-
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return reports;
-    }
 
     public List<String> getUnValidatedEventFormSubmissionIds(int limit) {
         List<String> ids = new ArrayList<String>();
@@ -796,46 +749,6 @@ public class EventClientRepository extends BaseRepository {
                 + validateFilter
                 + ORDER_BY
                 + event_column.updatedAt
-                + " asc limit "
-                + limit;
-
-        Cursor cursor = null;
-        try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
-            if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
-                while (!cursor.isAfterLast()) {
-                    String id = cursor.getString(0);
-                    ids.add(id);
-
-                    cursor.moveToNext();
-                }
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-
-        return ids;
-    }
-
-    public List<String> getUnValidatedReportFormSubmissionIds(int limit) {
-        List<String> ids = new ArrayList<String>();
-
-        final String validateFilter = " where "
-                + report_column.syncStatus + " = ? "
-                + " AND ( " + report_column.validationStatus + " is NULL or "
-                + report_column.validationStatus + " != ? ) ";
-
-        String query = "select "
-                + report_column.formSubmissionId
-                + " from "
-                + Table.path_reports.name()
-                + validateFilter
-                + ORDER_BY
-                + report_column.updatedAt
                 + " asc limit "
                 + limit;
 
@@ -1258,46 +1171,6 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void addReport(JSONObject jsonObject) {
-        try {
-
-            ContentValues values = new ContentValues();
-            values.put(report_column.json.name(), jsonObject.toString());
-            values.put(report_column.reportType.name(),
-                    jsonObject.has(report_column.reportType.name()) ? jsonObject.getString(
-                            report_column.reportType.name()) : "");
-            values.put(report_column.updatedAt.name(), dateFormat.format(new Date()));
-            values.put(report_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
-            //update existing event if eventid present
-            if (jsonObject.has(report_column.formSubmissionId.name())
-                    && jsonObject.getString(report_column.formSubmissionId.name()) != null) {
-                //sanity check
-                if (checkIfExistsByFormSubmissionId(Table.path_reports,
-                        jsonObject.getString(report_column
-                                .formSubmissionId
-                                .name()))) {
-                    getWritableDatabase().update(Table.path_reports.name(),
-                            values,
-                            report_column.formSubmissionId.name() + "=?",
-                            new String[]{jsonObject.getString(
-                                    report_column.formSubmissionId.name())});
-                } else {
-                    //that odd case
-                    values.put(report_column.formSubmissionId.name(),
-                            jsonObject.getString(report_column.formSubmissionId.name()));
-
-                    getWritableDatabase().insert(Table.path_reports.name(), null, values);
-
-                }
-            } else {
-// a case here would be if an event comes from openmrs
-                getWritableDatabase().insert(Table.path_reports.name(), null, values);
-            }
-
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
-        }
-    }
 
     public void markEventAsSynced(String formSubmissionId) {
         try {
@@ -1309,23 +1182,6 @@ public class EventClientRepository extends BaseRepository {
             getWritableDatabase().update(Table.event.name(),
                     values,
                     event_column.formSubmissionId.name() + " = ?",
-                    new String[]{formSubmissionId});
-
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
-        }
-    }
-
-    public void markReportAsSynced(String formSubmissionId) {
-        try {
-
-            ContentValues values = new ContentValues();
-            values.put(report_column.formSubmissionId.name(), formSubmissionId);
-            values.put(report_column.syncStatus.name(), BaseRepository.TYPE_Synced);
-
-            getWritableDatabase().update(Table.path_reports.name(),
-                    values,
-                    report_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
@@ -1369,24 +1225,6 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void markReportValidationStatus(String formSubmissionId, boolean valid) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(report_column.formSubmissionId.name(), formSubmissionId);
-            values.put(report_column.validationStatus.name(), valid ? TYPE_Valid : TYPE_InValid);
-            if (!valid) {
-                values.put(report_column.syncStatus.name(), TYPE_Unsynced);
-            }
-
-            getWritableDatabase().update(Table.path_reports.name(),
-                    values,
-                    report_column.formSubmissionId.name() + " = ?",
-                    new String[]{formSubmissionId});
-
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
-        }
-    }
 
     public void markClientValidationStatus(String baseEntityId, boolean valid) {
         try {
@@ -1427,22 +1265,6 @@ public class EventClientRepository extends BaseRepository {
                 for (JSONObject event : events) {
                     String formSubmissionId = event.getString(event_column.formSubmissionId.name());
                     markEventAsSynced(formSubmissionId);
-                }
-            }
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
-        }
-
-    }
-
-    public void markReportsAsSynced(List<JSONObject> syncedReports) {
-        try {
-
-            if (syncedReports != null && !syncedReports.isEmpty()) {
-                for (JSONObject report : syncedReports) {
-                    String formSubmissionId = report.getString(report_column.formSubmissionId
-                            .name());
-                    markReportAsSynced(formSubmissionId);
                 }
             }
         } catch (Exception e) {
@@ -1547,8 +1369,7 @@ public class EventClientRepository extends BaseRepository {
     // Definitions
     public enum Table {
         client(client_column.values()),
-        event(event_column.values()),
-        path_reports(report_column.values());
+        event(event_column.values());
         private Column[] columns;
 
         public Column[] columns() {
@@ -1595,42 +1416,6 @@ public class EventClientRepository extends BaseRepository {
         serverVersion(ColumnAttribute.Type.longnum, false, true);
 
         event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
-            this.column = new ColumnAttribute(type, pk, index);
-        }
-
-        private ColumnAttribute column;
-
-        public ColumnAttribute column() {
-            return column;
-        }
-    }
-
-    public enum report_column implements Column {
-        creator(ColumnAttribute.Type.text, false, false),
-        dateCreated(ColumnAttribute.Type.date, false, true),
-        editor(ColumnAttribute.Type.text, false, false),
-        dateEdited(ColumnAttribute.Type.date, false, false),
-        voided(ColumnAttribute.Type.bool, false, false),
-        dateVoided(ColumnAttribute.Type.date, false, false),
-        voider(ColumnAttribute.Type.text, false, false),
-        voidReason(ColumnAttribute.Type.text, false, false),
-
-        reportId(ColumnAttribute.Type.text, true, true),
-        syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.text, false, true),
-        json(ColumnAttribute.Type.text, false, false),
-        locationId(ColumnAttribute.Type.text, false, false),
-        childLocationId(ColumnAttribute.Type.text, false, false),
-        reportDate(ColumnAttribute.Type.date, false, true),
-        reportType(ColumnAttribute.Type.text, false, true),
-        formSubmissionId(ColumnAttribute.Type.text, false, false),
-        providerId(ColumnAttribute.Type.text, false, false),
-        entityType(ColumnAttribute.Type.text, false, false),
-        version(ColumnAttribute.Type.text, false, false),
-        updatedAt(ColumnAttribute.Type.date, false, true),
-        serverVersion(ColumnAttribute.Type.longnum, false, true);
-
-        report_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
 
