@@ -59,8 +59,8 @@ public class Hia2ReportRepository extends BaseRepository {
     }
 
     // Definitions
-    public enum Table {
-        hia2_reports(report_column.values());
+    public enum Table implements BaseTable {
+        hia2_report(report_column.values());
         private Column[] columns;
 
         public Column[] columns() {
@@ -81,7 +81,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 + ","
                 + report_column.syncStatus
                 + " from "
-                + Table.hia2_reports.name()
+                + Table.hia2_report.name()
                 + " where "
                 + report_column.syncStatus
                 + " = ?  and length("
@@ -128,7 +128,7 @@ public class Hia2ReportRepository extends BaseRepository {
         String query = "select "
                 + report_column.formSubmissionId
                 + " from "
-                + Table.hia2_reports.name()
+                + Table.hia2_report.name()
                 + validateFilter
                 + ORDER_BY
                 + report_column.updatedAt
@@ -171,11 +171,11 @@ public class Hia2ReportRepository extends BaseRepository {
             if (jsonObject.has(report_column.formSubmissionId.name())
                     && jsonObject.getString(report_column.formSubmissionId.name()) != null) {
                 //sanity check
-                if (checkIfExistsByFormSubmissionId(Table.hia2_reports,
+                if (checkIfExistsByFormSubmissionId(Table.hia2_report,
                         jsonObject.getString(report_column
                                 .formSubmissionId
                                 .name()))) {
-                    getWritableDatabase().update(Table.hia2_reports.name(),
+                    getWritableDatabase().update(Table.hia2_report.name(),
                             values,
                             report_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
@@ -185,12 +185,12 @@ public class Hia2ReportRepository extends BaseRepository {
                     values.put(report_column.formSubmissionId.name(),
                             jsonObject.getString(report_column.formSubmissionId.name()));
 
-                    getWritableDatabase().insert(Table.hia2_reports.name(), null, values);
+                    getWritableDatabase().insert(Table.hia2_report.name(), null, values);
 
                 }
             } else {
 // a case here would be if an event comes from openmrs
-                getWritableDatabase().insert(Table.hia2_reports.name(), null, values);
+                getWritableDatabase().insert(Table.hia2_report.name(), null, values);
             }
 
         } catch (Exception e) {
@@ -205,7 +205,7 @@ public class Hia2ReportRepository extends BaseRepository {
             values.put(report_column.formSubmissionId.name(), formSubmissionId);
             values.put(report_column.syncStatus.name(), BaseRepository.TYPE_Synced);
 
-            getWritableDatabase().update(Table.hia2_reports.name(),
+            getWritableDatabase().update(Table.hia2_report.name(),
                     values,
                     report_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});
@@ -224,7 +224,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 values.put(report_column.syncStatus.name(), TYPE_Unsynced);
             }
 
-            getWritableDatabase().update(Table.hia2_reports.name(),
+            getWritableDatabase().update(Table.hia2_report.name(),
                     values,
                     report_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});

@@ -23,8 +23,6 @@ import org.smartregister.util.JsonFormUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -416,7 +414,6 @@ public class EventClientRepository extends BaseRepository {
 
     public List<JSONObject> getEvents(Date lastSyncDate) {
 
-        List<JSONObject> list = new ArrayList<JSONObject>();
         String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
 
         List<JSONObject> eventAndAlerts = new ArrayList<JSONObject>();
@@ -432,7 +429,7 @@ public class EventClientRepository extends BaseRepository {
                 + " > ? and length("
                 + event_column.json
                 + ")>2 order by "
-                + event_column.updatedAt
+                + event_column.serverVersion
                 + " asc ";
         Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{lastSyncString});
 
@@ -479,52 +476,14 @@ public class EventClientRepository extends BaseRepository {
             cursor.close();
         }
 
-        if (eventAndAlerts.isEmpty()) {
-            return eventAndAlerts;
-        }
-
-        Collections.sort(eventAndAlerts, new Comparator<JSONObject>() {
-            @Override
-            public int compare(JSONObject lhs, JSONObject rhs) {
-                try {
-                    String lhvar = "version";
-                    String rhvar = "version";
-                    if (lhs.getString("type").equals("Action")) {
-                        lhvar = "timeStamp";
-                    }
-
-                    if (rhs.getString("type").equals("Action")) {
-                        rhvar = "timeStamp";
-                    }
-
-                    if (!lhs.has(lhvar)) {
-                        return 1;
-                    }
-                    if (!rhs.has(rhvar)) {
-                        return -1;
-                    }
-                    if (lhs.getLong(lhvar) > rhs.getLong(rhvar)) {
-                        return 1;
-                    }
-                    if (lhs.getLong(lhvar) < rhs.getLong(rhvar)) {
-                        return -1;
-                    }
-                    return 0;
-                } catch (JSONException e) {
-                    return -1;
-                }
-            }
-        });
-
         return eventAndAlerts;
     }
 
     public List<JSONObject> getEvents(Date lastSyncDate, String syncStatus) {
 
-        List<JSONObject> list = new ArrayList<JSONObject>();
         String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
 
-        List<JSONObject> eventAndAlerts = new ArrayList<JSONObject>();
+        List<JSONObject> eventAndAlerts = new ArrayList<>();
 
         String query = "select "
                 + event_column.json
@@ -539,7 +498,7 @@ public class EventClientRepository extends BaseRepository {
                 + " > ? and length("
                 + event_column.json
                 + ")>2 order by "
-                + event_column.updatedAt
+                + event_column.serverVersion
                 + " asc ";
         Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{syncStatus, lastSyncString});
 
@@ -585,43 +544,6 @@ public class EventClientRepository extends BaseRepository {
         } finally {
             cursor.close();
         }
-
-        if (eventAndAlerts.isEmpty()) {
-            return eventAndAlerts;
-        }
-
-        Collections.sort(eventAndAlerts, new Comparator<JSONObject>() {
-            @Override
-            public int compare(JSONObject lhs, JSONObject rhs) {
-                try {
-                    String lhvar = "version";
-                    String rhvar = "version";
-                    if (lhs.getString("type").equals("Action")) {
-                        lhvar = "timeStamp";
-                    }
-
-                    if (rhs.getString("type").equals("Action")) {
-                        rhvar = "timeStamp";
-                    }
-
-                    if (!lhs.has(lhvar)) {
-                        return 1;
-                    }
-                    if (!rhs.has(rhvar)) {
-                        return -1;
-                    }
-                    if (lhs.getLong(lhvar) > rhs.getLong(rhvar)) {
-                        return 1;
-                    }
-                    if (lhs.getLong(lhvar) < rhs.getLong(rhvar)) {
-                        return -1;
-                    }
-                    return 0;
-                } catch (JSONException e) {
-                    return -1;
-                }
-            }
-        });
 
         return eventAndAlerts;
     }
@@ -1285,7 +1207,7 @@ public class EventClientRepository extends BaseRepository {
         return str;
     }
 
-    public static void createTable(SQLiteDatabase db, Table table, Column[] columns) {
+    public static void createTable(SQLiteDatabase db, BaseTable table, Column[] columns) {
         try {
             String cl = "";
             for (Column cc : columns) {
@@ -1302,7 +1224,7 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public static void createIndex(SQLiteDatabase db, Table table, Column[] columns) {
+    public static void createIndex(SQLiteDatabase db, BaseTable table, Column[] columns) {
         try {
             for (Column cc : columns) {
                 if (cc.column().index()) {
@@ -1321,7 +1243,7 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public static void dropIndexes(SQLiteDatabase db, Table table) {
+    public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
         Cursor cursor = null;
         try {
             cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = 'index'"
@@ -1337,37 +1259,8 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public ArrayList<HashMap<String, String>> rawQuery(SQLiteDatabase db, String query) {
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery(query, null);
-
-            ArrayList<HashMap<String, String>> maplist = new ArrayList<HashMap<String, String>>();
-            // looping through all rows and adding to list
-            if (cursor.moveToFirst()) {
-                do {
-                    HashMap<String, String> map = new HashMap<String, String>();
-                    for (int i = 0; i < cursor.getColumnCount(); i++) {
-                        map.put(cursor.getColumnName(i), cursor.getString(i));
-                    }
-
-                    maplist.add(map);
-                } while (cursor.moveToNext());
-            }
-
-            return maplist;
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-        }
-        return null;
-    }
-
     // Definitions
-    public enum Table {
+    public enum Table implements BaseTable {
         client(client_column.values()),
         event(event_column.values());
         private Column[] columns;
