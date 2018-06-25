@@ -3,6 +3,9 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
+import android.util.Pair;
+
+import com.google.gson.reflect.TypeToken;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -20,6 +23,7 @@ import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.util.JsonFormUtils;
 
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -326,6 +330,36 @@ public class EventClientRepository extends BaseRepository {
             Log.e(getClass().getName(), "Unable to convert to json : " + object.toString());
             return null;
         }
+    }
+
+    private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
+        final String EVENTS = "events";
+        try {
+            if (jsonObject != null && jsonObject.has(EVENTS)) {
+                JSONArray events = jsonObject.getJSONArray(EVENTS);
+                Type listType = new TypeToken<List<Event>>() {
+                }.getType();
+                List<Event> eventList = JsonFormUtils.gson.fromJson(events.toString(), listType);
+
+                long maxServerVersion = Long.MIN_VALUE;
+                long minServerVersion = Long.MAX_VALUE;
+
+                for (Event event : eventList) {
+                    long serverVersion = event.getServerVersion();
+                    if (serverVersion > maxServerVersion) {
+                        maxServerVersion = serverVersion;
+                    }
+
+                    if (serverVersion < minServerVersion) {
+                        minServerVersion = serverVersion;
+                    }
+                }
+                return Pair.create(minServerVersion, maxServerVersion);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.getMessage(), e);
+        }
+        return Pair.create(0L, 0L);
     }
 
     public List<JSONObject> getEvents(long startServerVersion, long lastServerVersion) {

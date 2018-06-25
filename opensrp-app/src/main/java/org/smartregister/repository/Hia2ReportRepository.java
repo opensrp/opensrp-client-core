@@ -47,11 +47,11 @@ public class Hia2ReportRepository extends BaseRepository {
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true);
 
+        private ColumnAttribute column;
+
         report_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
-
-        private ColumnAttribute column;
 
         public ColumnAttribute column() {
             return column;
@@ -97,7 +97,7 @@ public class Hia2ReportRepository extends BaseRepository {
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
                 if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
                     continue;
                 }
                 jsonEventStr = jsonEventStr.replaceAll("'", "");
