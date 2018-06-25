@@ -29,7 +29,6 @@ import org.smartregister.view.activity.DrishtiApplication;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -72,12 +71,12 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     @Test
     public void batchInsertClientsReturnsNotNull() throws Exception {
-        Assert.assertNotNull(eventClientRepository.batchInsertClients(new JSONArray(ClientData.clientJsonArray)));
+        Assert.assertTrue(eventClientRepository.batchInsertClients(new JSONArray(ClientData.clientJsonArray)));
     }
 
     @Test
     public void batchInsertEventsReturnsNotNull() throws Exception {
-        Assert.assertNotNull(eventClientRepository.batchInsertEvents(new JSONArray(ClientData.eventJsonArray), 0l));
+        Assert.assertTrue(eventClientRepository.batchInsertEvents(new JSONArray(ClientData.eventJsonArray), 0l));
     }
 
     @Test
@@ -255,22 +254,12 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertGetUnSyncedReportsReturnsList() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
-        org.junit.Assert.assertNotNull(eventClientRepository.getUnSyncedReports(1));
-    }
-
-    @Test
     public void assertGetUnValidatedEventFormSubmissionIdsReturnsList() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedEventFormSubmissionIds(1));
     }
 
-    @Test
-    public void assertGetUnValidatedReportFormSubmissionIdsReturnsList() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
-        org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedReportFormSubmissionIds(1));
-    }
+
 
     @Test
     public void assertGetUnValidatedClientBaseEntityIdsReturnsList() throws Exception {
@@ -278,25 +267,6 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedClientBaseEntityIds(1));
     }
 
-    @Test
-    public void assertAddReportCallsDatabaseInsertAndUpdate() throws Exception {
-        String jsonReport = "{\"reportType\":\"reportType\", \"formSubmissionId\":\"formSubmissionId\"}";
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
-        eventClientRepository.addReport(new JSONObject(jsonReport));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(null);
-        eventClientRepository.addReport(new JSONObject(jsonReport));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
-    }
-
-    @Test
-    public void assertmarkReportsAsSyncedCallsDatabaseUpdate() throws Exception {
-        String jsonReport = "{\"reportType\":\"reportType\", \"formSubmissionId\":\"formSubmissionId\"}";
-        List<JSONObject> reports = new ArrayList<>();
-        reports.add(new JSONObject(jsonReport));
-        eventClientRepository.markReportsAsSynced(reports);
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
-    }
 
     @Test
     public void assertcreateTableCallsExecSql() {

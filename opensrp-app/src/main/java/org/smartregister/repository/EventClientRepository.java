@@ -116,6 +116,8 @@ public class EventClientRepository extends BaseRepository {
     }
 
     private boolean populateStatement(SQLiteStatement statement, Table table, JSONObject jsonObject) {
+        if (statement == null)
+            return false;
         statement.clearBindings();
         List columns;
         try {
@@ -204,9 +206,9 @@ public class EventClientRepository extends BaseRepository {
         return queryBuilder.toString();
     }
 
-    public void batchInsertClients(JSONArray array) {
+    public boolean batchInsertClients(JSONArray array) {
         if (array == null || array.length() == 0) {
-            return;
+            return false;
         }
         SQLiteStatement insertStatement = null;
         SQLiteStatement updateStatement = null;
@@ -242,9 +244,10 @@ public class EventClientRepository extends BaseRepository {
             }
             getWritableDatabase().setTransactionSuccessful();
             getWritableDatabase().endTransaction();
-
+            return true;
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
+            return false;
         } finally {
             if (insertStatement != null)
                 insertStatement.close();
@@ -253,9 +256,9 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void batchInsertEvents(JSONArray array, long serverVersion) {
+    public boolean batchInsertEvents(JSONArray array, long serverVersion) {
         if (array == null || array.length() == 0) {
-            return;
+            return false;
         }
 
         SQLiteStatement insertStatement = null;
@@ -289,8 +292,10 @@ public class EventClientRepository extends BaseRepository {
             }
             getWritableDatabase().setTransactionSuccessful();
             getWritableDatabase().endTransaction();
+            return true;
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
+            return false;
         } finally {
             if (insertStatement != null)
                 insertStatement.close();
