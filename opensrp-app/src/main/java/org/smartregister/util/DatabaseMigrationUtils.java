@@ -68,7 +68,7 @@ public class DatabaseMigrationUtils {
         String searchSql = "create virtual table "
                 + CommonFtsObject.searchTableName(originalTableName) + TABLE_PREFIX
                 + " using fts4 (" + joinedSearchColumns + ");";
-        android.util.Log.d(TAG, "Create query is\n---------------------------\n" + searchSql);
+        Log.d(TAG, "Create query is\n---------------------------\n" + searchSql);
 
         database.execSQL(searchSql);
 
@@ -94,12 +94,12 @@ public class DatabaseMigrationUtils {
                 + " select " + StringUtils.join(oldFields, ", ") + " from "
                 + CommonFtsObject.searchTableName(originalTableName);
 
-        android.util.Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+        Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
         database.execSQL(insertQuery);
 
         // Run the drop query
         String dropQuery = "drop table " + CommonFtsObject.searchTableName(originalTableName);
-        android.util.Log.d(TAG, "Drop query is\n---------------------------\n" + dropQuery);
+        Log.d(TAG, "Drop query is\n---------------------------\n" + dropQuery);
         database.execSQL(dropQuery);
 
         // Run rename query
@@ -125,7 +125,7 @@ public class DatabaseMigrationUtils {
                 + " SELECT " + StringUtils.join(table.columns(), ", ") + " FROM "
                 + TABLE_PREFIX + table.name();
 
-        android.util.Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+        Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
 
         database.execSQL(insertQuery);
 

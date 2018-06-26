@@ -21,6 +21,13 @@ import org.smartregister.view.activity.DrishtiApplication;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DrishtiApplication.class})
 public class Hia2ReportRepositoryTest extends BaseUnitTest {
@@ -39,32 +46,32 @@ public class Hia2ReportRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
+        when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         hia2ReportRepository = new Hia2ReportRepository(repository);
     }
 
     @Test
-    public void assertGetUnSyncedReportsReturnsList() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
-        org.junit.Assert.assertNotNull(hia2ReportRepository.getUnSyncedReports(1));
+    public void assertGetUnSyncedReportsReturnsList() {
+        when(sqliteDatabase.rawQuery(anyString(), any(String[].class))).thenReturn(getCursorSyncStatus());
+        assertNotNull(hia2ReportRepository.getUnSyncedReports(1));
     }
 
     @Test
-    public void assertGetUnValidatedReportFormSubmissionIdsReturnsList() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
-        org.junit.Assert.assertNotNull(hia2ReportRepository.getUnValidatedReportFormSubmissionIds(1));
+    public void assertGetUnValidatedReportFormSubmissionIdsReturnsList() {
+        when(sqliteDatabase.rawQuery(anyString(), any(String[].class))).thenReturn(getCursorSyncStatus());
+        assertNotNull(hia2ReportRepository.getUnValidatedReportFormSubmissionIds(1));
     }
 
     @Test
     public void assertAddReportCallsDatabaseInsertAndUpdate() throws Exception {
         String jsonReport = "{\"reportType\":\"reportType\", \"formSubmissionId\":\"formSubmissionId\"}";
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
+        when(sqliteDatabase.rawQuery(anyString(), any(String[].class))).thenReturn(getCursorSyncStatus());
         hia2ReportRepository.addReport(new JSONObject(jsonReport));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(null);
+        verify(sqliteDatabase, Mockito.times(1)).update(anyString(), any(ContentValues.class), anyString(), any(String[].class));
+        when(sqliteDatabase.rawQuery(anyString(), any(String[].class))).thenReturn(null);
         hia2ReportRepository.addReport(new JSONObject(jsonReport));
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).insert(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.isNull(String.class), org.mockito.ArgumentMatchers.any(ContentValues.class));
+        verify(sqliteDatabase, Mockito.times(1)).insert(anyString(), isNull(String.class), any(ContentValues.class));
     }
 
     @Test
@@ -73,7 +80,7 @@ public class Hia2ReportRepositoryTest extends BaseUnitTest {
         List<JSONObject> reports = new ArrayList<>();
         reports.add(new JSONObject(jsonReport));
         hia2ReportRepository.markReportsAsSynced(reports);
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).update(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(ContentValues.class), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
+        verify(sqliteDatabase, Mockito.times(1)).update(anyString(), any(ContentValues.class), anyString(), any(String[].class));
     }
 
     public MatrixCursor getCursorSyncStatus() {

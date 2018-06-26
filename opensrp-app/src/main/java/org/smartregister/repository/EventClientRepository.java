@@ -341,7 +341,7 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
+    public Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
         final String EVENTS = "events";
         try {
             if (jsonObject != null && jsonObject.has(EVENTS)) {
