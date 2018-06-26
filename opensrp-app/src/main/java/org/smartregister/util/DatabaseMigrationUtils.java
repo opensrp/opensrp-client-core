@@ -129,5 +129,9 @@ public class DatabaseMigrationUtils {
 
         database.execSQL("DROP TABLE " + TABLE_PREFIX + table.name());
 
+        database.setTransactionSuccessful();
+
+        database.endTransaction();
+
     }
 }

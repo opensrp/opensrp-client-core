@@ -38,6 +38,8 @@ import java.util.Map;
 public class EventClientRepository extends BaseRepository {
     private static final String TAG = BaseRepository.class.getCanonicalName();
 
+    private static final String EVENT_ID = "id";
+
     public EventClientRepository(Repository repository) {
         super(repository);
     }
@@ -135,6 +137,8 @@ public class EventClientRepository extends BaseRepository {
                 statement.bindString(columns.indexOf(event_column.syncStatus) + 1, BaseRepository.TYPE_Unsynced);
                 statement.bindString(columns.indexOf(event_column.validationStatus) + 1, BaseRepository.TYPE_Valid);
                 statement.bindString(columns.indexOf(event_column.baseEntityId) + 1, jsonObject.getString(event_column.baseEntityId.name()));
+                if (jsonObject.has(EVENT_ID))
+                    statement.bindString(columns.indexOf(event_column.eventId) + 1, jsonObject.getString(EVENT_ID));
             } else {
                 return false;
             }
@@ -1100,6 +1104,8 @@ public class EventClientRepository extends BaseRepository {
             values.put(event_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(event_column.baseEntityId.name(), baseEntityId);
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
+            if (jsonObject.has(EVENT_ID))
+                values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             populateAdditionalColumns(values, event_column.values(), jsonObject);
             //update existing event if eventid present
             if (jsonObject.has(event_column.formSubmissionId.name())
