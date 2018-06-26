@@ -29,9 +29,11 @@ public class DatabaseMigrationUtils {
             while (cursor.moveToNext()) {
                 String name = cursor.getString(cursor.getColumnIndex("name"));
                 if (column.equalsIgnoreCase(name)) {
+                    cursor.close();
                     return true;
                 }
             }
+            cursor.close();
         }
         return false;
     }
@@ -113,7 +115,7 @@ public class DatabaseMigrationUtils {
     public static void recreateSyncTableWithExistingColumnsOnly(SQLiteDatabase database, EventClientRepository.Table table) {
         database.beginTransaction();
         //rename original table
-        database.execSQL("RENAME " + table.name() + " RENAME TO " + TABLE_PREFIX + table.name());
+        database.execSQL("ALTER TABLE " + table.name() + " RENAME TO " + TABLE_PREFIX + table.name());
         //recreate table
         EventClientRepository.createTable(database, table, table.columns());
         //

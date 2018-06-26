@@ -146,7 +146,7 @@ public class EventClientRepository extends BaseRepository {
             List<? extends Column> otherColumns = new ArrayList(columns);
             if (!otherColumns.isEmpty()) {
                 otherColumns.removeAll(Arrays.asList(client_column.json, client_column.updatedAt, client_column.syncStatus, client_column.validationStatus, client_column.baseEntityId,
-                        event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId));
+                        event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId));
             }
 
             for (Column column : otherColumns) {
