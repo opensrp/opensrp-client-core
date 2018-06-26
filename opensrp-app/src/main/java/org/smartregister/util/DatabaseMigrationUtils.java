@@ -84,7 +84,7 @@ public class DatabaseMigrationUtils {
             if (!newlyAddedFields.contains(curColumn)) {
                 oldFields.add(curColumn);
             } else {
-                android.util.Log.d(TAG, "Skipping field " + curColumn + " from the select query");
+                Log.d(TAG, "Skipping field " + curColumn + " from the select query");
             }
         }
 
