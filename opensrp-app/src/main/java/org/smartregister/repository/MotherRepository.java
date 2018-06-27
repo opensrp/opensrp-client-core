@@ -72,7 +72,7 @@ public class MotherRepository extends DrishtiRepository {
     public List<Mother> allANCs() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS,
-                TYPE_COLUMN + " =" + " ? AND " + IS_CLOSED_COLUMN + " = ?",
+                TYPE_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?",
                 new String[]{TYPE_ANC, NOT_CLOSED}, null, null, null, null);
         return readAll(cursor);
     }
@@ -80,7 +80,7 @@ public class MotherRepository extends DrishtiRepository {
     public Mother findById(String entityId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database
-                .query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, ID_COLUMN + " = " + "?",
+                .query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS, ID_COLUMN + " = ?",
                         new String[]{entityId}, null, null, null, null);
         return readAll(cursor).get(0);
     }
@@ -102,13 +102,13 @@ public class MotherRepository extends DrishtiRepository {
     public long pncCount() {
         return longForQuery(masterRepository.getReadableDatabase(),
                 "SELECT COUNT(1) FROM " + MOTHER_TABLE_NAME + " WHERE " + TYPE_COLUMN + " = ? AND "
-                        + IS_CLOSED_COLUMN + " " + "= ?", new String[]{TYPE_PNC, NOT_CLOSED});
+                        + IS_CLOSED_COLUMN + "= ?", new String[]{TYPE_PNC, NOT_CLOSED});
     }
 
     public Mother findOpenCaseByCaseID(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.query(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS,
-                ID_COLUMN + " = ?" + " AND " + IS_CLOSED_COLUMN + " = ?",
+                ID_COLUMN + " = ? AND " + IS_CLOSED_COLUMN + " = ?",
                 new String[]{caseId, NOT_CLOSED}, null, null, null, null);
         List<Mother> mothers = readAll(cursor);
 
@@ -140,9 +140,9 @@ public class MotherRepository extends DrishtiRepository {
                 "SELECT " + tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", "
                         + tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) + " FROM "
                         + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME + " WHERE" + " " + TYPE_COLUMN
-                        + "='" + type + "' AND " + MOTHER_TABLE_NAME + "." + IS_CLOSED_COLUMN
-                        + "= '" + NOT_CLOSED + "' AND " + MOTHER_TABLE_NAME + "." + EC_CASEID_COLUMN
-                        + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, null);
+                        + "=? AND " + MOTHER_TABLE_NAME + "." + IS_CLOSED_COLUMN
+                        + "= ? AND " + MOTHER_TABLE_NAME + "." + EC_CASEID_COLUMN
+                        + " = " + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, new String[]{type,NOT_CLOSED});
         return readAllMothersWithEC(cursor);
     }
 

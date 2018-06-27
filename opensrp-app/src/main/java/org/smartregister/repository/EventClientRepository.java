@@ -127,14 +127,14 @@ public class EventClientRepository extends BaseRepository {
                 columns = new ArrayList<>(Arrays.asList(client_column.values()));
                 statement.bindString(columns.indexOf(client_column.json) + 1, jsonObject.toString());
                 statement.bindString(columns.indexOf(client_column.updatedAt) + 1, dateFormat.format(new Date()));
-                statement.bindString(columns.indexOf(client_column.syncStatus) + 1, BaseRepository.TYPE_Unsynced);
+                statement.bindString(columns.indexOf(client_column.syncStatus) + 1, BaseRepository.TYPE_Synced);
                 statement.bindString(columns.indexOf(client_column.validationStatus) + 1, BaseRepository.TYPE_Valid);
                 statement.bindString(columns.indexOf(client_column.baseEntityId) + 1, jsonObject.getString(client_column.baseEntityId.name()));
             } else if (table.equals(Table.event)) {
                 columns = new ArrayList<>(Arrays.asList(event_column.values()));
                 statement.bindString(columns.indexOf(event_column.json) + 1, jsonObject.toString());
                 statement.bindString(columns.indexOf(event_column.updatedAt) + 1, dateFormat.format(new Date()));
-                statement.bindString(columns.indexOf(event_column.syncStatus) + 1, BaseRepository.TYPE_Unsynced);
+                statement.bindString(columns.indexOf(event_column.syncStatus) + 1, BaseRepository.TYPE_Synced);
                 statement.bindString(columns.indexOf(event_column.validationStatus) + 1, BaseRepository.TYPE_Valid);
                 statement.bindString(columns.indexOf(event_column.baseEntityId) + 1, jsonObject.getString(event_column.baseEntityId.name()));
                 if (jsonObject.has(EVENT_ID))
@@ -420,15 +420,11 @@ public class EventClientRepository extends BaseRepository {
                             + Table.event.name()
                             + " WHERE "
                             + event_column.serverVersion.name()
-                            + " > "
-                            + startServerVersion
-                            + " AND "
+                            + " > ? AND "
                             + event_column.serverVersion.name()
-                            + " <= "
-                            + lastServerVersion
-                            + " ORDER BY "
+                            + " <= ?  ORDER BY "
                             + event_column.serverVersion.name(),
-                    null);
+                    new String[]{String.valueOf(startServerVersion), String.valueOf(lastServerVersion)});
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
                 if (StringUtils.isBlank(jsonEventStr)

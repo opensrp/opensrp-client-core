@@ -41,7 +41,7 @@ public class TimelineEventRepository extends DrishtiRepository {
     public List<TimelineEvent> allFor(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.query(TIMELINEEVENT_TABLE_NAME, TIMELINEEVENT_TABLE_COLUMNS,
-                CASEID_COLUMN + " " + "=" + " ?", new String[]{caseId}, null, null, null);
+                CASEID_COLUMN + "= ?", new String[]{caseId}, null, null, null);
 
         return readAllTimelineEvents(cursor);
     }

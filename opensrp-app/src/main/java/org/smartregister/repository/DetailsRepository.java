@@ -61,9 +61,8 @@ public class DetailsRepository extends DrishtiRepository {
         try {
             SQLiteDatabase db = masterRepository.getWritableDatabase();
             String query = "SELECT " + VALUE_COLUMN + " FROM " + TABLE_NAME + " WHERE "
-                    + BASE_ENTITY_ID_COLUMN + " = '" + baseEntityId + "' AND " + KEY_COLUMN + " "
-                    + "MATCH '" + key + "' ";
-            mCursor = db.rawQuery(query, null);
+                    + BASE_ENTITY_ID_COLUMN + " = ? AND " + KEY_COLUMN + " MATCH ? ";
+            mCursor = db.rawQuery(query, new String[]{baseEntityId, key});
             if (mCursor != null && mCursor.moveToFirst()) {
                 if (value != null) {
                     String currentValue = mCursor.getString(mCursor.getColumnIndex(VALUE_COLUMN));
@@ -89,9 +88,8 @@ public class DetailsRepository extends DrishtiRepository {
         try {
             SQLiteDatabase db = masterRepository.getReadableDatabase();
             String query =
-                    "SELECT * FROM " + TABLE_NAME + " WHERE " + BASE_ENTITY_ID_COLUMN + " " + ""
-                            + "" + "= '" + baseEntityId + "'";
-            cursor = db.rawQuery(query, null);
+                    "SELECT * FROM " + TABLE_NAME + " WHERE " + BASE_ENTITY_ID_COLUMN + " =?";
+            cursor = db.rawQuery(query, new String[]{baseEntityId});
             if (cursor != null && cursor.moveToFirst()) {
                 do {
                     String key = cursor.getString(cursor.getColumnIndex(KEY_COLUMN));

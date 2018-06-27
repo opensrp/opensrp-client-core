@@ -150,7 +150,7 @@ public class FormsVersionRepository extends DrishtiRepository {
     public long count() {
         return longForQuery(masterRepository.getReadableDatabase(),
                 "SELECT COUNT(1) FROM " + FORM_VERSION_TABLE_NAME + " " + "WHERE "
-                        + SYNC_STATUS_COLUMN + " = 'SYNCED'", new String[0]);
+                        + SYNC_STATUS_COLUMN + " = ?", new String[]{"SYNCED"});
     }
 
     private List<FormDefinitionVersion> readFormVersion(Cursor cursor) {
