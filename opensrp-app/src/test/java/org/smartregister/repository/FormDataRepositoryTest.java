@@ -82,18 +82,18 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertqueryUniqueResult() {
-        Assert.assertNotNull(formDataRepository.queryUniqueResult("sql"));
+        Assert.assertNotNull(formDataRepository.queryUniqueResult("sql",null));
     }
 
     @Test
     public void assertqueryList() {
-        Assert.assertNotNull(formDataRepository.queryList("sql"));
+        Assert.assertNotNull(formDataRepository.queryList("sql",null));
     }
 
     @Test
     public void assertqueryListWithdetails() {
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor2());
-        Assert.assertNotNull(formDataRepository.queryList("sql"));
+        Assert.assertNotNull(formDataRepository.queryList("sql", null));
     }
 
     @Test
@@ -138,7 +138,7 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertgetMapFromSQLQuery() {
-        Assert.assertNotNull(formDataRepository.getMapFromSQLQuery(""));
+        Assert.assertNotNull(formDataRepository.getMapFromSQLQuery("",null));
     }
 
     @Test

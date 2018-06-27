@@ -472,12 +472,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class);
         String baseEntityId = "1";
         String query =
-                "SELECT  * FROM " + tablename + " WHERE base_entity_id = '" + baseEntityId + "'";
+                "SELECT  * FROM " + tablename + " WHERE base_entity_id = ?";
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor);
         commonRepository.updateMasterRepository(repository);
-        Assert.assertNotNull(commonRepository.rawQuery(query));
+        Assert.assertNotNull(commonRepository.rawQuery(query,new String[]{baseEntityId}));
     }
 
     @Test

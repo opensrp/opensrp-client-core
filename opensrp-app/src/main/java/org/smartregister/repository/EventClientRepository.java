@@ -1287,8 +1287,8 @@ public class EventClientRepository extends BaseRepository {
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
         Cursor cursor = null;
         try {
-            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = 'index'"
-                    + " AND sql is not null AND tbl_name = ?", new String[]{table.name()});
+            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = ?"
+                    + " AND sql is not null AND tbl_name = ?", new String[]{"index", table.name()});
             while (cursor.moveToNext()) {
                 db.execSQL("DROP INDEX " + cursor.getString(0));
             }
