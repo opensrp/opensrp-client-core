@@ -156,7 +156,7 @@ public class MotherRepositoryTest extends BaseUnitTest {
     public void assertAllMothersOfATypeWithECReturnsAllMother() {
         motherRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.isNull(String[].class))).thenReturn(getJoinCursor());
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getJoinCursor());
         Assert.assertNotNull(motherRepository.allMothersOfATypeWithEC("type"));
     }
 

@@ -434,9 +434,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository.closeCase(baseEntityId, tablename);
         commonRepository.updateMasterRepository(repository);
         commonRepository.closeCase(baseEntityId, tablename);
-        ContentValues contentValues= new ContentValues();
-        contentValues.put(CommonRepository.IS_CLOSED_COLUMN ,"1");
-        Mockito.verify(sqliteDatabase,Mockito.times(1)).update(tablename, contentValues, CommonRepository.BASE_ENTITY_ID_COLUMN + "=?", new String[]{baseEntityId});
+        Mockito.verify(sqliteDatabase,Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(),Mockito.any(String[].class));
     }
 
     @Test
@@ -547,11 +545,11 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Mockito.when(commonFtsObject.getMainConditions(Mockito.anyString())).thenReturn(mainConditions);
         Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
 
-        String query = "SELECT object_id, field FROM common_search WHERE  object_id = 'caseID'";
+        String query = "SELECT object_id, field FROM common_search WHERE  object_id = ?";
         Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", "field", "value", new String[]{"details"}), false);
         Mockito.when(sqliteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
-        query = "SELECT object_id, phrase FROM common_search WHERE  object_id =?";
+        query = "SELECT object_id, phrase FROM common_search WHERE  object_id = ?";
         Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", CommonFtsObject.phraseColumn, "hello_world", new String[]{"hello"}), true);
     }
