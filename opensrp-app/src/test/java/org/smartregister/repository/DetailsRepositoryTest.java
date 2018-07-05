@@ -41,7 +41,7 @@ public class DetailsRepositoryTest extends BaseUnitTest {
         detailsRepository.updateMasterRepository(repository);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.isNull(String[].class))).thenReturn(getCursor());
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor());
     }
 
     @Test
@@ -58,12 +58,12 @@ public class DetailsRepositoryTest extends BaseUnitTest {
     @Test
     public void assertAddCallsRawQueryAndInsertUpdate() {
         detailsRepository.add("1", "key", "value", new Long(0));
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).rawQuery(Mockito.anyString(), Mockito.isNull(String[].class));
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
 
         detailsRepository.add("1", "key", "xyz", new Long(0));
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class));
 
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.isNull(String[].class))).thenReturn(null);
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(null);
         detailsRepository.add("1", "key", "xyz", new Long(0));
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).insert(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
     }

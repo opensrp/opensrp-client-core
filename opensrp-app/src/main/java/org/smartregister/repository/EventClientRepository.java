@@ -419,10 +419,9 @@ public class EventClientRepository extends BaseRepository {
                             + event_column.serverVersion.name()
                             + " > ? AND "
                             + event_column.serverVersion.name()
-                            + " <= ?"
-                            + " ORDER BY "
+                            + " <= ?  ORDER BY "
                             + event_column.serverVersion.name(),
-                    new String[]{String.valueOf(startServerVersion),String.valueOf(lastServerVersion)});
+                    new String[]{String.valueOf(startServerVersion), String.valueOf(lastServerVersion)});
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
                 if (StringUtils.isBlank(jsonEventStr)
@@ -1285,8 +1284,8 @@ public class EventClientRepository extends BaseRepository {
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
         Cursor cursor = null;
         try {
-            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = 'index'"
-                    + " AND sql is not null AND tbl_name = ?", new String[]{table.name()});
+            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = ?"
+                    + " AND sql is not null AND tbl_name = ?", new String[]{"index", table.name()});
             while (cursor.moveToNext()) {
                 db.execSQL("DROP INDEX " + cursor.getString(0));
             }

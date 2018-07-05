@@ -138,7 +138,7 @@ public class ChildRepositoryTest extends BaseUnitTest {
         childRepository.updateMasterRepository(repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.isNull(String[].class))).thenReturn(getJoinCursor());
+        Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getJoinCursor());
         //throws Exception for cursor being null
         Assert.assertNotNull(childRepository.allChildrenWithMotherAndEC());
     }
