@@ -390,9 +390,9 @@ public class FormUtils {
             String ec_bind_path = formDefinition.getJSONObject("form").getString("ec_bind_type");
 
             String sql =
-                    "select * from " + ec_bind_path + " where base_entity_id='" + entityId + "'";
+                    "select * from " + ec_bind_path + " where base_entity_id =?";
             Map<String, String> dbEntity = theAppContext.formDataRepository().
-                    getMapFromSQLQuery(sql);
+                    getMapFromSQLQuery(sql, new String[]{entityId});
             Map<String, String> detailsMap = theAppContext.detailsRepository().
                     getAllDetailsForClient(entityId);
             detailsMap.putAll(dbEntity);
@@ -492,10 +492,9 @@ public class FormUtils {
                         if (subFormDefinition != null) {
 
                             String childTableName = subFormDefinition.getString("ec_bind_type");
-                            String sql = "select * from '" + childTableName + "' where "
-                                    + "relational_id = '" + entityId + "'";
+                            String sql = "select * from " + childTableName + " where relational_id = ?";
                             String childRecordsString = theAppContext.formDataRepository().
-                                    queryList(sql);
+                                    queryList(sql, new String[]{relationalId});
                             JSONArray childRecords = new JSONArray(childRecordsString);
 
                             JSONArray fieldsArray = subFormDefinition.getJSONArray("fields");
@@ -760,8 +759,8 @@ public class FormUtils {
                                                 JSONObject jsonObject, JSONObject overrides)
             throws Exception {
         String bindPath = fieldsDefinition.getString("bind_type");
-        String sql = "select * from " + bindPath + " where id='" + entityId + "'";
-        String dbEntity = theAppContext.formDataRepository().queryUniqueResult(sql);
+        String sql = "select * from " + bindPath + " where id=?";
+        String dbEntity = theAppContext.formDataRepository().queryUniqueResult(sql, new String[]{entityId});
 
         JSONObject entityJson = new JSONObject();
 
@@ -884,9 +883,9 @@ public class FormUtils {
                         parentTable.equals(rJson.getString("parent")) ? rJson.getString("to")
                                 : rJson.getString("from");
                 String sql =
-                        "select * from " + childTable + " where " + joinField + "='" + val + "'";
+                        "select * from " + childTable + " where " + joinField + "=?";
                 Log.logInfo(sql);
-                String dbEntity = theAppContext.formDataRepository().queryUniqueResult(sql);
+                String dbEntity = theAppContext.formDataRepository().queryUniqueResult(sql, new String[]{val});
                 JSONObject linkedEntityJson = new JSONObject();
 
                 if (dbEntity != null && !dbEntity.isEmpty()) {

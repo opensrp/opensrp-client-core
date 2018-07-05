@@ -110,8 +110,8 @@ public class ChildRepository extends DrishtiRepository {
 
     public long count() {
         return longForQuery(masterRepository.getReadableDatabase(),
-                "SELECT COUNT(1) FROM " + CHILD_TABLE_NAME + " WHERE " + IS_CLOSED_COLUMN + " = '"
-                        + NOT_CLOSED + "'", new String[0]);
+                "SELECT COUNT(1) FROM " + CHILD_TABLE_NAME + " WHERE " + IS_CLOSED_COLUMN + " = ?",
+                new String[]{NOT_CLOSED});
     }
 
     public void close(String caseId) {
@@ -125,11 +125,11 @@ public class ChildRepository extends DrishtiRepository {
                         + tableColumnsForQuery(MOTHER_TABLE_NAME, MOTHER_TABLE_COLUMNS) + ", "
                         + tableColumnsForQuery(EC_TABLE_NAME, EC_TABLE_COLUMNS) + " FROM "
                         + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME + " "
-                        + "WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= '" + NOT_CLOSED
-                        + "' AND " + CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = "
+                        + "WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "= ? AND "
+                        + CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = "
                         + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN + " AND "
                         + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = "
-                        + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, null);
+                        + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN, new String[]{NOT_CLOSED});
         return readAllChildrenWithMotherAndEC(cursor);
     }
 
@@ -280,13 +280,13 @@ public class ChildRepository extends DrishtiRepository {
         Cursor cursor = database.rawQuery(
                 "SELECT " + tableColumnsForQuery(CHILD_TABLE_NAME, CHILD_TABLE_COLUMNS) + " FROM "
                         + CHILD_TABLE_NAME + ", " + MOTHER_TABLE_NAME + ", " + EC_TABLE_NAME
-                        + " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "=" + " '"
-                        + NOT_CLOSED + "' AND " + CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = "
+                        + " WHERE " + CHILD_TABLE_NAME + "." + IS_CLOSED_COLUMN + "=? AND "
+                        + CHILD_TABLE_NAME + "." + MOTHER_ID_COLUMN + " = "
                         + MOTHER_TABLE_NAME + "." + MotherRepository.ID_COLUMN + " AND "
                         + MOTHER_TABLE_NAME + "." + MotherRepository.EC_CASEID_COLUMN + " = "
                         + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN + " AND "
                         + EC_TABLE_NAME + "." + EligibleCoupleRepository.ID_COLUMN + "= ? ",
-                new String[]{ecId});
+                new String[]{NOT_CLOSED, ecId});
         return readAllChildren(cursor);
     }
 

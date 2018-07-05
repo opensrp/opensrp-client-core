@@ -381,17 +381,17 @@ public class CommonRepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class);
         String baseEntityId = "1";
         String query =
-                "SELECT  * FROM " + tablename + " WHERE base_entity_id = '" + baseEntityId + "'";
+                "SELECT  * FROM " + tablename + " WHERE base_entity_id = ?";
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor);
+        Mockito.when(sqliteDatabase.rawQuery(query, new String[]{baseEntityId})).thenReturn(cursor);
         ContentValues cv = new ContentValues();
         cv.put("base_entity_id", "1");
         commonRepository.updateMasterRepository(repository);
         Long id = 0l;
         Assert.assertEquals(commonRepository.executeInsertStatement(cv, tablename), id);
         Mockito.verify(sqliteDatabase, Mockito.times(1)).insertWithOnConflict(Mockito.anyString(), Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyInt());
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(query, null);
+        Mockito.verify(sqliteDatabase, Mockito.times(1)).rawQuery(query, new String[]{"1"});
     }
 
     @Test
@@ -434,7 +434,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         commonRepository.closeCase(baseEntityId, tablename);
         commonRepository.updateMasterRepository(repository);
         commonRepository.closeCase(baseEntityId, tablename);
-        Mockito.verify(sqliteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
+        Mockito.verify(sqliteDatabase,Mockito.times(1)).update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(),Mockito.any(String[].class));
     }
 
     @Test
@@ -472,12 +472,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class);
         String baseEntityId = "1";
         String query =
-                "SELECT  * FROM " + tablename + " WHERE base_entity_id = '" + baseEntityId + "'";
+                "SELECT  * FROM " + tablename + " WHERE base_entity_id = ?";
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor);
         commonRepository.updateMasterRepository(repository);
-        Assert.assertNotNull(commonRepository.rawQuery(query));
+        Assert.assertNotNull(commonRepository.rawQuery(query, new String[]{baseEntityId}));
     }
 
     @Test
@@ -545,12 +545,12 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Mockito.when(commonFtsObject.getMainConditions(Mockito.anyString())).thenReturn(mainConditions);
         Mockito.when(commonFtsObject.getSortFields(Mockito.anyString())).thenReturn(shortFields);
 
-        String query = "SELECT object_id, field FROM common_search WHERE  object_id = 'caseID'";
-        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor2);
+        String query = "SELECT object_id, field FROM common_search WHERE  object_id = ?";
+        Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", "field", "value", new String[]{"details"}), false);
         Mockito.when(sqliteDatabase.update(Mockito.anyString(), Mockito.any(ContentValues.class), Mockito.anyString(), Mockito.any(String[].class))).thenReturn(1);
-        query = "SELECT object_id, phrase FROM common_search WHERE  object_id = 'caseID'";
-        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(cursor2);
+        query = "SELECT object_id, phrase FROM common_search WHERE  object_id = ?";
+        Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", CommonFtsObject.phraseColumn, "hello_world", new String[]{"hello"}), true);
     }
 

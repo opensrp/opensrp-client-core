@@ -112,9 +112,9 @@ public class EligibleCoupleRepository extends DrishtiRepository {
 
     public long count() {
         return longForQuery(masterRepository.getReadableDatabase(),
-                "SELECT COUNT(1) FROM " + EC_TABLE_NAME + " WHERE " + IS_OUT_OF_AREA_COLUMN + " = '"
-                        + IN_AREA + "' and " + IS_CLOSED_COLUMN + " = '" + NOT_CLOSED + "'",
-                new String[0]);
+                "SELECT COUNT(1) FROM " + EC_TABLE_NAME + " WHERE " + IS_OUT_OF_AREA_COLUMN + " = ?"
+                        + " and " + IS_CLOSED_COLUMN + " = ?",
+                new String[]{IN_AREA, NOT_CLOSED});
     }
 
     public List<String> villages() {
@@ -190,9 +190,9 @@ public class EligibleCoupleRepository extends DrishtiRepository {
     public long fpCount() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.rawQuery(
-                format("SELECT details FROM {0} WHERE {1} = ''{2}'' and" + " {3} = " + "''{4}''",
-                        EC_TABLE_NAME, IS_OUT_OF_AREA_COLUMN, IN_AREA, IS_CLOSED_COLUMN,
-                        NOT_CLOSED), new String[0]);
+                format("SELECT details FROM {0} WHERE {1} = ? and" + " {2} = ?",
+                        EC_TABLE_NAME, IS_OUT_OF_AREA_COLUMN, IS_CLOSED_COLUMN)
+                , new String[]{IN_AREA, NOT_CLOSED});
         List<Map<String, String>> detailsList = readDetailsList(cursor);
         return getECsUsingFPMethod(detailsList);
     }

@@ -129,7 +129,7 @@ public class FormUtilsTest extends BaseUnitTest {
 
         FormDataRepository formDataRepository = Mockito.mock(FormDataRepository.class);
         Mockito.when(context.formDataRepository()).thenReturn(formDataRepository);
-        Mockito.when(formDataRepository.getMapFromSQLQuery(Mockito.anyString())).thenReturn(new HashMap<String, String>());
+        Mockito.when(formDataRepository.getMapFromSQLQuery(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(new HashMap<String, String>());
         DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
         Mockito.when(context.detailsRepository()).thenReturn(detailsRepository);
         Mockito.when(detailsRepository.getAllDetailsForClient(Mockito.anyString())).thenReturn(new HashMap<String, String>());
@@ -186,7 +186,7 @@ public class FormUtilsTest extends BaseUnitTest {
         });
         FormDataRepository formDataRepository = Mockito.mock(FormDataRepository.class);
         Mockito.when(context.formDataRepository()).thenReturn(formDataRepository);
-        Mockito.when(formDataRepository.queryUniqueResult(Mockito.anyString())).thenReturn(null);
+        Mockito.when(formDataRepository.queryUniqueResult(Mockito.anyString(),Mockito.any(String[].class))).thenReturn(null);
 
         Assert.assertNotNull(formUtils.generateFormSubmisionFromXMLString("baseEntityId", formData, FORMNAME, new JSONObject()));
     }

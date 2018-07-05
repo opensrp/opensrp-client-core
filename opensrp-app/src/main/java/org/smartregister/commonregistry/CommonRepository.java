@@ -425,8 +425,8 @@ public class CommonRepository extends DrishtiRepository {
         Map<String, String> dbValues = new HashMap<String, String>();
         SQLiteDatabase db = masterRepository.getWritableDatabase();
         String query =
-                "SELECT  * FROM " + tableName + " WHERE base_entity_id = '" + baseEntityId + "'";
-        Cursor cursor = db.rawQuery(query, null);
+                "SELECT  * FROM " + tableName + " WHERE base_entity_id = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{baseEntityId});
 
         if (cursor != null && cursor.moveToFirst()) {
             dbValues = sqliteRowToMap(cursor);
@@ -473,11 +473,10 @@ public class CommonRepository extends DrishtiRepository {
      */
     public void closeCase(String baseEntityId, String tableName) {
         try {
-            StringBuilder sql = new StringBuilder().append("UPDATE ").append(tableName)
-                    .append(" " + "SET is_closed = 1 WHERE base_entity_id = '").append(baseEntityId)
-                    .append("'");
             SQLiteDatabase db = masterRepository.getWritableDatabase();
-            db.execSQL(sql.toString());
+            ContentValues cv = new ContentValues();
+            cv.put(IS_CLOSED_COLUMN, 1);
+            db.update(tableName, cv, BASE_ENTITY_ID_COLUMN + "=?", new String[]{baseEntityId});
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);
         }
@@ -503,12 +502,12 @@ public class CommonRepository extends DrishtiRepository {
         return false;
     }
 
-    public ArrayList<HashMap<String, String>> rawQuery(String sql) {
+    public ArrayList<HashMap<String, String>> rawQuery(String sql, String[] selectionArgs) {
         ArrayList<HashMap<String, String>> maplist = new ArrayList<HashMap<String, String>>();
         Cursor cursor = null;
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
-            cursor = database.rawQuery(sql, null);
+            cursor = database.rawQuery(sql, selectionArgs);
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 // looping through all rows and adding to list
                 do {
@@ -631,14 +630,14 @@ public class CommonRepository extends DrishtiRepository {
         String selectSql =
                 "SELECT " + CommonFtsObject.idColumn + ", " + CommonFtsObject.phraseColumn
                         + " FROM " + ftsSearchTable + " WHERE  " + CommonFtsObject.idColumn
-                        + " = '%s'";
+                        + " = ?";
         if (!field.equals(CommonFtsObject.phraseColumn)) {
             selectSql =
                     "SELECT " + CommonFtsObject.idColumn + ", " + field + " FROM " + ftsSearchTable
-                            + " WHERE  " + CommonFtsObject.idColumn + " = '%s'";
+                            + " WHERE  " + CommonFtsObject.idColumn + " = ?";
         }
 
-        ArrayList<HashMap<String, String>> mapList = rawQuery(String.format(selectSql, caseId));
+        ArrayList<HashMap<String, String>> mapList = rawQuery(selectSql, new String[]{caseId});
 
         if (mapList.isEmpty()) {
             return false;
@@ -699,9 +698,9 @@ public class CommonRepository extends DrishtiRepository {
         try {
             for (String caseId : searchMap.keySet()) {
                 ContentValues searchValues = searchMap.get(caseId);
-                ArrayList<HashMap<String, String>> mapList = rawQuery(String.format(
+                ArrayList<HashMap<String, String>> mapList = rawQuery(
                         "SELECT " + CommonFtsObject.idColumn + " FROM " + ftsSearchTable
-                                + " WHERE  " + CommonFtsObject.idColumn + " = '%s'", caseId));
+                                + " WHERE  " + CommonFtsObject.idColumn + " = ?", new String[]{caseId});
                 if (!mapList.isEmpty()) {
                     int updated = database.update(ftsSearchTable, searchValues,
                             CommonFtsObject.idColumn + " = " + "" + "?", new String[]{caseId});
@@ -847,8 +846,8 @@ public class CommonRepository extends DrishtiRepository {
         for (String table : commonFtsObject.getTables()) {
             if (!table.equals(TABLE_NAME) && isFieldExist(table, fieldName)) {
                 ArrayList<HashMap<String, String>> list = rawQuery(
-                        " SELECT " + fieldName + " " + "FROM " + table + " WHERE " + ID_COLUMN
-                                + " = '" + relationId + "'");
+                        " SELECT " + fieldName + " FROM " + table + " WHERE " + ID_COLUMN
+                                + " = ?", new String[]{relationId});
                 if (!list.isEmpty()) {
                     return list.get(0).get(fieldName);
                 }
