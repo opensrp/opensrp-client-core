@@ -379,15 +379,12 @@ public class EventClientRepository extends BaseRepository {
                             + Table.event.name()
                             + " WHERE "
                             + event_column.serverVersion.name()
-                            + " > "
-                            + startServerVersion
-                            + " AND "
+                            + " > ? AND "
                             + event_column.serverVersion.name()
-                            + " <= "
-                            + lastServerVersion
+                            + " <= ?"
                             + " ORDER BY "
                             + event_column.serverVersion.name(),
-                    null);
+                    new String[]{String.valueOf(startServerVersion),String.valueOf(lastServerVersion)});
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 
