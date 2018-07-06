@@ -1,7 +1,6 @@
 package org.smartregister.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Xml;
 
 import com.google.gson.Gson;
@@ -14,6 +13,7 @@ import org.json.XML;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.EventClient;
 import org.smartregister.clientandeventmodel.FormAttributeParser;
 import org.smartregister.clientandeventmodel.FormData;
 import org.smartregister.clientandeventmodel.FormEntityConverter;
@@ -23,8 +23,6 @@ import org.smartregister.clientandeventmodel.SubFormData;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
-import org.smartregister.service.intentservices.ReplicationIntentService;
-import org.smartregister.sync.CloudantDataHandler;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,18 +65,17 @@ public class FormUtils {
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
     private Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private FormEntityConverter formEntityConverter;
-    private CloudantDataHandler mCloudantDataHandler;
 
-    public FormUtils(Context context) throws Exception {
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
+
+    public FormUtils(Context context) {
         mContext = context;
         theAppContext = CoreLibrary.getInstance().context();
         FormAttributeParser formAttributeParser = new FormAttributeParser(context);
         formEntityConverter = new FormEntityConverter(formAttributeParser, mContext);
-        // Protect creation of static variable.
-        mCloudantDataHandler = CloudantDataHandler.getInstance(context.getApplicationContext());
     }
 
-    public static FormUtils getInstance(Context ctx) throws Exception {
+    public static FormUtils getInstance(Context ctx) {
         if (instance == null) {
             instance = new FormUtils(ctx);
         }
@@ -223,8 +220,8 @@ public class FormUtils {
         return fs;
     }
 
-    private void generateClientAndEventModelsForFormSubmission(FormSubmission formSubmission,
-                                                               String formName) {
+    private List<EventClient> generateClientAndEventModelsForFormSubmission(FormSubmission formSubmission,
+                                                                            String formName) {
         org.smartregister.clientandeventmodel.FormSubmission v2FormSubmission;
 
         String anmId = CoreLibrary.getInstance().context().anmService().fetchDetails().name();
@@ -250,46 +247,26 @@ public class FormUtils {
                 instanceId, formName, entityId, clientVersion, formDataDefinitionVersion,
                 formInstance, clientVersion);
 
+        List<EventClient> eventClientList = new ArrayList<>();
         // retrieve client and events
         Client c = formEntityConverter.getClientFromFormSubmission(v2FormSubmission);
         printClient(c);
         Event e = formEntityConverter.getEventFromFormSubmission(v2FormSubmission);
         printEvent(e);
-        org.smartregister.cloudant.models.Event event = new org.smartregister.cloudant.models.Event(
-                e);
-        createNewEventDocument(event);
-        if (c != null) {
-            org.smartregister.cloudant.models.Client client = new org.smartregister.cloudant
-                    .models.Client(
-                    c);
-            createNewClientDocument(client);
-        }
-
+        eventClientList.add(new EventClient(e, c));
         Map<String, Map<String, Object>> dep = formEntityConverter.
                 getDependentClientsFromFormSubmission(v2FormSubmission);
         for (Map<String, Object> cm : dep.values()) {
             Client cin = (Client) cm.get("client");
             Event evin = (Event) cm.get("event");
-            event = new org.smartregister.cloudant.models.Event(evin);
-            createNewEventDocument(event);
-
-            if (cin != null) {
-                org.smartregister.cloudant.models.Client client = new org.smartregister.cloudant
-                        .models.Client(
-                        cin);
-                createNewClientDocument(client);
-                printClient(cin);
-            }
-            printEvent(evin);
-
+            eventClientList.add(new EventClient(evin, cin));
         }
 
-        startReplicationIntentService();
+        return eventClientList;
     }
 
     private void printClient(Client client) {
         Log.logDebug("============== CLIENT ================");
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
         String clientJson = gson.toJson(client);
         Log.logDebug(clientJson);
         Log.logDebug("====================================");
@@ -298,19 +275,9 @@ public class FormUtils {
 
     private void printEvent(Event event) {
         Log.logDebug("============== EVENT ================");
-        Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
         String eventJson = gson.toJson(event);
         Log.logDebug(eventJson);
         Log.logDebug("====================================");
-    }
-
-    /**
-     * Start ReplicationIntentService which handles cloudant sync processes
-     */
-    private void startReplicationIntentService() {
-
-        Intent serviceIntent = new Intent(mContext, ReplicationIntentService.class);
-        mContext.startService(serviceIntent);
     }
 
     private List<SubFormData> getSubFormList(FormSubmission formSubmission) {
@@ -1098,11 +1065,4 @@ public class FormUtils {
         return null;
     }
 
-    private void createNewEventDocument(org.smartregister.cloudant.models.Event event) {
-        mCloudantDataHandler.createEventDocument(event);
-    }
-
-    private void createNewClientDocument(org.smartregister.cloudant.models.Client client) {
-        mCloudantDataHandler.createClientDocument(client);
-    }
 }
