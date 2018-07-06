@@ -619,6 +619,15 @@ public class JsonFormUtils {
 
     }
 
+    public static JSONObject toJSONObject(String jsonString) {
+        try {
+            return new JSONObject(jsonString);
+        } catch (JSONException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return null;
+        }
+    }
+
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Person person) {
         if (jsonArray == null || jsonArray.length() == 0) {
             return null;
