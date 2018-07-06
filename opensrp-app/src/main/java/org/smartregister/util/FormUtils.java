@@ -459,9 +459,9 @@ public class FormUtils {
                         if (subFormDefinition != null) {
 
                             String childTableName = subFormDefinition.getString("ec_bind_type");
-                            String sql = "select * from " + childTableName + " where relational_id = ?";
+                            String sql = "select * from " + childTableName + " where id = ?";
                             String childRecordsString = theAppContext.formDataRepository().
-                                    queryList(sql, new String[]{relationalId});
+                                    queryList(sql, new String[]{entityId});
                             JSONArray childRecords = new JSONArray(childRecordsString);
 
                             JSONArray fieldsArray = subFormDefinition.getJSONArray("fields");
@@ -490,6 +490,27 @@ public class FormUtils {
                         // write the xml attributes
                         // a value node doesn't have id or relationalId fields
                         writeXMLAttributes(child, serializer, null, null);
+                        if (child.hasChildNodes()) {
+                            NodeList childNodes = child.getChildNodes();
+                            int childNodeSize = childNodes.getLength();
+                            for (int j = 0; j < childNodeSize; j++) {
+                                if (childNodes.item(j) instanceof Element) {
+                                    Element childNode = (Element) childNodes.item(j);
+                                    String childNodeName = childNode.getNodeName();
+                                    serializer.startTag("", childNodeName);
+                                    writeXMLAttributes(childNode, serializer, null, null);
+                                    String value = retrieveValueForNodeName(childNodeName, entityJson,
+                                            formDefinition);
+                                    if (value != null) {
+                                        serializer.text(value);
+                                    }
+                                    if (fieldOverrides.has(childNodeName)) {
+                                        serializer.text(fieldOverrides.getString(childNodeName));
+                                    }
+                                    serializer.endTag("", childNodeName);
+                                }
+                            }
+                        }
                         // write the node value
                         String value = retrieveValueForNodeName(fieldName, entityJson,
                                 formDefinition);
