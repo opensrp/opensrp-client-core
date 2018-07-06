@@ -31,7 +31,6 @@ android:
 
 addons:
   apt_packages:
-  - pandoc
 
 script: 
   - echo "Travis branch is $TRAVIS_BRANCH"
@@ -42,9 +41,6 @@ script:
   # so we'll just if the project compiles
   #Run All tests Unit and Instrumentation
   - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport coveralls --stacktrace
-
-after_failure:
- - pandoc opensrp-app/build/reports/tests/index.html -t plain
 
 
 notifications:
