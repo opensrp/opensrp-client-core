@@ -31,7 +31,7 @@ public class RecyclerViewPaginatedAdapter<VH extends RecyclerView.ViewHolder> ex
     @NonNull
     @Override
     public VH onCreateViewHolder(ViewGroup parent, int viewType) {
-        return listItemProvider.createViewHolder();
+        return listItemProvider.createViewHolder(parent);
     }
 
     @Override

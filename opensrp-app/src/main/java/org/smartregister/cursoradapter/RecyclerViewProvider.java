@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.contract.SmartRegisterClients;
@@ -27,5 +28,5 @@ public interface RecyclerViewProvider<VH extends RecyclerView.ViewHolder> {
 
     LayoutInflater inflater();
 
-    VH createViewHolder();
+    VH createViewHolder(ViewGroup parent);
 }
