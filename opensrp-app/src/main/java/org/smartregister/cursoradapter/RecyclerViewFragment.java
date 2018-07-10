@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -159,8 +160,11 @@ public abstract class RecyclerViewFragment extends
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         clientsView.setLayoutManager(layoutManager);
 
+        DividerItemDecoration itemDecor = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
+        clientsView.addItemDecoration(itemDecor);
+
         setupStatusBarViews(view);
-        paginationViewHandler.addPagination(clientsView);
+        paginationViewHandler.addPagination(view);
 
         updateDefaultOptions();
     }
@@ -591,26 +595,18 @@ public abstract class RecyclerViewFragment extends
 
     private class PaginationViewHandler implements View.OnClickListener {
 
-        private void addPagination(RecyclerView clientsView) {
-            ViewGroup footerView = getPaginationView();
-            nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
-            previousPageView = (Button) footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = (TextView) footerView.findViewById(R.id.txt_page_info);
+        private void addPagination(View view) {
+            nextPageView = view.findViewById(R.id.btn_next_page);
+            previousPageView = view.findViewById(R.id.btn_previous_page);
+            pageInfoView = view.findViewById(R.id.txt_page_info);
 
             nextPageView.setOnClickListener(this);
             previousPageView.setOnClickListener(this);
 
-            footerView.setLayoutParams(
+            view.setLayoutParams(
                     new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
                             (int) getResources().getDimension(R.dimen.pagination_bar_height)));
-
-            // clientsView.addFooterView(footerView);
             refresh();
-        }
-
-        private ViewGroup getPaginationView() {
-            return (ViewGroup) getActivity().getLayoutInflater()
-                    .inflate(R.layout.smart_register_pagination, null);
         }
 
         @Override
@@ -621,7 +617,6 @@ public abstract class RecyclerViewFragment extends
 
             } else if (i == R.id.btn_previous_page) {
                 goBackToPreviousPage();
-
             }
         }
 
