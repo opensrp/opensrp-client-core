@@ -224,15 +224,17 @@ public abstract class RecyclerViewFragment extends
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                // TODO implement this
             }
 
             @Override
             public void onTextChanged(CharSequence cs, int start, int before, int count) {
-
+                // TODO implement this
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
+                // TODO implement this
             }
         });
         searchCancelView = view.findViewById(R.id.btn_search_cancel);
@@ -461,7 +463,7 @@ public abstract class RecyclerViewFragment extends
         return query;
     }
 
-    public void CountExecute() {
+    public void countExecute() {
         Cursor c = null;
 
         try {
@@ -521,7 +523,7 @@ public abstract class RecyclerViewFragment extends
                     public Cursor loadInBackground() {
                         // Count query
                         if (args != null && args.getBoolean(COUNT)) {
-                            CountExecute();
+                            countExecute();
                         }
 
                         // Select register query
