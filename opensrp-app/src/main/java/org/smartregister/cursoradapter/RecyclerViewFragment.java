@@ -196,7 +196,7 @@ public abstract class RecyclerViewFragment extends
         View sortView = view.findViewById(R.id.sort_selection);
         sortView.setOnClickListener(navBarActionsHandler);
 
-        serviceModeView = (TextView) view.findViewById(R.id.service_mode_selection);
+        serviceModeView = view.findViewById(R.id.service_mode_selection);
         serviceModeView.setOnClickListener(navBarActionsHandler);
 
         view.findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
@@ -209,17 +209,17 @@ public abstract class RecyclerViewFragment extends
     }
 
     private void setupTitleView(View view) {
-        ViewGroup titleLayout = (ViewGroup) view.findViewById(R.id.title_layout);
+        ViewGroup titleLayout = view.findViewById(R.id.title_layout);
         titleLayout.setOnClickListener(navBarActionsHandler);
 
-        titleLabelView = (TextView) view.findViewById(R.id.txt_title_label);
+        titleLabelView = view.findViewById(R.id.txt_title_label);
 
-        TextView reportMonthStartView = (TextView) view.findViewById(R.id.btn_report_month);
+        TextView reportMonthStartView = view.findViewById(R.id.btn_report_month);
         setReportDates(reportMonthStartView);
     }
 
     public void setupSearchView(View view) {
-        searchView = (EditText) view.findViewById(R.id.edt_search);
+        searchView = view.findViewById(R.id.edt_search);
         searchView.setHint(getNavBarOptionsProvider().searchHint());
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -314,7 +314,7 @@ public abstract class RecyclerViewFragment extends
         getActivity().finish();
     }
 
-    void showFragmentDialog(DialogOptionModel dialogOptionModel) {
+    protected void showFragmentDialog(DialogOptionModel dialogOptionModel) {
         showFragmentDialog(dialogOptionModel, null);
     }
 
@@ -373,7 +373,7 @@ public abstract class RecyclerViewFragment extends
     }
 
     public void gotoNextPage() {
-        if (!(currentoffset + currentlimit > totalcount)) {
+        if (hasNextPage()) {
             currentoffset = currentoffset + currentlimit;
             filterandSortExecute();
         }
@@ -418,11 +418,11 @@ public abstract class RecyclerViewFragment extends
 
     public void showProgressView() {
         if (clientsProgressView.getVisibility() == INVISIBLE) {
-            clientsProgressView.setVisibility(View.VISIBLE);
+            clientsProgressView.setVisibility(VISIBLE);
         }
 
         if (clientsView.getVisibility() == VISIBLE) {
-            clientsView.setVisibility(View.INVISIBLE);
+            clientsView.setVisibility(INVISIBLE);
         }
     }
 

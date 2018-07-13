@@ -17,7 +17,6 @@ package org.smartregister.cursoradapter;
  *
  */
 
-import android.content.Context;
 import android.database.Cursor;
 import android.database.DataSetObserver;
 import android.support.v7.widget.RecyclerView;
@@ -26,9 +25,7 @@ import android.support.v7.widget.RecyclerView;
  * Created by skyfishjy on 10/31/14.
  */
 
-public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<VH> {
-
-    private Context mContext;
+public abstract class RecyclerViewCursorAdapter<V extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<V> {
 
     private Cursor mCursor;
 
@@ -38,8 +35,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
 
     private DataSetObserver mDataSetObserver;
 
-    public RecyclerViewCursorAdapter(Context context, Cursor cursor) {
-        mContext = context;
+    public RecyclerViewCursorAdapter(Cursor cursor) {
         mCursor = cursor;
         mDataValid = cursor != null;
         mRowIdColumn = mDataValid ? mCursor.getColumnIndex("_id") : -1;
@@ -74,10 +70,10 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
         super.setHasStableIds(true);
     }
 
-    public abstract void onBindViewHolder(VH viewHolder, Cursor cursor);
+    public abstract void onBindViewHolder(V viewHolder, Cursor cursor);
 
     @Override
-    public void onBindViewHolder(VH viewHolder, int position) {
+    public void onBindViewHolder(V viewHolder, int position) {
         if (!mDataValid) {
             throw new IllegalStateException("this should only be called when the cursor is valid");
         }
@@ -104,7 +100,7 @@ public abstract class RecyclerViewCursorAdapter<VH extends RecyclerView.ViewHold
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
-        if (newCursor == mCursor) {
+        if (newCursor.equals(mCursor)) {
             return null;
         }
         final Cursor oldCursor = mCursor;
