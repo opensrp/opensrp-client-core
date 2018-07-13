@@ -6,15 +6,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Address;
+import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -52,11 +55,142 @@ public class JsonFormUtils {
     public static final String SECTIONS = "sections";
     public static final String attributes = "attributes";
 
+    public static final String ENCOUNTER = "encounter";
+    public static final String ENCOUNTER_LOCATION = "encounter_location";
 
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
+
+    public static Client createBaseClient(JSONArray fields, FormTag formTag, String entityId) {
+
+        String firstName = getFieldValue(fields, FormEntityConstants.Person.first_name);
+        String lastName = getFieldValue(fields, FormEntityConstants.Person.last_name);
+        String bd = getFieldValue(fields, FormEntityConstants.Person.birthdate);
+        Date birthdate = formatDate(bd, true);
+        String dd = getFieldValue(fields, FormEntityConstants.Person.deathdate);
+        Date deathdate = formatDate(dd, true);
+        String aproxbd = getFieldValue(fields, FormEntityConstants.Person.birthdate_estimated);
+        Boolean birthdateApprox = false;
+        if (!StringUtils.isEmpty(aproxbd) && NumberUtils.isNumber(aproxbd)) {
+            int bde = 0;
+            try {
+                bde = Integer.parseInt(aproxbd);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString(), e);
+            }
+            birthdateApprox = bde > 0;
+        }
+        String aproxdd = getFieldValue(fields, FormEntityConstants.Person.deathdate_estimated);
+        Boolean deathdateApprox = false;
+        if (!StringUtils.isEmpty(aproxdd) && NumberUtils.isNumber(aproxdd)) {
+            int dde = 0;
+            try {
+                dde = Integer.parseInt(aproxdd);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString(), e);
+            }
+            deathdateApprox = dde > 0;
+        }
+        String gender = getFieldValue(fields, FormEntityConstants.Person.gender);
+
+        List<Address> addresses = new ArrayList<>(extractAddresses(fields).values());
+
+        Client c = (Client) new Client(entityId)
+                .withFirstName(firstName)
+                .withLastName(lastName)
+                .withBirthdate((birthdate), birthdateApprox)
+                .withDeathdate(deathdate, deathdateApprox)
+                .withGender(gender).withDateCreated(new Date());
+
+        c.setClientApplicationVersion(formTag.appVersion);
+        c.setClientDatabaseVersion(formTag.databaseVersion);
+
+        c.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
+                .withAttributes(extractAttributes(fields))
+                .withIdentifiers(extractIdentifiers(fields));
+        return c;
+
+    }
+
+    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType) {
+
+        String encounterDateField = getFieldValue(fields, FormEntityConstants.Encounter.encounter_date);
+        String encounterLocation = null;
+
+        Date encounterDate = new Date();
+        if (StringUtils.isNotBlank(encounterDateField)) {
+            Date dateTime = formatDate(encounterDateField, false);
+            if (dateTime != null) {
+                encounterDate = dateTime;
+            }
+        }
+        try {
+            encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
+        } catch (JSONException e) {
+            Log.e(TAG, e.getMessage());
+        }
+
+        if (StringUtils.isBlank(encounterLocation)) {
+            encounterLocation = formTag.locationId;
+        }
+
+        Event e = (Event) new Event()
+                .withBaseEntityId(entityId)
+                .withEventDate(encounterDate)
+                .withEventType(encounterType)
+                .withLocationId(encounterLocation)
+                .withProviderId(formTag.providerId)
+                .withEntityType(bindType)
+                .withFormSubmissionId(generateRandomUUIDString())
+                .withDateCreated(new Date());
+
+        e.setChildLocationId(formTag.childLocationId);
+        e.setTeam(formTag.team);
+        e.setTeamId(formTag.teamId);
+
+        e.setClientApplicationVersion(formTag.appVersion);
+        e.setClientDatabaseVersion(formTag.databaseVersion);
+
+        for (int i = 0; i < fields.length(); i++) {
+            JSONObject jsonObject = getJSONObject(fields, i);
+            String value = getString(jsonObject, VALUE);
+            if (StringUtils.isNotBlank(value)) {
+                addObservation(e, jsonObject);
+            }
+        }
+
+        if (metadata != null) {
+            Iterator<?> keys = metadata.keys();
+
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+                JSONObject jsonObject = getJSONObject(metadata, key);
+                String value = getString(jsonObject, VALUE);
+                if (StringUtils.isNotBlank(value)) {
+                    String entityVal = getString(jsonObject, OPENMRS_ENTITY);
+                    if (entityVal != null) {
+                        if (entityVal.equals(CONCEPT)) {
+                            addToJSONObject(jsonObject, KEY, key);
+                            addObservation(e, jsonObject);
+                        } else if (entityVal.equals(ENCOUNTER)) {
+                            String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
+                            if (entityIdVal.equals(FormEntityConstants.Encounter.encounter_date.name())) {
+                                Date eDate = formatDate(value, false);
+                                if (eDate != null) {
+                                    e.setEventDate(eDate);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return e;
+
+    }
 
     public static void addObservation(Event e, JSONObject jsonObject) {
         String value = getString(jsonObject, VALUE);
@@ -483,6 +617,15 @@ public class JsonFormUtils {
             return null;
         }
 
+    }
+
+    public static JSONObject toJSONObject(String jsonString) {
+        try {
+            return new JSONObject(jsonString);
+        } catch (JSONException e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+            return null;
+        }
     }
 
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Person person) {
