@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/client_list_header_dark_grey"
+    android:orientation="vertical">
+
+    <include layout="@layout/smart_register_nav_bar" />
+
+    <include layout="@layout/smart_register_status_bar" />
+
+    <LinearLayout
+        android:id="@+id/clients_upper_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_header_height"
+        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
+        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:orientation="horizontal"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/clients_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_header_height"
+        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
+        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:orientation="horizontal" />
+
+    <LinearLayout
+        android:id="@+id/clients_lower_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_header_height"
+        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
+        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:orientation="horizontal"
+        android:visibility="gone" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/smart_register_client_divider_height"
+        android:src="@color/smart_register_client_divider_color" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
+        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:layout_weight="1"
+        android:background="@drawable/listview_background_rounded">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="@color/smart_register_client_divider_color"
+            android:dividerHeight="@dimen/smart_register_client_divider_height"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/client_list_progress"
+            style="@android:style/Widget.Holo.Light.ProgressBar.Large.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+
+        <include
+            layout="@layout/smart_register_pagination"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/pagination_bar_height"
+            android:layout_gravity="bottom" />
+
+    </FrameLayout>
+</LinearLayout>
