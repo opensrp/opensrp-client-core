@@ -19,7 +19,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import org.apache.commons.lang3.StringUtils;
@@ -154,8 +153,8 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                     getDefaultOptionsProvider().serviceMode().getHeaderProvider(), view);
         }
 
-        clientsProgressView = (ProgressBar) view.findViewById(R.id.client_list_progress);
-        clientsView = (ListView) view.findViewById(R.id.list);
+        clientsProgressView = view.findViewById(R.id.client_list_progress);
+        clientsView = view.findViewById(R.id.list);
 
         setupStatusBarViews(view);
         paginationViewHandler.addPagination(clientsView);
@@ -200,25 +199,37 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     }
 
     private void setupStatusBarViews(View view) {
-        appliedSortView = (TextView) view.findViewById(R.id.sorted_by);
-        appliedVillageFilterView = (TextView) view.findViewById(R.id.village);
+        appliedSortView = view.findViewById(R.id.sorted_by);
+        appliedVillageFilterView = view.findViewById(R.id.village);
     }
 
     private void setupNavBarViews(View view) {
-        view.findViewById(R.id.btn_back_to_home).setOnClickListener(navBarActionsHandler);
+        View backButton = view.findViewById(R.id.btn_back_to_home);
+        if (backButton != null) {
+            backButton.setOnClickListener(navBarActionsHandler);
+        }
 
         setupTitleView(view);
 
         View villageFilterView = view.findViewById(R.id.filter_selection);
-        villageFilterView.setOnClickListener(navBarActionsHandler);
+        if (villageFilterView != null) {
+            villageFilterView.setOnClickListener(navBarActionsHandler);
+        }
 
         View sortView = view.findViewById(R.id.sort_selection);
-        sortView.setOnClickListener(navBarActionsHandler);
+        if (sortView != null) {
+            sortView.setOnClickListener(navBarActionsHandler);
+        }
 
-        serviceModeView = (TextView) view.findViewById(R.id.service_mode_selection);
-        serviceModeView.setOnClickListener(navBarActionsHandler);
+        serviceModeView = view.findViewById(R.id.service_mode_selection);
+        if (serviceModeView != null) {
+            serviceModeView.setOnClickListener(navBarActionsHandler);
+        }
 
-        view.findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
+        View registerClient = view.findViewById(R.id.register_client);
+        if (registerClient != null) {
+            registerClient.setOnClickListener(navBarActionsHandler);
+        }
 
         setupSearchView(view);
     }
@@ -228,34 +239,45 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     }
 
     private void setupTitleView(View view) {
-        ViewGroup titleLayout = (ViewGroup) view.findViewById(R.id.title_layout);
-        titleLayout.setOnClickListener(navBarActionsHandler);
+        ViewGroup titleLayout = view.findViewById(R.id.title_layout);
+        if (titleLayout != null) {
+            titleLayout.setOnClickListener(navBarActionsHandler);
+        }
 
-        titleLabelView = (TextView) view.findViewById(R.id.txt_title_label);
+        titleLabelView = view.findViewById(R.id.txt_title_label);
 
-        TextView reportMonthStartView = (TextView) view.findViewById(R.id.btn_report_month);
-        setReportDates(reportMonthStartView);
+        TextView reportMonthStartView = view.findViewById(R.id.btn_report_month);
+        if (reportMonthStartView != null) {
+            setReportDates(reportMonthStartView);
+        }
     }
 
     public void setupSearchView(View view) {
-        searchView = (EditText) view.findViewById(R.id.edt_search);
-        searchView.setHint(getNavBarOptionsProvider().searchHint());
-        searchView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+        searchView = view.findViewById(R.id.edt_search);
+        if (searchView != null) {
+            if (getNavBarOptionsProvider() != null) {
+                searchView.setHint(getNavBarOptionsProvider().searchHint());
             }
+            searchView.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                }
 
-            @Override
-            public void onTextChanged(CharSequence cs, int start, int before, int count) {
+                @Override
+                public void onTextChanged(CharSequence cs, int start, int before, int count) {
 
-            }
+                }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
+                @Override
+                public void afterTextChanged(Editable editable) {
+                }
+            });
+        }
+
         searchCancelView = view.findViewById(R.id.btn_search_cancel);
-        searchCancelView.setOnClickListener(searchCancelHandler);
+        if (searchCancelView != null) {
+            searchCancelView.setOnClickListener(searchCancelHandler);
+        }
     }
 
     private void setReportDates(TextView titleView) {
@@ -283,7 +305,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
                                                       .ClientsHeaderProvider headerProvider, View
                                                       view) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) view
+        LinearLayout clientsHeaderLayout = view
                 .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
@@ -579,7 +601,11 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     private class FilterDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
-            return getNavBarOptionsProvider().filterOptions();
+            if (getNavBarOptionsProvider() != null) {
+                return getNavBarOptionsProvider().filterOptions();
+            } else {
+                return new DialogOption[]{};
+            }
         }
 
         @Override
@@ -591,7 +617,11 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     private class SortDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
-            return getNavBarOptionsProvider().sortingOptions();
+            if (getNavBarOptionsProvider() != null) {
+                return getNavBarOptionsProvider().sortingOptions();
+            } else {
+                return new DialogOption[]{};
+            }
         }
 
         @Override
@@ -603,7 +633,11 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     protected class ServiceModeDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
-            return getNavBarOptionsProvider().serviceModeOptions();
+            if (getNavBarOptionsProvider() != null) {
+                return getNavBarOptionsProvider().serviceModeOptions();
+            } else {
+                return new DialogOption[]{};
+            }
         }
 
         @Override
@@ -616,9 +650,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
 
         private void addPagination(ListView clientsView) {
             ViewGroup footerView = getPaginationView();
-            nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
-            previousPageView = (Button) footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = (TextView) footerView.findViewById(R.id.txt_page_info);
+            nextPageView = footerView.findViewById(R.id.btn_next_page);
+            previousPageView = footerView.findViewById(R.id.btn_previous_page);
+            pageInfoView = footerView.findViewById(R.id.txt_page_info);
 
             nextPageView.setOnClickListener(this);
             previousPageView.setOnClickListener(this);
