@@ -217,7 +217,9 @@ public abstract class RecyclerViewFragment extends
     }
 
     protected void setServiceModeViewDrawableRight(Drawable drawable) {
-        serviceModeView.setCompoundDrawables(null, null, drawable, null);
+        if(serviceModeView != null) {
+            serviceModeView.setCompoundDrawables(null, null, drawable, null);
+        }
     }
 
     private void setupTitleView(View view) {
