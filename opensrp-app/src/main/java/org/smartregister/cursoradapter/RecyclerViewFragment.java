@@ -186,59 +186,83 @@ public abstract class RecyclerViewFragment extends
     }
 
     private void setupNavBarViews(View view) {
-        view.findViewById(R.id.btn_back_to_home).setOnClickListener(navBarActionsHandler);
+        View backButton = view.findViewById(R.id.btn_back_to_home);
+        if (backButton != null) {
+            backButton.setOnClickListener(navBarActionsHandler);
+        }
 
         setupTitleView(view);
 
         View villageFilterView = view.findViewById(R.id.filter_selection);
-        villageFilterView.setOnClickListener(navBarActionsHandler);
+        if (villageFilterView != null) {
+            villageFilterView.setOnClickListener(navBarActionsHandler);
+        }
 
         View sortView = view.findViewById(R.id.sort_selection);
-        sortView.setOnClickListener(navBarActionsHandler);
+        if (sortView != null) {
+            sortView.setOnClickListener(navBarActionsHandler);
+        }
 
         serviceModeView = view.findViewById(R.id.service_mode_selection);
-        serviceModeView.setOnClickListener(navBarActionsHandler);
+        if (serviceModeView != null) {
+            serviceModeView.setOnClickListener(navBarActionsHandler);
+        }
 
-        view.findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
+        View registerClient = view.findViewById(R.id.register_client);
+        if (registerClient != null) {
+            registerClient.setOnClickListener(navBarActionsHandler);
+        }
 
         setupSearchView(view);
     }
 
     protected void setServiceModeViewDrawableRight(Drawable drawable) {
-        serviceModeView.setCompoundDrawables(null, null, drawable, null);
+        if(serviceModeView != null) {
+            serviceModeView.setCompoundDrawables(null, null, drawable, null);
+        }
     }
 
     private void setupTitleView(View view) {
         ViewGroup titleLayout = view.findViewById(R.id.title_layout);
-        titleLayout.setOnClickListener(navBarActionsHandler);
+        if (titleLayout != null) {
+            titleLayout.setOnClickListener(navBarActionsHandler);
+        }
 
         titleLabelView = view.findViewById(R.id.txt_title_label);
 
         TextView reportMonthStartView = view.findViewById(R.id.btn_report_month);
-        setReportDates(reportMonthStartView);
+        if (reportMonthStartView != null) {
+            setReportDates(reportMonthStartView);
+        }
     }
 
     public void setupSearchView(View view) {
         searchView = view.findViewById(R.id.edt_search);
-        searchView.setHint(getNavBarOptionsProvider().searchHint());
-        searchView.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
-                // TODO implement this
+        if (searchView != null) {
+            if(getNavBarOptionsProvider() != null) {
+                searchView.setHint(getNavBarOptionsProvider().searchHint());
             }
+            searchView.addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
+                    // TODO implement this
+                }
 
-            @Override
-            public void onTextChanged(CharSequence cs, int start, int before, int count) {
-                // TODO implement this
-            }
+                @Override
+                public void onTextChanged(CharSequence cs, int start, int before, int count) {
+                    // TODO implement this
+                }
 
-            @Override
-            public void afterTextChanged(Editable editable) {
-                // TODO implement this
-            }
-        });
+                @Override
+                public void afterTextChanged(Editable editable) {
+                    // TODO implement this
+                }
+            });
+        }
         searchCancelView = view.findViewById(R.id.btn_search_cancel);
-        searchCancelView.setOnClickListener(searchCancelHandler);
+        if (searchCancelView != null) {
+            searchCancelView.setOnClickListener(searchCancelHandler);
+        }
     }
 
     private void setReportDates(TextView titleView) {
@@ -266,7 +290,7 @@ public abstract class RecyclerViewFragment extends
     private void populateClientListHeaderView(SecuredNativeSmartRegisterActivity
                                                       .ClientsHeaderProvider headerProvider, View
                                                       view) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) view
+        LinearLayout clientsHeaderLayout = view
                 .findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
@@ -562,7 +586,11 @@ public abstract class RecyclerViewFragment extends
     private class FilterDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
-            return getNavBarOptionsProvider().filterOptions();
+            if (getNavBarOptionsProvider() != null) {
+                return getNavBarOptionsProvider().filterOptions();
+            } else {
+                return new DialogOption[]{};
+            }
         }
 
         @Override
@@ -574,7 +602,11 @@ public abstract class RecyclerViewFragment extends
     private class SortDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
-            return getNavBarOptionsProvider().sortingOptions();
+            if (getNavBarOptionsProvider() != null) {
+                return getNavBarOptionsProvider().sortingOptions();
+            } else {
+                return new DialogOption[]{};
+            }
         }
 
         @Override
@@ -586,7 +618,11 @@ public abstract class RecyclerViewFragment extends
     protected class ServiceModeDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
-            return getNavBarOptionsProvider().serviceModeOptions();
+            if (getNavBarOptionsProvider() != null) {
+                return getNavBarOptionsProvider().serviceModeOptions();
+            } else {
+                return new DialogOption[]{};
+            }
         }
 
         @Override
