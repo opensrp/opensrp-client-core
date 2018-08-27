@@ -80,4 +80,12 @@ public class AllSettings {
         authParams.put("password", fetchANMPassword());
         return authParams;
     }
+
+    public void put(String key, String value) {
+        settingsRepository.updateSetting(key, value);
+    }
+
+    public String get(String key) {
+        return settingsRepository.querySetting(key, null);
+    }
 }
