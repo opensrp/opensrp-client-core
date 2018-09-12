@@ -18,6 +18,8 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
 public interface RecyclerViewProvider<V extends RecyclerView.ViewHolder> {
     void getView(Cursor cursor, SmartRegisterClient client, V viewHolder);
 
+    void getFooterView(RecyclerView.ViewHolder viewHolder, int currentPageCount, int totalCount, boolean hasNextPage, boolean hasPreviousPage);
+
     SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption
             serviceModeOption, FilterOption searchFilter, SortOption sortOption);
 
@@ -28,4 +30,8 @@ public interface RecyclerViewProvider<V extends RecyclerView.ViewHolder> {
     LayoutInflater inflater();
 
     V createViewHolder(ViewGroup parent);
+
+    RecyclerView.ViewHolder createFooterHolder(ViewGroup parent);
+
+    boolean isFooterViewHolder(RecyclerView.ViewHolder viewHolder);
 }

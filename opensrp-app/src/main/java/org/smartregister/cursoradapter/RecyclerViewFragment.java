@@ -17,8 +17,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,7 +44,6 @@ import java.util.List;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
-import static java.text.MessageFormat.format;
 import static org.smartregister.AllConstants.SHORT_DATE_FORMAT;
 
 /**
@@ -56,12 +53,11 @@ public abstract class RecyclerViewFragment extends
         SecuredNativeSmartRegisterFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
     protected static final int LOADER_ID = 0;
-    public static int totalcount = 0;
-    public static int currentlimit = 20;
-    public static int currentoffset = 0;
+
     public final SearchCancelHandler searchCancelHandler = new SearchCancelHandler();
-    private final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
+    public final PaginationViewHandler paginationViewHandler = new PaginationViewHandler();
     private final NavBarActionsHandler navBarActionsHandler = new NavBarActionsHandler();
+
     public String mainSelect;
     public String filters = "";
     public String mainCondition = "";
@@ -69,16 +65,16 @@ public abstract class RecyclerViewFragment extends
     public String tablename;
     public String countSelect;
     public String joinTable = "";
+
     public RecyclerView clientsView;
     public RecyclerViewPaginatedAdapter clientAdapter;
+
     public View mView;
+
     private FilterOption currentVillageFilter;
     private SortOption currentSortOption;
     private FilterOption currentSearchFilter;
     private ServiceModeOption currentServiceModeOption;
-    private TextView pageInfoView;
-    private Button nextPageView;
-    private Button previousPageView;
 
     private static final String COUNT = "count_execute";
 
@@ -164,7 +160,6 @@ public abstract class RecyclerViewFragment extends
         clientsView.addItemDecoration(itemDecor);
 
         setupStatusBarViews(view);
-        paginationViewHandler.addPagination(view);
 
         updateDefaultOptions();
     }
@@ -217,7 +212,7 @@ public abstract class RecyclerViewFragment extends
     }
 
     protected void setServiceModeViewDrawableRight(Drawable drawable) {
-        if(serviceModeView != null) {
+        if (serviceModeView != null) {
             serviceModeView.setCompoundDrawables(null, null, drawable, null);
         }
     }
@@ -239,7 +234,7 @@ public abstract class RecyclerViewFragment extends
     public void setupSearchView(View view) {
         searchView = view.findViewById(R.id.edt_search);
         if (searchView != null) {
-            if(getNavBarOptionsProvider() != null) {
+            if (getNavBarOptionsProvider() != null) {
                 searchView.setHint(getNavBarOptionsProvider().searchHint());
             }
             searchView.addTextChangedListener(new TextWatcher() {
@@ -361,53 +356,17 @@ public abstract class RecyclerViewFragment extends
 
     protected abstract void startRegistration();
 
-    private int getCurrentPageCount() {
-        if (currentoffset != 0) {
-            if ((currentoffset / currentlimit) != 0) {
-                return ((currentoffset / currentlimit) + 1);
-            } else {
-                return 1;
-            }
-        } else {
-            return 1;
-        }
-    }
-
-    private int getTotalcount() {
-        if (totalcount % currentlimit == 0) {
-            return (totalcount / currentlimit);
-        } else {
-            return ((totalcount / currentlimit) + 1);
-        }
-    }
-
-    public void refresh() {
-        pageInfoView.setText(
-                format(getResources().getString(R.string.str_page_info), (getCurrentPageCount()),
-                        getTotalcount()));
-        nextPageView.setVisibility(hasNextPage() ? VISIBLE : INVISIBLE);
-        previousPageView.setVisibility(hasPreviousPage() ? VISIBLE : INVISIBLE);
-    }
-
-    private boolean hasNextPage() {
-
-        return ((totalcount > (currentoffset + currentlimit)));
-    }
-
-    private boolean hasPreviousPage() {
-        return currentoffset != 0;
-    }
 
     public void gotoNextPage() {
-        if (hasNextPage()) {
-            currentoffset = currentoffset + currentlimit;
+        if (clientAdapter.hasNextPage()) {
+            clientAdapter.nextPageOffset();
             filterandSortExecute();
         }
     }
 
     public void goBackToPreviousPage() {
-        if (currentoffset > 0) {
-            currentoffset = currentoffset - currentlimit;
+        if (clientAdapter.hasPreviousPage()) {
+            clientAdapter.previousPageOffset();
             filterandSortExecute();
         }
     }
@@ -432,11 +391,8 @@ public abstract class RecyclerViewFragment extends
     }
 
     public void filterandSortExecute(Bundle args) {
-        refresh();
-
         getLoaderManager().restartLoader(LOADER_ID, args, this);
     }
-
 
     public void filterandSortExecute() {
         filterandSortExecute(null);
@@ -469,7 +425,7 @@ public abstract class RecyclerViewFragment extends
             if (isValidFilterForFts(commonRepository())) {
                 String sql = sqb
                         .searchQueryFts(tablename, joinTable, mainCondition, filters, Sortqueries,
-                                currentlimit, currentoffset);
+                                clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
                 List<String> ids = commonRepository().findSearchIds(sql);
                 query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
                         Sortqueries);
@@ -477,7 +433,7 @@ public abstract class RecyclerViewFragment extends
             } else {
                 sqb.addCondition(filters);
                 query = sqb.orderbyCondition(Sortqueries);
-                query = sqb.Endquery(sqb.addlimitandOffset(query, currentlimit, currentoffset));
+                query = sqb.Endquery(sqb.addlimitandOffset(query, clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset()));
 
             }
         } catch (Exception e) {
@@ -497,8 +453,8 @@ public abstract class RecyclerViewFragment extends
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
                 Log.i(getClass().getName(), query);
 
-                totalcount = commonRepository().countSearchIds(sql);
-                Log.v("total count here", "" + totalcount);
+                clientAdapter.setTotalcount(commonRepository().countSearchIds(sql));
+                Log.v("total count here", "" + clientAdapter.getTotalcount());
 
 
             } else {
@@ -509,12 +465,13 @@ public abstract class RecyclerViewFragment extends
                 Log.i(getClass().getName(), query);
                 c = commonRepository().rawCustomQueryForAdapter(query);
                 c.moveToFirst();
-                totalcount = c.getInt(0);
-                Log.v("total count here", "" + totalcount);
+                clientAdapter.setTotalcount(c.getInt(0));
+                Log.v("total count here", "" + clientAdapter.getTotalcount());
             }
 
-            currentlimit = 20;
-            currentoffset = 0;
+            clientAdapter.setCurrentlimit(20);
+            clientAdapter.setCurrentoffset(0);
+
 
         } catch (Exception e) {
             Log.e(getClass().getName(), e.toString(), e);
@@ -567,7 +524,6 @@ public abstract class RecyclerViewFragment extends
         clientAdapter.swapCursor(cursor);
 
         hideProgressView();
-        refresh();
     }
 
     @Override
@@ -583,6 +539,9 @@ public abstract class RecyclerViewFragment extends
         return isPaused() || isRefreshList();
     }
 
+    ////////////////////////////////////////////////////////////////
+    // Inner classes
+    ////////////////////////////////////////////////////////////////
     private class FilterDialogOptionModel implements DialogOptionModel {
         @Override
         public DialogOption[] getDialogOptions() {
@@ -632,20 +591,6 @@ public abstract class RecyclerViewFragment extends
     }
 
     private class PaginationViewHandler implements View.OnClickListener {
-
-        private void addPagination(View view) {
-            nextPageView = view.findViewById(R.id.btn_next_page);
-            previousPageView = view.findViewById(R.id.btn_previous_page);
-            pageInfoView = view.findViewById(R.id.txt_page_info);
-
-            nextPageView.setOnClickListener(this);
-            previousPageView.setOnClickListener(this);
-
-            view.setLayoutParams(
-                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
-            refresh();
-        }
 
         @Override
         public void onClick(View view) {

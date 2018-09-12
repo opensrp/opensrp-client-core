@@ -3,12 +3,8 @@ package org.smartregister.cursoradapter;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.TextView;
 
-import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
@@ -19,6 +15,10 @@ import org.smartregister.commonregistry.CommonRepository;
 public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> extends RecyclerViewCursorAdapter {
     private final RecyclerViewProvider<RecyclerView.ViewHolder> listItemProvider;
     private CommonRepository commonRepository;
+
+    public int totalcount = 0;
+    public int currentlimit = 20;
+    public int currentoffset = 0;
 
     public RecyclerViewPaginatedAdapter(Cursor cursor,
                                         RecyclerViewProvider<RecyclerView.ViewHolder>
@@ -32,10 +32,8 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         if (viewType == RecyclerViewCursorAdapter.Type.FOOTER.ordinal()) {
-            View view = listItemProvider.inflater().inflate(R.layout.smart_register_pagination, parent, false);
-            return new FooterViewHolder(view);
+            return listItemProvider.createFooterHolder(parent);
         } else {
             return listItemProvider.createViewHolder(parent);
         }
@@ -43,8 +41,8 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
-        if (FooterViewHolder.class.isInstance(viewHolder)) {
-
+        if (listItemProvider.isFooterViewHolder(viewHolder)) {
+            listItemProvider.getFooterView(viewHolder, getCurrentPageCount(), getTotalPageCount(), hasNextPage(), hasPreviousPage());
         } else {
             CommonPersonObject personinlist = commonRepository.readAllcommonforCursorAdapter(cursor);
             CommonPersonObjectClient pClient = new CommonPersonObjectClient(personinlist.getCaseId(),
@@ -54,24 +52,66 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
         }
     }
 
-
-    ////////////////////////////////////////////////////////////////
-    // Inner classes
-    ////////////////////////////////////////////////////////////////
-
-    public class FooterViewHolder extends RecyclerView.ViewHolder {
-        private TextView pageInfoView;
-        private Button nextPageView;
-        private Button previousPageView;
-
-        public FooterViewHolder(View view) {
-            super(view);
-
-            nextPageView = view.findViewById(R.id.btn_next_page);
-            previousPageView = view.findViewById(R.id.btn_previous_page);
-            pageInfoView = view.findViewById(R.id.txt_page_info);
+    // Pagination
+    private int getCurrentPageCount() {
+        if (currentoffset != 0) {
+            if ((currentoffset / currentlimit) != 0) {
+                return ((currentoffset / currentlimit) + 1);
+            } else {
+                return 1;
+            }
+        } else {
+            return 1;
         }
     }
 
+    private int getTotalPageCount() {
+        if (totalcount % currentlimit == 0) {
+            return (totalcount / currentlimit);
+        } else {
+            return ((totalcount / currentlimit) + 1);
+        }
+    }
+
+    public boolean hasNextPage() {
+
+        return ((totalcount > (currentoffset + currentlimit)));
+    }
+
+    public boolean hasPreviousPage() {
+        return currentoffset != 0;
+    }
+
+    public void nextPageOffset() {
+        currentoffset = currentoffset + currentlimit;
+    }
+
+    public void previousPageOffset() {
+        currentoffset = currentoffset - currentlimit;
+    }
+
+    public void setTotalcount(int totalcount) {
+        this.totalcount = totalcount;
+    }
+
+    public int getTotalcount() {
+        return totalcount;
+    }
+
+    public void setCurrentoffset(int currentoffset) {
+        this.currentoffset = currentoffset;
+    }
+
+    public int getCurrentoffset() {
+        return currentoffset;
+    }
+
+    public void setCurrentlimit(int currentlimit) {
+        this.currentlimit = currentlimit;
+    }
+
+    public int getCurrentlimit() {
+        return currentlimit;
+    }
 
 }
