@@ -25,7 +25,7 @@ import android.support.v7.widget.RecyclerView;
  * Created by skyfishjy on 10/31/14.
  */
 
-public abstract class RecyclerViewCursorAdapter<V extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<V> {
+public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private Cursor mCursor;
 
@@ -52,7 +52,7 @@ public abstract class RecyclerViewCursorAdapter<V extends RecyclerView.ViewHolde
     @Override
     public int getItemCount() {
         if (mDataValid && mCursor != null) {
-            return mCursor.getCount();
+            return mCursor.getCount() + 1;
         }
         return 0;
     }
@@ -70,14 +70,30 @@ public abstract class RecyclerViewCursorAdapter<V extends RecyclerView.ViewHolde
         super.setHasStableIds(true);
     }
 
-    public abstract void onBindViewHolder(V viewHolder, Cursor cursor);
+    @Override
+    public final int getItemViewType(int position) {
+        if (isFooter(position)) {
+            return Type.FOOTER.ordinal();
+        } else {
+            return Type.ITEM.ordinal();
+        }
+    }
+
+    public boolean isFooter(int position) {
+        if (mDataValid && mCursor != null) {
+            return position == mCursor.getCount();
+        }
+        return false;
+    }
+
+    public abstract void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor);
 
     @Override
-    public void onBindViewHolder(V viewHolder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         if (!mDataValid) {
             throw new IllegalStateException("this should only be called when the cursor is valid");
         }
-        if (!mCursor.moveToPosition(position)) {
+        if (position < (mCursor.getCount() -1) && !mCursor.moveToPosition(position)) {
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
         onBindViewHolder(viewHolder, mCursor);
@@ -139,5 +155,9 @@ public abstract class RecyclerViewCursorAdapter<V extends RecyclerView.ViewHolde
             notifyDataSetChanged();
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
+    }
+
+    public enum Type {
+        HEADER, ITEM, FOOTER;
     }
 }
