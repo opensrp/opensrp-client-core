@@ -175,17 +175,19 @@ public class EventClientRepository extends BaseRepository {
 
         QueryWrapper queryWrapper = new QueryWrapper();
         Map<String, Integer> columnOrder = new HashMap();
-        Integer i = 1;
 
         StringBuilder queryBuilder = new StringBuilder("INSERT  INTO ");
         queryBuilder.append(table.name());
         queryBuilder.append(" (");
         StringBuilder params = new StringBuilder(" VALUES( ");
-        for (Column col : table.columns()) {
-            queryBuilder.append(col.name() + ",");
+
+        for (int i = 0; i < table.columns().length; i++) {
+
+            queryBuilder.append(table.columns()[i].name() + ",");
             params.append("?,");
-            columnOrder.put(col.name(), i++);
+            columnOrder.put(table.columns()[i].name(), i + 1);
         }
+
         queryBuilder.setLength(queryBuilder.length() - 1);
         params.setLength(params.length() - 1);
         queryBuilder.append(")");
@@ -202,7 +204,6 @@ public class EventClientRepository extends BaseRepository {
 
         QueryWrapper queryWrapper = new QueryWrapper();
         Map<String, Integer> columnOrder = new HashMap();
-        Integer i = 1;
 
         Column filterColumn;
 
@@ -214,16 +215,18 @@ public class EventClientRepository extends BaseRepository {
         StringBuilder queryBuilder = new StringBuilder("UPDATE ");
         queryBuilder.append(table.name());
         queryBuilder.append(" SET ");
-        for (Column col : table.columns()) {
-            if (col.equals(filterColumn))
+
+        for (int i = 0; i < table.columns().length; i++) {
+            if (table.columns()[i].equals(filterColumn))
                 continue;
-            queryBuilder.append(col.name() + "=?,");
-            columnOrder.put(col.name(), i++);
+            queryBuilder.append(table.columns()[i].name() + "=?,");
+            columnOrder.put(table.columns()[i].name(), i + 1);
         }
+
         queryBuilder.setLength(queryBuilder.length() - 1);
         queryBuilder.append(" WHERE ");
         queryBuilder.append(filterColumn.name() + "=?");
-        columnOrder.put(filterColumn.name(), i);
+        columnOrder.put(filterColumn.name(), columnOrder.size() + 1);
 
         queryWrapper.sqlQuery = queryBuilder.toString();
         queryWrapper.columnOrder = columnOrder;
