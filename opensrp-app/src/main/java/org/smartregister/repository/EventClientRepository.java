@@ -220,7 +220,7 @@ public class EventClientRepository extends BaseRepository {
             if (table.columns()[i].equals(filterColumn))
                 continue;
             queryBuilder.append(table.columns()[i].name() + "=?,");
-            columnOrder.put(table.columns()[i].name(), i + 1);
+            columnOrder.put(table.columns()[i].name(), columnOrder.size() + 1);
         }
 
         queryBuilder.setLength(queryBuilder.length() - 1);
