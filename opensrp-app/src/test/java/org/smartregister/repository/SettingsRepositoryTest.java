@@ -50,6 +50,12 @@ public class SettingsRepositoryTest extends BaseUnitTest {
     }
 
     @Test
+    public void testOnUpgradeExecutesCorrectSQLStatement() {
+        settingsRepository.onUpgrade(sqLiteDatabase);
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL("");
+    }
+
+    @Test
     public void assertupdateSetting() {
         settingsRepository.updateSetting("KEY", "VALUE");
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
