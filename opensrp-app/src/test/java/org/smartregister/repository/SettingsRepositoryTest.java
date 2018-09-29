@@ -52,7 +52,7 @@ public class SettingsRepositoryTest extends BaseUnitTest {
     @Test
     public void testOnUpgradeExecutesCorrectSQLStatement() {
         settingsRepository.onUpgrade(sqLiteDatabase);
-        Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL("");
+        Mockito.verify(sqLiteDatabase, Mockito.times(3)).execSQL(Mockito.anyString());
     }
 
     @Test
