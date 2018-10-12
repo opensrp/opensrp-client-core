@@ -1,5 +1,6 @@
 package org.smartregister.domain;
 
+import org.json.JSONObject;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 
 public enum LoginResponse {
@@ -27,6 +28,7 @@ public enum LoginResponse {
 
     private LoginResponseData payload;
     private String message;
+    private JSONObject rawData;
 
     LoginResponse(String message) {
         this.message = message;
@@ -48,5 +50,13 @@ public enum LoginResponse {
     public LoginResponse withMessage(String message) {
         this.message = message;
         return this;
+    }
+
+    public JSONObject getRawData() {
+        return rawData;
+    }
+
+    public void setRawData(JSONObject rawData) {
+        this.rawData = rawData;
     }
 }

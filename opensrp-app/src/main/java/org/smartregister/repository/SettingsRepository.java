@@ -20,7 +20,7 @@ public class SettingsRepository extends DrishtiRepository {
     public static final String SETTINGS_TYPE_COLUMN = "type";
     public static final String SETTINGS_SYNC_STATUS_COLUMN = "sync_status";
 
-    static final String SETTINGS_SQL = "CREATE TABLE " + SETTINGS_TABLE_NAME + "(key VARCHAR PRIMARY KEY, value BLOB)";
+    public static final String SETTINGS_SQL = "CREATE TABLE " + SETTINGS_TABLE_NAME + "(key VARCHAR PRIMARY KEY, value BLOB)";
 
     public static final String ADD_SETTINGS_VERSION = "ALTER TABLE " + SETTINGS_TABLE_NAME + " ADD COLUMN " + SETTINGS_VERSION_COLUMN + " TEXT;";
     public static final String ADD_SETTINGS_TYPE = "ALTER TABLE " + SETTINGS_TABLE_NAME + " ADD COLUMN " + SETTINGS_TYPE_COLUMN + " TEXT;";//Global or otherwise

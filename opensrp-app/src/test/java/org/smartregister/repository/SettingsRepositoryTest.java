@@ -25,9 +25,9 @@ public class SettingsRepositoryTest extends BaseUnitTest {
     public static final String SETTINGS_VALUE_COLUMN = "value";
 
     @Mock
-    SQLiteDatabase sqLiteDatabase;
+    private SQLiteDatabase sqLiteDatabase;
     @Mock
-    Repository repository;
+    private Repository repository;
 
     @Before
     public void setUp() {
