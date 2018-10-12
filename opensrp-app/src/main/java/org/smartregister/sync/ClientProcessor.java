@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -19,10 +21,12 @@ import org.smartregister.domain.AlertStatus;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.DetailsRepository;
+import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.AlertService;
 import org.smartregister.util.AssetHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,7 +41,7 @@ public class ClientProcessor {
     public static final String baseEntityIdJSONKey = "baseEntityId";
     protected static final String providerIdJSONKey = "providerId";
     protected static final String VALUES_KEY = "values";
-    private static final String TAG = "ClientProcessor";
+    private static final String TAG = ClientProcessor.class.getCanonicalName();
     private static final String detailsUpdated = "detailsUpdated";
     private static final String[] openmrs_gen_ids = {"zeir_id"};
     private static ClientProcessor instance;
@@ -143,7 +147,7 @@ public class ClientProcessor {
             }
 
             // Check if child is deceased and skip
-            if (client.has("deathdate") && !client.getString("deathdate").isEmpty()) {
+            if (client.has(org.smartregister.cloudant.models.Client.death_date_key) && !client.getString(org.smartregister.cloudant.models.Client.death_date_key).isEmpty()) {
                 return false;
             }
 
@@ -174,16 +178,18 @@ public class ClientProcessor {
         }
     }
 
-    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject
-            clientClassificationJson) throws Exception {
+    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson) throws Exception {
 
+        return processEvent(event, client, clientClassificationJson, Arrays.asList(new String[]{org.smartregister.cloudant.models.Client.death_date_key}));
+    }
+
+    public Boolean processEvent(JSONObject event, JSONObject client, JSONObject clientClassificationJson, List<String> skipFields) throws Exception {
         try {
             String baseEntityId = event.getString(baseEntityIdJSONKey);
+
             if (event.has("creator")) {
                 Log.i(TAG, "EVENT from openmrs");
             }
-            // For data integrity check if a client exists, if not pull one from cloudant and
-            // insert in drishti sqlite db
 
             if (isNullOrEmptyJSONObject(client)) {
                 return false;
@@ -196,10 +202,14 @@ public class ClientProcessor {
                 return false;
             }
 
-            // Check if child is deceased and skip
-            if (client.has("deathdate") && !client.getString("deathdate").isEmpty()) {
-
-                return false;
+            if (skipFields != null && skipFields.size() > 0) {
+                for (String field : skipFields) {
+                    // Check if field set and skip
+                    if (isClientRemoved(client, field)) {
+                        purgeClientByBaseEntityId(baseEntityId);
+                        return false;
+                    }
+                }
             }
 
             for (int i = 0; i < clientClasses.length(); i++) {
@@ -220,6 +230,23 @@ public class ClientProcessor {
 
             return null;
         }
+    }
+
+    private boolean isClientRemoved(JSONObject client, String field) throws JSONException {
+        if (field.contains(".")) {
+
+            String key = field.substring(0, field.indexOf('.'));
+            String newJsonObjectString = client.get(key).toString();
+
+            JSONObject jsonObject = new JSONObject(newJsonObjectString);
+            String newKey = field.substring(field.indexOf('.') + 1);
+
+            return isClientRemoved(jsonObject, newKey);
+
+        } else {
+            return client.has(field) && !client.getString(field).isEmpty();
+        }
+
     }
 
     public Boolean processClientClass(JSONObject clientClass, JSONObject event, JSONObject client) {
@@ -848,8 +875,22 @@ public class ClientProcessor {
     }
 
     public boolean deleteCase(String tableName, String baseEntityId) {
-        CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
-        return cr.deleteCase(baseEntityId, tableName);
+        SQLiteDatabase db = null;
+        try {
+            CommonRepository cr = org.smartregister.CoreLibrary.getInstance().context().commonrepository(tableName);
+            if (cr != null) {
+                cr.deleteCase(baseEntityId, tableName);
+                cr.deleteSearchRecord(baseEntityId);
+            } else {
+                org.smartregister.CoreLibrary.getInstance().context().eventClientRepository().deleteFromTableByBaseEntityId(tableName, baseEntityId);
+
+
+            }
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+            return false;
+        }
     }
 
     public void executeInsertAlert(ContentValues contentValues) {
@@ -992,4 +1033,43 @@ public class ClientProcessor {
     public Context getContext() {
         return mContext;
     }
+
+    public boolean purgeClientByBaseEntityId(String baseEntityId) {
+        try {
+
+            if (baseEntityId == null || baseEntityId.isEmpty()) {
+                return false;
+            }
+
+            DetailsRepository detailsRepository = org.smartregister.CoreLibrary.getInstance().context().detailsRepository();
+            EventClientRepository eventClientRepository = org.smartregister.CoreLibrary.getInstance().context().eventClientRepository();
+
+
+            boolean eventDeleted = eventClientRepository.deleteEventsByBaseEntityId(baseEntityId);
+            boolean clientDeleted = eventClientRepository.deleteClient(baseEntityId);
+            Log.d(TAG, "EVENT_DELETED: " + eventDeleted);
+            Log.d(TAG, "CLIENT_DELETED: " + clientDeleted);
+
+            boolean detailsDeleted = detailsRepository.deleteDetails(baseEntityId);
+            Log.d(TAG, "DETAILS_DELETED: " + detailsDeleted);
+
+            List<String> clientCaseTables = eventClientRepository.getClientCaseTables();
+            for (int i = 0; i < clientCaseTables.size(); i++) {
+
+                String tableName = clientCaseTables.get(i);
+                boolean caseDeleted = deleteCase(tableName, baseEntityId);
+                Log.d(TAG, "CASE_DELETED: " + caseDeleted + ", TABLE: " + tableName);
+            }
+
+
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        }
+
+        return false;
+    }
+
+
 }

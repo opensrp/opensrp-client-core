@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
@@ -1440,6 +1441,64 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
+    public boolean deleteEventsByBaseEntityId(String baseEntityId) {
+
+        try {
+            int rowsAffected = getWritableDatabase().delete(Table.event.name(),
+                    event_column.baseEntityId.name()
+                            + " = ?",
+                    new String[]{baseEntityId});
+            if (rowsAffected > 0) {
+                return true;
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return false;
+    }
+
+    public List<String> getClientCaseTables() {
+        List<String> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT name FROM  sqlite_master " +
+                    "where type = 'table' " +
+                    "and sql like '%base_entity_id%'  " +
+                    "and sql not like '%c0base_entity_id%' " +
+                    "group by tbl_name ", null);
+
+            while (cursor.moveToNext()) {
+                list.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            return list;
+        }
+    }
+
+    public Boolean deleteFromTableByBaseEntityId(String tablename, String baseEntityId) {
+        Cursor mCursor = null;
+        try {
+            SQLiteDatabase db = getWritableDatabase();
+            String query = "DELETE FROM " + tablename + " WHERE " + CommonRepository.BASE_ENTITY_ID_COLUMN + " = '" + baseEntityId + "'";
+            mCursor = db.rawQuery(query, null);
+
+            return true;
+
+        } catch (Exception e) {
+            Log.e(TAG, e.toString(), e);
+        } finally {
+            if (mCursor != null) {
+                mCursor.close();
+            }
+        }
+        return false;
+    }
+    
     static class QueryWrapper {
         public String sqlQuery;
         public Map<String, Integer> columnOrder;
