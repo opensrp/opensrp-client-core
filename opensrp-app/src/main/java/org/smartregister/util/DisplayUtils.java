@@ -9,7 +9,7 @@ import android.util.DisplayMetrics;
  */
 
 public class DisplayUtils {
-    public static enum ScreenDpi {
+    public enum ScreenDpi {
         LDPI,
         MDPI,
         HDPI,

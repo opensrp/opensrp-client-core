@@ -2,13 +2,13 @@ description = 'OpenSRP core client library'
 
 buildscript {
     repositories {
+        google()
         jcenter()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:1.2.3"
+        classpath 'com.android.tools.build:gradle:3.1.2'
         classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
 }
 
@@ -18,17 +18,24 @@ allprojects {
     repositories {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
         mavenLocal()
+        google()
+        jcenter()
     }
 }
 
 apply plugin: 'com.android.library'
-apply plugin: 'org.robolectric'
+//apply plugin: 'org.robolectric'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 
+jacoco {
+    toolVersion = "0.8.0"
+}
+
 android {
     compileSdkVersion androidCompileSdkVersion
-    buildToolsVersion androidBuildToolsVersion
+    buildToolsVersion '27.0.3'
+    useLibrary 'org.apache.http.legacy'
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
 
@@ -61,7 +68,6 @@ android {
     }
 
     dexOptions {
-        incremental true
         javaMaxHeapSize "4g"
     }
 
@@ -70,7 +76,7 @@ android {
         multiDexEnabled true
         //applicationId "org.smartregister"
         minSdkVersion 16
-        targetSdkVersion 21
+        targetSdkVersion 27
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -103,6 +109,15 @@ android {
         exclude 'META-INF/notice.txt'
         exclude 'META-INF/ASL2.0'
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
 }
 
 def filesToCopy = copySpec {
@@ -120,49 +135,81 @@ task copyTestResources() {
     }
 }
 
-assembleDebug.dependsOn(copyTestResources)
-
+afterEvaluate {
+    assembleDebug.dependsOn(copyTestResources)
+}
 configurations.all {
     resolutionStrategy.force 'commons-codec:commons-codec:1.10'
 }
 
 dependencies {
-    compile 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
-    compile 'com.android.support:multidex:1.0.0'
-    compile 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
-    compile 'com.android.support:appcompat-v7:21.0.3'
-    compile "org.apache.httpcomponents:httpmime:4.2.3"
-    compile 'com.google.code.gson:gson:2.3'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.1'
-    compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
-    compile group: 'com.google.guava', name: 'guava', version: '15.0'
-    compile group: 'commons-io', name: 'commons-io', version: '2.4'
-    compile 'org.apache.commons:commons-lang3:3.2'
-    compile 'org.mozilla:rhino:1.7R4'
-    compile 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
-    compile 'joda-time:joda-time:2.3'
-    compile 'com.github.bmelnychuk:atv:1.2.9'
-    compile 'com.github.johnkil.print:print:1.2.3'
-    compile 'ch.acra:acra:4.5.0'
+    implementation 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
+    implementation 'com.android.support:multidex:1.0.0'
+    implementation 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation "org.apache.httpcomponents:httpmime:4.2.3"
+    implementation 'com.google.code.gson:gson:2.3'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.1.1'
+    implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
+    implementation group: 'com.google.guava', name: 'guava', version: '20.0'
+    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
+    implementation 'org.apache.commons:commons-lang3:3.2'
+    implementation 'org.mozilla:rhino:1.7R4'
+    implementation 'com.ocpsoft:ocpsoft-pretty-time:1.0.7'
+    implementation 'joda-time:joda-time:2.3'
+    implementation 'com.github.bmelnychuk:atv:1.2.9'
+    implementation 'com.github.johnkil.print:print:1.2.3'
+    implementation('ch.acra:acra:4.5.0') {
+        exclude group: 'org.json', module: 'json'
+    }
 
-    compile 'com.google.guava:guava:18.0'
-    compile 'com.mcxiaoke.volley:library:1.0.19'
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.cloudant:cloudant-http:2.7.0'
+    implementation 'com.google.guava:guava:18.0'
+    implementation 'com.mcxiaoke.volley:library:1.0.19'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
+    implementation 'com.cloudant:cloudant-http:2.7.0'
 
+    implementation 'com.android.support:recyclerview-v7:27.1.1'
 }
 
 dependencies {
-    androidTestCompile 'com.jayway.android.robotium:robotium-solo:4.3'
-    androidTestCompile 'com.google.dexmaker:dexmaker-mockito:1.0'
-    androidTestCompile 'junit:junit:4.11'
+    androidTestImplementation 'com.jayway.android.robotium:robotium-solo:4.3'
+    androidTestImplementation 'com.google.dexmaker:dexmaker-mockito:1.0'
+    androidTestImplementation 'junit:junit:4.12'
 
-    testCompile group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
-    testCompile 'junit:junit:4.11'
-    testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
-    testCompile 'org.mockito:mockito-core:1.9.5'
-    testCompile('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
-    testCompile 'org.robolectric:robolectric:2.4'
+    testImplementation group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
+    testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
+    testImplementation 'org.mockito:mockito-core:1.9.5'
+    testImplementation('com.squareup:fest-android:1.0.+') { exclude module: 'support-v4' }
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
+    testImplementation('org.robolectric:robolectric:3.8') {
+
+        exclude group: 'com.google.guava', module: 'guava'
+        exclude group: 'org.apache.maven', module: 'maven-model'
+        exclude group: 'com.android.support'
+        exclude group: 'com.thoughtworks.xstream', module: 'xstream'
+    }
+    testImplementation('org.robolectric:shadows-multidex:3.8') {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+    testImplementation('org.robolectric:shadows-support-v4:3.3.2'){
+        exclude group: 'com.google.guava', module: 'guava'
+    }
+
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.+') {
+
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'junit', module: 'junit'
+    }
+    testImplementation "org.robolectric:shadows-support-v4:3.3.2"
+    // PowerMock
+    def powerMockVersion = '1.7.1'
+    testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
+    testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
+    testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
+    testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
+
 }
 task clearJar(type: Delete) {
     delete 'build/libs/myCompiledLibrary.jar'
@@ -177,48 +224,7 @@ task makeJar(type: Copy) {
 
 makeJar.dependsOn(clearJar, build)
 
-import org.apache.commons.lang3.StringUtils
-
-gradle.projectsEvaluated {
-    def variants = android.libraryVariants.collect()
-
-    tasks.withType(Test) { task ->
-        try {
-            variants.each { variant ->
-                def buildTypeName = variant.buildType.name.capitalize()
-
-                def productFlavorNames = variant.productFlavors.collect { it.name.capitalize() }
-                if (productFlavorNames.isEmpty()) {
-                    productFlavorNames = [""]
-                }
-                def productFlavorName = productFlavorNames.join('')
-
-                def variationName = "${productFlavorName}${buildTypeName}"
-
-                if (task.name.contains(variationName)) {
-                    def variationPath = variant.buildType.name;
-
-                    if (StringUtils.isNotEmpty(productFlavorName)) {
-                        variationPath = StringUtils.uncapitalize(productFlavorName) + "/" + variationPath
-                    }
-
-                    def copyResourcesTask = project.tasks.create("copy${variationName}Resources", Copy)
-                    copyResourcesTask.from("${projectDir}/src/test/resources")
-                    copyResourcesTask.into("${buildDir}/intermediates/classes/test/${variationPath}")
-
-                    task.dependsOn(copyResourcesTask)
-
-                    variants.remove(variant)
-
-                    throw new Exception("Break") // Breaking the loop
-                }
-            }
-        } catch (Exception e) {
-        } // Just drop the exception
-    }
-}
-
-task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebug']) {
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
     reports {
         xml.enabled = true
@@ -235,7 +241,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebug']) {
     sourceDirectories = files([mainSrc])
     classDirectories = files([debugTree])
     executionData = fileTree(dir: project.buildDir, includes: [
-            'jacoco/testDebug.exec', 'outputs/code-coverage/connected/*coverage.ec'
+            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ])
 }
 

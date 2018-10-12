@@ -1,0 +1,651 @@
+<?xml version="1.0"?>
+<root>
+    <form autocomplete="off" novalidate="novalidate" class="or clearfix" dir="ltr"
+        id="BirthNotificationFollowUp">
+        <!--This form was created by transforming a OpenRosa-flavored (X)Form using an XSLT sheet created by Enketo LLC.-->
+        <section class="form-logo"></section>
+        <h3 id="form-title">&#x9AC;&#x9BE;&#x9B0;&#x9CD;&#x9A5; &#x9A8;&#x9CB;&#x99F;&#x9BF;&#x9AB;&#x9BF;&#x995;&#x9CD;&#x9AF;&#x9BE;&#x9B6;&#x9A8;
+            &#x9AB;&#x9B2;&#x9CB;&#x986;&#x9AA; &#x9AB;&#x9B0;&#x9CD;&#x9AE;</h3>
+        <select id="form-languages" data-default-lang="bn">
+            <option value="bn">Bengali</option>
+            <option value="en">English</option>
+        </select>
+
+
+        <label class="question non-select ">
+            <span lang="bn" class="question-label active"
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:label">&#x9B8;&#x9BE;&#x995;&#x9CD;&#x9B7;&#x9BE;&#x9A4;&#x995;&#x9BE;&#x9B0;&#x9C7;&#x9B0;
+                &#x9A4;&#x9BE;&#x9B0;&#x9BF;&#x996;</span>
+            <span lang="en" class="question-label "
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:label">Date of
+                Interview
+            </span>
+            <span class="required">*</span>
+            <span lang="bn" class="or-hint active"
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:hint">&#x986;&#x99C;&#x995;&#x9C7;&#x9B0;
+                &#x9A4;&#x9BE;&#x9B0;&#x9BF;&#x996; &#x9A6;&#x9BF;&#x9A8;</span>
+            <span lang="en" class="or-hint "
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE:hint">Please
+                Confirm Today&#x2019;s date is correct
+            </span>
+            <input type="date" name="/BirthNotificationPregnancyStatusFollowUp/FWBNFDATE"
+                required="required"
+                data-constraint=".&lt;= /BirthNotificationPregnancyStatusFollowUp/today "
+                data-type-xml="date" />
+            <span class="or-constraint-msg active" lang="" data-i18n="constraint.invalid">Value not
+                allowed
+            </span>
+            <span class="or-required-msg active" lang="" data-i18n="constraint.required">This field
+                is required
+            </span>
+        </label>
+        <label class="note non-select ">
+            <span lang="bn" class="question-label active"
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION:label">
+                &#x9AE;&#x9B9;&#x9BF;&#x9B2;&#x9BE;&#x9B0; &#x9A8;&#x9BE;&#x9AE;, &#x9B8;&#x9B0;&#x995;&#x9BE;&#x9B0;&#x9C0;
+                &#x996;&#x9BE;&#x9A8;&#x9BE; &#x9A8;&#x9AE;&#x9CD;&#x9AC;&#x9B0; &#x99C;&#x9C0;&#x9AC;&#x9BF;&#x9A4;&#x9BE;
+                &#x996;&#x9BE;&#x9A8;&#x9BE; &#x9A8;&#x9AE;&#x9CD;&#x9AC;&#x9B0; &#x9B8;&#x9A0;&#x9BF;&#x995;
+                &#x995;&#x9BF;&#x9A8;&#x9BE; &#x9A4;&#x9BE; &#x9A8;&#x9BF;&#x9B6;&#x9CD;&#x99A;&#x9BF;&#x9A4;
+                &#x995;&#x9B0;&#x9C1;&#x9A8; -
+                &#x9AE;&#x9B9;&#x9BF;&#x9B2;&#x9BE;&#x9B0; &#x9A8;&#x9BE;&#x9AE;:
+                <span class="or-output"
+                    data-value=" /BirthNotificationPregnancyStatusFollowUp/existing_first_name "></span>
+                GoB HHID:
+                <span class="or-output"
+                    data-value=" /BirthNotificationPregnancyStatusFollowUp/existing_gobhhid "></span>
+                JiVitA HHID:
+                <span class="or-output"
+                    data-value=" /BirthNotificationPregnancyStatusFollowUp/existing_jivhhid "></span>
+            </span>
+            <span lang="en" class="question-label "
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION:label">
+                Confirm woman&#x2019;s name, GoB HHID and JiVitA HHID are correct:
+
+                Name:
+                <span class="or-output"
+                    data-value=" /BirthNotificationPregnancyStatusFollowUp/existing_first_name "></span>
+                GoB HHID:
+                <span class="or-output"
+                    data-value=" /BirthNotificationPregnancyStatusFollowUp/existing_gobhhid "></span>
+                JiVitA HHID:
+                <span class="or-output"
+                    data-value=" /BirthNotificationPregnancyStatusFollowUp/existing_jivhhid "></span>
+            </span>
+            <input type="text" name="/BirthNotificationPregnancyStatusFollowUp/FWCONFIRMATION"
+                data-type-xml="string" readonly="readonly" />
+        </label>
+        <fieldset class="question simple-select ">
+            <fieldset>
+                <legend>
+                    <span lang="bn" class="question-label active"
+                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS:label">BNF
+                        &#x9AD;&#x9BF;&#x99C;&#x9BF;&#x99F; &#x9B8;&#x9CD;&#x99F;&#x9CD;&#x9AF;&#x9BE;&#x99F;&#x9BE;&#x9B8;</span>
+                    <span lang="en" class="question-label "
+                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS:label">BNF
+                        Status
+                    </span>
+                    <span class="required">*</span>
+                </legend>
+                <div class="option-wrapper">
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="1"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/1:label">
+                            &#x9A6;&#x9C7;&#x996;&#x9BE; &#x9B9;&#x9DF;&#x9C7;&#x99B;&#x9C7; &#x98F;&#x9AC;&#x982;
+                            &#x997;&#x9B0;&#x9CD;&#x9AD;&#x9AC;&#x9A4;&#x9C0;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/1:label">
+                            Met and pregnant
+                        </span>
+                    </label>
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="2"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/2:label">
+                            &#x9A6;&#x9C7;&#x996;&#x9BE; &#x9B9;&#x9DF;&#x9A8;&#x9BF;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/2:label">
+                            Not met
+                        </span>
+                    </label>
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="3"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/3:label">
+                            &#x99C;&#x9C0;&#x9AC;&#x9BF;&#x9A4; &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;
+                            &#x99C;&#x9A8;&#x9CD;&#x9AE; &#x9A6;&#x9BF;&#x9DF;&#x9C7;&#x99B;&#x9C7;&#x9A8;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/3:label">
+                            Woman had live birth
+                        </span>
+                    </label>
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="4"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/4:label">
+                            &#x997;&#x9B0;&#x9CD;&#x9AD;&#x9A8;&#x9B7;&#x9CD;&#x99F; &#x9B9;&#x9DF;&#x9C7;&#x99B;&#x9C7;
+                            / &#x9AE;&#x9C3;&#x9A4;&#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;
+                            &#x9AA;&#x9CD;&#x9B0;&#x9B8;&#x9AC;
+                            &#x9B9;&#x9DF;&#x9C7;&#x99B;&#x9C7;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/4:label">
+                            Miscarriage/Stillbirth
+                        </span>
+                    </label>
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="6"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/6:label">
+                            &#x989;&#x9A4;&#x9CD;&#x9A4;&#x9B0; &#x9A6;&#x9BF;&#x9A4;&#x9C7;
+                            &#x985;&#x9B8;&#x9AE;&#x9CD;&#x9AE;&#x9A4;&#x9BF; &#x99C;&#x9BE;&#x9A8;&#x9BF;&#x9DF;&#x9C7;&#x99B;&#x9C7;&#x9A8;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/6:label">
+                            Refused
+                        </span>
+                    </label>
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="7"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/7:label">
+                            &#x98F;&#x995;&#x9C7;&#x9AC;&#x9BE;&#x9B0;&#x9C7;&#x987; &#x98F;&#x9B2;&#x9BE;&#x995;&#x9BE;
+                            &#x99B;&#x9C7;&#x9DC;&#x9C7; &#x99A;&#x9B2;&#x9C7; &#x997;&#x9C7;&#x99B;&#x9C7;&#x9A8;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/7:label">
+                            Permanently moved
+                        </span>
+                    </label>
+                    <label class="">
+                        <input type="radio"
+                            name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS"
+                            data-name="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS" value="9"
+                            required="required" data-type-xml="select1" />
+                        <span lang="bn" class="option-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/9:label">
+                            &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE; &#x99C;&#x9A8;&#x9CD;&#x9AE;
+                            &#x9A6;&#x9C7;&#x993;&#x9DF;&#x9BE;&#x9B0; &#x986;&#x997;&#x9C7;&#x987;
+                            &#x9AE;&#x9B9;&#x9BF;&#x9B2;&#x9BE; &#x9AE;&#x9BE;&#x9B0;&#x9BE; &#x997;&#x9C7;&#x99B;&#x9C7;&#x9A8;</span>
+                        <span lang="en" class="option-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWBNFSTS/9:label">
+                            Woman died before birth
+                        </span>
+                    </label>
+                </div>
+            </fieldset>
+            <span class="or-constraint-msg active" lang="" data-i18n="constraint.invalid">Value not
+                allowed
+            </span>
+            <span class="or-required-msg active" lang="" data-i18n="constraint.required">This field
+                is required
+            </span>
+        </fieldset>
+        <label class="note or-branch pre-init non-select ">
+            <span lang="bn" class="question-label active"
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1:label">
+                &#x9AE;&#x9B9;&#x9BF;&#x9B2;&#x9BE; &#x98F;&#x9AC;&#x982; &#x9A4;&#x9BE;&#x9B0;
+                &#x9AA;&#x9B0;&#x9BF;&#x9AC;&#x9BE;&#x9B0;&#x9C7;&#x9B0; &#x9B8;&#x9A6;&#x9B8;&#x9CD;&#x9AF;&#x9A6;&#x9C7;&#x9B0;
+                &#x997;&#x9B0;&#x9CD;&#x9AD;&#x9C7;&#x9B0; &#x9AF;&#x9C7; &#x995;&#x9CB;&#x9A8;
+                &#x9AB;&#x9B2;&#x9BE;&#x9AB;&#x9B2; &#x9B9;&#x993;&#x9DF;&#x9BE;&#x9B0; &#x9B8;&#x9BE;&#x9A5;&#x9C7;
+                &#x9B8;&#x9BE;&#x9A5;&#x9C7; &#x9AC;&#x9BE; &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;
+                &#x99C;&#x9A8;&#x9CD;&#x9AE;&#x9BE;&#x9A8;&#x9CB;&#x9B0; &#x9B8;&#x9BE;&#x9A5;&#x9C7;
+                &#x9B8;&#x9BE;&#x9A5;&#x9C7; &#x996;&#x9AC;&#x9B0; &#x9A6;&#x9C7;&#x9DF;&#x9BE;&#x9B0;
+                &#x995;&#x9A5;&#x9BE; &#x9AE;&#x9A8;&#x9C7; &#x995;&#x9B0;&#x9BF;&#x9DF;&#x9C7;
+                &#x9A6;&#x9BF;&#x9A8;&#x964; &#x9AA;&#x9BE;&#x9B6;&#x9BE;&#x9AA;&#x9BE;&#x9B6;&#x9BF;
+                &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE; &#x98F;&#x9AC;&#x982; &#x9AE;&#x9BE;&#x9DF;&#x9C7;&#x9B0;
+                &#x9B8;&#x9C1;&#x9B8;&#x9CD;&#x9AC;&#x9BE;&#x9B8;&#x9CD;&#x9A5;&#x9CD;&#x9AF;&#x9C7;&#x9B0;
+                &#x99C;&#x9A8;&#x9CD;&#x9AF; &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE; &#x9B9;&#x993;&#x9DF;&#x9BE;&#x9B0;
+                &#x9B8;&#x9BE;&#x9A5;&#x9C7;&#x9B8;&#x9BE;&#x9A5;&#x9C7;&#x987; &#x9B8;&#x9CD;&#x9AC;&#x9BE;&#x9B8;&#x9CD;&#x9A5;&#x9CD;&#x9AF;&#x995;&#x9B0;&#x9CD;&#x9AE;&#x9C0;&#x995;&#x9C7;
+                &#x99C;&#x9BE;&#x9A8;&#x9BE;&#x9A8;&#x9CB; &#x9AF;&#x9C7; &#x995;&#x9A4;&#x99F;&#x9BE;
+                &#x99C;&#x9B0;&#x9C1;&#x9B0;&#x9C0; &#x9A4;&#x9BE; &#x9AC;&#x9C1;&#x99D;&#x9BF;&#x9DF;&#x9C7;
+                &#x9AC;&#x9B2;&#x9C1;&#x9A8;&#x964;</span>
+            <span lang="en" class="question-label "
+                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1:label">
+                Remind the woman to send a birth notification SMS immediately following the birth
+                and emphasize the importance of immediately notifying a health worker of the birth
+                for the health of the baby and mother.
+            </span>
+            <input type="text" name="/BirthNotificationPregnancyStatusFollowUp/FWDISPLAYTEXT1"
+                data-relevant="selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '1')"
+                data-type-xml="string" readonly="readonly" />
+        </label>
+        <section class="or-group or-branch pre-init "
+            name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured"
+            data-relevant=" /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS  ='3' or  /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS  ='4'">
+            <h4>
+                <span lang="bn" class="question-label active"
+                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured:label">
+                    &#x9AD;&#x9BE;&#x987;&#x99F;&#x9BE;&#x9B2; &#x9B8;&#x9CD;&#x99F;&#x9CD;&#x9AF;&#x9BE;&#x99F;&#x9BE;&#x9B8;
+                    &#x986;&#x9AA;&#x9A1;&#x9C7;&#x99F;</span>
+                <span lang="en" class="question-label "
+                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured:label">
+                    Vital Status Update
+                </span>
+            </h4>
+            <fieldset class="question simple-select ">
+                <fieldset>
+                    <legend>
+                        <span lang="bn" class="question-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS:label">
+                            &#x9AE;&#x9B9;&#x9BF;&#x9B2;&#x9BE;&#x9B0; &#x9AD;&#x9BE;&#x987;&#x99F;&#x9BE;&#x9B2;
+                            &#x9B8;&#x9CD;&#x99F;&#x9CD;&#x9AF;&#x9BE;&#x99F;&#x9BE;&#x9B8;</span>
+                        <span lang="en" class="question-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS:label">
+                            Vital Status of the Woman
+                        </span>
+                        <span class="required">*</span>
+                    </legend>
+                    <div class="option-wrapper">
+                        <label class="">
+                            <input type="radio"
+                                name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS"
+                                data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS"
+                                value="0" required="required" data-type-xml="select1" />
+                            <span lang="bn" class="option-label active"
+                                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/0:label">
+                                &#x9AE;&#x9BE;&#x9B0;&#x9BE;
+                                &#x997;&#x9C7;&#x99B;&#x9C7;&#x9A8;</span>
+                            <span lang="en" class="option-label "
+                                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/0:label">
+                                Deceased
+                            </span>
+                        </label>
+                        <label class="">
+                            <input type="radio"
+                                name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS"
+                                data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS"
+                                value="1" required="required" data-type-xml="select1" />
+                            <span lang="bn" class="option-label active"
+                                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/1:label">
+                                &#x9AC;&#x9C7;&#x981;&#x99A;&#x9C7;
+                                &#x986;&#x99B;&#x9C7;&#x9A8;</span>
+                            <span lang="en" class="option-label "
+                                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/1:label">
+                                Alive
+                            </span>
+                        </label>
+                        <label class="">
+                            <input type="radio"
+                                name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS"
+                                data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS"
+                                value="9" required="required" data-type-xml="select1" />
+                            <span lang="bn" class="option-label active"
+                                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/9:label">
+                                &#x99C;&#x9BE;&#x9A8;&#x9BF;&#x9A8;&#x9BE;</span>
+                            <span lang="en" class="option-label "
+                                data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS/9:label">
+                                Don't know
+                            </span>
+                        </label>
+                    </div>
+                </fieldset>
+                <span class="or-constraint-msg active" lang="" data-i18n="constraint.invalid">Value
+                    not allowed
+                </span>
+                <span class="or-required-msg active" lang="" data-i18n="constraint.required">This
+                    field is required
+                </span>
+            </fieldset>
+            <label class="question non-select ">
+                <span lang="bn" class="question-label active"
+                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO:label">
+                    &#x986;&#x989;&#x99F;&#x995;&#x9BE;&#x9AE;&#x9C7;&#x9B0; &#x9A4;&#x9BE;&#x9B0;&#x9BF;&#x996;
+                    &#x98F;&#x9AC;&#x982; &#x9B8;&#x9AE;&#x9AF;&#x9BC; (&#x998;&#x9A3;&#x9CD;&#x99F;&#x9BE;)
+                </span>
+                <span lang="en" class="question-label "
+                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO:label">
+                    What was the date and time of the outcome?
+                </span>
+                <span class="required">*</span>
+                <input type="datetime"
+                    name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO"
+                    required="required"
+                    data-constraint=".&lt;= /BirthNotificationPregnancyStatusFollowUp/start "
+                    data-type-xml="dateTime" />
+                <span class="or-constraint-msg active" lang="" data-i18n="constraint.invalid">Value
+                    not allowed
+                </span>
+                <span class="or-required-msg active" lang="" data-i18n="constraint.required">This
+                    field is required
+                </span>
+            </label>
+            <label class="question or-branch pre-init non-select ">
+                <span lang="bn" class="question-label active"
+                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB:label">
+                    &#x99C;&#x9C0;&#x9AC;&#x9BF;&#x9A4; &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x9B0;
+                    &#x9B8;&#x982;&#x996;&#x9CD;&#x9AF;&#x9BE;</span>
+                <span lang="en" class="question-label "
+                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB:label">
+                    Number of live births
+                </span>
+                <span class="required">*</span>
+                <input type="number"
+                    name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFLB"
+                    required="required"
+                    data-relevant="selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '3')"
+                    data-type-xml="int" />
+                <span class="or-constraint-msg active" lang="" data-i18n="constraint.invalid">Value
+                    not allowed
+                </span>
+                <span class="or-required-msg active" lang="" data-i18n="constraint.required">This
+                    field is required
+                </span>
+            </label>
+            <section class="or-group or-branch pre-init "
+                name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS"
+                data-relevant="selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '3')">
+                <h4>
+                    <span lang="bn" class="question-label active"
+                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS:label">
+                        &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x995;&#x9C7; &#x9A8;&#x9BF;&#x9AC;&#x9A8;&#x9CD;&#x9A7;&#x9A8;</span>
+                    <span lang="en" class="question-label "
+                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS:label">
+                        Child Registration
+                    </span>
+                </h4>
+                <section class="or-repeat "
+                    name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS">
+                    <fieldset class="question simple-select ">
+                        <fieldset>
+                            <legend>
+                                <span lang="bn" class="question-label active"
+                                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN:label">
+                                    &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x9B0; &#x9B2;&#x9BF;&#x999;&#x9CD;&#x997;</span>
+                                <span lang="en" class="question-label "
+                                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN:label">
+                                    Gender of baby
+                                </span>
+                                <span class="required">*</span>
+                            </legend>
+                            <div class="option-wrapper">
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN"
+                                        value="1" required="required" data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/1:label">
+                                        &#x99B;&#x9C7;&#x9B2;&#x9C7;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/1:label">
+                                        Male
+                                    </span>
+                                </label>
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN"
+                                        value="2" required="required" data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/2:label">
+                                        &#x9AE;&#x9C7;&#x9DF;&#x9C7;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/2:label">
+                                        Female
+                                    </span>
+                                </label>
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN"
+                                        value="9" required="required" data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/9:label">
+                                        &#x99C;&#x9BE;&#x9A8;&#x9BF;&#x9A8;&#x9BE;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN/9:label">
+                                        Don't know
+                                    </span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <span class="or-constraint-msg active" lang=""
+                            data-i18n="constraint.invalid">Value not allowed
+                        </span>
+                        <span class="or-required-msg active" lang=""
+                            data-i18n="constraint.required">This field is required
+                        </span>
+                    </fieldset>
+                    <fieldset class="question simple-select ">
+                        <fieldset>
+                            <legend>
+                                <span lang="bn" class="question-label active"
+                                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS:label">
+                                    &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x9B0; &#x9AD;&#x9BE;&#x987;&#x99F;&#x9BE;&#x9B2;
+                                    &#x9B8;&#x9CD;&#x99F;&#x9CD;&#x9AF;&#x9BE;&#x99F;&#x9BE;&#x9B8;</span>
+                                <span lang="en" class="question-label "
+                                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS:label">
+                                    Child&#x2019;s vital status
+                                </span>
+                                <span class="required">*</span>
+                            </legend>
+                            <div class="option-wrapper">
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS"
+                                        value="0" required="required" data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/0:label">
+                                        &#x9AE;&#x9BE;&#x9B0;&#x9BE; &#x997;&#x9C7;&#x99B;&#x9C7;&#x9A8;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/0:label">
+                                        Deceased
+                                    </span>
+                                </label>
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS"
+                                        value="1" required="required" data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/1:label">
+                                        &#x9AC;&#x9C7;&#x981;&#x99A;&#x9C7; &#x986;&#x99B;&#x9C7;&#x9A8;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/1:label">
+                                        Alive
+                                    </span>
+                                </label>
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS"
+                                        value="9" required="required" data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/9:label">
+                                        &#x99C;&#x9BE;&#x9A8;&#x9BF;&#x9A8;&#x9BE;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS/9:label">
+                                        Don't know
+                                    </span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <span class="or-constraint-msg active" lang=""
+                            data-i18n="constraint.invalid">Value not allowed
+                        </span>
+                        <span class="or-required-msg active" lang=""
+                            data-i18n="constraint.required">This field is required
+                        </span>
+                    </fieldset>
+                    <fieldset class="question simple-select or-branch pre-init ">
+                        <fieldset>
+                            <legend>
+                                <span lang="bn" class="question-label active"
+                                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK:label">
+                                    &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x99F;&#x9BF;&#x9B0;
+                                    &#x995;&#x9BF; &#x995;&#x9CB;&#x9A8; &#x9A8;&#x9BE;&#x9AE;
+                                    &#x986;&#x99B;&#x9C7;?
+                                </span>
+                                <span lang="en" class="question-label "
+                                    data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK:label">
+                                    Does the child have a name?
+                                </span>
+                                <span class="required">*</span>
+                            </legend>
+                            <div class="option-wrapper">
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK"
+                                        value="0" required="required"
+                                        data-relevant=" /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ='1'"
+                                        data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/0:label">
+                                        &#x98F;&#x996;&#x9A8;&#x9CB; &#x9A8;&#x9BE;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/0:label">
+                                        Not yet
+                                    </span>
+                                </label>
+                                <label class="">
+                                    <input type="radio"
+                                        name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK"
+                                        data-name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK"
+                                        value="1" required="required"
+                                        data-relevant=" /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ='1'"
+                                        data-type-xml="select1" />
+                                    <span lang="bn" class="option-label active"
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/1:label">
+                                        &#x9B9;&#x9CD;&#x9AF;&#x9BE;&#x981;</span>
+                                    <span lang="en" class="option-label "
+                                        data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK/1:label">
+                                        Yes
+                                    </span>
+                                </label>
+                            </div>
+                        </fieldset>
+                        <span class="or-constraint-msg active" lang=""
+                            data-i18n="constraint.invalid">Value not allowed
+                        </span>
+                        <span class="or-required-msg active" lang=""
+                            data-i18n="constraint.required">This field is required
+                        </span>
+                    </fieldset>
+                    <label class="question or-branch pre-init non-select ">
+                        <span lang="bn" class="question-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME:label">
+                            &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x9B0;
+                            &#x9A8;&#x9BE;&#x9AE;</span>
+                        <span lang="en" class="question-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME:label">
+                            Child Name
+                        </span>
+                        <span class="required">*</span>
+                        <input type="text"
+                            name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME"
+                            required="required"
+                            data-relevant=" /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='1'"
+                            data-type-xml="string" />
+                        <span class="or-constraint-msg active" lang=""
+                            data-i18n="constraint.invalid">Value not allowed
+                        </span>
+                        <span class="or-required-msg active" lang=""
+                            data-i18n="constraint.required">This field is required
+                        </span>
+                    </label>
+                    <label class="note non-select ">
+                        <span lang="bn" class="question-label active"
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/add_child:label">
+                            &#x9AF;&#x9A6;&#x9BF; &#x99C;&#x9C0;&#x9AC;&#x9BF;&#x9A4; &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x9B0;
+                            &#x9B8;&#x982;&#x996;&#x9CD;&#x9AF;&#x9BE; &#x98F;&#x995;&#x9C7;&#x9B0;
+                            &#x9AC;&#x9C7;&#x9B6;&#x9BF; &#x9B9;&#x9DF;, &#x9A4;&#x9BE;&#x9B9;&#x9B2;&#x9C7;
+                            '+' &#x985;&#x9AA;&#x9B6;&#x9A8;&#x99F;&#x9BF; &#x9A8;&#x9BF;&#x9B0;&#x9CD;&#x9AC;&#x9BE;&#x99A;&#x9A8;
+                            &#x995;&#x9B0;&#x9C1;&#x9A8; &#x98F;&#x9AC;&#x982; &#x98F;&#x995;&#x987;
+                            &#x9AA;&#x9CD;&#x9B0;&#x995;&#x9CD;&#x9B0;&#x9BF;&#x9DF;&#x9BE;&#x9DF;
+                            &#x9AA;&#x9B0;&#x9AC;&#x9B0;&#x9CD;&#x9A4;&#x9C0; &#x9AC;&#x9BE;&#x99A;&#x9CD;&#x99A;&#x9BE;&#x995;&#x9C7;
+                            &#x9A8;&#x9BF;&#x9AC;&#x9A8;&#x9CD;&#x9A7;&#x9A8; &#x995;&#x9B0;&#x9C1;&#x9A8;</span>
+                        <span lang="en" class="question-label "
+                            data-itext-id="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/add_child:label">
+                            If there were any additional children born of this pregnancy, select the
+                            "+" below to register the next child's vital status.
+                        </span>
+                        <input type="text"
+                            name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/add_child"
+                            data-type-xml="string" readonly="readonly" />
+                    </label>
+                </section><!--end of repeat fieldset with name /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS-->
+            </section><!--end of group -->
+        </section><!--end of group -->
+
+        <fieldset id="or-preload-items" style="display:none;">
+            <label class="calculation non-select ">
+                <input type="hidden" name="/BirthNotificationPregnancyStatusFollowUp/today"
+                    data-preload="date" data-preload-params="today" data-type-xml="date" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden" name="/BirthNotificationPregnancyStatusFollowUp/start"
+                    data-preload="timestamp" data-preload-params="start" data-type-xml="dateTime" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden" name="/BirthNotificationPregnancyStatusFollowUp/end"
+                    data-preload="timestamp" data-preload-params="end" data-type-xml="dateTime" />
+            </label>
+        </fieldset>
+        <fieldset id="or-calculated-items" style="display:none;">
+            <label class="calculation non-select ">
+                <input type="hidden"
+                    name="/BirthNotificationPregnancyStatusFollowUp/FWGESTATIONALAGE"
+                    data-calculate="round((( /BirthNotificationPregnancyStatusFollowUp/today - /BirthNotificationPregnancyStatusFollowUp/existing_psrlmp ) div 7),0)"
+                    data-type-xml="string" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden" name="/BirthNotificationPregnancyStatusFollowUp/FWEDD"
+                    data-calculate="format-date(date( /BirthNotificationPregnancyStatusFollowUp/existing_psrlmp +259), '%Y-%n-%e')"
+                    data-type-xml="string" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden"
+                    name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHILDNAME"
+                    data-calculate="if(( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='0' and  /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN  ='1'), 'BABYBOY', if( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='1',  /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAME , if(( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFNAMECHECK ='0' and  /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFGEN  ='2'), 'BABYGIRL', 'BABY')))"
+                    data-type-xml="string" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden"
+                    name="/BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFDOB"
+                    data-calculate="format-date(date( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFDTOO ), '%Y-%n-%e')"
+                    data-type-xml="string" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden" name="/BirthNotificationPregnancyStatusFollowUp/Is_PNC"
+                    data-calculate="if( (selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS ,'1') and selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ,'1')) or  (selected( /BirthNotificationPregnancyStatusFollowUp/FWBNFSTS , '4') and selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS ,'1')) or  (selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNFWOMVITSTS ,'1') and (selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS ,'0') or selected( /BirthNotificationPregnancyStatusFollowUp/outcome_occured/FWBNCHLDVITSTS/FWBNFCHLDVITSTS , '9'))), '1',' 0')"
+                    data-type-xml="string" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden"
+                    name="/BirthNotificationPregnancyStatusFollowUp/meta/instanceID"
+                    data-calculate="concat('uuid:', uuid())" data-type-xml="string" />
+            </label>
+            <label class="calculation non-select ">
+                <input type="hidden" name="/BirthNotificationPregnancyStatusFollowUp/formhub/uuid"
+                    data-calculate="'c9a068238f294b8fa782aa8285085d08'" data-type-xml="string" />
+            </label>
+        </fieldset>
+    </form>
+    <xsltmessages>
+        <message level="0">XML to HTML transformation for form took 0.03 seconds</message>
+    </xsltmessages>
+    <jrvalidationmessages>
+        <message level="1">This validation is yet not functional.</message>
+    </jrvalidationmessages>
+    <xmlerrors />
+    <xslformerrors />
+    <xsldataerrors />
+</root>

@@ -31,6 +31,10 @@ public class DrishtiSyncScheduler {
             return;
         }
 
+        if (ReceiverClass == null) {
+            return;
+        }
+
         PendingIntent syncBroadcastReceiverIntent = PendingIntent
                 .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
 
@@ -66,6 +70,10 @@ public class DrishtiSyncScheduler {
     }
 
     public static void stop(Context context) {
+        if (ReceiverClass == null) {
+            return;
+        }
+
         PendingIntent syncBroadcastReceiverIntent = PendingIntent
                 .getBroadcast(context, 0, new Intent(context, (Class) ReceiverClass), 0);
 

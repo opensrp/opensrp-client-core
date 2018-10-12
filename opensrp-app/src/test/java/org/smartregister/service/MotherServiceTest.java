@@ -14,7 +14,11 @@ import org.smartregister.repository.AllEligibleCouples;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.EligibleCoupleRepository;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.TimelineEvent.forDeliveryPlan;
 import static org.smartregister.domain.TimelineEvent.forIFATabletsGiven;

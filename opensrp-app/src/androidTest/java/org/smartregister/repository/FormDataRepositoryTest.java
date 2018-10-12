@@ -51,7 +51,7 @@ public class FormDataRepositoryTest extends AndroidTestCase {
         eligibleCoupleRepository.add(eligibleCouple);
         String sql = MessageFormat.format("select * from eligible_couple where eligible_couple.id = ''{0}''", eligibleCouple.caseId());
 
-        String result = repository.queryUniqueResult(sql);
+        String result = repository.queryUniqueResult(sql,null);
 
         Map<String, String> fieldValues = new Gson().fromJson(result, new TypeToken<Map<String, String>>() {
         }.getType());
@@ -63,7 +63,7 @@ public class FormDataRepositoryTest extends AndroidTestCase {
     public void testReturnsEmptyResultWhenQueryResultsAreEmpty() throws Exception {
         String sql = MessageFormat.format("select * from eligible_couple where eligible_couple.id = ''{0}''", "");
 
-        String result = repository.queryUniqueResult(sql);
+        String result = repository.queryUniqueResult(sql, null);
 
         Map<String, String> fieldValues = new Gson().fromJson(result, new TypeToken<Map<String, String>>() {
         }.getType());
@@ -78,7 +78,7 @@ public class FormDataRepositoryTest extends AndroidTestCase {
         eligibleCoupleRepository.add(secondEligibleCouple);
         String sql = MessageFormat.format("select * from eligible_couple where eligible_couple.village = ''{0}''", "Village 1");
 
-        String results = repository.queryList(sql);
+        String results = repository.queryList(sql, null);
 
         List<Map<String, String>> fieldValues = new Gson().fromJson(results, new TypeToken<List<Map<String, String>>>() {
         }.getType());
@@ -100,7 +100,7 @@ public class FormDataRepositoryTest extends AndroidTestCase {
     }
 
     public void testShouldCheckForSyncStatusWhenSavingFormSubmission() throws Exception {
-        Map<String, String> params = create("instanceId", "id 1").put("entityId", "entity id 1").put("formName", "form name").put( "sync_status", SYNCED.value()).map();
+        Map<String, String> params = create("instanceId", "id 1").put("entityId", "entity id 1").put("formName", "form name").put("sync_status", SYNCED.value()).map();
         String paramsJSON = new Gson().toJson(params);
 
         FormInstance instance = new FormInstance(new FormData("entity 1", "default", asList(new FormField("field1.1", "value1.1", "source1.1")), null), "1");

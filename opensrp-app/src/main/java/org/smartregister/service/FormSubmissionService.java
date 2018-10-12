@@ -39,7 +39,7 @@ public class FormSubmissionService {
 
     public FormSubmissionService(ZiggyService ziggyService, FormDataRepository
             formDataRepository, AllSettings allSettings, Map<String, AllCommonsRepository>
-            allCommonsRepositoryMap) {
+                                         allCommonsRepositoryMap) {
         this.ziggyService = ziggyService;
         this.formDataRepository = formDataRepository;
         this.allSettings = allSettings;

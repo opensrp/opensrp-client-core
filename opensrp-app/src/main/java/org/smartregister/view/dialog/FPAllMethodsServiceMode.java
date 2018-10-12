@@ -54,7 +54,6 @@ public class FPAllMethodsServiceMode extends ServiceModeOption {
     }
 
 
-
     private void setupSideEffectsButtonView(FPSmartRegisterClient client,
                                             NativeFPSmartRegisterViewHolder viewHolder) {
         viewHolder.btnSideEffectsView()

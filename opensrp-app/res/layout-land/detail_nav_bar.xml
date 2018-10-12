@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="fill_parent"
-                android:layout_height="@dimen/ec_main_header_height"
-                android:background="@color/light_blue"
-                android:focusableInTouchMode="true">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
 
-    <LinearLayout android:id="@+id/homestacklayout"
-        android:layout_width="65dp"
-        android:layout_height="match_parent"
-        android:orientation="horizontal" android:padding="5dp">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/ec_main_header_height"
+        android:background="@color/light_blue"
+        android:focusableInTouchMode="true">
 
-        <ImageButton
-            android:id="@+id/btn_back_to_home"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            android:src="@drawable/homestacks"
-            android:background="@drawable/transparent_gray_background"
-            android:padding="8dp" />
+        <LinearLayout
+            android:id="@+id/homestacklayout"
+            android:layout_width="65dp"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:padding="5dp">
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/btn_back_to_home"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:src="@drawable/homestacks"
+                android:background="@drawable/transparent_gray_background"
+                android:padding="8dp" />
 
-    <ImageView
+        </LinearLayout>
+
+        <ImageView
             android:id="@+id/home_title_separator"
             android:layout_width="@dimen/smart_register_nav_bar_separator"
             android:layout_height="fill_parent"
             android:src="@drawable/separator"
             android:scaleType="fitXY"
-            android:layout_toRightOf="@+id/homestacklayout"/>
+            android:layout_toRightOf="@+id/homestacklayout" />
 
-    <LinearLayout
+        <LinearLayout
             android:id="@+id/title_layout"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
@@ -42,45 +47,44 @@
             android:orientation="horizontal"
             android:background="@drawable/transparent_gray_background">
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
+            <org.smartregister.view.customcontrols.CustomFontTextView
                 android:id="@+id/detail_heading"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
                 style="@style/CustomFontTextViewStyle.NavBar.Black"
-            android:text="Details" />
+                android:text="Details" />
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/details_id_label"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            style="@style/CustomFontTextViewStyle.NavBar.Black"
-            android:text="ID of fourteen digits"
-            android:layout_gravity="right"
-            android:layout_marginRight="20dp"
-            android:ellipsize="none" />
+            <org.smartregister.view.customcontrols.CustomFontTextView
+                android:id="@+id/details_id_label"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                style="@style/CustomFontTextViewStyle.NavBar.Black"
+                android:text="ID of fourteen digits"
+                android:layout_gravity="right"
+                android:layout_marginRight="20dp"
+                android:ellipsize="none" />
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <ImageView
+        <ImageView
             android:layout_width="@dimen/smart_register_nav_bar_separator"
             android:layout_height="fill_parent"
             android:src="@drawable/separator"
             android:scaleType="fitXY" />
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/smart_register_client_divider_height"
-        android:src="@color/smart_register_client_divider_color"
-        android:id="@+id/imageView5" />
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/smart_register_client_divider_height"
+            android:src="@color/smart_register_client_divider_color"
+            android:id="@+id/imageView5" />
 
-</RelativeLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -104,8 +108,7 @@
         <View
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:layout_width="wrap_content"
@@ -115,7 +118,7 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal"
             android:layout_gravity="right"
             android:textColor="@color/text_black"
-            android:textSize="14sp"/>
+            android:textSize="14sp" />
 
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:layout_width="wrap_content"

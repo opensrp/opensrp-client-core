@@ -3,18 +3,15 @@ package org.smartregister.util;
 import com.google.gson.Gson;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.opensrp.api.domain.Location;
-import org.opensrp.api.util.EntityUtils;
-import org.opensrp.api.util.LocationTree;
+import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.validateMockitoUsage;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
 
 /**
  * Created by Dimas Ciputra on 3/23/15.
@@ -26,30 +23,29 @@ public class LocationTreeTest {
     private String locationJSONString;
 
     @Before
-    public void setUp() throws Exception{
-        locationJSONString = "{\"locationsHierarchy\":{\"map\" : {\"765cb701-9e61-4ead-afb9-a63c943f4f14\":{\"id\":\"765cb701-9e61-4ead-afb9-a63c943f4f14\",\"label\":\"testloc4\",\"node\":{\"creator\":null,\"dateCreated\":null,\"editor\":null,\"dateEdited\":null,\"voided\":false,\"dateVoided\":null,\"voider\":null,\"voidReason\":null,\"locationId\":\"765cb701-9e61-4ead-afb9-a63c943f4f14\",\"name\":\"testloc4\",\"address\":null,\"identifiers\":null,\"parentLocation\":null,\"tags\":null,\"attributes\":null},\"children\":null,\"parent\":null}}}}";
-
+    public void setUp() throws Exception {
+        locationJSONString = "{\"locationsHierarchy\":{\"map\" : {\"765cb701-9e61-4ead-afb9-a63c943f4f14\":{\"id\":\"765cb701-9e61-4ead-afb9-a63c943f4f14\", \"label\":\"testloc4\", \"node\":{\"creator\":null, \"dateCreated\":null, \"editor\":null, \"dateEdited\":null, \"voided\":false, \"dateVoided\":null, \"voider\":null, \"voidReason\":null, \"locationId\":\"765cb701-9e61-4ead-afb9-a63c943f4f14\", \"name\":\"testloc4\", \"address\":null, \"identifiers\":null, \"parentLocation\":null, \"tags\":null, \"attributes\":null}, \"children\":null, \"parent\":null}}}}";
     }
 
     @Test
     public void shouldShowLocationTree() throws Exception {
-        locationTree = EntityUtils.fromJson(locationJSONString, LocationTree.class);
-        assertNotNull(locationTree);
-        System.out.println("shouldShowLocationTree "+ new Gson().toJson(locationTree));
+        locationTree = AssetHandler.jsonStringToJava(locationJSONString, LocationTree.class);
+        Assert.assertNotNull(locationTree);
+        System.out.println("shouldShowLocationTree " + new Gson().toJson(locationTree));
     }
 
     @Test
     public void shouldFoundALocation() throws Exception {
-        locationTree = EntityUtils.fromJson(locationJSONString, LocationTree.class);
+        locationTree = AssetHandler.jsonStringToJava(locationJSONString, LocationTree.class);
         Location l = locationTree.findLocation("765cb701-9e61-4ead-afb9-a63c943f4f14");
-        assertNotNull(l);
-        assertEquals(l.getName(), "testloc4");
-        System.out.println("shouldFoundALocation " +new Gson().toJson(l));
+        Assert.assertNotNull(l);
+        Assert.assertEquals(l.getName(), "testloc4");
+        System.out.println("shouldFoundALocation " + new Gson().toJson(l));
     }
 
     @After
     public void validate() {
-        validateMockitoUsage();
+        Mockito.validateMockitoUsage();
     }
 
 }

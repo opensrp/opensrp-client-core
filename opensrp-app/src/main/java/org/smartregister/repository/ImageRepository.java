@@ -60,7 +60,7 @@ public class ImageRepository extends DrishtiRepository {
     public ProfileImage findByEntityId(String entityId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.query(Image_TABLE_NAME, Image_TABLE_COLUMNS,
-                entityID_COLUMN + "" + " = ? " + "COLLATE NOCASE ", new String[]{entityId}, null,
+                entityID_COLUMN + " = ? COLLATE NOCASE ", new String[]{entityId}, null,
                 null, null, null);
         List<ProfileImage> profileImages = readAll(cursor);
         return profileImages.isEmpty() ? null : profileImages.get(0);
@@ -78,7 +78,7 @@ public class ImageRepository extends DrishtiRepository {
         ContentValues values = new ContentValues();
         values.put(syncStatus_COLUMN, TYPE_Synced);
         masterRepository.getWritableDatabase()
-                .update(Image_TABLE_NAME, values, ID_COLUMN + " = " + "?", new String[]{caseId});
+                .update(Image_TABLE_NAME, values, ID_COLUMN + " = ?", new String[]{caseId});
     }
 
     private ContentValues createValuesFor(ProfileImage image, String type) {

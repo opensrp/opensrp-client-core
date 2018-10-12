@@ -1,14 +1,18 @@
 package org.smartregister.view.controller;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Alert;
+import org.smartregister.domain.AlertStatus;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.repository.AllEligibleCouples;
@@ -20,17 +24,9 @@ import org.smartregister.view.contract.FPClient;
 import org.smartregister.view.contract.FPClients;
 import org.smartregister.view.contract.RefillFollowUps;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.domain.AlertStatus.normal;
-import static org.smartregister.domain.AlertStatus.urgent;
-import static org.smartregister.util.EasyMap.create;
 
 @RunWith(RobolectricTestRunner.class)
 public class FPSmartRegisterControllerTest {
@@ -63,7 +59,7 @@ public class FPSmartRegisterControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context);
         emptyDetails = Collections.emptyMap();
         controller = new FPSmartRegisterController(allEligibleCouples, allBeneficiaries, alertService, new Cache<String>(), new Cache<FPClients>());
@@ -75,7 +71,7 @@ public class FPSmartRegisterControllerTest {
 
     @Test
     public void shouldMapECToFPClient() throws Exception {
-        Map<String, String> details = create("wifeAge", "22")
+        Map<String, String> details = EasyMap.create("wifeAge", "22")
                 .put("currentMethod", "condom")
                 .put("familyPlanningMethodChangeDate", "2013-01-02")
                 .put("sideEffects", "sideEffects 1")
@@ -106,7 +102,7 @@ public class FPSmartRegisterControllerTest {
                 .map();
         EligibleCouple ec = new EligibleCouple("EC Case 1", "Woman A", "Husband A", "EC Number 1", "Bherya", "Bherya SC", details)
                 .withPhotoPath("new photo path");
-        when(allEligibleCouples.all()).thenReturn(asList(ec));
+        Mockito.when(allEligibleCouples.all()).thenReturn(Arrays.asList(ec));
         FPClient expectedFPClient = new FPClient("EC Case 1", "Woman A", "Husband A", "Bherya", "EC Number 1")
                 .withAge("22")
                 .withFPMethod("condom")
@@ -139,40 +135,40 @@ public class FPSmartRegisterControllerTest {
 
         FPClients actualClients = controller.getClients();
 
-        assertEquals(asList(expectedFPClient), actualClients);
+        Assert.assertEquals(Arrays.asList(expectedFPClient), actualClients);
     }
 
     @Test
     public void shouldCreateFPClientsWithOCPRefillAlert() throws Exception {
         EligibleCouple ec = new EligibleCouple("entity id 1", "Woman C", "Husband C", "EC Number 3", "Bherya", "Bherya SC", emptyDetails);
-        Alert ocpRefillAlert = new Alert("entity id 1", "OCP Refill", "OCP Refill", normal, "2013-01-01", "2013-02-01");
-        when(allEligibleCouples.all()).thenReturn(asList(ec));
-        when(alertService.findByEntityIdAndAlertNames("entity id 1", EC_ALERTS)).thenReturn(asList(ocpRefillAlert));
+        Alert ocpRefillAlert = new Alert("entity id 1", "OCP Refill", "OCP Refill", AlertStatus.normal, "2013-01-01", "2013-02-01");
+        Mockito.when(allEligibleCouples.all()).thenReturn(Arrays.asList(ec));
+        Mockito.when(alertService.findByEntityIdAndAlertNames("entity id 1", EC_ALERTS)).thenReturn(Arrays.asList(ocpRefillAlert));
 
         FPClients actualClients = controller.getClients();
 
-        verify(alertService).findByEntityIdAndAlertNames("entity id 1", EC_ALERTS);
+        Mockito.verify(alertService).findByEntityIdAndAlertNames("entity id 1", EC_ALERTS);
         AlertDTO expectedAlertDto = new AlertDTO("OCP Refill", "normal", "2013-01-01");
-        FPClient expectedEC = createFPClient("entity id 1", "Woman C", "Husband C", "Bherya", "EC Number 3").withAlerts(asList(expectedAlertDto)).withNumberOfAbortions("0").withNumberOfPregnancies("0").withNumberOfStillBirths("0").withNumberOfLivingChildren("0").withParity("0");
-        assertEquals(asList(expectedEC), actualClients);
+        FPClient expectedEC = createFPClient("entity id 1", "Woman C", "Husband C", "Bherya", "EC Number 3").withAlerts(Arrays.asList(expectedAlertDto)).withNumberOfAbortions("0").withNumberOfPregnancies("0").withNumberOfStillBirths("0").withNumberOfLivingChildren("0").withParity("0");
+        Assert.assertEquals(Arrays.asList(expectedEC), actualClients);
     }
 
     @Test
     public void shouldCreateFPClientsWithRefillFollowUps() throws Exception {
         EligibleCouple ec = new EligibleCouple("entity id 1", "Woman C", "Husband C", "EC Number 3", "Bherya", "Bherya SC", EasyMap.create("currentMethod", "condom").map());
-        Alert condomRefillAlert = new Alert("entity id 1", "Condom Refill", "Condom Refill", urgent, "2013-01-01", "2013-02-01");
-        when(allEligibleCouples.all()).thenReturn(asList(ec));
-        when(alertService.findByEntityIdAndAlertNames("entity id 1", EC_ALERTS)).thenReturn(asList(condomRefillAlert));
-        when(context.getStringResource(R.string.str_refill)).thenReturn("refill");
+        Alert condomRefillAlert = new Alert("entity id 1", "Condom Refill", "Condom Refill", AlertStatus.urgent, "2013-01-01", "2013-02-01");
+        Mockito.when(allEligibleCouples.all()).thenReturn(Arrays.asList(ec));
+        Mockito.when(alertService.findByEntityIdAndAlertNames("entity id 1", EC_ALERTS)).thenReturn(Arrays.asList(condomRefillAlert));
+        Mockito.when(context.getStringResource(R.string.str_refill)).thenReturn("refill");
         CoreLibrary.reset(context);
 
         FPClients clients = controller.getClients();
 
-        verify(alertService).findByEntityIdAndAlertNames("entity id 1", EC_ALERTS);
+        Mockito.verify(alertService).findByEntityIdAndAlertNames("entity id 1", EC_ALERTS);
 
         AlertDTO expectedAlertDto = new AlertDTO("Condom Refill", "urgent", "2013-01-01");
         FPClient expectedEC = createFPClient("entity id 1", "Woman C", "Husband C", "Bherya", "EC Number 3")
-                .withAlerts(asList(expectedAlertDto))
+                .withAlerts(Arrays.asList(expectedAlertDto))
                 .withNumberOfAbortions("0")
                 .withNumberOfPregnancies("0")
                 .withNumberOfStillBirths("0")
@@ -180,22 +176,22 @@ public class FPSmartRegisterControllerTest {
                 .withParity("0")
                 .withFPMethod("condom")
                 .withRefillFollowUps(new RefillFollowUps("Condom Refill", expectedAlertDto, "refill"));
-        assertEquals(asList(expectedEC), clients);
+        Assert.assertEquals(Arrays.asList(expectedEC), clients);
     }
 
     @Test
     public void shouldNotIncludePregnantECsWhenFPClientsIsCreated() throws Exception {
         EligibleCouple ec = new EligibleCouple("entity id 1", "Woman C", "Husband C", "EC Number 3", "Bherya", "Bherya SC", emptyDetails);
         EligibleCouple pregnantEC = new EligibleCouple("entity id 2", "Woman D", "Husband D", "EC Number 4", "Bherya", "Bherya SC", emptyDetails);
-        when(allEligibleCouples.all()).thenReturn(asList(ec, pregnantEC));
-        when(allBeneficiaries.isPregnant("entity id 1")).thenReturn(false);
-        when(allBeneficiaries.isPregnant("entity id 2")).thenReturn(true);
+        Mockito.when(allEligibleCouples.all()).thenReturn(Arrays.asList(ec, pregnantEC));
+        Mockito.when(allBeneficiaries.isPregnant("entity id 1")).thenReturn(false);
+        Mockito.when(allBeneficiaries.isPregnant("entity id 2")).thenReturn(true);
 
         FPClients actualClients = controller.getClients();
 
-        verify(allBeneficiaries).isPregnant("entity id 1");
-        verify(allBeneficiaries).isPregnant("entity id 2");
+        Mockito.verify(allBeneficiaries).isPregnant("entity id 1");
+        Mockito.verify(allBeneficiaries).isPregnant("entity id 2");
         FPClient expectedEC = createFPClient("entity id 1", "Woman C", "Husband C", "Bherya", "EC Number 3").withNumberOfAbortions("0").withNumberOfPregnancies("0").withNumberOfStillBirths("0").withNumberOfLivingChildren("0").withParity("0");
-        assertEquals(asList(expectedEC), actualClients);
+        Assert.assertEquals(Arrays.asList(expectedEC), actualClients);
     }
 }

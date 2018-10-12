@@ -1,12 +1,16 @@
 package org.smartregister.service;
 
 import org.ei.drishti.dto.Action;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.AllEligibleCouples;
@@ -17,21 +21,8 @@ import org.smartregister.router.ActionRouter;
 import org.smartregister.util.ActionBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.fetchedFailed;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.domain.ResponseStatus.failure;
-import static org.smartregister.domain.ResponseStatus.success;
-import static org.smartregister.util.ActionBuilder.actionForCloseAlert;
-import static org.smartregister.util.ActionBuilder.actionForCloseMother;
-import static org.smartregister.util.ActionBuilder.actionForCreateAlert;
-import static org.smartregister.util.ActionBuilder.actionForReport;
 
 @RunWith(RobolectricTestRunner.class)
 public class ActionServiceTest {
@@ -52,54 +43,54 @@ public class ActionServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         service = new ActionService(drishtiService, allSettings, allSharedPreferences, allReports, actionRouter);
     }
 
     @Test
     public void shouldFetchAlertActionsAndNotSaveAnythingIfThereIsNothingNewToSave() throws Exception {
-        setupActions(success, new ArrayList<Action>());
+        setupActions(ResponseStatus.success, new ArrayList<Action>());
 
-        assertEquals(nothingFetched, service.fetchNewActions());
+        Assert.assertEquals(FetchStatus.nothingFetched, service.fetchNewActions());
 
-        verify(drishtiService).fetchNewActions("ANM X", "1234");
-        verifyNoMoreInteractions(drishtiService);
-        verifyNoMoreInteractions(actionRouter);
+        Mockito.verify(drishtiService).fetchNewActions("ANM X", "1234");
+        Mockito.verifyNoMoreInteractions(drishtiService);
+        Mockito.verifyNoMoreInteractions(actionRouter);
     }
 
     @Test
     public void shouldNotSaveAnythingIfTheDrishtiResponseStatusIsFailure() throws Exception {
-        setupActions(failure, asList(actionForCloseAlert("Case X", "ANC 1", "2012-01-01", "0")));
+        setupActions(ResponseStatus.failure, Arrays.asList(ActionBuilder.actionForCloseAlert("Case X", "ANC 1", "2012-01-01", "0")));
 
-        assertEquals(fetchedFailed, service.fetchNewActions());
+        Assert.assertEquals(FetchStatus.fetchedFailed, service.fetchNewActions());
 
-        verify(drishtiService).fetchNewActions("ANM X", "1234");
-        verifyNoMoreInteractions(drishtiService);
-        verifyNoMoreInteractions(actionRouter);
+        Mockito.verify(drishtiService).fetchNewActions("ANM X", "1234");
+        Mockito.verifyNoMoreInteractions(drishtiService);
+        Mockito.verifyNoMoreInteractions(actionRouter);
     }
 
     @Test
     public void shouldFetchAlertActionsAndSaveThemToRepository() throws Exception {
         Action action = ActionBuilder.actionForCreateAlert("Case X", "normal", "mother", "Ante Natal Care - Normal", "ANC 1", "2012-01-01", null, "0");
-        setupActions(success, asList(action));
+        setupActions(ResponseStatus.success, Arrays.asList(action));
 
-        assertEquals(fetched, service.fetchNewActions());
+        Assert.assertEquals(FetchStatus.fetched, service.fetchNewActions());
 
-        verify(drishtiService).fetchNewActions("ANM X", "1234");
-        verify(actionRouter).directAlertAction(action);
+        Mockito.verify(drishtiService).fetchNewActions("ANM X", "1234");
+        Mockito.verify(actionRouter).directAlertAction(action);
     }
 
     @Test
     public void shouldUpdatePreviousIndexWithIndexOfEachActionThatIsHandled() throws Exception {
 
-        Action firstAction = actionForCreateAlert("Case X", "normal", "mother", "Ante Natal Care - Normal", "ANC 1", "2012-01-01", "2012-01-22", "11111");
-        Action secondAction = actionForCreateAlert("Case Y", "normal", "mother", "Ante Natal Care - Normal", "ANC 2", "2012-01-01", "2012-01-11", "12345");
+        Action firstAction = ActionBuilder.actionForCreateAlert("Case X", "normal", "mother", "Ante Natal Care - Normal", "ANC 1", "2012-01-01", "2012-01-22", "11111");
+        Action secondAction = ActionBuilder.actionForCreateAlert("Case Y", "normal", "mother", "Ante Natal Care - Normal", "ANC 2", "2012-01-01", "2012-01-11", "12345");
 
-        setupActions(success, asList(firstAction, secondAction));
+        setupActions(ResponseStatus.success, Arrays.asList(firstAction, secondAction));
 
         service.fetchNewActions();
 
-        InOrder inOrder = inOrder(actionRouter, allSettings);
+        InOrder inOrder = Mockito.inOrder(actionRouter, allSettings);
         inOrder.verify(actionRouter).directAlertAction(firstAction);
         inOrder.verify(allSettings).savePreviousFetchIndex("11111");
         inOrder.verify(actionRouter).directAlertAction(secondAction);
@@ -108,21 +99,21 @@ public class ActionServiceTest {
 
     @Test
     public void shouldHandleDifferentKindsOfActions() throws Exception {
-        Action reportAction = actionForReport("Case X", "annual target");
-        Action alertAction = actionForCreateAlert("Case X", "normal", "mother", "Ante Natal Care - Normal", "ANC 1", "2012-01-01", null, "0");
-        Action closeMotherAction = actionForCloseMother("Case X");
-        setupActions(success, asList(reportAction, alertAction, closeMotherAction));
+        Action reportAction = ActionBuilder.actionForReport("Case X", "annual target");
+        Action alertAction = ActionBuilder.actionForCreateAlert("Case X", "normal", "mother", "Ante Natal Care - Normal", "ANC 1", "2012-01-01", null, "0");
+        Action closeMotherAction = ActionBuilder.actionForCloseMother("Case X");
+        setupActions(ResponseStatus.success, Arrays.asList(reportAction, alertAction, closeMotherAction));
 
         service.fetchNewActions();
 
-        verify(allReports).handleAction(reportAction);
-        verify(actionRouter).directAlertAction(alertAction);
-        verify(actionRouter).directMotherAction(closeMotherAction);
+        Mockito.verify(allReports).handleAction(reportAction);
+        Mockito.verify(actionRouter).directAlertAction(alertAction);
+        Mockito.verify(actionRouter).directMotherAction(closeMotherAction);
     }
 
     private void setupActions(ResponseStatus status, List<Action> list) {
-        when(allSettings.fetchPreviousFetchIndex()).thenReturn("1234");
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
-        when(drishtiService.fetchNewActions("ANM X", "1234")).thenReturn(new Response<List<Action>>(status, list));
+        Mockito.when(allSettings.fetchPreviousFetchIndex()).thenReturn("1234");
+        Mockito.when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
+        Mockito.when(drishtiService.fetchNewActions("ANM X", "1234")).thenReturn(new Response<List<Action>>(status, list));
     }
 }

@@ -17,9 +17,9 @@ public class CoreLibrary {
     public static CoreLibrary getInstance() {
         if (instance == null) {
             throw new IllegalStateException(" Instance does not exist!!! Call "
-                                                    + CoreLibrary.class.getName()
-                                                    + ".init method in the onCreate method of "
-                                                    + "your Application class ");
+                    + CoreLibrary.class.getName()
+                    + ".init method in the onCreate method of "
+                    + "your Application class ");
         }
         return instance;
     }

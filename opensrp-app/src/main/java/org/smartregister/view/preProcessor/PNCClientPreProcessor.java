@@ -64,7 +64,7 @@ public class PNCClientPreProcessor {
         }
         List<ServiceProvidedDTO> recentServicesWithDays =
                 findAndSetTheVisitDayOfTheServicesWithRespectToDeliveryDate(
-                recentServicesProvided, client.deliveryDate());
+                        recentServicesProvided, client.deliveryDate());
         client.withRecentlyProvidedServices(recentServicesWithDays);
     }
 
@@ -194,7 +194,7 @@ public class PNCClientPreProcessor {
 
     private ArrayList<Integer> getExpectedVisitDaysTillToday(List<ServiceProvidedDTO>
                                                                      expectedVisits, int
-            numberOfDaysFromDeliveryDate) {
+                                                                     numberOfDaysFromDeliveryDate) {
         ArrayList<Integer> expectedVisitDaysTillToday = new ArrayList<Integer>();
         for (ServiceProvidedDTO expectedVisit : expectedVisits) {
             if (expectedVisit.day() < numberOfDaysFromDeliveryDate) {

@@ -85,9 +85,9 @@ public class FormDataRepository extends DrishtiRepository {
     }
 
     @JavascriptInterface
-    public String queryUniqueResult(String sql) {
+    public String queryUniqueResult(String sql, String[] selectionArgs) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(sql, new String[]{});
+        Cursor cursor = database.rawQuery(sql, selectionArgs);
 
         cursor.moveToFirst();
         Map<String, String> result = readARow(cursor);
@@ -97,9 +97,9 @@ public class FormDataRepository extends DrishtiRepository {
     }
 
     @JavascriptInterface
-    public String queryList(String sql) {
+    public String queryList(String sql, String[] selectionArgs) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(sql, new String[]{});
+        Cursor cursor = database.rawQuery(sql, selectionArgs);
         List<Map<String, String>> results = new ArrayList<Map<String, String>>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -325,12 +325,12 @@ public class FormDataRepository extends DrishtiRepository {
         return randomUUID().toString();
     }
 
-    public Map<String, String> getMapFromSQLQuery(String sql) {
+    public Map<String, String> getMapFromSQLQuery(String sql, String[] selectionArgs) {
         Map<String, String> map = new HashMap<String, String>();
         Cursor cursor = null;
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
-            cursor = database.rawQuery(sql, new String[]{});
+            cursor = database.rawQuery(sql, selectionArgs);
             map = sqliteRowToMap(cursor);
         } catch (Exception e) {
             Log.e(TAG, e.toString(), e);

@@ -3,33 +3,27 @@ package org.smartregister.service;
 import com.google.gson.Gson;
 
 import org.ei.drishti.dto.form.FormSubmissionDTO;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
+import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.FormDataRepository;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.asList;
-import static junit.framework.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-import static org.mockito.MockitoAnnotations.initMocks;
-import static org.smartregister.domain.FetchStatus.fetched;
-import static org.smartregister.domain.FetchStatus.nothingFetched;
-import static org.smartregister.domain.ResponseStatus.failure;
-import static org.smartregister.domain.ResponseStatus.success;
-import static org.smartregister.domain.SyncStatus.PENDING;
-import static org.smartregister.domain.SyncStatus.SYNCED;
 
 @RunWith(RobolectricTestRunner.class)
 public class FormSubmissionSyncServiceTest {
@@ -53,98 +47,98 @@ public class FormSubmissionSyncServiceTest {
 
     @Before
     public void setUp() throws Exception {
-        initMocks(this);
+        MockitoAnnotations.initMocks(this);
         service = new FormSubmissionSyncService(formSubmissionService, httpAgent, repository, allSettings, allSharedPreferences, configuration);
 
         formInstanceJSON = "{form:{bind_type: 'ec'}}";
-        submissions = asList(new FormSubmission("id 1", "entity id 1", "form name", formInstanceJSON, "123", PENDING, "1"));
-        expectedFormSubmissionsDto = asList(new FormSubmissionDTO(
+        submissions = Arrays.asList(new FormSubmission("id 1", "entity id 1", "form name", formInstanceJSON, "123", SyncStatus.PENDING, "1"));
+        expectedFormSubmissionsDto = Arrays.asList(new FormSubmissionDTO(
                 "anm id 1", "id 1", "entity id 1", "form name", formInstanceJSON, "123", "1"));
-        when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn("anm id 1");
-        when(repository.getPendingFormSubmissions()).thenReturn(submissions);
+        Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://dristhi_base_url");
+        Mockito.when(allSharedPreferences.fetchRegisteredANM()).thenReturn("anm id 1");
+        Mockito.when(repository.getPendingFormSubmissions()).thenReturn(submissions);
     }
 
     @Test
     public void shouldPushPendingFormSubmissionsToServerAndMarkThemAsSynced() throws Exception {
-        when(httpAgent.post("http://dristhi_base_url" + "/form-submissions", new Gson().toJson(expectedFormSubmissionsDto)))
-                .thenReturn(new Response<String>(success, null));
+        Mockito.when(httpAgent.post("http://dristhi_base_url" + "/form-submissions", new Gson().toJson(expectedFormSubmissionsDto)))
+                .thenReturn(new Response<String>(ResponseStatus.success, null));
 
         service.pushToServer();
 
-        inOrder(allSettings, httpAgent, repository);
-        verify(allSharedPreferences).fetchRegisteredANM();
-        verify(httpAgent).post("http://dristhi_base_url" + "/form-submissions", new Gson().toJson(expectedFormSubmissionsDto));
-        verify(repository).markFormSubmissionsAsSynced(submissions);
+        Mockito.inOrder(allSettings, httpAgent, repository);
+        Mockito.verify(allSharedPreferences).fetchRegisteredANM();
+        Mockito.verify(httpAgent).post("http://dristhi_base_url" + "/form-submissions", new Gson().toJson(expectedFormSubmissionsDto));
+        Mockito.verify(repository).markFormSubmissionsAsSynced(submissions);
     }
 
     @Test
     public void shouldNotMarkPendingSubmissionsAsSyncedIfPostFails() throws Exception {
-        when(httpAgent.post("http://dristhi_base_url" + "/form-submissions", new Gson().toJson(expectedFormSubmissionsDto)))
+        Mockito.when(httpAgent.post("http://dristhi_base_url" + "/form-submissions", new Gson().toJson(expectedFormSubmissionsDto)))
                 .thenReturn(new Response<String>(ResponseStatus.failure, null));
 
         service.pushToServer();
 
-        verify(repository).getPendingFormSubmissions();
-        verifyNoMoreInteractions(repository);
+        Mockito.verify(repository).getPendingFormSubmissions();
+        Mockito.verifyNoMoreInteractions(repository);
     }
 
     @Test
     public void shouldNotPushIfThereAreNoPendingSubmissions() throws Exception {
-        when(repository.getPendingFormSubmissions()).thenReturn(Collections.<FormSubmission>emptyList());
+        Mockito.when(repository.getPendingFormSubmissions()).thenReturn(Collections.<FormSubmission>emptyList());
 
         service.pushToServer();
 
-        verify(repository).getPendingFormSubmissions();
-        verifyNoMoreInteractions(repository);
-        verifyZeroInteractions(allSettings);
-        verifyZeroInteractions(httpAgent);
+        Mockito.verify(repository).getPendingFormSubmissions();
+        Mockito.verifyNoMoreInteractions(repository);
+        Mockito.verifyZeroInteractions(allSettings);
+        Mockito.verifyZeroInteractions(httpAgent);
     }
 
     @Test
     public void shouldPullFormSubmissionsFromServerInBatchesAndDelegateToProcessing() throws Exception {
-        this.expectedFormSubmissionsDto = asList(new FormSubmissionDTO(
+        this.expectedFormSubmissionsDto = Arrays.asList(new FormSubmissionDTO(
                 "anm id 1", "id 1", "entity id 1", "form name", formInstanceJSON, "123", "1"));
-        List<FormSubmission> expectedFormSubmissions = asList(new FormSubmission("id 1", "entity id 1", "form name",
-                formInstanceJSON, "123", SYNCED, "1"));
-        when(configuration.syncDownloadBatchSize()).thenReturn(1);
-        when(allSettings.fetchPreviousFormSyncIndex()).thenReturn("122");
-        when(httpAgent.fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1"))
-                .thenReturn(new Response<String>(success, new Gson().toJson(this.expectedFormSubmissionsDto)),
-                        new Response<String>(success, new Gson().toJson(Collections.emptyList())));
+        List<FormSubmission> expectedFormSubmissions = Arrays.asList(new FormSubmission("id 1", "entity id 1", "form name",
+                formInstanceJSON, "123", SyncStatus.SYNCED, "1"));
+        Mockito.when(configuration.syncDownloadBatchSize()).thenReturn(1);
+        Mockito.when(allSettings.fetchPreviousFormSyncIndex()).thenReturn("122");
+        Mockito.when(httpAgent.fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1"))
+                .thenReturn(new Response<String>(ResponseStatus.success, new Gson().toJson(this.expectedFormSubmissionsDto)),
+                        new Response<String>(ResponseStatus.success, new Gson().toJson(Collections.emptyList())));
 
         FetchStatus fetchStatus = service.pullFromServer();
 
-        assertEquals(fetched, fetchStatus);
-        verify(httpAgent, times(2))
+        Assert.assertEquals(FetchStatus.fetched, fetchStatus);
+        Mockito.verify(httpAgent, Mockito.times(2))
                 .fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1");
-        verify(formSubmissionService).processSubmissions(expectedFormSubmissions);
+        Mockito.verify(formSubmissionService).processSubmissions(expectedFormSubmissions);
     }
 
     @Test
     public void shouldReturnNothingFetchedStatusWhenNoFormSubmissionsAreGotFromServer() throws Exception {
-        when(configuration.syncDownloadBatchSize()).thenReturn(1);
-        when(allSettings.fetchPreviousFormSyncIndex()).thenReturn("122");
-        when(httpAgent.fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1"))
-                .thenReturn(new Response<String>(success, new Gson().toJson(Collections.emptyList())));
+        Mockito.when(configuration.syncDownloadBatchSize()).thenReturn(1);
+        Mockito.when(allSettings.fetchPreviousFormSyncIndex()).thenReturn("122");
+        Mockito.when(httpAgent.fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1"))
+                .thenReturn(new Response<String>(ResponseStatus.success, new Gson().toJson(Collections.emptyList())));
 
         FetchStatus fetchStatus = service.pullFromServer();
 
-        assertEquals(nothingFetched, fetchStatus);
-        verify(httpAgent).fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1");
-        verifyZeroInteractions(formSubmissionService);
+        Assert.assertEquals(FetchStatus.nothingFetched, fetchStatus);
+        Mockito.verify(httpAgent).fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1");
+        Mockito.verifyZeroInteractions(formSubmissionService);
     }
 
     @Test
     public void shouldNotDelegateToProcessingIfPullFails() throws Exception {
-        when(configuration.syncDownloadBatchSize()).thenReturn(1);
-        when(allSettings.fetchPreviousFormSyncIndex()).thenReturn("122");
-        when(httpAgent.fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1"))
-                .thenReturn(new Response<String>(failure, null));
+        Mockito.when(configuration.syncDownloadBatchSize()).thenReturn(1);
+        Mockito.when(allSettings.fetchPreviousFormSyncIndex()).thenReturn("122");
+        Mockito.when(httpAgent.fetch("http://dristhi_base_url/form-submissions?anm-id=anm id 1&timestamp=122&batch-size=1"))
+                .thenReturn(new Response<String>(ResponseStatus.failure, null));
 
         FetchStatus fetchStatus = service.pullFromServer();
 
-        assertEquals(FetchStatus.fetchedFailed, fetchStatus);
-        verifyZeroInteractions(formSubmissionService);
+        Assert.assertEquals(FetchStatus.fetchedFailed, fetchStatus);
+        Mockito.verifyZeroInteractions(formSubmissionService);
     }
 }
