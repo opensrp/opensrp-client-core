@@ -18,7 +18,7 @@ import java.util.Set;
 public class Repository extends SQLiteOpenHelper {
     protected CommonFtsObject commonFtsObject;
     private DrishtiRepository[] repositories;
-    private File databasePath = new File(DrishtiApplication.getAppDir() + "/databases/drishti.db");
+    private File databasePath = new File(DrishtiApplication.getAppDir() + "/databases/" + AllConstants.DATABASE_NAME);
     private Context context;
     private String dbName;
     private Session session;
@@ -31,7 +31,7 @@ public class Repository extends SQLiteOpenHelper {
         this.session = session;
         this.dbName = session != null ? session.repositoryName() : AllConstants.DATABASE_NAME;
         this.databasePath = context != null ? context.getDatabasePath(dbName)
-                : new File("/data/data/org.smartregister" + ".indonesia/databases/drishti.db");
+                : new File("/data/data/org.smartregister" + ".indonesia/databases/" + AllConstants.DATABASE_NAME);
 
         SQLiteDatabase.loadLibs(context);
         for (DrishtiRepository repository : repositories) {
@@ -53,7 +53,7 @@ public class Repository extends SQLiteOpenHelper {
         this.context = context;
         this.session = session;
         this.databasePath = context != null ? context.getDatabasePath(dbName)
-                : new File("/data/data/org.smartregister" + ".indonesia/databases/drishti.db");
+                : new File("/data/data/org.smartregister" + ".indonesia/databases/" + AllConstants.DATABASE_NAME);
 
         SQLiteDatabase.loadLibs(context);
         for (DrishtiRepository repository : repositories) {
