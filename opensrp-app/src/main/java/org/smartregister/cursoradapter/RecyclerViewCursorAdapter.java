@@ -93,7 +93,7 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
         if (!mDataValid) {
             throw new IllegalStateException("this should only be called when the cursor is valid");
         }
-        if (position < (mCursor.getCount() -1) && !mCursor.moveToPosition(position)) {
+        if (position < mCursor.getCount() && !mCursor.moveToPosition(position)) {
             throw new IllegalStateException("couldn't move cursor to position " + position);
         }
         onBindViewHolder(viewHolder, mCursor);

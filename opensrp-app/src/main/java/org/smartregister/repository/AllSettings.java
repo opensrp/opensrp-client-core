@@ -1,6 +1,9 @@
 package org.smartregister.repository;
 
+import org.smartregister.domain.Setting;
+
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class AllSettings {
@@ -88,4 +91,21 @@ public class AllSettings {
     public String get(String key) {
         return settingsRepository.querySetting(key, null);
     }
+
+    public Setting getSetting(String key) {
+        return settingsRepository.querySetting(key);
+    }
+
+    public List<Setting> getSettingsByType(String type) {
+        return settingsRepository.querySettingsByType(type);
+    }
+
+    public void putSetting(Setting setting) {
+        settingsRepository.updateSetting(setting);
+    }
+
+    public List<Setting> getUnsyncedSettings() {
+        return settingsRepository.queryUnsyncedSettings();
+    }
+
 }

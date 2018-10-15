@@ -25,9 +25,9 @@ public class SettingsRepositoryTest extends BaseUnitTest {
     public static final String SETTINGS_VALUE_COLUMN = "value";
 
     @Mock
-    SQLiteDatabase sqLiteDatabase;
+    private SQLiteDatabase sqLiteDatabase;
     @Mock
-    Repository repository;
+    private Repository repository;
 
     @Before
     public void setUp() {
@@ -47,6 +47,12 @@ public class SettingsRepositoryTest extends BaseUnitTest {
     public void assertOnCreate() {
         settingsRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
+    }
+
+    @Test
+    public void testOnUpgradeExecutesCorrectSQLStatement() {
+        settingsRepository.onUpgrade(sqLiteDatabase);
+        Mockito.verify(sqLiteDatabase, Mockito.times(3)).execSQL(Mockito.anyString());
     }
 
     @Test
