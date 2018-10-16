@@ -74,7 +74,7 @@ public abstract class BaseJob extends Job {
     }
 
     //Custom app context method to aid unit testing
-    protected Context getApplicationContext() {
+    public Context getApplicationContext() {
         return super.getContext();
     }
 }

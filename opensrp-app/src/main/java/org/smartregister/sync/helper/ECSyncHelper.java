@@ -22,10 +22,10 @@ import static org.smartregister.util.Utils.getPreference;
 
 public class ECSyncHelper {
 
-    private final EventClientRepository eventClientRepository;
-    private final Context context;
+    protected final EventClientRepository eventClientRepository;
+    protected final Context context;
 
-    private static ECSyncHelper instance;
+    protected static ECSyncHelper instance;
 
     public static ECSyncHelper getInstance(Context context) {
         if (instance == null) {
@@ -34,7 +34,7 @@ public class ECSyncHelper {
         return instance;
     }
 
-    private ECSyncHelper(Context context, EventClientRepository eventClientRepository) {
+    protected ECSyncHelper(Context context, EventClientRepository eventClientRepository) {
         this.context = context;
         this.eventClientRepository = eventClientRepository;
     }
