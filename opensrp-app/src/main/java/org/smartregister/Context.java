@@ -25,6 +25,7 @@ import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
+import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
@@ -194,6 +195,7 @@ public class Context {
     private CommonFtsObject commonFtsObject;
     private Map<String, String> customHumanReadableConceptResponse;
     private HashMap<String, CommonRepository> MapOfCommonRepository;
+    private EventClientRepository eventClientRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1090,5 +1092,13 @@ public class Context {
     public void setDetailsRepository(DetailsRepository _detailsRepository) {
         detailsRepository = _detailsRepository;
     }
+
+    public EventClientRepository getEventClientRepository() {
+        if (eventClientRepository == null) {
+            eventClientRepository = new EventClientRepository(getRepository());
+        }
+        return eventClientRepository;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
 }
