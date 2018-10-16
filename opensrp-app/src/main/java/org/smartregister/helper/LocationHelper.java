@@ -31,9 +31,7 @@ import java.util.regex.Pattern;
 public class LocationHelper {
     private static final String TAG = LocationHelper.class.getCanonicalName();
 
-    private static final String DEFAULT_LOCATION_LEVEL = "Health Facility";
     private static LocationHelper instance;
-
     private String childLocationId;
     private String parentLocationId;
     private List<String> locationIds;
@@ -41,18 +39,18 @@ public class LocationHelper {
     private List<String> locationNameHierarchy;
     private HashMap<String, Pair<String, String>> childAndParentLocationIds;
     private String defaultLocation;
-    private ArrayList<String> ALLOWED_LEVELS;
+    private ArrayList<String> allowedLevels;
     
-    private LocationHelper(ArrayList<String> ALLOWED_LEVELS) {
+    private LocationHelper(ArrayList<String> allowedLevels) {
 
         childAndParentLocationIds = new HashMap<>();
         setParentAndChildLocationIds(getDefaultLocation());
-        this.ALLOWED_LEVELS = ALLOWED_LEVELS;
+        this.allowedLevels = allowedLevels;
     }
 
-    public static LocationHelper getInstance(ArrayList<String> ALLOWED_LEVELS) {
-        if (instance == null) {
-            instance = new LocationHelper(ALLOWED_LEVELS);
+    public static LocationHelper getInstance(ArrayList<String> allowedLevels, String defaultLocation) {
+        if (instance == null && StringUtils.isNotEmpty(defaultLocation) && allowedLevels.contains(defaultLocation)) {
+            instance = new LocationHelper(allowedLevels);
         }
         return instance;
     }
@@ -95,7 +93,7 @@ public class LocationHelper {
 
     public String getDefaultLocation() {
         if (StringUtils.isBlank(defaultLocation)) {
-            List<String> rawDefaultLocation = generateDefaultLocationHierarchy(ALLOWED_LEVELS);
+            List<String> rawDefaultLocation = generateDefaultLocationHierarchy(allowedLevels);
 
             if (!Utils.isEmptyCollection(rawDefaultLocation)) {
                 defaultLocation = rawDefaultLocation.get(rawDefaultLocation.size() - 1);
@@ -288,8 +286,8 @@ public class LocationHelper {
             Set<String> levels = node.getTags();
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
-                    if (ALLOWED_LEVELS.contains(level)) {
-                        if (!fetchLocationIds && DEFAULT_LOCATION_LEVEL.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
+                    if (allowedLevels.contains(level)) {
+                        if (!fetchLocationIds && defaultLocation.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
                             return locationList;
                         }
 
@@ -592,7 +590,7 @@ public class LocationHelper {
             Set<String> levels = node.getTags();
             if (!Utils.isEmptyCollection(levels)) {
                 for (String level : levels) {
-                    if (ALLOWED_LEVELS.contains(level)) {
+                    if (allowedLevels.contains(level)) {
                         hierarchy.add(node.getName());
                     }
                 }
