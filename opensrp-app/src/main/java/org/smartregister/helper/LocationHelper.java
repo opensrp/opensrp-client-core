@@ -41,7 +41,7 @@ public class LocationHelper {
     private List<String> locationNameHierarchy;
     private HashMap<String, Pair<String, String>> childAndParentLocationIds;
     private String defaultLocation;
-    ArrayList<String> ALLOWED_LEVELS;
+    private ArrayList<String> ALLOWED_LEVELS;
     
     private LocationHelper(ArrayList<String> ALLOWED_LEVELS) {
 
