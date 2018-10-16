@@ -41,16 +41,17 @@ public class LocationHelper {
     private String defaultLocation;
     private ArrayList<String> allowedLevels;
     
-    private LocationHelper(ArrayList<String> allowedLevels) {
+    private LocationHelper(ArrayList<String> allowedLevels, String defaultLocation) {
 
         childAndParentLocationIds = new HashMap<>();
         setParentAndChildLocationIds(getDefaultLocation());
         this.allowedLevels = allowedLevels;
+        this.defaultLocation = defaultLocation;
     }
 
     public static LocationHelper getInstance(ArrayList<String> allowedLevels, String defaultLocation) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocation) && allowedLevels.contains(defaultLocation)) {
-            instance = new LocationHelper(allowedLevels);
+            instance = new LocationHelper(allowedLevels, defaultLocation);
         }
         return instance;
     }
