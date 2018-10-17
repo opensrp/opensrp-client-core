@@ -1,4 +1,4 @@
-package org.smartregister.helper;
+package org.smartregister.location.helper;
 
 import android.util.Log;
 import android.util.Pair;
