@@ -300,7 +300,6 @@
     <string name="str_child_illness_sam">sam</string>
     <string name="str_pnc_visit_button_label">PNC Visit</string>
 
-
     <string name="ic_check_circle_blank">&#xe03e;</string>
     <string name="ic_keyboard_arrow_down">&#xe0c5;</string>
     <string name="ic_keyboard_arrow_left">&#xe0c6;</string>
@@ -315,4 +314,11 @@
     <string name="timezone_mismatch">Please change timezone to \'%1$s\' in the device settings before logging in</string>
     <string name="time_mismatch">This device\'s time seems to be wrong. Please correct it before continuing</string>
     <string name="time_error">Couldn\'t determine if this device\'s time is correct</string>
+
+    <!-- bottom navigation menu -->
+    <string name="clients_menu">Clients</string>
+    <string name="search_menu">Search</string>
+    <string name="register_menu">Register</string>
+    <string name="library_menu">Library</string>
+    <string name="me">Me</string>
 </resources>
