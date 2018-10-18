@@ -25,8 +25,6 @@ import java.util.Collection;
 @Config(constants = BuildConfig.class, shadows = {FontTextViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 public abstract class BaseUnitTest {
-    protected static final String DUMMY_PASSWORD = "mypassword";
-    protected static final String DUMMY_USERNAME = "myusername";
     public void resetWindowManager() {
 
         try {
