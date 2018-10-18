@@ -6,6 +6,7 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
@@ -23,6 +24,7 @@ import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
+import org.smartregister.util.StringUtil;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.ByteArrayInputStream;
@@ -308,7 +310,8 @@ public class UserService {
         return httpAgent.fetch(requestURL);
     }
 
-    private void loginWith(String userName, String password) {
+    private boolean loginWith(String userName, String password) {
+        boolean loginSuccessful = true;
         if (usesGroupIdAsDBPassword(userName)) {
             String encryptedGroupId = allSharedPreferences.fetchEncryptedGroupId(userName);
             try {
@@ -319,11 +322,13 @@ public class UserService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                loginSuccessful = false;
             }
         } else {
             setupContextForLogin(userName, password);
         }
         allSettings.registerANM(userName, password);
+        return loginSuccessful;
     }
 
     /**
@@ -350,8 +355,7 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        allSharedPreferences.saveForceRemoteLogin(false);
-        loginWith(userName, password);
+        boolean loginSuccessful = loginWith(userName, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
@@ -359,6 +363,11 @@ public class UserService {
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
+        if (loginSuccessful &&
+                StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName)) &&
+                StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName)) &&
+                StringUtils.isNotBlank(allSettings.fetchANMLocation()))
+            allSharedPreferences.saveForceRemoteLogin(false);
     }
 
     public void forceRemoteLogin() {
