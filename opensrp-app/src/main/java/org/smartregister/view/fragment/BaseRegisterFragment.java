@@ -1,11 +1,7 @@
 package org.smartregister.view.fragment;
 
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -24,34 +20,18 @@ import android.widget.TextView;
 import com.github.ybq.android.spinkit.style.FadingCircle;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.anc.R;
-import org.smartregister.anc.activity.BaseRegisterActivity;
-import org.smartregister.anc.activity.HomeRegisterActivity;
-import org.smartregister.anc.activity.ProfileActivity;
-import org.smartregister.anc.contract.RegisterFragmentContract;
-import org.smartregister.anc.cursor.AdvancedMatrixCursor;
-import org.smartregister.anc.domain.AttentionFlag;
-import org.smartregister.anc.event.SyncEvent;
-import org.smartregister.anc.job.SyncServiceJob;
-import org.smartregister.anc.job.SyncSettingsServiceJob;
-import org.smartregister.anc.provider.RegisterProvider;
-import org.smartregister.anc.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.anc.util.Constants;
-import org.smartregister.anc.util.DBConstants;
-import org.smartregister.anc.util.NetworkUtils;
-import org.smartregister.anc.util.Utils;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.configurableviews.model.Field;
+import org.smartregister.AllConstants;
+import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
-import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.util.NetworkUtils;
+import org.smartregister.util.Utils;
+import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
+import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.DialogOption;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -59,17 +39,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * Created by keyman on 26/06/2018.
  */
 
-public abstract class BaseRegisterFragment extends RecyclerViewFragment implements RegisterFragmentContract.View,
+public abstract class BaseRegisterFragment extends RecyclerViewFragment implements BaseRegisterFragmentContract.View,
         SyncStatusBroadcastReceiver.SyncStatusListener {
 
-    public static final String CLICK_VIEW_NORMAL = "click_view_normal";
-    public static final String CLICK_VIEW_DOSAGE_STATUS = "click_view_dosage_status";
-    public static final String CLICK_VIEW_SYNC = "click_view_sync";
-    public static final String CLICK_VIEW_ATTENTION_FLAG = "click_view_attention_flag";
     private static final String TAG = BaseRegisterFragment.class.getCanonicalName();
     public static String TOOLBAR_TITLE = BaseRegisterActivity.class.getPackage() + ".toolbarTitle";
+
     protected RegisterActionHandler registerActionHandler = new RegisterActionHandler();
-    protected RegisterFragmentContract.Presenter presenter;
+    protected BaseRegisterFragmentContract.Presenter presenter;
     protected View rootView;
     protected TextView headerTextDisplay;
     protected TextView filterStatus;
@@ -88,7 +65,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     private ImageView qrCodeScanImageView;
     private ProgressBar syncProgressBar;
     private boolean globalQrSearch = false;
-    private ImageView womanSyncButton;
+    private ImageView syncButton;
     protected final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {
@@ -143,7 +120,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_register, container, false);
+        View view = inflater.inflate(R.layout.fragment_base_register, container, false);
         rootView = view;//handle to the root
 
         Toolbar toolbar = view.findViewById(R.id.register_toolbar);
@@ -188,16 +165,11 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         Log.i(TAG, "QR code: " + qrCode);
         if (StringUtils.isNotBlank(qrCode)) {
             filter(qrCode.replace("-", ""), "", getMainCondition(), true);
-            setAncId(qrCode);
+            setUniqueID(qrCode);
         }
     }
 
-    public void setAncId(String qrCode) {
-        HomeRegisterActivity homeRegisterActivity = (HomeRegisterActivity) getActivity();
-        android.support.v4.app.Fragment currentFragment =
-                homeRegisterActivity.findFragmentByPosition(1);
-        ((AdvancedSearchFragment) currentFragment).getAncId().setText(qrCode);
-    }
+    public abstract void setUniqueID(String qrCode);
 
     @Override
     public void setupViews(View view) {
@@ -216,22 +188,23 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             qrCodeScanImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    HomeRegisterActivity homeRegisterActivity = (HomeRegisterActivity) getActivity();
-                    if (homeRegisterActivity != null) {
-                        homeRegisterActivity.startQrCodeScanner();
+                    BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) getActivity();
+                    if (baseRegisterActivity != null) {
+                        baseRegisterActivity.startQrCodeScanner();
                     }
                 }
             });
         }
 
         //Sync
-        womanSyncButton = view.findViewById(R.id.woman_sync);
-        if (womanSyncButton != null) {
-            womanSyncButton.setOnClickListener(new View.OnClickListener() {
+        syncButton = view.findViewById(R.id.sync_refresh);
+        if (syncButton != null) {
+            syncButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-                    SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+                    //TODO StartSync
+                    //SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+                    //SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
                 }
             });
         }
@@ -299,16 +272,12 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         this.mainCondition = getMainCondition();
         this.countSelect = countSelect;
         this.mainSelect = mainSelect;
-        this.Sortqueries = DBConstants.KEY.LAST_INTERACTED_WITH + " DESC";
+        this.Sortqueries = getDefaultSortQuery();
     }
 
-    @Override
-    public void initializeAdapter(Set<org.smartregister.configurableviews.model.View> visibleColumns) {
-        RegisterProvider registerProvider = new RegisterProvider(getActivity(), commonRepository(), visibleColumns, registerActionHandler, paginationViewHandler);
-        clientAdapter = new RecyclerViewPaginatedAdapter(null, registerProvider, context().commonrepository(this.tablename));
-        clientAdapter.setCurrentlimit(20);
-        clientsView.setAdapter(clientAdapter);
-    }
+    protected abstract String getMainCondition();
+
+    protected abstract String getDefaultSortQuery();
 
     public void filter(String filterString, String joinTableString, String mainConditionString, boolean qrCode) {
         getSearchCancelView().setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
@@ -340,10 +309,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         }
     }
 
-    public void updateSortAndFilter(List<Field> filterList, Field sortField) {
-        presenter.updateSortAndFilter(filterList, sortField);
-    }
-
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
         return null;
@@ -353,10 +318,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     protected void onInitialization() {//Implement Abstract Method
     }
 
-    @Override
-    protected void startRegistration() {
-        ((HomeRegisterActivity) getActivity()).startFormActivity(Constants.JSON_FORM.ANC_REGISTER, null, null);
-    }
+    protected abstract void startRegistration();
 
     @Override
     protected void onCreation() {
@@ -364,7 +326,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         Bundle extras = getActivity().getIntent().getExtras();
         if (extras != null) {
-            boolean isRemote = extras.getBoolean(Constants.INTENT_KEY.IS_REMOTE_LOGIN);
+            boolean isRemote = extras.getBoolean(AllConstants.INTENT_KEY.IS_REMOTE_LOGIN); //TODO PROVIDE RIGHT CONSTANT
             if (isRemote) {
                 presenter.startSync();
             }
@@ -373,18 +335,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
     public boolean onBackPressed() {
         return false;
-    }
-
-    protected abstract String getMainCondition();
-
-    private void goToPatientDetailActivity(CommonPersonObjectClient patient, boolean launchDialog) {
-        if (launchDialog) {
-            Log.i(BaseRegisterFragment.TAG, patient.name);
-        }
-
-        Intent intent = new Intent(getActivity(), ProfileActivity.class);
-        intent.putExtra(Constants.INTENT_KEY.BASE_ENTITY_ID, patient.getCaseId());
-        startActivity(intent);
     }
 
     /*protected void updateLocationText() {
@@ -413,7 +363,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
     @Override
     public void onSyncInProgress(FetchStatus fetchStatus) {
-        Utils.postEvent(new SyncEvent(fetchStatus));
         refreshSyncStatusViews(fetchStatus);
     }
 
@@ -474,52 +423,19 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             if (syncProgressBar != null) {
                 syncProgressBar.setVisibility(View.VISIBLE);
             }
-            if (womanSyncButton != null) {
-                womanSyncButton.setVisibility(View.GONE);
+            if (syncButton != null) {
+                syncButton.setVisibility(View.GONE);
             }
         } else {
             if (syncProgressBar != null) {
                 syncProgressBar.setVisibility(View.GONE);
             }
-            if (womanSyncButton != null) {
-                womanSyncButton.setVisibility(View.VISIBLE);
+            if (syncButton != null) {
+                syncButton.setVisibility(View.VISIBLE);
             }
         }
     }
 
-    @Override
-    public void recalculatePagination(AdvancedMatrixCursor matrixCursor) {
-        clientAdapter.setTotalcount(matrixCursor.getCount());
-        Log.v("total count here", "" + clientAdapter.getTotalcount());
-        clientAdapter.setCurrentlimit(20);
-        if (clientAdapter.getTotalcount() > 0) {
-            clientAdapter.setCurrentlimit(clientAdapter.getTotalcount());
-        }
-        clientAdapter.setCurrentoffset(0);
-    }
-
-    @Override
-    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-        final AdvancedMatrixCursor matrixCursor = presenter.getMatrixCursor();
-        if (!globalQrSearch || matrixCursor == null) {
-            return super.onCreateLoader(id, args);
-        } else {
-            globalQrSearch = false;
-            switch (id) {
-                case LOADER_ID:
-                    // Returns a new CursorLoader
-                    return new CursorLoader(getActivity()) {
-                        @Override
-                        public Cursor loadInBackground() {
-                            return matrixCursor;
-                        }
-                    };
-                default:
-                    // An invalid id was passed in
-                    return null;
-            }
-        }
-    }
 
     ////////////////////////////////////////////////////////////////
     // Inner classes
@@ -529,21 +445,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         @Override
         public void onClick(View view) {
-            if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_NORMAL) {
-                goToPatientDetailActivity((CommonPersonObjectClient) view.getTag(), false);
-            } else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_DOSAGE_STATUS) {
-                ((HomeRegisterActivity) getActivity()).showRecordBirthPopUp((CommonPersonObjectClient) view.getTag());
-
-            } else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_ATTENTION_FLAG) {
-                //Temporary for testing UI , To remove for real dynamic data
-                List<AttentionFlag> dummyAttentionFlags = Arrays.asList(new AttentionFlag[]{new AttentionFlag("Red Flag 1", true), new
-                        AttentionFlag("Red Flag 2", true), new AttentionFlag("Yellow Flag 1", false), new AttentionFlag("Yellow Flag 2", false)});
-                ((HomeRegisterActivity) getActivity()).showAttentionFlagsDialog(dummyAttentionFlags);
-            } /*else if (view.getTag() != null && view.getTag(R.id.VIEW_ID) == CLICK_VIEW_SYNC) { // Need to implement move to catchment
-                // TODO Move to catchment
-            }*/ else {
-                onViewClicked(view);
-            }
+            onViewClicked(view);
         }
     }
 }

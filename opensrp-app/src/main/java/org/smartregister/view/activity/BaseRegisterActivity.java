@@ -2,49 +2,36 @@ package org.smartregister.view.activity;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-
 
 import org.apache.commons.lang3.StringUtils;
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 import org.json.JSONObject;
-
 import org.smartregister.R;
-import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.adapter.PagerAdapter;
+import org.smartregister.barcode.Barcode;
+import org.smartregister.barcode.BarcodeIntentIntegrator;
+import org.smartregister.barcode.BarcodeIntentResult;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.helper.BottomNavigationHelper;
 import org.smartregister.listener.BottomNavigationListener;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * Created by keyman on 26/06/2018.
@@ -54,26 +41,28 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
     private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-    @Bind(R.id.view_pager)
     protected OpenSRPViewPager mPager;
 
     protected BaseRegisterContract.Presenter presenter;
     protected BaseRegisterFragment mBaseFragment = null;
+
     protected String userInitials;
+
     protected BottomNavigationHelper bottomNavigationHelper;
     protected BottomNavigationView bottomNavigationView;
+
     private ProgressDialog progressDialog;
     private FragmentPagerAdapter mPagerAdapter;
+
     private int currentPage;
-    private AlertDialog recordBirthAlertDialog;
-    private AlertDialog attentionFlagAlertDialog;
-    private View attentionFlagDialogView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base_register);
-        ButterKnife.bind(this);
+
+        mPager = findViewById(R.id.base_view_pager);
 
         Fragment[] otherFragments = getOtherFragments();
 
@@ -94,11 +83,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         });
         initializePresenter();
         presenter.updateInitials();
-        recordBirthAlertDialog = createAlertDialog();
 
 
         registerBottomNavigation();
-        createAttentionFlagsAlertDialog();
     }
 
     private void registerBottomNavigation() {
@@ -160,36 +147,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     @Override
-    public void showLanguageDialog(final List<String> displayValues) {
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout
-                .simple_list_item_1,
-                displayValues.toArray(new String[displayValues.size()])) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                TextView view = (TextView) super.getView(position, convertView, parent);
-                view.setTextColor(
-                        ConfigurableViewsLibrary.getInstance().getContext().getColorResource(R.color.customAppThemeBlue));
-
-                return view;
-            }
-        };
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(this.getString(R.string.select_language));
-        builder.setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String selectedItem = displayValues.get(which);
-                presenter.saveLanguage(selectedItem);
-                dialog.dismiss();
-            }
-        });
-
-        final AlertDialog dialog = builder.create();
-        dialog.show();
-    }
-
-    @Override
     public void displayToast(int resourceId) {
         displayToast(getString(resourceId));
     }
@@ -233,9 +190,28 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     @Override
-    public void startRegistration() {
-        startFormActivity(Constants.JSON_FORM.ANC_REGISTER, null, null);
+    public abstract void startFormActivity(String formName, String entityId, String metaData);
+
+
+    @Override
+    public abstract void startFormActivity(JSONObject form);
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BarcodeIntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
+            BarcodeIntentResult res = BarcodeIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (StringUtils.isNotBlank(res.getContents())) {
+                Log.d("Scanned QR Code", res.getContents());
+                mBaseFragment.onQRCodeSucessfullyScanned(res.getContents());
+                mBaseFragment.setSearchTerm(res.getContents());
+            } else
+                Log.i("", "NO RESULT FOR QR CODE");
+        } else {
+            onActivityResultExtended(requestCode, resultCode, data);
+        }
     }
+
+    public abstract void onActivityResultExtended(int requestCode, int resultCode, Intent data);
 
     public void refreshList(final FetchStatus fetchStatus) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -261,31 +237,8 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         if (bottomNavigationView.getSelectedItemId() != R.id.action_clients) {
             setSelectedBottomBarMenuItem(R.id.action_clients);
-        }
-    }
-
-    @Override
-    public void onPause() {
-        EventBus.getDefault().unregister(this);
-        super.onPause();
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showProgressDialogHandler(ShowProgressDialogEvent showProgressDialogEvent) {
-        if (showProgressDialogEvent != null) {
-            showProgressDialog(R.string.saving_dialog_title);
-        }
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    public void removePatientHandler(PatientRemovedEvent event) {
-        if (event != null) {
-            Utils.removeStickyEvent(event);
-            refreshList(FetchStatus.fetched);
-            hideProgressDialog();
         }
     }
 
@@ -331,54 +284,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         barcodeIntentIntegrator.initiateScan();
     }
 
-    @Override
-    public void startFormActivity(String formName, String entityId, String metaData) {
-        try {
-            if (mBaseFragment instanceof HomeRegisterFragment) {
-                String locationId = AncApplication.getInstance().getContext().allSharedPreferences().getPreference(Constants.CURRENT_LOCATION_ID);
-                presenter.startForm(formName, entityId, metaData, locationId);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
-            displayToast(getString(R.string.error_unable_to_start_form));
-        }
-
-    }
-
-    @Override
-    public void startFormActivity(JSONObject form) {
-        Intent intent = new Intent(this, JsonFormActivity.class);
-        intent.putExtra(Constants.JSON_FORM_EXTRA.JSON, form.toString());
-        startActivityForResult(intent, JsonFormUtils.REQUEST_CODE_GET_JSON);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == JsonFormUtils.REQUEST_CODE_GET_JSON && resultCode == RESULT_OK) {
-            try {
-                String jsonString = data.getStringExtra(Constants.JSON_FORM_EXTRA.JSON);
-                Log.d("JSONResult", jsonString);
-
-                JSONObject form = new JSONObject(jsonString);
-                if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.REGISTRATION)) {
-                    presenter.saveForm(jsonString, false);
-                } else if (form.getString(JsonFormUtils.ENCOUNTER_TYPE).equals(Constants.EventType.CLOSE)) {
-                    presenter.closeAncRecord(jsonString);
-                }
-            } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
-            }
-
-        } else if (requestCode == BarcodeIntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
-            BarcodeIntentResult res = BarcodeIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            if (StringUtils.isNotBlank(res.getContents())) {
-                Log.d("Scanned QR Code", res.getContents());
-                mBaseFragment.onQRCodeSucessfullyScanned(res.getContents());
-                mBaseFragment.setSearchTerm(res.getContents());
-            } else
-                Log.i("", "NO RESULT FOR QR CODE");
-        }
-    }
 
     public void switchToFragment(final int position) {
         Log.v("we are here", "switchtofragragment");
@@ -396,86 +301,6 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
-    }
-
-    public void showRecordBirthPopUp(CommonPersonObjectClient client) {
-
-        client.getColumnmaps().put(DBConstants.KEY.EDD, "2018-12-25"); //To remove temporary for dev testing
-
-        getIntent()
-                .putExtra(Constants.INTENT_KEY.BASE_ENTITY_ID, client.getColumnmaps().get(DBConstants.KEY.BASE_ENTITY_ID));
-        recordBirthAlertDialog.setMessage(
-                "GA: " + Utils.getGestationAgeFromDate(client.getColumnmaps().get(DBConstants.KEY.EDD)) + " weeks\nEDD: "
-                        + Utils.convertDateFormat(Utils.dobStringToDate(client.getColumnmaps().get(DBConstants.KEY.EDD)),
-                        dateFormatter) + " (" + Utils.getDuration(client.getColumnmaps().get(DBConstants.KEY.EDD))
-                        + " to go). \n\n" + client.getColumnmaps().get(DBConstants.KEY.FIRST_NAME)
-                        + " should come in immediately for delivery.");
-        recordBirthAlertDialog.show();
-    }
-
-    @NonNull
-    protected AlertDialog createAlertDialog() {
-        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-        alertDialog.setTitle(getString(R.string.record_birth) + "?");
-
-        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, getString(R.string.cancel).toUpperCase(),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, getString(R.string.record_birth).toUpperCase(),
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        JsonFormUtils.launchANCCloseForm(BaseRegisterActivity.this);
-                    }
-                });
-        return alertDialog;
-    }
-
-    @Override
-    public void showAttentionFlagsDialog(List<AttentionFlag> attentionFlags) {
-        ViewGroup red_flags_container = attentionFlagDialogView.findViewById(R.id.red_flags_container);
-        ViewGroup yellow_flags_container = attentionFlagDialogView.findViewById(R.id.yellow_flags_container);
-
-        red_flags_container.removeAllViews();
-        yellow_flags_container.removeAllViews();
-
-        for (AttentionFlag flag : attentionFlags) {
-            if (flag.isRedFlag()) {
-                LinearLayout redRow = (LinearLayout) LayoutInflater.from(this)
-                        .inflate(R.layout.alert_dialog_attention_flag_row_red, red_flags_container, false);
-                ((TextView) redRow.getChildAt(1)).setText(flag.getTitle());
-                red_flags_container.addView(redRow);
-            } else {
-
-                LinearLayout yellowRow = (LinearLayout) LayoutInflater.from(this)
-                        .inflate(R.layout.alert_dialog_attention_flag_row_yellow, yellow_flags_container, false);
-                ((TextView) yellowRow.getChildAt(1)).setText(flag.getTitle());
-                yellow_flags_container.addView(yellowRow);
-            }
-        }
-
-        attentionFlagAlertDialog.show();
-    }
-
-    @NonNull
-    protected AlertDialog createAttentionFlagsAlertDialog() {
-        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-
-        attentionFlagDialogView = LayoutInflater.from(this).inflate(R.layout.alert_dialog_attention_flag, null);
-        dialogBuilder.setView(attentionFlagDialogView);
-
-        attentionFlagDialogView.findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attentionFlagAlertDialog.dismiss();
-            }
-        });
-
-        attentionFlagAlertDialog = dialogBuilder.create();
-
-        return attentionFlagAlertDialog;
     }
 
     @Override

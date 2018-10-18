@@ -17,25 +17,25 @@ public class BottomNavigationListener implements BottomNavigationView.OnNavigati
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_clients:
-                ((BaseRegisterActivity) context).switchToBaseFragment();
-                break;
-            case R.id.action_search:
-                ((BaseRegisterActivity) context).switchToFragment(1);
-                break;
-            case R.id.action_register:
-                ((BaseRegisterActivity) context).startRegistration();
-                break;
-            case R.id.action_library:
-                ((BaseRegisterActivity) context).switchToFragment(4);
-                break;
-            case R.string.action_me:
-                ((BaseRegisterActivity) context).switchToFragment(3);
-                break;
-            default:
-                break;
+
+        if (context == null) {
+            return false;
         }
+
+        BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) context;
+
+        if (item.getItemId() == R.id.action_clients) {
+            baseRegisterActivity.switchToBaseFragment();
+        } else if (item.getItemId() == R.id.action_search) {
+            baseRegisterActivity.switchToFragment(1);
+        } else if (item.getItemId() == R.id.action_register) {
+            baseRegisterActivity.startRegistration();
+        } else if (item.getItemId() == R.id.action_library) {
+            baseRegisterActivity.switchToFragment(4);
+        } else if (item.getItemId() == R.string.action_me) {
+            baseRegisterActivity.switchToFragment(3);
+        }
+
         return true;
     }
 }

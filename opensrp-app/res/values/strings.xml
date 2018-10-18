@@ -321,4 +321,25 @@
     <string name="register_menu">Register</string>
     <string name="library_menu">Library</string>
     <string name="me">Me</string>
+    <string name="action_me">action_me</string>
+
+    <!-- sync -->
+    <string name="url_separator">/</string>
+    <string name="clients_key">clients</string>
+    <string name="events_key">events</string>
+    <string name="please_wait_message">Please wait</string>
+    <string name="sync_failed_no_internet">Sync failed. Check your internet connection.</string>
+    <string name="syncing">Syncing...</string>
+    <string name="sync_failed">Sync failed</string>
+    <string name="sync_complete">Sync complete</string>
+    <string name="manual_sync_triggered">Manual Sync triggered&#8230;</string>
+
+    <!-- base register -->
+    <string name="filter">Filter</string>
+    <string name="search_hint">Find name or ID</string>
+    <string name="_0_clients_sort_updated">0 Clients (Sort: updated)</string>
+    <string name="no_record">No Record</string>
+    <string name="clients">%1$d Clients</string>
+    <string name="client">%1$d Client</string>
+
 </resources>

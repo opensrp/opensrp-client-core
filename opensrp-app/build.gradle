@@ -162,6 +162,7 @@ dependencies {
     implementation('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
+    implementation 'com.github.ybq:Android-SpinKit:1.1.0'
 
     implementation 'com.google.guava:guava:18.0'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
@@ -176,6 +177,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'cardview-v7'
 
     }
+
+    implementation 'com.evernote:android-job:1.2.6'
 }
 
 dependencies {

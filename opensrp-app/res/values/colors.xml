@@ -33,4 +33,24 @@
     <color name="transparent">#00000000</color>
     <color name="dark_grey">#999999</color>
 
+    <color name="bottom_nav_bar_background">#FAFAFA</color>
+    <color name="bottom_nav_bar_unselected_background">#CBCBCB</color>
+    <color name="bottom_nav_bar_selected_background">#288CC4</color>
+
+    <color name="light_grey">#cccccc</color>
+    <color name="light_grey_text">#7f7f7f</color>
+    <color name="lighter_grey">#e5e5e5</color>
+    <color name="lighter_grey_text">#737373</color>
+    <color name="dark_grey_text">#727272</color>
+    <color name="sort_bar_grey">#E9E9E9</color>
+
+    <color name="customAppThemeBlue">#218CC5</color>
+
+    <color name="search_bar_background_black">#2E383D</color>
+    <color name="search_textfield_background_grey">#4A5357</color>
+    <color name="search_hint_white">#dbdbdb</color>
+
+    <color name="scan_qr_code_bg_st_grey">#585858</color>
+    <color name="scan_qr_code_bg_end_grey">#3e3e3e</color>
+    <color name="scan_qr_code_bg_stk_grey">#212121</color>
 </resources>
