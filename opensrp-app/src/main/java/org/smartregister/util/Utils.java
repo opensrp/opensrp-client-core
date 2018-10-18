@@ -281,10 +281,6 @@ public class Utils {
         return row;
     }
 
-    public static String getPreference(Context context, String key, String defaultVal) {
-        return context.getSharedPreferences("preferences", Context.MODE_PRIVATE).getString(key, defaultVal);
-    }
-
     public static Gson getLongDateAwareGson() {
         Gson g = new GsonBuilder().registerTypeAdapter(DateTime.class, new JsonDeserializer<DateTime>() {
             @Override
@@ -301,13 +297,6 @@ public class Utils {
 
         }).create();
         return g;
-    }
-
-    public static boolean writePreference(Context context, String name, String value) {
-        SharedPreferences pref = context.getSharedPreferences("preferences", Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = pref.edit();
-        ed.putString(name, value);
-        return ed.commit();
     }
 
     public static boolean isConnectedToNetwork(Context context) {

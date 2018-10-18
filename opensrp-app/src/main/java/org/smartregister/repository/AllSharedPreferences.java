@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.SharedPreferences;
 
+import org.smartregister.util.Utils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -28,6 +30,7 @@ public class AllSharedPreferences {
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
+    private static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -243,6 +246,14 @@ public class AllSharedPreferences {
 
     public Boolean fetchIsSyncInitial() {
         return preferences.getBoolean(IS_SYNC_INITIAL_KEY, false);
+    }
+
+    public long fetchLastCheckTimeStamp() {
+        return preferences.getLong(LAST_CHECK_TIMESTAMP,0);
+    }
+
+    public void updateLastCheckTimeStamp(long lastSyncTimeStamp) {
+        preferences.edit().putLong(LAST_CHECK_TIMESTAMP, lastSyncTimeStamp).commit();
     }
 
 }
