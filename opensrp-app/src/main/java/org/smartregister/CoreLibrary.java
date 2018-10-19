@@ -10,6 +10,10 @@ public class CoreLibrary {
 
     private final SyncConfiguration syncConfiguration;
 
+    public static void init(Context context) {
+        init(context, null);
+    }
+
     public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration);
@@ -41,6 +45,12 @@ public class CoreLibrary {
      *
      * @param context
      */
+    public static void reset(Context context) {
+        if (context != null) {
+            instance = new CoreLibrary(context, null);
+        }
+    }
+
     public static void reset(Context context, SyncConfiguration syncConfiguration) {
         if (context != null) {
             instance = new CoreLibrary(context, syncConfiguration);

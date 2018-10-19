@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.job.mock.MockSyncIntentService;
+import org.smartregister.sync.intent.SyncIntentService;
 
 /**
  * Created by ndegwamartin on 10/09/2018.
@@ -36,7 +36,7 @@ public class SyncServiceJobTest extends BaseUnitTest {
     @Test
     public void testOnRunJobStartsCorrectService() {
 
-        SyncServiceJob syncServiceJob = new SyncServiceJob(MockSyncIntentService.class);
+        SyncServiceJob syncServiceJob = new SyncServiceJob(SyncIntentService.class);
         SyncServiceJob syncServiceJobSpy = Mockito.spy(syncServiceJob);
 
         ArgumentCaptor<Intent> intent = ArgumentCaptor.forClass(Intent.class);
@@ -48,6 +48,6 @@ public class SyncServiceJobTest extends BaseUnitTest {
 
         Mockito.verify(context).startService(intent.capture());
 
-        Assert.assertEquals("org.smartregister.job.mock.MockSyncIntentService", intent.getValue().getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.sync.intent.SyncIntentService", intent.getValue().getComponent().getClassName());
     }
 }
