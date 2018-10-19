@@ -381,5 +381,8 @@ public class AllConstants {
 
     public static final class INTENT_KEY {
         public static final String TO_RESCHEDULE = "to_reschedule";
+        public static final String SYNC_TOTAL_RECORDS = "sync_total_records";
+        public static final String VALIDATED_RECORDS = "validated_records";
+        public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
     }
 }

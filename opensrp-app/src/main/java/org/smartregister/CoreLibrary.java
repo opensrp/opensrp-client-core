@@ -8,9 +8,11 @@ public class CoreLibrary {
 
     private static CoreLibrary instance;
 
-    public static void init(Context context) {
+    private final SyncConfiguration syncConfiguration;
+
+    public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
-            instance = new CoreLibrary(context);
+            instance = new CoreLibrary(context, syncConfiguration);
         }
     }
 
@@ -24,8 +26,9 @@ public class CoreLibrary {
         return instance;
     }
 
-    private CoreLibrary(Context contextArg) {
+    private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration) {
         context = contextArg;
+        this.syncConfiguration = syncConfiguration;
     }
 
     public Context context() {
@@ -38,10 +41,13 @@ public class CoreLibrary {
      *
      * @param context
      */
-    public static void reset(Context context) {
+    public static void reset(Context context, SyncConfiguration syncConfiguration) {
         if (context != null) {
-            instance = new CoreLibrary(context);
+            instance = new CoreLibrary(context, syncConfiguration);
         }
     }
 
+    public SyncConfiguration getSyncConfiguration() {
+        return syncConfiguration;
+    }
 }

@@ -35,6 +35,7 @@ import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
 import org.smartregister.repository.TimelineEventRepository;
+import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AlertService;
@@ -196,6 +197,7 @@ public class Context {
     private Map<String, String> customHumanReadableConceptResponse;
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
+    private UniqueIdRepository uniqueIdRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1098,6 +1100,13 @@ public class Context {
             eventClientRepository = new EventClientRepository(getRepository());
         }
         return eventClientRepository;
+    }
+
+    public UniqueIdRepository getUniqueIdRepository() {
+        if (uniqueIdRepository == null) {
+            uniqueIdRepository = new UniqueIdRepository(getRepository());
+        }
+        return uniqueIdRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
