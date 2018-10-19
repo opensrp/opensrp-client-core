@@ -42,7 +42,7 @@ public class UniqueIdRepository extends BaseRepository {
         super(repository);
     }
 
-    protected static void createTable(SQLiteDatabase database) {
+    public static void createTable(SQLiteDatabase database) {
         database.execSQL(UniqueIds_SQL);
     }
 
