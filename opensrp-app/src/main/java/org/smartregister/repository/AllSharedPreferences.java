@@ -2,8 +2,6 @@ package org.smartregister.repository;
 
 import android.content.SharedPreferences;
 
-import org.smartregister.util.Utils;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -16,8 +14,8 @@ import static org.smartregister.AllConstants.DRISHTI_BASE_URL;
 import static org.smartregister.AllConstants.ENCRYPTED_GROUP_ID_PREFIX;
 import static org.smartregister.AllConstants.ENCRYPTED_PASSWORD_PREFIX;
 import static org.smartregister.AllConstants.FORCE_REMOTE_LOGIN;
-import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.IS_SYNC_INITIAL_KEY;
+import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.LANGUAGE_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.PIONEER_USER;
 import static org.smartregister.AllConstants.SERVER_TIMEZONE;

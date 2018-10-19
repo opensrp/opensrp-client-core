@@ -24,7 +24,6 @@ import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
-import org.smartregister.util.StringUtil;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.ByteArrayInputStream;
