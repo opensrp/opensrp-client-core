@@ -21,6 +21,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.smartregister.R;
@@ -65,7 +66,7 @@ public abstract class RecyclerViewFragment extends
     public String tablename;
     public String countSelect;
     public String joinTable = "";
-
+    public String joinTables[];
     public RecyclerView clientsView;
     public RecyclerViewPaginatedAdapter clientAdapter;
 
@@ -443,6 +444,32 @@ public abstract class RecyclerViewFragment extends
         return query;
     }
 
+    private String filterandSortJoinQuery() {
+        SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(mainSelect);
+
+        String query = "";
+        try {
+            if (isValidFilterForFts(commonRepository())) {
+                String sql = sqb
+                        .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
+                                clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
+                List<String> ids = commonRepository().findSearchIds(sql);
+                query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
+                        Sortqueries);
+                query = sqb.Endquery(query);
+            } else {
+                sqb.addCondition(filters);
+                query = sqb.orderbyCondition(Sortqueries);
+                query = sqb.Endquery(sqb.addlimitandOffset(query, clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset()));
+
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), e.toString(), e);
+        }
+
+        return query;
+    }
+
     public void countExecute() {
         Cursor c = null;
 
@@ -506,9 +533,14 @@ public abstract class RecyclerViewFragment extends
                         if (args != null && args.getBoolean(COUNT)) {
                             countExecute();
                         }
-
+                        String query = "";
                         // Select register query
-                        String query = filterandSortQuery();
+
+                        if(ArrayUtils.isNotEmpty(joinTables)){
+                            query = filterandSortJoinQuery();
+                        }else{
+                            query = filterandSortQuery();
+                        }
                         return commonRepository().rawCustomQueryForAdapter(query);
                     }
                 };
