@@ -444,7 +444,7 @@ public abstract class RecyclerViewFragment extends
         return query;
     }
 
-    private String filterandSortJoinQuery() {
+    private String filterandSortJoinArrayQuery() {
         SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(mainSelect);
 
         String query = "";
@@ -537,7 +537,7 @@ public abstract class RecyclerViewFragment extends
                         // Select register query
 
                         if(ArrayUtils.isNotEmpty(joinTables)){
-                            query = filterandSortJoinQuery();
+                            query = filterandSortJoinArrayQuery();
                         }else{
                             query = filterandSortQuery();
                         }
