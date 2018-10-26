@@ -24,8 +24,8 @@ import java.util.Date;
 import java.util.Locale;
 
 public abstract class MeFragment extends Fragment implements MeContract.View {
-    private MeFragmentActionHandler meFragmentActionHandler = new MeFragmentActionHandler();
-    private MeContract.Presenter presenter;
+    protected MeFragmentActionHandler meFragmentActionHandler = new MeFragmentActionHandler();
+    protected MeContract.Presenter presenter;
 
     private TextView initials;
     private TextView userName;

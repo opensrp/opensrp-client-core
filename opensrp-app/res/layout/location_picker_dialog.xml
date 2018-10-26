@@ -14,7 +14,7 @@
         android:layout_marginRight="@dimen/loc_picker_service_location_title_margin"
         android:layout_marginTop="@dimen/loc_picker_service_location_title_margin_top"
         android:text="@string/service_location"
-        android:textColor="@color/text_color_primary"
+        android:textColor="@color/lighter_grey_text"
         android:textSize="20sp"
         android:textStyle="bold" />
 

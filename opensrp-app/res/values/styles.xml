@@ -306,4 +306,9 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="me_page_location_selector">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
 </resources>

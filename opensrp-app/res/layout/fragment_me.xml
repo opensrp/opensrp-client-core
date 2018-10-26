@@ -263,7 +263,7 @@
                     android:layout_marginEnd="@dimen/register_search_bar_margin"
                     android:text="@string/data_synced"
                     android:textColor="@color/dark_grey_text"
-                    android:textSize="@dimen/login_build_text_view_textSize"
+                    android:textSize="@dimen/me_page_build_text_view_size"
                     android:typeface="sans" />
 
                 <TextView
@@ -273,7 +273,7 @@
                     android:layout_marginEnd="@dimen/register_search_bar_margin"
                     android:text="@string/app_version"
                     android:textColor="@color/dark_grey_text"
-                    android:textSize="@dimen/login_build_text_view_textSize"
+                    android:textSize="@dimen/me_page_build_text_view_size"
                     android:typeface="sans" />
 
             </LinearLayout>
