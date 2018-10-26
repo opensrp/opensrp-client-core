@@ -27,13 +27,13 @@ public class BottomNavigationListener implements BottomNavigationView.OnNavigati
         if (item.getItemId() == R.id.action_clients) {
             baseRegisterActivity.switchToBaseFragment();
         } else if (item.getItemId() == R.id.action_search) {
-            baseRegisterActivity.switchToFragment(1);
+            baseRegisterActivity.switchToFragment(BaseRegisterActivity.ADVANCED_SEARCH_POSITION);
         } else if (item.getItemId() == R.id.action_register) {
             baseRegisterActivity.startRegistration();
         } else if (item.getItemId() == R.id.action_library) {
-            baseRegisterActivity.switchToFragment(4);
+            baseRegisterActivity.switchToFragment(BaseRegisterActivity.LIBRARY_POSITION);
         } else if (item.getItemId() == R.string.action_me) {
-            baseRegisterActivity.switchToFragment(3);
+            baseRegisterActivity.switchToFragment(BaseRegisterActivity.ME_POSITION);
         }
 
         return true;

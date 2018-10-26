@@ -56,6 +56,11 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     private int currentPage;
 
+    public static int BASE_REG_POSITION;
+    public static int ADVANCED_SEARCH_POSITION;
+    public static int SORT_FILTER_POSITION;
+    public static int LIBRARY_POSITION;
+    public static int ME_POSITION;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,7 +216,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         }
     }
 
-    public abstract void onActivityResultExtended(int requestCode, int resultCode, Intent data);
+    protected abstract void onActivityResultExtended(int requestCode, int resultCode, Intent data);
 
     public void refreshList(final FetchStatus fetchStatus) {
         if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -309,7 +314,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void switchToBaseFragment() {
-        switchToFragment(0);
+        switchToFragment(BASE_REG_POSITION);
     }
 
     public void setSelectedBottomBarMenuItem(int itemId) {
