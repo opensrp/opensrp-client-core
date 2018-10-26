@@ -342,4 +342,10 @@
     <string name="clients">%1$d Clients</string>
     <string name="client">%1$d Client</string>
 
+    <string name="library_placeholder">Library Placeholder</string>
+    <string name="service_location">Service Location</string>
+
+    <string name="app_version">App version: %1$s (built on %2$s)</string>
+    <string name="data_synced">Data synced: %1$s at %2$s</string>
+
 </resources>

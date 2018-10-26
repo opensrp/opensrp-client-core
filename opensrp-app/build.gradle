@@ -179,6 +179,7 @@ dependencies {
     }
 
     implementation 'com.evernote:android-job:1.2.6'
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
 }
 
 dependencies {
