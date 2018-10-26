@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.db.EventClient;
@@ -28,7 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public abstract class SyncIntentService extends IntentService {
+public class SyncIntentService extends IntentService {
     private static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
 
@@ -83,7 +84,8 @@ public abstract class SyncIntentService extends IntentService {
 
     private synchronized void fetchRetry(final int count) {
         try {
-            if (StringUtils.isBlank(getSyncFilterParam()) || StringUtils.isBlank(getSyncFilterValue())) {
+            SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+            if (StringUtils.isBlank(configs.getSyncFilterParam()) || StringUtils.isBlank(configs.getSyncFilterValue())) {
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -98,7 +100,7 @@ public abstract class SyncIntentService extends IntentService {
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
 
-            String url = baseUrl + SYNC_URL + "?" + getSyncFilterParam() + "=" + getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
+            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
             Log.i(SyncIntentService.class.getName(), "URL: " + url);
 
             if (httpAgent == null) {
@@ -140,7 +142,7 @@ public abstract class SyncIntentService extends IntentService {
     }
 
     public void fetchFailed(int count) {
-        if (count < getSyncMaxRetries()) {
+        if (count < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries()) {
             int newCount = count + 1;
             fetchRetry(newCount);
         } else {
@@ -271,12 +273,5 @@ public abstract class SyncIntentService extends IntentService {
         }
         return count;
     }
-
-
-    public abstract int getSyncMaxRetries();
-
-    public abstract String getSyncFilterParam();
-
-    public abstract String getSyncFilterValue();
 
 }

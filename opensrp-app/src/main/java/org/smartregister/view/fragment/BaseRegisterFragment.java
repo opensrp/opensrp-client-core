@@ -24,6 +24,8 @@ import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.job.SyncServiceJob;
+import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.NetworkUtils;
@@ -202,9 +204,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             syncButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    //TODO StartSync
-                    //SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-                    //SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
+                    SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+                    SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
                 }
             });
         }

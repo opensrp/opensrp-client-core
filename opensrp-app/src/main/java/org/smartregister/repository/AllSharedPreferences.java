@@ -28,6 +28,9 @@ public class AllSharedPreferences {
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
+    public final static String LAST_SETTINGS_SYNC_TIMESTAMP = "LAST_SETTINGS_SYNC_TIMESTAMP";
+
+
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -243,6 +246,14 @@ public class AllSharedPreferences {
 
     public Boolean fetchIsSyncInitial() {
         return preferences.getBoolean(IS_SYNC_INITIAL_KEY, false);
+    }
+
+    public void updateLastSettingsSyncTimeStamp(long lastSettingsSync) {
+        preferences.edit().putLong(LAST_SETTINGS_SYNC_TIMESTAMP, lastSettingsSync).commit();
+    }
+
+    public long fetchLastSettingsSyncTimeStamp() {
+        return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
 
 }

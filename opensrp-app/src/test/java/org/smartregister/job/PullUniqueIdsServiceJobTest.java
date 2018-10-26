@@ -14,12 +14,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.sync.intent.SyncIntentService;
 
 /**
  * Created by ndegwamartin on 10/09/2018.
  */
-public class SyncServiceJobTest extends BaseUnitTest {
+public class PullUniqueIdsServiceJobTest extends BaseUnitTest {
 
     @Mock
     private Context context;
@@ -36,18 +35,18 @@ public class SyncServiceJobTest extends BaseUnitTest {
     @Test
     public void testOnRunJobStartsCorrectService() {
 
-        SyncServiceJob syncServiceJob = new SyncServiceJob(SyncIntentService.class);
-        SyncServiceJob syncServiceJobSpy = Mockito.spy(syncServiceJob);
+        PullUniqueIdsServiceJob pullUniqueIdsServiceJob = new PullUniqueIdsServiceJob();
+        PullUniqueIdsServiceJob pullUniqueIdsServiceJobSpy = Mockito.spy(pullUniqueIdsServiceJob);
 
         ArgumentCaptor<Intent> intent = ArgumentCaptor.forClass(Intent.class);
 
-        Mockito.doReturn(context).when(syncServiceJobSpy).getApplicationContext();
+        Mockito.doReturn(context).when(pullUniqueIdsServiceJobSpy).getApplicationContext();
         Mockito.doReturn(componentName).when(context).startService(ArgumentMatchers.any(Intent.class));
 
-        syncServiceJobSpy.onRunJob(null);
+        pullUniqueIdsServiceJobSpy.onRunJob(null);
 
         Mockito.verify(context).startService(intent.capture());
 
-        Assert.assertEquals("org.smartregister.sync.intent.SyncIntentService", intent.getValue().getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.sync.intent.PullUniqueIdsIntentService", intent.getValue().getComponent().getClassName());
     }
 }
