@@ -40,7 +40,7 @@ public class LocationHelper {
     private HashMap<String, Pair<String, String>> childAndParentLocationIds;
     private String defaultLocation;
     private ArrayList<String> allowedLevels;
-    
+
     private LocationHelper(ArrayList<String> allowedLevels, String defaultLocation) {
 
         childAndParentLocationIds = new HashMap<>();
@@ -49,10 +49,13 @@ public class LocationHelper {
         this.defaultLocation = defaultLocation;
     }
 
-    public static LocationHelper getInstance(ArrayList<String> allowedLevels, String defaultLocation) {
+    public static void init(ArrayList<String> allowedLevels, String defaultLocation) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocation) && allowedLevels.contains(defaultLocation)) {
             instance = new LocationHelper(allowedLevels, defaultLocation);
         }
+    }
+
+    public static LocationHelper getInstance() {
         return instance;
     }
 
@@ -157,9 +160,8 @@ public class LocationHelper {
     /**
      * This method returns the name hierarchy of a location given it's id
      *
-     * @param locationId The ID for the location we want the hierarchy for
-     * @param  onlyAllowedLevels Restrict the location name hierarchy to only the allowed levels
-     *
+     * @param locationId        The ID for the location we want the hierarchy for
+     * @param onlyAllowedLevels Restrict the location name hierarchy to only the allowed levels
      * @return The name hierarchy (starting with the top-most parent) for the location or {@code NULL} if location id is not found
      */
     public List<String> getOpenMrsLocationHierarchy(String locationId, boolean onlyAllowedLevels) {
@@ -511,12 +513,12 @@ public class LocationHelper {
     }
 
     /**
-     *  Maps location name {@param currLocation} to both its parent and child (self) OpenMRS location ids
+     * Maps location name {@param currLocation} to both its parent and child (self) OpenMRS location ids
+     * <p>
+     * The child location is taken to be the {@param currLocation} and the method attempts to find
+     * its location id and that of its parent
      *
-     *  The child location is taken to be the {@param currLocation} and the method attempts to find
-     *  its location id and that of its parent
-     *
-     *  @return a  {@link Pair} representing the parent and child OpenMRS location ids
+     * @return a  {@link Pair} representing the parent and child OpenMRS location ids
      */
     private Pair<String, String> getParentAndChildLocationIds(String currLocation) {
 
@@ -534,7 +536,7 @@ public class LocationHelper {
             String childLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
             String parentLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 1);
             if (locationNameHierarchy.size() > 1) {
-               parentLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 2);
+                parentLocationName = locationNameHierarchy.get(locationNameHierarchy.size() - 2);
             }
 
             childLocationId = getOpenMrsLocationId(childLocationName);
@@ -566,7 +568,7 @@ public class LocationHelper {
 
     public void setParentLocationId(String parentId) {
 
-        parentLocationId =  parentId;
+        parentLocationId = parentId;
     }
 
     public void setChildLocationId(String childId) {
