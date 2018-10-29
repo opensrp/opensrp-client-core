@@ -321,4 +321,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         bottomNavigationView.setSelectedItemId(itemId);
     }
 
+    public void setSearchTerm(String searchTerm) {
+        mBaseFragment.setSearchTerm(searchTerm);
+    }
 }

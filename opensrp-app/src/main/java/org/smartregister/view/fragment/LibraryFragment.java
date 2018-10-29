@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import org.smartregister.R;
 import org.smartregister.view.contract.LibraryContract;
 
-public class LibraryFragment extends Fragment implements LibraryContract.View {
+public abstract class LibraryFragment extends Fragment implements LibraryContract.View {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
