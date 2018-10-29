@@ -363,9 +363,12 @@ public class UserService {
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
         if (loginSuccessful &&
-                StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName)) &&
-                StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName)) &&
-                StringUtils.isNotBlank(allSettings.fetchANMLocation()))
+                (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
+                (StringUtils.isBlank(getUserDefaultTeamId(userInfo)) ||
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName))) &&
+                (getUserLocation(userInfo) != null ||
+                        StringUtils.isNotBlank(allSettings.fetchANMLocation())))
             allSharedPreferences.saveForceRemoteLogin(false);
     }
 
