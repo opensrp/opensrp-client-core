@@ -57,6 +57,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -479,4 +480,13 @@ public class Utils {
         pc.setColumnmaps(commonPersonObject.getColumnmaps());
         return pc;
     }
+    public static boolean isEmptyCollection(Collection collection) {
+        return collection == null || collection.isEmpty();
+    }
+
+    public static boolean isEmptyMap(Map map) {
+        return map == null || map.isEmpty();
+    }
+
+
 }
