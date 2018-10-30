@@ -19,7 +19,7 @@ public class SampleApplication extends DrishtiApplication {
         context.updateApplicationContext(getApplicationContext());
 
         //Initialize Modules
-        CoreLibrary.init(context);
+        CoreLibrary.init(context,null);
     }
 
     public static synchronized SampleApplication getInstance() {
