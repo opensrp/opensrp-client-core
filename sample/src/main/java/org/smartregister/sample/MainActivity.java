@@ -9,6 +9,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -26,6 +28,10 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        SmartRegisterQueryBuilder srqb = new SmartRegisterQueryBuilder();
+        String query = srqb.searchQueryFts("ec_household",new String[]{"ec_woman","ec_child","ec_member"},"date_removed IS NULL ","ali","",20,0);
+        System.out.println(query);
+
     }
 
     @Override
