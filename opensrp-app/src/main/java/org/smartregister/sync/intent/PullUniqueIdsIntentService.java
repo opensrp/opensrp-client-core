@@ -8,6 +8,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
@@ -69,7 +70,7 @@ public class PullUniqueIdsIntentService extends IntentService {
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new RuntimeException(ID_URL + " not returned data");
+            throw new NoHttpResponseException(ID_URL + " not returned data");
         }
 
         return new JSONObject((String) resp.payload());
