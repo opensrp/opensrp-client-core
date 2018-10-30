@@ -29,6 +29,8 @@ public class AllSharedPreferences {
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
     private static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
+    public final static String LAST_SETTINGS_SYNC_TIMESTAMP = "LAST_SETTINGS_SYNC_TIMESTAMP";
+
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -252,6 +254,14 @@ public class AllSharedPreferences {
 
     public void updateLastCheckTimeStamp(long lastSyncTimeStamp) {
         preferences.edit().putLong(LAST_CHECK_TIMESTAMP, lastSyncTimeStamp).commit();
+    }
+
+    public void updateLastSettingsSyncTimeStamp(long lastSettingsSync) {
+        preferences.edit().putLong(LAST_SETTINGS_SYNC_TIMESTAMP, lastSettingsSync).commit();
+    }
+
+    public long fetchLastSettingsSyncTimeStamp() {
+        return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
 
 }
