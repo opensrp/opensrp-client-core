@@ -85,6 +85,9 @@ public class AllConstants {
     public static final String DATASTORE_MANAGER_DIR = "data";
     public static final int ANIMATION_FADE_IN_TIME = 250;
 
+    public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
+    public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
+
     public static class Immunizations {
         public static final String BCG = "bcg";
 
@@ -374,5 +377,12 @@ public class AllConstants {
         // using MEM_CACHE_PERCENT should not exceed this maximum 10MB)
         public static final String DISK_CACHE_DIR = "opensrp-images";
 
+    }
+
+    public static final class INTENT_KEY {
+        public static final String TO_RESCHEDULE = "to_reschedule";
+        public static final String SYNC_TOTAL_RECORDS = "sync_total_records";
+        public static final String VALIDATED_RECORDS = "validated_records";
+        public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
     }
 }

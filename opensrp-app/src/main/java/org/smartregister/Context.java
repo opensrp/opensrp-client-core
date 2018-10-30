@@ -25,6 +25,7 @@ import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
+import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
@@ -34,6 +35,7 @@ import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
 import org.smartregister.repository.TimelineEventRepository;
+import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.ANMService;
 import org.smartregister.service.ActionService;
 import org.smartregister.service.AlertService;
@@ -194,6 +196,8 @@ public class Context {
     private CommonFtsObject commonFtsObject;
     private Map<String, String> customHumanReadableConceptResponse;
     private HashMap<String, CommonRepository> MapOfCommonRepository;
+    private EventClientRepository eventClientRepository;
+    private UniqueIdRepository uniqueIdRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1090,5 +1094,20 @@ public class Context {
     public void setDetailsRepository(DetailsRepository _detailsRepository) {
         detailsRepository = _detailsRepository;
     }
+
+    public EventClientRepository getEventClientRepository() {
+        if (eventClientRepository == null) {
+            eventClientRepository = new EventClientRepository(getRepository());
+        }
+        return eventClientRepository;
+    }
+
+    public UniqueIdRepository getUniqueIdRepository() {
+        if (uniqueIdRepository == null) {
+            uniqueIdRepository = new UniqueIdRepository(getRepository());
+        }
+        return uniqueIdRepository;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////
 }
