@@ -17,11 +17,8 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
-import org.smartregister.sync.helper.ECSyncHelper;
 
 import java.util.List;
-
-import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * Created by ndegwamartin on 07/09/2018.
