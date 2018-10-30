@@ -1,5 +1,6 @@
 package org.smartregister.cursoradapter;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.commonregistry.CommonFtsObject;
 
@@ -264,7 +265,42 @@ public class SmartRegisterQueryBuilder {
                         + matchPhrase(phrase) + " )";
         return phraseClause;
     }
+    private String phraseClause(String tableName, String joinTable[], String mainCondition, String
+            phrase) {
+        String join_queries[] = new String[joinTable.length];
+        String join_query = "";
+        for(int i =0;i<joinTable.length;i++){
+            join_queries[i] = " SELECT "+ CommonFtsObject.relationalIdColumn + " " + "FROM " + CommonFtsObject
+                    .searchTableName(joinTable[i]) + " WHERE " + CommonFtsObject.phraseColumn
+                    + matchPhrase(phrase) + " UNION ";
+        }
+        join_queries[join_queries.length-1] = join_queries[join_queries.length-1].replace(" UNION ","");
+        for(int i=0;i<join_queries.length;i++){
+            join_query+=join_queries[i]+" ";
+        }
+        String phraseClause =
+                " WHERE " + CommonFtsObject.idColumn + " IN ( SELECT " + CommonFtsObject.idColumn
+                        + " FROM " + CommonFtsObject.searchTableName(tableName) + " WHERE "
+                        + mainConditionClause(mainCondition) + CommonFtsObject.phraseColumn
+                        + matchPhrase(phrase) + " UNION " +
+                        join_query
+                        + " )";
+        return phraseClause;
+    }
 
+    public String searchQueryFts(String tablename, String searchJoinTable[], String mainCondition,
+                                 String searchFilter, String sort, int limit, int offset) {
+        if (ArrayUtils.isNotEmpty(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {
+            String query = "SELECT " + CommonFtsObject.idColumn + " FROM " + CommonFtsObject
+                    .searchTableName(tablename) + phraseClause(tablename, searchJoinTable,
+                    mainCondition, searchFilter) + orderByClause(sort) + limitClause(limit, offset);
+            return query;
+        }
+        String query = "SELECT " + CommonFtsObject.idColumn + " FROM " + CommonFtsObject
+                .searchTableName(tablename) + phraseClause(mainCondition, searchFilter)
+                + orderByClause(sort) + limitClause(limit, offset);
+        return query;
+    }
     private String matchPhrase(String phrase) {
         if (phrase == null) {
             phrase = "";
