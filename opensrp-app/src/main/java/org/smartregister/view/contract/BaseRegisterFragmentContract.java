@@ -24,7 +24,9 @@ public interface BaseRegisterFragmentContract {
 
         void hideProgressView();
 
-        void showNotFoundPopup(String whoAncId);
+        void showNotFoundPopup(String opensrpId);
+
+        void setTotalPatients();
     }
 
     interface Presenter {

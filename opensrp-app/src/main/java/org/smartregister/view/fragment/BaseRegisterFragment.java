@@ -257,7 +257,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         setTotalPatients();
     }
 
-    private void setTotalPatients() {
+    @Override
+    public void setTotalPatients() {
         if (headerTextDisplay != null) {
             headerTextDisplay.setText(clientAdapter.getTotalcount() > 1 ?
                     String.format(getString(R.string.clients), clientAdapter.getTotalcount()) :
@@ -282,6 +283,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
     public void filter(String filterString, String joinTableString, String mainConditionString, boolean qrCode) {
         getSearchCancelView().setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
+        if (isEmpty(filterString)) {
+            Utils.hideKeyboard(getActivity());
+        }
 
         this.filters = filterString;
         this.joinTable = joinTableString;
@@ -295,6 +299,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         } else {
             filterandSortExecute();
         }
+
+        setTotalPatients();
 
     }
 
