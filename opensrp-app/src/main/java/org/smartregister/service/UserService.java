@@ -6,6 +6,7 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
@@ -308,7 +309,8 @@ public class UserService {
         return httpAgent.fetch(requestURL);
     }
 
-    private void loginWith(String userName, String password) {
+    private boolean loginWith(String userName, String password) {
+        boolean loginSuccessful = true;
         if (usesGroupIdAsDBPassword(userName)) {
             String encryptedGroupId = allSharedPreferences.fetchEncryptedGroupId(userName);
             try {
@@ -319,11 +321,13 @@ public class UserService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                loginSuccessful = false;
             }
         } else {
             setupContextForLogin(userName, password);
         }
         allSettings.registerANM(userName, password);
+        return loginSuccessful;
     }
 
     /**
@@ -350,8 +354,7 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        allSharedPreferences.saveForceRemoteLogin(false);
-        loginWith(userName, password);
+        boolean loginSuccessful = loginWith(userName, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
@@ -359,6 +362,14 @@ public class UserService {
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
+        if (loginSuccessful &&
+                (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
+                (StringUtils.isBlank(getUserDefaultTeamId(userInfo)) ||
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName))) &&
+                (getUserLocation(userInfo) != null ||
+                        StringUtils.isNotBlank(allSettings.fetchANMLocation())))
+            allSharedPreferences.saveForceRemoteLogin(false);
     }
 
     public void forceRemoteLogin() {

@@ -563,7 +563,6 @@ public class Context {
 
     public AllSharedPreferences allSharedPreferences() {
         if (allSharedPreferences == null) {
-            setDefaultValues(this.applicationContext, R.xml.preferences, false);
             allSharedPreferences = new AllSharedPreferences(
                     getDefaultSharedPreferences(this.applicationContext));
         }

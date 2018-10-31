@@ -1,4 +1,4 @@
-package org.smartregister.sync;
+package org.smartregister.sync.helper;
 
 import junit.framework.Assert;
 
@@ -9,18 +9,21 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.db.EventClient;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
-import org.smartregister.sync.helper.ECSyncHelper;
 
 import java.util.List;
 
 /**
  * Created by ndegwamartin on 07/09/2018.
  */
+@PrepareForTest(CoreLibrary.class)
 public class ECSyncHelperTest extends BaseUnitTest {
 
     private ECSyncHelper syncHelper;
@@ -31,12 +34,15 @@ public class ECSyncHelperTest extends BaseUnitTest {
     @Mock
     private EventClientRepository eventClientRepository;
 
+    @Mock
+    private AllSharedPreferences allSharedPreferences;
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        syncHelper = ECSyncHelper.getInstance(RuntimeEnvironment.application);
+        syncHelper = new ECSyncHelper(RuntimeEnvironment.application, eventClientRepository);
         Whitebox.setInternalState(syncHelper, EVENT_CLIENT_REPOSITORY, eventClientRepository);
+        Whitebox.setInternalState(syncHelper, allSharedPreferences, allSharedPreferences);
     }
 
     @Test
