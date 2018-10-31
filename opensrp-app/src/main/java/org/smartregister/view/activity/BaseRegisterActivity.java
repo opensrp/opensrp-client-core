@@ -40,7 +40,6 @@ import java.util.List;
 public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {
 
     public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
-    private static final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     protected OpenSRPViewPager mPager;
 
     protected BaseRegisterContract.Presenter presenter;

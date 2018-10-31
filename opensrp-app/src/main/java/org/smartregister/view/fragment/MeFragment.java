@@ -134,9 +134,10 @@ public abstract class MeFragment extends Fragment implements MeContract.View {
     private class MeFragmentActionHandler implements View.OnClickListener {
         @Override
         public void onClick(View view) {
-            if (view.getId() == R.id.setting_section) {
+            /*if (view.getId() == R.id.setting_section) {
                 //ToDO Add the functionality for the setting page after that is decided.
-            } else if (view.getId() == R.id.me_location_section) {
+            } else */
+            if (view.getId() == R.id.me_location_section) {
                 if (facilitySelection != null) {
                     LocationPickerView locationPickerView = new LocationPickerView(getContext());
                     locationPickerView.init();

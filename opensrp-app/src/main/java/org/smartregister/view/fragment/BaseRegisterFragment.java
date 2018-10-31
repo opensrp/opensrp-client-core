@@ -66,8 +66,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     };
     private ImageView qrCodeScanImageView;
     private ProgressBar syncProgressBar;
-    private boolean globalQrSearch = false;
     private ImageView syncButton;
+    protected boolean globalQrSearch = false;
     protected final TextWatcher textWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence charSequence, int i, int i2, int i3) {

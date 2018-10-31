@@ -1,12 +1,8 @@
 package org.smartregister.view.contract;
 
 import android.content.Context;
-import android.util.Pair;
 
-import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONObject;
-import org.smartregister.clientandeventmodel.Client;
-import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.FetchStatus;
 
 import java.util.List;
