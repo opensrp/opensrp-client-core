@@ -19,8 +19,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.R;
-import org.smartregister.anc.R;
-import org.smartregister.anc.activity.BaseUnitTest;
 
 @RunWith(PowerMockRunner.class)
 public class BottomNavigationHelperTest extends BaseUnitTest {
