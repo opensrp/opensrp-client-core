@@ -30,7 +30,6 @@ import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
