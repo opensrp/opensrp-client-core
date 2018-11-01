@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/client_list_header_dark_grey"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_base_register" />
+
+    <include
+        layout="@layout/base_register_search_bar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize" />
+
+    <LinearLayout
+        android:id="@+id/clients_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_header_height"
+        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
+        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone" />
+
+    <include
+        layout="@layout/base_register_sort_filter_bar"
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@drawable/listview_background_rounded">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:visibility="invisible" />
+
+        <ProgressBar
+            android:id="@+id/client_list_progress"
+            style="@android:style/Widget.Holo.Light.ProgressBar.Large.Inverse"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:padding="32dp"
+            android:text="@string/no_record"
+            android:visibility="gone" />
+    </FrameLayout>
+
+</LinearLayout>

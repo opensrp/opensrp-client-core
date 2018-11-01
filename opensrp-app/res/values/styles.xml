@@ -249,6 +249,13 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+
+    <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
+       <!-- <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primaryDark</item>
+        <item name="colorAccent">@color/accent</item> -->
+    </style>
+
     <style name="CustomFontTextViewStyle.ListView.Small.Bold" parent="CustomFontTextViewStyle">
         <item name="fontVariant">bold</item>
     </style>
@@ -293,6 +300,15 @@
         <item name="fontVariant">medium</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="me_page_location_selector">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/text_black</item>
     </style>
 
 </resources>

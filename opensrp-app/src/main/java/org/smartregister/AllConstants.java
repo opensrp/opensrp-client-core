@@ -85,6 +85,8 @@ public class AllConstants {
     public static final String DATASTORE_MANAGER_DIR = "data";
     public static final int ANIMATION_FADE_IN_TIME = 250;
 
+    public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
+
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
 
@@ -384,5 +386,14 @@ public class AllConstants {
         public static final String SYNC_TOTAL_RECORDS = "sync_total_records";
         public static final String VALIDATED_RECORDS = "validated_records";
         public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
+        public static final String IS_REMOTE_LOGIN = "is_remote_login";
+    }
+
+    public static final class REGISTER_FRAGMENT {
+        public static final String BASE_REGISTER = "base_register";
+        public static final String ADVANCED_SEARCH = "advanced_search";
+        public static final String SORT_FILTER = "sort_filter";
+        public static final String ME = "me";
+        public static final String LIBRARY = "library";
     }
 }

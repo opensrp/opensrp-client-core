@@ -17,8 +17,11 @@
 package org.smartregister.util;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -29,8 +32,11 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -64,10 +70,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.content.Context.INPUT_METHOD_SERVICE;
+import static org.smartregister.util.Log.logError;
+
 
 /**
  * @author Maimoona
- *         Class containing some static utility methods.
+ * Class containing some static utility methods.
  */
 public class Utils {
     private static final String TAG = "Utils";
@@ -480,6 +489,36 @@ public class Utils {
         pc.setColumnmaps(commonPersonObject.getColumnmaps());
         return pc;
     }
+
+    public static void showToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+
+    }
+
+    public static void showShortToast(Context context, String message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        try {
+
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        } catch (Exception e) {
+            logError("Error encountered while hiding keyboard " + e);
+        }
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
+            hideKeyboard(activity, view);
+        }
+    }
+
     public static boolean isEmptyCollection(Collection collection) {
         return collection == null || collection.isEmpty();
     }
@@ -488,5 +527,9 @@ public class Utils {
         return map == null || map.isEmpty();
     }
 
+    public static String getVersion(Context context) throws PackageManager.NameNotFoundException {
+        PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        return packageInfo.versionName;
+    }
 
 }
