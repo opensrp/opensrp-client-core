@@ -87,6 +87,7 @@ public class AllConstants {
 
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
+    public static final boolean TIME_CHECK = false;
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -385,4 +386,10 @@ public class AllConstants {
         public static final String VALIDATED_RECORDS = "validated_records";
         public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
     }
+    public static class PREF_KEY {
+        public static final String SITE_CHARACTERISTICS = "site_characteristics";
+        public static final String POPULATION_CHARACTERISTICS = "population_characteristics";
+
+    }
+
 }

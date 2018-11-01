@@ -21,16 +21,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.Context;
-import org.smartregister.anc.R;
-import org.smartregister.anc.application.AncApplication;
-import org.smartregister.anc.contract.LoginContract;
-import org.smartregister.anc.interactor.LoginInteractor;
-import org.smartregister.anc.model.LoginModel;
-import org.smartregister.anc.util.Constants;
-import org.smartregister.anc.util.ImageLoaderRequest;
-import org.smartregister.configurableviews.model.LoginConfiguration;
-import org.smartregister.configurableviews.model.ViewConfiguration;
+import org.smartregister.R;
 import org.smartregister.domain.Setting;
+import org.smartregister.login.interactor.BaseLoginInteractor;
+import org.smartregister.login.model.BaseLoginModel;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -43,16 +37,15 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 /**
  * Created by ndegwamartin on 22/06/2018.
  */
-public class LoginPresenter implements BaseLoginContract.Presenter {
+public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter {
 
-    private static final String TAG = LoginPresenter.class.getCanonicalName();
+    private static final String TAG = BaseLoginPresenter.class.getCanonicalName();
     private WeakReference<BaseLoginContract.View> mLoginView;
     private BaseLoginContract.Interactor mLoginInteractor;
     private BaseLoginContract.Model mLoginModel;
 
-    public LoginPresenter(BaseLoginContract.View loginView) {
+    public BaseLoginPresenter(BaseLoginContract.View loginView) {
         mLoginView = new WeakReference<>(loginView);
-        mLoginInteractor = new BaseLoginInteractor(this);
         mLoginModel = new BaseLoginModel();
     }
 
@@ -125,70 +118,11 @@ public class LoginPresenter implements BaseLoginContract.Presenter {
     }
 
 
-    protected void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener) {
-        final RelativeLayout canvasRL = getLoginView().getActivityContext().findViewById(R.id.login_layout);
-        final LinearLayout logoCanvasLL = getLoginView().getActivityContext().findViewById(R.id.bottom_section);
-        final LinearLayout credentialsCanvasLL = getLoginView().getActivityContext().findViewById(R.id.middle_section);
 
-        canvasSV.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
-
-        int windowHeight = canvasSV.getHeight();
-        int topMargin = (windowHeight / 2)
-                - (credentialsCanvasLL.getHeight() / 2)
-                - logoCanvasLL.getHeight();
-        topMargin = topMargin / 2;
-
-        RelativeLayout.LayoutParams logoCanvasLP = (RelativeLayout.LayoutParams) logoCanvasLL.getLayoutParams();
-        logoCanvasLP.setMargins(0, topMargin, 0, 0);
-        logoCanvasLL.setLayoutParams(logoCanvasLP);
-
-        canvasRL.setMinimumHeight(windowHeight);
-    }
+    protected abstract void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener);
 
     @Override
-    public void processViewCustomizations() {
-        try {
-            String jsonString = getJsonViewFromPreference(Constants.VIEW_CONFIGURATION_PREFIX + Constants.CONFIGURATION.LOGIN);
-            if (jsonString == null) {
-                return;
-            }
-
-            ViewConfiguration loginView = AncApplication.getJsonSpecHelper().getConfigurableView(jsonString);
-            LoginConfiguration metadata = (LoginConfiguration) loginView.getMetadata();
-            LoginConfiguration.Background background = metadata.getBackground();
-
-            CheckBox showPasswordCheckBox = getLoginView().getActivityContext().findViewById(R.id.login_show_password_checkbox);
-            TextView showPasswordTextView = getLoginView().getActivityContext().findViewById(R.id.login_show_password_text_view);
-            if (!metadata.getShowPasswordCheckbox()) {
-                showPasswordCheckBox.setVisibility(View.GONE);
-                showPasswordTextView.setVisibility(View.GONE);
-            } else {
-                showPasswordCheckBox.setVisibility(View.VISIBLE);
-                showPasswordTextView.setVisibility(View.VISIBLE);
-            }
-
-            if (background.getOrientation() != null && background.getStartColor() != null && background.getEndColor() != null) {
-                View loginLayout = getLoginView().getActivityContext().findViewById(R.id.login_layout);
-                GradientDrawable gradientDrawable = new GradientDrawable();
-                gradientDrawable.setShape(GradientDrawable.RECTANGLE);
-                gradientDrawable.setOrientation(
-                        GradientDrawable.Orientation.valueOf(background.getOrientation()));
-                gradientDrawable.setColors(new int[]{Color.parseColor(background.getStartColor()),
-                        Color.parseColor(background.getEndColor())});
-                loginLayout.setBackground(gradientDrawable);
-            }
-
-            if (metadata.getLogoUrl() != null) {
-                ImageView imageView = getLoginView().getActivityContext().findViewById(R.id.login_logo);
-                ImageLoaderRequest.getInstance(getLoginView().getActivityContext()).getImageLoader()
-                        .get(metadata.getLogoUrl(), ImageLoader.getImageListener(imageView,
-                                R.drawable.ic_who_logo, R.drawable.ic_who_logo)).getBitmap();
-            }
-
-        } catch (Exception e) {
-            Log.d(TAG, e.getMessage());
-        }
-    }
+    public abstract void processViewCustomizations();
 
     @Override
     public void setLanguage() {
@@ -209,25 +143,7 @@ public class LoginPresenter implements BaseLoginContract.Presenter {
     }
 
     @Override
-    public boolean isSiteCharacteristicsSet() {
-
-        try {
-            Setting setting = AncApplication.getInstance().getContext().allSettings().getSetting(Constants.PREF_KEY.SITE_CHARACTERISTICS);
-
-            JSONArray settingArray = setting != null ? new JSONArray(setting.getValue()) : null;
-
-            if (settingArray != null && settingArray.length() > 0) {
-
-                JSONObject settingObject = settingArray.getJSONObject(0);// get first setting to test
-                return !settingObject.isNull(Constants.KEY.VALUE);
-
-            }
-        } catch (JSONException e) {
-            return false;
-        }
-
-        return false;
-    }
+    public abstract boolean isSiteCharacteristicsSet();
 
     //for testing only, setter methods instead?
     public void setLoginInteractor(BaseLoginContract.Interactor mLoginInteractor) {
@@ -239,7 +155,5 @@ public class LoginPresenter implements BaseLoginContract.Presenter {
 
     }
 
-    protected String getJsonViewFromPreference(String viewKey) {
-        return Utils.getPreference(getLoginView().getActivityContext(), viewKey, null);
-    }
+    protected abstract String getJsonViewFromPreference(String viewKey);
 }

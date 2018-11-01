@@ -1,18 +1,19 @@
-package org.smartregister.anc.model;
+package org.smartregister.login.model;
 
 import android.text.TextUtils;
 
-import org.smartregister.anc.application.AncApplication;
-import org.smartregister.anc.contract.LoginContract;
+import org.smartregister.CoreLibrary;
+import org.smartregister.view.contract.BaseLoginContract;
 
 /**
  * Created by ndegwamartin on 27/06/2018.
  */
-public class LoginModel implements LoginContract.Model {
+public class BaseLoginModel implements BaseLoginContract.Model {
 
     @Override
     public org.smartregister.Context getOpenSRPContext() {
-        return AncApplication.getInstance().getContext();
+        return  CoreLibrary.getInstance().context();
+
     }
 
     @Override
