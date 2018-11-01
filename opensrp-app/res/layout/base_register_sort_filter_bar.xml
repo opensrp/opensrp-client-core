@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="30dp"
+    android:layout_weight="2"
+    android:background="@color/sort_bar_grey"
+    android:gravity="center_vertical">
+
+    <TextView
+            android:id="@+id/header_text_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/register_search_bar_margin"
+            android:ellipsize="end"
+            android:gravity="left|center_vertical"
+            android:padding="@dimen/min_padding_size"
+            android:singleLine="true"
+            android:text="@string/_0_clients_sort_updated"
+            android:textColor="@color/light_grey_text"
+            android:textSize="@dimen/default_font_size_search_bar"/>
+
+    <RelativeLayout
+		android:id="@+id/filter_display_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/filter_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="@dimen/register_sort_bar_left_padding"
+            android:layout_marginEnd="@dimen/register_sort_bar_right_padding"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:padding="@dimen/min_padding_size"
+            android:singleLine="true"
+            android:text="@string/filter"
+            android:textColor="@color/dark_grey_text"
+            android:textSize="@dimen/default_font_size_search_bar" />
+
+		<View
+				android:id="@+id/separator_v"
+				android:layout_width="1dp"
+				android:layout_height="wrap_content"
+				android:layout_gravity="right|center_vertical"
+				android:layout_toStartOf="@id/filter_status"
+				android:background="@color/light_grey"
+				android:scaleType="fitXY"/>
+	</RelativeLayout>
+
+</LinearLayout>

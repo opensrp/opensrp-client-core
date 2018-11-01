@@ -34,7 +34,7 @@ jacoco {
 
 android {
     compileSdkVersion androidCompileSdkVersion
-    buildToolsVersion '27.0.3'
+    buildToolsVersion androidBuildToolsVersion
     useLibrary 'org.apache.http.legacy'
 
     defaultPublishConfig !isReleaseBuild() ? "debug" : "release"
@@ -75,8 +75,8 @@ android {
         // Enabling multidex support.
         multiDexEnabled true
         //applicationId "org.smartregister"
-        minSdkVersion 16
-        targetSdkVersion 27
+        minSdkVersion androidMinSdkVersion
+        targetSdkVersion androidTargetSdkVersion
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
@@ -162,6 +162,7 @@ dependencies {
     implementation('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
+    implementation 'com.github.ybq:Android-SpinKit:1.1.0'
 
     implementation 'com.google.guava:guava:18.0'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
@@ -171,7 +172,16 @@ dependencies {
 
     implementation 'com.android.support:recyclerview-v7:27.1.1'
 
+    implementation('com.android.support:design:27.1.1') {
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+        exclude group: 'com.android.support', module: 'cardview-v7'
+
+    }
+
     implementation 'com.evernote:android-job:1.2.6'
+    implementation 'com.rengwuxian.materialedittext:library:2.1.4'
+
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
 }
 
 dependencies {

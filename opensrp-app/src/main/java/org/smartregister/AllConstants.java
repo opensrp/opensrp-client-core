@@ -15,6 +15,13 @@ public class AllConstants {
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
     public static final int DATABASE_VERSION = 1;
+    public static final int DATA_SYNC_DURATION_MINUTES = 2;
+    public static final int PULL_UNIQUE_IDS_MINUTES = 10;
+    public static final int IMAGE_UPLOAD_MINUTES = 7;
+    public static final int VIEW_SYNC_CONFIGURATIONS_MINUTES = 2;
+    public static final int CLIENT_SETTINGS_SYNC_MINUTES = 2;
+    public static final long BUILD_TIMESTAMP = 1541081122510L;
+
 
     // Maximum time difference between server and client time in milliseconds
     public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
@@ -84,6 +91,8 @@ public class AllConstants {
     public static final String IN_AREA = "in_area";
     public static final String DATASTORE_MANAGER_DIR = "data";
     public static final int ANIMATION_FADE_IN_TIME = 250;
+
+    public static final String CURRENT_LOCATION_ID = "CURRENT_LOCATION_ID";
 
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
@@ -385,6 +394,15 @@ public class AllConstants {
         public static final String SYNC_TOTAL_RECORDS = "sync_total_records";
         public static final String VALIDATED_RECORDS = "validated_records";
         public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
+        public static final String IS_REMOTE_LOGIN = "is_remote_login";
+    }
+
+    public static final class REGISTER_FRAGMENT {
+        public static final String BASE_REGISTER = "base_register";
+        public static final String ADVANCED_SEARCH = "advanced_search";
+        public static final String SORT_FILTER = "sort_filter";
+        public static final String ME = "me";
+        public static final String LIBRARY = "library";
     }
     public static class PREF_KEY {
         public static final String SITE_CHARACTERISTICS = "site_characteristics";

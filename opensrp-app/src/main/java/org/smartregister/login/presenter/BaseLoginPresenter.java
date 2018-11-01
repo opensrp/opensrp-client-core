@@ -2,31 +2,16 @@ package org.smartregister.login.presenter;
 
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
-import android.widget.TextView;
-
-import com.android.volley.toolbox.ImageLoader;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.domain.Setting;
 import org.smartregister.login.interactor.BaseLoginInteractor;
 import org.smartregister.login.model.BaseLoginModel;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
@@ -46,6 +31,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
     public BaseLoginPresenter(BaseLoginContract.View loginView) {
         mLoginView = new WeakReference<>(loginView);
+        mLoginInteractor = new BaseLoginInteractor(this);
         mLoginModel = new BaseLoginModel();
     }
 
@@ -116,10 +102,25 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
         });
     }
+    protected void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener) {
+        final RelativeLayout canvasRL = getLoginView().getActivityContext().findViewById(R.id.login_layout);
+        final LinearLayout logoCanvasLL = getLoginView().getActivityContext().findViewById(R.id.bottom_section);
+        final LinearLayout credentialsCanvasLL = getLoginView().getActivityContext().findViewById(R.id.middle_section);
 
+        canvasSV.getViewTreeObserver().removeOnGlobalLayoutListener(layoutListener);
 
+        int windowHeight = canvasSV.getHeight();
+        int topMargin = (windowHeight / 2)
+                - (credentialsCanvasLL.getHeight() / 2)
+                - logoCanvasLL.getHeight();
+        topMargin = topMargin / 2;
 
-    protected abstract void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener);
+        RelativeLayout.LayoutParams logoCanvasLP = (RelativeLayout.LayoutParams) logoCanvasLL.getLayoutParams();
+        logoCanvasLP.setMargins(0, topMargin, 0, 0);
+        logoCanvasLL.setLayoutParams(logoCanvasLP);
+
+        canvasRL.setMinimumHeight(windowHeight);
+    }
 
     @Override
     public abstract void processViewCustomizations();
@@ -155,5 +156,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
     }
 
-    protected abstract String getJsonViewFromPreference(String viewKey);
+    protected String getJsonViewFromPreference(String viewKey) {
+        return getDefaultSharedPreferences(getLoginView().getActivityContext()).getString(viewKey, null);
+    }
 }

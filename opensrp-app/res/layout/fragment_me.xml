@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/me_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/initials"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_marginBottom="@dimen/register_search_bar_margin"
+                        android:layout_marginStart="@dimen/me_page_initials_background_margin"
+                        android:layout_marginTop="@dimen/me_page_initials_background_margin"
+                        android:background="@drawable/me_page_initials_background"
+                        android:gravity="center"
+                        android:text="RW"
+                        android:textAlignment="center"
+                        android:textAllCaps="true"
+                        android:textColor="@color/me_page_dark_blue"
+                        android:textSize="@dimen/me_page_initials_text_size" />
+
+                    <TextView
+                        android:id="@+id/user_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/initials"
+                        android:layout_marginBottom="@dimen/register_search_bar_margin"
+                        android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                        android:layout_marginLeft="@dimen/me_page_initials_background_margin"
+                        android:layout_marginRight="@dimen/me_page_initials_background_margin"
+                        android:layout_marginStart="@dimen/me_page_initials_background_margin"
+                        android:text="Roger Wong"
+                        android:textColor="@color/text_black"
+                        android:textSize="25sp" />
+
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/header_separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/register_search_bar_margin"
+                    android:background="@color/me_page_line_separator" />
+
+                <RelativeLayout
+                    android:id="@+id/me_location_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                    android:layout_marginLeft="@dimen/me_page_initials_background_margin"
+                    android:layout_marginRight="@dimen/me_page_initials_background_margin"
+                    android:layout_marginStart="@dimen/me_page_initials_background_margin">
+
+                    <ImageView
+                        android:id="@+id/locationImageView"
+                        android:layout_width="@dimen/me_page_section_square_dimension"
+                        android:layout_height="@dimen/me_page_section_square_dimension"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                        android:contentDescription="@string/section_icon"
+                        android:gravity="center"
+                        android:src="@drawable/ic_icon_location" />
+
+                    <RelativeLayout
+                        android:id="@+id/locationPickerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/me_page_section_text_right_margin"
+                        android:layout_marginStart="0dp"
+                        android:layout_toEndOf="@+id/locationImageView"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/location_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_centerVertical="true"
+                            android:text="@string/me_page_location_text"
+                            android:textColor="@color/text_black"
+                            android:textSize="@dimen/me_page_section_text_size" />
+
+                        <org.smartregister.anc.view.LocationPickerView
+                            android:id="@+id/facility_selection"
+                            style="@style/me_page_location_selector"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginStart="8dp"
+                            android:layout_toEndOf="@+id/location_text"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:scrollHorizontally="true"
+                            android:text="Bukesa Urban Health Center" />
+
+                    </RelativeLayout>
+
+                    <ImageView
+                        android:id="@+id/locationRightCaret"
+                        android:layout_width="@dimen/me_page_section_square_dimension"
+                        android:layout_height="@dimen/me_page_section_square_dimension"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:layout_toStartOf="@+id/locationPickerView"
+                        android:contentDescription="@string/right_arrow"
+                        android:gravity="center"
+                        android:src="@drawable/baseline_keyboard_arrow_right"
+                        android:tint="@color/me_page_arrow" />
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/contact_summary_separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/me_page_line_separator" />
+
+                <RelativeLayout
+                    android:id="@+id/setting_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                    android:layout_marginLeft="@dimen/me_page_initials_background_margin"
+                    android:layout_marginRight="@dimen/me_page_initials_background_margin"
+                    android:layout_marginStart="@dimen/me_page_initials_background_margin"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/settingImageView"
+                        android:layout_width="@dimen/me_page_section_square_dimension"
+                        android:layout_height="@dimen/me_page_section_square_dimension"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                        android:contentDescription="@string/section_icon"
+                        android:gravity="center"
+                        android:src="@drawable/ic_icon_settings" />
+
+                    <TextView
+                        android:id="@+id/setting_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/me_page_section_text_right_margin"
+                        android:layout_toEndOf="@+id/settingImageView"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:scrollHorizontally="true"
+                        android:text="@string/settings"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/me_page_section_text_size" />
+
+                    <ImageView
+                        android:id="@+id/settingRightCaret"
+                        android:layout_width="@dimen/me_page_section_square_dimension"
+                        android:layout_height="@dimen/me_page_section_square_dimension"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/right_arrow"
+                        android:gravity="center"
+                        android:src="@drawable/baseline_keyboard_arrow_right"
+                        android:tint="@color/me_page_arrow" />
+
+                </RelativeLayout>
+
+                <View
+                    android:id="@+id/setting_separator"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/me_page_line_separator" />
+
+                <RelativeLayout
+                    android:id="@+id/logout_section"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                    android:layout_marginLeft="@dimen/me_page_initials_background_margin"
+                    android:layout_marginRight="@dimen/me_page_initials_background_margin"
+                    android:layout_marginStart="@dimen/me_page_initials_background_margin">
+
+                    <ImageView
+                        android:id="@+id/logoutImageView"
+                        android:layout_width="@dimen/me_page_section_square_dimension"
+                        android:layout_height="@dimen/me_page_section_square_dimension"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                        android:contentDescription="@string/section_icon"
+                        android:gravity="center"
+                        android:src="@drawable/ic_icon_logout" />
+
+                    <TextView
+                        android:id="@+id/logout_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="@dimen/me_page_section_text_right_margin"
+                        android:layout_toEndOf="@+id/logoutImageView"
+                        android:text="@string/log_out_text"
+                        android:textColor="@color/text_black"
+                        android:textSize="@dimen/me_page_section_text_size" />
+
+                    <ImageView
+                        android:id="@+id/logoutRightCaret"
+                        android:layout_width="@dimen/me_page_section_square_dimension"
+                        android:layout_height="@dimen/me_page_section_square_dimension"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:contentDescription="@string/right_arrow"
+                        android:gravity="center"
+                        android:src="@drawable/baseline_keyboard_arrow_right"
+                        android:tint="@color/me_page_arrow" />
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/me_page_line_separator" />
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/bottom_section"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="@dimen/me_page_initials_background_margin"
+                android:layout_marginEnd="@dimen/me_page_initials_background_margin"
+                android:layout_marginLeft="@dimen/me_page_initials_background_margin"
+                android:layout_marginRight="@dimen/me_page_initials_background_margin"
+                android:layout_marginStart="@dimen/me_page_initials_background_margin"
+                android:layout_weight="1"
+                android:gravity="bottom"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/synced_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/register_search_bar_margin"
+                    android:text="@string/data_synced"
+                    android:textColor="@color/dark_grey_text"
+                    android:textSize="@dimen/me_page_build_text_view_size"
+                    android:typeface="sans" />
+
+                <TextView
+                    android:id="@+id/application_version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/register_search_bar_margin"
+                    android:text="@string/app_version"
+                    android:textColor="@color/dark_grey_text"
+                    android:textSize="@dimen/me_page_build_text_view_size"
+                    android:typeface="sans" />
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

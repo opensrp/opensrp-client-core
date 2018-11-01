@@ -86,4 +86,40 @@
     <dimen name="checkbox_margin_top">10dp</dimen>
     <dimen name="login_middle_section_padding_top">20dp</dimen>
     <dimen name="login_title_text_size">35sp</dimen>
+    <dimen name="register_search_bar_margin">10dp</dimen>
+    <dimen name="register_search_bar_min_margin">5dp</dimen>
+    <dimen name="register_search_bar_max_margin">12dp</dimen>
+    <dimen name="register_search_bar_padding">10dp</dimen>
+    <dimen name="register_search_bar_button_padding">7.5dp</dimen>
+    <dimen name="register_search_bar_button_min_padding">2dp</dimen>
+    <dimen name="register_search_bar_min_padding">5dp</dimen>
+    <dimen name="ec_main_header_search_layout_height">43dp</dimen>
+    <dimen name="default_font_size_search_bar">16sp</dimen>
+    <dimen name="max_font_size_search_bar">19sp</dimen>
+    <dimen name="search_view_cancel_image_margin_right">3dp</dimen>
+    <dimen name="title_label_text_max_width">150dp</dimen>
+    <dimen name="register_sort_bar_left_padding">10dp</dimen>
+    <dimen name="register_sort_bar_right_padding">0dp</dimen>
+    <dimen name="min_padding_size">2dp</dimen>
+    <dimen name="search_bar_min_margin">1dp</dimen>
+
+    <dimen name="loc_picker_text_max_width">210dp</dimen>
+    <dimen name="loc_picker_text_min_width">130dp</dimen>
+    <dimen name="loc_picker_bottom_margin">20dp</dimen>
+    <dimen name="loc_picker_service_location_title_margin">30dp</dimen>
+    <dimen name="loc_picker_service_location_title_margin_top">10dp</dimen>
+    <dimen name="loc_picker_service_location_check_image_size">30dp</dimen>
+    <dimen name="loc_picker_service_location_check_margin_left">0dp</dimen>
+    <dimen name="loc_picker_service_location_text_item_margin_left">5dp</dimen>
+    <dimen name="loc_picker_title_textview_size">19sp</dimen>
+
+    <dimen name="me_page_initials_background_margin">20dp</dimen>
+    <dimen name="me_page_initials_text_size">25sp</dimen>
+    <dimen name="me_page_section_text_size">18sp</dimen>
+    <dimen name="me_page_section_square_dimension">30dp</dimen>
+    <dimen name="me_page_location_text_size">14sp</dimen>
+    <dimen name="me_page_section_text_right_margin">40dp</dimen>
+    <dimen name="me_page_build_text_view_size">15sp</dimen>
+    <dimen name="me_bottom_nav_bar_text_size">13sp</dimen>
+
 </resources>

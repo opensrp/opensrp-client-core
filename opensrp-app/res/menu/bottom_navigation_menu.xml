@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+	<item
+			android:id="@+id/action_clients"
+			android:enabled="true"
+			android:icon="@drawable/ic_icon_nav_clients"
+			android:title="@string/clients_menu"
+			app:showAsAction="ifRoom"/>
+	<item
+			android:id="@+id/action_search"
+			android:enabled="true"
+			android:icon="@drawable/ic_icon_search"
+			android:title="@string/search_menu"
+			app:showAsAction="ifRoom"/>
+	<item
+			android:id="@+id/action_register"
+			android:enabled="true"
+			android:icon="@drawable/ic_icon_nav_new"
+			android:title="@string/register_menu"
+			app:showAsAction="ifRoom"/>
+	<item
+			android:id="@+id/action_library"
+			android:enabled="true"
+			android:icon="@drawable/ic_icon_open_book"
+			android:title="@string/library_menu"
+			app:showAsAction="ifRoom"/>
+</menu>
