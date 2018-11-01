@@ -319,4 +319,23 @@
     <string name="url_separator">/</string>
     <string name="clients_key">clients</string>
     <string name="events_key">events</string>
+
+
+    <string name="loading_client_settings">Loading client settings&#8230;</string>
+    <!-- login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password (optional)</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_username">This username is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="registration_info">Registration info</string>
+
+    <string name="app_version">App version: %1$s (built on %2$s)</string>
+
+    <string name="show_password_text">Show password</string>
+    <string name="antenatal_care_module">Antenatal Care \n Module</string>
+    <string name="error_field_required">This field is required</string>
+
 </resources>
