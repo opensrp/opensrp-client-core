@@ -5,7 +5,10 @@
     android:versionName="3.0.1"
     android:installLocation="auto">
 
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -25,7 +28,7 @@
         android:largeHeap="true">
         <service
             android:enabled="true"
-            android:name=".service.ImageUploadSyncService"></service>
+            android:name=".service.ImageUploadSyncService" />
 
         <activity
             android:name=".view.activity.ReportsActivity"
@@ -67,11 +70,14 @@
             android:name=".view.activity.NativeECSmartRegisterActivity"
             android:screenOrientation="landscape"
             android:theme="@style/AppThemeNoTitle" />
-
+        <activity
+            android:name=".view.activity.BarcodeScanActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait" />
 
         <activity
             android:name=".view.activity.NativeHomeActivity"
-            android:screenOrientation="landscape"></activity>
+            android:screenOrientation="landscape" />
 
         <receiver android:name=".view.receiver.SyncBroadcastReceiver" />
         <receiver android:name=".view.receiver.ConnectivityChangeReceiver">
@@ -81,11 +87,19 @@
         </receiver>
         <receiver android:name=".view.receiver.TimeChangedBroadcastReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.TIME_SET"></action>
-                <action android:name="android.intent.action.TIMEZONE_CHANGED"></action>
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
 
         <service android:name=".service.intentservices.ReplicationIntentService" />
+
+        <meta-data
+            android:name="com.google.android.gms.vision.Dependencies"
+            android:value="barcode" />
+
+        <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
+
+
     </application>
 </manifest>

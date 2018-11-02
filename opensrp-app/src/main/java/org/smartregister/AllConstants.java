@@ -396,4 +396,12 @@ public class AllConstants {
         public static final String ME = "me";
         public static final String LIBRARY = "library";
     }
+
+
+    public static class BARCODE {
+        public static final String BARCODE_KEY = "barcode";
+        public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
+        // intent request code to handle updating play services if needed.
+        public static final int RC_HANDLE_GMS = 9001;
+    }
 }
