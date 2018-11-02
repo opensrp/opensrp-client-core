@@ -23,7 +23,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
-import org.smartregister.barcode.CameraSourcePreview;
 import org.smartregister.view.activity.mock.BarcodeScanActivityMock;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -42,9 +41,6 @@ public class BarcodeScanActivityTest extends BaseUnitTest {
 
     @Mock
     private SparseArray<Barcode> barcodeSparseArray;
-
-    @Mock
-    private CameraSourcePreview cameraSourcePreview;
 
     @Mock
     private Detector.Detections<Barcode> detections;

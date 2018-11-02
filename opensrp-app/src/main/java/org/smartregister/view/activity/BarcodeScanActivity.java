@@ -73,7 +73,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
 
     @Override
     public void release() {
-
+        //Todo
     }
 
     @Override
