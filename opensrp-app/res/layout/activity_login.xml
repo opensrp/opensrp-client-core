@@ -33,7 +33,7 @@
                 android:layout_weight="1"
                 android:contentDescription="logo"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_who_logo" />
+                android:src="@drawable/opensrp_logo" />
 
             <TextView
                 android:id="@+id/login_title_text_view"
@@ -42,8 +42,8 @@
                 android:layout_marginTop="@dimen/login_text_build_margin"
                 android:layout_marginBottom="5dp"
                 android:gravity="center_horizontal"
-                android:text="@string/antenatal_care_module"
-                android:textColor="#FFFFFF"
+                android:text="@string/application_module_text"
+                android:textColor="#f7f9fb"
                 android:textSize="@dimen/login_title_text_size"
                 android:typeface="sans" />
 
@@ -100,7 +100,7 @@
                 android:cursorVisible="true"
                 android:ems="10"
                 android:hint="Password"
-                android:imeActionId="100"
+                android:imeActionId="@integer/login"
                 android:inputType="textPassword"
                 android:lines="1"
                 android:paddingLeft="10dp"
@@ -182,7 +182,7 @@
                 android:adjustViewBounds="false"
                 android:cropToPadding="false"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_who_logo" />
+                android:src="@drawable/ic_opensrp_logo" />
         </LinearLayout>
     </RelativeLayout>
 </ScrollView>

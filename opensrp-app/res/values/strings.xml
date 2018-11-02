@@ -344,7 +344,7 @@
     <string name="app_version">App version: %1$s (built on %2$s)</string>
 
     <string name="show_password_text">Show password</string>
-    <string name="antenatal_care_module">Antenatal Care \n Module</string>
+    <string name="application_module_text">OpenSRP \n Application</string>
     <string name="error_field_required">This field is required</string>
 
     <string name="please_wait_message">Please wait</string>
