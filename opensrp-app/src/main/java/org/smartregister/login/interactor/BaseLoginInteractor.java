@@ -220,7 +220,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         return mLoginPresenter.getOpenSRPContext().userService();
     }
 
-
     protected abstract void scheduleJobs();
 
     protected long getFlexValue(int value) {
