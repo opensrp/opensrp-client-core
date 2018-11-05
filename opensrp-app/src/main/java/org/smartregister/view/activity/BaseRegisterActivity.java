@@ -55,7 +55,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     private ProgressDialog progressDialog;
     private FragmentPagerAdapter mPagerAdapter;
 
-    private int currentPage;
+    protected int currentPage;
 
     public static int BASE_REG_POSITION;
     public static int ADVANCED_SEARCH_POSITION;
