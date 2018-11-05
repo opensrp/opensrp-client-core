@@ -66,7 +66,8 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
         CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedPreviewSize(1600, 1024)
-                .setRequestedFps(15.0f);
+                .setAutoFocusEnabled(true)
+                .setRequestedFps(45.0f);
 
         cameraSource = builder.build();
     }
