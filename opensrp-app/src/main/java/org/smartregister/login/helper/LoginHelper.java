@@ -8,10 +8,8 @@ import org.smartregister.view.contract.BaseLoginContract;
  */
 
 public class LoginHelper {
-    private static final String TAG = LoginHelper.class.getCanonicalName();
-
     private static LoginHelper instance;
-    BaseLoginContract.Interactor mLoginInteractor;
+    protected BaseLoginContract.Interactor mLoginInteractor;
     private LoginHelper(BaseLoginContract.Interactor mLoginInteractor) {
 
         this.mLoginInteractor = mLoginInteractor;
