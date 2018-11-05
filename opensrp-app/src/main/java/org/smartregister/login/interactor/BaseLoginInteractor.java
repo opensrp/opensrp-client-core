@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
@@ -102,7 +103,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private void remoteLogin(final String userName, final String password) {
 
         try {
-            if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(getApplicationContext().getString(R.string.opensrp_url))) {
+            if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_url))) {
                 getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
@@ -199,12 +200,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     public void startPullUniqueIdsService() {
-        Intent intent = new Intent(getApplicationContext(), PullUniqueIdsIntentService.class);
+        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), PullUniqueIdsIntentService.class);
         getApplicationContext().startService(intent);
     }
 
     public Context getApplicationContext() {
-        return getApplicationContext();
+        return mLoginPresenter.getLoginView().getActivityContext();
     }
 
     public AllSharedPreferences getSharedPreferences() {
