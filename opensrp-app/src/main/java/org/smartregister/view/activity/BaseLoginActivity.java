@@ -29,6 +29,10 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
+/**
+ * Created by manu on 01/11/2018.
+ */
+
 public abstract class BaseLoginActivity extends AppCompatActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
     private ProgressDialog progressDialog;
     protected BaseLoginContract.Presenter mLoginPresenter;
@@ -48,7 +52,6 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
         initializePresenter();
         mLoginPresenter.setLanguage();
         setupViews(mLoginPresenter);
-
     }
 
     @Override
@@ -66,11 +69,9 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
         return super.onOptionsItemSelected(item);
     }
 
-        protected abstract int getContentView();
+    protected abstract int getContentView();
 
     protected abstract void initializePresenter();
-
-
 
     @Override
     protected void onDestroy() {
@@ -84,7 +85,6 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
         initializeProgressDialog();
         setListenerOnShowPasswordCheckbox();
         renderBuildInfo();
-
     }
 
     private void initializeLoginChildViews() {
@@ -115,9 +115,6 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
             }
         });
     }
-
-    @Override
-    public abstract void goToHome(boolean remote);
 
     @Override
     public void showErrorDialog(String message) {
@@ -167,15 +164,11 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
 
     @Override
     public void onClick(View v) {
-//        switch (v.getId()) {
-//            case R.id.login_login_btn:
-                String username = userNameEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-                mLoginPresenter.attemptLogin(username, password);
-//                break;
-//            default:
-//                break;
-//        }
+        if (v.getId() == R.id.login_login_btn) {
+            String username = userNameEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            mLoginPresenter.attemptLogin(username, password);
+        }
     }
 
     @Override
@@ -202,11 +195,9 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
         passwordEditText.setError(null);
     }
 
-
     @Override
     public Activity getActivityContext() {
         return this;
-
     }
 
     @Override
@@ -217,7 +208,6 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
     @Override
     public void updateProgressMessage(String message) {
         progressDialog.setTitle(message);
-
     }
 
     protected void renderBuildInfo() {

@@ -25,15 +25,15 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter {
 
     private static final String TAG = BaseLoginPresenter.class.getCanonicalName();
-    private WeakReference<BaseLoginContract.View> mLoginView;
-    private BaseLoginContract.Interactor mLoginInteractor;
-    private BaseLoginContract.Model mLoginModel;
+    protected WeakReference<BaseLoginContract.View> mLoginView;
+    protected BaseLoginContract.Interactor mLoginInteractor;
+    protected BaseLoginContract.Model mLoginModel;
 
-    public BaseLoginPresenter(BaseLoginContract.View loginView) {
-        mLoginView = new WeakReference<>(loginView);
-        mLoginInteractor = new BaseLoginInteractor(this);
-        mLoginModel = new BaseLoginModel();
-    }
+//    public BaseLoginPresenter(BaseLoginContract.View loginView) {
+//        mLoginView = new WeakReference<>(loginView);
+//        mLoginInteractor = new BaseLoginInteractor(this);
+//        mLoginModel = new BaseLoginModel();
+//    }
 
     @Override
     public void onDestroy(boolean isChangingConfiguration) {

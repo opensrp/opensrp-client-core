@@ -15,11 +15,6 @@ public class AllConstants {
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
     public static final int DATABASE_VERSION = 1;
-    public static final int DATA_SYNC_DURATION_MINUTES = 2;
-    public static final int PULL_UNIQUE_IDS_MINUTES = 10;
-    public static final int IMAGE_UPLOAD_MINUTES = 7;
-    public static final int VIEW_SYNC_CONFIGURATIONS_MINUTES = 2;
-    public static final int CLIENT_SETTINGS_SYNC_MINUTES = 2;
     public static final long BUILD_TIMESTAMP = 1541081122510L;
 
 

@@ -37,7 +37,7 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 /**
  * Created by ndegwamartin on 26/06/2018.
  */
-public class BaseLoginInteractor implements BaseLoginContract.Interactor {
+public abstract class BaseLoginInteractor implements BaseLoginContract.Interactor {
 
     private BaseLoginContract.Presenter mLoginPresenter;
 
@@ -195,7 +195,7 @@ public class BaseLoginInteractor implements BaseLoginContract.Interactor {
 
         getLoginView().goToHome(true);
         if (NetworkUtils.isNetworkAvailable()) {
-           startPullUniqueIdsService();
+            startPullUniqueIdsService();
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
         scheduleJobs();
@@ -222,24 +222,10 @@ public class BaseLoginInteractor implements BaseLoginContract.Interactor {
         return mLoginPresenter.getOpenSRPContext().userService();
     }
 
-    private void scheduleJobs() {
 
-        //schedule jobs
-        SyncServiceJob.scheduleJob(SyncServiceJob.TAG, TimeUnit.MINUTES.toMillis(AllConstants.DATA_SYNC_DURATION_MINUTES), getFlexValue(AllConstants.DATA_SYNC_DURATION_MINUTES));
+    protected abstract void scheduleJobs();
 
-        PullUniqueIdsServiceJob.scheduleJob(SyncServiceJob.TAG, TimeUnit.MINUTES.toMillis(AllConstants.PULL_UNIQUE_IDS_MINUTES), getFlexValue
-                (AllConstants.PULL_UNIQUE_IDS_MINUTES));
-
-        ImageUploadServiceJob.scheduleJob(SyncServiceJob.TAG, TimeUnit.MINUTES.toMillis(AllConstants.IMAGE_UPLOAD_MINUTES), getFlexValue(AllConstants.IMAGE_UPLOAD_MINUTES));
-
-//        ViewConfigurationsServiceJob.scheduleJob(SyncServiceJob.TAG, TimeUnit.MINUTES.toMillis(AllConstants.VIEW_SYNC_CONFIGURATIONS_MINUTES),
-                getFlexValue(AllConstants.VIEW_SYNC_CONFIGURATIONS_MINUTES);
-
-        SyncSettingsServiceJob.scheduleJob(SyncSettingsServiceJob.TAG, TimeUnit.MINUTES.toMillis(AllConstants.CLIENT_SETTINGS_SYNC_MINUTES),
-                getFlexValue(AllConstants.CLIENT_SETTINGS_SYNC_MINUTES));
-    }
-
-    private long getFlexValue(int value) {
+    protected long getFlexValue(int value) {
         int minutes = MINIMUM_JOB_FLEX_VALUE;
 
         if (value > MINIMUM_JOB_FLEX_VALUE) {

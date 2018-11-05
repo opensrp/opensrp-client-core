@@ -1,6 +1,7 @@
 package org.smartregister.view.contract;
 
 import android.app.Activity;
+
 import org.smartregister.domain.LoginResponse;
 
 import java.lang.ref.WeakReference;
