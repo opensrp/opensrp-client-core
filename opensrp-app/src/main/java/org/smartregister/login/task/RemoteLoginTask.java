@@ -7,7 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
-import org.smartregister.Context;;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
@@ -44,8 +44,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     @Override
     protected LoginResponse doInBackground(Void... params) {
         LoginResponse loginResponse = getOpenSRPContext().userService().isValidRemoteLogin(mUsername, mPassword);
-        ;
-
         if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) == null) {
 
 
@@ -55,10 +53,10 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setUsername(mUsername);
             syncSettingsServiceHelper.setPassword(mPassword);
 
-           String teamId =  mLoginView.getUserTeamId(loginResponse);
+            String teamId = mLoginView.getUserTeamId(loginResponse);
 
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer();
+                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(teamId);
 
                 JSONObject data = new JSONObject();
                 data.put(AllConstants.PREF_KEY.SITE_CHARACTERISTICS, settings);
@@ -92,7 +90,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     protected void onCancelled() {
         mLoginView.showProgress(false);
     }
-
 
     public static Context getOpenSRPContext() {
         return CoreLibrary.getInstance().context();

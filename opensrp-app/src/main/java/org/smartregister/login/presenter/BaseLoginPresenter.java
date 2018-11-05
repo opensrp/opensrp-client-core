@@ -22,7 +22,6 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
  */
 public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter {
 
-    private static final String TAG = BaseLoginPresenter.class.getCanonicalName();
     protected WeakReference<BaseLoginContract.View> mLoginView;
     protected BaseLoginContract.Interactor mLoginInteractor;
     protected BaseLoginContract.Model mLoginModel;
