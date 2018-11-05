@@ -9,8 +9,6 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import org.smartregister.Context;
 import org.smartregister.R;
-import org.smartregister.login.interactor.BaseLoginInteractor;
-import org.smartregister.login.model.BaseLoginModel;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -28,12 +26,6 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
     protected WeakReference<BaseLoginContract.View> mLoginView;
     protected BaseLoginContract.Interactor mLoginInteractor;
     protected BaseLoginContract.Model mLoginModel;
-
-//    public BaseLoginPresenter(BaseLoginContract.View loginView) {
-//        mLoginView = new WeakReference<>(loginView);
-//        mLoginInteractor = new BaseLoginInteractor(this);
-//        mLoginModel = new BaseLoginModel();
-//    }
 
     @Override
     public void onDestroy(boolean isChangingConfiguration) {
