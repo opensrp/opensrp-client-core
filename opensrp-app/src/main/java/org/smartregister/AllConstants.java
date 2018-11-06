@@ -15,6 +15,8 @@ public class AllConstants {
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
     public static final int DATABASE_VERSION = 1;
+    public static final long BUILD_TIMESTAMP = 1541081122510L;
+
 
     // Maximum time difference between server and client time in milliseconds
     public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
@@ -89,6 +91,7 @@ public class AllConstants {
 
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
+    public static final boolean TIME_CHECK = false;
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -396,12 +399,15 @@ public class AllConstants {
         public static final String ME = "me";
         public static final String LIBRARY = "library";
     }
-
-
     public static class BARCODE {
         public static final String BARCODE_KEY = "barcode";
         public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
         // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
+    }
+    public static class PREF_KEY {
+        public static final String SITE_CHARACTERISTICS = "site_characteristics";
+        public static final String POPULATION_CHARACTERISTICS = "population_characteristics";
+
     }
 }

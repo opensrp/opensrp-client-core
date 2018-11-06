@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/canvasSV"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:isScrollContainer="true">
+
+    <RelativeLayout
+        android:id="@+id/login_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1.0"
+        android:background="#0092D5"
+        android:paddingBottom="@dimen/login_bottom_margin">
+
+
+        <!-- Top section -->
+        <LinearLayout
+            android:id="@+id/top_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            android:paddingTop="@dimen/login_logo_top_padding">
+
+            <ImageView
+                android:id="@+id/login_logo"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_logo_height"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:contentDescription="logo"
+                android:scaleType="centerInside"
+                android:src="@drawable/opensrp_logo" />
+
+            <TextView
+                android:id="@+id/login_title_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/login_text_build_margin"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_horizontal"
+                android:text="@string/application_module_text"
+                android:textColor="#f7f9fb"
+                android:textSize="@dimen/login_title_text_size"
+                android:typeface="sans" />
+
+            <TextView
+                android:id="@+id/login_build_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:gravity="center_horizontal"
+                android:text="@string/app_version"
+                android:textColor="#90c4dc"
+                android:textSize="@dimen/login_build_text_view_textSize" />
+
+        </LinearLayout>
+
+        <!-- Middle section -->
+        <LinearLayout
+            android:id="@+id/middle_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/top_section"
+            android:layout_marginTop="@dimen/login_middle_section_padding_top"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/login_horizontal_margin"
+            android:paddingRight="@dimen/login_horizontal_margin">
+
+            <EditText
+                android:id="@+id/login_user_name_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_view_component_height"
+                android:layout_weight="8"
+                android:background="@drawable/rounded_corner_edit_text"
+                android:cursorVisible="true"
+                android:ems="10"
+                android:hint="Username"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:lines="1"
+                android:paddingLeft="10dp"
+                android:textColor="#666666"
+                android:textColorHint="#bfbfbf"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/login_edit_text_textSize"
+                android:typeface="sans" />
+
+            <EditText
+                android:id="@+id/login_password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_view_component_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="15dp"
+                android:layout_weight="8"
+                android:background="@drawable/rounded_corner_edit_text"
+                android:cursorVisible="true"
+                android:ems="10"
+                android:hint="Password"
+                android:imeActionId="@integer/login"
+                android:inputType="textPassword"
+                android:lines="1"
+                android:paddingLeft="10dp"
+                android:textColor="#666666"
+                android:textColorHint="#bfbfbf"
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/login_edit_text_textSize"
+                android:typeface="sans" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/checkbox_margin_top">
+
+                <CheckBox
+                    android:id="@+id/login_show_password_checkbox"
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="5dp"
+                    android:button="@drawable/white_checkbox_bg_selector"/>
+
+                <TextView
+                    android:id="@+id/login_show_password_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_toRightOf="@id/login_show_password_checkbox"
+                    android:text="@string/show_password_text"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/login_edit_text_textSize" />
+            </RelativeLayout>
+
+            <Button
+                android:id="@+id/login_login_btn"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/login_view_component_height"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:layout_weight="8"
+                android:background="@drawable/login_button"
+                android:ems="10"
+                android:shadowColor="#ffffff"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowRadius="0.5"
+                android:text="@string/login_text"
+                android:textAllCaps="true"
+                android:textColor="#666666"
+                android:textSize="18sp" />
+        </LinearLayout>
+        <!-- Bottom section -->
+        <LinearLayout
+            android:id="@+id/bottom_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:orientation="vertical"
+            android:paddingTop="150dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:text="Powered by"
+                android:textAlignment="center"
+                android:textColor="#A6ffffff" />
+
+            <ImageView
+                android:id="@+id/opensrp_logo_image_view"
+                android:layout_width="@dimen/login_opensrp_logo_width"
+                android:layout_height="@dimen/login_opensrp_logo_height"
+                android:layout_gravity="center_horizontal"
+                android:adjustViewBounds="false"
+                android:cropToPadding="false"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_opensrp_logo" />
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

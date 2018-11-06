@@ -79,6 +79,11 @@
             android:name=".view.activity.NativeHomeActivity"
             android:screenOrientation="landscape" />
 
+        <activity
+            android:name=".view.activity.SettingsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" />
+
         <receiver android:name=".view.receiver.SyncBroadcastReceiver" />
         <receiver android:name=".view.receiver.ConnectivityChangeReceiver">
             <intent-filter>
