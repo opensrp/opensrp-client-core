@@ -1,4 +1,4 @@
-package org.smartregister.Task;
+package org.smartregister.task;
 
 import android.os.AsyncTask;
 
