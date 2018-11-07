@@ -61,7 +61,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         loginWithLocalFlag(view, !getSharedPreferences().fetchForceRemoteLogin(), userName, password);
     }
 
-    protected void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, String password) {
+    public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, String password) {
 
         getLoginView().hideKeyboard();
         getLoginView().enableLoginButton(false);
