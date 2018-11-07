@@ -328,8 +328,6 @@
     <string name="clients_key">clients</string>
     <string name="events_key">events</string>
 
-
-
     <string name="loading_client_settings">Loading client settings&#8230;</string>
     <!-- login -->
     <string name="prompt_username">Username</string>
@@ -340,13 +338,10 @@
     <string name="error_invalid_password">This password is too short</string>
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="registration_info">Registration info</string>
-
     <string name="app_version">App version: %1$s (built on %2$s)</string>
-
     <string name="show_password_text">Show password</string>
     <string name="application_module_text">OpenSRP \n Application</string>
     <string name="error_field_required">This field is required</string>
-
     <string name="please_wait_message">Please wait</string>
     <string name="sync_failed_no_internet">Sync failed. Check your internet connection.</string>
     <string name="syncing">Syncing...</string>
@@ -361,7 +356,6 @@
     <string name="no_record">No Record</string>
     <string name="clients">%1$d Clients</string>
     <string name="client">%1$d Client</string>
-
     <string name="library_placeholder">Library Placeholder</string>
     <string name="service_location">Service Location</string>
     <string name="section_icon">Section Icon</string>
@@ -369,14 +363,28 @@
     <string name="right_arrow">Right Arrow</string>
     <string name="settings">Settings</string>
     <string name="log_out_text">Log out</string>
-
     <string name="data_synced">Data synced: %1$s at %2$s</string>
+    <string name="scan_qr_code_title">Scan QR Code</string>
 
+    <!--The barcode strings-->
+    <string name="ok">OK</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="title_activity_main">Barcode Reader Sample</string>
+    <string name="barcode_header">Click &quot;Read Barcode&quot; to read a barcode</string>
+    <string name="read_barcode">Read Barcode</string>
+    <string name="auto_focus">Auto Focus</string>
+    <string name="use_flash">Use Flash</string>
+    <string name="barcode_success">Barcode read successfully</string>
+    <string name="barcode_failure">No barcode captured</string>
+    <string name="barcode_error">"Error reading barcode: %1$s"</string>
+
+    <string name="allow_camera_management">You need to allow the app to use the camera to scan QR codes&#8230;</string>
     <string name="unauthorized_group">Your user group is not allowed to access this device</string>
     <string name="opensrp_url">http://27.147.129.50:9979</string>
     <string name="no_internet_connectivity">No internet connection. Please ensure data connectivity</string>
     <string name="unknown_response">login failed. Try later</string>
     <string name="unauthorized">Please check the credentials</string>
-
 
 </resources>

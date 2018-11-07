@@ -79,6 +79,7 @@ public abstract class MeFragment extends Fragment implements MeContract.View {
 
         if (me_location_section != null) {
             facilitySelection.init();
+            facilitySelection.setTextColor(getResources().getColor(R.color.text_black));
         }
         TextView application_version = view.findViewById(R.id.application_version);
         if (application_version != null) {

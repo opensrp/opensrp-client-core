@@ -121,5 +121,6 @@
     <dimen name="me_page_section_text_right_margin">40dp</dimen>
     <dimen name="me_page_build_text_view_size">15sp</dimen>
     <dimen name="me_bottom_nav_bar_text_size">13sp</dimen>
+    <dimen name="barcode_toolbar_text_size">23sp</dimen>
 
 </resources>

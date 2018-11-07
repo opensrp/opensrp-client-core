@@ -180,7 +180,7 @@ dependencies {
 
     implementation 'com.evernote:android-job:1.2.6'
     implementation 'com.rengwuxian.materialedittext:library:2.1.4'
-
+    implementation 'com.google.android.gms:play-services-vision:17.0.2'
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
 }
 

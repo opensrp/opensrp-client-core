@@ -1,11 +1,14 @@
 package org.smartregister.view.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -14,17 +17,17 @@ import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.android.gms.vision.barcode.Barcode;
+
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.adapter.PagerAdapter;
-import org.smartregister.barcode.Barcode;
-import org.smartregister.barcode.BarcodeIntentIntegrator;
-import org.smartregister.barcode.BarcodeIntentResult;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.helper.BottomNavigationHelper;
 import org.smartregister.listener.BottomNavigationListener;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
@@ -52,7 +55,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     private ProgressDialog progressDialog;
     private FragmentPagerAdapter mPagerAdapter;
 
-    private int currentPage;
+    protected int currentPage;
 
     public static int BASE_REG_POSITION;
     public static int ADVANCED_SEARCH_POSITION;
@@ -201,12 +204,12 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BarcodeIntentIntegrator.REQUEST_CODE && resultCode == RESULT_OK) {
-            BarcodeIntentResult res = BarcodeIntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-            if (StringUtils.isNotBlank(res.getContents())) {
-                Log.d("Scanned QR Code", res.getContents());
-                mBaseFragment.onQRCodeSucessfullyScanned(res.getContents());
-                mBaseFragment.setSearchTerm(res.getContents());
+        if (requestCode == AllConstants.BARCODE.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                Barcode barcode = data.getParcelableExtra(AllConstants.BARCODE.BARCODE_KEY);
+                Log.d("Scanned QR Code", barcode.displayValue);
+                mBaseFragment.onQRCodeSucessfullyScanned(barcode.displayValue);
+                mBaseFragment.setSearchTerm(barcode.displayValue);
             } else
                 Log.i("", "NO RESULT FOR QR CODE");
         } else {
@@ -282,10 +285,35 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void startQrCodeScanner() {
-        BarcodeIntentIntegrator barcodeIntentIntegrator = new BarcodeIntentIntegrator(this);
-        barcodeIntentIntegrator.addExtra(Barcode.SCAN_MODE, Barcode.QR_MODE);
-        barcodeIntentIntegrator.initiateScan();
+        if (PermissionUtils.isPermissionGranted(this, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+            try {
+                Intent intent = new Intent(this, BarcodeScanActivity.class);
+                startActivityForResult(intent, AllConstants.BARCODE.BARCODE_REQUEST_CODE);
+            } catch (SecurityException e) {
+                Utils.showToast(this, getString(R.string.allow_camera_management));
+            }
+        }
+
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {switch (requestCode) {
+        case PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE:
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                try {
+                    Intent intent = new Intent(this, BarcodeScanActivity.class);
+                    startActivityForResult(intent, AllConstants.BARCODE.BARCODE_REQUEST_CODE);
+                } catch (SecurityException e) {
+                    Utils.showToast(this, getString(R.string.allow_camera_management));
+                }
+            } else {
+                Utils.showToast(this, getString(R.string.allow_camera_management));
+            }
+            break;
+        default:
+            break;
+    }    }
 
 
     public void switchToFragment(final int position) {

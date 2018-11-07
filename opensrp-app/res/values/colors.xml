@@ -59,4 +59,6 @@
     <color name="me_page_line_separator">#DFDFDF</color>
     <color name="me_page_arrow">#C7C7C7</color>
 
+    <color name="white">#FFFFFF</color>
+
 </resources>
