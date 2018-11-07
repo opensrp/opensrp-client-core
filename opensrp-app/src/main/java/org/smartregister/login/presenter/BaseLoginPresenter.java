@@ -93,7 +93,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
         });
     }
-    protected void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener) {
+    public void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener) {
         final RelativeLayout canvasRL = getLoginView().getActivityContext().findViewById(R.id.login_layout);
         final LinearLayout logoCanvasLL = getLoginView().getActivityContext().findViewById(R.id.bottom_section);
         final LinearLayout credentialsCanvasLL = getLoginView().getActivityContext().findViewById(R.id.middle_section);
@@ -147,7 +147,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
     }
 
-    protected String getJsonViewFromPreference(String viewKey) {
+    public String getJsonViewFromPreference(String viewKey) {
         return getDefaultSharedPreferences(getLoginView().getActivityContext()).getString(viewKey, null);
     }
 }

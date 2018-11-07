@@ -74,7 +74,7 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
     protected abstract void initializePresenter();
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         mLoginPresenter.onDestroy(isChangingConfigurations());
     }
