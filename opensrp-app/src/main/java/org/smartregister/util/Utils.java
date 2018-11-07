@@ -49,9 +49,11 @@ import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
+import org.smartregister.AllConstants;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 
 import java.io.BufferedReader;
@@ -68,6 +70,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
@@ -530,6 +533,28 @@ public class Utils {
     public static String getVersion(Context context) throws PackageManager.NameNotFoundException {
         PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
         return packageInfo.versionName;
+    }
+
+    public static String getBuildDate(Boolean isShortMonth) {
+        String simpleDateFormat = "";
+        if (isShortMonth) {
+            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
+        } else {
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
+        }
+        return simpleDateFormat;
+    }
+
+    public static String getUserDefaultTeamId(LoginResponseData userInfo) {
+        try {
+            if (userInfo != null && userInfo.team != null && userInfo.team.team != null) {
+                return userInfo.team.team.uuid;
+            }
+        } catch (Exception e) {
+            Log.v("Error : ", e.getMessage());
+        }
+
+        return null;
     }
 
 }
