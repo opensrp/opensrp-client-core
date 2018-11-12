@@ -38,8 +38,10 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
     protected BaseLoginContract.Presenter mLoginPresenter;
     private EditText userNameEditText;
     private EditText passwordEditText;
+    private TextView showPasswordCheckBoxText;
     private CheckBox showPasswordCheckBox;
     private Button loginButton;
+    private Boolean showPasswordChecked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +93,7 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
         userNameEditText = findViewById(R.id.login_user_name_edit_text);
         passwordEditText = findViewById(R.id.login_password_edit_text);
         showPasswordCheckBox = findViewById(R.id.login_show_password_checkbox);
+        showPasswordCheckBoxText = findViewById(R.id.login_show_password_text_view);
         passwordEditText.setOnEditorActionListener(this);
         loginButton = findViewById(R.id.login_login_btn);
         loginButton.setOnClickListener(this);
@@ -104,12 +107,29 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
     }
 
     private void setListenerOnShowPasswordCheckbox() {
+        showPasswordCheckBoxText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (showPasswordChecked) {
+                    showPasswordCheckBox.setChecked(true);
+                    passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+                    showPasswordChecked = false;
+                } else {
+                    showPasswordCheckBox.setChecked(false);
+                    passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                    showPasswordChecked = true;
+                }
+            }
+        });
+
         showPasswordCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    showPasswordChecked = false;
                     passwordEditText.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
                 } else {
+                    showPasswordChecked = true;
                     passwordEditText.setTransformationMethod(PasswordTransformationMethod.getInstance());
                 }
             }

@@ -117,8 +117,8 @@
 
                 <CheckBox
                     android:id="@+id/login_show_password_checkbox"
-                    android:layout_width="12dp"
-                    android:layout_height="12dp"
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="3dp"
                     android:layout_marginTop="15dp"

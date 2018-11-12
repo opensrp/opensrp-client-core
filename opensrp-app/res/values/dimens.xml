@@ -80,7 +80,7 @@
     <dimen name="login_view_component_height">40dp</dimen>
     <dimen name="login_build_text_view_textSize">15sp</dimen>
     <dimen name="login_edit_text_textSize">16sp</dimen>
-    <dimen name="login_show_password_dimen">12dp</dimen>
+    <dimen name="login_show_password_dimen">15dp</dimen>
     <dimen name="login_logo_top_padding">0dp</dimen>
     <item name="checkbox_scale" format="float" type="dimen">1.7</item>
     <dimen name="checkbox_margin_top">10dp</dimen>
