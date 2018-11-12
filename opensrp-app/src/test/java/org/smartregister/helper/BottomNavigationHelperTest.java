@@ -14,11 +14,13 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.R;
+
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 @RunWith(PowerMockRunner.class)
 public class BottomNavigationHelperTest extends BaseUnitTest {
@@ -43,8 +45,8 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         bottomNavigationHelper = new BottomNavigationHelper();
     }
 
-    @PrepareForTest({BitmapFactory.class})
     @Test
+    @PrepareForTest({BitmapFactory.class})
     public void testConvertDrawableToBitmap() {
         BottomNavigationHelper spyBottomNavigationHelper = Mockito.spy(bottomNavigationHelper);
 
@@ -54,8 +56,8 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         Mockito.doReturn(drawable).when(resources).getDrawable(INITIALS_RESOURCE_ID);
         Assert.assertNotNull(drawable);
 
-        PowerMockito.mockStatic(BitmapFactory.class);
-        PowerMockito.when(BitmapFactory.decodeResource(resources, INITIALS_RESOURCE_ID)).thenReturn(bitmap);
+        mockStatic(BitmapFactory.class);
+        when(BitmapFactory.decodeResource(resources, INITIALS_RESOURCE_ID)).thenReturn(bitmap);
         Assert.assertNull(bitmap.copy(Bitmap.Config.ARGB_8888, true));
 
         spyBottomNavigationHelper.convertDrawableResToBitmap(INITIALS_RESOURCE_ID, resources);
@@ -63,8 +65,8 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         Assert.assertNotNull(bitmap);
     }
 
-    @PrepareForTest({BitmapFactory.class, Bitmap.class})
     @Test
+    @PrepareForTest({BitmapFactory.class, Bitmap.class})
     public void testConvertGradientDrawableToBitmap() {
         BottomNavigationHelper spyBottomNavigationHelper = Mockito.spy(bottomNavigationHelper);
 
@@ -76,8 +78,8 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
 
         int width = 27;
         int height = 27;
-        PowerMockito.mockStatic(Bitmap.class);
-        PowerMockito.when(Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)).thenReturn(bitmap);
+        mockStatic(Bitmap.class);
+        when(Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)).thenReturn(bitmap);
         Assert.assertNotNull(bitmap);
 
         spyBottomNavigationHelper.convertDrawableResToBitmap(INITIALS_RESOURCE_ID, resources);
@@ -110,7 +112,6 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         Assert.assertNotNull(bitmap);
 
         spyBottomNavigationHelper.writeOnDrawable(INITIALS_RESOURCE_ID, INITIALS_TEXT, resources);
-
         Mockito.verify(bitmap).copy(Bitmap.Config.ARGB_8888, true);
     }
 }
