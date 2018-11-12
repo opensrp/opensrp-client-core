@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" >
+        <layer-list>
+            <item android:drawable="@drawable/white_checkbox_bg"/>
+            <item android:drawable="@drawable/ic_done"/>
+        </layer-list>
+    </item>
+    <item android:drawable="@drawable/white_checkbox_bg"/>
+</selector>
