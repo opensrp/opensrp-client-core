@@ -19,7 +19,6 @@ package org.smartregister.util;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -50,11 +49,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -555,6 +556,47 @@ public class Utils {
         }
 
         return null;
+    }
+
+    protected static String getPrefferedName() {
+        if (getAllSharedPreferences() == null) {
+            return null;
+        }
+
+        return getAllSharedPreferences().getANMPreferredName(getAllSharedPreferences().fetchRegisteredANM());
+    }
+
+    public static String getUserInitials() {
+        String initials = "N/A";
+        String preferredName = getPrefferedName();
+
+        if (StringUtils.isNotBlank(preferredName)) {
+            String[] preferredNameArray = preferredName.split(" ");
+            initials = "";
+            if (preferredNameArray.length > 1) {
+                initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
+            } else if (preferredNameArray.length == 1) {
+                initials = String.valueOf(preferredNameArray[0].charAt(0));
+            }
+        }
+        return initials;
+    }
+
+    public static AllSharedPreferences getAllSharedPreferences() {
+        return CoreLibrary.getInstance().context().allSharedPreferences();
+    }
+
+    public static String getDuration(String date) {
+        DateTime duration;
+        if (StringUtils.isNotBlank(date)) {
+            try {
+                duration = new DateTime(date);
+                return DateUtil.getDuration(duration);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString(), e);
+            }
+        }
+        return "";
     }
 
 }
