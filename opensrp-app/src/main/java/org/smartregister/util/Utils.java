@@ -48,6 +48,8 @@ import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -66,6 +68,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -89,9 +92,6 @@ public class Utils {
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    private Utils() {
-    }
 
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
@@ -566,8 +566,12 @@ public class Utils {
         return getAllSharedPreferences().getANMPreferredName(getAllSharedPreferences().fetchRegisteredANM());
     }
 
+    public String getName() {
+        return getPrefferedName();
+    }
+
     public static String getUserInitials() {
-        String initials = "N/A";
+        String initials = "Me";
         String preferredName = getPrefferedName();
 
         if (StringUtils.isNotBlank(preferredName)) {
@@ -599,4 +603,51 @@ public class Utils {
         return "";
     }
 
+
+    public static String getDob(int age) {
+        return getDob(age, DateUtil.DATE_FORMAT_FOR_TIMELINE_EVENT);
+    }
+
+    public static String getDob(int age, String dateFormatPattern) {
+        String pattern = dateFormatPattern;
+        if (StringUtils.isBlank(dateFormatPattern)) {
+            pattern = DateUtil.DATE_FORMAT_FOR_TIMELINE_EVENT;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -age);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+
+        cal.set(Calendar.MONTH, 0);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static int getAgeFromDate(String dateOfBirth) {
+        DateTime date = DateTime.parse(dateOfBirth);
+        Years age = Years.yearsBetween(date.toLocalDate(), LocalDate.now());
+        return age.getYears();
+    }
+
+    public static Date dobStringToDate(String dobString) {
+        DateTime dateTime = dobStringToDateTime(dobString);
+        if (dateTime != null) {
+            return dateTime.toDate();
+        }
+        return null;
+    }
+
+    public static DateTime dobStringToDateTime(String dobString) {
+        try {
+            if (StringUtils.isBlank(dobString)) {
+                return null;
+            }
+            return new DateTime(dobString);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
