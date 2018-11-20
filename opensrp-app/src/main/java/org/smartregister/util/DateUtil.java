@@ -18,8 +18,8 @@ interface DateUtility {
 }
 
 public class DateUtil {
-    private static String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-    private static String DATE_FORMAT_FOR_TIMELINE_EVENT = "dd-MM-yyyy";
+    public static String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    public static String DATE_FORMAT_FOR_TIMELINE_EVENT = "dd-MM-yyyy";
 
     private static DateUtility dateUtility = new RealDate();
 
