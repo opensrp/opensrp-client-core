@@ -140,7 +140,7 @@ public class ECSyncHelper {
         eventClientRepository.batchInsertClients(clients);
     }
 
-    protected void batchInsertEvents(JSONArray events) {
+    public void batchInsertEvents(JSONArray events) {
         eventClientRepository.batchInsertEvents(events, getLastSyncTimeStamp());
     }
 
