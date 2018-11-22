@@ -123,4 +123,10 @@
     <dimen name="me_bottom_nav_bar_text_size">13sp</dimen>
     <dimen name="barcode_toolbar_text_size">23sp</dimen>
 
+    <dimen name="activity_title_size">18sp</dimen>
+    <dimen name="activity_sub_title_size">14sp</dimen>
+
+    <dimen name="profile_btn_registration_info_padding">24dp</dimen>
+    <dimen name="profile_dot_separator_margin">10dp</dimen>
+
 </resources>
