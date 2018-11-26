@@ -32,6 +32,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.Task.TaskStatus.IN_PROGRESS;
@@ -52,6 +53,8 @@ public class TaskRepositoryTest {
 
     @Mock
     private static Repository repository;
+    @Mock
+    private TaskNotesRepository taskNotesRepository;
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
@@ -74,7 +77,7 @@ public class TaskRepositoryTest {
 
     @Before
     public void setUp() {
-        taskRepository = new TaskRepository(repository);
+        taskRepository = new TaskRepository(repository, taskNotesRepository);
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -86,7 +89,6 @@ public class TaskRepositoryTest {
         taskRepository.addOrUpdate(task);
 
         verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
-        assertEquals(2, stringArgumentCaptor.getAllValues().size());
 
         Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
         assertEquals(TASK_TABLE, iterator.next());
@@ -98,6 +100,8 @@ public class TaskRepositoryTest {
         assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
         assertEquals("IRS_2018_S1", contentValues.getAsString("campaign_id"));
         assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
+
+        verify(taskNotesRepository).addOrUpdate(task.getNotes().get(0), task.getIdentifier());
 
 
     }

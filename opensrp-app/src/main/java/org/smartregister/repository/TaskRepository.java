@@ -7,6 +7,7 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.util.DateUtil;
 
@@ -40,6 +41,7 @@ public class TaskRepository extends BaseRepository {
     private static final String OWNER = "owner";
     private static final String SERVER_VERSION = "server_version";
 
+    private TaskNotesRepository taskNotesRepository;
 
     protected static final String[] COLUMNS = {ID, CAMPAIGN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SERVER_VERSION};
 
@@ -65,8 +67,9 @@ public class TaskRepository extends BaseRepository {
                     SERVER_VERSION + " INTEGER ) ";
 
 
-    public TaskRepository(Repository repository) {
+    public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
+        this.taskNotesRepository = taskNotesRepository;
     }
 
     public static void createTable(SQLiteDatabase database) {
@@ -101,6 +104,11 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(SERVER_VERSION, task.getServerVersion());
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+
+        if (task.getNotes() != null) {
+            for (Note note : task.getNotes())
+                taskNotesRepository.addOrUpdate(note, task.getIdentifier());
+        }
 
     }
 
