@@ -251,9 +251,9 @@
 
 
     <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-       <!-- <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/accent</item> -->
+        <!-- <item name="colorPrimary">@color/primary</item>
+         <item name="colorPrimaryDark">@color/primaryDark</item>
+         <item name="colorAccent">@color/accent</item> -->
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Small.Bold" parent="CustomFontTextViewStyle">
@@ -300,6 +300,18 @@
         <item name="fontVariant">medium</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.tabIndicator.sub" parent="CustomFontTextViewStyle.tabIndicator">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">@dimen/activity_sub_title_size</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.tabIndicator.sub.white" parent="CustomFontTextViewStyle.tabIndicator">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">@dimen/activity_sub_title_size</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
