@@ -72,7 +72,7 @@ public class LocationTest {
 
 	}
 
-	private String stripTimezone(String locationJson) {
+	public static String stripTimezone(String locationJson) {
 		return locationJson.replaceAll("[\\+-]\\d{2}:00", "").replace(".000Z", ".000");
 	}
 }

@@ -1,13 +1,9 @@
 package org.smartregister.repository;
 
-import android.util.Log;
-
-import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.domain.Location;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,10 +11,11 @@ import java.util.List;
  */
 public class StructureRepository extends LocationRepository {
 
-    private static final String LOCATION_TABLE = "structure";
+    protected static String STRUCTURE_TABLE = "structure";
+
 
     private static final String CREATE_LOCATION_TABLE =
-            "CREATE TABLE " + LOCATION_TABLE + " (" +
+            "CREATE TABLE " + STRUCTURE_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
                     UUID + " VARCHAR , " +
                     PARENT_ID + " VARCHAR , " +
@@ -36,5 +33,11 @@ public class StructureRepository extends LocationRepository {
     public List<Location> getAllLocations() {
         throw new UnsupportedOperationException("getAllLocations not supported for Structures");
     }
+
+    @Override
+    protected String getLocationTableName() {
+        return STRUCTURE_TABLE;
+    }
+
 
 }

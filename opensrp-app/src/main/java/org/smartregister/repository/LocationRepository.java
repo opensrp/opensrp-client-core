@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.domain.Location;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -25,11 +26,13 @@ public class LocationRepository extends BaseRepository {
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     protected static final String ID = "_id";
-    protected static final String UUID = "title";
+    protected static final String UUID = "uuid";
     protected static final String PARENT_ID = "parent_id";
     protected static final String GEOJSON = "geojson";
 
-    private static final String LOCATION_TABLE = "location";
+    protected static final String LOCATION_TABLE = "location";
+
+    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, GEOJSON};
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
@@ -43,18 +46,23 @@ public class LocationRepository extends BaseRepository {
         super(repository);
     }
 
+    protected String getLocationTableName() {
+        return LOCATION_TABLE;
+    }
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
     }
 
     public void addOrUpdate(Location location) {
+        if (StringUtils.isBlank(location.getId()))
+            throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, location.getId());
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(GEOJSON, gson.toJson(location));
-        getWritableDatabase().replace(LOCATION_TABLE, null, contentValues);
+        getWritableDatabase().replace(getLocationTableName(), null, contentValues);
 
     }
 
@@ -62,7 +70,7 @@ public class LocationRepository extends BaseRepository {
         Cursor cursor = null;
         List<Location> locations = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + LOCATION_TABLE, null);
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName(), null);
             while (cursor.moveToNext()) {
                 locations.add(readCursor(cursor));
             }
@@ -79,7 +87,7 @@ public class LocationRepository extends BaseRepository {
     public Location getLocationById(String id) {
         Cursor cursor = null;
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + LOCATION_TABLE +
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName() +
                     " WHERE " + ID + " =?", new String[]{id});
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
@@ -97,7 +105,7 @@ public class LocationRepository extends BaseRepository {
     public Location getLocationByUUId(String uuid) {
         Cursor cursor = null;
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + LOCATION_TABLE +
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName() +
                     " WHERE " + UUID + " =?", new String[]{uuid});
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
@@ -116,7 +124,7 @@ public class LocationRepository extends BaseRepository {
         Cursor cursor = null;
         List<Location> locations = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + LOCATION_TABLE +
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName() +
                     " WHERE " + PARENT_ID + " =?", new String[]{parentId});
             while (cursor.moveToNext()) {
                 locations.add(readCursor(cursor));

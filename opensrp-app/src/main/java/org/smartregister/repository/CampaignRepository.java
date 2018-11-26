@@ -6,6 +6,7 @@ import android.util.Log;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Campaign;
 import org.smartregister.domain.ExecutionPeriod;
 import org.smartregister.util.DateUtil;
@@ -31,7 +32,9 @@ public class CampaignRepository extends BaseRepository {
     private static final String OWNER = "owner";
     private static final String SERVER_VERSION = "server_version";
 
-    private static final String CAMPAIGN_TABLE = "campaign";
+    protected static final String[] COLUMNS ={ID,TITLE,DESCRIPTION,STATUS,START,END,AUTHORED_ON,LAST_MODIFIED,OWNER,SERVER_VERSION};
+
+    protected static final String CAMPAIGN_TABLE = "campaign";
 
     private static final String CREATE_CAMPAIGN_TABLE =
             "CREATE TABLE " + CAMPAIGN_TABLE + " (" +
@@ -56,6 +59,8 @@ public class CampaignRepository extends BaseRepository {
     }
 
     public void addOrUpdate(Campaign campaign) {
+        if (StringUtils.isBlank(campaign.getIdentifier()))
+            throw new IllegalArgumentException("Identifier must be specified");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, campaign.getIdentifier());
         contentValues.put(TITLE, campaign.getTitle());
