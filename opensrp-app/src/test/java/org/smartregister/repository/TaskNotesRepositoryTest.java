@@ -2,15 +2,10 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,7 +17,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Note;
-import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.Iterator;
 import java.util.List;
