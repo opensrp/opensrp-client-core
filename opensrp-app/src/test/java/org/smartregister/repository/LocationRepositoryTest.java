@@ -9,8 +9,6 @@ import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,20 +52,18 @@ public class LocationRepositoryTest {
     private SQLiteDatabase sqLiteDatabase;
 
     @Captor
-    ArgumentCaptor<ContentValues> contentValuesArgumentCaptor;
+    private ArgumentCaptor<ContentValues> contentValuesArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
+    private ArgumentCaptor<String> stringArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<String[]> argsCaptor;
+    private ArgumentCaptor<String[]> argsCaptor;
 
     private String locationJson = LocationTest.parentJson;
 
     private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
-
-    protected static DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HHmm");
 
     @Before
     public void setUp() {

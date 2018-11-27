@@ -29,7 +29,6 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.Task.TaskStatus.IN_PROGRESS;
@@ -54,13 +53,13 @@ public class CampaignRepositoryTest {
     private SQLiteDatabase sqLiteDatabase;
 
     @Captor
-    ArgumentCaptor<ContentValues> contentValuesArgumentCaptor;
+    private ArgumentCaptor<ContentValues> contentValuesArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
+    private ArgumentCaptor<String> stringArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<String[]> argsCaptor;
+    private ArgumentCaptor<String[]> argsCaptor;
 
     private String campaignJson = "{\"identifier\":\"IRS_2018_S1\",\"title\":\"2019 IRS Season 1\",\"description\":\"IRS_2018_S1 Campaign for Zambia for the first spray season dated 1 Jan 2019 - 31 Mar 2019.\",\"status\":\"In Progress\",\"executionPeriod\":{\"start\":\"2019-01-01\",\"end\":\"2019-03-31\"},\"authoredOn\":\"2018-10-01T0900\",\"lastModified\":\"2018-10-01T0900\",\"owner\":\"jdoe\",\"serverVersion\":0}";
 
