@@ -6,12 +6,12 @@ import android.util.Pair;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.form.FormLocation;
-import org.smartregister.util.Utils;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.AssetHandler;
+import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
+import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
 
 
 /**
@@ -42,6 +45,9 @@ public class LocationHelper {
 
     private ArrayList<String> ALLOWED_LEVELS;
     private String DEFAULT_LOCATION_LEVEL;
+    List<String> revealCampaigns = new ArrayList<>();
+    List<String> revealOperationalArea = new ArrayList<>();
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     private LocationHelper(ArrayList<String> allowedLevels, String defaultLocationLevel) {
 
@@ -86,8 +92,18 @@ public class LocationHelper {
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
                     List<String> foundLocations = extractLocations(entry.getValue(), fetchLocationIds, defaultLocation);
+
                     if (!Utils.isEmptyCollection(foundLocations)) {
                         locations.addAll(foundLocations);
+                    }
+                }
+//                clean up on reveal release 2
+                if (ALLOWED_LEVELS.contains("reveal")) {
+                    if (revealCampaigns != null && !revealCampaigns.isEmpty()) {
+                        allSharedPreferences.saveRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS, android.text.TextUtils.join(",", revealCampaigns));
+                    }
+                    if (revealOperationalArea != null && !revealOperationalArea.isEmpty()) {
+                        allSharedPreferences.saveRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS, android.text.TextUtils.join(",", revealOperationalArea));
                     }
                 }
             }
@@ -199,7 +215,6 @@ public class LocationHelper {
         }
 
         try {
-            AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
             String defaultLocationUuid = allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM());
 
             LinkedHashMap<String, TreeNode<String, Location>> map = map();
@@ -289,9 +304,18 @@ public class LocationHelper {
             }
             String value = fetchLocationIds ? node.getLocationId() : node.getName();
             Set<String> levels = node.getTags();
+
             if (!Utils.isEmptyCollection(levels)) {
+                String teamUID = allSharedPreferences.fetchDefaultTeamId(allSharedPreferences.fetchRegisteredANM());
                 for (String level : levels) {
                     if (ALLOWED_LEVELS.contains(level)) {
+//                        Handling Reveal campaigns and operational areas shoudl clean up after release 2
+                        if (node.getAttribute("campaign_id") != null) {
+                            revealCampaigns.add(node.getAttribute("campaign_id").toString());
+                        }
+                        if (node.getAttribute("team_id") != null && node.getAttribute("team_id").toString().equals(teamUID)) {
+                            revealOperationalArea.add(node.getName());
+                        }
                         if (!fetchLocationIds && DEFAULT_LOCATION_LEVEL.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
                             return locationList;
                         }
@@ -299,6 +323,7 @@ public class LocationHelper {
                         locationList.add(value);
                     }
                 }
+
             }
 
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(rawLocationData);
@@ -646,7 +671,6 @@ public class LocationHelper {
     }
 
 }
-
 
 
 
