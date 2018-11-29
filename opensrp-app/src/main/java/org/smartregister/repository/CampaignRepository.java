@@ -32,7 +32,7 @@ public class CampaignRepository extends BaseRepository {
     private static final String OWNER = "owner";
     private static final String SERVER_VERSION = "server_version";
 
-    protected static final String[] COLUMNS ={ID,TITLE,DESCRIPTION,STATUS,START,END,AUTHORED_ON,LAST_MODIFIED,OWNER,SERVER_VERSION};
+    protected static final String[] COLUMNS = {ID, TITLE, DESCRIPTION, STATUS, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SERVER_VERSION};
 
     protected static final String CAMPAIGN_TABLE = "campaign";
 
@@ -83,7 +83,7 @@ public class CampaignRepository extends BaseRepository {
 
     }
 
-    public List<Campaign> getCampaignsAllCampaigns() {
+    public List<Campaign> getAllCampaigns() {
         Cursor cursor = null;
         List<Campaign> campaigns = new ArrayList<>();
         try {
