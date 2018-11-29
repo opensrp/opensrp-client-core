@@ -1,158 +1,68 @@
 package org.smartregister.sync.intent;
 
+/**
+ * Created by ndegwamartin on 09/04/2018.
+ */
+
 import android.app.IntentService;
-import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.util.Pair;
 
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
+import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
-import org.smartregister.SyncConfiguration;
-import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.helper.ECSyncHelper;
-import org.smartregister.util.NetworkUtils;
-
-import java.util.Date;
 
 public class CampaignTaskIntentService extends IntentService {
-
-    final static String CAMPAIGN_SYNC_URL = "/rest/campaign";
-    protected final static int CAMPAIGN_SYNC_LIMIT = 250;
-    private Context context;
-    private HTTPAgent httpAgent;
+    public static final String CAMPAIGN_URL = "/rest/campaign/";
+    private static final String TAG = CampaignTaskIntentService.class.getCanonicalName();
 
 
     public CampaignTaskIntentService() {
-        super("SyncCampaignTaskService");
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        context = getBaseContext();
-        httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
-        return super.onStartCommand(intent, flags, startId);
+        super("PullUniqueOpenMRSUniqueIdsService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
-        handleSync();
-    }
-
-    private void complete(FetchStatus fetchStatus) {
-        Intent intent = new Intent();
-        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
-
-        sendBroadcast(intent);
-
-        ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-        ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
-    }
-
-    protected void handleSync() {
-        sendSyncStatusBroadcastMessage(FetchStatus.fetchStarted);
-
-        doSync();
-    }
-
-    private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
-        Intent intent = new Intent();
-        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
-        sendBroadcast(intent);
-    }
-
-    private void doSync() {
-        if (!NetworkUtils.isNetworkAvailable()) {
-            complete(FetchStatus.noConnection);
-            return;
-        }
-
         try {
-            pullECFromServer();
+            Log.i("shimba ", "HERE");
 
+            JSONArray ids = fetchCampaigns();
+
+            Log.i("shimba ", ids.toString());
+
+//            if (ids != null && ids.has(IDENTIFIERS)) {
+////                parseResponse(ids);
+//            }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
-            complete(FetchStatus.fetchedFailed);
+            Log.e(TAG, e.getMessage(), e);
         }
     }
 
-    private void pullECFromServer() {
-        fetchRetry(0);
-    }
 
-
-    private synchronized void fetchRetry(final int count) {
-        try {
-            SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-            if (StringUtils.isBlank(configs.getSyncFilterParam()) || StringUtils.isBlank(configs.getSyncFilterValue())) {
-                complete(FetchStatus.fetchedFailed);
-                return;
-            }
-
-            final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-            String baseUrl = CoreLibrary.getInstance().context().
-                    configuration().dristhiBaseURL();
-            if (baseUrl.endsWith("/")) {
-                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
-            }
-
-            Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
-            Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
-
-            String url = baseUrl + CAMPAIGN_SYNC_URL + "?" + configs.getSyncFilterParam() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
-            Log.i(SyncIntentService.class.getName(), "URL: " + url);
-
-            if (httpAgent == null) {
-                complete(FetchStatus.fetchedFailed);
-            }
-
-            Response resp = httpAgent.fetch(url);
-            if (resp.isFailure()) {
-                fetchFailed(count);
-            }
-
-            JSONObject jsonObject = new JSONObject((String) resp.payload());
-
-            int eCount = fetchNumberOfEvents(jsonObject);
-            Log.i(getClass().getName(), "Parse Network Event Count: " + eCount);
-
-        } catch (Exception e) {
-            Log.e(getClass().getName(), "Fetch Retry Exception: " + e.getMessage(), e.getCause());
-            fetchFailed(count);
+    private JSONArray fetchCampaigns() throws Exception {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
-    }
 
-    public void fetchFailed(int count) {
-        if (count < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries()) {
-            int newCount = count + 1;
-            fetchRetry(newCount);
-        } else {
-            complete(FetchStatus.fetchedFailed);
-        }
-    }
+        String url = baseUrl + CAMPAIGN_URL;
 
-    private int fetchNumberOfEvents(JSONObject jsonObject) {
-        int count = -1;
-        final String NO_OF_EVENTS = "no_of_events";
-        try {
-            if (jsonObject != null && jsonObject.has(NO_OF_EVENTS)) {
-                count = jsonObject.getInt(NO_OF_EVENTS);
-            }
-        } catch (JSONException e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
         }
-        return count;
+
+        Response resp = httpAgent.fetch(url);
+        if (resp.isFailure()) {
+            throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
+        }
+
+        return new JSONArray((String) resp.payload());
     }
 
 
