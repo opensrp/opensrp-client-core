@@ -61,9 +61,10 @@
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/txt_title_label"
             style="@style/CustomFontTextViewStyle.NavBar.Black"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@android:color/transparent"
+            android:gravity="center"
             android:text="@string/app_name"
             android:visibility="gone" />
 
