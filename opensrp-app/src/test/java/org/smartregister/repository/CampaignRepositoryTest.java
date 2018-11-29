@@ -108,7 +108,7 @@ public class CampaignRepositoryTest {
     @Test
     public void tesGetCampaignsAllCampaigns() {
         when(sqLiteDatabase.rawQuery("SELECT * FROM " + CAMPAIGN_TABLE, null)).thenReturn(getCursor());
-        List<Campaign> allCampaigns = campaignRepository.getCampaignsAllCampaigns();
+        List<Campaign> allCampaigns = campaignRepository.getAllCampaigns();
         verify(sqLiteDatabase).rawQuery("SELECT * FROM " + CAMPAIGN_TABLE, null);
         assertEquals(1, allCampaigns.size());
         assertEquals(campaignJson, gson.toJson(allCampaigns.get(0)));
