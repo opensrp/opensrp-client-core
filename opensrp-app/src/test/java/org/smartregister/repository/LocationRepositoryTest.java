@@ -86,7 +86,7 @@ public class LocationRepositoryTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(4, contentValues.size());
+        assertEquals(5, contentValues.size());
 
         assertEquals("3734", contentValues.getAsString("_id"));
         assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
@@ -102,6 +102,22 @@ public class LocationRepositoryTest {
         locationRepository.addOrUpdate(location);
 
     }
+
+
+    @Test
+    public void tesGetAllLocations() {
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location", null)).thenReturn(getCursor());
+        List<Location> allLocations = locationRepository.getAllLocations();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT * FROM location", stringArgumentCaptor.getValue());
+
+        assertEquals(1, allLocations.size());
+        Location location = allLocations.get(0);
+        assertEquals(locationJson, stripTimezone(gson.toJson(location)));
+
+    }
+
 
     @Test
     public void tesGetLocationsByParentId() {
@@ -148,11 +164,27 @@ public class LocationRepositoryTest {
 
     }
 
+    @Test
+    public void tesGetLocationByName() {
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location WHERE name =?",
+                new String[]{"01_5"})).thenReturn(getCursor());
+        Location location = locationRepository.getLocationByName("01_5");
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT * FROM location WHERE name =?", stringArgumentCaptor.getValue());
+        assertEquals(1, argsCaptor.getValue().length);
+        assertEquals("01_5", argsCaptor.getValue()[0]);
+
+        assertEquals(locationJson, stripTimezone(gson.toJson(location)));
+
+    }
+
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
         Location location = gson.fromJson(locationJson, Location.class);
-        cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(), location.getProperties().getParentId(), locationJson});
+        cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
+                location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;
     }
 

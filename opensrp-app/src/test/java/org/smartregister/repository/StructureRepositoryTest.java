@@ -87,7 +87,7 @@ public class StructureRepositoryTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(4, contentValues.size());
+        assertEquals(5, contentValues.size());
 
         assertEquals("90397", contentValues.getAsString("_id"));
         assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
@@ -153,7 +153,8 @@ public class StructureRepositoryTest {
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
         Location location = gson.fromJson(locationJson, Location.class);
-        cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(), location.getProperties().getParentId(), locationJson});
+        cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
+                location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;
     }
 

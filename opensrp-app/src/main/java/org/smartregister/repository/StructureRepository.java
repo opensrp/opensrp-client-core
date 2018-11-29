@@ -19,6 +19,7 @@ public class StructureRepository extends LocationRepository {
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
                     UUID + " VARCHAR , " +
                     PARENT_ID + " VARCHAR , " +
+                    NAME + " VARCHAR , " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
     public StructureRepository(Repository repository) {

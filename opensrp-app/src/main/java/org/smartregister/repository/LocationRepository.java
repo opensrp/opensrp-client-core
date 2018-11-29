@@ -28,17 +28,19 @@ public class LocationRepository extends BaseRepository {
     protected static final String ID = "_id";
     protected static final String UUID = "uuid";
     protected static final String PARENT_ID = "parent_id";
+    protected static final String NAME = "name";
     protected static final String GEOJSON = "geojson";
 
     protected static final String LOCATION_TABLE = "location";
 
-    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, GEOJSON};
+    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME, GEOJSON};
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
                     UUID + " VARCHAR , " +
                     PARENT_ID + " VARCHAR , " +
+                    NAME + " VARCHAR , " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
 
@@ -61,6 +63,7 @@ public class LocationRepository extends BaseRepository {
         contentValues.put(ID, location.getId());
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
+        contentValues.put(NAME, location.getProperties().getName());
         contentValues.put(GEOJSON, gson.toJson(location));
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
 
@@ -140,7 +143,26 @@ public class LocationRepository extends BaseRepository {
     }
 
 
-    protected Location readCursor(Cursor cursor) {
+    public Location getLocationByName(String name) {
+        Cursor cursor = null;
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName() +
+                    " WHERE " + NAME + " =?", new String[]{name});
+            if (cursor.moveToFirst()) {
+                return readCursor(cursor);
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return null;
+    }
+
+
+    private Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
     }
