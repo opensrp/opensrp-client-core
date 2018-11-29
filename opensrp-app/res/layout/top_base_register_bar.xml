@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/register_nav_bar_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/customAppThemeBlue"
-    android:focusableInTouchMode="true"
-    tools:showIn="@layout/toolbar_register">
+    android:focusableInTouchMode="true">
 
     <RelativeLayout
         android:id="@+id/top_left_layout"
@@ -22,6 +20,16 @@
             android:layout_margin="3dp"
             android:gravity="center"
             android:src="@drawable/ic_icon_qr_code" />
+
+        <ImageView
+            android:id="@+id/left_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="3dp"
+            android:gravity="center"
+            android:src="@drawable/ic_action_menu"
+            android:visibility="gone" />
 
     </RelativeLayout>
 
@@ -50,8 +58,16 @@
             android:scaleType="center"
             android:src="@drawable/logo_opensrp_200" />
 
-    </RelativeLayout>
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/txt_title_label"
+            style="@style/CustomFontTextViewStyle.NavBar.Black"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:text="@string/app_name"
+            android:visibility="gone" />
 
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/top_right_layout"
