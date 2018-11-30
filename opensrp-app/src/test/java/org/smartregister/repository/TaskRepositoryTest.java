@@ -25,7 +25,7 @@ import org.smartregister.domain.Task;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -113,7 +113,7 @@ public class TaskRepositoryTest {
     public void tesGetTasksAllTasks() {
         when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE campaign_id=? AND group_id =?",
                 new String[]{"IRS_2018_S1", "2018_IRS-3734"})).thenReturn(getCursor());
-        List<Task> allTasks = taskRepository.getTasksByCampaignAndGroup("IRS_2018_S1", "2018_IRS-3734");
+        Map<String, Task> allTasks = taskRepository.getTasksByCampaignAndGroup("IRS_2018_S1", "2018_IRS-3734");
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
         assertEquals("SELECT * FROM task WHERE campaign_id=? AND group_id =?", stringArgumentCaptor.getValue());
@@ -122,7 +122,7 @@ public class TaskRepositoryTest {
         assertEquals("2018_IRS-3734", argsCaptor.getValue()[1]);
 
         assertEquals(1, allTasks.size());
-        Task task = allTasks.get(0);
+        Task task = allTasks.get("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc");
 
         assertEquals("tsk11231jh22", task.getIdentifier());
         assertEquals("2018_IRS-3734", task.getGroupIdentifier());
