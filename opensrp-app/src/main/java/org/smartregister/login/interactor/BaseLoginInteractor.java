@@ -20,7 +20,7 @@ import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.CharacteristicsHelper;
-import org.smartregister.sync.intent.CampaignTaskIntentService;
+import org.smartregister.sync.intent.CampaignIntentService;
 import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -194,7 +194,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         getLoginView().goToHome(true);
         if (NetworkUtils.isNetworkAvailable()) {
-//            startPullUniqueIdsService();
+            startPullUniqueIdsService();
             startCampaignTaskIntentService();
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
@@ -207,7 +207,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     public void startCampaignTaskIntentService() {
-        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), CampaignTaskIntentService.class);
+        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), CampaignIntentService.class);
         getApplicationContext().startService(intent);
     }
 

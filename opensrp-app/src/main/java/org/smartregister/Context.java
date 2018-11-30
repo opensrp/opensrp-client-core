@@ -35,6 +35,8 @@ import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
+import org.smartregister.repository.TaskNotesRepository;
+import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.ANMService;
@@ -200,6 +202,8 @@ public class Context {
     private EventClientRepository eventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
     private CampaignRepository campaignRepository;
+    private TaskRepository taskRepository;
+    private TaskNotesRepository taskNotesRepository;
 
 
     /////////////////////////////////////////////////
@@ -1116,6 +1120,13 @@ public class Context {
             campaignRepository = new CampaignRepository(getRepository());
         }
         return campaignRepository;
+    }
+    public TaskRepository getTaskRepository() {
+        if (taskRepository == null) {
+            taskNotesRepository = new TaskNotesRepository(getRepository());
+            taskRepository = new TaskRepository(getRepository(),taskNotesRepository);
+        }
+        return taskRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

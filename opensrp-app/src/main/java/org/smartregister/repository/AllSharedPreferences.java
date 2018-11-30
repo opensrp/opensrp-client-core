@@ -273,4 +273,14 @@ public class AllSharedPreferences {
         return preferences.getString(preferencesKey, "");
     }
 
+    public void saveCampaingTaskLastSyncDate(long lastSyncDate, String campaignTaskPreferencesKey) {
+        preferences.edit().putLong(campaignTaskPreferencesKey, lastSyncDate).commit();
+    }
+
+    public Long fetchCampaingTaskLastSyncDate(String campaignTaskPreferencesKey) {
+
+        return preferences.getLong(campaignTaskPreferencesKey, 0);
+    }
+
 }
+
