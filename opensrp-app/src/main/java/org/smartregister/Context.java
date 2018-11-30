@@ -21,6 +21,7 @@ import org.smartregister.repository.AllServicesProvided;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
+import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
@@ -198,6 +199,8 @@ public class Context {
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
+    private CampaignRepository campaignRepository;
+
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1106,6 +1109,13 @@ public class Context {
             uniqueIdRepository = new UniqueIdRepository(getRepository());
         }
         return uniqueIdRepository;
+    }
+
+    public CampaignRepository getCampaignRepository() {
+        if (campaignRepository == null) {
+            campaignRepository = new CampaignRepository(getRepository());
+        }
+        return campaignRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

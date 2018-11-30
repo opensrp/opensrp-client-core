@@ -558,7 +558,7 @@ public class Utils {
         return null;
     }
 
-    protected static String getPrefferedName() {
+    public static String getPrefferedName() {
         if (getAllSharedPreferences() == null) {
             return null;
         }
