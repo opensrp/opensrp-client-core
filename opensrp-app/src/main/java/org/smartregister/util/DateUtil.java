@@ -221,11 +221,11 @@ public class DateUtil {
     }
 
     public static DateTime getDateTimeFromMillis(Long milliSeconds) {
-        return milliSeconds == null ? null : new DateTime(milliSeconds);
+        return milliSeconds == null || milliSeconds == 0 ? null : new DateTime(milliSeconds);
     }
 
     public static LocalDate getDateFromMillis(Long milliSeconds) {
-        return milliSeconds == null ? null : new LocalDate(milliSeconds);
+        return milliSeconds == null || milliSeconds == 0 ? null : new LocalDate(milliSeconds);
     }
 }
 

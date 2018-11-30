@@ -1,7 +1,5 @@
 package org.smartregister.domain;
 
-import com.google.gson.annotations.SerializedName;
-
 import org.joda.time.DateTime;
 
 /**

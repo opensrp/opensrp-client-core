@@ -6,6 +6,8 @@ import android.util.Log;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.util.DateUtil;
 
@@ -39,7 +41,11 @@ public class TaskRepository extends BaseRepository {
     private static final String OWNER = "owner";
     private static final String SERVER_VERSION = "server_version";
 
-    private static final String TASK_TABLE = "task";
+    private TaskNotesRepository taskNotesRepository;
+
+    protected static final String[] COLUMNS = {ID, CAMPAIGN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SERVER_VERSION};
+
+    protected static final String TASK_TABLE = "task";
 
     private static final String CREATE_TASK_TABLE =
             "CREATE TABLE " + TASK_TABLE + " (" +
@@ -61,8 +67,9 @@ public class TaskRepository extends BaseRepository {
                     SERVER_VERSION + " INTEGER ) ";
 
 
-    public TaskRepository(Repository repository) {
+    public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
+        this.taskNotesRepository = taskNotesRepository;
     }
 
     public static void createTable(SQLiteDatabase database) {
@@ -70,6 +77,9 @@ public class TaskRepository extends BaseRepository {
     }
 
     public void addOrUpdate(Task task) {
+        if (StringUtils.isBlank(task.getIdentifier())) {
+            throw new IllegalArgumentException("identifier must be specified");
+        }
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, task.getIdentifier());
         contentValues.put(CAMPAIGN_ID, task.getCampaignIdentifier());
@@ -95,13 +105,19 @@ public class TaskRepository extends BaseRepository {
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
 
+        if (task.getNotes() != null) {
+            for (Note note : task.getNotes())
+                taskNotesRepository.addOrUpdate(note, task.getIdentifier());
+        }
+
     }
 
     public List<Task> getTasksByCampaignAndGroup(String campaignId, String groupId) {
         Cursor cursor = null;
         List<Task> tasks = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE, null);
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =?",
+                    TASK_TABLE, CAMPAIGN_ID, GROUP_ID), new String[]{campaignId, groupId});
             while (cursor.moveToNext()) {
                 tasks.add(readCursor(cursor));
             }
@@ -144,8 +160,8 @@ public class TaskRepository extends BaseRepository {
         task.setPriority(cursor.getInt(cursor.getColumnIndex(PRIORITY)));
         task.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
         task.setDescription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
-        task.setCode(cursor.getString(cursor.getColumnIndex(FOCUS)));
-        task.setCode(cursor.getString(cursor.getColumnIndex(FOR)));
+        task.setFocus(cursor.getString(cursor.getColumnIndex(FOCUS)));
+        task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
 
         task.setExecutionStartDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
         task.setExecutionEndDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
