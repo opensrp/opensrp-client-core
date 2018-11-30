@@ -212,6 +212,21 @@ public class DateUtil {
         return date.before(dateBefore90Days);
     }
 
+    public static Long getMillis(DateTime dateTime) {
+        return dateTime == null ? null : dateTime.getMillis();
+    }
+
+    public static Long getMillis(LocalDate localDate) {
+        return localDate == null ? null : localDate.toDate().getTime();
+    }
+
+    public static DateTime getDateTimeFromMillis(Long milliSeconds) {
+        return milliSeconds == null || milliSeconds == 0 ? null : new DateTime(milliSeconds);
+    }
+
+    public static LocalDate getDateFromMillis(Long milliSeconds) {
+        return milliSeconds == null || milliSeconds == 0 ? null : new LocalDate(milliSeconds);
+    }
 }
 
 class RealDate implements DateUtility {
