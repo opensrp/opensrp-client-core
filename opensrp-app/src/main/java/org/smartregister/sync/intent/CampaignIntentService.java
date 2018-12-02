@@ -8,6 +8,7 @@ import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Campaign;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
@@ -38,7 +39,7 @@ public class CampaignIntentService extends IntentService {
         try {
             JSONArray campaignsResponse = fetchCampaigns();
             List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS).split(","));
-            for (Campaign campaign : SyncIntentServiceHelper.parseTasksFromServer(campaignsResponse,Campaign.class)) {
+            for (Campaign campaign : SyncIntentServiceHelper.parseTasksFromServer(campaignsResponse, Campaign.class)) {
                 try {
                     if (campaign.getIdentifier() != null && allowedCampaigns.contains(campaign.getIdentifier())) {
                         campaignRepository.addOrUpdate(campaign);
@@ -52,6 +53,7 @@ public class CampaignIntentService extends IntentService {
         }
     }
 
+
     private JSONArray fetchCampaigns() throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
@@ -60,18 +62,19 @@ public class CampaignIntentService extends IntentService {
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
-
         String url = baseUrl + CAMPAIGN_URL;
 
         if (httpAgent == null) {
+            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
+            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
-
+        sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.fetched));
         return new JSONArray((String) resp.payload());
     }
 
@@ -80,6 +83,5 @@ public class CampaignIntentService extends IntentService {
         campaignRepository = CoreLibrary.getInstance().context().getCampaignRepository();
         return super.onStartCommand(intent, flags, startId);
     }
-
 
 }

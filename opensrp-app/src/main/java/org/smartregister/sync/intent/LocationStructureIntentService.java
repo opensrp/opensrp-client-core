@@ -7,6 +7,7 @@ import android.util.Log;
 import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
@@ -14,9 +15,11 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.SyncIntentServiceHelper;
 
+import java.util.List;
+
 public class LocationStructureIntentService extends IntentService {
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
-    public static final String LOCATION_STRUCTURE_LAST_SYNC_DATE = "LOCATION_STRUCTURE_LAST_SYNC_DATE";
+    public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     private static final String TAG = LocationStructureIntentService.class.getCanonicalName();
     private LocationRepository locationRepository;
     AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
@@ -27,21 +30,22 @@ public class LocationStructureIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        syncLocationsStructures("3734",false);
+        syncLocationsStructures("3734", false);
     }
 
     protected void syncLocationsStructures(String parent_id, boolean is_jurisdiction) {
-        long serverVersion = allSharedPreferences.fetchRevealIntentServiceLastSyncDate(LOCATION_STRUCTURE_LAST_SYNC_DATE);
+        long serverVersion = allSharedPreferences.fetchRevealIntentServiceLastSyncDate(STRUCTURES_LAST_SYNC_DATE);
         try {
-
             JSONArray tasksResponse = fetchLocationsOrStructures(parent_id, is_jurisdiction, serverVersion);
-            for (Location location : SyncIntentServiceHelper.parseTasksFromServer(tasksResponse,Location.class)) {
+            List<Location> locations = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Location.class);
+            for (Location location : locations) {
                 try {
                     locationRepository.addOrUpdate(location);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            allSharedPreferences.saveRevealIntentServiceLastSyncDate(geMaxServerVersion(locations, serverVersion), STRUCTURES_LAST_SYNC_DATE);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -60,15 +64,29 @@ public class LocationStructureIntentService extends IntentService {
         String url = baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parent_id + "&is_jurisdiction=" + is_jurisdiction + "&serverVersion=" + serverVersion;
 
         if (httpAgent == null) {
+            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
+            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
         return new JSONArray((String) resp.payload());
+    }
+
+    public long geMaxServerVersion(List<Location> locations, long currentServerVersion) {
+
+        for (Location location : locations) {
+            long serverVersion = location.getServerVersion();
+            if (serverVersion > currentServerVersion) {
+                currentServerVersion = serverVersion;
+            }
+        }
+
+        return currentServerVersion;
     }
 
     @Override

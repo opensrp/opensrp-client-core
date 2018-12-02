@@ -7,12 +7,15 @@ import android.util.Log;
 import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.SyncIntentServiceHelper;
+
+import java.util.List;
 
 import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
 import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
@@ -38,15 +41,17 @@ public class TaskIntentService extends IntentService {
         String groups = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS);
         long serverVersion = allSharedPreferences.fetchRevealIntentServiceLastSyncDate(TASK_LAST_SYNC_DATE);
         try {
-
             JSONArray tasksResponse = fetchTasks(campaigns, groups, serverVersion);
-            for (Task task : SyncIntentServiceHelper.parseTasksFromServer(tasksResponse,Task.class)) {
+            List<Task> tasks = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Task.class);
+
+            for (Task task : tasks) {
                 try {
                     taskRepository.addOrUpdate(task);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
+            allSharedPreferences.saveRevealIntentServiceLastSyncDate(geMaxServerVersion(tasks, serverVersion),TASK_LAST_SYNC_DATE);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -65,11 +70,13 @@ public class TaskIntentService extends IntentService {
         String url = baseUrl + CAMPAIGN_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
 
         if (httpAgent == null) {
+            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
+            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
 
@@ -82,5 +89,15 @@ public class TaskIntentService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    public long geMaxServerVersion(List<Task> tasks, long currentServerVersion) {
 
+        for (Task task : tasks) {
+            long serverVersion = task.getServerVersion();
+            if (serverVersion > currentServerVersion) {
+                currentServerVersion = serverVersion;
+            }
+        }
+
+        return currentServerVersion;
+    }
 }
