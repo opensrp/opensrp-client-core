@@ -28,7 +28,7 @@ import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
 import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
 
 public class TaskIntentService extends IntentService {
-    public static final String CAMPAIGN_URL = "/rest/task/";
+    public static final String CAMPAIGN_URL = "/rest/task/sync";
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
     private static final String TAG = TaskIntentService.class.getCanonicalName();
     private TaskRepository taskRepository;
@@ -43,16 +43,16 @@ public class TaskIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        String campaigns = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS);
-        String groups = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS);
-        syncTasks(campaigns, groups, allSharedPreferences.fetchCampaingTaskLastSyncDate(TASK_LAST_SYNC_DATE));
+        syncTasks();
     }
 
-    protected void syncTasks(String campaign, String group, Long serverVersion) {
-
+    protected void syncTasks() {
+        String campaigns = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS);
+        String groups = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS);
+        long serverVersion = allSharedPreferences.fetchCampaingTaskLastSyncDate(TASK_LAST_SYNC_DATE);
         try {
 
-            JSONArray tasksResponse = fetchTasks(campaign, group, serverVersion);
+            JSONArray tasksResponse = fetchTasks(campaigns, groups, serverVersion);
             for (Task task : parseTasksFromServer(tasksResponse)) {
                 try {
                     taskRepository.addOrUpdate(task);

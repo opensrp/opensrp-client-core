@@ -22,6 +22,7 @@ import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.CharacteristicsHelper;
 import org.smartregister.sync.intent.CampaignIntentService;
 import org.smartregister.sync.intent.PullUniqueIdsIntentService;
+import org.smartregister.sync.intent.TaskIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -195,7 +196,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         getLoginView().goToHome(true);
         if (NetworkUtils.isNetworkAvailable()) {
             startPullUniqueIdsService();
-            startCampaignTaskIntentService();
+            startCampaignIntentService();
+            startTaskIntentService();
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
         scheduleJobs();
@@ -206,8 +208,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         getApplicationContext().startService(intent);
     }
 
-    public void startCampaignTaskIntentService() {
+    public void startCampaignIntentService() {
         Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), CampaignIntentService.class);
+        getApplicationContext().startService(intent);
+    }
+    public void startTaskIntentService() {
+        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), TaskIntentService.class);
         getApplicationContext().startService(intent);
     }
 
