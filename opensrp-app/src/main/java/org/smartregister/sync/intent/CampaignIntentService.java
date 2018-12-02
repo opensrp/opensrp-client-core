@@ -4,24 +4,16 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import org.apache.http.NoHttpResponseException;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Campaign;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.util.DateTimeTypeConverter;
-import org.smartregister.util.DateTypeConverter;
+import org.smartregister.sync.helper.SyncIntentServiceHelper;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,9 +23,6 @@ public class CampaignIntentService extends IntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = CampaignIntentService.class.getCanonicalName();
     private CampaignRepository campaignRepository;
-    private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
-            .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
-            .serializeNulls().create();
     AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     public CampaignIntentService() {
@@ -49,7 +38,7 @@ public class CampaignIntentService extends IntentService {
         try {
             JSONArray campaignsResponse = fetchCampaigns();
             List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS).split(","));
-            for (Campaign campaign : parseCampaignsFromServer(campaignsResponse)) {
+            for (Campaign campaign : SyncIntentServiceHelper.parseTasksFromServer(campaignsResponse,Campaign.class)) {
                 try {
                     if (campaign.getIdentifier() != null && allowedCampaigns.contains(campaign.getIdentifier())) {
                         campaignRepository.addOrUpdate(campaign);
@@ -61,18 +50,6 @@ public class CampaignIntentService extends IntentService {
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
-    }
-
-    protected List<Campaign> parseCampaignsFromServer(JSONArray campaignsFromServer) {
-        List<Campaign> campaigns = new ArrayList<>();
-        for (int i = 0; i < campaignsFromServer.length(); i++) {
-            try {
-                campaigns.add(gson.fromJson(campaignsFromServer.getJSONObject(i).toString(), Campaign.class));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return campaigns;
     }
 
     private JSONArray fetchCampaigns() throws Exception {

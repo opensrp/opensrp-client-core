@@ -273,13 +273,13 @@ public class AllSharedPreferences {
         return preferences.getString(preferencesKey, "");
     }
 
-    public void saveCampaingTaskLastSyncDate(long lastSyncDate, String campaignTaskPreferencesKey) {
-        preferences.edit().putLong(campaignTaskPreferencesKey, lastSyncDate).commit();
+    public void saveRevealIntentServiceLastSyncDate(long lastSyncDate, String intentServicePreferencesKey) {
+        preferences.edit().putLong(intentServicePreferencesKey, lastSyncDate).commit();
     }
 
-    public Long fetchCampaingTaskLastSyncDate(String campaignTaskPreferencesKey) {
+    public Long fetchRevealIntentServiceLastSyncDate(String intentServicePreferencesKey) {
 
-        return preferences.getLong(campaignTaskPreferencesKey, 0);
+        return preferences.getLong(intentServicePreferencesKey, 0);
     }
 
 }

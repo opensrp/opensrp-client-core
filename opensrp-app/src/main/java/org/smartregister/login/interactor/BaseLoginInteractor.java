@@ -21,6 +21,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.CharacteristicsHelper;
 import org.smartregister.sync.intent.CampaignIntentService;
+import org.smartregister.sync.intent.LocationStructureIntentService;
 import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.sync.intent.TaskIntentService;
 import org.smartregister.util.NetworkUtils;
@@ -198,6 +199,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             startPullUniqueIdsService();
             startCampaignIntentService();
             startTaskIntentService();
+            startLocationStructureIntentService();
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
         scheduleJobs();
@@ -214,6 +216,10 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
     public void startTaskIntentService() {
         Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), TaskIntentService.class);
+        getApplicationContext().startService(intent);
+    }
+    public void startLocationStructureIntentService() {
+        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), LocationStructureIntentService.class);
         getApplicationContext().startService(intent);
     }
 

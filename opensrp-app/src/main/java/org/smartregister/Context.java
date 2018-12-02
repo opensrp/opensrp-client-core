@@ -30,6 +30,7 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
@@ -204,6 +205,7 @@ public class Context {
     private CampaignRepository campaignRepository;
     private TaskRepository taskRepository;
     private TaskNotesRepository taskNotesRepository;
+    private LocationRepository locationRepository;
 
 
     /////////////////////////////////////////////////
@@ -1127,6 +1129,12 @@ public class Context {
             taskRepository = new TaskRepository(getRepository(),taskNotesRepository);
         }
         return taskRepository;
+    }
+    public LocationRepository getLocationRepository() {
+        if (locationRepository == null) {
+            locationRepository = new LocationRepository(getRepository());
+        }
+        return locationRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////
