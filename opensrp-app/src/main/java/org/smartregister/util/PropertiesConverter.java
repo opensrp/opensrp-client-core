@@ -24,8 +24,10 @@ public class PropertiesConverter implements JsonSerializer<LocationProperty> {
     @Override
     public JsonElement serialize(LocationProperty src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = gson.toJsonTree(src).getAsJsonObject();
-        for (Map.Entry<String, String> entryset : src.getCustomProperties().entrySet()) {
-            object.addProperty(entryset.getKey(), entryset.getValue());
+        if (src.getCustomProperties() != null) {
+            for (Map.Entry<String, String> entryset : src.getCustomProperties().entrySet()) {
+                object.addProperty(entryset.getKey(), entryset.getValue());
+            }
         }
         return object;
     }
