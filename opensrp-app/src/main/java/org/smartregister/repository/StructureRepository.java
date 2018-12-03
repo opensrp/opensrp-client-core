@@ -23,7 +23,7 @@ public class StructureRepository extends LocationRepository {
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_PARENT_INDEX = "CREATE INDEX "
-            + STRUCTURE_TABLE + "_" + PARENT_ID + "_ind (" + PARENT_ID + ")";
+            + STRUCTURE_TABLE + "_" + PARENT_ID + "_ind ON " + STRUCTURE_TABLE + "(" + PARENT_ID + ")";
 
     public StructureRepository(Repository repository) {
         super(repository);
