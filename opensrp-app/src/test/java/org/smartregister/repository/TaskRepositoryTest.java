@@ -110,7 +110,7 @@ public class TaskRepositoryTest {
     }
 
     @Test
-    public void tesGetTasksAllTasks() {
+    public void testGetTasksByCampaignAndGroup() {
         when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE campaign_id=? AND group_id =?",
                 new String[]{"IRS_2018_S1", "2018_IRS-3734"})).thenReturn(getCursor());
         Map<String, Task> allTasks = taskRepository.getTasksByCampaignAndGroup("IRS_2018_S1", "2018_IRS-3734");
