@@ -43,6 +43,9 @@ public class LocationRepository extends BaseRepository {
                     NAME + " VARCHAR , " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
+    private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
+            + LOCATION_TABLE + "_" + NAME + "_ind ON " + LOCATION_TABLE + "(" + NAME + ")";
+
 
     public LocationRepository(Repository repository) {
         super(repository);
@@ -54,6 +57,7 @@ public class LocationRepository extends BaseRepository {
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
+        database.execSQL(CREATE_LOCATION_NAME_INDEX);
     }
 
     public void addOrUpdate(Location location) {

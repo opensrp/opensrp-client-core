@@ -22,12 +22,16 @@ public class StructureRepository extends LocationRepository {
                     NAME + " VARCHAR , " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
+    private static final String CREATE_LOCATION_PARENT_INDEX = "CREATE INDEX "
+            + STRUCTURE_TABLE + "_" + PARENT_ID + "_ind ON " + STRUCTURE_TABLE + "(" + PARENT_ID + ")";
+
     public StructureRepository(Repository repository) {
         super(repository);
     }
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
+        database.execSQL(CREATE_LOCATION_PARENT_INDEX);
     }
 
     @Override

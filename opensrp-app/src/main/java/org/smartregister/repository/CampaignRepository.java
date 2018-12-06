@@ -43,10 +43,10 @@ public class CampaignRepository extends BaseRepository {
                     DESCRIPTION + " VARCHAR , " +
                     STATUS + " VARCHAR NOT NULL, " +
                     START + " INTEGER , " +
-                    END + " INTEGER NULL, " +
-                    AUTHORED_ON + " INTEGER NOT NULL, " +
-                    LAST_MODIFIED + " INTEGER NOT NULL, " +
-                    OWNER + " VARCHAR NOT NULL, " +
+                    END + " INTEGER , " +
+                    AUTHORED_ON + " INTEGER , " +
+                    LAST_MODIFIED + " INTEGER , " +
+                    OWNER + " VARCHAR , " +
                     SERVER_VERSION + " INTEGER ) ";
 
 

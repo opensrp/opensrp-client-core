@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.util.Map;
+
 /**
  * Created by samuelgithengi on 11/22/18.
  */
@@ -17,7 +19,7 @@ public class LocationProperty {
         @SerializedName("Pending Review")
         PENDING_REVIEW;
 
-    };
+    }
 
     private String uid;
 
@@ -38,6 +40,8 @@ public class LocationProperty {
     private DateTime effectiveEndDate;
 
     private int version;
+
+    private transient Map<String, String> customProperties;
 
     public String getUid() {
         return uid;
@@ -117,5 +121,13 @@ public class LocationProperty {
 
     public void setVersion(int version) {
         this.version = version;
+    }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Map<String, String> customProperties) {
+        this.customProperties = customProperties;
     }
 }
