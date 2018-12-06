@@ -141,7 +141,7 @@ public class Location extends BaseDataObject {
     }
 
     public Object getAttribute(String name) {
-        return attributes.get(name);
+        return attributes == null ? null : attributes.get(name);
     }
 
     /**
