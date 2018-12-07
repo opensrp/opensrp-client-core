@@ -20,15 +20,15 @@ import java.util.List;
 import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
 import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
 
-public class TaskIntentService extends IntentService {
+public class SyncTaskIntentService extends IntentService {
     public static final String CAMPAIGN_URL = "/rest/task/sync";
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
-    private static final String TAG = TaskIntentService.class.getCanonicalName();
+    private static final String TAG = SyncTaskIntentService.class.getCanonicalName();
     private TaskRepository taskRepository;
     AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
-    public TaskIntentService() {
-        super("FetchTasks");
+    public SyncTaskIntentService() {
+        super("SyncTaskIntentService");
     }
 
     @Override
@@ -52,6 +52,11 @@ public class TaskIntentService extends IntentService {
                 }
             }
             allSharedPreferences.saveRevealIntentServiceLastSyncDate(geMaxServerVersion(tasks, serverVersion),TASK_LAST_SYNC_DATE);
+
+            Task task = taskRepository.getTaskByIdentifier("tsk11231jh23");
+
+
+            Log.i("Structures ","STruc "+task.getBusinessStatus());
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);

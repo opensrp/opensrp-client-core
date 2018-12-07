@@ -17,26 +17,30 @@ import org.smartregister.sync.helper.SyncIntentServiceHelper;
 
 import java.util.List;
 
-public class LocationStructureIntentService extends IntentService {
+import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
+
+public class LocationIntentService extends IntentService {
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
-    private static final String TAG = LocationStructureIntentService.class.getCanonicalName();
+    private static final String TAG = LocationIntentService.class.getCanonicalName();
     private LocationRepository locationRepository;
     AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
-    public LocationStructureIntentService() {
-        super("FetchLocations");
+    public LocationIntentService() {
+        super("LocationIntentService");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        syncLocationsStructures("3734", false);
+        syncLocationsStructures(true);
+        syncLocationsStructures(false);
     }
 
-    protected void syncLocationsStructures(String parent_id, boolean is_jurisdiction) {
+
+    protected void syncLocationsStructures(boolean is_jurisdiction) {
         long serverVersion = allSharedPreferences.fetchRevealIntentServiceLastSyncDate(STRUCTURES_LAST_SYNC_DATE);
         try {
-            JSONArray tasksResponse = fetchLocationsOrStructures(parent_id, is_jurisdiction, serverVersion);
+            JSONArray tasksResponse = fetchLocationsOrStructures(is_jurisdiction, serverVersion);
             List<Location> locations = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Location.class);
             for (Location location : locations) {
                 try {
@@ -52,23 +56,32 @@ public class LocationStructureIntentService extends IntentService {
         }
     }
 
-    private JSONArray fetchLocationsOrStructures(String parent_id, boolean is_jurisdiction, Long serverVersion) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+
+    private String makeURL(boolean is_jurisdiction, long serverVersion) {
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
+        if (is_jurisdiction) {
+            String preferenceLocationNames = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS);
+            return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + is_jurisdiction + "&location_names=" + preferenceLocationNames;
+        }
+        String parent_ids = android.text.TextUtils.join(",", locationRepository.getAllLocationIds());
+        return baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parent_ids + "&is_jurisdiction=" + is_jurisdiction + "&serverVersion=" + serverVersion;
 
-        String url = baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parent_id + "&is_jurisdiction=" + is_jurisdiction + "&serverVersion=" + serverVersion;
+    }
 
+    private JSONArray fetchLocationsOrStructures(boolean is_jurisdiction, Long serverVersion) throws Exception {
+
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
             sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(url);
+        Response resp = httpAgent.fetch(makeURL(is_jurisdiction, serverVersion));
         if (resp.isFailure()) {
             sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");

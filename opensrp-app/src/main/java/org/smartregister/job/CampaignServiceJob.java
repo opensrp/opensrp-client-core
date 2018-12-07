@@ -6,12 +6,9 @@ import android.support.annotation.NonNull;
 import org.smartregister.AllConstants;
 import org.smartregister.sync.intent.CampaignIntentService;
 
-/**
- * Created by ndegwamartin on 06/09/2018.
- */
-public class CampaignTaskServiceJob extends BaseJob {
+public class CampaignServiceJob extends BaseJob {
 
-    public static final String TAG = "PullUniqueIdsServiceJob";
+    public static final String TAG = "CampaignServiceJob";
 
     @NonNull
     @Override

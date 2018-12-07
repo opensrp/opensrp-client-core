@@ -22,17 +22,18 @@ import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
 
 public class CampaignIntentService extends IntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
-    private static final String TAG = CampaignIntentService.class.getCanonicalName();
+    private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
     AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     public CampaignIntentService() {
-        super("FetchCampaigns");
+        super(TAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         syncCampaigns();
+        Log.i("TEST__MA", "TEST--"+campaignRepository.getAllCampaigns().get(0).getTitle());
     }
 
     protected void syncCampaigns() {
@@ -43,6 +44,7 @@ public class CampaignIntentService extends IntentService {
                 try {
                     if (campaign.getIdentifier() != null && allowedCampaigns.contains(campaign.getIdentifier())) {
                         campaignRepository.addOrUpdate(campaign);
+
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

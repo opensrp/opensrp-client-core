@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import org.smartregister.domain.Location;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -85,6 +87,23 @@ public class LocationRepository extends BaseRepository {
                 cursor.close();
         }
         return locations;
+    }
+    public List<String> getAllLocationIds() {
+        Cursor cursor = null;
+        List<String> locationIds = new ArrayList<>();
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT "+ID+" FROM " + getLocationTableName(), null);
+            while (cursor.moveToNext()) {
+                locationIds.add(cursor.getString(0));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locationIds;
     }
 
     public Location getLocationById(String id) {
@@ -160,6 +179,25 @@ public class LocationRepository extends BaseRepository {
         }
         return null;
     }
+
+//    public Location getLocationByNameArray(String nameArray) {
+//        TextUtils.concat()
+//        Cursor cursor = null;
+//        try {
+//            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + " IN (" + TextUtils.join(", ", nameArray) + ")";
+//
+//            if (cursor.moveToFirst()) {
+//                return readCursor(cursor);
+//            }
+//            cursor.close();
+//        } catch (Exception e) {
+//            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+//        } finally {
+//            if (cursor != null)
+//                cursor.close();
+//        }
+//        return null;
+//    }
 
 
     private Location readCursor(Cursor cursor) {
