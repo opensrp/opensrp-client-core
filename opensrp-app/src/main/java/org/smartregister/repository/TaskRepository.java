@@ -11,8 +11,8 @@ import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.util.DateUtil;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -67,6 +67,9 @@ public class TaskRepository extends BaseRepository {
                     SERVER_VERSION + " INTEGER ) ";
 
 
+    private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
+            + TASK_TABLE + "_campaign_group_ind  ON " + TASK_TABLE + "(" + CAMPAIGN_ID + "," + GROUP_ID + ")";
+
     public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
         this.taskNotesRepository = taskNotesRepository;
@@ -74,6 +77,7 @@ public class TaskRepository extends BaseRepository {
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_TASK_TABLE);
+        database.execSQL(CREATE_TASK_CAMPAIGN_GROUP_INDEX);
     }
 
     public void addOrUpdate(Task task) {
@@ -112,14 +116,15 @@ public class TaskRepository extends BaseRepository {
 
     }
 
-    public List<Task> getTasksByCampaignAndGroup(String campaignId, String groupId) {
+    public Map<String, Task> getTasksByCampaignAndGroup(String campaignId, String groupId) {
         Cursor cursor = null;
-        List<Task> tasks = new ArrayList<>();
+        Map<String, Task> tasks = new HashMap<>();
         try {
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =?",
                     TASK_TABLE, CAMPAIGN_ID, GROUP_ID), new String[]{campaignId, groupId});
             while (cursor.moveToNext()) {
-                tasks.add(readCursor(cursor));
+                Task task = readCursor(cursor);
+                tasks.put(task.getForEntity(), task);
             }
         } catch (Exception e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
