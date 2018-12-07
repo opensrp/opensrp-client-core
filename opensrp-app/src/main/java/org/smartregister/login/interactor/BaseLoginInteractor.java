@@ -197,9 +197,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         getLoginView().goToHome(true);
         if (NetworkUtils.isNetworkAvailable()) {
             startPullUniqueIdsService();
-//            startCampaignIntentService();
-//            startTaskIntentService();
-//            startLocationStructureIntentService();
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
         scheduleJobs();
@@ -209,20 +206,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), PullUniqueIdsIntentService.class);
         getApplicationContext().startService(intent);
     }
-
-    public void startCampaignIntentService() {
-        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), CampaignIntentService.class);
-        getApplicationContext().startService(intent);
-    }
-    public void startTaskIntentService() {
-        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), SyncTaskIntentService.class);
-        getApplicationContext().startService(intent);
-    }
-    public void startLocationStructureIntentService() {
-        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), LocationIntentService.class);
-        getApplicationContext().startService(intent);
-    }
-
 
     public Context getApplicationContext() {
         return mLoginPresenter.getLoginView().getActivityContext();

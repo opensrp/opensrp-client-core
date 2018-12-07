@@ -180,26 +180,6 @@ public class LocationRepository extends BaseRepository {
         return null;
     }
 
-//    public Location getLocationByNameArray(String nameArray) {
-//        TextUtils.concat()
-//        Cursor cursor = null;
-//        try {
-//            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + " IN (" + TextUtils.join(", ", nameArray) + ")";
-//
-//            if (cursor.moveToFirst()) {
-//                return readCursor(cursor);
-//            }
-//            cursor.close();
-//        } catch (Exception e) {
-//            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
-//        } finally {
-//            if (cursor != null)
-//                cursor.close();
-//        }
-//        return null;
-//    }
-
-
     private Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
