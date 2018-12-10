@@ -263,14 +263,5 @@ public class AllSharedPreferences {
     public long fetchLastSettingsSyncTimeStamp() {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
-
-    public void saveCampaignsOperationalArea(String preferencesKey, String locationCSV) {
-        preferences.edit().putString(preferencesKey, locationCSV).commit();
-    }
-
-    public String getCampaignsOperationalArea(String preferencesKey) {
-        return preferences.getString(preferencesKey, "");
-    }
-
 }
 

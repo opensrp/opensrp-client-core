@@ -37,8 +37,8 @@ public class SyncTaskIntentService extends IntentService {
     }
 
     protected void syncTasks() {
-        String campaigns = allSharedPreferences.getCampaignsOperationalArea(CAMPAIGNS);
-        String groups = allSharedPreferences.getCampaignsOperationalArea(OPERATIONAL_AREAS);
+        String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
+        String groups = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
         long serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         try {
             JSONArray tasksResponse = fetchTasks(campaigns, groups, serverVersion);

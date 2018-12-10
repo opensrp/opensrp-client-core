@@ -39,7 +39,7 @@ public class CampaignIntentService extends IntentService {
     protected void syncCampaigns() {
         try {
             JSONArray campaignsResponse = fetchCampaigns();
-            List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getCampaignsOperationalArea(CAMPAIGNS).split(","));
+            List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getPreference(CAMPAIGNS).split(","));
             for (Campaign campaign : SyncIntentServiceHelper.parseTasksFromServer(campaignsResponse, Campaign.class)) {
                 try {
                     if (campaign.getIdentifier() != null && allowedCampaigns.contains(campaign.getIdentifier())) {
@@ -54,7 +54,6 @@ public class CampaignIntentService extends IntentService {
             Log.e(TAG, e.getMessage(), e);
         }
     }
-
 
     private JSONArray fetchCampaigns() throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();

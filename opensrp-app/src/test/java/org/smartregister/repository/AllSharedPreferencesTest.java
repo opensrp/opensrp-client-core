@@ -233,13 +233,13 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void shouldSaveCampaignsOperationalArea() {
-        allSharedPreferences.saveCampaignsOperationalArea(CAMPAIGNS,"Miti Rural Health Centre");
+        allSharedPreferences.savePreference(CAMPAIGNS,"Miti Rural Health Centre");
         Mockito.verify(preferences, Mockito.times(1)).edit();
     }
 
     @Test
     public void shouldGetCampaignsOperationalArea() {
-        Assert.assertEquals(allSharedPreferences.getCampaignsOperationalArea(CAMPAIGNS), str);
+        Assert.assertEquals(allSharedPreferences.getPreference(CAMPAIGNS), str);
     }
 
 }

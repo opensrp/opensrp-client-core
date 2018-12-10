@@ -65,7 +65,7 @@ public class LocationIntentService extends IntentService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
         if (is_jurisdiction) {
-            String preferenceLocationNames = allSharedPreferences.getCampaignsOperationalArea(OPERATIONAL_AREAS);
+            String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
             return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + is_jurisdiction + "&location_names=" + preferenceLocationNames;
         }
         String parent_ids = android.text.TextUtils.join(",", locationRepository.getAllLocationIds());
