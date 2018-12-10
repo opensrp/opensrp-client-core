@@ -154,7 +154,7 @@ public class SyncIntentService extends IntentService {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
-            ClientProcessorForJava.getInstance(context).processClient(events);
+            getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Process Client Exception: " + e.getMessage(), e.getCause());
@@ -272,6 +272,10 @@ public class SyncIntentService extends IntentService {
             Log.e(getClass().getName(), e.getMessage(), e);
         }
         return count;
+    }
+
+    protected ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(context);
     }
 
 }
