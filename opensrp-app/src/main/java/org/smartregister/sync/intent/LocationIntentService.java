@@ -17,7 +17,7 @@ import org.smartregister.sync.helper.SyncIntentServiceHelper;
 
 import java.util.List;
 
-import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class LocationIntentService extends IntentService {
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
@@ -38,7 +38,7 @@ public class LocationIntentService extends IntentService {
 
 
     protected void syncLocationsStructures(boolean is_jurisdiction) {
-        long serverVersion = allSharedPreferences.fetchRevealIntentServiceLastSyncDate(STRUCTURES_LAST_SYNC_DATE);
+        long serverVersion = Long.parseLong(allSharedPreferences.getPreference(STRUCTURES_LAST_SYNC_DATE));
         try {
             JSONArray tasksResponse = fetchLocationsOrStructures(is_jurisdiction, serverVersion);
             List<Location> locations = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Location.class);
@@ -49,7 +49,7 @@ public class LocationIntentService extends IntentService {
                     e.printStackTrace();
                 }
             }
-            allSharedPreferences.saveRevealIntentServiceLastSyncDate(geMaxServerVersion(locations, serverVersion), STRUCTURES_LAST_SYNC_DATE);
+            allSharedPreferences.savePreference(String.valueOf(geMaxServerVersion(locations, serverVersion)), STRUCTURES_LAST_SYNC_DATE);
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -65,7 +65,7 @@ public class LocationIntentService extends IntentService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
         if (is_jurisdiction) {
-            String preferenceLocationNames = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS);
+            String preferenceLocationNames = allSharedPreferences.getCampaignsOperationalArea(OPERATIONAL_AREAS);
             return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + is_jurisdiction + "&location_names=" + preferenceLocationNames;
         }
         String parent_ids = android.text.TextUtils.join(",", locationRepository.getAllLocationIds());

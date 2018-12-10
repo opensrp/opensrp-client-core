@@ -93,8 +93,8 @@ public class AllConstants {
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public static final boolean TIME_CHECK = false;
 
-    public static final String REVEAL_CAMPAIGNS= "REVEAL_CAMPAIGNS";
-    public static final String REVEAL_OPERATIONAL_AREAS= "REVEAL_OPERATIONAL_AREAS";
+    public static final String CAMPAIGNS = "CAMPAIGNS";
+    public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
 
     public static class Immunizations {
         public static final String BCG = "bcg";

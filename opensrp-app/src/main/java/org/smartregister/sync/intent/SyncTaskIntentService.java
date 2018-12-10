@@ -17,8 +17,8 @@ import org.smartregister.sync.helper.SyncIntentServiceHelper;
 
 import java.util.List;
 
-import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
-import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.CAMPAIGNS;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class SyncTaskIntentService extends IntentService {
     public static final String CAMPAIGN_URL = "/rest/task/sync";
@@ -37,9 +37,9 @@ public class SyncTaskIntentService extends IntentService {
     }
 
     protected void syncTasks() {
-        String campaigns = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS);
-        String groups = allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS);
-        long serverVersion = allSharedPreferences.fetchRevealIntentServiceLastSyncDate(TASK_LAST_SYNC_DATE);
+        String campaigns = allSharedPreferences.getCampaignsOperationalArea(CAMPAIGNS);
+        String groups = allSharedPreferences.getCampaignsOperationalArea(OPERATIONAL_AREAS);
+        long serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         try {
             JSONArray tasksResponse = fetchTasks(campaigns, groups, serverVersion);
             List<Task> tasks = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Task.class);
@@ -51,7 +51,7 @@ public class SyncTaskIntentService extends IntentService {
                     e.printStackTrace();
                 }
             }
-            allSharedPreferences.saveRevealIntentServiceLastSyncDate(geMaxServerVersion(tasks, serverVersion),TASK_LAST_SYNC_DATE);
+            allSharedPreferences.savePreference(String.valueOf(geMaxServerVersion(tasks, serverVersion)),TASK_LAST_SYNC_DATE);
 
             Task task = taskRepository.getTaskByIdentifier("tsk11231jh23");
 

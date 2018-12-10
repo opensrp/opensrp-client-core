@@ -18,7 +18,7 @@ import org.smartregister.sync.helper.SyncIntentServiceHelper;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
+import static org.smartregister.AllConstants.CAMPAIGNS;
 
 public class CampaignIntentService extends IntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
@@ -32,13 +32,14 @@ public class CampaignIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.i(TAG,"CAMPAIGN sync");
         syncCampaigns();
     }
 
     protected void syncCampaigns() {
         try {
             JSONArray campaignsResponse = fetchCampaigns();
-            List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS).split(","));
+            List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getCampaignsOperationalArea(CAMPAIGNS).split(","));
             for (Campaign campaign : SyncIntentServiceHelper.parseTasksFromServer(campaignsResponse, Campaign.class)) {
                 try {
                     if (campaign.getIdentifier() != null && allowedCampaigns.contains(campaign.getIdentifier())) {

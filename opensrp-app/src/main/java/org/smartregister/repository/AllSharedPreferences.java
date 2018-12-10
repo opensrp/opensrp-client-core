@@ -264,22 +264,12 @@ public class AllSharedPreferences {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
 
-//        Done for reveal location/campaigns/operational areas should clean up on release 2
-    public void saveRevealCampaignsOperationalArea(String preferencesKey, String locationCSV) {
+    public void saveCampaignsOperationalArea(String preferencesKey, String locationCSV) {
         preferences.edit().putString(preferencesKey, locationCSV).commit();
     }
 
-    public String getRevealCampaignsOperationalArea(String preferencesKey) {
+    public String getCampaignsOperationalArea(String preferencesKey) {
         return preferences.getString(preferencesKey, "");
-    }
-
-    public void saveRevealIntentServiceLastSyncDate(long lastSyncDate, String intentServicePreferencesKey) {
-        preferences.edit().putLong(intentServicePreferencesKey, lastSyncDate).commit();
-    }
-
-    public Long fetchRevealIntentServiceLastSyncDate(String intentServicePreferencesKey) {
-
-        return preferences.getLong(intentServicePreferencesKey, 0);
     }
 
 }
