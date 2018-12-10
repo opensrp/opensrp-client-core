@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -115,6 +116,17 @@ public class LocationRepositoryTest {
         assertEquals(1, allLocations.size());
         Location location = allLocations.get(0);
         assertEquals(locationJson, stripTimezone(gson.toJson(location)));
+
+    }
+    @Test
+    public void tesGetAllLocationIds() {
+        when(sqLiteDatabase.rawQuery("SELECT _id FROM location", null)).thenReturn(getCursor());
+        List<String> allLocationIds = locationRepository.getAllLocationIds();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT _id FROM location", stringArgumentCaptor.getValue());
+        assertEquals(1, allLocationIds.size());
+        assertEquals("3734", allLocationIds.get(0));
 
     }
 

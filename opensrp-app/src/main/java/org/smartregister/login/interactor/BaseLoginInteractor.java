@@ -20,10 +20,7 @@ import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.CharacteristicsHelper;
-import org.smartregister.sync.intent.CampaignIntentService;
-import org.smartregister.sync.intent.LocationIntentService;
 import org.smartregister.sync.intent.PullUniqueIdsIntentService;
-import org.smartregister.sync.intent.SyncTaskIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 

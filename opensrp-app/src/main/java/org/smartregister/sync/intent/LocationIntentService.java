@@ -24,7 +24,7 @@ public class LocationIntentService extends IntentService {
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     private static final String TAG = LocationIntentService.class.getCanonicalName();
     private LocationRepository locationRepository;
-    AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     public LocationIntentService() {
         super("LocationIntentService");
@@ -90,8 +90,8 @@ public class LocationIntentService extends IntentService {
         return new JSONArray((String) resp.payload());
     }
 
-    public long geMaxServerVersion(List<Location> locations, long currentServerVersion) {
-
+    public long geMaxServerVersion(List<Location> locations, long serverVersionParam) {
+        long currentServerVersion = serverVersionParam;
         for (Location location : locations) {
             long serverVersion = location.getServerVersion();
             if (serverVersion > currentServerVersion) {

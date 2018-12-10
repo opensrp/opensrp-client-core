@@ -24,7 +24,7 @@ public class CampaignIntentService extends IntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
-    AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     public CampaignIntentService() {
         super(TAG);

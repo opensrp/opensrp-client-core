@@ -25,7 +25,7 @@ public class SyncTaskIntentService extends IntentService {
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
     private static final String TAG = SyncTaskIntentService.class.getCanonicalName();
     private TaskRepository taskRepository;
-    AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     public SyncTaskIntentService() {
         super("SyncTaskIntentService");

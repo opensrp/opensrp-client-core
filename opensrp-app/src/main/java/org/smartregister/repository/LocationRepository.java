@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -16,7 +15,6 @@ import org.smartregister.domain.Location;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
