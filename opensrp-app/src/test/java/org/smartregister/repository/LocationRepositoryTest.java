@@ -29,6 +29,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
@@ -127,6 +128,11 @@ public class LocationRepositoryTest {
         assertEquals("SELECT _id FROM location", stringArgumentCaptor.getValue());
         assertEquals(1, allLocationIds.size());
         assertEquals("3734", allLocationIds.get(0));
+
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location", null)).thenReturn(getCursor());
+        List<Location> allLocations = locationRepository.getAllLocations();
+        assertEquals(1,allLocations.size());
+        assertEquals(allLocationIds.get(0),allLocations.get(0).getId());
 
     }
 

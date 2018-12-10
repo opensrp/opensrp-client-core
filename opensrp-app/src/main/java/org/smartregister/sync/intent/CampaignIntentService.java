@@ -33,7 +33,6 @@ public class CampaignIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         syncCampaigns();
-        Log.i("TEST__MA", "TEST--"+campaignRepository.getAllCampaigns().get(0).getTitle());
     }
 
     protected void syncCampaigns() {
