@@ -15,12 +15,12 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Campaign;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
+import org.smartregister.util.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -77,16 +77,16 @@ public class CampaignIntentService extends IntentService {
         String url = baseUrl + CAMPAIGN_URL;
 
         if (httpAgent == null) {
-            sendBroadcast(completeSync(FetchStatus.noConnection));
+            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            sendBroadcast(completeSync(FetchStatus.nothingFetched));
+            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
-        sendBroadcast(completeSync(FetchStatus.fetched));
+        sendBroadcast(Utils.completeSync(FetchStatus.fetched));
 
         return resp.payload().toString();
     }
@@ -96,13 +96,4 @@ public class CampaignIntentService extends IntentService {
         campaignRepository = CoreLibrary.getInstance().context().getCampaignRepository();
         return super.onStartCommand(intent, flags, startId);
     }
-
-    private Intent completeSync(FetchStatus fetchStatus) {
-        Intent intent = new Intent();
-        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
-        return intent;
-    }
-
 }
