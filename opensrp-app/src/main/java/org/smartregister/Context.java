@@ -36,6 +36,7 @@ import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
+import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
@@ -206,6 +207,7 @@ public class Context {
     private TaskRepository taskRepository;
     private TaskNotesRepository taskNotesRepository;
     private LocationRepository locationRepository;
+    private StructureRepository structureRepository;
 
 
     /////////////////////////////////////////////////
@@ -1135,6 +1137,13 @@ public class Context {
             locationRepository = new LocationRepository(getRepository());
         }
         return locationRepository;
+    }
+
+    public StructureRepository getStructureRepository() {
+        if (structureRepository == null) {
+            structureRepository = new StructureRepository(getRepository());
+        }
+        return structureRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

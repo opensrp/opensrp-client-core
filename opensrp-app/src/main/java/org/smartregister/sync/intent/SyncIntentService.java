@@ -274,4 +274,8 @@ public class SyncIntentService extends IntentService {
         return count;
     }
 
+    protected ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(context);
+    }
+
 }

@@ -32,7 +32,7 @@ public class CampaignIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.i(TAG,"CAMPAIGN sync");
+        Log.d(TAG, "In Campaign Intent Service...");
         syncCampaigns();
     }
 

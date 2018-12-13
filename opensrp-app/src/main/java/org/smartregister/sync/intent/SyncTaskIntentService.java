@@ -2,6 +2,7 @@ package org.smartregister.sync.intent;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.http.NoHttpResponseException;
@@ -11,6 +12,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.SyncIntentServiceHelper;
@@ -18,14 +20,14 @@ import org.smartregister.sync.helper.SyncIntentServiceHelper;
 import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class SyncTaskIntentService extends IntentService {
-    public static final String CAMPAIGN_URL = "/rest/task/sync";
+    public static final String TASK_URL = "/rest/task/sync";
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
     private static final String TAG = SyncTaskIntentService.class.getCanonicalName();
     private TaskRepository taskRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private LocationRepository locationRepository;
 
     public SyncTaskIntentService() {
         super("SyncTaskIntentService");
@@ -38,8 +40,13 @@ public class SyncTaskIntentService extends IntentService {
 
     protected void syncTasks() {
         String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
-        String groups = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
-        long serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
+        String groups = TextUtils.join(",", locationRepository.getAllLocationIds());
+
+        long serverVersion = 0;
+        try {
+            serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
+        } catch (NumberFormatException e) {
+        }
         try {
             JSONArray tasksResponse = fetchTasks(campaigns, groups, serverVersion);
             List<Task> tasks = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Task.class);
@@ -51,12 +58,8 @@ public class SyncTaskIntentService extends IntentService {
                     e.printStackTrace();
                 }
             }
-            allSharedPreferences.savePreference(String.valueOf(geMaxServerVersion(tasks, serverVersion)),TASK_LAST_SYNC_DATE);
+            allSharedPreferences.savePreference(String.valueOf(geMaxServerVersion(tasks, serverVersion)), TASK_LAST_SYNC_DATE);
 
-            Task task = taskRepository.getTaskByIdentifier("tsk11231jh23");
-
-
-            Log.i("Structures ","STruc "+task.getBusinessStatus());
 
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -72,17 +75,17 @@ public class SyncTaskIntentService extends IntentService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + CAMPAIGN_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
+        String url = baseUrl + TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
 
         if (httpAgent == null) {
             sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
-            throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
+            throw new IllegalArgumentException(TASK_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
             sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
-            throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
+            throw new NoHttpResponseException(TASK_URL + " not returned data");
         }
 
         return new JSONArray((String) resp.payload());
@@ -91,6 +94,7 @@ public class SyncTaskIntentService extends IntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         taskRepository = CoreLibrary.getInstance().context().getTaskRepository();
+        locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
         return super.onStartCommand(intent, flags, startId);
     }
 
