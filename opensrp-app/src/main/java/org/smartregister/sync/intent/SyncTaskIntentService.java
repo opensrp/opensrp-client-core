@@ -15,12 +15,12 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
-import org.smartregister.util.Utils;
 
 import java.util.List;
 
@@ -83,13 +83,13 @@ public class SyncTaskIntentService extends IntentService {
         String url = baseUrl + TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
 
         if (httpAgent == null) {
-            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            sendBroadcast(completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(TASK_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            sendBroadcast(completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(TASK_URL + " not returned data");
         }
 
@@ -114,5 +114,13 @@ public class SyncTaskIntentService extends IntentService {
         }
 
         return String.valueOf(maxServerVersion);
+    }
+
+    private Intent completeSync(FetchStatus fetchStatus) {
+        Intent intent = new Intent();
+        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
+        return intent;
     }
 }

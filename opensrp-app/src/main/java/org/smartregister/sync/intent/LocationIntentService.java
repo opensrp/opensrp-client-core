@@ -16,13 +16,13 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
-import org.smartregister.util.Utils;
 
 import java.util.List;
 
@@ -102,13 +102,13 @@ public class LocationIntentService extends IntentService {
 
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
-            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            sendBroadcast(completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(makeURL(is_jurisdiction, serverVersion, parentId));
         if (resp.isFailure()) {
-            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            sendBroadcast(completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
@@ -131,6 +131,14 @@ public class LocationIntentService extends IntentService {
         locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
         structureRepository = CoreLibrary.getInstance().context().getStructureRepository();
         return super.onStartCommand(intent, flags, startId);
+    }
+
+    private Intent completeSync(FetchStatus fetchStatus) {
+        Intent intent = new Intent();
+        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
+        return intent;
     }
 
 }

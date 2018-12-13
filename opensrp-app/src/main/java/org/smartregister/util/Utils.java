@@ -19,7 +19,6 @@ package org.smartregister.util;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -55,11 +54,9 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 
 import java.io.BufferedReader;
@@ -652,13 +649,5 @@ public class Utils {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public static Intent completeSync(FetchStatus fetchStatus) {
-        Intent intent = new Intent();
-        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
-        return intent;
     }
 }
