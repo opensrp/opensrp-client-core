@@ -4,8 +4,13 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.http.NoHttpResponseException;
-import org.json.JSONArray;
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Campaign;
 import org.smartregister.domain.FetchStatus;
@@ -13,7 +18,9 @@ import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.helper.SyncIntentServiceHelper;
+import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.DateTypeConverter;
+import org.smartregister.util.Utils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,6 +32,8 @@ public class CampaignIntentService extends IntentService {
     private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
+            .registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
 
     public CampaignIntentService() {
         super(TAG);
@@ -32,19 +41,21 @@ public class CampaignIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d(TAG, "In Campaign Intent Service...");
         syncCampaigns();
     }
 
     protected void syncCampaigns() {
         try {
-            JSONArray campaignsResponse = fetchCampaigns();
+            String campaignsResponse = fetchCampaigns();
             List<String> allowedCampaigns = Arrays.asList(allSharedPreferences.getPreference(CAMPAIGNS).split(","));
-            for (Campaign campaign : SyncIntentServiceHelper.parseTasksFromServer(campaignsResponse, Campaign.class)) {
+
+            List<Campaign> campaigns = gson.fromJson(campaignsResponse, new TypeToken<List<Campaign>>() {
+            }.getType());
+
+            for (Campaign campaign : campaigns) {
                 try {
                     if (campaign.getIdentifier() != null && allowedCampaigns.contains(campaign.getIdentifier())) {
                         campaignRepository.addOrUpdate(campaign);
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -55,7 +66,7 @@ public class CampaignIntentService extends IntentService {
         }
     }
 
-    private JSONArray fetchCampaigns() throws Exception {
+    private String fetchCampaigns() throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -66,17 +77,18 @@ public class CampaignIntentService extends IntentService {
         String url = baseUrl + CAMPAIGN_URL;
 
         if (httpAgent == null) {
-            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
+            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(CAMPAIGN_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
+            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
-        sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.fetched));
-        return new JSONArray((String) resp.payload());
+        sendBroadcast(Utils.completeSync(FetchStatus.fetched));
+
+        return resp.payload().toString();
     }
 
     @Override

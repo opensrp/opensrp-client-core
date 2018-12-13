@@ -5,17 +5,24 @@ import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.http.NoHttpResponseException;
-import org.json.JSONArray;
+import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.helper.SyncIntentServiceHelper;
+import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.PropertiesConverter;
+import org.smartregister.util.Utils;
 
 import java.util.List;
 
@@ -29,6 +36,9 @@ public class LocationIntentService extends IntentService {
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
+            .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
 
     public LocationIntentService() {
         super("LocationIntentService");
@@ -47,11 +57,13 @@ public class LocationIntentService extends IntentService {
         try {
             serverVersion = Long.parseLong(currentServerVersion);
         } catch (NumberFormatException e) {
+            Log.e(TAG, e.getMessage(), e);
         }
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
-            JSONArray tasksResponse = fetchLocationsOrStructures(is_jurisdiction, serverVersion, TextUtils.join(",", parentIds));
-            List<Location> locations = SyncIntentServiceHelper.parseTasksFromServer(tasksResponse, Location.class);
+            String featureResponse = fetchLocationsOrStructures(is_jurisdiction, serverVersion, TextUtils.join(",", parentIds));
+            List<Location> locations = gson.fromJson(featureResponse, new TypeToken<List<Location>>() {
+            }.getType());
 
             for (Location location : locations) {
                 try {
@@ -86,21 +98,21 @@ public class LocationIntentService extends IntentService {
 
     }
 
-    private JSONArray fetchLocationsOrStructures(boolean is_jurisdiction, Long serverVersion, String parentId) throws Exception {
+    private String fetchLocationsOrStructures(boolean is_jurisdiction, Long serverVersion, String parentId) throws Exception {
 
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
-            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.noConnection));
+            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(makeURL(is_jurisdiction, serverVersion, parentId));
         if (resp.isFailure()) {
-            sendBroadcast(SyncIntentServiceHelper.completeSync(FetchStatus.nothingFetched));
+            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
-        return new JSONArray((String) resp.payload());
+        return resp.payload().toString();
     }
 
     public String geMaxServerVersion(List<Location> locations, long serverVersionParam) {
