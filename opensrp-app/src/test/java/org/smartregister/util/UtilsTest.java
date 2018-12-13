@@ -202,6 +202,7 @@ public class UtilsTest extends BaseUnitTest {
 
         Assert.assertSame(intent.getExtras().get("complete_status"), Utils.completeSync(FetchStatus.fetched).getExtras().get("complete_status"));
         Assert.assertSame(intent.getExtras().get("fetch_status"), Utils.completeSync(FetchStatus.fetched).getExtras().get("fetch_status"));
+        Assert.assertSame(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, Utils.completeSync(FetchStatus.fetched).getAction());
 
     }
 
