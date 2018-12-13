@@ -193,7 +193,7 @@ public class UtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void testStringExtra() throws Exception {
+    public void testCompleteSyncIntent() throws Exception {
         Intent intent = new Intent();
         Assert.assertEquals(intent.getExtras(), null);
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
