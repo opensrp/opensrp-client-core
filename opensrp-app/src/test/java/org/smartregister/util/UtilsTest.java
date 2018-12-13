@@ -200,9 +200,13 @@ public class UtilsTest extends BaseUnitTest {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, FetchStatus.fetched);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
-        Assert.assertSame(intent.getExtras().get("complete_status"), Utils.completeSync(FetchStatus.fetched).getExtras().get("complete_status"));
-        Assert.assertSame(intent.getExtras().get("fetch_status"), Utils.completeSync(FetchStatus.fetched).getExtras().get("fetch_status"));
-        Assert.assertSame(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, Utils.completeSync(FetchStatus.fetched).getAction());
+        Intent UtilIntent = Utils.completeSync(FetchStatus.fetched);
+
+        Assert.assertSame(intent.getExtras().get("complete_status"), UtilIntent.getExtras().get("complete_status"));
+        Assert.assertSame(intent.getExtras().get("fetch_status"), UtilIntent.getExtras().get("fetch_status"));
+        Assert.assertEquals(FetchStatus.fetched, UtilIntent.getExtras().get("fetch_status"));
+        Assert.assertSame(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, UtilIntent.getAction());
+        Assert.assertSame(0, Utils.completeSync(FetchStatus.fetched).getFlags());
 
     }
 
