@@ -17,7 +17,6 @@ import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.SyncIntentServiceHelper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;

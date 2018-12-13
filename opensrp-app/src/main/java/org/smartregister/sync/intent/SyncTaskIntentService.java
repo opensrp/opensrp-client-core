@@ -58,7 +58,7 @@ public class SyncTaskIntentService extends IntentService {
                     e.printStackTrace();
                 }
             }
-            allSharedPreferences.savePreference(String.valueOf(geMaxServerVersion(tasks, serverVersion)), TASK_LAST_SYNC_DATE);
+            allSharedPreferences.savePreference(geMaxServerVersion(tasks, serverVersion), TASK_LAST_SYNC_DATE);
 
 
         } catch (Exception e) {
@@ -98,15 +98,16 @@ public class SyncTaskIntentService extends IntentService {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    public long geMaxServerVersion(List<Task> tasks, long currentServerVersion) {
+    public String geMaxServerVersion(List<Task> tasks, long currentServerVersion) {
+        long maxServerVersion =currentServerVersion;
 
         for (Task task : tasks) {
             long serverVersion = task.getServerVersion();
             if (serverVersion > currentServerVersion) {
-                currentServerVersion = serverVersion;
+                maxServerVersion = serverVersion;
             }
         }
 
-        return currentServerVersion;
+        return String.valueOf(maxServerVersion);
     }
 }
