@@ -20,6 +20,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.Context;
 import org.smartregister.domain.Campaign;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
@@ -69,7 +70,7 @@ public class CampaignRepositoryTest {
 
     @Before
     public void setUp() {
-        campaignRepository = new CampaignRepository(repository);
+        campaignRepository = Context.getInstance().getCampaignRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }

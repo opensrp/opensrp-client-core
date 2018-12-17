@@ -29,7 +29,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -74,7 +73,7 @@ public class TaskRepositoryTest {
 
     @Before
     public void setUp() {
-        taskRepository = new TaskRepository(repository, taskNotesRepository);
+        taskRepository = Context.getInstance().getTaskRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -188,10 +187,4 @@ public class TaskRepositoryTest {
         return cursor;
     }
 
-    @Test
-    public void testGetTaskRepository() {
-        TaskRepository taskRepository = Context.getInstance().getTaskRepository();
-
-        assertNotNull(taskRepository);
-    }
 }
