@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
@@ -137,9 +138,9 @@ public class LocationTaskServiceHelper {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(is_jurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
-            serverVersion = Long.parseLong(currentServerVersion);
+            serverVersion = (StringUtils.isEmpty(currentServerVersion)? 0: Long.parseLong(currentServerVersion));
         } catch (NumberFormatException e) {
-            Log.e(TAG, e.getMessage(), e);
+            e.printStackTrace();
         }
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
@@ -158,10 +159,11 @@ public class LocationTaskServiceHelper {
                 }
             }
             String maxServerVersion = geMaxServerVersion(locations, serverVersion);
-            allSharedPreferences.savePreference(maxServerVersion, is_jurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
+            String updateKey = is_jurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
+            allSharedPreferences.savePreference(maxServerVersion, updateKey);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            e.printStackTrace();
         }
     }
 
