@@ -21,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.smartregister.Context;
 import org.smartregister.domain.Task;
 import org.smartregister.util.DateTimeTypeConverter;
 
@@ -73,7 +72,7 @@ public class TaskRepositoryTest {
 
     @Before
     public void setUp() {
-        taskRepository = Context.getInstance().getTaskRepository();
+        taskRepository = new TaskRepository(repository, taskNotesRepository);
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -186,5 +185,6 @@ public class TaskRepositoryTest {
                 task.getOwner(), task.getServerVersion()});
         return cursor;
     }
+
 
 }

@@ -19,8 +19,6 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -29,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -159,13 +156,6 @@ public class StructureRepositoryTest {
         cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
                 location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;
-    }
-
-    @Test
-    public void testGetStructureRepository() {
-        StructureRepository structureRepository = Context.getInstance().getStructureRepository();
-
-        assertNotNull(structureRepository);
     }
 
 }
