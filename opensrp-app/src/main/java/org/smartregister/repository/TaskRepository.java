@@ -9,9 +9,12 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateUtil;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.smartregister.domain.Task.TaskStatus;
@@ -39,11 +42,12 @@ public class TaskRepository extends BaseRepository {
     private static final String AUTHORED_ON = "authored_on";
     private static final String LAST_MODIFIED = "last_modified";
     private static final String OWNER = "owner";
+    private static final String SYNC_STATUS = "sync_status";
     private static final String SERVER_VERSION = "server_version";
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, CAMPAIGN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SERVER_VERSION};
+    protected static final String[] COLUMNS = {ID, CAMPAIGN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION};
 
     protected static final String TASK_TABLE = "task";
 
@@ -64,6 +68,7 @@ public class TaskRepository extends BaseRepository {
                     AUTHORED_ON + " INTEGER NOT NULL, " +
                     LAST_MODIFIED + " INTEGER NOT NULL, " +
                     OWNER + " VARCHAR NOT NULL, " +
+                    SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     SERVER_VERSION + " INTEGER ) ";
 
 
@@ -177,5 +182,52 @@ public class TaskRepository extends BaseRepository {
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
 
         return task;
+    }
+
+    public List<TaskUpdate> getUnSyncedTaskStatus() {
+        Cursor cursor = null;
+        List<TaskUpdate> taskUpdates = new ArrayList<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT " + ID + "," + STATUS + "," + BUSINESS_STATUS + "  FROM %s WHERE %s =?", TASK_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Unsynced});
+            while (cursor.moveToNext()) {
+                taskUpdates.add(readUpdateCursor(cursor));
+            }
+        } catch (Exception e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return taskUpdates;
+    }
+
+    public void markTaskAsSynced(String taskID) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(TaskRepository.ID, taskID);
+            values.put(TaskRepository.SYNC_STATUS, BaseRepository.TYPE_Synced);
+
+            getWritableDatabase().update(TaskRepository.TASK_TABLE,
+                    values,
+                    TaskRepository.ID + " = ?",
+                    new String[]{taskID});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    private TaskUpdate readUpdateCursor(Cursor cursor) {
+        TaskUpdate taskUpdate = new TaskUpdate();
+        taskUpdate.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
+
+        if (cursor.getString(cursor.getColumnIndex(STATUS)) != null) {
+            taskUpdate.setStatus(cursor.getString(cursor.getColumnIndex(STATUS)));
+        }
+        if (cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)) != null) {
+            taskUpdate.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
+        }
+        if (cursor.getString(cursor.getColumnIndex(SERVER_VERSION)) != null) {
+            taskUpdate.setServerVersion(cursor.getString(cursor.getColumnIndex(SERVER_VERSION)));
+        }
+        return taskUpdate;
     }
 }

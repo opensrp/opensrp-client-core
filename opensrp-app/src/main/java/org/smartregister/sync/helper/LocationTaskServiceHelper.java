@@ -17,6 +17,7 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
@@ -39,19 +40,20 @@ public class LocationTaskServiceHelper {
     private TaskRepository taskRepository;
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
-    public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
-    public static final String TASK_URL = "/rest/task/sync";
 
+    public static final String TASK_URL = "/rest/task/sync";
+    public static final String UPDATE_STATUS_URL = "rest/task/update_status";
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
+
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
+    public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
 
     private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
-
-
     private static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
+
     protected static LocationTaskServiceHelper instance;
 
     public static LocationTaskServiceHelper getInstance() {
@@ -68,6 +70,27 @@ public class LocationTaskServiceHelper {
         this.taskRepository = taskRepository;
         this.locationRepository = locationRepository;
         this.structureRepository = structureRepository;
+    }
+
+
+    private void syncTaskStatusToServer(){
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        List<TaskUpdate> updates =taskRepository.getUnSyncedTaskStatus();
+
+        String jsonPayload = new Gson().toJson(updates);
+        Response<String> response = httpAgent.post(UPDATE_STATUS_URL,jsonPayload);
+        if (response.isFailure()) {
+            Log.e(getClass().getName(), "Update Status failed.");
+            return;
+        }
+        String responseString = response.payload();
+        if (responseString.contains("Tasks Updated:")) {
+            for(TaskUpdate taskUpdate: updates){
+                taskRepository.markTaskAsSynced(taskUpdate.getIdentifier());
+            }
+        } else {
+            throw new IllegalArgumentException(responseString);
+        }
     }
 
     public void syncTasks() {
