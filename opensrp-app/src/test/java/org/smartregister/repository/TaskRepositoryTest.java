@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.Context;
 import org.smartregister.domain.Task;
 import org.smartregister.util.DateTimeTypeConverter;
 
@@ -28,6 +29,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -186,5 +188,10 @@ public class TaskRepositoryTest {
         return cursor;
     }
 
+    @Test
+    public void testGetTaskRepository() {
+        TaskRepository taskRepository = Context.getInstance().getTaskRepository();
 
+        assertNotNull(taskRepository);
+    }
 }
