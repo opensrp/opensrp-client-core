@@ -158,5 +158,4 @@ public class StructureRepositoryTest {
         return cursor;
     }
 
-
 }

@@ -192,10 +192,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
 
         getLoginView().goToHome(true);
-        if (NetworkUtils.isNetworkAvailable()) {
-            startPullUniqueIdsService();
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-        }
+
         scheduleJobs();
     }
 
@@ -220,7 +217,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         return mLoginPresenter.getOpenSRPContext().userService();
     }
 
-    protected abstract void scheduleJobs();
+    protected void scheduleJobs(){
+        if (NetworkUtils.isNetworkAvailable()) {
+            startPullUniqueIdsService();
+            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+        }
+    }
 
     protected long getFlexValue(int value) {
         int minutes = MINIMUM_JOB_FLEX_VALUE;
@@ -232,4 +234,5 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         return TimeUnit.MINUTES.toMillis(minutes);
     }
+
 }

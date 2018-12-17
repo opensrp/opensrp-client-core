@@ -23,8 +23,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
-import static org.smartregister.AllConstants.REVEAL_OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.CAMPAIGNS;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 
 /**
@@ -45,8 +45,8 @@ public class LocationHelper {
 
     private ArrayList<String> ALLOWED_LEVELS;
     private String DEFAULT_LOCATION_LEVEL;
-    private List<String> revealCampaigns = new ArrayList<>();
-    private List<String> revealOperationalArea = new ArrayList<>();
+    private List<String> allCampaigns = new ArrayList<>();
+    private List<String> allOperationalArea = new ArrayList<>();
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     private LocationHelper(ArrayList<String> allowedLevels, String defaultLocationLevel) {
@@ -97,13 +97,13 @@ public class LocationHelper {
                         locations.addAll(foundLocations);
                     }
                 }
-//                clean up on reveal release 2
+
                 if (ALLOWED_LEVELS.contains("reveal")) {
-                    if (revealCampaigns != null && !revealCampaigns.isEmpty()) {
-                        allSharedPreferences.saveRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS, android.text.TextUtils.join(",", revealCampaigns));
+                    if (allCampaigns != null && !allCampaigns.isEmpty()) {
+                        allSharedPreferences.savePreference(CAMPAIGNS, android.text.TextUtils.join(",", allCampaigns));
                     }
-                    if (revealOperationalArea != null && !revealOperationalArea.isEmpty()) {
-                        allSharedPreferences.saveRevealCampaignsOperationalArea(REVEAL_OPERATIONAL_AREAS, android.text.TextUtils.join(",", revealOperationalArea));
+                    if (allOperationalArea != null && !allOperationalArea.isEmpty()) {
+                        allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", allOperationalArea));
                     }
                 }
             }
@@ -310,13 +310,12 @@ public class LocationHelper {
                 for (String level : levels) {
                     if (ALLOWED_LEVELS.contains(level)) {
 
-//                        Handling Reveal campaigns and operational areas shoudl clean up after release 2
                         if (node.getAttribute("campaign_id") != null) {
 
-                            revealCampaigns.add(node.getAttribute("campaign_id").toString());
+                            allCampaigns.add(node.getAttribute("campaign_id").toString());
                         }
                         if (node.getAttribute("team_id") != null && node.getAttribute("team_id").toString().equals(teamUID)) {
-                            revealOperationalArea.add(node.getName());
+                            allOperationalArea.add(node.getName());
                         }
                         if (!fetchLocationIds && DEFAULT_LOCATION_LEVEL.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
                             return locationList;

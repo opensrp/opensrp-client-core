@@ -15,7 +15,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.smartregister.AllConstants;
 import org.smartregister.sync.mock.MockEditor;
 
-import static org.smartregister.AllConstants.REVEAL_CAMPAIGNS;
+import static org.smartregister.AllConstants.CAMPAIGNS;
 
 @RunWith(RobolectricTestRunner.class)
 public class AllSharedPreferencesTest extends TestCase {
@@ -232,14 +232,14 @@ public class AllSharedPreferencesTest extends TestCase {
     }
 
     @Test
-    public void shouldSaveRevealCampaignsOperationalArea() {
-        allSharedPreferences.saveRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS,"Miti Rural Health Centre");
+    public void shouldSaveCampaignsOperationalArea() {
+        allSharedPreferences.savePreference(CAMPAIGNS,"Miti Rural Health Centre");
         Mockito.verify(preferences, Mockito.times(1)).edit();
     }
 
     @Test
-    public void shouldGetRevealCampaignsOperationalArea() {
-        Assert.assertEquals(allSharedPreferences.getRevealCampaignsOperationalArea(REVEAL_CAMPAIGNS), str);
+    public void shouldGetCampaignsOperationalArea() {
+        Assert.assertEquals(allSharedPreferences.getPreference(CAMPAIGNS), str);
     }
 
 }

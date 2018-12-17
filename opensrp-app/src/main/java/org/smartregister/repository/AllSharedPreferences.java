@@ -263,14 +263,5 @@ public class AllSharedPreferences {
     public long fetchLastSettingsSyncTimeStamp() {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
-
-//        Done for reveal location/campaigns/operational areas should clean up on release 2
-    public void saveRevealCampaignsOperationalArea(String preferencesKey, String locationCSV) {
-        preferences.edit().putString(preferencesKey, locationCSV).commit();
-    }
-
-    public String getRevealCampaignsOperationalArea(String preferencesKey) {
-        return preferences.getString(preferencesKey, "");
-    }
-
 }
+

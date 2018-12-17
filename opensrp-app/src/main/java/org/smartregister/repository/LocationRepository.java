@@ -90,6 +90,23 @@ public class LocationRepository extends BaseRepository {
         }
         return locations;
     }
+    public List<String> getAllLocationIds() {
+        Cursor cursor = null;
+        List<String> locationIds = new ArrayList<>();
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT "+ID+" FROM " + getLocationTableName(), null);
+            while (cursor.moveToNext()) {
+                locationIds.add(cursor.getString(0));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locationIds;
+    }
 
     public Location getLocationById(String id) {
         Cursor cursor = null;
@@ -164,7 +181,6 @@ public class LocationRepository extends BaseRepository {
         }
         return null;
     }
-
 
     private Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));

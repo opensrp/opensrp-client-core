@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.Context;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -67,7 +68,7 @@ public class LocationRepositoryTest {
 
     @Before
     public void setUp() {
-        locationRepository = new LocationRepository(repository);
+        locationRepository = Context.getInstance().getLocationRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -115,6 +116,22 @@ public class LocationRepositoryTest {
         assertEquals(1, allLocations.size());
         Location location = allLocations.get(0);
         assertEquals(locationJson, stripTimezone(gson.toJson(location)));
+
+    }
+    @Test
+    public void tesGetAllLocationIds() {
+        when(sqLiteDatabase.rawQuery("SELECT _id FROM location", null)).thenReturn(getCursor());
+        List<String> allLocationIds = locationRepository.getAllLocationIds();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT _id FROM location", stringArgumentCaptor.getValue());
+        assertEquals(1, allLocationIds.size());
+        assertEquals("3734", allLocationIds.get(0));
+
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location", null)).thenReturn(getCursor());
+        List<Location> allLocations = locationRepository.getAllLocations();
+        assertEquals(1,allLocations.size());
+        assertEquals(allLocationIds.get(0),allLocations.get(0).getId());
 
     }
 
@@ -187,6 +204,5 @@ public class LocationRepositoryTest {
                 location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;
     }
-
 
 }

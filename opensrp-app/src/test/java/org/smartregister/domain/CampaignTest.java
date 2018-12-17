@@ -49,6 +49,9 @@ public class CampaignTest {
 	public void testSerialize() {
 		Campaign campaign = gson.fromJson(campaignJson, Campaign.class);
 		assertEquals(campaignJson, gson.toJson(campaign));
+		assertEquals(campaign.getTitle(),"2019 IRS Season 2");
 	}
+
+
 
 }
