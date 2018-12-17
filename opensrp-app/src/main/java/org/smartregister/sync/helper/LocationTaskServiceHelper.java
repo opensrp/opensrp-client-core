@@ -35,7 +35,7 @@ public class LocationTaskServiceHelper {
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     protected final Context context;
-    TaskRepository taskRepository;
+    private TaskRepository taskRepository;
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
