@@ -48,7 +48,7 @@ public class LocationTaskServiceHelper {
     private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
 
 
-    public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationTaskServiceHelper instance;
@@ -113,14 +113,13 @@ public class LocationTaskServiceHelper {
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            String string = resp.toString();
             throw new NoHttpResponseException(TASK_URL + " not returned data");
         }
 
         return resp.payload().toString();
     }
 
-    public String getTaskMaxServerVersion(List<Task> tasks, long currentServerVersion) {
+    private String getTaskMaxServerVersion(List<Task> tasks, long currentServerVersion) {
         long maxServerVersion = currentServerVersion;
 
         for (Task task : tasks) {
@@ -196,7 +195,7 @@ public class LocationTaskServiceHelper {
         return resp.payload().toString();
     }
 
-    public String geMaxServerVersion(List<Location> locations, long serverVersionParam) {
+    private String geMaxServerVersion(List<Location> locations, long serverVersionParam) {
         long currentServerVersion = serverVersionParam;
         for (Location location : locations) {
             long serverVersion = location.getServerVersion();

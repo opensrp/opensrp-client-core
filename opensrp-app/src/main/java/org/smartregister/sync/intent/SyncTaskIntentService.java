@@ -19,6 +19,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.sync.helper.LocationTaskServiceHelper;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.Utils;
 
@@ -27,92 +28,17 @@ import java.util.List;
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
 public class SyncTaskIntentService extends IntentService {
-    public static final String TASK_URL = "/rest/task/sync";
-    public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
-    private static final String TAG = SyncIntentService.class.getCanonicalName();
-    private TaskRepository taskRepository;
-    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-    private LocationRepository locationRepository;
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
+    private static final String TAG = "SyncTaskIntentService";
 
     public SyncTaskIntentService() {
-        super("SyncTaskIntentService");
+        super(TAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        syncTasks();
+        LocationTaskServiceHelper locationTaskServiceHelper = new LocationTaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository(), CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+
+        locationTaskServiceHelper.syncTasks();
     }
 
-    protected void syncTasks() {
-        String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
-        String groups = TextUtils.join(",", locationRepository.getAllLocationIds());
-
-        long serverVersion = 0;
-        try {
-            serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
-        } catch (NumberFormatException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        try {
-            String tasksResponse = fetchTasks(campaigns, groups, serverVersion);
-            List<Task> tasks = gson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
-            }.getType());
-            for (Task task : tasks) {
-                try {
-                    taskRepository.addOrUpdate(task);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            allSharedPreferences.savePreference(geMaxServerVersion(tasks, serverVersion), TASK_LAST_SYNC_DATE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private String fetchTasks(String campaign, String group, Long serverVersion) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-        }
-
-        String url = baseUrl + TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
-
-        if (httpAgent == null) {
-            sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
-            throw new IllegalArgumentException(TASK_URL + " http agent is null");
-        }
-
-        Response resp = httpAgent.fetch(url);
-        if (resp.isFailure()) {
-            sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
-            throw new NoHttpResponseException(TASK_URL + " not returned data");
-        }
-
-        return resp.payload().toString();
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        taskRepository = CoreLibrary.getInstance().context().getTaskRepository();
-        locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    public String geMaxServerVersion(List<Task> tasks, long currentServerVersion) {
-        long maxServerVersion = currentServerVersion;
-
-        for (Task task : tasks) {
-            long serverVersion = task.getServerVersion();
-            if (serverVersion > currentServerVersion) {
-                maxServerVersion = serverVersion;
-            }
-        }
-
-        return String.valueOf(maxServerVersion);
-    }
 }
