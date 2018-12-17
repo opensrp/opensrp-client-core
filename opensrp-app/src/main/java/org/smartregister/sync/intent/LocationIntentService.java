@@ -9,7 +9,8 @@ import com.google.gson.GsonBuilder;
 import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.LocationProperty;
-import org.smartregister.sync.helper.LocationTaskServiceHelper;
+import org.smartregister.sync.helper.LocationServiceHelper;
+import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
@@ -26,9 +27,9 @@ public class LocationIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
 
-        LocationTaskServiceHelper locationTaskServiceHelper = new LocationTaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository(), CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+        LocationServiceHelper locationServiceHelper = new LocationServiceHelper( CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
 
-        locationTaskServiceHelper.fetchLocationsStructures();
+        locationServiceHelper.fetchLocationsStructures();
 
     }
 }

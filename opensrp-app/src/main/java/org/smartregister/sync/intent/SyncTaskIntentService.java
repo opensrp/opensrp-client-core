@@ -4,7 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 
 import org.smartregister.CoreLibrary;
-import org.smartregister.sync.helper.LocationTaskServiceHelper;
+import org.smartregister.sync.helper.TaskServiceHelper;
 
 public class SyncTaskIntentService extends IntentService {
     private static final String TAG = "SyncTaskIntentService";
@@ -15,9 +15,9 @@ public class SyncTaskIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        LocationTaskServiceHelper locationTaskServiceHelper = new LocationTaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository(), CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+        TaskServiceHelper taskServiceHelper = new TaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository());
 
-        locationTaskServiceHelper.syncTasks();
+        taskServiceHelper.syncTasks();
     }
 
 }
