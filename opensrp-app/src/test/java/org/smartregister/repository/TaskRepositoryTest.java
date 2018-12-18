@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import junit.framework.Assert;
+
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -18,10 +20,12 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.Iterator;
@@ -185,6 +189,29 @@ public class TaskRepositoryTest {
                 task.getOwner(), task.getServerVersion()});
         return cursor;
     }
+
+    @Test
+    public void testGetUnSyncedTaskStatus(){
+        Mockito.when(sqLiteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursor());
+        Assert.assertNotNull(taskRepository.getUnSyncedTaskStatus());
+
+    }
+
+
+    public MatrixCursor getTaskUpdateCursor() {
+        MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
+        TaskUpdate taskUpdate = new Gson fromJson(taskJson, Task.class);
+
+        cursor.addRow(new Object[]{task.getIdentifier(), task.getCampaignIdentifier(), task.getGroupIdentifier(),
+                task.getStatus().name(), task.getBusinessStatus(), task.getPriority(), task.getCode(),
+                task.getDescription(), task.getFocus(), task.getForEntity(),
+                task.getExecutionStartDate().getMillis(),
+                null,
+                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
+                task.getOwner(), task.getServerVersion()});
+        return cursor;
+    }
+
 
 
 }

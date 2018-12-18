@@ -11,9 +11,13 @@ import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
@@ -31,6 +35,7 @@ public class TaskServiceHelper {
     protected final Context context;
     private TaskRepository taskRepository;
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
+    public static final String UPDATE_STATUS_URL = "rest/task/update_status";
     public static final String TASK_URL = "/rest/task/sync";
 
     private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
@@ -111,6 +116,28 @@ public class TaskServiceHelper {
         }
 
         return String.valueOf(maxServerVersion);
+    }
+
+    private void syncTaskStatusToServer() {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        List<TaskUpdate> updates = taskRepository.getUnSyncedTaskStatus();
+
+        String jsonPayload = new Gson().toJson(updates);
+        Response<String> response = httpAgent.post(UPDATE_STATUS_URL, jsonPayload);
+        if (response.isFailure()) {
+            Log.e(getClass().getName(), "Update Status failed.");
+            return;
+        }
+        try {
+            JSONArray updatedIds = new JSONObject(response.payload()).getJSONArray("task_ids");
+            for (int i = 0; i < updatedIds.length(); i++) {
+                taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+            }
+
+        } catch (JSONException e) {
+            Log.e(getClass().getName(), "No update to the task status made");
+        }
+
     }
 
 }
