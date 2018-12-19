@@ -37,8 +37,8 @@ public class TaskServiceHelper {
     protected final Context context;
     private TaskRepository taskRepository;
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
-    public static final String UPDATE_STATUS_URL = "rest/task/update_status";
-    public static final String ADD_TASK_URL = "rest/task/add";
+    public static final String UPDATE_STATUS_URL = "/rest/task/update_status";
+    public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
 
     private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
