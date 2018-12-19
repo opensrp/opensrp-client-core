@@ -59,9 +59,9 @@ public class TaskServiceHelper {
     }
 
     public void syncTasks() {
-        fetchTasksFromServer();
-        syncTaskStatusToServer();
         syncCreatedTaskToServer();
+        syncTaskStatusToServer();
+        fetchTasksFromServer();
     }
 
     public void fetchTasksFromServer() {
@@ -145,14 +145,17 @@ public class TaskServiceHelper {
                 Log.e(getClass().getName(), "Update Status failed.");
                 return;
             }
-            try {
-                JSONObject idObject = new JSONObject(response.payload());
-                JSONArray updatedIds = idObject.getJSONArray("task_ids");
-                for (int i = 0; i < updatedIds.length(); i++) {
-                    taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+
+            if (response.payload().contains("task_ids")) {
+                try {
+                    JSONObject idObject = new JSONObject(response.payload());
+                    JSONArray updatedIds = idObject.getJSONArray("task_ids");
+                    for (int i = 0; i < updatedIds.length(); i++) {
+                        taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+                    }
+                } catch (JSONException e) {
+                    Log.e(getClass().getName(), "No update to the task status made");
                 }
-            } catch (JSONException e) {
-                Log.e(getClass().getName(), "No update to the task status made");
             }
 
         }
