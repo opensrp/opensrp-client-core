@@ -188,7 +188,7 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         List<TaskUpdate> taskUpdates = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT " + ID + "," + STATUS + "," + BUSINESS_STATUS + "  FROM %s WHERE %s =?", TASK_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Unsynced});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT " + ID + "," + STATUS + "," + BUSINESS_STATUS + "," + SERVER_VERSION + "  FROM %s WHERE %s =?", TASK_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Unsynced});
             while (cursor.moveToNext()) {
                 taskUpdates.add(readUpdateCursor(cursor));
             }
