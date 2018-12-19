@@ -182,7 +182,7 @@ public class LocationRepository extends BaseRepository {
         return null;
     }
 
-    private Location readCursor(Cursor cursor) {
+    protected Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
     }

@@ -10,7 +10,6 @@ import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.sync.helper.LocationServiceHelper;
-import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 

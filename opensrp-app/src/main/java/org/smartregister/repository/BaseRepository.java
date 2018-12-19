@@ -24,6 +24,7 @@ public class BaseRepository {
     public static String TYPE_Synced = "Synced";
     public static String TYPE_Valid = "Valid";
     public static String TYPE_InValid = "Invalid";
+    public static String TYPE_Created = "Created";
     protected static final String ORDER_BY = " order by ";
 
     public static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
