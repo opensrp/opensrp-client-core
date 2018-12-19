@@ -23,6 +23,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
@@ -36,12 +37,12 @@ public class LocationServiceHelper {
     private StructureRepository structureRepository;
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
-    public static final String CREATE_STRUCTURE_URL = "/rest/location/add/is_jurisdiction=false";
+    public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
 
-    private static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
+    private static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
 
@@ -63,7 +64,7 @@ public class LocationServiceHelper {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
-            serverVersion = (StringUtils.isEmpty(currentServerVersion)? 0: Long.parseLong(currentServerVersion));
+            serverVersion = (StringUtils.isEmpty(currentServerVersion) ? 0 : Long.parseLong(currentServerVersion));
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
@@ -142,16 +143,22 @@ public class LocationServiceHelper {
     public void syncCreatedStructureToServer() {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Location> locations = structureRepository.getAllUnsynchedCreatedStructures();
+        if (!locations.isEmpty()) {
+            String jsonPayload = locationGson.toJson(locations);
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            Response<String> response = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            CREATE_STRUCTURE_URL),
+                    jsonPayload);
+            if (response.isFailure()) {
+                Log.e(getClass().getName(), "Failed to create new locations on server.");
+                return;
+            }
 
-        String jsonPayload = locationGson.toJson(locations);
-        Response<String> response = httpAgent.post(CREATE_STRUCTURE_URL, jsonPayload);
-        if (response.isFailure()) {
-            Log.e(getClass().getName(), "Failed to create new locations on server.");
-            return;
-        }
-
-        for (Location location : locations) {
-            structureRepository.markStructuresAsSynced(location.getId());
+            for (Location location : locations) {
+                structureRepository.markStructuresAsSynced(location.getId());
+            }
         }
     }
 

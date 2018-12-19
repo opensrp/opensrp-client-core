@@ -19,10 +19,12 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
@@ -57,6 +59,12 @@ public class TaskServiceHelper {
     }
 
     public void syncTasks() {
+        fetchTasksFromServer();
+        syncTaskStatusToServer();
+        syncCreatedTaskToServer();
+    }
+
+    public void fetchTasksFromServer() {
         String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
         String groups = TextUtils.join(",", CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds());
 
@@ -72,6 +80,7 @@ public class TaskServiceHelper {
             }.getType());
             for (Task task : tasks) {
                 try {
+                    task.setSyncStatus(BaseRepository.TYPE_Synced);
                     taskRepository.addOrUpdate(task);
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -122,38 +131,52 @@ public class TaskServiceHelper {
     public void syncTaskStatusToServer() {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<TaskUpdate> updates = taskRepository.getUnSyncedTaskStatus();
+        if (!updates.isEmpty()) {
+            String jsonPayload = new Gson().toJson(updates);
 
-        String jsonPayload = new Gson().toJson(updates);
-        Response<String> response = httpAgent.post(UPDATE_STATUS_URL, jsonPayload);
-        if (response.isFailure()) {
-            Log.e(getClass().getName(), "Update Status failed.");
-            return;
-        }
-        try {
-            JSONArray updatedIds = new JSONObject(response.payload()).getJSONArray("task_ids");
-            for (int i = 0; i < updatedIds.length(); i++) {
-                taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            Response<String> response = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            UPDATE_STATUS_URL),
+                    jsonPayload);
+
+            if (response.isFailure()) {
+                Log.e(getClass().getName(), "Update Status failed.");
+                return;
+            }
+            try {
+                JSONObject idObject = new JSONObject(response.payload());
+                JSONArray updatedIds = idObject.getJSONArray("task_ids");
+                for (int i = 0; i < updatedIds.length(); i++) {
+                    taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+                }
+            } catch (JSONException e) {
+                Log.e(getClass().getName(), "No update to the task status made");
             }
 
-        } catch (JSONException e) {
-            Log.e(getClass().getName(), "No update to the task status made");
         }
-
     }
 
     public void syncCreatedTaskToServer() {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
+        if (!tasks.isEmpty()) {
+            String jsonPayload = taskGson.toJson(tasks);
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            Response<String> response = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            ADD_TASK_URL),
+                    jsonPayload);
+            if (response.isFailure()) {
+                Log.e(getClass().getName(), "Failed to create new tasks on server.");
+                return;
+            }
 
-        String jsonPayload = taskGson.toJson(tasks);
-        Response<String> response = httpAgent.post(ADD_TASK_URL, jsonPayload);
-        if (response.isFailure()) {
-            Log.e(getClass().getName(), "Failed to create new tasks on server.");
-            return;
-        }
-
-        for (Task task : tasks) {
-            taskRepository.markTaskAsSynced(task.getIdentifier());
+            for (Task task : tasks) {
+                taskRepository.markTaskAsSynced(task.getIdentifier());
+            }
         }
     }
 

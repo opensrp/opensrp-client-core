@@ -102,15 +102,13 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(DESCRIPTION, task.getDescription());
         contentValues.put(FOCUS, task.getFocus());
         contentValues.put(FOR, task.getForEntity());
-
         contentValues.put(START, DateUtil.getMillis(task.getExecutionStartDate()));
         contentValues.put(END, DateUtil.getMillis(task.getExecutionEndDate()));
-
-
         contentValues.put(AUTHORED_ON, DateUtil.getMillis(task.getAuthoredOn()));
         contentValues.put(LAST_MODIFIED, DateUtil.getMillis(task.getLastModified()));
         contentValues.put(OWNER, task.getOwner());
         contentValues.put(SERVER_VERSION, task.getServerVersion());
+        contentValues.put(SYNC_STATUS, task.getSyncStatus());
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
 
@@ -172,10 +170,8 @@ public class TaskRepository extends BaseRepository {
         task.setDescription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
         task.setFocus(cursor.getString(cursor.getColumnIndex(FOCUS)));
         task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
-
         task.setExecutionStartDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
         task.setExecutionEndDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
-
         task.setAuthoredOn(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(AUTHORED_ON))));
         task.setLastModified(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(LAST_MODIFIED))));
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
@@ -208,14 +204,13 @@ public class TaskRepository extends BaseRepository {
             values.put(TaskRepository.ID, taskID);
             values.put(TaskRepository.SYNC_STATUS, BaseRepository.TYPE_Synced);
 
-            getWritableDatabase().update(TaskRepository.TASK_TABLE,
-                    values,
-                    TaskRepository.ID + " = ?",
+            getWritableDatabase().update(TaskRepository.TASK_TABLE, values, TaskRepository.ID + " = ?",
                     new String[]{taskID});
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     private TaskUpdate readUpdateCursor(Cursor cursor) {
         TaskUpdate taskUpdate = new TaskUpdate();
         taskUpdate.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
@@ -231,7 +226,6 @@ public class TaskRepository extends BaseRepository {
         }
         return taskUpdate;
     }
-
 
     public List<Task> getAllUnsynchedCreatedTasks() {
         Cursor cursor = null;
@@ -250,4 +244,5 @@ public class TaskRepository extends BaseRepository {
         }
         return tasks;
     }
+
 }
