@@ -18,6 +18,9 @@ public class SyncTaskIntentService extends IntentService {
         TaskServiceHelper taskServiceHelper = new TaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository());
 
         taskServiceHelper.syncTasks();
+        taskServiceHelper.syncTaskStatusToServer();
+        taskServiceHelper.syncCreatedTaskToServer();
+
     }
 
 }

@@ -36,7 +36,8 @@ public class TaskServiceHelper {
     private TaskRepository taskRepository;
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
     public static final String UPDATE_STATUS_URL = "rest/task/update_status";
-    public static final String TASK_URL = "/rest/task/sync";
+    public static final String ADD_TASK_URL = "rest/task/add";
+    public static final String SYNC_TASK_URL = "/rest/task/sync";
 
     private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
 
@@ -91,15 +92,15 @@ public class TaskServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
+        String url = baseUrl + SYNC_TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
 
         if (httpAgent == null) {
-            throw new IllegalArgumentException(TASK_URL + " http agent is null");
+            throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new NoHttpResponseException(TASK_URL + " not returned data");
+            throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
 
         return resp.payload().toString();
@@ -118,7 +119,7 @@ public class TaskServiceHelper {
         return String.valueOf(maxServerVersion);
     }
 
-    private void syncTaskStatusToServer() {
+    public void syncTaskStatusToServer() {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<TaskUpdate> updates = taskRepository.getUnSyncedTaskStatus();
 
@@ -139,6 +140,23 @@ public class TaskServiceHelper {
         }
 
     }
+
+    public void syncCreatedTaskToServer() {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
+
+        String jsonPayload = taskGson.toJson(tasks);
+        Response<String> response = httpAgent.post(ADD_TASK_URL, jsonPayload);
+        if (response.isFailure()) {
+            Log.e(getClass().getName(), "Failed to create new tasks on server.");
+            return;
+        }
+
+        for (Task task : tasks) {
+            taskRepository.markTaskAsSynced(task.getIdentifier());
+        }
+    }
+
 
 }
 

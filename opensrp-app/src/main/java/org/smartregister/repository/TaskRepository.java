@@ -230,4 +230,23 @@ public class TaskRepository extends BaseRepository {
         }
         return taskUpdate;
     }
+
+
+    public List<Task> getAllUnsynchedCreatedTasks() {
+        Cursor cursor = null;
+        List<Task> tasks = new ArrayList<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =?", TASK_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Created});
+            while (cursor.moveToNext()) {
+                tasks.add(readCursor(cursor));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return tasks;
+    }
 }

@@ -3,6 +3,7 @@ package org.smartregister.sync.helper;
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -15,6 +16,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.Task;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
@@ -35,6 +37,7 @@ public class LocationServiceHelper {
     private StructureRepository structureRepository;
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
+    public static final String CREATE_LOCATION_URL = "/rest/location/add/is_jurisdiction=true";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
 
@@ -130,10 +133,27 @@ public class LocationServiceHelper {
         }
         return String.valueOf(currentServerVersion);
     }
+    public void syncCreatedLocationToServer() {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        List<Location> locations = locationRepository.getAllUnsynchedCreatedLocations();
+
+        String jsonPayload = locationGson.toJson(locations);
+        Response<String> response = httpAgent.post(CREATE_LOCATION_URL, jsonPayload);
+        if (response.isFailure()) {
+            Log.e(getClass().getName(), "Failed to create new locations on server.");
+            return;
+        }
+
+        for (Location location : locations) {
+            locationRepository.markLocationAsSynced(location.getId());
+        }
+    }
 
     public void fetchLocationsStructures() {
         syncLocationsStructures(true);
         syncLocationsStructures(false);
+        syncCreatedLocationToServer();
+
     }
 
 }

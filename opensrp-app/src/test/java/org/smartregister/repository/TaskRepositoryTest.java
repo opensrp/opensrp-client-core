@@ -29,6 +29,7 @@ import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -68,6 +69,8 @@ public class TaskRepositoryTest {
     private ArgumentCaptor<String[]> argsCaptor;
 
     private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"campaignIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0}";
+
+    private String taskUpdateJson ="{\"businessStatus\": \"Not Sprayed\",\"identifier\": \"076885f8-582e-4dc6-8a1a-510e1c8ed5d9\",\"status\": \"completed\",\"serverVersion\": 1543867945304}";
 
     private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .serializeNulls().create();
@@ -192,23 +195,17 @@ public class TaskRepositoryTest {
 
     @Test
     public void testGetUnSyncedTaskStatus(){
-        Mockito.when(sqLiteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursor());
+        List<TaskUpdate> allTasks = taskRepository.getUnSyncedTaskStatus();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
         Assert.assertNotNull(taskRepository.getUnSyncedTaskStatus());
-
     }
 
 
     public MatrixCursor getTaskUpdateCursor() {
-        MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
-        TaskUpdate taskUpdate = new Gson fromJson(taskJson, Task.class);
-
-        cursor.addRow(new Object[]{task.getIdentifier(), task.getCampaignIdentifier(), task.getGroupIdentifier(),
-                task.getStatus().name(), task.getBusinessStatus(), task.getPriority(), task.getCode(),
-                task.getDescription(), task.getFocus(), task.getForEntity(),
-                task.getExecutionStartDate().getMillis(),
-                null,
-                task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
-                task.getOwner(), task.getServerVersion()});
+        String[] columns = {"ID", "STATUS", "BUSINESS_STATUS", "SERVER_VERSION"};
+        MatrixCursor cursor = new MatrixCursor(columns);
+        TaskUpdate taskUpdate = new Gson().fromJson(taskUpdateJson, TaskUpdate.class);
+        cursor.addRow(new Object[]{taskUpdate.getIdentifier(),taskUpdate.getStatus(),taskUpdate.getBusinessStatus(),taskUpdate.getServerVersion()});
         return cursor;
     }
 
