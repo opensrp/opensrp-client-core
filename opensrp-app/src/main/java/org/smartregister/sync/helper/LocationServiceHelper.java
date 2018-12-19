@@ -36,7 +36,7 @@ public class LocationServiceHelper {
     private StructureRepository structureRepository;
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
-    public static final String CREATE_LOCATION_URL = "/rest/location/add/is_jurisdiction=false";
+    public static final String CREATE_STRUCTURE_URL = "/rest/location/add/is_jurisdiction=false";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
 
@@ -136,15 +136,15 @@ public class LocationServiceHelper {
     public void fetchLocationsStructures() {
         syncLocationsStructures(true);
         syncLocationsStructures(false);
-        syncCreatedLocationToServer();
+        syncCreatedStructureToServer();
     }
 
-    public void syncCreatedLocationToServer() {
+    public void syncCreatedStructureToServer() {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Location> locations = structureRepository.getAllUnsynchedCreatedStructures();
 
         String jsonPayload = locationGson.toJson(locations);
-        Response<String> response = httpAgent.post(CREATE_LOCATION_URL, jsonPayload);
+        Response<String> response = httpAgent.post(CREATE_STRUCTURE_URL, jsonPayload);
         if (response.isFailure()) {
             Log.e(getClass().getName(), "Failed to create new locations on server.");
             return;
