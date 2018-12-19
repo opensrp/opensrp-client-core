@@ -19,9 +19,6 @@ public class StructureRepository extends LocationRepository {
     protected static String STRUCTURE_TABLE = "structure";
     private static final String SYNC_STATUS = "sync_status";
 
-    public static final String CREATE_LOCATION_URL = "/rest/location/add/is_jurisdiction=true";
-
-
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + STRUCTURE_TABLE + " (" +
