@@ -86,7 +86,6 @@ public class CampaignIntentService extends IntentService {
             sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
-        sendBroadcast(Utils.completeSync(FetchStatus.fetched));
 
         return resp.payload().toString();
     }

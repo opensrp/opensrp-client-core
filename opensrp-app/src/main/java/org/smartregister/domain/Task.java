@@ -52,6 +52,8 @@ public class Task {
 
     private String owner;
 
+    private String syncStatus;
+
     @SerializedName("note")
     private List<Note> notes;
 
@@ -191,5 +193,13 @@ public class Task {
 
     public void setServerVersion(Long serverVersion) {
         this.serverVersion = serverVersion;
+    }
+
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
     }
 }

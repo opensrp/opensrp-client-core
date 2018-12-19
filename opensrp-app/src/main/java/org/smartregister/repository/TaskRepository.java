@@ -179,6 +179,7 @@ public class TaskRepository extends BaseRepository {
         task.setAuthoredOn(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(AUTHORED_ON))));
         task.setLastModified(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(LAST_MODIFIED))));
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
+        task.setSyncStatus(cursor.getString(cursor.getColumnIndex(SYNC_STATUS)));
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
 
         return task;

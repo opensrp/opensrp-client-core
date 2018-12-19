@@ -13,6 +13,8 @@ public class Location {
 
     private LocationProperty properties;
 
+    private String syncStatus;
+
     private Long serverVersion;
 
     private transient boolean isJurisdiction;
@@ -63,5 +65,13 @@ public class Location {
 
     public void setJurisdiction(boolean isJurisdiction) {
         this.isJurisdiction = isJurisdiction;
+    }
+
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
     }
 }
