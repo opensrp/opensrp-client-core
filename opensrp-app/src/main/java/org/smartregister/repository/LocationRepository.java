@@ -31,11 +31,10 @@ public class LocationRepository extends BaseRepository {
     protected static final String PARENT_ID = "parent_id";
     protected static final String NAME = "name";
     protected static final String GEOJSON = "geojson";
-    private static final String SYNC_STATUS = "sync_status";
 
     protected static final String LOCATION_TABLE = "location";
 
-    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME, SYNC_STATUS, GEOJSON};
+    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME, GEOJSON};
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
@@ -43,7 +42,6 @@ public class LocationRepository extends BaseRepository {
                     UUID + " VARCHAR , " +
                     PARENT_ID + " VARCHAR , " +
                     NAME + " VARCHAR , " +
-                    SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
@@ -185,39 +183,9 @@ public class LocationRepository extends BaseRepository {
         return null;
     }
 
-    private Location readCursor(Cursor cursor) {
+    protected Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
-    }
-
-    public List<Location> getAllUnsynchedCreatedLocations() {
-        Cursor cursor = null;
-        List<Location> locations = new ArrayList<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =?", LOCATION_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Created});
-            while (cursor.moveToNext()) {
-                locations.add(readCursor(cursor));
-            }
-            cursor.close();
-        } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return locations;
-    }
-
-    public void markLocationAsSynced(String locationId) {
-        try {
-            ContentValues values = new ContentValues();
-            values.put(ID, locationId);
-            values.put(SYNC_STATUS, BaseRepository.TYPE_Synced);
-
-            getWritableDatabase().update(LOCATION_TABLE, values,ID + " = ?",new String[]{locationId});
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
 }
