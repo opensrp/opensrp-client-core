@@ -146,7 +146,7 @@ public class TaskServiceHelper {
                 return;
             }
 
-            if (response.payload().contains("task_ids")) {
+            if (response.payload() != null) {
                 try {
                     JSONObject idObject = new JSONObject(response.payload());
                     JSONArray updatedIds = idObject.getJSONArray("task_ids");
@@ -182,6 +182,5 @@ public class TaskServiceHelper {
             }
         }
     }
-
 }
 
