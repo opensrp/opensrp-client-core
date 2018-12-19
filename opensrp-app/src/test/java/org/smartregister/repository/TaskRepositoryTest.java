@@ -20,7 +20,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
@@ -195,20 +194,9 @@ public class TaskRepositoryTest {
 
     @Test
     public void testGetUnSyncedTaskStatus(){
-        List<TaskUpdate> allTasks = taskRepository.getUnSyncedTaskStatus();
+        taskRepository.getUnSyncedTaskStatus();
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
         Assert.assertNotNull(taskRepository.getUnSyncedTaskStatus());
     }
-
-
-    public MatrixCursor getTaskUpdateCursor() {
-        String[] columns = {"ID", "STATUS", "BUSINESS_STATUS", "SERVER_VERSION"};
-        MatrixCursor cursor = new MatrixCursor(columns);
-        TaskUpdate taskUpdate = new Gson().fromJson(taskUpdateJson, TaskUpdate.class);
-        cursor.addRow(new Object[]{taskUpdate.getIdentifier(),taskUpdate.getStatus(),taskUpdate.getBusinessStatus(),taskUpdate.getServerVersion()});
-        return cursor;
-    }
-
-
 
 }

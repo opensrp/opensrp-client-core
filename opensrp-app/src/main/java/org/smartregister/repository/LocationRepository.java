@@ -12,7 +12,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.smartregister.domain.Location;
-import org.smartregister.domain.Task;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.ArrayList;
