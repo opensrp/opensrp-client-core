@@ -44,7 +44,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     @Override
     protected LoginResponse doInBackground(Void... params) {
         LoginResponse loginResponse = getOpenSRPContext().userService().isValidRemoteLogin(mUsername, mPassword);
-        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) == null) {
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
 
             publishProgress(R.string.loading_client_settings);
