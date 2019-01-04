@@ -15,6 +15,14 @@ import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * <p>A wrapper class for the low level access API to the {@link net.sqlcipher.database.SQLiteDatabase}</p>
+ * <p>Provides CRUD functionality to the database object</p>
+ *
+ * @since 2018-01-01
+ * @author OpenSRPLegends
+ * @version 0.1
+ */
 public class Repository extends SQLiteOpenHelper {
     protected CommonFtsObject commonFtsObject;
     private DrishtiRepository[] repositories;

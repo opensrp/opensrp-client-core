@@ -21,6 +21,22 @@ import java.util.Locale;
 
 import static org.smartregister.util.Log.logError;
 
+/**
+ * <p>This class initializes all the global parameters for the Application</p>
+ * <p>It provides the following :
+ *  <ul>
+ *      <li><b>A Repository Object :</b> For local access to the application central database <i>{@link #getRepository()}</i></li>
+ *      <li><b>An Image Cache :</b> A volley based image cache to save network resources <i>{@link #getMemoryCacheInstance()}</i></li>
+ *      <li><b>An Image Loader :</b> For image retrieval  <i>{@link #getCachedImageLoaderInstance()}</i></li>
+ *      <li>Access to OpenSRP custom context</li>
+ *      <li>Access the application object in a thread safe way</li>
+ *  </ul>
+ * </p>
+ *
+ * @author OpenSRPLegends
+ * @version 0.1
+ * @since 2018-01-01
+ */
 public abstract class DrishtiApplication extends Application {
     private static final String TAG = "DrishtiApplication";
     protected static DrishtiApplication mInstance;
@@ -44,6 +60,9 @@ public abstract class DrishtiApplication extends Application {
         return memoryImageCache;
     }
 
+    /**
+     * @return default app directory
+     */
     public static String getAppDir() {
         File appDir = DrishtiApplication.getInstance().getApplicationContext()
                 .getDir("opensrp", android.content.Context.MODE_PRIVATE); //Creating an internal
@@ -51,6 +70,10 @@ public abstract class DrishtiApplication extends Application {
         return appDir.getAbsolutePath();
     }
 
+    /**
+     * Gives users a singleton OpenSRPImageLoader
+     * @return OpenSRPImageLoader
+     */
     public static OpenSRPImageLoader getCachedImageLoaderInstance() {
         if (cachedImageLoader == null) {
             cachedImageLoader = new OpenSRPImageLoader(
@@ -61,6 +84,9 @@ public abstract class DrishtiApplication extends Application {
         return cachedImageLoader;
     }
 
+    /**
+     * Initializes the database
+     */
     @Override
     public void onCreate() {
         try {
@@ -72,6 +98,9 @@ public abstract class DrishtiApplication extends Application {
         }
     }
 
+    /**
+     * Implementation of this method to logout the current and end session
+     */
     public abstract void logoutCurrentUser();
 
     @Override
@@ -80,6 +109,10 @@ public abstract class DrishtiApplication extends Application {
         MultiDex.install(this);
     }
 
+    /**
+     *
+     * @return a @see org.smartregister.repository.Repository
+     */
     public Repository getRepository() {
         ArrayList<DrishtiRepository> drishtireposotorylist = CoreLibrary.getInstance().context()
                 .sharedRepositories();

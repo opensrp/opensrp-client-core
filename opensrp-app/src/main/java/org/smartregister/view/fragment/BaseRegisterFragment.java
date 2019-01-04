@@ -38,7 +38,27 @@ import org.smartregister.view.dialog.DialogOption;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
- * Created by keyman on 26/06/2018.
+ * <p>A Register Fragment that provides the primary child to {@link org.smartregister.view.activity.BaseRegisterActivity}.</p>
+ * <p> RecyclerView with a header and Footer </p>
+ *
+ * <p>
+ *     To use, you need ot initialize the following
+ *     <ul>
+ *         <li>{@link #initializePresenter()} Provide a default Presenter for the class.</li>
+ *         <li>{@link #setupViews(View view)} This method provides a secure override for the deafult Fragment Method #onCreateView(View view) </li>
+ *         <li>{@link #refreshSyncProgressSpinner()} Exposes a synchronization ImageView </li>
+ *         <li>{@link #startRegistration()} provides a hook to initialize Native Forms and collect information. <a href="https://github.com/OpenSRP/opensrp-client-native-form">View Native Forms</a> </li>
+ *         <li>{@link #onResumption()} Secure exposed on Resume Call</li>
+ *         <li>{@link #setUniqueID} Method to Receive the Unique ID scanned from QR Code</li>
+ *         <li>{@link #getMainCondition} returns a query filter to be used as the main filter condition of the rows</li>
+ *         <li>{@link #getDefaultSortQuery} returns default sort order of the registers</li>
+ *         <li>{@link #onViewClicked} Default click listener for the parent view </li>
+ *     </ul>
+ * </p>
+ *
+ * @author Keyman
+ * @version 0.1
+ * @since 2018-06-26
  */
 
 public abstract class BaseRegisterFragment extends RecyclerViewFragment implements BaseRegisterFragmentContract.View,

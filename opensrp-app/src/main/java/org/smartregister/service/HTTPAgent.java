@@ -73,6 +73,13 @@ import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 import static org.smartregister.util.HttpResponseUtil.getResponseString;
 import static org.smartregister.util.Log.logError;
 
+/**
+ * Default HTTP provider class
+ *
+ * @author OpenSRPLegends
+ * @version 0.1
+ * @since 2018-01-01
+ */
 public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();

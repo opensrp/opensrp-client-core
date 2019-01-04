@@ -25,7 +25,12 @@ import static net.sqlcipher.DatabaseUtils.longForQuery;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
 /**
- * Created by Raihan Ahmed on 4/15/15.
+ * <p>Provides a wrapper on the application {@link org.smartregister.repository.DrishtiRepository}</p>
+ * <p>Its a wrapper class that creates and provides default sql querying functionality for users</p>
+ *
+ * @author Raihan Ahmed
+ * @since 2015-15-04
+ * @version 0.1
  */
 public class CommonRepository extends DrishtiRepository {
     public static final String ID_COLUMN = "id";

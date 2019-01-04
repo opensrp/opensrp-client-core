@@ -15,6 +15,13 @@ import static org.smartregister.event.Event.ON_DATA_FETCHED;
 import static org.smartregister.event.Event.ON_PHOTO_CAPTURED;
 import static org.smartregister.util.Log.logWarn;
 
+/**
+ * <p>
+ *     An OpenSRP memory based cache. These are data stores that listen to application Events
+ * </p>
+ * @see org.smartregister.event.Event
+ * @param <T>
+ */
 public class Cache<T> {
     private final Listener<String> formSubmittedListener;
     private final Listener<FetchStatus> actionsFetchedListener;

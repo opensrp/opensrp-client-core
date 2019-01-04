@@ -36,7 +36,27 @@ import org.smartregister.view.viewpager.OpenSRPViewPager;
 import java.util.List;
 
 /**
- * Created by keyman on 26/06/2018.
+ *
+ * <p>An abstract activity that provides a base for Registers. <i>Registers are a list of objects </i></p>
+ * <p>
+ *     This class conforms to MVP standards and implements the contracts in {@link org.smartregister.view.contract.BaseRegisterContract}.
+ *     Extending the class means you also need to extend the contract
+ * </p>
+ * <p>
+ *     In order to implement this activity, you need to
+ *     <ul>
+ *         <li>Create a presenter of type {@link org.smartregister.view.contract.BaseRegisterContract.Presenter} via the method {@link #initializePresenter()} </li>
+ *         <li>Provide a {@link org.smartregister.view.fragment.BaseRegisterFragment} via {@link #getRegisterFragment()}</li>
+ *         <li>{@link #getOtherFragments()} provides a count of the total number of fragments in the registers. <i>(This activity is implemented based on a ViewPager)</i></li>
+ *         <li>{@link #startRegistration()} provides a hook to initialize Native Forms and collect information. <a href="https://github.com/OpenSRP/opensrp-client-native-form">View Native Forms</a> </li>
+ *         <li>{@link #startFormActivity(JSONObject form)} same as above</li>
+ *         <li>{@Link #registerViewConfigurations} Provide configuration information. See this <a href="https://github.com/OpenSRP/opensrp-client-configurable-views">OpenSRP Configurable View Lib</a></li>
+ *     </ul>
+ * </p>
+ *
+ * @author Keyman
+ * @since 2018-06-26
+ * @version 0.1
  */
 
 public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {

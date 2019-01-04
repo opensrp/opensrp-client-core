@@ -108,8 +108,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.preference.PreferenceManager.setDefaultValues;
 
+/**
+ * <p>An OpenSRP 'Context' that provides access to the all Repositories and Services. <i>hindsight: this object should have been named OpenSRPContext</i></p>
+ * <p>The following objects and default behaviour are supplied by this object</p>
+ * <ul>
+ *     <li><b>Services : </b> Codebase that provide functionality to default functions</li>
+ *     <li><b>Repositories </b> Local databases tables / resources for data</li>
+ *     <li><b>Cache</b> {@link org.smartregister.util.Cache} Event conscious cache objects</li>
+ *     <li>Low level helper classes</li>
+ * </ul>
+ *
+ * @author OpenSRPLegends
+ * @since 2018-01-01
+ * @version 0.1
+ */
 public class Context {
     private static final String TAG = "Context";
     ///////////////////common bindtypes///////////////
@@ -229,6 +242,10 @@ public class Context {
         return null;
     }
 
+    /**
+     * Returns the default android context
+     * @return android.content.Context
+     */
     public android.content.Context applicationContext() {
         return applicationContext;
     }
@@ -1125,13 +1142,15 @@ public class Context {
         }
         return campaignRepository;
     }
+
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
             taskNotesRepository = new TaskNotesRepository(getRepository());
-            taskRepository = new TaskRepository(getRepository(),taskNotesRepository);
+            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
         }
         return taskRepository;
     }
+
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
             locationRepository = new LocationRepository(getRepository());

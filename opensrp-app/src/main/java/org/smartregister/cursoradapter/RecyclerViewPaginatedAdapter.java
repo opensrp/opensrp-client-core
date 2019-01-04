@@ -10,7 +10,11 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
 
 /**
- * Created by keyman on 09/07/18.
+ * This adapter uses a database cursor to render a list of objects.
+ *
+ * @author Keyman
+ * @since 2018-07-09
+ * @version 0.1
  */
 public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> extends RecyclerViewCursorAdapter {
     private final RecyclerViewProvider<RecyclerView.ViewHolder> listItemProvider;

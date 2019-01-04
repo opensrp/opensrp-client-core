@@ -11,6 +11,13 @@ import java.net.URISyntaxException;
 import static java.text.MessageFormat.format;
 import static org.smartregister.util.Log.logError;
 
+/**
+ * Wrapper class to open and provide access to base files in OpenSRP
+ *
+ * @version 1.0
+ * @author OpenSRPLegends
+ * @since 2018-01-01
+ */
 public class ZiggyFileLoader {
     private String ziggyDirectoryPath;
     private String formDirectoryPath;

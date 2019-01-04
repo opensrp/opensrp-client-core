@@ -30,7 +30,17 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 /**
- * Created by manu on 01/11/2018.
+ * <p>Extending this class provides default login behaviour for OpenSRP clients</p>
+ * <p> To implement :
+ *      <ul>
+ *          <li>{@link #getContentView()} Override this function to provide your custom layout resource</li>
+ *          <li>{@link #initializePresenter()} Return a presenter of type {@link org.smartregister.view.contract.BaseLoginContract.Presenter}</li>
+ *      </ul>
+ *</p>
+ *
+ * @author manu
+ * @since 2018-11-01
+ * @version 0.1
  */
 
 public abstract class BaseLoginActivity extends AppCompatActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
