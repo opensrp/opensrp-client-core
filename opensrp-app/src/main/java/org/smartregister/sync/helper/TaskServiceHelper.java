@@ -20,6 +20,7 @@ import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
+import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -29,10 +30,11 @@ import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
-public class TaskServiceHelper {
+public class TaskServiceHelper  {
     private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
 
     protected final Context context;
     private TaskRepository taskRepository;

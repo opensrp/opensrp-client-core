@@ -1094,6 +1094,34 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+
+    public List<Event> getEventsBySyncStatus(String syncStatus, int limit) {
+        List<Event> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = getReadableDatabase().rawQuery("SELECT json FROM "
+                    + Table.event.name()
+                    + " WHERE "
+                    + event_column.baseEntityId.name()
+                    + "= ? AND " + event_column.syncStatus.name() + "= ? ", new String[]{syncStatus});
+            while (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+                Event event = convert(jsonEventStr, Event.class);
+                list.add(event);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject) {
         try {
             ContentValues values = new ContentValues();
@@ -1228,6 +1256,20 @@ public class EventClientRepository extends BaseRepository {
                     client_column.baseEntityId.name() + " = ?",
                     new String[]{baseEntityId});
 
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
+    public void updateTaskUnprocessedEventStatus(String formSubmissionId, boolean hasTask) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(event_column.formSubmissionId.name(), formSubmissionId);
+            values.put(client_column.syncStatus.name(), hasTask ? TYPE_Synced : TYPE_Task_Unprocessed);
+            getWritableDatabase().update(Table.event.name(),
+                    values,
+                    event_column.formSubmissionId.name() + " = ?",
+                    new String[]{formSubmissionId});
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
         }
