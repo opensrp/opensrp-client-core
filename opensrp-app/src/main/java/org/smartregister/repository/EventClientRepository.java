@@ -1095,7 +1095,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
 
-    public List<Event> getEventsBySyncStatus(String syncStatus, int limit) {
+    public List<Event> getEventsByBaseEntityIdAndSyncStatus(String syncStatus, String baseEntityId) {
         List<Event> list = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -1103,7 +1103,7 @@ public class EventClientRepository extends BaseRepository {
                     + Table.event.name()
                     + " WHERE "
                     + event_column.baseEntityId.name()
-                    + "= ? AND " + event_column.syncStatus.name() + "= ? ", new String[]{syncStatus});
+                    + "= ? AND " + event_column.syncStatus.name() + "= ? ", new String[]{baseEntityId,syncStatus});
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 
