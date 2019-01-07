@@ -143,10 +143,11 @@ public class LocationServiceHelper {
         return String.valueOf(currentServerVersion);
     }
 
-    public void fetchLocationsStructures() {
+    public List<Location> fetchLocationsStructures() {
         syncLocationsStructures(true);
-        syncLocationsStructures(false);
+        List<Location> locations = syncLocationsStructures(false);
         syncCreatedStructureToServer();
+        return locations;
     }
 
     public void syncCreatedStructureToServer() {
