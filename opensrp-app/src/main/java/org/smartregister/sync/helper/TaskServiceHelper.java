@@ -46,8 +46,6 @@ public class TaskServiceHelper {
 
     protected static TaskServiceHelper instance;
 
-    private String targetGroupIdentifier;
-
     public static TaskServiceHelper getInstance() {
         if (instance == null) {
             instance = new TaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository());
@@ -70,7 +68,6 @@ public class TaskServiceHelper {
     public List<Task> fetchTasksFromServer() {
         String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
         String groups = TextUtils.join(",", CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds());
-        List<Task> tasksInTargetArea = new ArrayList<>();
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -85,18 +82,16 @@ public class TaskServiceHelper {
                 try {
                     task.setSyncStatus(BaseRepository.TYPE_Synced);
                     taskRepository.addOrUpdate(task);
-                    if (targetGroupIdentifier != null && targetGroupIdentifier.equals(task.getGroupIdentifier())) {
-                        tasksInTargetArea.add(task);
-                    }
                 } catch (Exception e) {
                     Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
                 }
             }
             allSharedPreferences.savePreference(getTaskMaxServerVersion(tasks, serverVersion), TASK_LAST_SYNC_DATE);
+            return tasks;
         } catch (Exception e) {
             Log.e(TAG, "Error fetching tasks from server ", e);
         }
-        return tasksInTargetArea;
+        return null;
     }
 
     private String fetchTasks(String campaign, String group, Long serverVersion) throws NoHttpResponseException {
@@ -190,8 +185,5 @@ public class TaskServiceHelper {
         }
     }
 
-    public void setTargetGroupIdentifier(String targetGroupIdentifier) {
-        this.targetGroupIdentifier = targetGroupIdentifier;
-    }
 }
 

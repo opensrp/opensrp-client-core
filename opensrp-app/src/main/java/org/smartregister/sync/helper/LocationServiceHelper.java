@@ -47,8 +47,6 @@ public class LocationServiceHelper {
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
 
-    private String targetParentIdentifier;
-
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
             instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
@@ -71,7 +69,6 @@ public class LocationServiceHelper {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
-        List<Location> structuresInTargetArea = new ArrayList<>();
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
@@ -84,9 +81,6 @@ public class LocationServiceHelper {
                         locationRepository.addOrUpdate(location);
                     else {
                         structureRepository.addOrUpdate(location);
-                        if (targetParentIdentifier != null && targetParentIdentifier.equals(location.getProperties().getParentId())) {
-                            structuresInTargetArea.add(location);
-                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -95,11 +89,12 @@ public class LocationServiceHelper {
             String maxServerVersion = getMaxServerVersion(locations, serverVersion);
             String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
             allSharedPreferences.savePreference(maxServerVersion, updateKey);
+            return locations;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return structuresInTargetArea;
+        return null;
     }
 
     private String makeURL(boolean isJurisdiction, long serverVersion, String parentId) {
@@ -172,8 +167,5 @@ public class LocationServiceHelper {
         }
     }
 
-    public void setTargetParentIdentifier(String targetParentIdentifier) {
-        this.targetParentIdentifier = targetParentIdentifier;
-    }
 }
 
