@@ -3,7 +3,6 @@ package org.smartregister.sync.intent;
 import android.app.IntentService;
 import android.content.Intent;
 
-import org.smartregister.CoreLibrary;
 import org.smartregister.sync.helper.TaskServiceHelper;
 
 public class SyncTaskIntentService extends IntentService {
@@ -15,7 +14,7 @@ public class SyncTaskIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        TaskServiceHelper taskServiceHelper = new TaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository());
+        TaskServiceHelper taskServiceHelper = TaskServiceHelper.getInstance();
 
         taskServiceHelper.syncTasks();
 
