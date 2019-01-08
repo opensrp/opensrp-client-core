@@ -43,7 +43,7 @@ public class ClientProcessorForJava {
     private String[] openmrsGenIds = {};
     private Map<String, Object> jsonMap = new HashMap<>();
 
-    private static ClientProcessorForJava instance;
+    protected static ClientProcessorForJava instance;
     private Context mContext;
 
     public ClientProcessorForJava(Context context) {
