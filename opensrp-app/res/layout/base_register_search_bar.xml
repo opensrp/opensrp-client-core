@@ -13,7 +13,7 @@
         android:layout_height="@dimen/ec_main_header_search_layout_height"
         android:layout_marginLeft="@dimen/register_search_bar_margin"
         android:layout_marginRight="@dimen/register_search_bar_min_margin"
-        android:layout_weight="1.4">
+        android:layout_weight="1.5">
 
         <EditText
             android:id="@+id/edt_search"
@@ -52,7 +52,7 @@
         android:layout_marginLeft="@dimen/search_bar_min_margin"
         android:layout_marginRight="@dimen/register_search_bar_margin"
         android:layout_marginStart="@dimen/search_bar_min_margin"
-        android:layout_weight="0.6">
+        android:layout_weight="0.5">
 
         <TextView
             android:id="@+id/filter_text_view"
@@ -73,23 +73,37 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/default_font_size_search_bar" />
 
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/due_only_layout"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/ec_main_header_search_layout_height"
+        android:layout_marginEnd="@dimen/register_search_bar_margin"
+        android:layout_marginLeft="@dimen/search_bar_min_margin"
+        android:layout_marginRight="@dimen/register_search_bar_margin"
+        android:layout_marginStart="@dimen/search_bar_min_margin"
+        android:visibility="gone"
+        android:layout_weight="0.75">
+
+
         <TextView
             android:id="@+id/due_only_text_view"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
             android:drawableEnd="@drawable/ic_due_filter_off"
             android:drawableRight="@drawable/ic_due_filter_off"
             android:ellipsize="end"
             android:gravity="center"
             android:maxLines="1"
-            android:layout_marginEnd="5dp"
-            android:layout_marginRight="5dp"
             android:scrollHorizontally="true"
             android:text="@string/due_only"
             android:textColor="@android:color/white"
-            android:textSize="@dimen/default_font_size_search_bar"
-            android:visibility="gone" />
+            android:textSize="@dimen/default_font_size_search_bar"/>
     </RelativeLayout>
 </LinearLayout>
