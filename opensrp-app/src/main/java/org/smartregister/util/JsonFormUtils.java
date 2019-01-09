@@ -66,6 +66,7 @@ public class JsonFormUtils {
     public static Client createBaseClient(JSONArray fields, FormTag formTag, String entityId) {
 
         String firstName = getFieldValue(fields, FormEntityConstants.Person.first_name);
+        String middleName = getFieldValue(fields, FormEntityConstants.Person.middle_name);
         String lastName = getFieldValue(fields, FormEntityConstants.Person.last_name);
         String bd = getFieldValue(fields, FormEntityConstants.Person.birthdate);
         Date birthdate = formatDate(bd, true);
@@ -99,6 +100,7 @@ public class JsonFormUtils {
 
         Client c = (Client) new Client(entityId)
                 .withFirstName(firstName)
+                .withMiddleName(middleName)
                 .withLastName(lastName)
                 .withBirthdate((birthdate), birthdateApprox)
                 .withDeathdate(deathdate, deathdateApprox)
