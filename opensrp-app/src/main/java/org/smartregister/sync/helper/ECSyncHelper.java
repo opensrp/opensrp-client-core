@@ -6,14 +6,13 @@ import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
-import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -93,4 +92,69 @@ public class ECSyncHelper {
         eventClientRepository.batchInsertEvents(events, getLastSyncTimeStamp());
     }
 
+
+    public List<EventClient> getEvents(Date lastSyncDate, String syncStatus) {
+        try {
+            return eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return new ArrayList<>();
+    }
+
+    public JSONObject getClient(String baseEntityId) {
+        try {
+            return eventClientRepository.getClientByBaseEntityId(baseEntityId);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return null;
+    }
+
+    public void addClient(String baseEntityId, JSONObject jsonObject) {
+        try {
+            eventClientRepository.addorUpdateClient(baseEntityId, jsonObject);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
+    public void addEvent(String baseEntityId, JSONObject jsonObject) {
+        try {
+            eventClientRepository.addEvent(baseEntityId, jsonObject);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
+    public List<EventClient> allEvents(long startSyncTimeStamp, long lastSyncTimeStamp) {
+        try {
+            return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return new ArrayList<>();
+    }
+
+    public void batchInsertClients(JSONArray clients) {
+        eventClientRepository.batchInsertClients(clients);
+    }
+
+    public void batchInsertEvents(JSONArray events) {
+        eventClientRepository.batchInsertEvents(events, getLastSyncTimeStamp());
+    }
+
+    public <T> T convert(JSONObject jo, Class<T> t) {
+        return eventClientRepository.convert(jo, t);
+    }
+
+    public JSONObject convertToJson(Object object) {
+        return eventClientRepository.convertToJson(object);
+    }
+
+    public boolean deleteClient(String baseEntityId) {
+        return eventClientRepository.deleteClient(baseEntityId);
+    }
+
 }
+

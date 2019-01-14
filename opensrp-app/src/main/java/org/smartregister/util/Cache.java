@@ -66,5 +66,11 @@ public class Cache<T> {
         value.put(key, fetchedData);
         return fetchedData;
     }
+
+    public void evict(String key) {
+        if (value.get(key) != null) {
+            value.remove(key);
+        }
+    }
 }
 

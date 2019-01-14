@@ -64,9 +64,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             return false;
         }
     };
-    private ImageView qrCodeScanImageView;
-    private ProgressBar syncProgressBar;
-    private ImageView syncButton;
+    protected ImageView qrCodeScanImageView;
+    protected ProgressBar syncProgressBar;
+    protected ImageView syncButton;
     protected boolean globalQrSearch = false;
     protected final TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -425,7 +425,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         super.onPause();
     }
 
-    private void refreshSyncProgressSpinner() {
+    protected void refreshSyncProgressSpinner() {
         if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
             if (syncProgressBar != null) {
                 syncProgressBar.setVisibility(View.VISIBLE);

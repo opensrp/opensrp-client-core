@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
@@ -62,7 +63,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
         }
 
         if (!cancel) {
-            mLoginInteractor.login(mLoginView, username, password);
+            mLoginInteractor.login(mLoginView, username.trim(), password.trim());
 
         }
     }
@@ -93,6 +94,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
         });
     }
+
     public void canvasGlobalLayoutListenerProcessor(ScrollView canvasSV, ViewTreeObserver.OnGlobalLayoutListener layoutListener) {
         final RelativeLayout canvasRL = getLoginView().getActivityContext().findViewById(R.id.login_layout);
         final LinearLayout logoCanvasLL = getLoginView().getActivityContext().findViewById(R.id.bottom_section);

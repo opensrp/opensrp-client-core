@@ -173,29 +173,14 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private void remoteLoginWith(String userName, String password, LoginResponse loginResponse) {
         getUserService().remoteLogin(userName, password, loginResponse.payload());
 
-        JSONObject data = loginResponse.getRawData();
+        processServerSettings(loginResponse);
 
-        if (data != null) {
-            try {
-
-                JSONArray settings = data.has(AllConstants.PREF_KEY.SITE_CHARACTERISTICS) ? data.getJSONArray(AllConstants.PREF_KEY.SITE_CHARACTERISTICS) : null;
-
-                if (settings != null && settings.length() > 0) {
-                    CharacteristicsHelper.saveSetting(settings);
-                    CharacteristicsHelper.updateLastSettingServerSyncTimetamp();
-                }
-
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
-
-            }
+        if (NetworkUtils.isNetworkAvailable()) {
+            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
 
         getLoginView().goToHome(true);
-        if (NetworkUtils.isNetworkAvailable()) {
-            startPullUniqueIdsService();
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-        }
+
         scheduleJobs();
     }
 
@@ -220,7 +205,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         return mLoginPresenter.getOpenSRPContext().userService();
     }
 
-    protected abstract void scheduleJobs();
+    protected void scheduleJobs() {
+        if (NetworkUtils.isNetworkAvailable()) {
+            startPullUniqueIdsService();
+            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+        }
+    }
 
     protected long getFlexValue(int value) {
         int minutes = MINIMUM_JOB_FLEX_VALUE;
@@ -231,5 +221,26 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
 
         return TimeUnit.MINUTES.toMillis(minutes);
+    }
+
+    //Always call super.processServerSettings( ) if you ever Override this
+    protected void processServerSettings(LoginResponse loginResponse) {
+        JSONObject data = loginResponse.getRawData();
+
+        if (data != null) {
+            try {
+
+                JSONArray settings = data.has(AllConstants.PREF_KEY.SITE_CHARACTERISTICS) ? data.getJSONArray(AllConstants.PREF_KEY.SITE_CHARACTERISTICS) : null;
+
+                if (settings != null && settings.length() > 0) {
+                    CharacteristicsHelper.saveSetting(settings);
+                    CharacteristicsHelper.updateLastSettingServerSyncTimetamp();
+                }
+
+            } catch (JSONException e) {
+                Log.e(TAG, e.getMessage());
+
+            }
+        }
     }
 }

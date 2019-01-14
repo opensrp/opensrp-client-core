@@ -17,4 +17,6 @@ public abstract class SyncConfiguration {
 
     public abstract int getUniqueIdInitialBatchSize();
 
+    public abstract boolean isSyncSettings();// determines whether to sync settings from server side. return false if not
+
 }

@@ -19,7 +19,7 @@ package org.smartregister.util;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -49,12 +49,18 @@ import com.google.gson.JsonParseException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -65,6 +71,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -88,9 +95,6 @@ public class Utils {
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-    private Utils() {
-    }
 
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
@@ -536,7 +540,7 @@ public class Utils {
     }
 
     public static String getBuildDate(Boolean isShortMonth) {
-        String simpleDateFormat = "";
+        String simpleDateFormat;
         if (isShortMonth) {
             simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
         } else {
@@ -557,4 +561,104 @@ public class Utils {
         return null;
     }
 
+    public static String getPrefferedName() {
+        if (getAllSharedPreferences() == null) {
+            return null;
+        }
+
+        return getAllSharedPreferences().getANMPreferredName(getAllSharedPreferences().fetchRegisteredANM());
+    }
+
+    public String getName() {
+        return getPrefferedName();
+    }
+
+    public static String getUserInitials() {
+        String initials = "Me";
+        String preferredName = getPrefferedName();
+
+        if (StringUtils.isNotBlank(preferredName)) {
+            String[] preferredNameArray = preferredName.split(" ");
+            initials = "";
+            if (preferredNameArray.length > 1) {
+                initials = String.valueOf(preferredNameArray[0].charAt(0)) + String.valueOf(preferredNameArray[1].charAt(0));
+            } else if (preferredNameArray.length == 1) {
+                initials = String.valueOf(preferredNameArray[0].charAt(0));
+            }
+        }
+        return initials;
+    }
+
+    public static AllSharedPreferences getAllSharedPreferences() {
+        return CoreLibrary.getInstance().context().allSharedPreferences();
+    }
+
+    public static String getDuration(String date) {
+        DateTime duration;
+        if (StringUtils.isNotBlank(date)) {
+            try {
+                duration = new DateTime(date);
+                return DateUtil.getDuration(duration);
+            } catch (Exception e) {
+                Log.e(TAG, e.toString(), e);
+            }
+        }
+        return "";
+    }
+
+
+    public static String getDob(int age) {
+        return getDob(age, DateUtil.DATE_FORMAT_FOR_TIMELINE_EVENT);
+    }
+
+    public static String getDob(int age, String dateFormatPattern) {
+        String pattern = dateFormatPattern;
+        if (StringUtils.isBlank(dateFormatPattern)) {
+            pattern = DateUtil.DATE_FORMAT_FOR_TIMELINE_EVENT;
+        }
+
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -age);
+        cal.set(Calendar.DAY_OF_MONTH, 1);
+
+
+        cal.set(Calendar.MONTH, 0);
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
+        return dateFormat.format(cal.getTime());
+    }
+
+    public static int getAgeFromDate(String dateOfBirth) {
+        DateTime date = DateTime.parse(dateOfBirth);
+        Years age = Years.yearsBetween(date.toLocalDate(), LocalDate.now());
+        return age.getYears();
+    }
+
+    public static Date dobStringToDate(String dobString) {
+        DateTime dateTime = dobStringToDateTime(dobString);
+        if (dateTime != null) {
+            return dateTime.toDate();
+        }
+        return null;
+    }
+
+    public static DateTime dobStringToDateTime(String dobString) {
+        try {
+            if (StringUtils.isBlank(dobString)) {
+                return null;
+            }
+            return new DateTime(dobString);
+
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    public static Intent completeSync(FetchStatus fetchStatus) {
+        Intent intent = new Intent();
+        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
+        return intent;
+    }
 }

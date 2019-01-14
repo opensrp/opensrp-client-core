@@ -263,5 +263,5 @@ public class AllSharedPreferences {
     public long fetchLastSettingsSyncTimeStamp() {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
-
 }
+

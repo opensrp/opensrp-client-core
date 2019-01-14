@@ -21,6 +21,7 @@ import org.smartregister.repository.AllServicesProvided;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
+import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
@@ -29,11 +30,15 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.repository.TaskNotesRepository;
+import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.ANMService;
@@ -198,6 +203,12 @@ public class Context {
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
+    private CampaignRepository campaignRepository;
+    private TaskRepository taskRepository;
+    private TaskNotesRepository taskNotesRepository;
+    private LocationRepository locationRepository;
+    private StructureRepository structureRepository;
+
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1106,6 +1117,33 @@ public class Context {
             uniqueIdRepository = new UniqueIdRepository(getRepository());
         }
         return uniqueIdRepository;
+    }
+
+    public CampaignRepository getCampaignRepository() {
+        if (campaignRepository == null) {
+            campaignRepository = new CampaignRepository(getRepository());
+        }
+        return campaignRepository;
+    }
+    public TaskRepository getTaskRepository() {
+        if (taskRepository == null) {
+            taskNotesRepository = new TaskNotesRepository(getRepository());
+            taskRepository = new TaskRepository(getRepository(),taskNotesRepository);
+        }
+        return taskRepository;
+    }
+    public LocationRepository getLocationRepository() {
+        if (locationRepository == null) {
+            locationRepository = new LocationRepository(getRepository());
+        }
+        return locationRepository;
+    }
+
+    public StructureRepository getStructureRepository() {
+        if (structureRepository == null) {
+            structureRepository = new StructureRepository(getRepository());
+        }
+        return structureRepository;
     }
 
     ///////////////////////////////////////////////////////////////////////////////

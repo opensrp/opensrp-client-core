@@ -66,6 +66,7 @@ public class JsonFormUtils {
     public static Client createBaseClient(JSONArray fields, FormTag formTag, String entityId) {
 
         String firstName = getFieldValue(fields, FormEntityConstants.Person.first_name);
+        String middleName = getFieldValue(fields, FormEntityConstants.Person.middle_name);
         String lastName = getFieldValue(fields, FormEntityConstants.Person.last_name);
         String bd = getFieldValue(fields, FormEntityConstants.Person.birthdate);
         Date birthdate = formatDate(bd, true);
@@ -99,6 +100,7 @@ public class JsonFormUtils {
 
         Client c = (Client) new Client(entityId)
                 .withFirstName(firstName)
+                .withMiddleName(middleName)
                 .withLastName(lastName)
                 .withBirthdate((birthdate), birthdateApprox)
                 .withDeathdate(deathdate, deathdateApprox)
@@ -652,6 +654,36 @@ public class JsonFormUtils {
         return value(jsonArray, encounter.entity(), encounter.entityId());
     }
 
+    public static String getFieldValue(String jsonString, String key) {
+        JSONObject jsonForm = toJSONObject(jsonString);
+        if (jsonForm == null) {
+            return null;
+        }
+
+        JSONArray fields = fields(jsonForm);
+        if (fields == null) {
+            return null;
+        }
+
+        return getFieldValue(fields, key);
+
+    }
+
+    public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
+        if (jsonArray == null || jsonArray.length() == 0) {
+            return null;
+        }
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = getJSONObject(jsonArray, i);
+            String keyVal = getString(jsonObject, KEY);
+            if (keyVal != null && keyVal.equals(key)) {
+                return jsonObject;
+            }
+        }
+        return null;
+    }
+
     public static String value(JSONArray jsonArray, String entity, String entityId) {
 
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -734,6 +766,10 @@ public class JsonFormUtils {
             return null;
 
         }
+    }
+
+    public static String getString(String jsonString, String field) {
+        return getString(toJSONObject(jsonString), field);
     }
 
     public static Long getLong(JSONObject jsonObject, String field) {
