@@ -540,7 +540,7 @@ public class Utils {
     }
 
     public static String getBuildDate(Boolean isShortMonth) {
-        String simpleDateFormat = "";
+        String simpleDateFormat;
         if (isShortMonth) {
             simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
         } else {
