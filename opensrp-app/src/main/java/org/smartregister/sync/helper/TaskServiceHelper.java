@@ -73,6 +73,7 @@ public class TaskServiceHelper {
         } catch (NumberFormatException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+        if (serverVersion > 0) serverVersion += 1;
         try {
             String tasksResponse = fetchTasks(campaigns, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {

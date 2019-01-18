@@ -69,6 +69,7 @@ public class LocationServiceHelper {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
+        if (serverVersion > 0) serverVersion += 1;
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
