@@ -88,7 +88,7 @@ public class LocationServiceHelper {
             }
             String maxServerVersion = getMaxServerVersion(locations, serverVersion);
             String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
-            allSharedPreferences.savePreference(maxServerVersion, updateKey);
+            allSharedPreferences.savePreference(updateKey, maxServerVersion);
             return locations;
 
         } catch (Exception e) {
