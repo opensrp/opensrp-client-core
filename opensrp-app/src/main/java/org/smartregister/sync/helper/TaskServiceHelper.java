@@ -31,11 +31,10 @@ import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
-public class TaskServiceHelper  {
+public class TaskServiceHelper {
     private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-    private EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
 
     protected final Context context;
     private TaskRepository taskRepository;
