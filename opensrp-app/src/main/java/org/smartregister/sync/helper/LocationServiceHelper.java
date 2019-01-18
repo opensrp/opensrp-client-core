@@ -17,6 +17,7 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
@@ -77,6 +78,7 @@ public class LocationServiceHelper {
 
             for (Location location : locations) {
                 try {
+                    location.setSyncStatus(BaseRepository.TYPE_Synced);
                     if (isJurisdiction)
                         locationRepository.addOrUpdate(location);
                     else {
