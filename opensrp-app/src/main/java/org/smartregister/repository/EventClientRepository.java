@@ -1108,9 +1108,9 @@ public class EventClientRepository extends BaseRepository {
             String query = String.format("SELECT json FROM "
                             + Table.event.name()
                             + " WHERE " + event_column.baseEntityId.name() + " IN (%s) "
-                            + " AND " + event_column.syncStatus.name() + "= ? ",
-                    TextUtils.join(",", Collections.nCopies(len, "?"))
-                            + " ORDER BY " + event_column.serverVersion.name());
+                            + " AND " + event_column.syncStatus.name() + "= ? "
+                            + " ORDER BY " + event_column.serverVersion.name(),
+                    TextUtils.join(",", Collections.nCopies(len, "?")));
             String[] params = baseEntityIds.toArray(new String[len + 1]);
             params[len] = syncStatus;
             cursor = getReadableDatabase().rawQuery(query, params);
