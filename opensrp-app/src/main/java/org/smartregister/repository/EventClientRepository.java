@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
@@ -22,11 +23,13 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1095,21 +1098,29 @@ public class EventClientRepository extends BaseRepository {
     }
 
 
-    public List<Event> getEventsByBaseEntityIdAndSyncStatus(String syncStatus, String baseEntityId) {
-        List<Event> list = new ArrayList<>();
+    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String syncStatus, List<String> baseEntityIds) {
+        List<EventClient> list = new ArrayList<>();
+        if (Utils.isEmptyCollection(baseEntityIds))
+            return list;
         Cursor cursor = null;
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT json FROM "
-                    + Table.event.name()
-                    + " WHERE "
-                    + event_column.baseEntityId.name()
-                    + "= ? AND " + event_column.syncStatus.name() + "= ? ", new String[]{baseEntityId,syncStatus});
+            int len = baseEntityIds.size();
+            String query = String.format("SELECT json FROM "
+                            + Table.event.name()
+                            + " WHERE "
+                            + event_column.baseEntityId.name() + " IN (%s) "
+                            + " AND " + event_column.syncStatus.name() + "= ? ",
+                    TextUtils.join(",", Collections.nCopies(len, "?")));
+            String[] params = baseEntityIds.toArray(new String[len + 1]);
+            params[len] = syncStatus;
+            cursor = getReadableDatabase().rawQuery(query, params);
+
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
 
                 jsonEventStr = jsonEventStr.replaceAll("'", "");
                 Event event = convert(jsonEventStr, Event.class);
-                list.add(event);
+                list.add(new EventClient(event));
             }
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
@@ -1261,11 +1272,10 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void updateTaskUnprocessedEventStatus(String formSubmissionId, boolean hasTask) {
+    public void updateTaskUnprocessedEventStatus(String formSubmissionId) {
         try {
             ContentValues values = new ContentValues();
-            values.put(event_column.formSubmissionId.name(), formSubmissionId);
-            values.put(client_column.syncStatus.name(), hasTask ? TYPE_Synced : TYPE_Task_Unprocessed);
+            values.put(client_column.syncStatus.name(), TYPE_Task_Unprocessed);
             getWritableDatabase().update(Table.event.name(),
                     values,
                     event_column.formSubmissionId.name() + " = ?",

@@ -24,7 +24,6 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
