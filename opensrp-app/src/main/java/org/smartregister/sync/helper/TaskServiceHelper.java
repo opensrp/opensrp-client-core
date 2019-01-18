@@ -26,6 +26,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
@@ -60,16 +61,15 @@ public class TaskServiceHelper  {
         this.taskRepository = taskRepository;
     }
 
-    public void syncTasks() {
+    public List<Task> syncTasks() {
         syncCreatedTaskToServer();
         syncTaskStatusToServer();
-        fetchTasksFromServer();
+        return fetchTasksFromServer();
     }
 
-    public void fetchTasksFromServer() {
+    public List<Task> fetchTasksFromServer() {
         String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
         String groups = TextUtils.join(",", CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds());
-
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -85,16 +85,18 @@ public class TaskServiceHelper  {
                     task.setSyncStatus(BaseRepository.TYPE_Synced);
                     taskRepository.addOrUpdate(task);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
                 }
             }
             allSharedPreferences.savePreference(getTaskMaxServerVersion(tasks, serverVersion), TASK_LAST_SYNC_DATE);
+            return tasks;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(TAG, "Error fetching tasks from server ", e);
         }
+        return null;
     }
 
-    private String fetchTasks(String campaign, String group, Long serverVersion) throws Exception {
+    private String fetchTasks(String campaign, String group, Long serverVersion) throws NoHttpResponseException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -184,5 +186,6 @@ public class TaskServiceHelper  {
             }
         }
     }
+
 }
 

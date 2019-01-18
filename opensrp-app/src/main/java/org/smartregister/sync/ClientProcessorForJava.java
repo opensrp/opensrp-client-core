@@ -35,15 +35,15 @@ import java.util.Map;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
-    private static final String TAG = ClientProcessorForJava.class.getName();
+    protected static final String TAG = ClientProcessorForJava.class.getName();
 
     protected static final String VALUES_KEY = "values";
-    private static final String detailsUpdated = "detailsUpdated";
+    protected static final String detailsUpdated = "detailsUpdated";
 
     private String[] openmrsGenIds = {};
     private Map<String, Object> jsonMap = new HashMap<>();
 
-    private static ClientProcessorForJava instance;
+    protected static ClientProcessorForJava instance;
     private Context mContext;
 
     public ClientProcessorForJava(Context context) {

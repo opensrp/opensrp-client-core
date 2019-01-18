@@ -24,6 +24,7 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
@@ -60,7 +61,7 @@ public class LocationServiceHelper {
         this.structureRepository = structureRepository;
     }
 
-    protected void syncLocationsStructures(boolean isJurisdiction) {
+    protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
@@ -78,8 +79,9 @@ public class LocationServiceHelper {
                 try {
                     if (isJurisdiction)
                         locationRepository.addOrUpdate(location);
-                    else
+                    else {
                         structureRepository.addOrUpdate(location);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -87,10 +89,12 @@ public class LocationServiceHelper {
             String maxServerVersion = getMaxServerVersion(locations, serverVersion);
             String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
             allSharedPreferences.savePreference(maxServerVersion, updateKey);
+            return locations;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     private String makeURL(boolean isJurisdiction, long serverVersion, String parentId) {
@@ -134,10 +138,11 @@ public class LocationServiceHelper {
         return String.valueOf(currentServerVersion);
     }
 
-    public void fetchLocationsStructures() {
+    public List<Location> fetchLocationsStructures() {
         syncLocationsStructures(true);
-        syncLocationsStructures(false);
+        List<Location> locations = syncLocationsStructures(false);
         syncCreatedStructureToServer();
+        return locations;
     }
 
     public void syncCreatedStructureToServer() {
