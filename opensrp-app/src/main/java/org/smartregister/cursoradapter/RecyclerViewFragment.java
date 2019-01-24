@@ -65,6 +65,7 @@ public abstract class RecyclerViewFragment extends
     public String Sortqueries;
     public String tablename;
     public String countSelect;
+    public String condition = "";
     public String joinTable = "";
     public String joinTables[];
     public RecyclerView clientsView;
@@ -454,8 +455,14 @@ public abstract class RecyclerViewFragment extends
                         .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
                                 clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
                 List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
-                        Sortqueries);
+                if(StringUtils.isBlank(condition)){
+                    query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
+                            Sortqueries);
+                }else{
+                    query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
+                            Sortqueries,condition);
+                }
+
                 query = sqb.Endquery(query);
             } else {
                 sqb.addCondition(filters);
