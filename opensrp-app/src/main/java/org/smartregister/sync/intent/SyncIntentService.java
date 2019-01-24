@@ -3,10 +3,12 @@ package org.smartregister.sync.intent;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +26,9 @@ import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,6 +40,8 @@ public class SyncIntentService extends IntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
+
+    private static final String TAG = SyncIntentService.class.getName();
 
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
@@ -69,6 +76,7 @@ public class SyncIntentService extends IntentService {
         }
 
         try {
+            verifyAuthorization();
             pushToServer();
             pullECFromServer();
 
@@ -77,6 +85,45 @@ public class SyncIntentService extends IntentService {
             complete(FetchStatus.fetchedFailed);
         }
     }
+
+    private void verifyAuthorization() {
+        org.smartregister.Context opensrpContent = CoreLibrary.getInstance().context();
+        String baseUrl = opensrpContent.configuration().dristhiBaseURL();
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+        }
+        final String username = opensrpContent.allSharedPreferences().fetchRegisteredANM();
+        final String password = opensrpContent.allSettings().fetchANMPassword();
+        baseUrl = baseUrl + "/user-details?anm-id=" + username;
+        try {
+            URL url = new URL(baseUrl);
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+            final String basicAuth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+            int statusCode = urlConnection.getResponseCode();
+            Log.i(TAG, urlConnection.getResponseMessage());
+            urlConnection.disconnect();
+            if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                Log.i(TAG, "User not authorized. User access was revoked, will log off user");
+                opensrpContent.userService().forceRemoteLogin();
+                Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addCategory(Intent.CATEGORY_HOME);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                getApplicationContext().startActivity(intent);
+                opensrpContent.userService().logoutSession();
+            } else if (statusCode != HttpStatus.SC_OK) {
+                Log.w(TAG, "Error occurred verifying authorization, User will not be logged off");
+            } else {
+                Log.i(TAG, "User is Authorized");
+            }
+
+        } catch (IOException e) {
+            Log.e(TAG, e.getMessage(), e);
+        }
+    }
+
 
     private void pullECFromServer() {
         fetchRetry(0);
