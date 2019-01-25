@@ -9,7 +9,6 @@ import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -42,7 +41,7 @@ public class SyncIntentService extends IntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
-
+    private org.smartregister.Context opensrpContent = CoreLibrary.getInstance().context();
     private static final String TAG = SyncIntentService.class.getName();
 
     protected static final int EVENT_PULL_LIMIT = 250;
@@ -78,9 +77,16 @@ public class SyncIntentService extends IntentService {
         }
 
         try {
-            verifyAuthorization();
-            pushToServer();
-            pullECFromServer();
+            boolean hasValidAuthorization = verifyAuthorization();
+            if (hasValidAuthorization ||
+                    (!hasValidAuthorization && !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled())) {
+                pushToServer();
+            }
+            if (hasValidAuthorization) {
+                pullECFromServer();
+            } else {
+                logoutUser();
+            }
 
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage(), e);
@@ -88,8 +94,7 @@ public class SyncIntentService extends IntentService {
         }
     }
 
-    private void verifyAuthorization() {
-        org.smartregister.Context opensrpContent = CoreLibrary.getInstance().context();
+    private boolean verifyAuthorization() {
         String baseUrl = opensrpContent.configuration().dristhiBaseURL();
         if (baseUrl.endsWith("/")) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
@@ -106,23 +111,7 @@ public class SyncIntentService extends IntentService {
             urlConnection.disconnect();
             if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 Log.i(TAG, "User not authorized. User access was revoked, will log off user");
-                //force remote login
-                opensrpContent.userService().forceRemoteLogin();
-                Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.addCategory(Intent.CATEGORY_LAUNCHER);
-                intent.setPackage(context.getPackageName());
-                //retrieve the main/launcher activity defined in the manifest and open it
-                List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
-                if (activities.size() == 1) {
-                    intent = intent.setClassName(context.getPackageName(), activities.get(0).activityInfo.name);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    getApplicationContext().startActivity(intent);
-                }
-                //logoff opensrp session
-                opensrpContent.userService().logoutSession();
+                return false;
             } else if (statusCode != HttpStatus.SC_OK) {
                 Log.w(TAG, "Error occurred verifying authorization, User will not be logged off");
             } else {
@@ -132,8 +121,29 @@ public class SyncIntentService extends IntentService {
         } catch (IOException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+        return true;
     }
 
+
+    private void logoutUser() {
+        //force remote login
+        opensrpContent.userService().forceRemoteLogin();
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        intent.setPackage(context.getPackageName());
+        //retrieve the main/launcher activity defined in the manifest and open it
+        List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
+        if (activities.size() == 1) {
+            intent = intent.setClassName(context.getPackageName(), activities.get(0).activityInfo.name);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            getApplicationContext().startActivity(intent);
+        }
+        //logoff opensrp session
+        opensrpContent.userService().logoutSession();
+    }
 
     private void pullECFromServer() {
         fetchRetry(0);
