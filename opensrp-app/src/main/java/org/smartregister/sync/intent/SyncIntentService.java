@@ -3,11 +3,13 @@ package org.smartregister.sync.intent;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.util.Base64;
 import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -101,17 +103,25 @@ public class SyncIntentService extends IntentService {
             final String basicAuth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
             urlConnection.setRequestProperty("Authorization", basicAuth);
             int statusCode = urlConnection.getResponseCode();
-            Log.i(TAG, urlConnection.getResponseMessage());
             urlConnection.disconnect();
             if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                 Log.i(TAG, "User not authorized. User access was revoked, will log off user");
+                //force remote login
                 opensrpContent.userService().forceRemoteLogin();
                 Intent intent = new Intent(Intent.ACTION_MAIN);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addCategory(Intent.CATEGORY_HOME);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                getApplicationContext().startActivity(intent);
+                intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                intent.setPackage(context.getPackageName());
+                //retrieve the main/launcher activity defined in the manifest and open it
+                List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
+                if (activities.size() == 1) {
+                    intent = intent.setClassName(context.getPackageName(), activities.get(0).activityInfo.name);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    getApplicationContext().startActivity(intent);
+                }
+                //logoff opensrp session
                 opensrpContent.userService().logoutSession();
             } else if (statusCode != HttpStatus.SC_OK) {
                 Log.w(TAG, "Error occurred verifying authorization, User will not be logged off");
