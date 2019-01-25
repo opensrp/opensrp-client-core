@@ -1272,7 +1272,7 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void updateTaskUnprocessedEventStatus(String formSubmissionId) {
+    public void markEventAsTaskUnprocessed(String formSubmissionId) {
         try {
             ContentValues values = new ContentValues();
             values.put(client_column.syncStatus.name(), TYPE_Task_Unprocessed);
