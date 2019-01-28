@@ -8,11 +8,14 @@ import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+
+import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
 /**
  * Created by samuelgithengi on 1/28/19.
@@ -73,6 +76,7 @@ public class SyncUtils {
             intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra(ACCOUNT_DISABLED, context.getString(R.string.account_disabled_logged_off));
             context.startActivity(intent);
         }
         //logoff opensrp session
