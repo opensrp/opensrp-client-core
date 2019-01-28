@@ -17,6 +17,7 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
@@ -24,7 +25,6 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
@@ -69,6 +69,7 @@ public class LocationServiceHelper {
         } catch (NumberFormatException e) {
             e.printStackTrace();
         }
+        if (serverVersion > 0) serverVersion += 1;
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
@@ -77,6 +78,7 @@ public class LocationServiceHelper {
 
             for (Location location : locations) {
                 try {
+                    location.setSyncStatus(BaseRepository.TYPE_Synced);
                     if (isJurisdiction)
                         locationRepository.addOrUpdate(location);
                     else {
@@ -88,7 +90,7 @@ public class LocationServiceHelper {
             }
             String maxServerVersion = getMaxServerVersion(locations, serverVersion);
             String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
-            allSharedPreferences.savePreference(maxServerVersion, updateKey);
+            allSharedPreferences.savePreference(updateKey, maxServerVersion);
             return locations;
 
         } catch (Exception e) {
