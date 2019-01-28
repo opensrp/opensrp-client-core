@@ -388,4 +388,7 @@
     <string name="unknown_response">login failed. Try later</string>
     <string name="unauthorized">Please check the credentials</string>
 
+    <string name="account_disabled">Account Disabled</string>
+    <string name="account_disabled_logged_off">You have been logged off as your account has been disabled. Contact your administrator</string>
+
 </resources>
