@@ -24,6 +24,8 @@ public class SyncUtils {
 
     private static final String TAG = "SyncUtils";
 
+    private static final String DETAILS_URL = "/user-details?anm-id=";
+
     private org.smartregister.Context opensrpContent = CoreLibrary.getInstance().context();
 
     private Context context;
@@ -35,11 +37,11 @@ public class SyncUtils {
     public boolean verifyAuthorization() {
         String baseUrl = opensrpContent.configuration().dristhiBaseURL();
         if (baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
         }
         final String username = opensrpContent.allSharedPreferences().fetchRegisteredANM();
         final String password = opensrpContent.allSettings().fetchANMPassword();
-        baseUrl = baseUrl + "/user-details?anm-id=" + username;
+        baseUrl = baseUrl + DETAILS_URL + username;
         try {
             URL url = new URL(baseUrl);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -72,7 +74,6 @@ public class SyncUtils {
         List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
         if (activities.size() == 1) {
             intent = intent.setClassName(context.getPackageName(), activities.get(0).activityInfo.name);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
