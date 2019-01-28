@@ -73,8 +73,7 @@ public class SyncIntentService extends IntentService {
 
         try {
             boolean hasValidAuthorization = syncUtils.verifyAuthorization();
-            if (hasValidAuthorization ||
-                    (!hasValidAuthorization && !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled())) {
+            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
                 pushToServer();
             }
             if (hasValidAuthorization) {
