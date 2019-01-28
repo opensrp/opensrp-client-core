@@ -15,7 +15,6 @@ public class AllConstants {
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
     public static final int DATABASE_VERSION = 1;
-    public static final long BUILD_TIMESTAMP = 1541081122510L;
 
 
     // Maximum time difference between server and client time in milliseconds
