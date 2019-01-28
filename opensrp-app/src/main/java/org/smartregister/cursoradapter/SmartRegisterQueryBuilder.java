@@ -3,6 +3,7 @@ package org.smartregister.cursoradapter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.util.StringUtil;
 
 import java.util.List;
 
@@ -250,7 +251,12 @@ public class SmartRegisterQueryBuilder {
                 + orderByClause(sort) + limitClause(limit, offset);
         return query;
     }
-
+//    public String countQueryFts(String tablename, String searchJoinTable, String mainCondition,
+//                                String searchFilter,String condition) {
+//
+//        String query = "SELECT COUNT(*) FROM ("+Selectquery + ") WHERE "+mainCondition+" AND "+ condition;
+//        return query;
+//    }
     public String countQueryFts(String tablename, String searchJoinTable, String mainCondition,
                                 String searchFilter) {
         if (StringUtils.isNotBlank(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {
@@ -321,6 +327,25 @@ public class SmartRegisterQueryBuilder {
         return phraseClause;
     }
 
+    public String searchQueryFts(String tablename,String mainselect,String mainCondition,String condition,String searchJoinTable[],String searchFilter, String sort,int limit, int offset) {
+
+        String search_phrase = "";
+        if(StringUtils.isNotBlank(searchFilter)){
+            search_phrase = phraseClause(tablename, searchJoinTable,
+                    mainCondition, searchFilter);
+            search_phrase = search_phrase.replaceFirst("WHERE"," AND ");
+            search_phrase = search_phrase.replaceFirst(CommonFtsObject.idColumn," id ");
+        }
+
+        String query;
+        if(mainselect.contains(mainCondition)){
+            query = mainselect + " AND " + condition + " "  +search_phrase  + orderByClause(sort) + limitClause(limit, offset);
+        }else{
+            query = mainselect + " WHERE " + mainCondition + " AND " + condition +  search_phrase + orderByClause(sort) + limitClause(limit, offset);
+        }
+
+        return query;
+    }
     public String searchQueryFts(String tablename, String searchJoinTable[], String mainCondition,
                                  String searchFilter, String sort, int limit, int offset) {
         if (ArrayUtils.isNotEmpty(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {
