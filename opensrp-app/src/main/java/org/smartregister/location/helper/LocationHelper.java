@@ -100,10 +100,10 @@ public class LocationHelper {
 
                 if (ALLOWED_LEVELS.contains("reveal")) {
                     if (allCampaigns != null && !allCampaigns.isEmpty()) {
-                        allSharedPreferences.savePreference(CAMPAIGNS, android.text.TextUtils.join(",", allCampaigns));
+                        allSharedPreferences.savePreference(CAMPAIGNS + "-" + allSharedPreferences.fetchRegisteredANM(), android.text.TextUtils.join(",", allCampaigns));
                     }
                     if (allOperationalArea != null && !allOperationalArea.isEmpty()) {
-                        allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", allOperationalArea));
+                        allSharedPreferences.savePreference(OPERATIONAL_AREAS + "-" + allSharedPreferences.fetchRegisteredANM(), android.text.TextUtils.join(",", allOperationalArea));
                     }
                 }
             }
