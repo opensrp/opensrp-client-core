@@ -251,12 +251,7 @@ public class SmartRegisterQueryBuilder {
                 + orderByClause(sort) + limitClause(limit, offset);
         return query;
     }
-//    public String countQueryFts(String tablename, String searchJoinTable, String mainCondition,
-//                                String searchFilter,String condition) {
-//
-//        String query = "SELECT COUNT(*) FROM ("+Selectquery + ") WHERE "+mainCondition+" AND "+ condition;
-//        return query;
-//    }
+
     public String countQueryFts(String tablename, String searchJoinTable, String mainCondition,
                                 String searchFilter) {
         if (StringUtils.isNotBlank(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {

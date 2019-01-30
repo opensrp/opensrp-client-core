@@ -35,9 +35,11 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
 //        SmartRegisterQueryBuilder srqb = new SmartRegisterQueryBuilder();
 //        String query = srqb.searchQueryFts("ec_household",new String[]{"ec_woman","ec_child","ec_member"},"date_removed IS NULL ","ali","",20,0);
 //        System.out.println(query);
+
         String tableName = "ec_household";
         String mainCondition = "date_removed IS NULL";
         SmartRegisterQueryBuilder queryBUilder = new SmartRegisterQueryBuilder();

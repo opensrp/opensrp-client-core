@@ -64,6 +64,7 @@ public abstract class RecyclerViewFragment extends
     public String mainCondition = "";
     public String Sortqueries;
     public String tablename;
+
     public String countSelect;
     public String condition = "";
     public String joinTable = "";
