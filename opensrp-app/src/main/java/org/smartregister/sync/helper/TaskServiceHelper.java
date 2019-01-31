@@ -151,15 +151,16 @@ public class TaskServiceHelper {
             if (response.payload() != null) {
                 try {
                     JSONObject idObject = new JSONObject(response.payload());
-                    JSONArray updatedIds = idObject.getJSONArray("task_ids");
-                    for (int i = 0; i < updatedIds.length(); i++) {
-                        taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+                    JSONArray updatedIds = idObject.optJSONArray("task_ids");
+                    if (updatedIds != null) {
+                        for (int i = 0; i < updatedIds.length(); i++) {
+                            taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+                        }
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass().getName(), "No update to the task status made");
+                    Log.e(getClass().getName(), "Error processing the tasks payload: " + response.payload());
                 }
             }
-
         }
     }
 
