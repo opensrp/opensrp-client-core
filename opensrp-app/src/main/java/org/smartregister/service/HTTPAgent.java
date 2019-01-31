@@ -54,6 +54,7 @@ import java.text.ParseException;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
@@ -151,7 +152,7 @@ public class HTTPAgent {
             httpResponse = httpClient.postContent(httpPost);
 
             ResponseStatus responseStatus =
-                    httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
+                    httpResponse.getStatusLine().getStatusCode() == SC_CREATED
                             ? ResponseStatus.success : ResponseStatus.failure;
             response = new Response<>(responseStatus, null);
         } catch (Exception e) {
@@ -178,7 +179,7 @@ public class HTTPAgent {
             httpPost.setEntity(entity);
 
             httpResponse = httpClient.postContent(httpPost);
-            if (httpResponse.getStatusLine().getStatusCode() != SC_OK) {
+            if (httpResponse.getStatusLine().getStatusCode() != SC_OK && httpResponse.getStatusLine().getStatusCode() != SC_CREATED) {
                 return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
             } else {
                 String payload = httpClient.retrieveStringResponse(httpResponse);
