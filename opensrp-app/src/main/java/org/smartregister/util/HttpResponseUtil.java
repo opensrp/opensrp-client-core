@@ -43,6 +43,19 @@ public class HttpResponseUtil {
         return null;
     }
 
+    public static LoginResponseData getResponseBody(String responseString) {
+        try {
+            if (StringUtils.isBlank(responseString)) {
+                return null;
+            }
+            return AssetHandler.jsonStringToJava(responseString, LoginResponseData.class);
+        } catch (Exception e) {
+            logError(format("Cannot read data from response due to exception: {0}. Stack "
+                    + "" + "" + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
+        }
+        return null;
+    }
+
     public static String getResponseString(HttpResponse response) {
         try {
             InputStream responseStream = getResponseStream(response);
