@@ -137,7 +137,7 @@ public class TaskServiceHelper {
             String jsonPayload = new Gson().toJson(updates);
 
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            Response<String> response = httpAgent.post(
+            Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             UPDATE_STATUS_URL),
