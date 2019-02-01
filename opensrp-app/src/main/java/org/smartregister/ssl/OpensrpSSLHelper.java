@@ -23,9 +23,15 @@ import javax.net.ssl.TrustManagerFactory;
  */
 
 public class OpensrpSSLHelper {
+
+    private static final String X509 = "X509";
+    private static final String TLS = "TLS";
+    private static final String PASS = "phone red pen";
+
     private Context context;
     private DristhiConfiguration configuration;
     private String TAG = OpensrpSSLHelper.class.getCanonicalName();
+
 
     public OpensrpSSLHelper(Context context_, DristhiConfiguration configuration_) {
         this.context = context_;
@@ -38,7 +44,7 @@ public class OpensrpSSLHelper {
             KeyStore trustedKeystore = KeyStore.getInstance("BKS");
             InputStream inputStream = context.getResources().openRawResource(R.raw.opensrp_truststore);
             try {
-                trustedKeystore.load(inputStream, "phone red pen".toCharArray());
+                trustedKeystore.load(inputStream, PASS.toCharArray());
             } finally {
                 inputStream.close();
             }
@@ -70,15 +76,15 @@ public class OpensrpSSLHelper {
             KeyStore trustedKeystore = KeyStore.getInstance(KeyStore.getDefaultType());
             InputStream inputStream = context.getResources().openRawResource(R.raw.opensrp_truststore);
             try {
-                trustedKeystore.load(inputStream, "phone red pen".toCharArray());
+                trustedKeystore.load(inputStream, PASS.toCharArray());
             } finally {
                 inputStream.close();
             }
             //Initialise a TrustManagerFactory with the CA keyStore
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance("X509");
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(X509);
             tmf.init(trustedKeystore);
             //Create new SSLContext using our new TrustManagerFactory
-            SSLContext context = SSLContext.getInstance("TLS");
+            SSLContext context = SSLContext.getInstance(TLS);
             context.init(null, tmf.getTrustManagers(), null);
             //Get a SSLSocketFactory from our SSLContext
             return context.getSocketFactory();
