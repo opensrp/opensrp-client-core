@@ -26,6 +26,7 @@ public class AllConstants {
     public static final String DEFAULT_LOCALITY_ID_PREFIX = "dfltLoc-";
     public static final String DEFAULT_TEAM_PREFIX = "dfltTeam-";
     public static final String DEFAULT_TEAM_ID_PREFIX = "dfltTeamId-";
+    public static final String USER_LOCALITY_ID_PREFIX = "userLoc-";
     public static final String PIONEER_USER = "pioneerUser";
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
@@ -94,6 +95,8 @@ public class AllConstants {
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
+
+    public static final String ACCOUNT_DISABLED = "account_disabled_reason";
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -401,12 +404,14 @@ public class AllConstants {
         public static final String ME = "me";
         public static final String LIBRARY = "library";
     }
+
     public static class BARCODE {
         public static final String BARCODE_KEY = "barcode";
         public static final int BARCODE_REQUEST_CODE = 0x0000c0de;
         // intent request code to handle updating play services if needed.
         public static final int RC_HANDLE_GMS = 9001;
     }
+
     public static class PREF_KEY {
         public static final String SITE_CHARACTERISTICS = "site_characteristics";
         public static final String POPULATION_CHARACTERISTICS = "population_characteristics";
