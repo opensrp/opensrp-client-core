@@ -384,7 +384,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -395,7 +395,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -406,7 +406,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -423,7 +423,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -440,7 +440,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
 
         return null;
@@ -458,7 +458,7 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -473,7 +473,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
