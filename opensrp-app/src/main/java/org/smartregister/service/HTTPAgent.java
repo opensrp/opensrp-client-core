@@ -82,6 +82,7 @@ import static org.smartregister.util.Log.logError;
 
 public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
+    private static final int READ_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();
     private GZipEncodingHttpClient httpClient;
     private Context context;
@@ -207,7 +208,7 @@ public class HTTPAgent {
                 ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
             }
             urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            urlConnection.setReadTimeout(CONNECTION_TIMEOUT);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
             final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
             urlConnection.setRequestProperty("Authorization", basicAuth);
             int statusCode = urlConnection.getResponseCode();
@@ -224,8 +225,10 @@ public class HTTPAgent {
                 logError("Invalid credentials for: " + userName + " using " + requestURL);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
+                //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
                 responseString = StringUtils.substringBetween(responseString, "<p><b>message</b>", "</u></p>");
                 if (StringUtils.isNotBlank(responseString)) {
+                    //remove the underline tag from the responseString
                     responseString = responseString.replace("<u>", "").trim();
                     loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
                 }
@@ -247,8 +250,9 @@ public class HTTPAgent {
                     + "" + "" + "Error: " + e.toString(), e);
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
-            assert urlConnection != null;
-            urlConnection.disconnect();
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
         return loginResponse;
     }

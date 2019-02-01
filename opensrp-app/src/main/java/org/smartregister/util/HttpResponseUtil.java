@@ -62,7 +62,7 @@ public class HttpResponseUtil {
             return IOUtils.toString(responseStream);
         } catch (Exception e) {
             logError(format("Cannot read data from response due to exception: {0}. Stack "
-                    + "" + "" + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
+                    + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
         }
         return null;
     }
