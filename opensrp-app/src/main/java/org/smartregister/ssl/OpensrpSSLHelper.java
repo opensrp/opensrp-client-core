@@ -7,6 +7,7 @@ import org.apache.http.conn.scheme.SocketFactory;
 import org.apache.http.conn.ssl.AbstractVerifier;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
+import org.smartregister.BuildConfig;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.R;
 
@@ -24,10 +25,6 @@ import javax.net.ssl.TrustManagerFactory;
 
 public class OpensrpSSLHelper {
 
-    private static final String TRUST_MANAGER_ALGORITHM = "X509";
-    private static final String SSL_CONTEXT_PROTOCOL = "TLSv1.2";
-    private static final String PASS = "phone red pen";
-
     private Context context;
     private DristhiConfiguration configuration;
     private String TAG = OpensrpSSLHelper.class.getCanonicalName();
@@ -44,7 +41,7 @@ public class OpensrpSSLHelper {
             KeyStore trustedKeystore = KeyStore.getInstance("BKS");
             InputStream inputStream = context.getResources().openRawResource(R.raw.opensrp_truststore);
             try {
-                trustedKeystore.load(inputStream, PASS.toCharArray());
+                trustedKeystore.load(inputStream, BuildConfig.OPENSRP_TRUSTORE_PASS.toCharArray());
             } finally {
                 inputStream.close();
             }
@@ -76,15 +73,15 @@ public class OpensrpSSLHelper {
             KeyStore trustedKeystore = KeyStore.getInstance(KeyStore.getDefaultType());
             InputStream inputStream = context.getResources().openRawResource(R.raw.opensrp_truststore);
             try {
-                trustedKeystore.load(inputStream, PASS.toCharArray());
+                trustedKeystore.load(inputStream, BuildConfig.OPENSRP_TRUSTORE_PASS.toCharArray());
             } finally {
                 inputStream.close();
             }
             //Initialise a TrustManagerFactory with the CA keyStore
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TRUST_MANAGER_ALGORITHM);
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(BuildConfig.TRUST_MANAGER_ALGORITHM);
             tmf.init(trustedKeystore);
             //Create new SSLContext using our new TrustManagerFactory
-            SSLContext context = SSLContext.getInstance(SSL_CONTEXT_PROTOCOL);
+            SSLContext context = SSLContext.getInstance(BuildConfig.SSL_CONTEXT_PROTOCOL);
             context.init(null, tmf.getTrustManagers(), null);
             //Get a SSLSocketFactory from our SSLContext
             return context.getSocketFactory();
