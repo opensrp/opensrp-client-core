@@ -55,11 +55,17 @@ android {
             testCoverageEnabled = true
             signingConfig signingConfigs.config
             zipAlignEnabled true
+            buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
+            buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
+            buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
+            buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
+            buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
+            buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
         }
     }
 
@@ -207,7 +213,7 @@ dependencies {
     testImplementation('org.robolectric:shadows-multidex:3.8') {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    testImplementation('org.robolectric:shadows-support-v4:3.3.2'){
+    testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 

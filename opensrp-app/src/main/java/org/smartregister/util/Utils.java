@@ -48,10 +48,10 @@ import com.google.gson.JsonParseException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -662,5 +662,9 @@ public class Utils {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
         return intent;
+    }
+
+    public static boolean is2xxSuccessful(int httpStatus) {
+        return httpStatus >= HttpStatus.SC_OK && httpStatus <= HttpStatus.SC_MULTI_STATUS;
     }
 }
