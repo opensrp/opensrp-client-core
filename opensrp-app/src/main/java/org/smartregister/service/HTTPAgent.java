@@ -42,6 +42,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 import org.smartregister.util.FileUtilities;
+import org.smartregister.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,7 +56,6 @@ import java.text.ParseException;
 import javax.net.ssl.HttpsURLConnection;
 
 import static org.apache.http.HttpStatus.SC_CREATED;
-import static org.apache.http.HttpStatus.SC_OK;
 import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
@@ -180,7 +180,7 @@ public class HTTPAgent {
             httpPost.setEntity(entity);
 
             httpResponse = httpClient.postContent(httpPost);
-            if (httpResponse.getStatusLine().getStatusCode() != SC_OK && httpResponse.getStatusLine().getStatusCode() != SC_CREATED) {
+            if (!Utils.is2xxSuccessful(httpResponse.getStatusLine().getStatusCode())) {
                 return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
             } else {
                 String payload = httpClient.retrieveStringResponse(httpResponse);

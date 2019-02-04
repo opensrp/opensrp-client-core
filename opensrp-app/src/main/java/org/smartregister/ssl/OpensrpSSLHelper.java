@@ -24,8 +24,8 @@ import javax.net.ssl.TrustManagerFactory;
 
 public class OpensrpSSLHelper {
 
-    private static final String X509 = "X509";
-    private static final String TLS = "TLS";
+    private static final String TRUST_MANAGER_ALGORITHM = "X509";
+    private static final String SSL_CONTEXT_PROTOCOL = "TLSv1.2";
     private static final String PASS = "phone red pen";
 
     private Context context;
@@ -81,10 +81,10 @@ public class OpensrpSSLHelper {
                 inputStream.close();
             }
             //Initialise a TrustManagerFactory with the CA keyStore
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(X509);
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TRUST_MANAGER_ALGORITHM);
             tmf.init(trustedKeystore);
             //Create new SSLContext using our new TrustManagerFactory
-            SSLContext context = SSLContext.getInstance(TLS);
+            SSLContext context = SSLContext.getInstance(SSL_CONTEXT_PROTOCOL);
             context.init(null, tmf.getTrustManagers(), null);
             //Get a SSLSocketFactory from our SSLContext
             return context.getSocketFactory();
