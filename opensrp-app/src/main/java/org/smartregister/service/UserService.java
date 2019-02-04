@@ -15,6 +15,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
+import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
@@ -359,6 +360,7 @@ public class UserService {
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
         saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
+        saveUserLocationId(userName, getUserLocationId(userInfo));
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
@@ -382,7 +384,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -393,7 +395,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -404,7 +406,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -421,7 +423,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -438,7 +440,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
 
         return null;
@@ -456,9 +458,30 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
+    }
+
+    public String getUserLocationId(LoginResponseData userInfo) {
+        try {
+            if (userInfo != null && userInfo.team != null && userInfo.team.locations != null && !userInfo.team.locations.isEmpty()) {
+                for (TeamLocation teamLocation : userInfo.team.locations) {
+                    if (teamLocation != null) {
+                        return teamLocation.uuid;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("Error : ", e.getMessage());
+        }
+        return null;
+    }
+
+    public void saveUserLocationId(String userName, String locationId) {
+        if (userName != null) {
+            allSharedPreferences.saveUserLocalityId(userName, locationId);
+        }
     }
 
     public void saveAnmLocation(LocationTree anmLocation) {
