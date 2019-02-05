@@ -58,6 +58,12 @@ public class CoreLibrary {
     }
 
     public SyncConfiguration getSyncConfiguration() {
+        if (syncConfiguration == null) {
+            throw new IllegalStateException(" Instance does not exist!!! Call "
+                    + CoreLibrary.class.getName()
+                    + ".init method in the onCreate method of "
+                    + "your Application class ");
+        }
         return syncConfiguration;
     }
 }

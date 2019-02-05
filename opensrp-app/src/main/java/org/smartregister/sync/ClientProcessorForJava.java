@@ -6,6 +6,7 @@ import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.db.Address;
@@ -465,20 +466,22 @@ public class ClientProcessorForJava {
         try {
             Log.d(TAG, "Started updateClientDetailsTable");
 
-            String baseEntityId = client.getBaseEntityId();
-            Long timestamp = getEventDate(event.getEventDate());
+            if(CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
+                String baseEntityId = client.getBaseEntityId();
+                Long timestamp = getEventDate(event.getEventDate());
 
-            Map<String, String> genderInfo = getGender(client);
-            saveClientDetails(baseEntityId, genderInfo, timestamp);
+                Map<String, String> genderInfo = getGender(client);
+                saveClientDetails(baseEntityId, genderInfo, timestamp);
 
-            Map<String, String> addressInfo = getClientAddressAsMap(client);
-            saveClientDetails(baseEntityId, addressInfo, timestamp);
+                Map<String, String> addressInfo = getClientAddressAsMap(client);
+                saveClientDetails(baseEntityId, addressInfo, timestamp);
 
-            Map<String, String> attributes = getClientAttributes(client);
-            saveClientDetails(baseEntityId, attributes, timestamp);
+                Map<String, String> attributes = getClientAttributes(client);
+                saveClientDetails(baseEntityId, attributes, timestamp);
 
-            Map<String, String> obs = getObsFromEvent(event);
-            saveClientDetails(baseEntityId, obs, timestamp);
+                Map<String, String> obs = getObsFromEvent(event);
+                saveClientDetails(baseEntityId, obs, timestamp);
+            }
 
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
 

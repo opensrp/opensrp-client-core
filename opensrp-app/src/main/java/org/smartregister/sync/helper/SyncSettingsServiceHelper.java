@@ -81,7 +81,7 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam() + "=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
                 syncFilterValue + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
