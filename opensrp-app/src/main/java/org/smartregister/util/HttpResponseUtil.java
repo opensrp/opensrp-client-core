@@ -38,19 +38,22 @@ public class HttpResponseUtil {
             return AssetHandler.jsonStringToJava(responseString, LoginResponseData.class);
         } catch (Exception e) {
             logError(format("Cannot read data from response due to exception: {0}. Stack "
-                    + "" + "" + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
+                    + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
         }
         return null;
     }
 
-    public static String getResponseString(HttpResponse response) {
+    public static LoginResponseData getResponseBody(String responseString) {
         try {
-            InputStream responseStream = getResponseStream(response);
-            return IOUtils.toString(responseStream);
+            if (StringUtils.isBlank(responseString)) {
+                return null;
+            }
+            return AssetHandler.jsonStringToJava(responseString, LoginResponseData.class);
         } catch (Exception e) {
             logError(format("Cannot read data from response due to exception: {0}. Stack "
-                    + "" + "" + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
+                    + "trace: {1}", e.getMessage(), ExceptionUtils.getStackTrace(e)));
         }
         return null;
     }
+
 }

@@ -1,8 +1,10 @@
 package org.smartregister.service;
 
 import android.content.Context;
+import android.util.Base64;
 import android.util.Log;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
@@ -41,13 +42,20 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 import org.smartregister.util.FileUtilities;
+import org.smartregister.util.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
+import java.net.URL;
 import java.text.ParseException;
 
-import static org.apache.http.HttpStatus.SC_OK;
+import javax.net.ssl.HttpsURLConnection;
+
+import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
@@ -70,11 +78,11 @@ import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
-import static org.smartregister.util.HttpResponseUtil.getResponseString;
 import static org.smartregister.util.Log.logError;
 
 public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
+    private static final int READ_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();
     private GZipEncodingHttpClient httpClient;
     private Context context;
@@ -145,7 +153,7 @@ public class HTTPAgent {
             httpResponse = httpClient.postContent(httpPost);
 
             ResponseStatus responseStatus =
-                    httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED
+                    httpResponse.getStatusLine().getStatusCode() == SC_CREATED
                             ? ResponseStatus.success : ResponseStatus.failure;
             response = new Response<>(responseStatus, null);
         } catch (Exception e) {
@@ -172,7 +180,7 @@ public class HTTPAgent {
             httpPost.setEntity(entity);
 
             httpResponse = httpClient.postContent(httpPost);
-            if (httpResponse.getStatusLine().getStatusCode() != SC_OK) {
+            if (!Utils.is2xxSuccessful(httpResponse.getStatusLine().getStatusCode())) {
                 return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
             } else {
                 String payload = httpClient.retrieveStringResponse(httpResponse);
@@ -189,48 +197,62 @@ public class HTTPAgent {
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
                                                             String password) {
-        HttpResponse httpResponse = null;
         LoginResponse loginResponse = null;
-
+        HttpURLConnection urlConnection = null;
         try {
-            setCredentials(userName, password);
             requestURL = requestURL.replaceAll("\\s+", "");
-            httpResponse = httpClient.execute(new HttpGet(requestURL));
-            int statusCode = httpResponse.getStatusLine().getStatusCode();
-            if (statusCode == HttpStatus.SC_OK) {
-                LoginResponseData responseData = getResponseBody(httpResponse);
-                loginResponse = retrieveResponse(responseData);
-            } else {
-                if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                    logError("Invalid credentials for: " + userName + " using " + requestURL);
-                    loginResponse = UNAUTHORIZED;
-                } else {
-                    logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
-                            + userName + " using " + requestURL);
-                    loginResponse = UNKNOWN_RESPONSE;
-                }
-
-                String responseString = getResponseString(httpResponse);
-                if (StringUtils.isNotBlank(responseString)) {
-                    responseString = StringUtils.substringBetween(responseString, "<p><b>message</b>", "</u></p>");
-                    if (StringUtils.isNotBlank(responseString)) {
-                        responseString = responseString.replace("<u>", "").trim();
-                        loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
-                    }
-                }
+            URL url = new URL(requestURL);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            if (urlConnection instanceof HttpsURLConnection) {
+                OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
             }
-        } catch (ConnectionPoolTimeoutException | SocketTimeoutException e) {
-            Log.e(TAG, e.getMessage(), e);
+            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+            int statusCode = urlConnection.getResponseCode();
+            InputStream inputStream;
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+                inputStream = urlConnection.getErrorStream();
+            else
+                inputStream = urlConnection.getInputStream();
+            String responseString = IOUtils.toString(inputStream);
+            if (statusCode == HttpStatus.SC_OK) {
+                LoginResponseData responseData = getResponseBody(responseString);
+                loginResponse = retrieveResponse(responseData);
+            } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                logError("Invalid credentials for: " + userName + " using " + requestURL);
+                loginResponse = UNAUTHORIZED;
+            } else if (StringUtils.isNotBlank(responseString)) {
+                //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
+                responseString = StringUtils.substringBetween(responseString, "<p><b>message</b>", "</u></p>");
+                if (StringUtils.isNotBlank(responseString)) {
+                    //remove the underline tag from the responseString
+                    responseString = responseString.replace("<u>", "").trim();
+                    loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
+                }
+            } else {
+                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
+                        + userName + " using " + requestURL);
+                loginResponse = UNKNOWN_RESPONSE;
+            }
+        } catch (MalformedURLException e) {
+            Log.e(TAG, "Failed to check credentials bad url " + requestURL, e);
+            loginResponse = MALFORMED_URL;
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, "SocketTimeoutException when authenticating " + userName, e);
             loginResponse = TIMEOUT;
+            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
+                    + "" + "" + "Error: " + e.toString(), e);
         } catch (IOException e) {
             Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
                     + "" + "" + "Error: " + e.toString(), e);
             loginResponse = NO_INTERNET_CONNECTIVITY;
-        } catch (IllegalArgumentException e) {
-            Log.e(TAG, e.getMessage(), e);
-            loginResponse = MALFORMED_URL;
         } finally {
-            httpClient.consumeResponse(httpResponse);
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
         return loginResponse;
     }

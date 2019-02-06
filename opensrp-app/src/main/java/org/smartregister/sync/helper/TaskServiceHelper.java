@@ -25,7 +25,6 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
@@ -74,6 +73,7 @@ public class TaskServiceHelper {
         } catch (NumberFormatException e) {
             Log.e(TAG, e.getMessage(), e);
         }
+        if (serverVersion > 0) serverVersion += 1;
         try {
             String tasksResponse = fetchTasks(campaigns, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
@@ -86,7 +86,7 @@ public class TaskServiceHelper {
                     Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
                 }
             }
-            allSharedPreferences.savePreference(getTaskMaxServerVersion(tasks, serverVersion), TASK_LAST_SYNC_DATE);
+            allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, getTaskMaxServerVersion(tasks, serverVersion));
             return tasks;
         } catch (Exception e) {
             Log.e(TAG, "Error fetching tasks from server ", e);
@@ -137,7 +137,7 @@ public class TaskServiceHelper {
             String jsonPayload = new Gson().toJson(updates);
 
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            Response<String> response = httpAgent.post(
+            Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             UPDATE_STATUS_URL),
@@ -151,15 +151,16 @@ public class TaskServiceHelper {
             if (response.payload() != null) {
                 try {
                     JSONObject idObject = new JSONObject(response.payload());
-                    JSONArray updatedIds = idObject.getJSONArray("task_ids");
-                    for (int i = 0; i < updatedIds.length(); i++) {
-                        taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+                    JSONArray updatedIds = idObject.optJSONArray("task_ids");
+                    if (updatedIds != null) {
+                        for (int i = 0; i < updatedIds.length(); i++) {
+                            taskRepository.markTaskAsSynced(updatedIds.get(i).toString());
+                        }
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass().getName(), "No update to the task status made");
+                    Log.e(getClass().getName(), "Error processing the tasks payload: " + response.payload());
                 }
             }
-
         }
     }
 
