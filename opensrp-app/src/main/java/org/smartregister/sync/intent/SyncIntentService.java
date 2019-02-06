@@ -96,7 +96,7 @@ public class SyncIntentService extends IntentService {
     private synchronized void fetchRetry(final int count) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-            if (configs.getSyncFilterParam() != null || StringUtils.isBlank(configs.getSyncFilterValue())) {
+            if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
