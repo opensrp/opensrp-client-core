@@ -47,7 +47,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
      * Suppressing InlinedApi since there is a check that the minimum version is met before using
      * the constant.
      */
-    @SuppressLint("InlinedApi")
+    @SuppressLint ("InlinedApi")
     private void createCameraSource() {
         Context context = getApplicationContext();
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
@@ -91,7 +91,9 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
     public void closeBarcodeActivity(SparseArray<Barcode> sparseArray) {
         Intent intent = new Intent();
         if (sparseArray != null) {
+            String origin = this.getIntent().getStringExtra(AllConstants.ORIGIN);
             intent.putExtra(AllConstants.BARCODE.BARCODE_KEY, sparseArray.valueAt(0));
+            intent.putExtra(AllConstants.ORIGIN, origin);
         }
         setResult(RESULT_OK, intent);
         finish();
