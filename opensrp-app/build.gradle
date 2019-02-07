@@ -55,11 +55,17 @@ android {
             testCoverageEnabled = true
             signingConfig signingConfigs.config
             zipAlignEnabled true
+            buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
+            buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
+            buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             zipAlignEnabled true
+            buildConfigField "String", "TRUST_MANAGER_ALGORITHM", "\"X509\""
+            buildConfigField "String", "SSL_CONTEXT_PROTOCOL", "\"TLSv1.2\""
+            buildConfigField "String", "OPENSRP_TRUSTORE_PASS", "\"phone red pen\""
         }
     }
 
@@ -80,6 +86,7 @@ android {
         versionCode Integer.parseInt(project.VERSION_CODE)
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
+        buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
     }
 
     sourceSets {
@@ -145,7 +152,7 @@ configurations.all {
 dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:3.5.6@aar'
     implementation 'com.android.support:multidex:1.0.0'
-    implementation 'org.ei.drishti:drishti-interface:0.1-SNAPSHOT'
+    implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation "org.apache.httpcomponents:httpmime:4.2.3"
     implementation 'com.google.code.gson:gson:2.3'
@@ -206,7 +213,7 @@ dependencies {
     testImplementation('org.robolectric:shadows-multidex:3.8') {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    testImplementation('org.robolectric:shadows-support-v4:3.3.2'){
+    testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 

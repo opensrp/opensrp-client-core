@@ -12,7 +12,7 @@ public class TeamMember {
 
     public String teamMemberId;
 
-    public Set<TeamLocation> location = new HashSet<>();
+    public Set<TeamLocation> locations = new HashSet<>();
 
     public Team team;
 
