@@ -23,6 +23,7 @@ import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -88,9 +89,11 @@ public class LocationServiceHelper {
                     e.printStackTrace();
                 }
             }
-            String maxServerVersion = getMaxServerVersion(locations, serverVersion);
-            String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
-            allSharedPreferences.savePreference(updateKey, maxServerVersion);
+            if (!Utils.isEmptyCollection(locations)) {
+                String maxServerVersion = getMaxServerVersion(locations);
+                String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
+                allSharedPreferences.savePreference(updateKey, maxServerVersion);
+            }
             return locations;
 
         } catch (Exception e) {
@@ -129,8 +132,8 @@ public class LocationServiceHelper {
         return resp.payload().toString();
     }
 
-    private String getMaxServerVersion(List<Location> locations, long serverVersionParam) {
-        long currentServerVersion = serverVersionParam;
+    private String getMaxServerVersion(List<Location> locations) {
+        long currentServerVersion = 0;
         for (Location location : locations) {
             long serverVersion = location.getServerVersion();
             if (serverVersion > currentServerVersion) {
