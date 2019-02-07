@@ -69,11 +69,8 @@ public class SyncSettingsServiceHelper {
         return settings == null ? 0 : settings.length();
     }
 
-    public JSONArray pullSettingsFromServer() throws JSONException {
-        return pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
-    }
 
-    public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
+    public JSONArray pullSettingsFromServer() throws JSONException {
 
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
@@ -82,7 +79,7 @@ public class SyncSettingsServiceHelper {
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
                 CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
-                syncFilterValue + "&serverVersion=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue() + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
         Log.i(TAG, "URL: " + url);

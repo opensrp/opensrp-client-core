@@ -404,8 +404,7 @@ public class AllConstants {
     }
 
     public static class PREF_KEY {
-        public static final String SITE_CHARACTERISTICS = "site_characteristics";
-        public static final String POPULATION_CHARACTERISTICS = "population_characteristics";
+        public static final String SETTINGS = "settings";
 
     }
 }
