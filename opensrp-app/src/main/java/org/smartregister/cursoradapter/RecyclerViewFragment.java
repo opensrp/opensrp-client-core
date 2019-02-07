@@ -64,6 +64,7 @@ public abstract class RecyclerViewFragment extends
     public String mainCondition = "";
     public String Sortqueries;
     public String tablename;
+    public String parent_tablename = "";
     public String countSelect;
     public String joinTable = "";
     public String joinTables[];
@@ -450,9 +451,15 @@ public abstract class RecyclerViewFragment extends
         String query = "";
         try {
             if (isValidFilterForFts(commonRepository())) {
-                String sql = sqb
-                        .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
-                                clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
+                String sql = "";
+                if(StringUtils.isEmpty(parent_tablename)){
+                    sql = sqb
+                            .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
+                                    clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
+                }else{
+
+                }
+
                 List<String> ids = commonRepository().findSearchIds(sql);
                 query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
                         Sortqueries);
