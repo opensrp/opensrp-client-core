@@ -95,7 +95,6 @@ public class AllConstants {
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
-    public static final String ORIGIN = "origin";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
 

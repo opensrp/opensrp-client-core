@@ -14,7 +14,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 
@@ -285,38 +284,16 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         return this;
     }
 
-    /**
-     * Starts the Qr Code Reader but adds intent extras to set the origin fragment|activity of the event
-     * @param origin {@link String}
-     * @author dubdabasoduba
-     */
-    public void startQrCodeScannerWithOrigin(String origin) {
-        readQrCode(origin);
-    }
-
     public void startQrCodeScanner() {
-        readQrCode(null);
-
-    }
-
-    /**
-     * Starts the Barcode activity
-     * @param origin {@link String}
-     * @author dubdabasoduba
-     */
-    private void readQrCode(String origin) {
-        if (PermissionUtils
-                .isPermissionGranted(this, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
+        if (PermissionUtils.isPermissionGranted(this, Manifest.permission.CAMERA, PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE)) {
             try {
                 Intent intent = new Intent(this, BarcodeScanActivity.class);
-                if (!TextUtils.isEmpty(origin)) {
-                    intent.putExtra(AllConstants.ORIGIN, origin);
-                }
                 startActivityForResult(intent, AllConstants.BARCODE.BARCODE_REQUEST_CODE);
             } catch (SecurityException e) {
                 Utils.showToast(this, getString(R.string.allow_camera_management));
             }
         }
+
     }
 
     @Override
