@@ -85,15 +85,15 @@ public class MainActivity extends AppCompatActivity {
             };
             queryBUilder.SelectInitiateMainTable(tablename, columns);
             mainSelect =  queryBUilder.mainCondition(mainCondition);
-            condition = "(child_dob IS NOT NULL OR member_dob IS NOT NULL OR woman_dob IS NOT NULL ) ";
+            registerCondition = "(child_dob IS NOT NULL OR member_dob IS NOT NULL OR woman_dob IS NOT NULL ) ";
             List<String> ids = new ArrayList<String>();
             ids.add("97715f4c-8ce5-4b78-9a06-935506fddc60");
             ids.add("a3998611-939a-4dde-9a04-dc3ea2d92c80");
             ids.add("69fca380-3e16-4664-9d35-249886b12015");
             ids.add("a9af1e88-4d97-45bb-bf7a-bb376c9a9c27");
-            String sql = queryBUilder.searchQueryFts(tablename,mainSelect,mainCondition,condition,joinTables,filters,Sortqueries,20, 0);
+            String sql = queryBUilder.searchQueryFts(tablename,mainSelect,mainCondition,registerCondition,joinTables,filters,Sortqueries,20, 0);
             String query = queryBUilder.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
-                    Sortqueries,condition);
+                    Sortqueries,registerCondition);
             System.out.println(sql);
             System.out.println(query);
 

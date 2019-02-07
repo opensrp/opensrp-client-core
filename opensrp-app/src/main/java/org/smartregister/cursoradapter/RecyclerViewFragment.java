@@ -66,7 +66,7 @@ public abstract class RecyclerViewFragment extends
     public String tablename;
 
     public String countSelect;
-    public String condition = "";
+    public String registerCondition = "";
     public String joinTable = "";
     public String joinTables[];
     public RecyclerView clientsView;
@@ -454,7 +454,7 @@ public abstract class RecyclerViewFragment extends
             if (isValidFilterForFts(commonRepository())) {
                 String sql;
                 List<String> ids;
-                if(StringUtils.isBlank(condition)){
+                if(StringUtils.isBlank(registerCondition)){
                     sql = sqb
                             .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
                                     clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
@@ -462,10 +462,10 @@ public abstract class RecyclerViewFragment extends
                     query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
                             Sortqueries);
                 }else{
-                    sql = sqb.searchQueryFts(tablename,mainSelect,mainCondition,condition,joinTables,filters,Sortqueries,clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
+                    sql = sqb.searchQueryFts(tablename,mainSelect,mainCondition,registerCondition,joinTables,filters,Sortqueries,clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
                     ids =  commonRepository().findSearchIds(sql);
                     query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
-                            Sortqueries,condition);
+                            Sortqueries,registerCondition);
                 }
 
                 query = sqb.Endquery(query);
@@ -490,7 +490,7 @@ public abstract class RecyclerViewFragment extends
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
                 String sql = "";
-                if(StringUtils.isBlank(condition)) {
+                if(StringUtils.isBlank(registerCondition)) {
                     sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
                 }else{
                     sql = countSelect;
