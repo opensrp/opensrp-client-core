@@ -7,7 +7,10 @@ import android.util.Base64;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.SyncConfiguration;
+import org.smartregister.SyncFilter;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -522,13 +525,36 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
-                if (privateKeyEntry != null && userInfo.team != null && userInfo.team.team != null && userInfo.team.team.uuid != null) {
+
+                if (password == null) {
+                    return;
+                }
+
+
+                String groupId = null;
+
+                SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
+                if (syncConfiguration.getEncryptionParam() != null) {
+                    SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
+                    if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
+                        groupId = getUserDefaultTeamId(userInfo);
+                    } else if (SyncFilter.LOCATION.equals(syncFilter)) {
+                        groupId = getUserLocationId(userInfo);
+                    } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
+                        groupId = password;
+                    }
+                }
+
+                if (StringUtils.isBlank(groupId)) {
+                    return;
+                }
+
+                if (privateKeyEntry != null) {
                     // First save the encrypted password
                     String encryptedPassword = encryptString(privateKeyEntry, password);
                     allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
 
                     // Then save the encrypted group
-                    String groupId = userInfo.team.team.uuid;
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
                     allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 

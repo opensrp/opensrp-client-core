@@ -53,13 +53,11 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setUsername(mUsername);
             syncSettingsServiceHelper.setPassword(mPassword);
 
-            String teamId = mLoginView.getUserTeamId(loginResponse);
-
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(teamId);
+                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer();
 
                 JSONObject data = new JSONObject();
-                data.put(AllConstants.PREF_KEY.SITE_CHARACTERISTICS, settings);
+                data.put(AllConstants.PREF_KEY.SETTINGS, settings);
                 loginResponse.setRawData(data);
 
             } catch (JSONException e) {

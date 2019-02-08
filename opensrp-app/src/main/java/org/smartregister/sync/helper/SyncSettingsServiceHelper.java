@@ -69,11 +69,8 @@ public class SyncSettingsServiceHelper {
         return settings == null ? 0 : settings.length();
     }
 
-    public JSONArray pullSettingsFromServer() throws JSONException {
-        return pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
-    }
 
-    public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
+    public JSONArray pullSettingsFromServer() throws JSONException {
 
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
@@ -81,8 +78,8 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam() + "=" +
-                syncFilterValue + "&serverVersion=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue() + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
         Log.i(TAG, "URL: " + url);
@@ -177,8 +174,8 @@ public class SyncSettingsServiceHelper {
 
             JSONObject jsonObject = serverSettings.getJSONObject(i);
             Setting characteristic = new Setting();
-            characteristic.setKey(jsonObject.getString("identifier"));
-            characteristic.setValue(jsonObject.getString("settings"));
+            characteristic.setKey(jsonObject.getString(AllConstants.IDENTIFIER));
+            characteristic.setValue(jsonObject.getString(AllConstants.SETTINGS));
             characteristic.setSyncStatus(SyncStatus.SYNCED.name());
 
             CoreLibrary.getInstance().context().allSettings().put(LAST_SETTINGS_SYNC_TIMESTAMP, characteristic.getVersion());

@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.smartregister.R;
-import org.smartregister.domain.LoginResponse;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -236,11 +235,6 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
     @Override
     public Activity getActivityContext() {
         return this;
-    }
-
-    @Override
-    public String getUserTeamId(LoginResponse loginResponse) {
-        return Utils.getUserDefaultTeamId(loginResponse.payload());
     }
 
     @Override
