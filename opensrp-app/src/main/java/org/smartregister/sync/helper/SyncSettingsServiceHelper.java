@@ -174,8 +174,8 @@ public class SyncSettingsServiceHelper {
 
             JSONObject jsonObject = serverSettings.getJSONObject(i);
             Setting characteristic = new Setting();
-            characteristic.setKey(jsonObject.getString("identifier"));
-            characteristic.setValue(jsonObject.getString("settings"));
+            characteristic.setKey(jsonObject.getString(AllConstants.IDENTIFIER));
+            characteristic.setValue(jsonObject.getString(AllConstants.SETTINGS));
             characteristic.setSyncStatus(SyncStatus.SYNCED.name());
 
             CoreLibrary.getInstance().context().allSettings().put(LAST_SETTINGS_SYNC_TIMESTAMP, characteristic.getVersion());
