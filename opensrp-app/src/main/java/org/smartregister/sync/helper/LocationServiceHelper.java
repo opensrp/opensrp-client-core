@@ -133,14 +133,14 @@ public class LocationServiceHelper {
     }
 
     private String getMaxServerVersion(List<Location> locations) {
-        long currentServerVersion = 0;
+        long maxServerVersion = 0;
         for (Location location : locations) {
             long serverVersion = location.getServerVersion();
-            if (serverVersion > currentServerVersion) {
-                currentServerVersion = serverVersion;
+            if (serverVersion > maxServerVersion) {
+                maxServerVersion = serverVersion;
             }
         }
-        return String.valueOf(currentServerVersion);
+        return String.valueOf(maxServerVersion);
     }
 
     public List<Location> fetchLocationsStructures() {
