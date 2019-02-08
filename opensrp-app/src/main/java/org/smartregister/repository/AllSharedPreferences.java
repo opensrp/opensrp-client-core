@@ -19,6 +19,7 @@ import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.LANGUAGE_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.PIONEER_USER;
 import static org.smartregister.AllConstants.SERVER_TIMEZONE;
+import static org.smartregister.AllConstants.USER_LOCALITY_ID_PREFIX;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
@@ -92,6 +93,20 @@ public class AllSharedPreferences {
     public String fetchDefaultLocalityId(String username) {
         if (username != null) {
             return preferences.getString(DEFAULT_LOCALITY_ID_PREFIX + username, null);
+        }
+        return null;
+    }
+
+    public void saveUserLocalityId(String username, String localityId) {
+        if (username != null) {
+            preferences.edit().putString(USER_LOCALITY_ID_PREFIX + username, localityId)
+                    .commit();
+        }
+    }
+
+    public String fetchUserLocalityId(String username) {
+        if (username != null) {
+            return preferences.getString(USER_LOCALITY_ID_PREFIX + username, null);
         }
         return null;
     }
@@ -249,7 +264,7 @@ public class AllSharedPreferences {
     }
 
     public long fetchLastCheckTimeStamp() {
-        return preferences.getLong(LAST_CHECK_TIMESTAMP,0);
+        return preferences.getLong(LAST_CHECK_TIMESTAMP, 0);
     }
 
     public void updateLastCheckTimeStamp(long lastSyncTimeStamp) {

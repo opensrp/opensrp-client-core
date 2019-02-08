@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.text.TextUtils;
 import android.util.Log;
 import android.util.Pair;
 
@@ -22,11 +23,13 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -1094,6 +1097,42 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+
+    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String syncStatus, List<String> baseEntityIds) {
+        List<EventClient> list = new ArrayList<>();
+        if (Utils.isEmptyCollection(baseEntityIds))
+            return list;
+        Cursor cursor = null;
+        try {
+            int len = baseEntityIds.size();
+            String query = String.format("SELECT json FROM "
+                            + Table.event.name()
+                            + " WHERE " + event_column.baseEntityId.name() + " IN (%s) "
+                            + " AND " + event_column.syncStatus.name() + "= ? "
+                            + " ORDER BY " + event_column.serverVersion.name(),
+                    TextUtils.join(",", Collections.nCopies(len, "?")));
+            String[] params = baseEntityIds.toArray(new String[len + 1]);
+            params[len] = syncStatus;
+            cursor = getReadableDatabase().rawQuery(query, params);
+
+            while (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+                Event event = convert(jsonEventStr, Event.class);
+                list.add(new EventClient(event));
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
+
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject) {
         try {
             ContentValues values = new ContentValues();
@@ -1228,6 +1267,19 @@ public class EventClientRepository extends BaseRepository {
                     client_column.baseEntityId.name() + " = ?",
                     new String[]{baseEntityId});
 
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
+    public void markEventAsTaskUnprocessed(String formSubmissionId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(client_column.syncStatus.name(), TYPE_Task_Unprocessed);
+            getWritableDatabase().update(Table.event.name(),
+                    values,
+                    event_column.formSubmissionId.name() + " = ?",
+                    new String[]{formSubmissionId});
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
         }

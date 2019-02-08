@@ -48,10 +48,11 @@ import com.google.gson.JsonParseException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.smartregister.AllConstants;
+import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -542,9 +543,10 @@ public class Utils {
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
-            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
+            simpleDateFormat =
+                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(BuildConfig.BUILD_TIMESTAMP));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date(BuildConfig.BUILD_TIMESTAMP));
         }
         return simpleDateFormat;
     }
@@ -660,5 +662,9 @@ public class Utils {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
         return intent;
+    }
+
+    public static boolean is2xxSuccessful(int httpStatus) {
+        return httpStatus >= HttpStatus.SC_OK && httpStatus <= HttpStatus.SC_MULTI_STATUS;
     }
 }

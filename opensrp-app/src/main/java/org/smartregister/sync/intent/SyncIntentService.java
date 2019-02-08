@@ -23,6 +23,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
+import org.smartregister.util.SyncUtils;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -35,6 +36,7 @@ public class SyncIntentService extends IntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
+    private SyncUtils syncUtils;
 
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
@@ -47,6 +49,7 @@ public class SyncIntentService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = getBaseContext();
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        syncUtils = new SyncUtils(getBaseContext());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -69,14 +72,22 @@ public class SyncIntentService extends IntentService {
         }
 
         try {
-            pushToServer();
-            pullECFromServer();
+            boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
+                pushToServer();
+            }
+            if (hasValidAuthorization) {
+                pullECFromServer();
+            } else {
+                syncUtils.logoutUser();
+            }
 
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage(), e);
             complete(FetchStatus.fetchedFailed);
         }
     }
+
 
     private void pullECFromServer() {
         fetchRetry(0);

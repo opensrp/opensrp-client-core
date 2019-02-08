@@ -47,7 +47,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
      * Suppressing InlinedApi since there is a check that the minimum version is met before using
      * the constant.
      */
-    @SuppressLint("InlinedApi")
+    @SuppressLint ("InlinedApi")
     private void createCameraSource() {
         Context context = getApplicationContext();
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();

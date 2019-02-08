@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.StringRes;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
@@ -28,6 +29,8 @@ import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
+
+import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
 /**
  * Created by manu on 01/11/2018.
@@ -69,6 +72,17 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (getIntent() != null) {
+            String logoffReason = getIntent().getStringExtra(ACCOUNT_DISABLED);
+            if (logoffReason != null) {
+                showErrorDialog(R.string.account_disabled, logoffReason);
+            }
+        }
     }
 
     protected abstract int getContentView();
@@ -138,8 +152,12 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
 
     @Override
     public void showErrorDialog(String message) {
+        showErrorDialog(org.smartregister.R.string.login_failed_dialog_title, message);
+    }
+
+    public void showErrorDialog(@StringRes int title, String message) {
         AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle(getString(org.smartregister.R.string.login_failed_dialog_title))
+                .setTitle(title)
                 .setMessage(message)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
