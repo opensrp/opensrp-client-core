@@ -35,6 +35,8 @@ import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.DialogOption;
 
+import java.util.HashMap;
+
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -172,6 +174,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     public abstract void setUniqueID(String qrCode);
+    public abstract void setAdvancedSearchFormData(HashMap<String,String> advancedSearchFormData);
 
     @Override
     public void setupViews(View view) {
