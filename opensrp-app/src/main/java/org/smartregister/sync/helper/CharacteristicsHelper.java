@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Characteristic;
 import org.smartregister.domain.Setting;
@@ -62,8 +63,8 @@ public class CharacteristicsHelper {
 
             JSONObject jsonObject = serverSettings.getJSONObject(i);
             Setting characteristic = new Setting();
-            characteristic.setKey(jsonObject.getString("identifier"));
-            characteristic.setValue(jsonObject.getString("settings"));
+            characteristic.setKey(jsonObject.getString(AllConstants.IDENTIFIER));
+            characteristic.setValue(jsonObject.getString(AllConstants.SETTINGS));
             characteristic.setSyncStatus(SyncStatus.SYNCED.name());
 
             CoreLibrary.getInstance().context().allSettings().put(AllSharedPreferences.LAST_SETTINGS_SYNC_TIMESTAMP, characteristic.getVersion());

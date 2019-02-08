@@ -7,7 +7,7 @@ public abstract class SyncConfiguration {
 
     public abstract int getSyncMaxRetries();
 
-    public abstract String getSyncFilterParam();
+    public abstract SyncFilter getSyncFilterParam();
 
     public abstract String getSyncFilterValue();
 
@@ -31,4 +31,7 @@ public abstract class SyncConfiguration {
         return false;
     }
 
+    public abstract SyncFilter getEncryptionParam();
+
+    public abstract boolean updateClientDetailsTable();
 }

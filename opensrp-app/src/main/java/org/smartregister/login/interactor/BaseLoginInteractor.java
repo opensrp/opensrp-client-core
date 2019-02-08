@@ -231,7 +231,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         if (data != null) {
             try {
 
-                JSONArray settings = data.has(AllConstants.PREF_KEY.SITE_CHARACTERISTICS) ? data.getJSONArray(AllConstants.PREF_KEY.SITE_CHARACTERISTICS) : null;
+                JSONArray settings = data.has(AllConstants.PREF_KEY.SETTINGS) ? data.getJSONArray(AllConstants.PREF_KEY.SETTINGS) : null;
 
                 if (settings != null && settings.length() > 0) {
                     CharacteristicsHelper.saveSetting(settings);

@@ -96,7 +96,7 @@ public class SyncIntentService extends IntentService {
     private synchronized void fetchRetry(final int count) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-            if (StringUtils.isBlank(configs.getSyncFilterParam()) || StringUtils.isBlank(configs.getSyncFilterValue())) {
+            if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -111,7 +111,7 @@ public class SyncIntentService extends IntentService {
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
 
-            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
+            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
             Log.i(SyncIntentService.class.getName(), "URL: " + url);
 
             if (httpAgent == null) {
