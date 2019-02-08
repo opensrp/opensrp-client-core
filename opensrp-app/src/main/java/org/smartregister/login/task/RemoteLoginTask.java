@@ -13,6 +13,7 @@ import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 /**
@@ -54,7 +55,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setPassword(mPassword);
 
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer();
+                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
 
                 JSONObject data = new JSONObject();
                 data.put(AllConstants.PREF_KEY.SETTINGS, settings);

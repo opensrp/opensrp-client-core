@@ -54,9 +54,11 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
@@ -666,5 +668,33 @@ public class Utils {
 
     public static boolean is2xxSuccessful(int httpStatus) {
         return httpStatus >= HttpStatus.SC_OK && httpStatus <= HttpStatus.SC_MULTI_STATUS;
+    }
+
+    public static String getFilterValue(LoginResponse loginResponse, SyncFilter syncFilterParam) {
+        String filterValue = "";
+        LoginResponseData response = loginResponse.payload();
+        switch (syncFilterParam) {
+
+            case TEAM:
+            case TEAM_ID:
+
+                filterValue = response.team.team.uuid;
+                break;
+
+            case LOCATION:
+
+                filterValue = response.team.team.location.uuid;
+                break;
+            case PROVIDER:
+
+                filterValue = response.user.getUsername();
+                break;
+
+
+            default:
+                break;
+        }
+
+        return filterValue;
     }
 }
