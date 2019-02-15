@@ -9,6 +9,7 @@ public class CoreLibrary {
     private static CoreLibrary instance;
 
     private final SyncConfiguration syncConfiguration;
+    private static long buildTimeStamp;
 
     public static void init(Context context) {
         init(context, null);
@@ -17,6 +18,13 @@ public class CoreLibrary {
     public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration);
+        }
+    }
+
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion) {
+        if (instance == null) {
+            instance = new CoreLibrary(context, syncConfiguration);
+            buildTimeStamp = buildVersion;
         }
     }
 
@@ -65,5 +73,9 @@ public class CoreLibrary {
                     + "your Application class ");
         }
         return syncConfiguration;
+    }
+
+    public static long getBuildTimeStamp() {
+        return buildTimeStamp;
     }
 }
