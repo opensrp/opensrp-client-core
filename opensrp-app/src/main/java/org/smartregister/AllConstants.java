@@ -15,6 +15,8 @@ public class AllConstants {
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
     public static final int DATABASE_VERSION = 1;
+    public static final String IDENTIFIER = "identifier";
+    public static final String SETTINGS = "settings";
 
 
     // Maximum time difference between server and client time in milliseconds
@@ -144,16 +146,7 @@ public class AllConstants {
 
     }
 
-    public static class SyncFilters {
-        // These pull filters must be defined in your couchDB server for them to work
-        // Filters
-        public static final String FILTER_LOCATION_ID = "locationId";
-        public static final String FILTER_PROVIDER = "providerId";
-
-        //filter by team e.g. team = user1,user2,user3
-        public static final String FILTER_TEAM = "team";
-
-    }
+    // Sync Filters moved to org.smartregister.SyncFilter class
 
     public class FormNames {
         public static final String EC_REGISTRATION = "ec_registration";
@@ -413,8 +406,7 @@ public class AllConstants {
     }
 
     public static class PREF_KEY {
-        public static final String SITE_CHARACTERISTICS = "site_characteristics";
-        public static final String POPULATION_CHARACTERISTICS = "population_characteristics";
+        public static final String SETTINGS = "settings";
 
     }
 }

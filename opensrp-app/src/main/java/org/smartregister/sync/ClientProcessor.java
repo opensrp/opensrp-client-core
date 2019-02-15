@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
@@ -626,20 +627,22 @@ public class ClientProcessor {
         try {
             Log.i(TAG, "Started updateClientDetailsTable");
 
-            String baseEntityId = client.getString(baseEntityIdJSONKey);
-            Long timestamp = getEventDate(event.get("eventDate"));
+            if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
+                String baseEntityId = client.getString(baseEntityIdJSONKey);
+                Long timestamp = getEventDate(event.get("eventDate"));
 
-            Map<String, String> genderInfo = getClientSingleValueAttribute(client, "gender");
-            saveClientDetails(baseEntityId, genderInfo, timestamp);
+                Map<String, String> genderInfo = getClientSingleValueAttribute(client, "gender");
+                saveClientDetails(baseEntityId, genderInfo, timestamp);
 
-            Map<String, String> addressInfo = getClientAddressAsMap(client);
-            saveClientDetails(baseEntityId, addressInfo, timestamp);
+                Map<String, String> addressInfo = getClientAddressAsMap(client);
+                saveClientDetails(baseEntityId, addressInfo, timestamp);
 
-            Map<String, String> attributes = getClientAttributes(client);
-            saveClientDetails(baseEntityId, attributes, timestamp);
+                Map<String, String> attributes = getClientAttributes(client);
+                saveClientDetails(baseEntityId, attributes, timestamp);
 
-            Map<String, String> obs = getObsFromEvent(event);
-            saveClientDetails(baseEntityId, obs, timestamp);
+                Map<String, String> obs = getObsFromEvent(event);
+                saveClientDetails(baseEntityId, obs, timestamp);
+            }
 
             event.put(detailsUpdated, true);
 

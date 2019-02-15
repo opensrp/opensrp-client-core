@@ -23,6 +23,7 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -86,7 +87,9 @@ public class TaskServiceHelper {
                     Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
                 }
             }
-            allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, getTaskMaxServerVersion(tasks, serverVersion));
+            if (!Utils.isEmptyCollection(tasks)) {
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, getTaskMaxServerVersion(tasks));
+            }
             return tasks;
         } catch (Exception e) {
             Log.e(TAG, "Error fetching tasks from server ", e);
@@ -117,12 +120,12 @@ public class TaskServiceHelper {
         return resp.payload().toString();
     }
 
-    private String getTaskMaxServerVersion(List<Task> tasks, long currentServerVersion) {
-        long maxServerVersion = currentServerVersion;
+    private String getTaskMaxServerVersion(List<Task> tasks) {
+        long maxServerVersion = 0;
 
         for (Task task : tasks) {
             long serverVersion = task.getServerVersion();
-            if (serverVersion > currentServerVersion) {
+            if (serverVersion > maxServerVersion) {
                 maxServerVersion = serverVersion;
             }
         }

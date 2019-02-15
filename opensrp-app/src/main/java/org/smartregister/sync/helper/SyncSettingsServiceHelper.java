@@ -59,7 +59,7 @@ public class SyncSettingsServiceHelper {
             Log.e(TAG, e.getMessage());
         }
 
-        JSONArray settings = pullSettingsFromServer();
+        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
 
         if (settings != null && settings.length() > 0) {
             settings = saveSetting(settings);
@@ -69,10 +69,9 @@ public class SyncSettingsServiceHelper {
         return settings == null ? 0 : settings.length();
     }
 
-    public JSONArray pullSettingsFromServer() throws JSONException {
-        return pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
-    }
-
+    /**
+     * @param syncFilterValue the actual value to use with the filter param
+     */
     public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
 
         String endString = "/";
@@ -81,7 +80,7 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam() + "=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
                 syncFilterValue + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
@@ -177,8 +176,8 @@ public class SyncSettingsServiceHelper {
 
             JSONObject jsonObject = serverSettings.getJSONObject(i);
             Setting characteristic = new Setting();
-            characteristic.setKey(jsonObject.getString("identifier"));
-            characteristic.setValue(jsonObject.getString("settings"));
+            characteristic.setKey(jsonObject.getString(AllConstants.IDENTIFIER));
+            characteristic.setValue(jsonObject.getString(AllConstants.SETTINGS));
             characteristic.setSyncStatus(SyncStatus.SYNCED.name());
 
             CoreLibrary.getInstance().context().allSettings().put(LAST_SETTINGS_SYNC_TIMESTAMP, characteristic.getVersion());

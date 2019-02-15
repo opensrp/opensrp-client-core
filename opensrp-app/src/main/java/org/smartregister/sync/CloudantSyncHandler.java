@@ -32,6 +32,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.smartregister.AllConstants;
+import org.smartregister.SyncFilter;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.AssetHandler;
 
@@ -85,10 +86,10 @@ public class CloudantSyncHandler {
             if (designDocumentId != null) {
                 String filterDoc = designDocumentId.split("/")[1];
                 HashMap<String, String> filterParams = new HashMap<String, String>();
-                filterParams.put(AllConstants.SyncFilters.FILTER_PROVIDER,
+                filterParams.put(SyncFilter.PROVIDER.value(),
                         allSharedPreferences.fetchRegisteredANM());
                 pullFilter = new PullFilter(
-                        filterDoc.concat("/").concat(AllConstants.SyncFilters.FILTER_PROVIDER),
+                        filterDoc.concat("/").concat(SyncFilter.PROVIDER.value()),
                         filterParams);
             }
 
