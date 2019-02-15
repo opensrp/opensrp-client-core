@@ -140,7 +140,15 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                 getLoginView().showErrorDialog("Sorry, your loginWithLocalFlag failed. Please try again");
                             } else {
                                 if (loginResponse == NO_INTERNET_CONNECTIVITY) {
-                                    getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
+
+                                    if (userName.equalsIgnoreCase(getSharedPreferences().fetchRegisteredANM())) {
+
+                                        localLoginWith(userName, password);
+
+                                    } else {
+                                        getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
+
+                                    }
                                 } else if (loginResponse == UNKNOWN_RESPONSE) {
                                     getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unknown_response));
                                 } else if (loginResponse == UNAUTHORIZED) {

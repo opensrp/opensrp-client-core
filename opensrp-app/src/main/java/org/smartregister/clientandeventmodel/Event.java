@@ -63,6 +63,9 @@ public class Event extends BaseDataObject {
     @JsonProperty
     private String teamId;
 
+    @JsonProperty
+    private List<Event> events;
+
     public Event() {
         this.version = System.currentTimeMillis();
     }
@@ -311,6 +314,15 @@ public class Event extends BaseDataObject {
         return this;
     }
 
+    public Event withEvents(List<Event> events) {
+        this.events = events;
+        return this;
+    }
+
+    public List<Event> getEvents() {
+        return events;
+    }
+
     @Override
     public boolean equals(Object o) {
         return EqualsBuilder.reflectionEquals(this, o, "id", "revision");
@@ -334,4 +346,3 @@ public class Event extends BaseDataObject {
         this.status = status;
     }
 }
-
