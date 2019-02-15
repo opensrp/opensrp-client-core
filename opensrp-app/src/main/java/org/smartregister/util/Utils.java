@@ -52,7 +52,6 @@ import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -164,7 +163,8 @@ public class Utils {
         v.setText(val);
     }
 
-    public static void addToList(Map<String, String> locations, Map<String, TreeNode<String, Location>> locationMap, String locationTag) {
+    public static void addToList(Map<String, String> locations, Map<String, TreeNode<String, Location>> locationMap,
+                                 String locationTag) {
         for (Map.Entry<String, TreeNode<String, Location>> entry : locationMap.entrySet()) {
             boolean tagFound = false;
             if (entry.getValue() != null) {
@@ -320,7 +320,8 @@ public class Utils {
     }
 
     public static boolean isConnectedToNetwork(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
@@ -392,10 +393,10 @@ public class Utils {
         return is;
     }
 
-    @TargetApi(VERSION_CODES.HONEYCOMB)
+    @TargetApi (VERSION_CODES.HONEYCOMB)
     public static <T> void startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
         if (params == null) {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings ("unchecked")
             T[] arr = (T[]) new Void[0];
             params = arr;
         }
@@ -422,7 +423,8 @@ public class Utils {
      * @param columns     this map has the db column name as value and the csv column no as the key
      * @return each map is db row with key as the column name and value as the value from the csv file
      */
-    public static List<Map<String, String>> populateTableFromCSV(Context context, String csvFileName, Map<Integer, String> columns) {
+    public static List<Map<String, String>> populateTableFromCSV(Context context, String csvFileName,
+                                                                 Map<Integer, String> columns) {
         List<Map<String, String>> result = new ArrayList<>();
 
         try {
@@ -546,9 +548,11 @@ public class Utils {
         String simpleDateFormat;
         if (isShortMonth) {
             simpleDateFormat =
-                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(BuildConfig.BUILD_TIMESTAMP));
+                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                            .format(new Date(CoreLibrary.getBuildTimeStamp()));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date(BuildConfig.BUILD_TIMESTAMP));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                    .format(new Date(CoreLibrary.getBuildTimeStamp()));
         }
         return simpleDateFormat;
     }
