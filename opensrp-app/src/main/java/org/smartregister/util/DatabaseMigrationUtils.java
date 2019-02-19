@@ -3,13 +3,11 @@ package org.smartregister.util;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
-import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
-import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.repository.EventClientRepository;
 
@@ -145,11 +143,7 @@ public class DatabaseMigrationUtils {
         ArrayList<CommonRepositoryInformationHolder> bindTypes = org.smartregister.Context.bindtypes;
         for (CommonRepositoryInformationHolder bindType : bindTypes) {
             if (bindings.contains(bindType.getBindtypename())) {
-                try {
-                    CoreLibrary.getInstance().context().commonrepository(bindType.getBindtypename()).onCreate(database);
-                } catch (SQLException e) {
-                    Log.e(TAG, e.getMessage());
-                }
+                CoreLibrary.getInstance().context().commonrepository(bindType.getBindtypename()).onCreate(database);
             }
         }
 
