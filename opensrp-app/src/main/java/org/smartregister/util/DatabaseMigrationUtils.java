@@ -3,10 +3,14 @@ package org.smartregister.util;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
+import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.commonregistry.CommonRepository;
+import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.repository.EventClientRepository;
 
 import java.util.ArrayList;
@@ -135,5 +139,57 @@ public class DatabaseMigrationUtils {
 
         database.endTransaction();
 
+    }
+
+    public static void createAddedECTables(SQLiteDatabase database, List<String> bindings, CommonFtsObject commonFtsObject) {
+        ArrayList<CommonRepositoryInformationHolder> bindTypes = org.smartregister.Context.bindtypes;
+        for (CommonRepositoryInformationHolder bindType : bindTypes) {
+            if (bindings.contains(bindType.getBindtypename())) {
+                try {
+                    CoreLibrary.getInstance().context().commonrepository(bindType.getBindtypename()).onCreate(database);
+                } catch (SQLException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+        }
+
+
+        if (commonFtsObject != null) {
+            for (String ftsTable : commonFtsObject.getTables()) {
+                if (bindings.contains(ftsTable)) {
+                    Set<String> searchColumns = new LinkedHashSet<String>();
+                    searchColumns.add(CommonFtsObject.idColumn);
+                    searchColumns.add(CommonFtsObject.relationalIdColumn);
+                    searchColumns.add(CommonFtsObject.phraseColumn);
+                    searchColumns.add(CommonFtsObject.isClosedColumn);
+
+                    String[] mainConditions = commonFtsObject.getMainConditions(ftsTable);
+                    if (mainConditions != null) {
+                        for (String mainCondition : mainConditions) {
+                            if (!mainCondition.equals(CommonFtsObject.isClosedColumnName)) {
+                                searchColumns.add(mainCondition);
+                            }
+                        }
+                    }
+
+                    String[] sortFields = commonFtsObject.getSortFields(ftsTable);
+                    if (sortFields != null) {
+                        for (String sortValue : sortFields) {
+                            if (sortValue.startsWith("alerts.")) {
+                                sortValue = sortValue.split("\\.")[1];
+                            }
+                            searchColumns.add(sortValue);
+                        }
+                    }
+
+                    String joinedSearchColumns = StringUtils.join(searchColumns, ",");
+
+                    String searchSql =
+                            "create virtual table " + CommonFtsObject.searchTableName(ftsTable)
+                                    + " using fts4 (" + joinedSearchColumns + ");";
+                    database.execSQL(searchSql);
+                }
+            }
+        }
     }
 }
