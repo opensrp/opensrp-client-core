@@ -139,10 +139,21 @@ public class DatabaseMigrationUtils {
 
     }
 
+
+    private static boolean tableExists(SQLiteDatabase database, String tableName) {
+        Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name= ?", new String[]{tableName});
+        boolean exists = false;
+        if (cursor != null) {
+            exists = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return exists;
+    }
+
     public static void createAddedECTables(SQLiteDatabase database, List<String> bindings, CommonFtsObject commonFtsObject) {
         ArrayList<CommonRepositoryInformationHolder> bindTypes = org.smartregister.Context.bindtypes;
         for (CommonRepositoryInformationHolder bindType : bindTypes) {
-            if (bindings.contains(bindType.getBindtypename())) {
+            if (bindings.contains(bindType.getBindtypename()) && !tableExists(database, bindType.getBindtypename())) {
                 CoreLibrary.getInstance().context().commonrepository(bindType.getBindtypename()).onCreate(database);
             }
         }
@@ -150,7 +161,7 @@ public class DatabaseMigrationUtils {
 
         if (commonFtsObject != null) {
             for (String ftsTable : commonFtsObject.getTables()) {
-                if (bindings.contains(ftsTable)) {
+                if (bindings.contains(ftsTable) && !tableExists(database, ftsTable)) {
                     Set<String> searchColumns = new LinkedHashSet<String>();
                     searchColumns.add(CommonFtsObject.idColumn);
                     searchColumns.add(CommonFtsObject.relationalIdColumn);
