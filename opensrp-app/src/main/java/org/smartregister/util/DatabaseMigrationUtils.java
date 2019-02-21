@@ -161,7 +161,8 @@ public class DatabaseMigrationUtils {
 
         if (commonFtsObject != null) {
             for (String ftsTable : commonFtsObject.getTables()) {
-                if (bindings.contains(ftsTable) && !tableExists(database, ftsTable)) {
+                String ftsSearchTableName = CommonFtsObject.searchTableName(ftsTable);
+                if (bindings.contains(ftsTable) && !tableExists(database, ftsSearchTableName)) {
                     Set<String> searchColumns = new LinkedHashSet<String>();
                     searchColumns.add(CommonFtsObject.idColumn);
                     searchColumns.add(CommonFtsObject.relationalIdColumn);
@@ -190,7 +191,7 @@ public class DatabaseMigrationUtils {
                     String joinedSearchColumns = StringUtils.join(searchColumns, ",");
 
                     String searchSql =
-                            "create virtual table " + CommonFtsObject.searchTableName(ftsTable)
+                            "create virtual table " + ftsSearchTableName
                                     + " using fts4 (" + joinedSearchColumns + ");";
                     database.execSQL(searchSql);
                 }
