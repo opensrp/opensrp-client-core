@@ -150,7 +150,7 @@ public class DatabaseMigrationUtils {
         return exists;
     }
 
-    public static void createAddedECTables(SQLiteDatabase database, List<String> bindings, CommonFtsObject commonFtsObject) {
+    public static void createAddedECTables(SQLiteDatabase database, Set<String> bindings, CommonFtsObject commonFtsObject) {
         ArrayList<CommonRepositoryInformationHolder> bindTypes = org.smartregister.Context.bindtypes;
         for (CommonRepositoryInformationHolder bindType : bindTypes) {
             if (bindings.contains(bindType.getBindtypename()) && !tableExists(database, bindType.getBindtypename())) {
