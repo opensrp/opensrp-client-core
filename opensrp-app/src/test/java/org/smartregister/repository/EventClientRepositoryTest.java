@@ -102,6 +102,12 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
+    public void fetchEventClientsByEventVersion() throws Exception {
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Assert.assertNotNull(eventClientRepository.fetchEventClientsByEventType("Registration"));
+    }
+
+    @Test
     public void getUnsyncedEventsReturnsNotNull() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getUnSyncedEvents(100));
@@ -258,7 +264,6 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedEventFormSubmissionIds(1));
     }
-
 
 
     @Test

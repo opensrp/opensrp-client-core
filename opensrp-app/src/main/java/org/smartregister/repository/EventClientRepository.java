@@ -479,6 +479,42 @@ public class EventClientRepository extends BaseRepository {
         return list;
     }
 
+
+    public List<EventClient> fetchEventClientsByEventType(String eventType) {
+        List<EventClient> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+                            + Table.event.name()
+                            + " WHERE " + event_column.eventType.name() + " = ?  "
+                            + " ORDER BY " + event_column.serverVersion.name(),
+                    new String[]{eventType});
+            while (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+                if (StringUtils.isBlank(jsonEventStr)
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
+                    continue;
+                }
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+                Event event = convert(jsonEventStr, Event.class);
+
+                String baseEntityId = event.getBaseEntityId();
+                Client client = fetchClientByBaseEntityId(baseEntityId);
+
+                EventClient eventClient = new EventClient(event, client);
+                list.add(eventClient);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
     public List<JSONObject> getEvents(Date lastSyncDate) {
 
         String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
