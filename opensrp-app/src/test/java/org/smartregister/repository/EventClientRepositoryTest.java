@@ -27,6 +27,7 @@ import org.smartregister.sync.ClientData;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -104,7 +105,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void fetchEventClientsByEventVersion() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
-        Assert.assertNotNull(eventClientRepository.fetchEventClientsByEventType("Registration"));
+        Assert.assertNotNull(eventClientRepository.fetchEventClientsByEventTypes(Collections.singletonList("Registration")));
     }
 
     @Test

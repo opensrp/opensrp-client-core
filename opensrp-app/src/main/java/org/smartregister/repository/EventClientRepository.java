@@ -479,16 +479,25 @@ public class EventClientRepository extends BaseRepository {
         return list;
     }
 
-
-    public List<EventClient> fetchEventClientsByEventType(String eventType) {
+    /**
+     * Get a list of events and client for a list of event types
+     *
+     * @param eventTypes the list of event types
+     * @return a list of events and clients
+     */
+    public List<EventClient> fetchEventClientsByEventTypes(List<String> eventTypes) {
+        if (eventTypes == null)
+            return null;
         List<EventClient> list = new ArrayList<>();
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+            String eventTypeString = TextUtils.join(",", Collections.nCopies(eventTypes.size(), "?"));
+
+            cursor = getWritableDatabase().rawQuery(String.format("SELECT json FROM "
                             + Table.event.name()
-                            + " WHERE " + event_column.eventType.name() + " = ?  "
-                            + " ORDER BY " + event_column.serverVersion.name(),
-                    new String[]{eventType});
+                            + " WHERE " + event_column.eventType.name() + " IN (%s)  "
+                            + " ORDER BY " + event_column.serverVersion.name(), eventTypeString),
+                    eventTypes.toArray(new String[]{}));
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(0);
                 if (StringUtils.isBlank(jsonEventStr)
