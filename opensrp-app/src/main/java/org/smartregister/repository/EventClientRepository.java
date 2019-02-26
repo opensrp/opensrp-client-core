@@ -479,6 +479,51 @@ public class EventClientRepository extends BaseRepository {
         return list;
     }
 
+    /**
+     * Get a list of events and client for a list of event types
+     *
+     * @param eventTypes the list of event types
+     * @return a list of events and clients
+     */
+    public List<EventClient> fetchEventClientsByEventTypes(List<String> eventTypes) {
+        if (eventTypes == null)
+            return null;
+        List<EventClient> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            String eventTypeString = TextUtils.join(",", Collections.nCopies(eventTypes.size(), "?"));
+
+            cursor = getWritableDatabase().rawQuery(String.format("SELECT json FROM "
+                            + Table.event.name()
+                            + " WHERE " + event_column.eventType.name() + " IN (%s)  "
+                            + " ORDER BY " + event_column.serverVersion.name(), eventTypeString),
+                    eventTypes.toArray(new String[]{}));
+            while (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+                if (StringUtils.isBlank(jsonEventStr)
+                        || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
+                    continue;
+                }
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+                Event event = convert(jsonEventStr, Event.class);
+
+                String baseEntityId = event.getBaseEntityId();
+                Client client = fetchClientByBaseEntityId(baseEntityId);
+
+                EventClient eventClient = new EventClient(event, client);
+                list.add(eventClient);
+            }
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+
     public List<JSONObject> getEvents(Date lastSyncDate) {
 
         String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
