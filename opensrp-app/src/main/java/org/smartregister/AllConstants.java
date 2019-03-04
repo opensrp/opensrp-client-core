@@ -99,6 +99,14 @@ public class AllConstants {
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
+    public static final String OPTIONS = "options";
+    public static final String CHECK_BOX = "check_box";
+    public static final String TRUE = "true";
+    public static final String DATE = "date";
+    public static final String TEXT = "text";
+    public static final String NATIVE_RADIO = "native_radio";
+    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+
 
     public static class Immunizations {
         public static final String BCG = "bcg";

@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.DateUtil;
@@ -61,7 +62,8 @@ public class JsonFormUtils {
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
-    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
+    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     public static Client createBaseClient(JSONArray fields, FormTag formTag, String entityId) {
 
@@ -116,7 +118,8 @@ public class JsonFormUtils {
 
     }
 
-    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType) {
+    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId,
+                                    String encounterType, String bindType) {
 
         String encounterDateField = getFieldValue(fields, FormEntityConstants.Encounter.encounter_date);
         String encounterLocation = null;
@@ -196,50 +199,70 @@ public class JsonFormUtils {
 
     public static void addObservation(Event e, JSONObject jsonObject) {
         String value = getString(jsonObject, VALUE);
+        String type = getString(jsonObject, AllConstants.TYPE);
         String entity = CONCEPT;
         if (StringUtils.isNotBlank(value)) {
-            List<Object> vall = new ArrayList<>();
-
-            String formSubmissionField = getString(jsonObject, KEY);
-
-            String dataType = getString(jsonObject, OPENMRS_DATA_TYPE);
-            if (StringUtils.isBlank(dataType)) {
-                dataType = "text";
-            }
-
-            if (dataType.equals("date") && StringUtils.isNotBlank(value)) {
-                String newValue = convertToOpenMRSDate(value);
-                if (newValue != null) {
-                    value = newValue;
+            if (AllConstants.CHECK_BOX.equals(type)) {
+                try {
+                    JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    for (int i = 0; i < conceptsOptions.length(); i++) {
+                        JSONObject option = conceptsOptions.getJSONObject(i);
+                        String optionValue = option.getString(VALUE);
+                        if (AllConstants.TRUE.equals(optionValue)) {
+                            createObservation(e, option, option.getString(VALUE), entity);
+                        }
+                    }
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
                 }
+            } else {
+                createObservation(e, jsonObject, value, entity);
             }
+        }
+    }
 
-            String entityVal = getString(jsonObject, OPENMRS_ENTITY);
+    private static void createObservation(Event e, JSONObject jsonObject, String value, String entity) {
+        List<Object> vall = new ArrayList<>();
 
-            if (entityVal != null && entityVal.equals(entity)) {
-                String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
-                String entityParentVal = getString(jsonObject, OPENMRS_ENTITY_PARENT);
+        String formSubmissionField = getString(jsonObject, KEY);
 
-                List<Object> humanReadableValues = new ArrayList<>();
+        String dataType = getString(jsonObject, OPENMRS_DATA_TYPE);
+        if (StringUtils.isBlank(dataType)) {
+            dataType = AllConstants.TEXT;
+        }
 
-                JSONArray values = getJSONArray(jsonObject, VALUES);
-                if (values != null && values.length() > 0) {
-                    JSONObject choices = getJSONObject(jsonObject, OPENMRS_CHOICE_IDS);
-                    String chosenConcept = getString(choices, value);
-                    vall.add(chosenConcept);
-                    humanReadableValues.add(value);
-                } else {
-                    vall.add(value);
-                }
+        if (dataType.equals(AllConstants.DATE) && StringUtils.isNotBlank(value)) {
+            String newValue = convertToOpenMRSDate(value);
+            if (newValue != null) {
+                value = newValue;
+            }
+        }
 
-                e.addObs(new Obs(CONCEPT, dataType, entityIdVal,
-                        entityParentVal, vall, humanReadableValues, null, formSubmissionField));
-            } else if (StringUtils.isBlank(entityVal)) {
+        String entityVal = getString(jsonObject, OPENMRS_ENTITY);
+
+        if (entityVal != null && entityVal.equals(entity)) {
+            String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
+            String entityParentVal = getString(jsonObject, OPENMRS_ENTITY_PARENT);
+
+            List<Object> humanReadableValues = new ArrayList<>();
+
+            JSONArray values = getJSONArray(jsonObject, VALUES);
+            if (values != null && values.length() > 0) {
+                JSONObject choices = getJSONObject(jsonObject, OPENMRS_CHOICE_IDS);
+                String chosenConcept = getString(choices, value);
+                vall.add(chosenConcept);
+                humanReadableValues.add(value);
+            } else {
                 vall.add(value);
-
-                e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
-                        "", vall, new ArrayList<>(), null, formSubmissionField));
             }
+
+            e.addObs(new Obs(CONCEPT, dataType, entityIdVal,
+                    entityParentVal, vall, humanReadableValues, null, formSubmissionField));
+        } else if (StringUtils.isBlank(entityVal)) {
+            vall.add(value);
+
+            e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
+                    "", vall, new ArrayList<>(), null, formSubmissionField));
         }
     }
 
@@ -372,12 +395,14 @@ public class JsonFormUtils {
                 } else if (addressField.equalsIgnoreCase("sub_district") || addressField.equalsIgnoreCase("subDistrict")) {
                     ad.setSubDistrict(value);
                 } else if (addressField.equalsIgnoreCase("district") || addressField.equalsIgnoreCase("county")
-                        || addressField.equalsIgnoreCase("county_district") || addressField.equalsIgnoreCase("countyDistrict")) {
+                        || addressField.equalsIgnoreCase("county_district") || addressField
+                        .equalsIgnoreCase("countyDistrict")) {
                     ad.setCountyDistrict(value);
                 } else if (addressField.equalsIgnoreCase("city") || addressField.equalsIgnoreCase("village")
                         || addressField.equalsIgnoreCase("cityVillage") || addressField.equalsIgnoreCase("city_village")) {
                     ad.setCityVillage(value);
-                } else if (addressField.equalsIgnoreCase("state") || addressField.equalsIgnoreCase("state_province") || addressField.equalsIgnoreCase("stateProvince")) {
+                } else if (addressField.equalsIgnoreCase("state") || addressField
+                        .equalsIgnoreCase("state_province") || addressField.equalsIgnoreCase("stateProvince")) {
                     ad.setStateProvince(value);
                 } else if (addressField.equalsIgnoreCase("country")) {
                     ad.setCountry(value);
@@ -436,7 +461,8 @@ public class JsonFormUtils {
             }
             String entityVal = getString(jsonObject, OPENMRS_ENTITY);
             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
-            if (entityVal != null && entityVal.equals(person.entity()) && entityIdVal != null && entityIdVal.equals(person.name())) {
+            if (entityVal != null && entityVal.equals(person.entity()) && entityIdVal != null && entityIdVal
+                    .equals(person.name())) {
                 return getString(jsonObject, VALUE);
             }
 
@@ -541,12 +567,14 @@ public class JsonFormUtils {
                 } else if (addressField.equalsIgnoreCase("sub_district") || addressField.equalsIgnoreCase("subDistrict")) {
                     ad.setSubDistrict(value);
                 } else if (addressField.equalsIgnoreCase("district") || addressField.equalsIgnoreCase("county")
-                        || addressField.equalsIgnoreCase("county_district") || addressField.equalsIgnoreCase("countyDistrict")) {
+                        || addressField.equalsIgnoreCase("county_district") || addressField
+                        .equalsIgnoreCase("countyDistrict")) {
                     ad.setCountyDistrict(value);
                 } else if (addressField.equalsIgnoreCase("city") || addressField.equalsIgnoreCase("village")
                         || addressField.equalsIgnoreCase("cityVillage") || addressField.equalsIgnoreCase("city_village")) {
                     ad.setCityVillage(value);
-                } else if (addressField.equalsIgnoreCase("state") || addressField.equalsIgnoreCase("state_province") || addressField.equalsIgnoreCase("stateProvince")) {
+                } else if (addressField.equalsIgnoreCase("state") || addressField
+                        .equalsIgnoreCase("state_province") || addressField.equalsIgnoreCase("stateProvince")) {
                     ad.setStateProvince(value);
                 } else if (addressField.equalsIgnoreCase("country")) {
                     ad.setCountry(value);
