@@ -27,6 +27,7 @@ import org.smartregister.sync.ClientData;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -99,6 +100,12 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(new Date()));
 
+    }
+
+    @Test
+    public void fetchEventClientsByEventVersion() throws Exception {
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Assert.assertNotNull(eventClientRepository.fetchEventClientsByEventTypes(Collections.singletonList("Registration")));
     }
 
     @Test
@@ -258,7 +265,6 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedEventFormSubmissionIds(1));
     }
-
 
 
     @Test
