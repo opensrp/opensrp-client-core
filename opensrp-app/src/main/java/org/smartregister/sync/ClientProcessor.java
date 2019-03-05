@@ -883,7 +883,7 @@ public class ClientProcessor {
     public JSONObject getColumnMappings(String registerName) {
 
         try {
-            String clientClassificationStr = getFileContents("ec_client_fields.json");
+            String clientClassificationStr = getFileContents(CoreLibrary.getInstance().getEcClientFieldsFile());
             JSONObject clientClassificationJson = new JSONObject(clientClassificationStr);
             JSONArray bindObjects = clientClassificationJson.getJSONArray("bindobjects");
 

@@ -466,7 +466,7 @@ public class ClientProcessorForJava {
         try {
             Log.d(TAG, "Started updateClientDetailsTable");
 
-            if(CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
+            if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
                 String baseEntityId = client.getBaseEntityId();
                 Long timestamp = getEventDate(event.getEventDate());
 
@@ -674,7 +674,7 @@ public class ClientProcessorForJava {
 
     public Table getColumnMappings(String registerName) {
         try {
-            ClientField clientField = assetJsonToJava("ec_client_fields.json", ClientField.class);
+            ClientField clientField = assetJsonToJava(CoreLibrary.getInstance().getEcClientFieldsFile(), ClientField.class);
             if (clientField == null) {
                 return null;
             }
