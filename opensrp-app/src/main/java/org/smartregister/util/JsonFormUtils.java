@@ -209,6 +209,8 @@ public class JsonFormUtils {
                         JSONObject option = conceptsOptions.getJSONObject(i);
                         String optionValue = option.getString(VALUE);
                         if (AllConstants.TRUE.equals(optionValue)) {
+                            option.put(AllConstants.TYPE, type);
+                            option.put("check_box_parent", jsonObject.getString(OPENMRS_ENTITY_ID));
                             createObservation(e, option, option.getString(VALUE), entity);
                         }
                     }
@@ -247,15 +249,36 @@ public class JsonFormUtils {
             List<Object> humanReadableValues = new ArrayList<>();
 
             JSONArray values = getJSONArray(jsonObject, VALUES);
-            if (values != null && values.length() > 0) {
-                JSONObject choices = getJSONObject(jsonObject, OPENMRS_CHOICE_IDS);
-                String chosenConcept = getString(choices, value);
-                vall.add(chosenConcept);
-                humanReadableValues.add(value);
+            String widgetType = getString(jsonObject, AllConstants.TYPE);
+            if (AllConstants.CHECK_BOX.equals(widgetType)) {
+                entityIdVal = getString(jsonObject, "check_box_parent");
+                entityParentVal = getString(jsonObject, "check_box_parent");
+                vall.add(getString(jsonObject, OPENMRS_ENTITY_ID));
+                humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
+            } else if (AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON
+                    .equals(widgetType)) {
+                try {
+                    JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
+                    for (int i = 0; i < options.length(); i++) {
+                        JSONObject option = options.getJSONObject(i);
+                        if (value.equals(option.getString(KEY))) {
+                            entityParentVal = getString(jsonObject, OPENMRS_ENTITY_ID);
+                            vall.add(option.getString(OPENMRS_ENTITY_ID));
+                        }
+                    }
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
             } else {
-                vall.add(value);
+                if (values != null && values.length() > 0) {
+                    JSONObject choices = getJSONObject(jsonObject, OPENMRS_CHOICE_IDS);
+                    String chosenConcept = getString(choices, value);
+                    vall.add(chosenConcept);
+                    humanReadableValues.add(value);
+                } else {
+                    vall.add(value);
+                }
             }
-
             e.addObs(new Obs(CONCEPT, dataType, entityIdVal,
                     entityParentVal, vall, humanReadableValues, null, formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
