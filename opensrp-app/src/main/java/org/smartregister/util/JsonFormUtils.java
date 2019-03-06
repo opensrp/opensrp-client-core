@@ -251,7 +251,7 @@ public class JsonFormUtils {
             JSONArray values = getJSONArray(jsonObject, VALUES);
             String widgetType = getString(jsonObject, AllConstants.TYPE);
             if (AllConstants.CHECK_BOX.equals(widgetType)) {
-                entityIdVal = getString(jsonObject, "check_box_parent");
+                entityIdVal = "";
                 entityParentVal = getString(jsonObject, "check_box_parent");
                 vall.add(getString(jsonObject, OPENMRS_ENTITY_ID));
                 humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
@@ -262,6 +262,7 @@ public class JsonFormUtils {
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         if (value.equals(option.getString(KEY))) {
+                            entityIdVal = "";
                             entityParentVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                             vall.add(option.getString(OPENMRS_ENTITY_ID));
                         }
