@@ -17,6 +17,7 @@ public class AllConstants {
     public static final int DATABASE_VERSION = 1;
     public static final String IDENTIFIER = "identifier";
     public static final String SETTINGS = "settings";
+    public static final String SERVER_VERSION = "serverVersion";
 
 
     // Maximum time difference between server and client time in milliseconds
