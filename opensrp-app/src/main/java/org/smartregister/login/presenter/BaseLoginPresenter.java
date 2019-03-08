@@ -137,7 +137,7 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
     }
 
     @Override
-    public abstract boolean isSiteCharacteristicsSet();
+    public abstract boolean isServerSettingsSet();
 
     //for testing only, setter methods instead?
     public void setLoginInteractor(BaseLoginContract.Interactor mLoginInteractor) {
