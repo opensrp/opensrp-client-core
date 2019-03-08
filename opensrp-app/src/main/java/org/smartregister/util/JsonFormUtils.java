@@ -210,7 +210,7 @@ public class JsonFormUtils {
                         String optionValue = option.getString(VALUE);
                         if (AllConstants.TRUE.equals(optionValue)) {
                             option.put(AllConstants.TYPE, type);
-                            option.put("check_box_parent", jsonObject.getString(OPENMRS_ENTITY_ID));
+                            option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                             createObservation(e, option, option.getString(VALUE), entity);
                         }
                     }
@@ -251,8 +251,8 @@ public class JsonFormUtils {
             JSONArray values = getJSONArray(jsonObject, VALUES);
             String widgetType = getString(jsonObject, AllConstants.TYPE);
             if (AllConstants.CHECK_BOX.equals(widgetType)) {
-                entityIdVal = "";
-                entityParentVal = getString(jsonObject, "check_box_parent");
+                entityIdVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
+                entityParentVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
                 vall.add(getString(jsonObject, OPENMRS_ENTITY_ID));
                 humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
             } else if (AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON
@@ -262,8 +262,8 @@ public class JsonFormUtils {
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         if (value.equals(option.getString(KEY))) {
-                            entityIdVal = "";
-                            entityParentVal = getString(jsonObject, OPENMRS_ENTITY_ID);
+                            entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
+                            entityParentVal = "";
                             vall.add(option.getString(OPENMRS_ENTITY_ID));
                         }
                     }
@@ -628,6 +628,39 @@ public class JsonFormUtils {
             Log.e(TAG, "", e);
         }
         return null;
+    }
+
+    /**
+     * Returns a JSONArray of all the forms fields in a multi step form.
+     * @param jsonForm {@link JSONObject}
+     * @return fields {@link JSONArray}
+     * @author dubdabasoduba
+     */
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+        JSONArray fields = new JSONArray();
+        try {
+            if (jsonForm.has(AllConstants.COUNT)) {
+                int stepCount = Integer.parseInt(jsonForm.getString(AllConstants.COUNT));
+                for (int i = 0; i < stepCount; i++) {
+                    String stepName = AllConstants.STEP + (i + 1);
+                    JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
+                    if (step != null && step.has(FIELDS)) {
+                        JSONArray stepFields = step.getJSONArray(FIELDS);
+                        for (int k = 0; k < stepFields.length(); k++) {
+                            JSONObject field = stepFields.getJSONObject(k);
+                            fields.put(field);
+                        }
+                    }
+                }
+            } else {
+                Log.e(TAG, "The form step count is needed for the fields to be fetched", null);
+                return fields;
+            }
+
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return fields;
     }
 
     /**

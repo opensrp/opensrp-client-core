@@ -106,6 +106,9 @@ public class AllConstants {
     public static final String TEXT = "text";
     public static final String NATIVE_RADIO = "native_radio";
     public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String PARENT_ENTITY_ID = "parent_entity_id";
+    public static final String COUNT = "count";
+    public static final String STEP = "step";
 
 
     public static class Immunizations {
