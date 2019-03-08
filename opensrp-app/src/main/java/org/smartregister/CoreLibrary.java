@@ -11,6 +11,8 @@ public class CoreLibrary {
     private final SyncConfiguration syncConfiguration;
     private static long buildTimeStamp;
 
+    private String ecClientFieldsFile = "ec_client_fields.json";
+
     public static void init(Context context) {
         init(context, null);
     }
@@ -77,5 +79,13 @@ public class CoreLibrary {
 
     public static long getBuildTimeStamp() {
         return buildTimeStamp;
+    }
+
+    public String getEcClientFieldsFile() {
+        return ecClientFieldsFile;
+    }
+
+    public void setEcClientFieldsFile(String ecClientFieldsFile) {
+        this.ecClientFieldsFile = ecClientFieldsFile;
     }
 }
