@@ -96,6 +96,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 if (NetworkUtils.isNetworkAvailable()) {
                     SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
                 }
+
+                scheduleJobs();
                 Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
             }
         }).start();
