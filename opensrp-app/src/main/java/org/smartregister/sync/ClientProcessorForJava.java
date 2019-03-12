@@ -388,7 +388,10 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    columnValue = getValues((List) values).get(0);
+                                    List<String> li = getValues((List) values);
+                                    if (!li.isEmpty()) {
+                                        columnValue = li.get(0);
+                                    }
                                 }
                             }
                         }
