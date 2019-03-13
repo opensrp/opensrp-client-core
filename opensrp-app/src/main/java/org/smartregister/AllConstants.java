@@ -109,6 +109,12 @@ public class AllConstants {
     public static final String PARENT_ENTITY_ID = "parent_entity_id";
     public static final String COUNT = "count";
     public static final String STEP = "step";
+    public static final String EXTRA_REL = "extra_rel";
+    public static final String HAS_EXTRA_REL = "has_extra_rel";
+    public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
+    public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
+    public static final String SECONDARY_VALUE = "secondary_value";
+    public static final String EXPANSION_PANEL = "expansion_panel";
 
 
     public static class Immunizations {

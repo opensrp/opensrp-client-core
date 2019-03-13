@@ -141,7 +141,7 @@ public class JsonFormUtils {
             encounterLocation = formTag.locationId;
         }
 
-        Event e = (Event) new Event()
+        Event event = (Event) new Event()
                 .withBaseEntityId(entityId)
                 .withEventDate(encounterDate)
                 .withEventType(encounterType)
@@ -151,18 +151,44 @@ public class JsonFormUtils {
                 .withFormSubmissionId(generateRandomUUIDString())
                 .withDateCreated(new Date());
 
-        e.setChildLocationId(formTag.childLocationId);
-        e.setTeam(formTag.team);
-        e.setTeamId(formTag.teamId);
+        event.setChildLocationId(formTag.childLocationId);
+        event.setTeam(formTag.team);
+        event.setTeamId(formTag.teamId);
 
-        e.setClientApplicationVersion(formTag.appVersion);
-        e.setClientDatabaseVersion(formTag.databaseVersion);
+        event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientDatabaseVersion(formTag.databaseVersion);
 
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
+            try {
+                if (jsonObject.has(AllConstants.TYPE) && (AllConstants.NATIVE_RADIO
+                        .equals(jsonObject.getString(AllConstants.TYPE)) || AllConstants.ANC_RADIO_BUTTON
+                        .equals(jsonObject.getString(AllConstants.TYPE))) && jsonObject
+                        .has(AllConstants.EXTRA_REL) && jsonObject
+                        .getBoolean(AllConstants.EXTRA_REL) && jsonObject.has(AllConstants.HAS_EXTRA_REL)) {
+                    String extraFieldsKey = jsonObject.getString(AllConstants.HAS_EXTRA_REL);
+                    JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    for (int k = 0; k < options.length(); k++) {
+                        JSONObject option = options.getJSONObject(k);
+                        if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) && option.has(
+                                AllConstants.OPENMRS_ATTRIBUTES) && option
+                                .has(AllConstants.VALUE_OPENMRS_ATTRIBUTES) && option.has(AllConstants.SECONDARY_VALUE)) {
+                            jsonObject = getPopUpValues(option, true);
+                        }
+                    }
+
+                } else if (jsonObject.has(AllConstants.TYPE) && AllConstants.EXPANSION_PANEL
+                        .equals(jsonObject.getString(AllConstants.TYPE))) {
+                    jsonObject = getPopUpValues(jsonObject, false);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
             String value = getString(jsonObject, VALUE);
             if (StringUtils.isNotBlank(value)) {
-                addObservation(e, jsonObject);
+                addObservation(event, jsonObject);
             }
         }
 
@@ -178,13 +204,13 @@ public class JsonFormUtils {
                     if (entityVal != null) {
                         if (entityVal.equals(CONCEPT)) {
                             addToJSONObject(jsonObject, KEY, key);
-                            addObservation(e, jsonObject);
+                            addObservation(event, jsonObject);
                         } else if (entityVal.equals(ENCOUNTER)) {
                             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                             if (entityIdVal.equals(FormEntityConstants.Encounter.encounter_date.name())) {
                                 Date eDate = formatDate(value, false);
                                 if (eDate != null) {
-                                    e.setEventDate(eDate);
+                                    event.setEventDate(eDate);
                                 }
                             }
                         }
@@ -193,8 +219,76 @@ public class JsonFormUtils {
             }
         }
 
-        return e;
+        return event;
 
+    }
+
+    private static JSONObject getPopUpValues(JSONObject jsonObject, boolean type) {
+        JSONObject popupJson = new JSONObject();
+        try {
+            JSONArray secondaryValues;
+            if (type) {
+                secondaryValues = jsonObject.getJSONArray(AllConstants.SECONDARY_VALUE);
+            } else {
+                secondaryValues = jsonObject.getJSONArray(VALUE);
+            }
+
+            JSONObject parentOpenMRSAttributes = jsonObject.getJSONObject(AllConstants.OPENMRS_ATTRIBUTES);
+            JSONArray valueOpenMRSAttributes = jsonObject.getJSONArray(AllConstants.VALUE_OPENMRS_ATTRIBUTES);
+
+            for (int j = 0; j < secondaryValues.length(); j++) {
+                JSONObject secondaryValue = secondaryValues.getJSONObject(j);
+                if (secondaryValue.has(KEY)) {
+                    String secondaryValueKey = secondaryValue.getString(KEY);
+                    String secondaryValueType = secondaryValue.getString(AllConstants.TYPE);
+
+                    for (int l = 0; l < valueOpenMRSAttributes.length(); l++) {
+                        JSONObject valueOpenMRSAttribute = valueOpenMRSAttributes.getJSONObject(l);
+                        if (valueOpenMRSAttribute.get(KEY).equals(secondaryValueKey)) {
+                            JSONObject newJson = new JSONObject();
+                            newJson.put(KEY, secondaryValueKey);
+                            newJson.put(OPENMRS_ENTITY, CONCEPT);
+                            newJson.put(OPENMRS_ENTITY_ID,
+                                    valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+
+                            if (AllConstants.CHECK_BOX.equals(secondaryValueKey)) {
+                                newJson.put(OPENMRS_ENTITY_PARENT,
+                                        parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
+                                newJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                            } else if (AllConstants.NATIVE_RADIO
+                                    .equals(secondaryValueType) || AllConstants.ANC_RADIO_BUTTON
+                                    .equals(secondaryValueType)) {
+                                newJson.put(OPENMRS_ENTITY_PARENT, "");
+                                newJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                            } else {
+                                newJson.put(OPENMRS_ENTITY_PARENT,
+                                        valueOpenMRSAttribute.getString(OPENMRS_ENTITY_PARENT));
+                                JSONArray values = secondaryValue.getJSONArray(VALUES);
+                                String value = "";
+                                if (values != null) {
+                                    String valueString = values.getString(0);
+                                    String[] valueStringArray = valueString.split(":");
+                                    if (valueStringArray.length > 1) {
+                                        value = valueStringArray[1];
+                                    } else {
+                                        value = valueStringArray[0];
+                                    }
+                                }
+
+                                newJson.put(VALUE, value);
+                                popupJson = newJson;
+                            }
+
+                        }
+                    }
+
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return popupJson;
     }
 
     public static void addObservation(Event e, JSONObject jsonObject) {
@@ -204,15 +298,19 @@ public class JsonFormUtils {
         if (StringUtils.isNotBlank(value)) {
             if (AllConstants.CHECK_BOX.equals(type)) {
                 try {
-                    JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
-                    for (int i = 0; i < conceptsOptions.length(); i++) {
-                        JSONObject option = conceptsOptions.getJSONObject(i);
-                        String optionValue = option.getString(VALUE);
-                        if (AllConstants.TRUE.equals(optionValue)) {
-                            option.put(AllConstants.TYPE, type);
-                            option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
-                            createObservation(e, option, option.getString(VALUE), entity);
+                    if (jsonObject.has(AllConstants.OPTIONS)) {
+                        JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                        for (int i = 0; i < conceptsOptions.length(); i++) {
+                            JSONObject option = conceptsOptions.getJSONObject(i);
+                            String optionValue = option.getString(VALUE);
+                            if (AllConstants.TRUE.equals(optionValue)) {
+                                option.put(AllConstants.TYPE, type);
+                                option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
+                                createObservation(e, option, option.getString(VALUE), entity);
+                            }
                         }
+                    } else {
+                        createObservation(e, jsonObject, value, entity);
                     }
                 } catch (JSONException e1) {
                     e1.printStackTrace();
@@ -250,13 +348,13 @@ public class JsonFormUtils {
 
             JSONArray values = getJSONArray(jsonObject, VALUES);
             String widgetType = getString(jsonObject, AllConstants.TYPE);
-            if (AllConstants.CHECK_BOX.equals(widgetType)) {
-                entityIdVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
+            if (AllConstants.CHECK_BOX.equals(widgetType) && jsonObject.has(AllConstants.OPTIONS)) {
+                entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                 entityParentVal = getString(jsonObject, AllConstants.PARENT_ENTITY_ID);
                 vall.add(getString(jsonObject, OPENMRS_ENTITY_ID));
                 humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
-            } else if (AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON
-                    .equals(widgetType)) {
+            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON
+                    .equals(widgetType)) && jsonObject.has(AllConstants.OPTIONS)) {
                 try {
                     JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
                     for (int i = 0; i < options.length(); i++) {
@@ -632,6 +730,7 @@ public class JsonFormUtils {
 
     /**
      * Returns a JSONArray of all the forms fields in a multi step form.
+     *
      * @param jsonForm {@link JSONObject}
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
