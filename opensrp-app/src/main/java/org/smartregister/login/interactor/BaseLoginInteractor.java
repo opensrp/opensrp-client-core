@@ -19,7 +19,7 @@ import org.smartregister.job.SyncServiceJob;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
-import org.smartregister.sync.helper.CharacteristicsHelper;
+import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -242,8 +242,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 JSONArray settings = data.has(AllConstants.PREF_KEY.SETTINGS) ? data.getJSONArray(AllConstants.PREF_KEY.SETTINGS) : null;
 
                 if (settings != null && settings.length() > 0) {
-                    CharacteristicsHelper.saveSetting(settings);
-                    CharacteristicsHelper.updateLastSettingServerSyncTimetamp();
+                    ServerSettingsHelper.saveSetting(settings);
                 }
 
             } catch (JSONException e) {

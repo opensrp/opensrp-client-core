@@ -23,7 +23,7 @@ public interface BaseLoginContract {
 
         org.smartregister.Context getOpenSRPContext();
 
-        boolean isSiteCharacteristicsSet();
+        boolean isServerSettingsSet();
     }
 
     interface View {
