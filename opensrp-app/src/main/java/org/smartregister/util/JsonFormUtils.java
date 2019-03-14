@@ -249,59 +249,82 @@ public class JsonFormUtils {
                 }
 
                 JSONArray valueOpenMRSAttributes = new JSONArray();
-                if (secondaryValue.has(AllConstants.VALUE_OPENMRS_ATTRIBUTES)) {
-                    valueOpenMRSAttributes = secondaryValue.getJSONArray(AllConstants.VALUE_OPENMRS_ATTRIBUTES);
-                }
-
                 if (secondaryValue.has(KEY)) {
                     String secondaryValueKey = secondaryValue.getString(KEY);
                     String secondaryValueType = secondaryValue.getString(AllConstants.TYPE);
 
-                    for (int l = 0; l < valueOpenMRSAttributes.length(); l++) {
-                        JSONObject valueOpenMRSAttribute = valueOpenMRSAttributes.getJSONObject(l);
-                        JSONObject popupJson = new JSONObject();
-                        if (valueOpenMRSAttribute.get(KEY).equals(secondaryValueKey)) {
-                            popupJson.put(KEY, secondaryValueKey);
-                            popupJson.put(OPENMRS_ENTITY, CONCEPT);
-                            popupJson.put(OPENMRS_ENTITY_ID, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                    if (secondaryValue.has(AllConstants.VALUE_OPENMRS_ATTRIBUTES)) {
+                        valueOpenMRSAttributes = secondaryValue.getJSONArray(AllConstants.VALUE_OPENMRS_ATTRIBUTES);
 
-                            if (AllConstants.CHECK_BOX.equals(secondaryValueKey)) {
-                                popupJson.put(OPENMRS_ENTITY_PARENT,
-                                        parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
-                                popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
-                                popupJson.put(AllConstants.TYPE, secondaryValueType);
-                                addObservation(event, popupJson);
-                            } else if (AllConstants.NATIVE_RADIO
-                                    .equals(secondaryValueType) || AllConstants.ANC_RADIO_BUTTON
-                                    .equals(secondaryValueType)) {
-                                popupJson.put(OPENMRS_ENTITY_PARENT, "");
-                                popupJson.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
-                                popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
-                                popupJson.put(AllConstants.TYPE, secondaryValueType);
-                                addObservation(event, popupJson);
-                            } else {
-                                popupJson.put(OPENMRS_ENTITY_PARENT,
-                                        valueOpenMRSAttribute.getString(OPENMRS_ENTITY_PARENT));
-                                JSONArray values = secondaryValue.getJSONArray(VALUES);
-                                String value = "";
-                                if (values != null) {
-                                    String valueString = values.getString(0);
-                                    String[] valueStringArray = valueString.split(":");
-                                    if (valueStringArray.length > 1) {
-                                        value = valueStringArray[1];
-                                    } else {
-                                        value = valueStringArray[0];
+                        for (int l = 0; l < valueOpenMRSAttributes.length(); l++) {
+                            JSONObject valueOpenMRSAttribute = valueOpenMRSAttributes.getJSONObject(l);
+                            JSONObject popupJson = new JSONObject();
+                            if (valueOpenMRSAttribute.get(KEY).equals(secondaryValueKey)) {
+                                popupJson.put(KEY, secondaryValueKey);
+                                popupJson.put(OPENMRS_ENTITY, CONCEPT);
+                                popupJson.put(OPENMRS_ENTITY_ID, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+
+                                if (AllConstants.CHECK_BOX.equals(secondaryValueKey)) {
+                                    popupJson.put(OPENMRS_ENTITY_PARENT,
+                                            parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
+                                    popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                                    popupJson.put(AllConstants.TYPE, secondaryValueType);
+                                    addObservation(event, popupJson);
+                                } else if (AllConstants.NATIVE_RADIO
+                                        .equals(secondaryValueType) || AllConstants.ANC_RADIO_BUTTON
+                                        .equals(secondaryValueType)) {
+                                    popupJson.put(OPENMRS_ENTITY_PARENT, "");
+                                    popupJson.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
+                                    popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
+                                    popupJson.put(AllConstants.TYPE, secondaryValueType);
+                                    addObservation(event, popupJson);
+                                } else {
+                                    popupJson.put(OPENMRS_ENTITY_PARENT,
+                                            valueOpenMRSAttribute.getString(OPENMRS_ENTITY_PARENT));
+                                    JSONArray values = secondaryValue.getJSONArray(VALUES);
+                                    String value = "";
+                                    if (values != null) {
+                                        String valueString = values.getString(0);
+                                        String[] valueStringArray = valueString.split(":");
+                                        if (valueStringArray.length > 1) {
+                                            value = valueStringArray[1];
+                                        } else {
+                                            value = valueStringArray[0];
+                                        }
                                     }
+
+                                    popupJson.put(VALUE, value);
+                                    popupJson.put(AllConstants.TYPE, secondaryValueType);
+                                    addObservation(event, popupJson);
                                 }
 
-                                popupJson.put(VALUE, value);
-                                popupJson.put(AllConstants.TYPE, secondaryValueType);
-                                addObservation(event, popupJson);
                             }
-
                         }
-                    }
+                    } else {
+                        JSONObject otherWidgetObject = new JSONObject();
+                        JSONArray values = secondaryValue.getJSONArray(VALUES);
+                        String value = "";
+                        if (values != null) {
+                            String valueString = values.getString(0);
+                            String[] valueStringArray = valueString.split(":");
+                            if (valueStringArray.length > 1) {
+                                value = valueStringArray[1];
+                            } else {
+                                value = valueStringArray[0];
+                            }
+                        }
 
+
+                        otherWidgetObject.put(OPENMRS_ENTITY_PARENT,
+                                parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
+                        otherWidgetObject.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
+                        otherWidgetObject.put(OPENMRS_ENTITY, parentOpenMRSAttributes.getString(OPENMRS_ENTITY));
+                        otherWidgetObject.put(VALUE, value);
+                        otherWidgetObject.put(AllConstants.TYPE, secondaryValueType);
+                        addObservation(event, otherWidgetObject);
+
+
+                    }
                 }
             }
         } catch (JSONException e) {
