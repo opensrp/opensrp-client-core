@@ -243,7 +243,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     public void onResume() {
         super.onResume();
-        if (bottomNavigationView.getSelectedItemId() != R.id.action_clients) {
+        if (bottomNavigationView != null && bottomNavigationView.getSelectedItemId() != R.id.action_clients) {
             setSelectedBottomBarMenuItem(R.id.action_clients);
         }
     }
