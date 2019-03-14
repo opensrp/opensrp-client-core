@@ -1,7 +1,6 @@
 package org.smartregister.login.interactor;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,17 +9,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
-import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
+import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
-import org.smartregister.sync.intent.PullUniqueIdsIntentService;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -93,9 +91,9 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             @Override
             public void run() {
                 Log.i(getClass().getName(), "Starting DrishtiSyncScheduler " + DateTime.now().toString());
-                if (NetworkUtils.isNetworkAvailable()) {
-                    SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-                }
+
+                scheduleJobsImmediately();
+
                 Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
             }
         }).start();
@@ -184,18 +182,10 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         processServerSettings(loginResponse);
 
-        if (NetworkUtils.isNetworkAvailable()) {
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-        }
+        scheduleJobsPeriodically();
+        scheduleJobsImmediately();
 
         getLoginView().goToHome(true);
-
-        scheduleJobs();
-    }
-
-    public void startPullUniqueIdsService() {
-        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), PullUniqueIdsIntentService.class);
-        getApplicationContext().startService(intent);
     }
 
     public Context getApplicationContext() {
@@ -214,9 +204,18 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         return mLoginPresenter.getOpenSRPContext().userService();
     }
 
-    protected void scheduleJobs() {
+    /**
+     * Add all the metnods that should be scheduled remotely
+     */
+    protected abstract void scheduleJobsPeriodically();
+
+    /**
+     * Sync and pull unique ids are scheduleds by default.
+     * Call super if you override this method.
+     */
+    protected void scheduleJobsImmediately() {
         if (NetworkUtils.isNetworkAvailable()) {
-            startPullUniqueIdsService();
+            PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
     }
