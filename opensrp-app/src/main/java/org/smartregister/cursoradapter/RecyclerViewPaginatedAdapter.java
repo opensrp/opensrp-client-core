@@ -19,6 +19,7 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
     public int totalcount = 0;
     public int currentlimit = 20;
     public int currentoffset = 0;
+    private boolean queryClients = true;
 
     public RecyclerViewPaginatedAdapter(Cursor cursor,
                                         RecyclerViewProvider<RecyclerView.ViewHolder>
@@ -43,12 +44,14 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
         if (listItemProvider.isFooterViewHolder(viewHolder)) {
             listItemProvider.getFooterView(viewHolder, getCurrentPageCount(), getTotalPageCount(), hasNextPage(), hasPreviousPage());
-        } else {
+        } else if (queryClients) {
             CommonPersonObject personinlist = commonRepository.readAllcommonforCursorAdapter(cursor);
             CommonPersonObjectClient pClient = new CommonPersonObjectClient(personinlist.getCaseId(),
                     personinlist.getDetails(), personinlist.getDetails().get("FWHOHFNAME"));
             pClient.setColumnmaps(personinlist.getColumnmaps());
             listItemProvider.getView(cursor, pClient, viewHolder);
+        } else {
+            listItemProvider.getView(cursor, null, viewHolder);
         }
     }
 
@@ -114,4 +117,7 @@ public class RecyclerViewPaginatedAdapter<V extends RecyclerView.ViewHolder> ext
         return currentlimit;
     }
 
+    public void setQueryClients(boolean queryClients) {
+        this.queryClients = queryClients;
+    }
 }
