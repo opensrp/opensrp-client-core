@@ -345,7 +345,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void setSelectedBottomBarMenuItem(int itemId) {
-        bottomNavigationView.setSelectedItemId(itemId);
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setSelectedItemId(itemId);
+        }
     }
 
     public void setSearchTerm(String searchTerm) {
