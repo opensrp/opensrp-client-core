@@ -94,8 +94,8 @@ public abstract class SecuredActivity extends AppCompatActivity {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(this, "Language preference set to " + newLanguagePreference + ". "
-                    + "Please restart the application.", LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.language_change_prepend_message + " " + newLanguagePreference + ". "
+                    + R.string.language_change_prepend_message + ".", LENGTH_SHORT).show();
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
