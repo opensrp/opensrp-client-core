@@ -25,6 +25,7 @@ import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.cloudant.models.Client;
 import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.ANM;
+import org.smartregister.domain.tag.FormTag;
 import org.smartregister.service.ANMService;
 import org.smartregister.sync.CloudantDataHandler;
 
@@ -155,6 +156,147 @@ public class JsonFormUtilsTest extends BaseUnitTest {
             "    ]\n" +
             "  }\n" +
             "}";
+
+    private String formFields = "[\n" +
+            "      {\n" +
+            "        \"key\": \"contact_reason\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"type\": \"native_radio\",\n" +
+            "        \"label\": \"Reason for coming to facility\",\n" +
+            "        \"label_text_style\": \"bold\",\n" +
+            "        \"options\": [\n" +
+            "          {\n" +
+            "            \"key\": \"first_contact\",\n" +
+            "            \"text\": \"First contact\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"165269AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"scheduled_contact\",\n" +
+            "            \"text\": \"Scheduled contact\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"1246AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"specific_complaint\",\n" +
+            "            \"text\": \"Specific complaint\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"5219AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"value\":\"specific_complaint\",\n" +
+            "        \"v_required\": {\n" +
+            "          \"value\": \"true\",\n" +
+            "          \"err\": \"Reason for coming to facility is required\"\n" +
+            "        }\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"key\": \"danger_signs\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"160939AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"type\": \"check_box\",\n" +
+            "        \"label\": \"Danger signs\",\n" +
+            "        \"label_text_style\": \"bold\",\n" +
+            "        \"text_color\": \"#000000\",\n" +
+            "        \"exclusive\": [\n" +
+            "          \"danger_none\"\n" +
+            "        ],\n" +
+            "        \"options\": [\n" +
+            "          {\n" +
+            "            \"key\": \"danger_none\",\n" +
+            "            \"text\": \"None\",\n" +
+            "            \"value\": true,\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"looks_very_ill\",\n" +
+            "            \"text\": \"Looks very ill\",\n" +
+            "            \"value\": false,\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"163293AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"severe_vomiting\",\n" +
+            "            \"text\": \"Severe vomiting\",\n" +
+            "            \"value\": true,\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"118477AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"value\":\"[danger_none,severe_vomiting]\",\n" +
+            "        \"v_required\": {\n" +
+            "          \"value\": \"true\",\n" +
+            "          \"err\": \"Danger signs is required\"\n" +
+            "        },\n" +
+            "        \"relevance\": {\n" +
+            "          \"rules-engine\": {\n" +
+            "            \"ex-rules\": {\n" +
+            "              \"rules-file\": \"quick_check_relevance_rules.yml\"\n" +
+            "            }\n" +
+            "          }\n" +
+            "        }\n" +
+            "      }\n" +
+            "    ]";
+
+    private String formMetaData = "{\n" +
+            "    \"start\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"start\",\n" +
+            "      \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"end\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"end\",\n" +
+            "      \"openmrs_entity_id\": \"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"today\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"encounter\",\n" +
+            "      \"openmrs_entity_id\": \"encounter_date\"\n" +
+            "    },\n" +
+            "    \"deviceid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"deviceid\",\n" +
+            "      \"openmrs_entity_id\": \"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"subscriberid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"subscriberid\",\n" +
+            "      \"openmrs_entity_id\": \"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"simserial\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"simserial\",\n" +
+            "      \"openmrs_entity_id\": \"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"phonenumber\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"phonenumber\",\n" +
+            "      \"openmrs_entity_id\": \"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"encounter_location\": \"\",\n" +
+            "    \"look_up\": {\n" +
+            "      \"entity_id\": \"\",\n" +
+            "      \"value\": \"\"\n" +
+            "    }\n" +
+            "  }";
+
     @Rule
     public PowerMockRule rule = new PowerMockRule();
     @Mock
@@ -523,91 +665,6 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void testGetMultiStepFormFields() throws JSONException {
-        String expectedFields = "[\n" +
-                "  {\n" +
-                "    \"key\": \"educ_level\",\n" +
-                "    \"openmrs_entity_parent\": \"\",\n" +
-                "    \"openmrs_entity\": \"concept\",\n" +
-                "    \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "    \"type\": \"native_radio\",\n" +
-                "    \"label\": \"Highest level of school\",\n" +
-                "    \"label_text_style\": \"bold\",\n" +
-                "    \"options\": [\n" +
-                "      {\n" +
-                "        \"key\": \"none\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "        \"text\": \"None\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"key\": \"dont_know\",\n" +
-                "        \"text\": \"Don't know\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"key\": \"primary\",\n" +
-                "        \"text\": \"Primary\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"key\": \"secondary\",\n" +
-                "        \"text\": \"Secondary\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"key\": \"higher\",\n" +
-                "        \"text\": \"Higher\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"v_required\": {\n" +
-                "      \"value\": true,\n" +
-                "      \"err\": \"Please specify your education level\"\n" +
-                "    }\n" +
-                "  },\n" +
-                "  {\n" +
-                "    \"key\": \"lmp_known\",\n" +
-                "    \"openmrs_entity_parent\": \"\",\n" +
-                "    \"openmrs_entity\": \"concept\",\n" +
-                "    \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "    \"type\": \"native_radio\",\n" +
-                "    \"label\": \"LMP known?\",\n" +
-                "    \"label_text_style\": \"bold\",\n" +
-                "    \"max_date\": \"today\",\n" +
-                "    \"options\": [\n" +
-                "      {\n" +
-                "        \"key\": \"yes\",\n" +
-                "        \"text\": \"Yes\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "        \"specify_info\": \"specify date\",\n" +
-                "        \"specify_widget\": \"date_picker\",\n" +
-                "        \"max_date\": \"today\",\n" +
-                "        \"min_date\": \"today-280d\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"key\": \"no\",\n" +
-                "        \"text\": \"No\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"v_required\": {\n" +
-                "      \"value\": true\n" +
-                "    }\n" +
-                "  }\n" +
-                "]";
         Assert.assertNotNull(miltiStepForm);
 
         JSONObject jsonForm = new JSONObject(miltiStepForm);
@@ -658,6 +715,28 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         JSONArray formFields = JsonFormUtils.getMultiStepFormFields(jsonForm);
         Assert.assertNotNull(formFields);
         Assert.assertEquals(formFields.length(), 0);
+    }
+
+    @Test
+    public void testEventCreationForForm() throws JSONException {
+        JSONArray fields = new JSONArray(formFields);
+        Assert.assertNotNull(fields);
+
+        JSONObject metadata = new JSONObject(formMetaData);
+        Assert.assertNotNull(metadata);
+
+        FormTag formTag = new FormTag();
+        formTag.providerId = "160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+        formTag.appVersion = 1;
+        formTag.databaseVersion = 20;
+
+        Assert.assertNotNull(formTag);
+
+        org.smartregister.clientandeventmodel.Event event = JsonFormUtils
+                .createEvent(fields, metadata, formTag, "160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Quick Check", "");
+        Assert.assertNotNull(event.getEventType());
+        Assert.assertEquals(event.getObs().size(), 3);
+        Assert.assertEquals(event.getProviderId(),"160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     public static boolean areEqual(Object ob1, Object ob2) throws JSONException {
