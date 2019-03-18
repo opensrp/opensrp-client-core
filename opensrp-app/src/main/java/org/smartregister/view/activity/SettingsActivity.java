@@ -55,7 +55,7 @@ public class SettingsActivity extends PreferenceActivity {
                                     baseUrlEditTextPreference.onClick(null, DialogInterface.BUTTON_POSITIVE);
                                     dialog.dismiss();
                                 } else {
-                                    Toast.makeText(getActivity(), "Please enter a valid url!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), R.string.invalid_url_massage, Toast.LENGTH_SHORT).show();
                                 }
                             }
                         });

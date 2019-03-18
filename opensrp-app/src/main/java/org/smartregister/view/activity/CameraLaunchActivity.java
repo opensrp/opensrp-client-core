@@ -8,6 +8,7 @@ import android.provider.MediaStore;
 import android.widget.Toast;
 
 import org.smartregister.AllConstants;
+import org.smartregister.R;
 import org.smartregister.event.CapturedPhotoInformation;
 import org.smartregister.util.Log;
 
@@ -76,7 +77,7 @@ public class CameraLaunchActivity extends SecuredActivity {
             String imageFilePath = imageFile.getAbsolutePath();
             setPic(imageFilePath);
             updateEntity("file://" + imageFilePath);
-            Toast.makeText(this, "Photo captured", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.photo_captured, Toast.LENGTH_SHORT).show();
         }
         super.onBackPressed();
     }
