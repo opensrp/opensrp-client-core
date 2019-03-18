@@ -24,7 +24,7 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
-    private static final String ID = "_id";
+    private static final String ID = "id";
     private static final String CAMPAIGN_ID = "campaign_id";
     private static final String GROUP_ID = "group_id";
     private static final String STATUS = "status";
@@ -177,6 +177,16 @@ public class TaskRepository extends BaseRepository {
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
         task.setSyncStatus(cursor.getString(cursor.getColumnIndex(SYNC_STATUS)));
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
+
+        return task;
+    }
+
+    public Task readNativeCursor(android.database.Cursor cursor) {
+        Task task = new Task();
+        task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
+        task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
+        task.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
+        task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
 
         return task;
     }
