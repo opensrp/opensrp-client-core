@@ -410,4 +410,9 @@ public class AllConstants {
         public static final String SETTINGS = "settings";
 
     }
+
+    public class KEY {
+        public static final String EVENTS = "events";
+        public static final String CLIENTS = "clients";
+    }
 }
