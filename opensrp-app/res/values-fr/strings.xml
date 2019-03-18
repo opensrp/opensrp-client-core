@@ -290,8 +290,6 @@
 
     <!-- sync -->
     <string name="url_separator">/</string>
-    <string name="clients_key">clients</string>
-    <string name="events_key">évenéments</string>
 
     <string name="loading_client_settings">Chargement des paramètres du client&#8230;</string>
     <!-- login -->
