@@ -171,9 +171,8 @@ public class JsonFormUtils {
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
                     for (int k = 0; k < options.length(); k++) {
                         JSONObject option = options.getJSONObject(k);
-                        if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) && option.has(
-                                AllConstants.OPENMRS_ATTRIBUTES) && option
-                                .has(AllConstants.VALUE_OPENMRS_ATTRIBUTES) && option.has(AllConstants.SECONDARY_VALUE)) {
+                        if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) && option
+                                .has(AllConstants.SECONDARY_VALUE)) {
                             createObsFromPopUpValues(event, option, true);
                         }
                     }
@@ -320,11 +319,12 @@ public class JsonFormUtils {
                                                      String secondaryValueType, JSONObject checkBoxObsObject, int l,
                                                      JSONObject valueOpenMRSAttribute, JSONObject popupJson)
             throws JSONException {
-        checkBoxObsObject.put(KEY, secondaryValueKey);
-        checkBoxObsObject.put(OPENMRS_ENTITY, CONCEPT);
-        checkBoxObsObject
+        JSONObject checkBoxOptionsObject = checkBoxObsObject;
+        checkBoxOptionsObject.put(KEY, secondaryValueKey);
+        checkBoxOptionsObject.put(OPENMRS_ENTITY, CONCEPT);
+        checkBoxOptionsObject
                 .put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
-        checkBoxObsObject.put(OPENMRS_ENTITY_PARENT,
+        checkBoxOptionsObject.put(OPENMRS_ENTITY_PARENT,
                 parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
         popupJson.put(OPENMRS_ENTITY_PARENT,
                 valueOpenMRSAttribute.getString(OPENMRS_ENTITY_PARENT));
@@ -332,24 +332,24 @@ public class JsonFormUtils {
         popupJson.put(OPENMRS_ENTITY, valueOpenMRSAttribute.getString(OPENMRS_ENTITY));
         popupJson.put(VALUE, true);
 
-        if (checkBoxObsObject.has(AllConstants.OPTIONS)) {
-            JSONArray values = checkBoxObsObject.getJSONArray(AllConstants.OPTIONS);
+        if (checkBoxOptionsObject.has(AllConstants.OPTIONS)) {
+            JSONArray values = checkBoxOptionsObject.getJSONArray(AllConstants.OPTIONS);
             values.put(popupJson);
-            checkBoxObsObject.put(AllConstants.OPTIONS, values);
+            checkBoxOptionsObject.put(AllConstants.OPTIONS, values);
         } else {
             JSONArray values = new JSONArray();
             values.put(popupJson);
-            checkBoxObsObject.put(AllConstants.OPTIONS, values);
+            checkBoxOptionsObject.put(AllConstants.OPTIONS, values);
         }
 
-        checkBoxObsObject.put(AllConstants.TYPE, secondaryValueType);
-        checkBoxObsObject.put(VALUE, "value");
+        checkBoxOptionsObject.put(AllConstants.TYPE, secondaryValueType);
+        checkBoxOptionsObject.put(VALUE, "value");
 
         if ((valueOpenMRSAttributes.length() - 1) == l) {
-            addObservation(event, checkBoxObsObject);
-            checkBoxObsObject = new JSONObject();
+            addObservation(event, checkBoxOptionsObject);
+            checkBoxOptionsObject = new JSONObject();
         }
-        return checkBoxObsObject;
+        return checkBoxOptionsObject;
     }
 
     public static void addObservation(Event e, JSONObject jsonObject) {
@@ -385,16 +385,17 @@ public class JsonFormUtils {
         List<Object> vall = new ArrayList<>();
 
         String formSubmissionField = getString(jsonObject, KEY);
+        String obsValue = value;
 
         String dataType = getString(jsonObject, OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {
             dataType = AllConstants.TEXT;
         }
 
-        if (dataType.equals(AllConstants.DATE) && StringUtils.isNotBlank(value)) {
-            String newValue = convertToOpenMRSDate(value);
+        if (dataType.equals(AllConstants.DATE) && StringUtils.isNotBlank(obsValue)) {
+            String newValue = convertToOpenMRSDate(obsValue);
             if (newValue != null) {
-                value = newValue;
+                obsValue = newValue;
             }
         }
 
@@ -421,7 +422,7 @@ public class JsonFormUtils {
                     JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
-                        if (value.equals(option.getString(KEY))) {
+                        if (obsValue.equals(option.getString(KEY))) {
                             entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                             entityParentVal = "";
                             vall.add(option.getString(OPENMRS_ENTITY_ID));
@@ -433,17 +434,17 @@ public class JsonFormUtils {
             } else {
                 if (values != null && values.length() > 0) {
                     JSONObject choices = getJSONObject(jsonObject, OPENMRS_CHOICE_IDS);
-                    String chosenConcept = getString(choices, value);
+                    String chosenConcept = getString(choices, obsValue);
                     vall.add(chosenConcept);
-                    humanReadableValues.add(value);
+                    humanReadableValues.add(obsValue);
                 } else {
-                    vall.add(value);
+                    vall.add(obsValue);
                 }
             }
             e.addObs(new Obs(CONCEPT, dataType, entityIdVal,
                     entityParentVal, vall, humanReadableValues, null, formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
-            vall.add(value);
+            vall.add(obsValue);
 
             e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
                     "", vall, new ArrayList<>(), null, formSubmissionField));

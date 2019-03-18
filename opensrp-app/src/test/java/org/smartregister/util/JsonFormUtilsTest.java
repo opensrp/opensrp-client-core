@@ -245,6 +245,219 @@ public class JsonFormUtilsTest extends BaseUnitTest {
             "            }\n" +
             "          }\n" +
             "        }\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"v_required\": {\n" +
+            "          \"value\": \"true\",\n" +
+            "          \"err\": \"Please select first Respiratory Exam\"\n" +
+            "        },\n" +
+            "        \"key\": \"repiratory_exam\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"openmrs_entity\": \"\",\n" +
+            "        \"openmrs_entity_id\": \"\",\n" +
+            "        \"type\": \"native_radio\",\n" +
+            "        \"label\": \"Respiratory exam\",\n" +
+            "        \"label_text_style\": \"bold\",\n" +
+            "        \"text_color\": \"#000000\",\n" +
+            "        \"extra_rel\": true,\n" +
+            "        \"has_extra_rel\": \"resOne3\",\n" +
+            "        \"options\": [\n" +
+            "          {\n" +
+            "            \"key\": \"resOne1\",\n" +
+            "            \"text\": \"Not done\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"resOne2\",\n" +
+            "            \"text\": \"Normal\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"resOne3\",\n" +
+            "            \"text\": \"Abnormal\",\n" +
+            "            \"specify_info\": \"Specify\",\n" +
+            "            \"specify_info_color\": \"#b5b5b5\",\n" +
+            "            \"specify_widget\": \"check_box\",\n" +
+            "            \"content_form\": \"child_enrollment_sub_form\",\n" +
+            "            \"content_form_location\": \"\",\n" +
+            "            \"secondary_suffix\": \"test\",\n" +
+            "            \"secondary_value\": [\n" +
+            "              {\n" +
+            "                \"key\": \"respiratory_exam_abnormal\",\n" +
+            "                \"type\": \"check_box\",\n" +
+            "                \"values\": [\n" +
+            "                  \"rapid_breathing:Rapid breathing:true\",\n" +
+            "                  \"other:Other (specify):true\"\n" +
+            "                ],\n" +
+            "                \"openmrs_attributes\": {\n" +
+            "                  \"openmrs_entity_parent\": \"\",\n" +
+            "                  \"openmrs_entity\": \"\",\n" +
+            "                  \"openmrs_entity_id\": \"\"\n" +
+            "                },\n" +
+            "                \"value_openmrs_attributes\": [\n" +
+            "                  {\n" +
+            "                    \"key\": \"respiratory_exam_abnormal\",\n" +
+            "                    \"openmrs_entity_parent\": \"\",\n" +
+            "                    \"openmrs_entity\": \"TACHYPNEA\",\n" +
+            "                    \"openmrs_entity_id\": \"125061\"\n" +
+            "                  },\n" +
+            "                  {\n" +
+            "                    \"key\": \"respiratory_exam_abnormal\",\n" +
+            "                    \"openmrs_entity_parent\": \"\",\n" +
+            "                    \"openmrs_entity\": \"\",\n" +
+            "                    \"openmrs_entity_id\": \"\"\n" +
+            "                  }\n" +
+            "                ]\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"key\": \"Place_Birth\",\n" +
+            "                \"type\": \"spinner\",\n" +
+            "                \"values\": [\n" +
+            "                  \"Health facility\"\n" +
+            "                ],\n" +
+            "                \"openmrs_attributes\": {\n" +
+            "                  \"openmrs_entity_parent\": \"\",\n" +
+            "                  \"openmrs_entity\": \"concept\",\n" +
+            "                  \"openmrs_entity_id\": \"1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "                },\n" +
+            "                \"value_openmrs_attributes\": [\n" +
+            "                  {\n" +
+            "                    \"key\": \"Place_Birth\",\n" +
+            "                    \"openmrs_entity_parent\": \"\",\n" +
+            "                    \"openmrs_entity\": \"concept\",\n" +
+            "                    \"openmrs_entity_id\": \"1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "                  }\n" +
+            "                ]\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"key\": \"respiratory_exam_radio_button\",\n" +
+            "                \"type\": \"native_radio\",\n" +
+            "                \"values\": [\n" +
+            "                  \"2:Normal\"\n" +
+            "                ],\n" +
+            "                \"openmrs_attributes\": {\n" +
+            "                  \"openmrs_entity_parent\": \"\",\n" +
+            "                  \"openmrs_entity\": \"concept\",\n" +
+            "                  \"openmrs_entity_id\": \"165300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "                },\n" +
+            "                \"value_openmrs_attributes\": [\n" +
+            "                  {\n" +
+            "                    \"key\": \"respiratory_exam_radio_button\",\n" +
+            "                    \"openmrs_entity_parent\": \"\",\n" +
+            "                    \"openmrs_entity\": \"concept\",\n" +
+            "                    \"openmrs_entity_id\": \"165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "                  }\n" +
+            "                ]\n" +
+            "              },\n" +
+            "              {\n" +
+            "                \"key\": \"respiratory_exam_abnormal_other\",\n" +
+            "                \"type\": \"edit_text\",\n" +
+            "                \"values\": [\n" +
+            "                  \"Not sure\"\n" +
+            "                ],\n" +
+            "                \"openmrs_attributes\": {\n" +
+            "                  \"openmrs_entity_parent\": \"\",\n" +
+            "                  \"openmrs_entity\": \"\",\n" +
+            "                  \"openmrs_entity_id\": \"\"\n" +
+            "                }\n" +
+            "              }\n" +
+            "            ]\n" +
+            "          }\n" +
+            "        ],\n" +
+            "        \"is-rule-check\": false,\n" +
+            "        \"value\": \"resOne3\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "  \"key\": \"accordion_blood_haemoglobin\",\n" +
+            "  \"openmrs_entity_parent\": \"\",\n" +
+            "  \"openmrs_entity\": \"\",\n" +
+            "  \"openmrs_entity_id\": \"\",\n" +
+            "  \"text\": \"Blood Haemoglobin test\",\n" +
+            "  \"accordion_info_text\": \"Blood haemoglobin testing is necessary for diagnosing anaemia in pregnancy.\",\n" +
+            "  \"accordion_info_title\": \"Blood haemoglobin test\",\n" +
+            "  \"type\": \"expansion_panel\",\n" +
+            "  \"display_bottom_section\": true,\n" +
+            "  \"content_form\": \"tests_blood_haemoglobin_sub_form\",\n" +
+            "  \"container\": \"anc_test\",\n" +
+            "  \"value\": [\n" +
+            "    {\n" +
+            "      \"value_openmrs_attributes\": [\n" +
+            "        {\n" +
+            "          \"openmrs_entity\": \"TACHYPNEA\",\n" +
+            "          \"openmrs_entity_id\": \"125061\",\n" +
+            "          \"openmrs_entity_parent\": \"\",\n" +
+            "          \"key\": \"respiratory_exam_abnormal\"\n" +
+            "        },\n" +
+            "        {\n" +
+            "          \"openmrs_entity\": \"\",\n" +
+            "          \"openmrs_entity_id\": \"\",\n" +
+            "          \"openmrs_entity_parent\": \"\",\n" +
+            "          \"key\": \"respiratory_exam_abnormal\"\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"openmrs_attributes\": {\n" +
+            "        \"openmrs_entity\": \"\",\n" +
+            "        \"openmrs_entity_id\": \"\",\n" +
+            "        \"openmrs_entity_parent\": \"\"\n" +
+            "      },\n" +
+            "      \"values\": [\n" +
+            "        \"rapid_breathing:Rapid breathing:true\",\n" +
+            "        \"other:Other (specify):true\"\n" +
+            "      ],\n" +
+            "      \"type\": \"check_box\",\n" +
+            "      \"key\": \"respiratory_exam_abnormal\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"value_openmrs_attributes\": [\n" +
+            "        {\n" +
+            "          \"openmrs_entity\": \"concept\",\n" +
+            "          \"openmrs_entity_id\": \"1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "          \"openmrs_entity_parent\": \"\",\n" +
+            "          \"key\": \"Place_Birth\"\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"openmrs_attributes\": {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\"\n" +
+            "      },\n" +
+            "      \"values\": [\n" +
+            "        \"Health facility\"\n" +
+            "      ],\n" +
+            "      \"type\": \"spinner\",\n" +
+            "      \"key\": \"Place_Birth\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"value_openmrs_attributes\": [\n" +
+            "        {\n" +
+            "          \"openmrs_entity\": \"concept\",\n" +
+            "          \"openmrs_entity_id\": \"165230AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "          \"openmrs_entity_parent\": \"\",\n" +
+            "          \"key\": \"respiratory_exam_radio_button\"\n" +
+            "        }\n" +
+            "      ],\n" +
+            "      \"openmrs_attributes\": {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"165300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\"\n" +
+            "      },\n" +
+            "      \"values\": [\n" +
+            "        \"2:Normal\"\n" +
+            "      ],\n" +
+            "      \"type\": \"native_radio\",\n" +
+            "      \"key\": \"respiratory_exam_radio_button\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"openmrs_attributes\": {\n" +
+            "        \"openmrs_entity\": \"\",\n" +
+            "        \"openmrs_entity_id\": \"\",\n" +
+            "        \"openmrs_entity_parent\": \"\"\n" +
+            "      },\n" +
+            "      \"values\": [\n" +
+            "        \"Not sure\"\n" +
+            "      ],\n" +
+            "      \"type\": \"edit_text\",\n" +
+            "      \"key\": \"respiratory_exam_abnormal_other\"\n" +
+            "    }\n" +
+            "  ]\n" +
             "      }\n" +
             "    ]";
 
@@ -253,42 +466,49 @@ public class JsonFormUtilsTest extends BaseUnitTest {
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"start\",\n" +
-            "      \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "      \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"value\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
             "    },\n" +
             "    \"end\": {\n" +
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"end\",\n" +
-            "      \"openmrs_entity_id\": \"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "      \"openmrs_entity_id\": \"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"value\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
             "    },\n" +
             "    \"today\": {\n" +
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"encounter\",\n" +
-            "      \"openmrs_entity_id\": \"encounter_date\"\n" +
+            "      \"openmrs_entity_id\": \"encounter_date\",\n" +
+            "        \"value\":\"2019-03-13\"\n" +
             "    },\n" +
             "    \"deviceid\": {\n" +
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"deviceid\",\n" +
-            "      \"openmrs_entity_id\": \"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "      \"openmrs_entity_id\": \"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"value\":\"specific437598439875984\"\n" +
             "    },\n" +
             "    \"subscriberid\": {\n" +
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"subscriberid\",\n" +
-            "      \"openmrs_entity_id\": \"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "      \"openmrs_entity_id\": \"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"value\":\"4379857437985798437598\"\n" +
             "    },\n" +
             "    \"simserial\": {\n" +
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"simserial\",\n" +
-            "      \"openmrs_entity_id\": \"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "      \"openmrs_entity_id\": \"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"value\":\"326587364756436875643875\"\n" +
             "    },\n" +
             "    \"phonenumber\": {\n" +
             "      \"openmrs_entity_parent\": \"\",\n" +
             "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"phonenumber\",\n" +
-            "      \"openmrs_entity_id\": \"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "      \"openmrs_entity_id\": \"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"value\":\"+3u465632453\"\n" +
             "    },\n" +
             "    \"encounter_location\": \"\",\n" +
             "    \"look_up\": {\n" +
@@ -735,8 +955,8 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         org.smartregister.clientandeventmodel.Event event = JsonFormUtils
                 .createEvent(fields, metadata, formTag, "160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "Quick Check", "");
         Assert.assertNotNull(event.getEventType());
-        Assert.assertEquals(event.getObs().size(), 3);
-        Assert.assertEquals(event.getProviderId(),"160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+        Assert.assertEquals(event.getObs().size(), 16);
+        Assert.assertEquals(event.getProviderId(), "160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     }
 
     public static boolean areEqual(Object ob1, Object ob2) throws JSONException {
