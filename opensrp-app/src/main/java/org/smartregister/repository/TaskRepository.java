@@ -24,7 +24,7 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
-    private static final String ID = "id";
+    private static final String ID = "_id";
     private static final String CAMPAIGN_ID = "campaign_id";
     private static final String GROUP_ID = "group_id";
     private static final String STATUS = "status";
