@@ -101,8 +101,8 @@ public class StructureRepository extends LocationRepository {
         contentValues.put(SYNC_STATUS, location.getSyncStatus());
         contentValues.put(GEOJSON, gson.toJson(location));
         if (location.getGeometry().getType().equals(Geometry.GeometryType.POINT)) {
-            contentValues.put(LATITUDE, location.getGeometry().getCoordinates().get(0).getAsFloat());
-            contentValues.put(LONGITUDE, location.getGeometry().getCoordinates().get(1).getAsFloat());
+            contentValues.put(LONGITUDE, location.getGeometry().getCoordinates().get(0).getAsFloat());
+            contentValues.put(LATITUDE, location.getGeometry().getCoordinates().get(1).getAsFloat());
         } else if (helper != null) {
             android.location.Location center = helper.getCenter(gson.toJson(location.getGeometry()));
             contentValues.put(LATITUDE, center.getLatitude());
