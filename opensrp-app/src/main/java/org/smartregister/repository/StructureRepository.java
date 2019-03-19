@@ -7,7 +7,9 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Geometry;
 import org.smartregister.domain.Location;
+import org.smartregister.repository.helper.MappingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ public class StructureRepository extends LocationRepository {
     protected static String STRUCTURE_TABLE = "structure";
     private static final String SYNC_STATUS = "sync_status";
 
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + STRUCTURE_TABLE + " (" +
@@ -28,10 +32,14 @@ public class StructureRepository extends LocationRepository {
                     PARENT_ID + " VARCHAR , " +
                     NAME + " VARCHAR , " +
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
+                    LATITUDE + " FLOAT , " +
+                    LONGITUDE + " FLOAT , " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_PARENT_INDEX = "CREATE INDEX "
             + STRUCTURE_TABLE + "_" + PARENT_ID + "_ind ON " + STRUCTURE_TABLE + "(" + PARENT_ID + ")";
+
+    private MappingHelper helper;
 
     public StructureRepository(Repository repository) {
         super(repository);
@@ -92,9 +100,19 @@ public class StructureRepository extends LocationRepository {
         contentValues.put(NAME, location.getProperties().getName());
         contentValues.put(SYNC_STATUS, location.getSyncStatus());
         contentValues.put(GEOJSON, gson.toJson(location));
+        if (location.getGeometry().getType().equals(Geometry.GeometryType.POINT)) {
+            contentValues.put(LATITUDE, location.getGeometry().getCoordinates().get(0).getAsFloat());
+            contentValues.put(LONGITUDE, location.getGeometry().getCoordinates().get(1).getAsFloat());
+        } else if (helper != null) {
+            android.location.Location center = helper.getCenter(gson.toJson(location.getGeometry()));
+            contentValues.put(LATITUDE, center.getLatitude());
+            contentValues.put(LONGITUDE, center.getLongitude());
+        }
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
 
     }
 
-
+    public void setHelper(MappingHelper helper) {
+        this.helper = helper;
+    }
 }
