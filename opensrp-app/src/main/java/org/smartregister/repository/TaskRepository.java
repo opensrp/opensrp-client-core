@@ -181,16 +181,6 @@ public class TaskRepository extends BaseRepository {
         return task;
     }
 
-    public Task readNativeCursor(android.database.Cursor cursor) {
-        Task task = new Task();
-        task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
-        task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
-        task.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
-        task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
-
-        return task;
-    }
-
     public List<TaskUpdate> getUnSyncedTaskStatus() {
         Cursor cursor = null;
         List<TaskUpdate> taskUpdates = new ArrayList<>();
