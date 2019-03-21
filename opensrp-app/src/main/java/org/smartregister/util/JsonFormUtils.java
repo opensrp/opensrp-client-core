@@ -20,6 +20,7 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
+import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -798,7 +799,7 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
-    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) throws JsonFormMissingStepCountException {
         JSONArray fields = new JSONArray();
         try {
             if (jsonForm.has(AllConstants.COUNT)) {
@@ -815,8 +816,9 @@ public class JsonFormUtils {
                     }
                 }
             } else {
-                Log.e(TAG, "The form step count is needed for the fields to be fetched", null);
-                return fields;
+
+                throw new JsonFormMissingStepCountException("The form step count is needed for the fields to be fetched");
+
             }
 
         } catch (JSONException e) {

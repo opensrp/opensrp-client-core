@@ -1,33 +1,18 @@
 package org.smartregister.util;
 
-import android.content.res.AssetManager;
-import android.util.Xml;
-
 import junit.framework.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Obs;
-import org.smartregister.cloudant.models.Client;
-import org.smartregister.cloudant.models.Event;
-import org.smartregister.domain.ANM;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.service.ANMService;
-import org.smartregister.sync.CloudantDataHandler;
+import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,8 +28,7 @@ import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
-@PrepareForTest ({CoreLibrary.class, CloudantDataHandler.class, Xml.class})
-public class JsonFormUtilsTest extends BaseUnitTest {
+public class JsonFormUtilsTest {
 
     private JsonFormUtils formUtils;
     private String FORMNAME = "birthnotificationpregnancystatusfollowup";
@@ -517,36 +501,9 @@ public class JsonFormUtilsTest extends BaseUnitTest {
             "    }\n" +
             "  }";
 
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-    @Mock
-    private CloudantDataHandler cloudantDataHandler;
-    @Mock
-    private CoreLibrary coreLibrary;
-    @Mock
-    private Context context;
-    @Mock
-    private android.content.Context context_;
-    @Mock
-    private AssetManager assetManager;
-    @Mock
-    private ANMService anmService;
-    @Mock
-    private ANM anm;
-
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.anmService()).thenReturn(anmService);
-        PowerMockito.when(anmService.fetchDetails()).thenReturn(anm);
-        PowerMockito.when(anm.name()).thenReturn("anmId");
-        PowerMockito.mockStatic(CloudantDataHandler.class);
-        PowerMockito.when(CloudantDataHandler.getInstance(context_.getApplicationContext())).thenReturn(cloudantDataHandler);
-        PowerMockito.when(cloudantDataHandler.createClientDocument(any(Client.class))).thenReturn(null);
-        PowerMockito.when(cloudantDataHandler.createEventDocument(any(Event.class))).thenReturn(null);
         formjson = new JSONObject(formresultJson);
 
     }
@@ -884,7 +841,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetMultiStepFormFields() throws JSONException {
+    public void testGetMultiStepFormFields() throws JSONException, JsonFormMissingStepCountException {
         Assert.assertNotNull(miltiStepForm);
 
         JSONObject jsonForm = new JSONObject(miltiStepForm);
@@ -894,8 +851,8 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         Assert.assertNotNull(formFields);
     }
 
-    @Test
-    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException {
+    @Test(expected = JsonFormMissingStepCountException.class)
+    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException, JsonFormMissingStepCountException {
         String json = " {\n" +
                 "    \"key\": \"lmp_known\",\n" +
                 "    \"openmrs_entity_parent\": \"\",\n" +
