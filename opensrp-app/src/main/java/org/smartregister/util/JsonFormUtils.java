@@ -20,6 +20,7 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
+import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -78,39 +79,39 @@ public class JsonFormUtils {
         String aproxbd = getFieldValue(fields, FormEntityConstants.Person.birthdate_estimated);
         Boolean birthdateApprox = false;
         if (!StringUtils.isEmpty(aproxbd) && NumberUtils.isNumber(aproxbd)) {
-            int bde = 0;
+            int birthDateEstimated = 0;
             try {
-                bde = Integer.parseInt(aproxbd);
+                birthDateEstimated = Integer.parseInt(aproxbd);
             } catch (Exception e) {
                 Log.e(TAG, e.toString(), e);
             }
-            birthdateApprox = bde > 0;
+            birthdateApprox = birthDateEstimated > 0;
         }
         String aproxdd = getFieldValue(fields, FormEntityConstants.Person.deathdate_estimated);
         Boolean deathdateApprox = false;
         if (!StringUtils.isEmpty(aproxdd) && NumberUtils.isNumber(aproxdd)) {
-            int dde = 0;
+            int deathDateEstimated = 0;
             try {
-                dde = Integer.parseInt(aproxdd);
+                deathDateEstimated = Integer.parseInt(aproxdd);
             } catch (Exception e) {
                 Log.e(TAG, e.toString(), e);
             }
-            deathdateApprox = dde > 0;
+            deathdateApprox = deathDateEstimated > 0;
         }
         String gender = getFieldValue(fields, FormEntityConstants.Person.gender);
 
         List<Address> addresses = new ArrayList<>(extractAddresses(fields).values());
 
-        Client c = (Client) new Client(entityId).withFirstName(firstName).withMiddleName(middleName).withLastName(lastName)
+        Client client = (Client) new Client(entityId).withFirstName(firstName).withMiddleName(middleName).withLastName(lastName)
                 .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
 
-        c.setClientApplicationVersion(formTag.appVersion);
-        c.setClientDatabaseVersion(formTag.databaseVersion);
+        client.setClientApplicationVersion(formTag.appVersion);
+        client.setClientDatabaseVersion(formTag.databaseVersion);
 
-        c.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
+        client.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
                 .withAttributes(extractAttributes(fields)).withIdentifiers(extractIdentifiers(fields));
-        return c;
+        return client;
 
     }
 
@@ -159,13 +160,7 @@ public class JsonFormUtils {
                         jsonObject.has(AllConstants.HAS_EXTRA_REL)) {
                     String extraFieldsKey = jsonObject.getString(AllConstants.HAS_EXTRA_REL);
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
-                    for (int k = 0; k < options.length(); k++) {
-                        JSONObject option = options.getJSONObject(k);
-                        if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) &&
-                                option.has(AllConstants.SECONDARY_VALUE)) {
-                            createObsFromPopUpValues(event, option, true);
-                        }
-                    }
+                    initiateOptionsObsCreation(event, extraFieldsKey, options);
 
                 } else if (jsonObject.has(AllConstants.TYPE) &&
                         AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
@@ -184,6 +179,23 @@ public class JsonFormUtils {
             }
         }
 
+        createFormMetadataObs(metadata, event);
+
+        return event;
+
+    }
+
+    private static void initiateOptionsObsCreation(Event event, String extraFieldsKey, JSONArray options) throws JSONException {
+        for (int k = 0; k < options.length(); k++) {
+            JSONObject option = options.getJSONObject(k);
+            if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) &&
+                    option.has(AllConstants.SECONDARY_VALUE)) {
+                createObsFromPopUpValues(event, option, true);
+            }
+        }
+    }
+
+    private static void createFormMetadataObs(JSONObject metadata, Event event) {
         if (metadata != null) {
             Iterator<?> keys = metadata.keys();
 
@@ -210,9 +222,6 @@ public class JsonFormUtils {
                 }
             }
         }
-
-        return event;
-
     }
 
     private static void createObsFromPopUpValues(Event event, JSONObject jsonObject, boolean type) {
@@ -788,7 +797,7 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
-    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) throws JsonFormMissingStepCountException {
         JSONArray fields = new JSONArray();
         try {
             if (jsonForm.has(AllConstants.COUNT)) {
@@ -805,8 +814,7 @@ public class JsonFormUtils {
                     }
                 }
             } else {
-                Log.e(TAG, "The form step count is needed for the fields to be fetched", null);
-                return fields;
+                throw new JsonFormMissingStepCountException("The form step count is needed for the fields to be fetched");
             }
 
         } catch (JSONException e) {

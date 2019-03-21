@@ -1,32 +1,18 @@
 package org.smartregister.util;
 
-import android.content.res.AssetManager;
-import android.util.Xml;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Address;
+import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Obs;
-import org.smartregister.cloudant.models.Client;
-import org.smartregister.cloudant.models.Event;
-import org.smartregister.domain.ANM;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.service.ANMService;
-import org.smartregister.sync.CloudantDataHandler;
+import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,8 +28,7 @@ import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
-@PrepareForTest ({CoreLibrary.class, CloudantDataHandler.class, Xml.class})
-public class JsonFormUtilsTest extends BaseUnitTest {
+public class JsonFormUtilsTest {
 
     private JsonFormUtils formUtils;
     private String FORMNAME = "birthnotificationpregnancystatusfollowup";
@@ -55,108 +40,156 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     private String formSubmissionXML = "www/form/form_submission/form_submission_xml.xml";
     private String formSubmissionJSON = "www/form/form_submission/form_submission_json.json";
     private String entityRelationShip = "www/form/entity_relationship.json";
-    private String formresultJson = "{\"count\":\"1\",\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\",\"relational_id\":\"\",\"step1\":{\"title\":\"Birth Registration\",\"fields\":[{\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"uploadButtonText\":\"শিশুর ছবি তুলুন \",\"openmrs_entity_parent\":\"\",\"type\":\"choose_image\",\"key\":\"Child_Photo\"},{\"default\":\"[\\\"Bangladesh\\\"]\",\"tree\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"key\":\"Kuptala:Ward1:1-KA:Abdur Rahim Memberer bari-Kholapar\",\"level\":\"\",\"name\":\"Abdur Rahim Memberer bari-Kholapar\"},{\"key\":\"Kuptala:Ward1:1-KA:Jaynal Abediner Bari-Jangalia\",\"level\":\"\",\"name\":\"Jaynal Abediner Bari-Jangalia\"},{\"key\":\"Kuptala:Ward1:1-KA:Narayon Cowdhurir bari-Kholapara\",\"level\":\"\",\"name\":\"Narayon Cowdhurir bari-Kholapara\"}],\"key\":\"Kuptala:Ward1:1-KA\",\"level\":\"\",\"name\":\"1-KA\"}],\"key\":\"Kuptala:Ward-1\",\"level\":\"\",\"name\":\"Ward-1\"},{\"nodes\":[{\"key\":\"Kuptala:Ward-2:1-KA\",\"level\":\"\",\"name\":\"1-KA\"}],\"key\":\"Kuptala:Ward-2\",\"level\":\"\",\"name\":\"Ward-2\"}],\"key\":\"Kuptala\",\"level\":\"\",\"name\":\"Kuptala\"}],\"key\":\"Gaibandha Sadar\",\"level\":\"\",\"name\":\"Gaibandha Sadar\"}],\"key\":\"Gaibandha\",\"level\":\"\",\"name\":\"Gaibandha\"}],\"key\":\"Rangpur\",\"level\":\"\",\"name\":\"Rangpur\"}],\"key\":\"Bangladesh\",\"level\":\"\",\"name\":\"Bangladesh\"}],\"v_required\":{\"value\":true,\"err\":\"Please enter the child's home facility\"},\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"value\":\"[\\\"Bangladesh\\\",\\\"Rangpur\\\",\\\"Gaibandha\\\",\\\"Gaibandha Sadar\\\",\\\"Kuptala\\\",\\\"Kuptala:Ward-1\\\",\\\"Kuptala:Ward1:1-KA\\\",\\\"Kuptala:Ward1:1-KA:Abdur Rahim Memberer bari-Kholapar\\\"]\",\"hint\":\"শিশুর EPI কেন্দ্র *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"tree\",\"key\":\"HIE_FACILITIES\"},{\"read_only\":\"true\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the Child's ZEIR ID\"},\"openmrs_entity\":\"person_identifier\",\"openmrs_entity_id\":\"OpenMRS_ID\",\"value\":\"10177528\",\"hint\":\"নিবন্ধন নম্বর *\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\",\"key\":\"OpenMRS_ID\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Please enter a valid ID\"}},{\"value\":\"123123131231231233\",\"openmrs_entity\":\"person_attribute\",\"openmrs_entity_id\":\"Child_Birth_Certificate\",\"hint\":\"শিশুর জন্মনিবন্ধন নাম্বার\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\",\"key\":\"Child_Birth_Certificate\"},{\"v_regex\":{\"value\":\"[A-Za-z\\\\s.-]*\",\"err\":\"Please enter a valid name\"},\"value\":\"hatim\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\",\"hint\":\"শিশুর নাম\",\"edit_type\":\"name\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\",\"key\":\"First_Name\"},{\"values\":[\"Male\",\"Female\"],\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the sex\"},\"value\":\"Male\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"gender\",\"hint\":\"শিশুর লিঙ্গ *\",\"openmrs_entity_parent\":\"\",\"type\":\"spinner\",\"key\":\"Sex\"},{\"max_date\":\"today\",\"duration\":{\"label\":\"Age\"},\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the date of birth\"},\"value\":\"01-01-2017\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"birthdate\",\"min_date\":\"today-5y\",\"hint\":\"শিশুর জন্ম তারিখ *\",\"openmrs_entity_parent\":\"\",\"type\":\"date_picker\",\"expanded\":false,\"key\":\"Date_Birth\"},{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0.1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}},{\"household_id\":\"1ae4d826-ef15-45d5-a475-37e8b6791260\",\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the mother\\/guardian's first name\"},\"v_regex\":{\"value\":\"[A-Za-z\\\\s.-]*\",\"err\":\"Please enter a valid name\"},\"value\":\"Mohila Nutun\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1593AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"মা\\/অবিভাবকের নাম *\",\"look_up\":\"true\",\"edit_type\":\"name\",\"openmrs_entity_parent\":\"\",\"entity_id\":\"mother\",\"type\":\"edit_text\",\"key\":\"Mother_Guardian_First_Name\"},{\"v_max_length\":{\"value\":\"11\",\"err\":\"Please Enter 11 digit Mobile number\"},\"v_min_length\":{\"value\":\"11\",\"err\":\"Please Enter 11 digit Mobile number\"},\"v_regex\":{\"value\":\"(01[5-9][0-9]{8})|s*\",\"err\":\"Number must begin with 015, 016,017,018 or 019 and must be a total of 11 digits in length\"},\"value\":\"01918901991\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"মা\\/অবিভাবকের মোবাইল নম্বর\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\",\"key\":\"Mother_Guardian_Number\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Number must begin with 095, 096, or 097 and must be a total of 11 digits in length\"}},{\"v_regex\":{\"value\":\"[A-Za-z\\\\s.-]*\",\"err\":\"Please enter a valid name\"},\"value\":\"mafinar\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1594AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"পিতা \\/ অবিভাবকের নাম\",\"edit_type\":\"name\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Father_Guardian_Name\"},{\"values\":[\"Health facility\",\"Home\"],\"v_required\":{\"value\":true,\"err\":\"Please enter the place of birth\"},\"value\":\"Home\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"জন্মস্থান ধরণ *\",\"openmrs_choice_ids\":{\"Health facility\":\"1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"Home\":\"1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"select one\",\"type\":\"spinner\",\"key\":\"Place_Birth\"},{\"v_required\":{\"value\":true,\"err\":\"Please enter the birth facility name\"},\"value\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"relevance\":{\"step1:Place_Birth\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"Health facility\\\")\"}},\"hint\":\"শিশুটি জন্মগ্রহণ করার সময় কোন স্বাস্থ্য কেন্দ্রের সুবিধা পেয়েছিল? *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Facility_Name\"},{\"v_required\":{\"value\":true,\"err\":\"Please specify the health facility the child was born in\"},\"value\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"relevance\":{\"step1:Birth_Facility_Name\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"[\\\"Home\\\"]\\\")\"}},\"hint\":\"শিশুর জন্ম স্থান * *\",\"edit_type\":\"name\",\"openmrs_entity_parent\":\"163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"edit_text\",\"key\":\"Birth_Facility_Name_Other\"}]},\"encounter_type\":\"Birth Registration\",\"metadata\":{\"phonenumber\":{\"value\":\"15555215554\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"phonenumber\"},\"subscriberid\":{\"value\":\"310260000000000\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"subscriberid\"},\"start\":{\"value\":\"2018-01-01 18:00:49\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"start\"},\"today\":{\"value\":\"01-01-2018\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"look_up\":{\"entity_id\":\"mother\",\"value\":\"69d28d10-1b16-4c56-b8c3-5359a6ba77c4\"},\"encounter_location\":\"4c8cb044-7b15-40b7-8ca2-6eceaa6c4e9a\",\"simserial\":{\"value\":\"89014103211118510720\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"simserial\"},\"end\":{\"value\":\"2018-01-01 18:01:41\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"end\"},\"deviceid\":{\"value\":\"bded72fcd7e3a083\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"deviceid\"}}}";
+    private String formresultJson =
+            "{\"count\":\"1\",\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\"," +
+                    "\"relational_id\":\"\",\"step1\":{\"title\":\"Birth Registration\"," +
+                    "\"fields\":[{\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"uploadButtonText\":\"শিশুর ছবি " +
+                    "তুলুন \",\"openmrs_entity_parent\":\"\",\"type\":\"choose_image\",\"key\":\"Child_Photo\"}," +
+                    "{\"default\":\"[\\\"Bangladesh\\\"]\"," +
+                    "\"tree\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"nodes\":[{\"key" +
+                    "\":\"Kuptala:Ward1:1-KA:Abdur Rahim Memberer bari-Kholapar\",\"level\":\"\",\"name\":\"Abdur Rahim " +
+                    "Memberer bari-Kholapar\"},{\"key\":\"Kuptala:Ward1:1-KA:Jaynal Abediner Bari-Jangalia\"," +
+                    "\"level\":\"\",\"name\":\"Jaynal Abediner Bari-Jangalia\"},{\"key\":\"Kuptala:Ward1:1-KA:Narayon " +
+                    "Cowdhurir bari-Kholapara\",\"level\":\"\",\"name\":\"Narayon Cowdhurir bari-Kholapara\"}]," +
+                    "\"key\":\"Kuptala:Ward1:1-KA\",\"level\":\"\",\"name\":\"1-KA\"}],\"key\":\"Kuptala:Ward-1\"," +
+                    "\"level\":\"\",\"name\":\"Ward-1\"},{\"nodes\":[{\"key\":\"Kuptala:Ward-2:1-KA\",\"level\":\"\"," +
+                    "\"name\":\"1-KA\"}],\"key\":\"Kuptala:Ward-2\",\"level\":\"\",\"name\":\"Ward-2\"}]," +
+                    "\"key\":\"Kuptala\",\"level\":\"\",\"name\":\"Kuptala\"}],\"key\":\"Gaibandha Sadar\",\"level\":\"\"," +
+                    "\"name\":\"Gaibandha Sadar\"}],\"key\":\"Gaibandha\",\"level\":\"\",\"name\":\"Gaibandha\"}]," +
+                    "\"key\":\"Rangpur\",\"level\":\"\",\"name\":\"Rangpur\"}],\"key\":\"Bangladesh\",\"level\":\"\"," +
+                    "\"name\":\"Bangladesh\"}],\"v_required\":{\"value\":true,\"err\":\"Please enter the child's home " +
+                    "facility\"},\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"value\":\"[\\\"Bangladesh\\\"," +
+                    "\\\"Rangpur\\\",\\\"Gaibandha\\\",\\\"Gaibandha Sadar\\\",\\\"Kuptala\\\",\\\"Kuptala:Ward-1\\\"," +
+                    "\\\"Kuptala:Ward1:1-KA\\\",\\\"Kuptala:Ward1:1-KA:Abdur Rahim Memberer bari-Kholapar\\\"]\"," +
+                    "\"hint\":\"শিশুর EPI কেন্দ্র *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\"," +
+                    "\"type\":\"tree\",\"key\":\"HIE_FACILITIES\"},{\"read_only\":\"true\"," +
+                    "\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the Child's ZEIR ID\"}," +
+                    "\"openmrs_entity\":\"person_identifier\",\"openmrs_entity_id\":\"OpenMRS_ID\",\"value\":\"10177528\"," +
+                    "\"hint\":\"নিবন্ধন নম্বর *\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\"," +
+                    "\"key\":\"OpenMRS_ID\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Please enter a valid ID\"}}," +
+                    "{\"value\":\"123123131231231233\",\"openmrs_entity\":\"person_attribute\"," +
+                    "\"openmrs_entity_id\":\"Child_Birth_Certificate\",\"hint\":\"শিশুর জন্মনিবন্ধন নাম্বার\"," +
+                    "\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\",\"key\":\"Child_Birth_Certificate\"}," +
+                    "{\"v_regex\":{\"value\":\"[A-Za-z\\\\s.-]*\",\"err\":\"Please enter a valid name\"}," +
+                    "\"value\":\"hatim\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\"," +
+                    "\"hint\":\"শিশুর নাম\",\"edit_type\":\"name\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\"," +
+                    "\"key\":\"First_Name\"},{\"values\":[\"Male\",\"Female\"],\"v_required\":{\"value\":\"true\"," +
+                    "\"err\":\"Please enter the sex\"},\"value\":\"Male\",\"openmrs_entity\":\"person\"," +
+                    "\"openmrs_entity_id\":\"gender\",\"hint\":\"শিশুর লিঙ্গ *\",\"openmrs_entity_parent\":\"\"," +
+                    "\"type\":\"spinner\",\"key\":\"Sex\"},{\"max_date\":\"today\",\"duration\":{\"label\":\"Age\"}," +
+                    "\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the date of birth\"}," +
+                    "\"value\":\"01-01-2017\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"birthdate\"," +
+                    "\"min_date\":\"today-5y\",\"hint\":\"শিশুর জন্ম তারিখ *\",\"openmrs_entity_parent\":\"\"," +
+                    "\"type\":\"date_picker\",\"expanded\":false,\"key\":\"Date_Birth\"}," +
+                    "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"}," +
+                    "\"v_min\":{\"value\":\"0.1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\"," +
+                    "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\"," +
+                    "\"type\":\"edit_text\",\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a " +
+                    "valid weight\"}},{\"household_id\":\"1ae4d826-ef15-45d5-a475-37e8b6791260\"," +
+                    "\"v_required\":{\"value\":\"true\",\"err\":\"Please enter the mother\\/guardian's first name\"}," +
+                    "\"v_regex\":{\"value\":\"[A-Za-z\\\\s.-]*\",\"err\":\"Please enter a valid name\"},\"value\":\"Mohila" +
+                    " Nutun\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"1593AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"মা\\/অবিভাবকের নাম *\"," +
+                    "\"look_up\":\"true\",\"edit_type\":\"name\",\"openmrs_entity_parent\":\"\",\"entity_id\":\"mother\"," +
+                    "\"type\":\"edit_text\",\"key\":\"Mother_Guardian_First_Name\"},{\"v_max_length\":{\"value\":\"11\"," +
+                    "\"err\":\"Please Enter 11 digit Mobile number\"},\"v_min_length\":{\"value\":\"11\",\"err\":\"Please " +
+                    "Enter 11 digit Mobile number\"},\"v_regex\":{\"value\":\"(01[5-9][0-9]{8})|s*\",\"err\":\"Number must" +
+                    " begin with 015, 016,017,018 or 019 and must be a total of 11 digits in length\"}," +
+                    "\"value\":\"01918901991\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"মা\\/অবিভাবকের মোবাইল " +
+                    "নম্বর\",\"openmrs_entity_parent\":\"\",\"type\":\"edit_text\",\"key\":\"Mother_Guardian_Number\"," +
+                    "\"v_numeric\":{\"value\":\"true\",\"err\":\"Number must begin with 095, 096, or 097 and must be a " +
+                    "total of 11 digits in length\"}},{\"v_regex\":{\"value\":\"[A-Za-z\\\\s.-]*\",\"err\":\"Please enter " +
+                    "a valid name\"},\"value\":\"mafinar\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"1594AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"পিতা \\/ অবিভাবকের নাম\"," +
+                    "\"edit_type\":\"name\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\"," +
+                    "\"type\":\"edit_text\",\"key\":\"Father_Guardian_Name\"},{\"values\":[\"Health facility\",\"Home\"]," +
+                    "\"v_required\":{\"value\":true,\"err\":\"Please enter the place of birth\"},\"value\":\"Home\"," +
+                    "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1572AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"hint\":\"জন্মস্থান ধরণ *\",\"openmrs_choice_ids\":{\"Health " +
+                    "facility\":\"1588AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"Home\":\"1536AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"openmrs_entity_parent\":\"\"," +
+                    "\"openmrs_data_type\":\"select one\",\"type\":\"spinner\",\"key\":\"Place_Birth\"}," +
+                    "{\"v_required\":{\"value\":true,\"err\":\"Please enter the birth facility name\"},\"value\":\"\"," +
+                    "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"relevance\":{\"step1:Place_Birth\":{\"type\":\"string\",\"ex\":\"equalTo(., \\\"Health " +
+                    "facility\\\")\"}},\"hint\":\"শিশুটি জন্মগ্রহণ করার সময় কোন স্বাস্থ্য কেন্দ্রের সুবিধা পেয়েছিল? *\"," +
+                    "\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\"," +
+                    "\"key\":\"Birth_Facility_Name\"},{\"v_required\":{\"value\":true,\"err\":\"Please specify the health " +
+                    "facility the child was born in\"},\"value\":\"\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"relevance\":{\"step1:Birth_Facility_Name\":{\"type\":\"string\",\"ex\":\"equalTo(., " +
+                    "\\\"[\\\"Home\\\"]\\\")\"}},\"hint\":\"শিশুর জন্ম স্থান * *\",\"edit_type\":\"name\"," +
+                    "\"openmrs_entity_parent\":\"163531AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"type\":\"edit_text\"," +
+                    "\"key\":\"Birth_Facility_Name_Other\"}]},\"encounter_type\":\"Birth Registration\"," +
+                    "\"metadata\":{\"phonenumber\":{\"value\":\"15555215554\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"," +
+                    "\"openmrs_data_type\":\"phonenumber\"},\"subscriberid\":{\"value\":\"310260000000000\"," +
+                    "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"subscriberid\"}," +
+                    "\"start\":{\"value\":\"2018-01-01 18:00:49\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"," +
+                    "\"openmrs_data_type\":\"start\"},\"today\":{\"value\":\"01-01-2018\",\"openmrs_entity_parent\":\"\"," +
+                    "\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"}," +
+                    "\"look_up\":{\"entity_id\":\"mother\",\"value\":\"69d28d10-1b16-4c56-b8c3-5359a6ba77c4\"}," +
+                    "\"encounter_location\":\"4c8cb044-7b15-40b7-8ca2-6eceaa6c4e9a\"," +
+                    "\"simserial\":{\"value\":\"89014103211118510720\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"," +
+                    "\"openmrs_data_type\":\"simserial\"},\"end\":{\"value\":\"2018-01-01 18:01:41\"," +
+                    "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
+                    "\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"end\"}," +
+                    "\"deviceid\":{\"value\":\"bded72fcd7e3a083\",\"openmrs_entity\":\"concept\"," +
+                    "\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"," +
+                    "\"openmrs_data_type\":\"deviceid\"}}}";
     private JSONObject formjson;
     private String bindtype = "ec_child";
-    private String miltiStepForm = "{\n" +
-            "  \"count\": \"2\",\n" +
-            "  \"step1\": {\n" +
-            "    \"title\": \"Demographic Info\",\n" +
-            "    \"next\": \"step2\",\n" +
-            "    \"fields\": [\n" +
-            "      {\n" +
-            "        \"key\": \"educ_level\",\n" +
-            "        \"openmrs_entity_parent\": \"\",\n" +
-            "        \"openmrs_entity\": \"concept\",\n" +
-            "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"type\": \"native_radio\",\n" +
-            "        \"label\": \"Highest level of school\",\n" +
-            "        \"label_text_style\": \"bold\",\n" +
-            "        \"options\": [\n" +
-            "          {\n" +
-            "            \"key\": \"none\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "            \"text\": \"None\"\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"key\": \"dont_know\",\n" +
-            "            \"text\": \"Don't know\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"key\": \"primary\",\n" +
-            "            \"text\": \"Primary\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"key\": \"secondary\",\n" +
-            "            \"text\": \"Secondary\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"key\": \"higher\",\n" +
-            "            \"text\": \"Higher\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "          }\n" +
-            "        ],\n" +
-            "        \"v_required\": {\n" +
-            "          \"value\": true,\n" +
-            "          \"err\": \"Please specify your education level\"\n" +
-            "        }\n" +
-            "      }\n" +
-            "    ]\n" +
-            "  },\n" +
-            "  \"step2\": {\n" +
-            "    \"title\": \"Current Pregnancy\",\n" +
-            "    \"fields\": [\n" +
-            "      {\n" +
-            "        \"key\": \"lmp_known\",\n" +
-            "        \"openmrs_entity_parent\": \"\",\n" +
-            "        \"openmrs_entity\": \"concept\",\n" +
-            "        \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"type\": \"native_radio\",\n" +
-            "        \"label\": \"LMP known?\",\n" +
-            "        \"label_text_style\": \"bold\",\n" +
-            "        \"max_date\": \"today\",\n" +
-            "        \"options\": [\n" +
-            "          {\n" +
-            "            \"key\": \"yes\",\n" +
-            "            \"text\": \"Yes\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "            \"specify_info\": \"specify date\",\n" +
-            "            \"specify_widget\": \"date_picker\",\n" +
-            "            \"max_date\": \"today\",\n" +
-            "            \"min_date\": \"today-280d\"\n" +
-            "          },\n" +
-            "          {\n" +
-            "            \"key\": \"no\",\n" +
-            "            \"text\": \"No\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "          }\n" +
-            "        ],\n" +
-            "        \"v_required\": {\n" +
-            "          \"value\": true\n" +
-            "        }\n" +
-            "      }\n" +
-            "    ]\n" +
-            "  }\n" +
-            "}";
+    private String miltiStepForm =
+            "{\n" + "  \"count\": \"2\",\n" + "  \"step1\": {\n" + "    \"title\": \"Demographic Info\",\n" +
+                    "    \"next\": \"step2\",\n" + "    \"fields\": [\n" + "      {\n" +
+                    "        \"key\": \"educ_level\",\n" + "        \"openmrs_entity_parent\": \"\",\n" +
+                    "        \"openmrs_entity\": \"concept\",\n" +
+                    "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "        \"type\": \"native_radio\",\n" + "        \"label\": \"Highest level of school\",\n" +
+                    "        \"label_text_style\": \"bold\",\n" + "        \"options\": [\n" + "          {\n" +
+                    "            \"key\": \"none\",\n" + "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "            \"text\": \"None\"\n" + "          },\n" + "          {\n" +
+                    "            \"key\": \"dont_know\",\n" + "            \"text\": \"Don't know\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
+                    "          {\n" + "            \"key\": \"primary\",\n" + "            \"text\": \"Primary\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
+                    "          {\n" + "            \"key\": \"secondary\",\n" + "            \"text\": \"Secondary\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
+                    "          {\n" + "            \"key\": \"higher\",\n" + "            \"text\": \"Higher\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
+                    "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true,\n" +
+                    "          \"err\": \"Please specify your education level\"\n" + "        }\n" + "      }\n" +
+                    "    ]\n" + "  },\n" + "  \"step2\": {\n" + "    \"title\": \"Current Pregnancy\",\n" +
+                    "    \"fields\": [\n" + "      {\n" + "        \"key\": \"lmp_known\",\n" +
+                    "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
+                    "        \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "        \"type\": \"native_radio\",\n" + "        \"label\": \"LMP known?\",\n" +
+                    "        \"label_text_style\": \"bold\",\n" + "        \"max_date\": \"today\",\n" +
+                    "        \"options\": [\n" + "          {\n" + "            \"key\": \"yes\",\n" +
+                    "            \"text\": \"Yes\",\n" + "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "            \"specify_info\": \"specify date\",\n" +
+                    "            \"specify_widget\": \"date_picker\",\n" + "            \"max_date\": \"today\",\n" +
+                    "            \"min_date\": \"today-280d\"\n" + "          },\n" + "          {\n" +
+                    "            \"key\": \"no\",\n" + "            \"text\": \"No\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
+                    "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true\n" + "        }\n" +
+                    "      }\n" + "    ]\n" + "  }\n" + "}";
 
-    private String formFields = "[{\"key\":\"contact_reason\",\"openmrs_entity_parent\":\"\"," +
+    private String eventFormFields = "[{\"key\":\"contact_reason\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
             "\"type\":\"native_radio\",\"label\":\"Reason for coming to facility\",\"label_text_style\":\"bold\"," +
             "\"options\":[{\"key\":\"specific_complaint\",\"text\":\"Specific complaint\",\"openmrs_entity_parent\":\"\"," +
@@ -230,92 +263,55 @@ public class JsonFormUtilsTest extends BaseUnitTest {
             "\"openmrs_attributes\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\"," +
             "\"openmrs_entity_id\":\"165300AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"}}]}]";
 
-    private String formMetaData = "{\n" +
-            "    \"start\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"concept\",\n" +
-            "      \"openmrs_data_type\": \"start\",\n" +
+    private String formMetaData = "{\n" + "    \"start\": {\n" + "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" + "      \"openmrs_data_type\": \"start\",\n" +
             "      \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"value\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "    },\n" +
-            "    \"end\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"concept\",\n" +
+            "        \"value\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "    },\n" + "    \"end\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" + "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"end\",\n" +
             "      \"openmrs_entity_id\": \"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"value\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-            "    },\n" +
-            "    \"today\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"encounter\",\n" +
-            "      \"openmrs_entity_id\": \"encounter_date\",\n" +
-            "        \"value\":\"2019-03-13\"\n" +
-            "    },\n" +
-            "    \"deviceid\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"concept\",\n" +
-            "      \"openmrs_data_type\": \"deviceid\",\n" +
+            "        \"value\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "    },\n" + "    \"today\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" + "      \"openmrs_entity\": \"encounter\",\n" +
+            "      \"openmrs_entity_id\": \"encounter_date\",\n" + "        \"value\":\"2019-03-13\"\n" + "    },\n" +
+            "    \"deviceid\": {\n" + "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" + "      \"openmrs_data_type\": \"deviceid\",\n" +
             "      \"openmrs_entity_id\": \"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"value\":\"specific437598439875984\"\n" +
-            "    },\n" +
-            "    \"subscriberid\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"concept\",\n" +
+            "        \"value\":\"specific437598439875984\"\n" + "    },\n" + "    \"subscriberid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" + "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"subscriberid\",\n" +
             "      \"openmrs_entity_id\": \"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"value\":\"4379857437985798437598\"\n" +
-            "    },\n" +
-            "    \"simserial\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"concept\",\n" +
+            "        \"value\":\"4379857437985798437598\"\n" + "    },\n" + "    \"simserial\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" + "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"simserial\",\n" +
             "      \"openmrs_entity_id\": \"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"value\":\"326587364756436875643875\"\n" +
-            "    },\n" +
-            "    \"phonenumber\": {\n" +
-            "      \"openmrs_entity_parent\": \"\",\n" +
-            "      \"openmrs_entity\": \"concept\",\n" +
+            "        \"value\":\"326587364756436875643875\"\n" + "    },\n" + "    \"phonenumber\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" + "      \"openmrs_entity\": \"concept\",\n" +
             "      \"openmrs_data_type\": \"phonenumber\",\n" +
             "      \"openmrs_entity_id\": \"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"value\":\"+3u465632453\"\n" +
-            "    },\n" +
-            "    \"encounter_location\": \"\",\n" +
-            "    \"look_up\": {\n" +
-            "      \"entity_id\": \"\",\n" +
-            "      \"value\": \"\"\n" +
-            "    }\n" +
-            "  }";
+            "        \"value\":\"+3u465632453\"\n" + "    },\n" + "    \"encounter_location\": \"\",\n" +
+            "    \"look_up\": {\n" + "      \"entity_id\": \"\",\n" + "      \"value\": \"\"\n" + "    }\n" + "  }";
 
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
-    @Mock
-    private CloudantDataHandler cloudantDataHandler;
-    @Mock
-    private CoreLibrary coreLibrary;
-    @Mock
-    private Context context;
-    @Mock
-    private android.content.Context context_;
-    @Mock
-    private AssetManager assetManager;
-    @Mock
-    private ANMService anmService;
-    @Mock
-    private ANM anm;
+    private String clientFormFields ="[{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\"," +
+            "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\",\"type\":\"edit_text\",\"hint\":\"First " +
+            "name\",\"edit_type\":\"name\",\"value\":\"John\"},{\"key\":\"last_name\",\"openmrs_entity_parent\":\"\"," +
+            "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"last_name\",\"type\":\"edit_text\",\"hint\":\"Last " +
+            "name\",\"edit_type\":\"name\",\"value\":\"Doe\"},{\"key\":\"gender\",\"openmrs_entity_parent\":\"\"," +
+            "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"gender\",\"type\":\"hidden\",\"value\":\"F\"}," +
+            "{\"key\":\"dob\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\"," +
+            "\"openmrs_entity_id\":\"birthdate\",\"type\":\"hidden\",\"value\":\"12-12-1990\"},{\"key\":\"dob_unknown\"," +
+            "\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"birthdate_estimated\"," +
+            "\"type\":\"check_box\",\"options\":[{\"key\":\"dob_unknown\",\"text\":\"DOB unknown?\"," +
+            "\"text_size\":\"18px\",\"value\":\"false\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"\"," +
+            "\"openmrs_entity_id\":\"\"}]},{\"key\":\"age\",\"openmrs_entity_parent\":\"\"," +
+            "\"openmrs_entity\":\"person_attribute\",\"openmrs_entity_id\":\"age\",\"type\":\"hidden\",\"value\":\"\"}," +
+            "{\"key\":\"age_entered\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person\"," +
+            "\"openmrs_entity_id\":\"age\",\"type\":\"edit_text\",\"hint\":\"Age\"},{\"key\":\"home_address\"," +
+            "\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"address2\"," +
+            "\"type\":\"edit_text\",\"hint\":\"Home address\",\"edit_type\":\"name\",\"value\":\"Nairobi\"}]";
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.anmService()).thenReturn(anmService);
-        PowerMockito.when(anmService.fetchDetails()).thenReturn(anm);
-        PowerMockito.when(anm.name()).thenReturn("anmId");
-        PowerMockito.mockStatic(CloudantDataHandler.class);
-        PowerMockito.when(CloudantDataHandler.getInstance(context_.getApplicationContext())).thenReturn(cloudantDataHandler);
-        PowerMockito.when(cloudantDataHandler.createClientDocument(any(Client.class))).thenReturn(null);
-        PowerMockito.when(cloudantDataHandler.createEventDocument(any(Event.class))).thenReturn(null);
         formjson = new JSONObject(formresultJson);
 
     }
@@ -381,7 +377,12 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void addObservationAddsObservationToEvent() throws Exception {
-        String observationJsonObjectString = "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0.1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
+        String observationJsonObjectString =
+                "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0" +
+                        ".1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"concept\"," +
+                        "\"openmrs_entity_id\":\"5916AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"hint\":\"জন্মের সময় ওজন (kg) " +
+                        "*\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\"," +
+                        "\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
         org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
@@ -390,7 +391,12 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void addObservationAddsObservationFormSubmissionFieldToEvent() throws Exception {
-        String observationJsonObjectString = "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0.1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"\",\"openmrs_entity_id\":\"\",\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
+        String observationJsonObjectString =
+                "{\"v_required\":{\"value\":\"false\",\"err\":\"Enter the child's birth weight\"},\"v_min\":{\"value\":\"0" +
+                        ".1\",\"err\":\"Weight must be greater than 0\"},\"value\":\"5\",\"openmrs_entity\":\"\"," +
+                        "\"openmrs_entity_id\":\"\",\"hint\":\"জন্মের সময় ওজন (kg) *\",\"openmrs_entity_parent\":\"\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\"," +
+                        "\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
         org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
@@ -399,28 +405,36 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressStartDateAddsStartDate() throws Exception {
-        String addressJsonWithStartDateString = "{\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"startDate\",\"hint\":\"address of household start date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
+        String addressJsonWithStartDateString =
+                "{\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"startDate\"," +
+                        "\"hint\":\"address of household start date\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartDateString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate()
-                .getTime() - org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime() -
+                org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfilladdressEndDateAddsEndDate() throws Exception {
-        String addressJsonWithEndDateString = "{\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"end_date\",\"hint\":\"address of household end date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
+        String addressJsonWithEndDateString =
+                "{\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"end_date\"," +
+                        "\"hint\":\"address of household end date\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithEndDateString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
-        Assert.assertEquals(
-                addressHashMap.get("usual_residence").getEndDate().getTime() - org.smartregister.clientandeventmodel.DateUtil
-                        .parseDate("2017-05-22").getTime(), 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime() -
+                org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfilladdressLongitudeAddsLongitude() throws Exception {
-        String addressJsonWithLongitudeString = "{\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"longitude\",\"hint\":\"address of household longitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
+        String addressJsonWithLongitudeString =
+                "{\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"longitude\"," +
+                        "\"hint\":\"address of household longitude\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithLongitudeString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -429,7 +443,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdresslatitudeAddslatitude() throws Exception {
-        String addressJsonWithStartlatitudeString = "{\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"latitude\",\"hint\":\"address of household latitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
+        String addressJsonWithStartlatitudeString =
+                "{\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"latitude\"," +
+                        "\"hint\":\"address of household latitude\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartlatitudeString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -438,7 +455,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressGeopointAddsGeopoint() throws Exception {
-        String addressJsonWithGeopointString = "{\"value\":\"34.044494 -84.695704 4 76 = lat lon alt prec\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"geopoint\",\"hint\":\"address of household geopoint\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
+        String addressJsonWithGeopointString =
+                "{\"value\":\"34.044494 -84.695704 4 76 = lat lon alt prec\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"geopoint\",\"hint\":\"address of household geopoint\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithGeopointString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -448,7 +469,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressPostal_codeAddsPostal_code() throws Exception {
-        String addressJsonWithStartPostal_code = "{\"value\":\"4021\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"postal_code\",\"hint\":\"address of household postal_code\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"postal_code\"}";
+        String addressJsonWithStartPostal_code =
+                "{\"value\":\"4021\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"postal_code\"," +
+                        "\"hint\":\"address of household postal_code\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"postal_code\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartPostal_code), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -457,7 +481,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressSub_townAddsSub_town() throws Exception {
-        String addressJsonWithSub_townString = "{\"value\":\"Kotwali\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_town\",\"hint\":\"address of household sub_town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_town\"}";
+        String addressJsonWithSub_townString =
+                "{\"value\":\"Kotwali\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_town\"," +
+                        "\"hint\":\"address of household sub_town\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithSub_townString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -466,7 +493,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressTownAddsTown() throws Exception {
-        String addressJsonWithTownString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"town\",\"hint\":\"address of household town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"town\"}";
+        String addressJsonWithTownString =
+                "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"town\"," +
+                        "\"hint\":\"address of household town\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithTownString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -475,7 +505,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressSub_districtAddsSub_district() throws Exception {
-        String addressJsonWithsub_districtString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_district\",\"hint\":\"address of household sub_district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_district\"}";
+        String addressJsonWithsub_districtString =
+                "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_district\"," +
+                        "\"hint\":\"address of household sub_district\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithsub_districtString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -484,7 +517,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressDistrictAddsDistrict() throws Exception {
-        String addressJsonWithDistrictString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"district\",\"hint\":\"address of household district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"district\"}";
+        String addressJsonWithDistrictString =
+                "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"district\"," +
+                        "\"hint\":\"address of household district\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithDistrictString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -493,7 +529,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressCityVillageAddsCityVillage() throws Exception {
-        String addressJsonWithCityVillageString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"cityVillage\",\"hint\":\"address of household cityVillage\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
+        String addressJsonWithCityVillageString =
+                "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"cityVillage\"," +
+                        "\"hint\":\"address of household cityVillage\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCityVillageString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -502,7 +541,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressStateAddsState() throws Exception {
-        String addressJsonWithStateString = "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"state\",\"hint\":\"address of household state\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"state\"}";
+        String addressJsonWithStateString =
+                "{\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"state\"," +
+                        "\"hint\":\"address of household state\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"state\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStateString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -511,7 +553,10 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfilladdressCountryAddsCountry() throws Exception {
-        String addressJsonWithCountryString = "{\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
+        String addressJsonWithCountryString =
+                "{\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\"," +
+                        "\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCountryString), addressHashMap);
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -520,28 +565,39 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubformaddressStartDateAddsStartDate() throws Exception {
-        String addressJsonWithStartDateString = "{\"entity_id\":\"mother\",\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"startDate\",\"hint\":\"address of household start date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
+        String addressJsonWithStartDateString =
+                "{\"entity_id\":\"mother\",\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"startDate\",\"hint\":\"address of household start date\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\"," +
+                        "\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartDateString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
-        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate()
-                .getTime() - org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime() -
+                org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfillSubFormaddressEndDateAddsEndDate() throws Exception {
-        String addressJsonWithEndDateString = "{\"entity_id\":\"mother\",\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"end_date\",\"hint\":\"address of household end date\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
+        String addressJsonWithEndDateString =
+                "{\"entity_id\":\"mother\",\"value\":\"2017-05-22\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"end_date\",\"hint\":\"address of household end date\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"date\"," +
+                        "\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithEndDateString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
-        Assert.assertEquals(
-                addressHashMap.get("usual_residence").getEndDate().getTime() - org.smartregister.clientandeventmodel.DateUtil
-                        .parseDate("2017-05-22").getTime(), 0);
+        Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime() -
+                org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
 
     @Test
     public void assertfillSubFormaddressLongitudeAddsLongitude() throws Exception {
-        String addressJsonWithLongitudeString = "{\"entity_id\":\"mother\",\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"longitude\",\"hint\":\"address of household longitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
+        String addressJsonWithLongitudeString =
+                "{\"entity_id\":\"mother\",\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"longitude\",\"hint\":\"address of household longitude\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithLongitudeString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -550,7 +606,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubFormaddresslatitudeAddslatitude() throws Exception {
-        String addressJsonWithStartlatitudeString = "{\"entity_id\":\"mother\",\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"latitude\",\"hint\":\"address of household latitude\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
+        String addressJsonWithStartlatitudeString =
+                "{\"entity_id\":\"mother\",\"value\":\"34.044494\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"latitude\",\"hint\":\"address of household latitude\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartlatitudeString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -559,7 +619,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubFormaddressGeopointAddsGeopoint() throws Exception {
-        String addressJsonWithGeopointString = "{\"entity_id\":\"mother\",\"value\":\"34.044494 -84.695704 4 76 = lat lon alt prec\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"geopoint\",\"hint\":\"address of household geopoint\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
+        String addressJsonWithGeopointString =
+                "{\"entity_id\":\"mother\",\"value\":\"34.044494 -84.695704 4 76 = lat lon alt prec\"," +
+                        "\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"geopoint\",\"hint\":\"address of " +
+                        "household geopoint\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithGeopointString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -569,7 +633,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubFormaddressPostal_codeAddsPostal_code() throws Exception {
-        String addressJsonWithStartPostal_code = "{\"entity_id\":\"mother\",\"value\":\"4021\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"postal_code\",\"hint\":\"address of household postal_code\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"postal_code\"}";
+        String addressJsonWithStartPostal_code =
+                "{\"entity_id\":\"mother\",\"value\":\"4021\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"postal_code\",\"hint\":\"address of household postal_code\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"postal_code\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartPostal_code), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -578,7 +646,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubFormaddressSub_townAddsSub_town() throws Exception {
-        String addressJsonWithSub_townString = "{\"entity_id\":\"mother\",\"value\":\"Kotwali\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_town\",\"hint\":\"address of household sub_town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_town\"}";
+        String addressJsonWithSub_townString =
+                "{\"entity_id\":\"mother\",\"value\":\"Kotwali\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"sub_town\",\"hint\":\"address of household sub_town\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"sub_town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithSub_townString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -587,7 +659,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubFormaddressTownAddsTown() throws Exception {
-        String addressJsonWithTownString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"town\",\"hint\":\"address of household town\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"town\"}";
+        String addressJsonWithTownString =
+                "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"town\",\"hint\":\"address of household town\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithTownString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -596,7 +672,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubformaddressSub_districtAddsSub_district() throws Exception {
-        String addressJsonWithsub_districtString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"sub_district\",\"hint\":\"address of household sub_district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_district\"}";
+        String addressJsonWithsub_districtString =
+                "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"sub_district\",\"hint\":\"address of household sub_district\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"sub_district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithsub_districtString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -605,7 +685,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubformaddressDistrictAddsDistrict() throws Exception {
-        String addressJsonWithDistrictString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"district\",\"hint\":\"address of household district\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"district\"}";
+        String addressJsonWithDistrictString =
+                "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"district\",\"hint\":\"address of household district\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithDistrictString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -614,7 +698,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubformaddressCityVillageAddsCityVillage() throws Exception {
-        String addressJsonWithCityVillageString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"cityVillage\",\"hint\":\"address of household cityVillage\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
+        String addressJsonWithCityVillageString =
+                "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"cityVillage\",\"hint\":\"address of household cityVillage\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCityVillageString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -623,7 +711,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubformaddressStateAddsState() throws Exception {
-        String addressJsonWithStateString = "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"state\",\"hint\":\"address of household state\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"state\"}";
+        String addressJsonWithStateString =
+                "{\"entity_id\":\"mother\",\"value\":\"Chittagong\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"state\",\"hint\":\"address of household state\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"state\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStateString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -632,7 +724,11 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertfillSubformaddressCountryAddsCountry() throws Exception {
-        String addressJsonWithCountryString = "{\"entity_id\":\"mother\",\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
+        String addressJsonWithCountryString =
+                "{\"entity_id\":\"mother\",\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"country\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCountryString), addressHashMap, "mother");
         Assert.assertTrue(addressHashMap.size() > 0);
@@ -641,8 +737,15 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void assertMergeWillMergeJsonObjects() throws Exception {
-        String addressJsonWithCountryString = "{\"entity_id\":\"mother\",\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
-        String originalString = "{\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
+        String addressJsonWithCountryString =
+                "{\"entity_id\":\"mother\",\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\"," +
+                        "\"openmrs_entity_id\":\"country\",\"hint\":\"address of household country\"," +
+                        "\"openmrs_entity_parent\":\"usual_residence\",\"openmrs_data_type\":\"text\"," +
+                        "\"type\":\"edit_text\",\"key\":\"country\"}";
+        String originalString =
+                "{\"value\":\"Bangladesh\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"country\"," +
+                        "\"hint\":\"address of household country\",\"openmrs_entity_parent\":\"usual_residence\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
         JSONObject updatedExpected = new JSONObject(addressJsonWithCountryString);
         JSONObject original = new JSONObject(originalString);
         JSONObject toMerge = new JSONObject();
@@ -653,7 +756,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetMultiStepFormFields() throws JSONException {
+    public void testGetMultiStepFormFields() throws JSONException, JsonFormMissingStepCountException {
         Assert.assertNotNull(miltiStepForm);
 
         JSONObject jsonForm = new JSONObject(miltiStepForm);
@@ -663,41 +766,22 @@ public class JsonFormUtilsTest extends BaseUnitTest {
         Assert.assertNotNull(formFields);
     }
 
-    @Test
-    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException {
-        String json = " {\n" +
-                "    \"key\": \"lmp_known\",\n" +
-                "    \"openmrs_entity_parent\": \"\",\n" +
+    @Test(expected = JsonFormMissingStepCountException.class)
+    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException, JsonFormMissingStepCountException {
+        String json = " {\n" + "    \"key\": \"lmp_known\",\n" + "    \"openmrs_entity_parent\": \"\",\n" +
                 "    \"openmrs_entity\": \"concept\",\n" +
                 "    \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "    \"type\": \"native_radio\",\n" +
-                "    \"label\": \"LMP known?\",\n" +
-                "    \"label_text_style\": \"bold\",\n" +
-                "    \"max_date\": \"today\",\n" +
-                "    \"options\": [\n" +
-                "      {\n" +
-                "        \"key\": \"yes\",\n" +
-                "        \"text\": \"Yes\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
+                "    \"type\": \"native_radio\",\n" + "    \"label\": \"LMP known?\",\n" +
+                "    \"label_text_style\": \"bold\",\n" + "    \"max_date\": \"today\",\n" + "    \"options\": [\n" +
+                "      {\n" + "        \"key\": \"yes\",\n" + "        \"text\": \"Yes\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
                 "        \"openmrs_entity_id\": \"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "        \"specify_info\": \"specify date\",\n" +
-                "        \"specify_widget\": \"date_picker\",\n" +
-                "        \"max_date\": \"today\",\n" +
-                "        \"min_date\": \"today-280d\"\n" +
-                "      },\n" +
-                "      {\n" +
-                "        \"key\": \"no\",\n" +
-                "        \"text\": \"No\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" +
-                "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-                "      }\n" +
-                "    ],\n" +
-                "    \"v_required\": {\n" +
-                "      \"value\": true\n" +
-                "    }\n" +
-                "  }";
+                "        \"specify_info\": \"specify date\",\n" + "        \"specify_widget\": \"date_picker\",\n" +
+                "        \"max_date\": \"today\",\n" + "        \"min_date\": \"today-280d\"\n" + "      },\n" +
+                "      {\n" + "        \"key\": \"no\",\n" + "        \"text\": \"No\",\n" +
+                "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
+                "        \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "      }\n" + "    ],\n" +
+                "    \"v_required\": {\n" + "      \"value\": true\n" + "    }\n" + "  }";
         JSONObject jsonForm = new JSONObject(json);
         Assert.assertNotNull(jsonForm);
 
@@ -708,7 +792,7 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
     @Test
     public void testEventCreationForForm() throws JSONException {
-        JSONArray fields = new JSONArray(formFields);
+        JSONArray fields = new JSONArray(eventFormFields);
         Assert.assertNotNull(fields);
 
         JSONObject metadata = new JSONObject(formMetaData);
@@ -721,11 +805,45 @@ public class JsonFormUtilsTest extends BaseUnitTest {
 
         Assert.assertNotNull(formTag);
 
-        org.smartregister.clientandeventmodel.Event event = JsonFormUtils
-                .createEvent(fields, metadata, formTag, "97dc48f681ddcf188b2758fba89635fe", "Quick Check", "");
+        org.smartregister.clientandeventmodel.Event event =
+                JsonFormUtils.createEvent(fields, metadata, formTag, "97dc48f681ddcf188b2758fba89635fe", "Quick Check", "");
         Assert.assertNotNull(event.getEventType());
         Assert.assertEquals(event.getObs().size(), 20);
         Assert.assertEquals(event.getProviderId(), "52c9534da60e66bfc6d1641b3359894c");
+    }
+
+    @Test
+    public void testClientCreation() throws JSONException {
+        JSONArray fields = new JSONArray(clientFormFields);
+        Assert.assertNotNull(fields);
+
+        FormTag formTag = new FormTag();
+        formTag.providerId = "52c9534da60e66bfc6d1641b3359894c";
+        formTag.appVersion = 1;
+        formTag.databaseVersion = 20;
+
+        Assert.assertNotNull(formTag);
+        Client client = JsonFormUtils.createBaseClient(fields,formTag,"97dc48f681ddcf188b2758fba89635fe");
+        Assert.assertEquals(client.getGender(), "F" );
+        Assert.assertEquals(client.getFirstName(), "John");
+    }
+
+    @Test
+    public void testConvertToOpenMRSDate(){
+        String date = "12-12-2019";
+        String openmrsDate = JsonFormUtils.convertToOpenMRSDate(date);
+        Assert.assertEquals(openmrsDate,"2019-12-12");
+    }
+
+    @Test
+    public void testGetFieldJsonObject() throws  JSONException{
+        JSONArray fields = new JSONArray(clientFormFields);
+        Assert.assertNotNull(fields);
+
+        JSONObject field = JsonFormUtils.getFieldJSONObject(fields,"first_name");
+        Assert.assertNotNull(field);
+        Assert.assertTrue(field.has("value"));
+        Assert.assertEquals(field.get("value"), "John");
     }
 
     public static boolean areEqual(Object ob1, Object ob2) throws JSONException {
