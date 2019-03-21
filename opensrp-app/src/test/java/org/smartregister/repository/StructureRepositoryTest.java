@@ -46,7 +46,7 @@ public class StructureRepositoryTest {
     private StructureRepository structureRepository;
 
     @Mock
-    private static Repository repository;
+    private  Repository repository;
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
@@ -87,7 +87,7 @@ public class StructureRepositoryTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(5, contentValues.size());
+        assertEquals(6, contentValues.size());
 
         assertEquals("90397", contentValues.getAsString("_id"));
         assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
