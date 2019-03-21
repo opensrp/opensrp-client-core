@@ -101,20 +101,15 @@ public class JsonFormUtils {
 
         List<Address> addresses = new ArrayList<>(extractAddresses(fields).values());
 
-        Client c = (Client) new Client(entityId)
-                .withFirstName(firstName)
-                .withMiddleName(middleName)
-                .withLastName(lastName)
-                .withBirthdate((birthdate), birthdateApprox)
-                .withDeathdate(deathdate, deathdateApprox)
-                .withGender(gender).withDateCreated(new Date());
+        Client c = (Client) new Client(entityId).withFirstName(firstName).withMiddleName(middleName).withLastName(lastName)
+                .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
+                .withDateCreated(new Date());
 
         c.setClientApplicationVersion(formTag.appVersion);
         c.setClientDatabaseVersion(formTag.databaseVersion);
 
         c.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
-                .withAttributes(extractAttributes(fields))
-                .withIdentifiers(extractIdentifiers(fields));
+                .withAttributes(extractAttributes(fields)).withIdentifiers(extractIdentifiers(fields));
         return c;
 
     }
@@ -142,15 +137,10 @@ public class JsonFormUtils {
             encounterLocation = formTag.locationId;
         }
 
-        Event event = (Event) new Event()
-                .withBaseEntityId(entityId)
-                .withEventDate(encounterDate)
-                .withEventType(encounterType)
-                .withLocationId(encounterLocation)
-                .withProviderId(formTag.providerId)
-                .withEntityType(bindType)
-                .withFormSubmissionId(generateRandomUUIDString())
-                .withDateCreated(new Date());
+        Event event =
+                (Event) new Event().withBaseEntityId(entityId).withEventDate(encounterDate).withEventType(encounterType)
+                        .withLocationId(encounterLocation).withProviderId(formTag.providerId).withEntityType(bindType)
+                        .withFormSubmissionId(generateRandomUUIDString()).withDateCreated(new Date());
 
         event.setChildLocationId(formTag.childLocationId);
         event.setTeam(formTag.team);
@@ -162,34 +152,31 @@ public class JsonFormUtils {
         for (int i = 0; i < fields.length(); i++) {
             JSONObject jsonObject = getJSONObject(fields, i);
             try {
-                if (jsonObject.has(AllConstants.TYPE) && (AllConstants.NATIVE_RADIO
-                        .equals(jsonObject.getString(AllConstants.TYPE)) || AllConstants.ANC_RADIO_BUTTON
-                        .equals(jsonObject.getString(AllConstants.TYPE))) && jsonObject
-                        .has(AllConstants.EXTRA_REL) && jsonObject
-                        .getBoolean(AllConstants.EXTRA_REL) && jsonObject.has(AllConstants.HAS_EXTRA_REL)) {
+                if (jsonObject.has(AllConstants.TYPE) &&
+                        (AllConstants.NATIVE_RADIO.equals(jsonObject.getString(AllConstants.TYPE)) ||
+                                AllConstants.ANC_RADIO_BUTTON.equals(jsonObject.getString(AllConstants.TYPE))) &&
+                        jsonObject.has(AllConstants.EXTRA_REL) && jsonObject.getBoolean(AllConstants.EXTRA_REL) &&
+                        jsonObject.has(AllConstants.HAS_EXTRA_REL)) {
                     String extraFieldsKey = jsonObject.getString(AllConstants.HAS_EXTRA_REL);
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
                     for (int k = 0; k < options.length(); k++) {
                         JSONObject option = options.getJSONObject(k);
-                        if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) && option
-                                .has(AllConstants.SECONDARY_VALUE)) {
+                        if (option.has(KEY) && extraFieldsKey.equals(option.getString(KEY)) &&
+                                option.has(AllConstants.SECONDARY_VALUE)) {
                             createObsFromPopUpValues(event, option, true);
                         }
                     }
 
-                } else if (jsonObject.has(AllConstants.TYPE) && AllConstants.EXPANSION_PANEL
-                        .equals(jsonObject.getString(AllConstants.TYPE))) {
+                } else if (jsonObject.has(AllConstants.TYPE) &&
+                        AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
                     createObsFromPopUpValues(event, jsonObject, false);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-
-            String value = getString(jsonObject, VALUE);
             try {
-                if (StringUtils.isNotBlank(value) && !AllConstants.EXPANSION_PANEL
-                        .equals(jsonObject.getString(AllConstants.TYPE))) {
+                if (!AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
                     addObservation(event, jsonObject);
                 }
             } catch (JSONException e) {
@@ -263,21 +250,26 @@ public class JsonFormUtils {
                             JSONObject popupJson = new JSONObject();
                             if (valueOpenMRSAttribute.get(KEY).equals(secondaryValueKey)) {
                                 if (AllConstants.CHECK_BOX.equals(secondaryValueType)) {
-                                    checkBoxObsObject = getCheckBoxJsonObjects(event, parentOpenMRSAttributes,
-                                            valueOpenMRSAttributes, secondaryValueKey, secondaryValueType,
-                                            checkBoxObsObject, l, valueOpenMRSAttribute, popupJson);
-                                } else if (AllConstants.NATIVE_RADIO
-                                        .equals(secondaryValueType) || AllConstants.ANC_RADIO_BUTTON
-                                        .equals(secondaryValueType)) {
+                                    checkBoxObsObject =
+                                            getCheckBoxJsonObjects(event, parentOpenMRSAttributes, valueOpenMRSAttributes,
+                                                    secondaryValueKey, secondaryValueType, checkBoxObsObject, l,
+                                                    valueOpenMRSAttribute, popupJson);
+                                } else {
                                     popupJson.put(KEY, secondaryValueKey);
                                     popupJson.put(OPENMRS_ENTITY, CONCEPT);
-                                    popupJson.put(OPENMRS_ENTITY_PARENT, "");
                                     popupJson.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
                                     popupJson.put(VALUE, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
                                     popupJson.put(AllConstants.TYPE, secondaryValueType);
+
+                                    if (AllConstants.NATIVE_RADIO.equals(secondaryValueType) ||
+                                            AllConstants.ANC_RADIO_BUTTON.equals(secondaryValueType)) {
+                                        popupJson.put(OPENMRS_ENTITY_PARENT, "");
+                                    } else if (AllConstants.SPINNER.equals(secondaryValueType)) {
+                                        popupJson.put(OPENMRS_ENTITY_PARENT,
+                                                parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
+                                    }
                                     addObservation(event, popupJson);
                                 }
-
                             }
                         }
                     } else {
@@ -295,8 +287,8 @@ public class JsonFormUtils {
                         }
 
 
-                        otherWidgetObject.put(OPENMRS_ENTITY_PARENT,
-                                parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
+                        otherWidgetObject
+                                .put(OPENMRS_ENTITY_PARENT, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
                         otherWidgetObject.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
                         otherWidgetObject.put(OPENMRS_ENTITY, parentOpenMRSAttributes.getString(OPENMRS_ENTITY));
                         otherWidgetObject.put(VALUE, value);
@@ -318,16 +310,13 @@ public class JsonFormUtils {
                                                      JSONArray valueOpenMRSAttributes, String secondaryValueKey,
                                                      String secondaryValueType, JSONObject checkBoxObsObject, int l,
                                                      JSONObject valueOpenMRSAttribute, JSONObject popupJson)
-            throws JSONException {
+    throws JSONException {
         JSONObject checkBoxOptionsObject = checkBoxObsObject;
         checkBoxOptionsObject.put(KEY, secondaryValueKey);
         checkBoxOptionsObject.put(OPENMRS_ENTITY, CONCEPT);
-        checkBoxOptionsObject
-                .put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
-        checkBoxOptionsObject.put(OPENMRS_ENTITY_PARENT,
-                parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
-        popupJson.put(OPENMRS_ENTITY_PARENT,
-                valueOpenMRSAttribute.getString(OPENMRS_ENTITY_PARENT));
+        checkBoxOptionsObject.put(OPENMRS_ENTITY_ID, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_ID));
+        checkBoxOptionsObject.put(OPENMRS_ENTITY_PARENT, parentOpenMRSAttributes.getString(OPENMRS_ENTITY_PARENT));
+        popupJson.put(OPENMRS_ENTITY_PARENT, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_PARENT));
         popupJson.put(OPENMRS_ENTITY_ID, valueOpenMRSAttribute.getString(OPENMRS_ENTITY_ID));
         popupJson.put(OPENMRS_ENTITY, valueOpenMRSAttribute.getString(OPENMRS_ENTITY));
         popupJson.put(VALUE, true);
@@ -363,12 +352,12 @@ public class JsonFormUtils {
                         JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
                         for (int i = 0; i < conceptsOptions.length(); i++) {
                             JSONObject option = conceptsOptions.getJSONObject(i);
-                            String optionValue = option.getString(VALUE);
-                            if (AllConstants.TRUE.equals(optionValue)) {
+                            boolean optionValue = option.getBoolean(VALUE);
+                            if (optionValue) {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                                 option.put(KEY, jsonObject.getString(KEY));
-                                createObservation(e, option, option.getString(VALUE), entity);
+                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
                             }
                         }
                     }
@@ -416,8 +405,8 @@ public class JsonFormUtils {
                 if (jsonObject.has(AllConstants.TEXT)) {
                     humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
                 }
-            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON
-                    .equals(widgetType)) && jsonObject.has(AllConstants.OPTIONS)) {
+            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON.equals(widgetType)) &&
+                    jsonObject.has(AllConstants.OPTIONS)) {
                 try {
                     JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
                     for (int i = 0; i < options.length(); i++) {
@@ -441,13 +430,13 @@ public class JsonFormUtils {
                     vall.add(obsValue);
                 }
             }
-            e.addObs(new Obs(CONCEPT, dataType, entityIdVal,
-                    entityParentVal, vall, humanReadableValues, null, formSubmissionField));
+            e.addObs(new Obs(CONCEPT, dataType, entityIdVal, entityParentVal, vall, humanReadableValues, null,
+                    formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
             vall.add(obsValue);
 
-            e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
-                    "", vall, new ArrayList<>(), null, formSubmissionField));
+            e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
+                    formSubmissionField));
         }
     }
 
@@ -579,15 +568,15 @@ public class JsonFormUtils {
                     ad.setTown(value);
                 } else if (addressField.equalsIgnoreCase("sub_district") || addressField.equalsIgnoreCase("subDistrict")) {
                     ad.setSubDistrict(value);
-                } else if (addressField.equalsIgnoreCase("district") || addressField.equalsIgnoreCase("county")
-                        || addressField.equalsIgnoreCase("county_district") || addressField
-                        .equalsIgnoreCase("countyDistrict")) {
+                } else if (addressField.equalsIgnoreCase("district") || addressField.equalsIgnoreCase("county") ||
+                        addressField.equalsIgnoreCase("county_district") ||
+                        addressField.equalsIgnoreCase("countyDistrict")) {
                     ad.setCountyDistrict(value);
-                } else if (addressField.equalsIgnoreCase("city") || addressField.equalsIgnoreCase("village")
-                        || addressField.equalsIgnoreCase("cityVillage") || addressField.equalsIgnoreCase("city_village")) {
+                } else if (addressField.equalsIgnoreCase("city") || addressField.equalsIgnoreCase("village") ||
+                        addressField.equalsIgnoreCase("cityVillage") || addressField.equalsIgnoreCase("city_village")) {
                     ad.setCityVillage(value);
-                } else if (addressField.equalsIgnoreCase("state") || addressField
-                        .equalsIgnoreCase("state_province") || addressField.equalsIgnoreCase("stateProvince")) {
+                } else if (addressField.equalsIgnoreCase("state") || addressField.equalsIgnoreCase("state_province") ||
+                        addressField.equalsIgnoreCase("stateProvince")) {
                     ad.setStateProvince(value);
                 } else if (addressField.equalsIgnoreCase("country")) {
                     ad.setCountry(value);
@@ -646,8 +635,8 @@ public class JsonFormUtils {
             }
             String entityVal = getString(jsonObject, OPENMRS_ENTITY);
             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
-            if (entityVal != null && entityVal.equals(person.entity()) && entityIdVal != null && entityIdVal
-                    .equals(person.name())) {
+            if (entityVal != null && entityVal.equals(person.entity()) && entityIdVal != null &&
+                    entityIdVal.equals(person.name())) {
                 return getString(jsonObject, VALUE);
             }
 
@@ -751,15 +740,15 @@ public class JsonFormUtils {
                     ad.setTown(value);
                 } else if (addressField.equalsIgnoreCase("sub_district") || addressField.equalsIgnoreCase("subDistrict")) {
                     ad.setSubDistrict(value);
-                } else if (addressField.equalsIgnoreCase("district") || addressField.equalsIgnoreCase("county")
-                        || addressField.equalsIgnoreCase("county_district") || addressField
-                        .equalsIgnoreCase("countyDistrict")) {
+                } else if (addressField.equalsIgnoreCase("district") || addressField.equalsIgnoreCase("county") ||
+                        addressField.equalsIgnoreCase("county_district") ||
+                        addressField.equalsIgnoreCase("countyDistrict")) {
                     ad.setCountyDistrict(value);
-                } else if (addressField.equalsIgnoreCase("city") || addressField.equalsIgnoreCase("village")
-                        || addressField.equalsIgnoreCase("cityVillage") || addressField.equalsIgnoreCase("city_village")) {
+                } else if (addressField.equalsIgnoreCase("city") || addressField.equalsIgnoreCase("village") ||
+                        addressField.equalsIgnoreCase("cityVillage") || addressField.equalsIgnoreCase("city_village")) {
                     ad.setCityVillage(value);
-                } else if (addressField.equalsIgnoreCase("state") || addressField
-                        .equalsIgnoreCase("state_province") || addressField.equalsIgnoreCase("stateProvince")) {
+                } else if (addressField.equalsIgnoreCase("state") || addressField.equalsIgnoreCase("state_province") ||
+                        addressField.equalsIgnoreCase("stateProvince")) {
                     ad.setStateProvince(value);
                 } else if (addressField.equalsIgnoreCase("country")) {
                     ad.setCountry(value);
@@ -795,6 +784,7 @@ public class JsonFormUtils {
      * Returns a JSONArray of all the forms fields in a multi step form.
      *
      * @param jsonForm {@link JSONObject}
+     *
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
@@ -829,6 +819,7 @@ public class JsonFormUtils {
      * return field values that are in sections e.g for the hia2 monthly draft form which has sections
      *
      * @param jsonForm
+     *
      * @return
      */
     public static Map<String, String> sectionFields(JSONObject jsonForm) {

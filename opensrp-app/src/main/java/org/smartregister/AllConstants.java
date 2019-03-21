@@ -116,6 +116,7 @@ public class AllConstants {
     public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
     public static final String SECONDARY_VALUE = "secondary_value";
     public static final String EXPANSION_PANEL = "expansion_panel";
+    public static final String SPINNER = "spinner";
 
 
     public static class Immunizations {
