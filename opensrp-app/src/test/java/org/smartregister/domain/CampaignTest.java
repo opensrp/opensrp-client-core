@@ -21,7 +21,7 @@ public class CampaignTest {
 
 	private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
 			.registerTypeAdapter(LocalDate.class, new DateTypeConverter())
-			.serializeNulls().create();
+			.create();
 
 	private static DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HHmm");
 
@@ -49,7 +49,7 @@ public class CampaignTest {
 	public void testSerialize() {
 		Campaign campaign = gson.fromJson(campaignJson, Campaign.class);
 		assertEquals(campaignJson, gson.toJson(campaign));
-		assertEquals(campaign.getTitle(),"2019 IRS Season 2");
+		assertEquals(campaign.getTitle(),"2019 IRS Season 1");
 	}
 
 

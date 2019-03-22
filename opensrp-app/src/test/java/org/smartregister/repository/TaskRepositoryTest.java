@@ -51,7 +51,7 @@ public class TaskRepositoryTest {
     private TaskRepository taskRepository;
 
     @Mock
-    private static Repository repository;
+    private Repository repository;
     @Mock
     private TaskNotesRepository taskNotesRepository;
 
@@ -96,7 +96,7 @@ public class TaskRepositoryTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(16, contentValues.size());
+        assertEquals(17, contentValues.size());
 
         assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
         assertEquals("IRS_2018_S1", contentValues.getAsString("campaign_id"));
@@ -188,7 +188,7 @@ public class TaskRepositoryTest {
                 task.getExecutionStartDate().getMillis(),
                 null,
                 task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
-                task.getOwner(), task.getServerVersion()});
+                task.getOwner(),task.getSyncStatus(), task.getServerVersion()});
         return cursor;
     }
 
