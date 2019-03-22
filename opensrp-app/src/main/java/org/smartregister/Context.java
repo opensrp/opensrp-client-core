@@ -983,7 +983,7 @@ public class Context {
             if (this.applicationContext() == null) {
                 return;
             }
-            String str = ReadFromfile("ec_client_fields.json", this.applicationContext());
+            String str = ReadFromfile(CoreLibrary.getInstance().getEcClientFieldsFile(), this.applicationContext());
             if (StringUtils.isBlank(str)) {
                 return;
             }
@@ -1125,13 +1125,15 @@ public class Context {
         }
         return campaignRepository;
     }
+
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
             taskNotesRepository = new TaskNotesRepository(getRepository());
-            taskRepository = new TaskRepository(getRepository(),taskNotesRepository);
+            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
         }
         return taskRepository;
     }
+
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
             locationRepository = new LocationRepository(getRepository());

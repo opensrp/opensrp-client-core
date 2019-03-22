@@ -391,4 +391,12 @@
     <string name="account_disabled">Account Disabled</string>
     <string name="account_disabled_logged_off">You have been logged off as your account has been disabled. Contact your administrator</string>
 
+    <!--Alerts-->
+    <string name="invalid_url_massage">Please enter a valid url!</string>
+    <string name="language_change_prepend_message">Language preference set to</string>
+    <string name="language_change_append_message">Please restart the application</string>
+    <string name="photo_captured">Photo captured</string>
+
+
+
 </resources>
