@@ -1,6 +1,7 @@
 package org.smartregister.login.interactor;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,12 +11,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
+import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.login.task.RemoteLoginTask;
+import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
@@ -184,6 +187,13 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         scheduleJobsPeriodically();
         scheduleJobsImmediately();
+
+        // Initialize the P2P library here
+        String teamId = getUserService().getUserDefaultTeamId(loginResponse.payload());
+
+        if (!TextUtils.isEmpty(teamId)) {
+            P2PLibrary.init(new P2PLibrary.Options(userName, new P2PSyncAuthorizationService(teamId)));
+        }
 
         getLoginView().goToHome(true);
     }

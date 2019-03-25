@@ -1,7 +1,10 @@
 package org.smartregister.authorizer;
 
 import android.support.annotation.NonNull;
+
+import org.smartregister.AllConstants;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
+
 import java.util.Map;
 
 /**
@@ -11,15 +14,19 @@ import java.util.Map;
 public class P2PSyncAuthorizationService implements P2PAuthorizationService {
 
     private Map<String, Object> authorizationDetails;
-    private static final String KEY_TEAM_ID = "team-id";
+
+    public P2PSyncAuthorizationService(@NonNull String teamId) {
+        authorizationDetails.put(AllConstants.PeerToPeer.KEY_TEAM_ID, teamId);
+    }
 
     @Override
     public void authorizeConnection(@NonNull Map<String, Object> peerDeviceMap, @NonNull final AuthorizationCallback authorizationCallback) {
         getAuthorizationDetails(new OnAuthorizationDetailsProvidedCallback() {
             @Override
             public void onAuthorizationDetailsProvided(@NonNull Map<String, Object> map) {
-                Object peerDeviceTeamId = map.get(KEY_TEAM_ID);
-                if (peerDeviceTeamId != null && peerDeviceTeamId instanceof String && ((String) peerDeviceTeamId).equals(map.get(KEY_TEAM_ID))) {
+                Object peerDeviceTeamId = map.get(AllConstants.PeerToPeer.KEY_TEAM_ID);
+                if (peerDeviceTeamId != null && peerDeviceTeamId instanceof String
+                        && ((String) peerDeviceTeamId).equals(map.get(AllConstants.PeerToPeer.KEY_TEAM_ID))) {
                     authorizationCallback.onConnectionAuthorized();
                 } else {
                     authorizationCallback.onConnectionAuthorizationRejected("Incorrect authorization details provided");
@@ -30,10 +37,7 @@ public class P2PSyncAuthorizationService implements P2PAuthorizationService {
 
     @Override
     public void getAuthorizationDetails(@NonNull OnAuthorizationDetailsProvidedCallback onAuthorizationDetailsProvidedCallback) {
-        if (authorizationDetails == null) {
             // Todo: Add the authorization details here
-        } else {
             onAuthorizationDetailsProvidedCallback.onAuthorizationDetailsProvided(authorizationDetails);
-        }
     }
 }

@@ -1,5 +1,13 @@
 package org.smartregister;
 
+import android.text.TextUtils;
+
+import org.smartregister.authorizer.P2PSyncAuthorizationService;
+import org.smartregister.p2p.P2PLibrary;
+import org.smartregister.repository.AllSharedPreferences;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+
 /**
  * Created by keyman on 31/07/17.
  */
@@ -43,6 +51,18 @@ public class CoreLibrary {
     private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration) {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
+
+        initP2pLibrary();
+    }
+
+    private void initP2pLibrary() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
+        String username = allSharedPreferences.fetchRegisteredANM();
+
+        if (!TextUtils.isEmpty(username)) {
+            P2PLibrary.init(new P2PLibrary.Options(username
+                    , new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(username))));
+        }
     }
 
     public Context context() {
