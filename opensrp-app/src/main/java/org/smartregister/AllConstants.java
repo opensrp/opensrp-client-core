@@ -100,6 +100,24 @@ public class AllConstants {
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
+    public static final String OPTIONS = "options";
+    public static final String CHECK_BOX = "check_box";
+    public static final String TRUE = "true";
+    public static final String DATE = "date";
+    public static final String TEXT = "text";
+    public static final String NATIVE_RADIO = "native_radio";
+    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String PARENT_ENTITY_ID = "parent_entity_id";
+    public static final String COUNT = "count";
+    public static final String STEP = "step";
+    public static final String EXTRA_REL = "extra_rel";
+    public static final String HAS_EXTRA_REL = "has_extra_rel";
+    public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
+    public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
+    public static final String SECONDARY_VALUE = "secondary_value";
+    public static final String EXPANSION_PANEL = "expansion_panel";
+    public static final String SPINNER = "spinner";
+
 
     public static class Immunizations {
         public static final String BCG = "bcg";
