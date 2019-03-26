@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import org.smartregister.AllConstants;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class P2PSyncAuthorizationService implements P2PAuthorizationService {
 
-    private Map<String, Object> authorizationDetails;
+    private Map<String, Object> authorizationDetails = new HashMap<>();
 
     public P2PSyncAuthorizationService(@NonNull String teamId) {
         authorizationDetails.put(AllConstants.PeerToPeer.KEY_TEAM_ID, teamId);
