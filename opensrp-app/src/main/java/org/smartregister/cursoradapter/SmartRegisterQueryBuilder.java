@@ -76,10 +76,10 @@ public class SmartRegisterQueryBuilder {
     }
 
     public String SelectInitiateMainTable(String tablename, String[] columns) {
-        return SelectInitiateMainTable(tablename, columns, "id");
+        return selectInitiateMainTable(tablename, columns, "id");
     }
 
-    public String SelectInitiateMainTable(String tablename, String[] columns, String idColumn) {
+    public String selectInitiateMainTable(String tablename, String[] columns, String idColumn) {
         Selectquery = "Select " + tablename + "." + idColumn + " as _id";
 
         for (String column : columns) {
