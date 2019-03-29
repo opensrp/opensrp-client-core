@@ -1,9 +1,11 @@
 package org.smartregister;
 
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
+import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.repository.AllSharedPreferences;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -20,6 +22,9 @@ public class CoreLibrary {
     private static long buildTimeStamp;
 
     private String ecClientFieldsFile = "ec_client_fields.json";
+    private boolean enableP2pLibrary = false;
+    private P2PAuthorizationService p2PAuthorizationService;
+
 
     public static void init(Context context) {
         init(context, null);
@@ -27,13 +32,28 @@ public class CoreLibrary {
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration);
+            instance = new CoreLibrary(context, syncConfiguration, false, null);
         }
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration);
+            instance = new CoreLibrary(context, syncConfiguration, false, null);
+            buildTimeStamp = buildVersion;
+        }
+    }
+
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion, boolean enableP2pLibrary) {
+        if (instance == null) {
+            instance = new CoreLibrary(context, syncConfiguration, enableP2pLibrary, null);
+            buildTimeStamp = buildVersion;
+        }
+    }
+
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion, boolean enableP2pLibrary
+            , P2PAuthorizationService p2PAuthorizationService) {
+        if (instance == null) {
+            instance = new CoreLibrary(context, syncConfiguration, enableP2pLibrary, p2PAuthorizationService);
             buildTimeStamp = buildVersion;
         }
     }
@@ -48,20 +68,28 @@ public class CoreLibrary {
         return instance;
     }
 
-    private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration) {
+    private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, boolean enableP2pLibrary
+            , @Nullable P2PAuthorizationService authorizationService) {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
+        this.enableP2pLibrary = enableP2pLibrary;
+        this.p2PAuthorizationService = authorizationService;
 
         initP2pLibrary();
     }
 
-    private void initP2pLibrary() {
-        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
-        String username = allSharedPreferences.fetchRegisteredANM();
+    public void initP2pLibrary() {
+        if (enableP2pLibrary) {
+            AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
+            String username = allSharedPreferences.fetchRegisteredANM();
 
-        if (!TextUtils.isEmpty(username)) {
-            P2PLibrary.init(new P2PLibrary.Options(username
-                    , new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(username))));
+            if (p2PAuthorizationService == null) {
+                p2PAuthorizationService = new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(username));
+            }
+
+            if (!TextUtils.isEmpty(username)) {
+                P2PLibrary.init(new P2PLibrary.Options(username, p2PAuthorizationService));
+            }
         }
     }
 
@@ -77,13 +105,13 @@ public class CoreLibrary {
      */
     public static void reset(Context context) {
         if (context != null) {
-            instance = new CoreLibrary(context, null);
+            instance = new CoreLibrary(context, null, false, null);
         }
     }
 
     public static void reset(Context context, SyncConfiguration syncConfiguration) {
         if (context != null) {
-            instance = new CoreLibrary(context, syncConfiguration);
+            instance = new CoreLibrary(context, syncConfiguration, false, null);
         }
     }
 

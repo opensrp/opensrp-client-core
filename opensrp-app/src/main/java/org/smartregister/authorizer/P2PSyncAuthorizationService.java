@@ -21,11 +21,11 @@ public class P2PSyncAuthorizationService implements P2PAuthorizationService {
     }
 
     @Override
-    public void authorizeConnection(@NonNull Map<String, Object> peerDeviceMap, @NonNull final AuthorizationCallback authorizationCallback) {
+    public void authorizeConnection(@NonNull final Map<String, Object> peerDeviceMap, @NonNull final AuthorizationCallback authorizationCallback) {
         getAuthorizationDetails(new OnAuthorizationDetailsProvidedCallback() {
             @Override
             public void onAuthorizationDetailsProvided(@NonNull Map<String, Object> map) {
-                Object peerDeviceTeamId = map.get(AllConstants.PeerToPeer.KEY_TEAM_ID);
+                Object peerDeviceTeamId = peerDeviceMap.get(AllConstants.PeerToPeer.KEY_TEAM_ID);
                 if (peerDeviceTeamId != null && peerDeviceTeamId instanceof String
                         && ((String) peerDeviceTeamId).equals(map.get(AllConstants.PeerToPeer.KEY_TEAM_ID))) {
                     authorizationCallback.onConnectionAuthorized();
