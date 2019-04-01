@@ -1,6 +1,7 @@
 package org.smartregister;
 
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
@@ -75,13 +76,15 @@ public class CoreLibrary {
         this.enableP2pLibrary = enableP2pLibrary;
         this.p2PAuthorizationService = authorizationService;
 
-        initP2pLibrary();
+        initP2pLibrary(null);
     }
 
-    public void initP2pLibrary() {
+    public void initP2pLibrary(@Nullable String username) {
         if (enableP2pLibrary) {
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
-            String username = allSharedPreferences.fetchRegisteredANM();
+            if (username == null) {
+                username = allSharedPreferences.fetchRegisteredANM();
+            }
 
             if (p2PAuthorizationService == null) {
                 p2PAuthorizationService = new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(username));

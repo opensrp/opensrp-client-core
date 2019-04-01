@@ -88,6 +88,9 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         getUserService().localLogin(userName, password);
         getLoginView().goToHome(false);
+
+        CoreLibrary.getInstance().initP2pLibrary(userName);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
