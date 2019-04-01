@@ -189,7 +189,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         scheduleJobsPeriodically();
         scheduleJobsImmediately();
 
-        CoreLibrary.getInstance().initP2pLibrary();
+        CoreLibrary.getInstance().initP2pLibrary(userName);
 
         getLoginView().goToHome(true);
     }

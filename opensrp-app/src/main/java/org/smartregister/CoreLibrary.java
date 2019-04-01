@@ -1,7 +1,6 @@
 package org.smartregister;
 
 import android.support.annotation.Nullable;
-import android.support.annotation.StringRes;
 import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
@@ -37,25 +36,25 @@ public class CoreLibrary {
         }
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, false, null);
-            buildTimeStamp = buildVersion;
+            buildTimeStamp = buildTimestamp;
         }
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion, boolean enableP2pLibrary) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, boolean enableP2pLibrary) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, enableP2pLibrary, null);
-            buildTimeStamp = buildVersion;
+            buildTimeStamp = buildTimestamp;
         }
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildVersion, boolean enableP2pLibrary
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, boolean enableP2pLibrary
             , P2PAuthorizationService p2PAuthorizationService) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, enableP2pLibrary, p2PAuthorizationService);
-            buildTimeStamp = buildVersion;
+            buildTimeStamp = buildTimestamp;
         }
     }
 
