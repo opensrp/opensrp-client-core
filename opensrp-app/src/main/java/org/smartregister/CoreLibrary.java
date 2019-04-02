@@ -80,17 +80,18 @@ public class CoreLibrary {
 
     public void initP2pLibrary(@Nullable String username) {
         if (enableP2pLibrary) {
+            String p2pUsername = username;
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
-            if (username == null) {
-                username = allSharedPreferences.fetchRegisteredANM();
+            if (p2pUsername == null) {
+                p2pUsername = allSharedPreferences.fetchRegisteredANM();
             }
 
             if (p2PAuthorizationService == null) {
-                p2PAuthorizationService = new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(username));
+                p2PAuthorizationService = new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(p2pUsername));
             }
 
-            if (!TextUtils.isEmpty(username)) {
-                P2PLibrary.init(new P2PLibrary.Options(username, p2PAuthorizationService));
+            if (!TextUtils.isEmpty(p2pUsername)) {
+                P2PLibrary.init(new P2PLibrary.Options(p2pUsername, p2PAuthorizationService));
             }
         }
     }
