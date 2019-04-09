@@ -263,13 +263,13 @@ public class EventClientRepository extends BaseRepository {
                 try {
                     JSONObject jsonObject = array.getJSONObject(i);
                     String baseEntityId = jsonObject.getString(client_column.baseEntityId.name());
+
+                    if (maxRowId == 0) {
+                        maxRowId = getMaxRowId(Table.client);
+                    }
+
+                    maxRowId++;
                     if (checkIfExists(Table.client, baseEntityId)) {
-                        if (maxRowId == 0) {
-                            maxRowId = getMaxRowId(Table.client);
-                        }
-
-                        maxRowId++;
-
                         if (populateStatement(updateStatement, Table.client, jsonObject, updateQueryWrapper.columnOrder)) {
                             updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                             updateStatement.executeUpdateDelete();
@@ -339,12 +339,13 @@ public class EventClientRepository extends BaseRepository {
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
                 String formSubmissionId = jsonObject.getString(event_column.formSubmissionId.name());
-                if (checkIfExistsByFormSubmissionId(Table.event, formSubmissionId)) {
-                    if (maxRowId == 0) {
-                        maxRowId = getMaxRowId(Table.event);
-                    }
 
-                    maxRowId++;
+                if (maxRowId == 0) {
+                    maxRowId = getMaxRowId(Table.event);
+                }
+
+                maxRowId++;
+                if (checkIfExistsByFormSubmissionId(Table.event, formSubmissionId)) {
                     if (populateStatement(updateStatement, Table.event, jsonObject, updateQueryWrapper.columnOrder)) {
                         updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                         updateStatement.executeUpdateDelete();
