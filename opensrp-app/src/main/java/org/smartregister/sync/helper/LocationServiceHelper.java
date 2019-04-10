@@ -55,7 +55,6 @@ public class LocationServiceHelper {
         return instance;
     }
 
-    @VisibleForTesting
     public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
