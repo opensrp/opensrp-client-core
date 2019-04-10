@@ -426,6 +426,9 @@ public class AllConstants {
 
     public static class PREF_KEY {
         public static final String SETTINGS = "settings";
+    }
 
+    public static class PeerToPeer {
+        public static final String KEY_TEAM_ID = "team-id";
     }
 }

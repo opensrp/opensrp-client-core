@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
@@ -87,6 +88,9 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         getUserService().localLogin(userName, password);
         getLoginView().goToHome(false);
+
+        CoreLibrary.getInstance().initP2pLibrary(userName);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -184,6 +188,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         scheduleJobsPeriodically();
         scheduleJobsImmediately();
+
+        CoreLibrary.getInstance().initP2pLibrary(userName);
 
         getLoginView().goToHome(true);
     }
