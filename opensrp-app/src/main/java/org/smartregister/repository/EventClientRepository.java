@@ -56,7 +56,7 @@ public class EventClientRepository extends BaseRepository {
                 if (jsonObject.has(column.name())) {
                     Object value = jsonObject.get(column.name());
                     if (column.column().type().equals(ColumnAttribute.Type.date)) {
-                        values.put(column.name(), new DateTime(value).toDate().toString());
+                        values.put(column.name(), dateFormat.format(new DateTime(value).toDate()));
                     } else if (column.column().type().equals(ColumnAttribute.Type.longnum)) {
                         values.put(column.name(), Long.valueOf(value.toString()));
                     } else {
@@ -156,7 +156,7 @@ public class EventClientRepository extends BaseRepository {
                 if (jsonObject.has(column.name())) {
                     Object value = jsonObject.get(column.name());
                     if (column.column().type().equals(ColumnAttribute.Type.date)) {
-                        statement.bindString(columnOrder.get(column.name()), new DateTime(value).toDate().toString());
+                        statement.bindString(columnOrder.get(column.name()), dateFormat.format(new DateTime(value).toDate()));
                     } else if (column.column().type().equals(ColumnAttribute.Type.longnum)) {
                         statement.bindLong(columnOrder.get(column.name()), Long.valueOf(value.toString()));
                     } else {
