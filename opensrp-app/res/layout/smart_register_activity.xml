@@ -14,8 +14,8 @@
         android:id="@+id/clients_upper_header_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_header_height"
-        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
-        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:layout_marginStart="@dimen/list_view_margin_left_and_right"
+        android:layout_marginEnd="@dimen/list_view_margin_left_and_right"
         android:visibility="gone"
         android:orientation="horizontal" />
 
@@ -23,16 +23,16 @@
         android:id="@+id/clients_header_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_header_height"
-        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
-        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:layout_marginStart="@dimen/list_view_margin_left_and_right"
+        android:layout_marginEnd="@dimen/list_view_margin_left_and_right"
         android:orientation="horizontal" />
 
     <LinearLayout
         android:id="@+id/clients_lower_header_layout"
         android:layout_width="match_parent"
         android:layout_height="@dimen/list_header_height"
-        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
-        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:layout_marginStart="@dimen/list_view_margin_left_and_right"
+        android:layout_marginEnd="@dimen/list_view_margin_left_and_right"
         android:visibility="gone"
         android:orientation="horizontal" />
 
@@ -45,8 +45,8 @@
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:layout_marginLeft="@dimen/list_view_margin_left_and_right"
-        android:layout_marginRight="@dimen/list_view_margin_left_and_right"
+        android:layout_marginStart="@dimen/list_view_margin_left_and_right"
+        android:layout_marginEnd="@dimen/list_view_margin_left_and_right"
         android:background="@drawable/listview_background_rounded">
 
         <ListView

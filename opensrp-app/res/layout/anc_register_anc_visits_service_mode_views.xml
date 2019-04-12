@@ -29,7 +29,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_anc_visit_1_due_type"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
 
@@ -52,9 +52,9 @@
                     android:id="@+id/txt_anc_visit_1_done_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_yes_small"
+                    android:drawableStart="@drawable/ic_yes_small"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -62,7 +62,7 @@
                     android:id="@+id/lbl_anc_visit_1_bp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_bp"
                     android:layout_below="@id/txt_anc_visit_1_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -71,7 +71,7 @@
                     android:id="@+id/lbl_anc_visit_1_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_weight"
                     android:layout_below="@id/lbl_anc_visit_1_bp"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -80,7 +80,7 @@
                     android:id="@+id/txt_anc_visit_1_bp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_1_bp"
+                    android:layout_toEndOf="@id/lbl_anc_visit_1_bp"
                     android:layout_below="@id/txt_anc_visit_1_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -88,7 +88,7 @@
                     android:id="@+id/txt_anc_visit_1_weight_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_1_weight"
+                    android:layout_toEndOf="@id/lbl_anc_visit_1_weight"
                     android:layout_below="@id/txt_anc_visit_1_bp_value"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
@@ -123,7 +123,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -132,7 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_anc_visit_2_due_type"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
 
@@ -146,9 +146,9 @@
                     android:id="@+id/txt_anc_visit_2_done_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_yes_small"
+                    android:drawableStart="@drawable/ic_yes_small"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -156,7 +156,7 @@
                     android:id="@+id/lbl_anc_visit_2_bp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_bp"
                     android:layout_below="@id/txt_anc_visit_2_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -165,7 +165,7 @@
                     android:id="@+id/lbl_anc_visit_2_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_weight"
                     android:layout_below="@id/lbl_anc_visit_2_bp"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -174,7 +174,7 @@
                     android:id="@+id/txt_anc_visit_2_bp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_2_bp"
+                    android:layout_toEndOf="@id/lbl_anc_visit_2_bp"
                     android:layout_below="@id/txt_anc_visit_2_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -182,7 +182,7 @@
                     android:id="@+id/txt_anc_visit_2_weight_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_2_weight"
+                    android:layout_toEndOf="@id/lbl_anc_visit_2_weight"
                     android:layout_below="@id/txt_anc_visit_2_bp_value"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
@@ -217,7 +217,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -226,7 +226,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_anc_visit_3_due_type"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
 
@@ -241,8 +241,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:drawableLeft="@drawable/ic_yes_small"
+                    android:layout_alignParentStart="true"
+                    android:drawableStart="@drawable/ic_yes_small"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -250,7 +250,7 @@
                     android:id="@+id/lbl_anc_visit_3_bp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_bp"
                     android:layout_below="@id/txt_anc_visit_3_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -259,7 +259,7 @@
                     android:id="@+id/lbl_anc_visit_3_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_weight"
                     android:layout_below="@id/lbl_anc_visit_3_bp"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -268,7 +268,7 @@
                     android:id="@+id/txt_anc_visit_3_bp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_3_bp"
+                    android:layout_toEndOf="@id/lbl_anc_visit_3_bp"
                     android:layout_below="@id/txt_anc_visit_3_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -276,7 +276,7 @@
                     android:id="@+id/txt_anc_visit_3_weight_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_3_weight"
+                    android:layout_toEndOf="@id/lbl_anc_visit_3_weight"
                     android:layout_below="@id/txt_anc_visit_3_bp_value"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
@@ -311,7 +311,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -320,7 +320,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_anc_visit_4_due_type"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
 
@@ -335,8 +335,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
-                    android:drawableLeft="@drawable/ic_yes_small"
+                    android:layout_alignParentStart="true"
+                    android:drawableStart="@drawable/ic_yes_small"
                     android:text="@string/anc_label"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -344,7 +344,7 @@
                     android:id="@+id/lbl_anc_visit_4_bp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_bp"
                     android:layout_below="@id/txt_anc_visit_4_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -353,7 +353,7 @@
                     android:id="@+id/lbl_anc_visit_4_weight"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     android:text="@string/str_weight"
                     android:layout_below="@id/lbl_anc_visit_4_bp"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -362,7 +362,7 @@
                     android:id="@+id/txt_anc_visit_4_bp_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_4_bp"
+                    android:layout_toEndOf="@id/lbl_anc_visit_4_bp"
                     android:layout_below="@id/txt_anc_visit_4_done_date"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
@@ -370,7 +370,7 @@
                     android:id="@+id/txt_anc_visit_4_weight_value"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/lbl_anc_visit_4_weight"
+                    android:layout_toEndOf="@id/lbl_anc_visit_4_weight"
                     android:layout_below="@id/txt_anc_visit_4_bp_value"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
             </RelativeLayout>
