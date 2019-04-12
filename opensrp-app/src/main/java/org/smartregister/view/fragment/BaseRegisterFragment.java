@@ -1,6 +1,7 @@
 package org.smartregister.view.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -124,7 +125,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_base_register, container, false);
+        View view = inflater.inflate(getLayout(), container, false);
         rootView = view;//handle to the root
 
         Toolbar toolbar = view.findViewById(R.id.register_toolbar);
@@ -140,6 +141,12 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         setupViews(view);
         return view;
+    }
+
+
+    @LayoutRes
+    protected int getLayout() {
+        return R.layout.fragment_base_register;
     }
 
     protected abstract void initializePresenter();
@@ -174,7 +181,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     public abstract void setUniqueID(String qrCode);
-    public abstract void setAdvancedSearchFormData(HashMap<String,String> advancedSearchFormData);
+
+    public abstract void setAdvancedSearchFormData(HashMap<String, String> advancedSearchFormData);
 
     @Override
     public void setupViews(View view) {
