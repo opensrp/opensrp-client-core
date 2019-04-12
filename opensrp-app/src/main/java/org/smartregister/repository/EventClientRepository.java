@@ -1008,7 +1008,6 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
-        List<JSONObject> list = new ArrayList<>();
         if (StringUtils.isBlank(formSubmissionId)) {
             return null;
         }
