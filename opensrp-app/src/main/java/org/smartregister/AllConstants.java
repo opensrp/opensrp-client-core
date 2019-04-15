@@ -117,6 +117,7 @@ public class AllConstants {
     public static final String SECONDARY_VALUE = "secondary_value";
     public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String SPINNER = "spinner";
+    public static final String ROWID = "rowid";
 
 
     public static class Immunizations {
