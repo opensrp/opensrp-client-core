@@ -902,6 +902,7 @@ public class EventClientRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             cursor = getWritableDatabase().rawQuery(clients, null);
+            int maxRowId = getMaxRowId(Table.client);
 
             while (cursor.moveToNext()) {
                 String beid = (cursor.getString(0));
@@ -913,6 +914,7 @@ public class EventClientRepository extends BaseRepository {
                 ContentValues values = new ContentValues();
                 values.put(client_column.baseEntityId.name(), beid);
                 values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
+                values.put(ROWID, maxRowId++);
 
                 getWritableDatabase().update(Table.client.name(),
                         values,
@@ -920,8 +922,11 @@ public class EventClientRepository extends BaseRepository {
                         new String[]{beid});
 
             }
+
             cursor.close();
             cursor = getWritableDatabase().rawQuery(events, null);
+
+            maxRowId = getMaxRowId(Table.event);
 
             while (cursor.moveToNext()) {
                 String beid = (cursor.getString(0));
@@ -933,6 +938,7 @@ public class EventClientRepository extends BaseRepository {
                 ContentValues values = new ContentValues();
                 values.put(event_column.baseEntityId.name(), beid);
                 values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
+                values.put(ROWID, maxRowId++);
 
                 getWritableDatabase().update(Table.event.name(),
                         values,
@@ -1224,7 +1230,7 @@ public class EventClientRepository extends BaseRepository {
             values.put(client_column.baseEntityId.name(), baseEntityId);
             populateAdditionalColumns(values, client_column.values(), jsonObject);
             if (checkIfExists(Table.client, baseEntityId)) {
-                values.put("rowid", getMaxRowId(Table.client) + 1);
+                values.put(ROWID, getMaxRowId(Table.client) + 1);
 
                 getWritableDatabase().update(Table.client.name(),
                         values,
@@ -1259,6 +1265,8 @@ public class EventClientRepository extends BaseRepository {
                         jsonObject.getString(event_column
                                 .formSubmissionId
                                 .name()))) {
+
+                    values.put(ROWID, getMaxRowId(Table.event) + 1);
                     getWritableDatabase().update(Table.event.name(),
                             values,
                             event_column.formSubmissionId.name() + "=?",
@@ -1289,6 +1297,7 @@ public class EventClientRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(event_column.formSubmissionId.name(), formSubmissionId);
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Synced);
+            values.put(ROWID, getMaxRowId(Table.event) + 1);
 
             getWritableDatabase().update(Table.event.name(),
                     values,
@@ -1306,6 +1315,7 @@ public class EventClientRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(client_column.baseEntityId.name(), baseEntityId);
             values.put(client_column.syncStatus.name(), BaseRepository.TYPE_Synced);
+            values.put(ROWID, getMaxRowId(Table.client) + 1);
 
             getWritableDatabase().update(Table.client.name(),
                     values,
@@ -1325,6 +1335,7 @@ public class EventClientRepository extends BaseRepository {
             if (!valid) {
                 values.put(event_column.syncStatus.name(), TYPE_Unsynced);
             }
+            values.put(ROWID, getMaxRowId(Table.event) + 1);
 
             getWritableDatabase().update(Table.event.name(),
                     values,
@@ -1346,6 +1357,8 @@ public class EventClientRepository extends BaseRepository {
                 values.put(client_column.syncStatus.name(), TYPE_Unsynced);
             }
 
+            values.put(ROWID, getMaxRowId(Table.client) + 1);
+
             getWritableDatabase().update(Table.client.name(),
                     values,
                     client_column.baseEntityId.name() + " = ?",
@@ -1360,6 +1373,8 @@ public class EventClientRepository extends BaseRepository {
         try {
             ContentValues values = new ContentValues();
             values.put(client_column.syncStatus.name(), TYPE_Task_Unprocessed);
+            values.put(ROWID, getMaxRowId(Table.event) + 1);
+
             getWritableDatabase().update(Table.event.name(),
                     values,
                     event_column.formSubmissionId.name() + " = ?",
