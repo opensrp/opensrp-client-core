@@ -977,7 +977,6 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public JSONObject getEventsByEventId(String eventId) {
-        List<JSONObject> list = new ArrayList<>();
         if (StringUtils.isBlank(eventId)) {
             return null;
         }
