@@ -290,8 +290,6 @@
 
     <!-- sync -->
     <string name="url_separator">/</string>
-    <string name="clients_key">clients</string>
-    <string name="events_key">évenéments</string>
 
     <string name="loading_client_settings">Chargement des paramètres du client&#8230;</string>
     <!-- login -->
@@ -361,5 +359,30 @@
     <string name="language_change_prepend_message">Préférence de langue définie sur</string>
     <string name="language_change_append_message">Veuillez redémarrer l\'application</string>
     <string name="photo_captured">Photo capturée</string>
+
+
+    <string name="fp_register_service_mode_ocp">OCP</string>
+    <string name="fp_register_service_mode_dmpa">DMPA/Injectable</string>
+
+    <string name="fp_register_service_mode_ecp">ECP</string>
+    <string name="fp_register_service_mode_lam">LAM</string>
+    <string name="fp_register_service_mode_none_ps">None - PS</string>
+    <string name="fp_register_service_mode_none_ss">None - SS</string>
+    <string name="str_out_of_area">(O/A)</string>
+    <string name="fp_prioritization_all_ec_service_mode">All EC</string>
+    <string name="str_edit_ec_form">Modifier EC</string>
+    <string name="str_close_ec_form">Fermer EC</string>
+    <string name="sort_by_st_label">ST</string>
+
+    <string name="sort_by_sc_label">SC</string>
+    <string name="header_ec_no">EC NO.</string>
+
+    <string name="service_type_je">JE</string>
+    <string name="ec_register_title_in_short">EC</string>
+    <string name="filter_by_out_of_area_label">O/A</string>
+    <string name="sort_by_ec_number_label">EC Nombre</string>
+    <string name="header_gplsa">GPLSA</string>
+    <string name="ifa">IFA</string>
+    <string name="hb_test_label">Hb Tester</string>
 
 </resources>
