@@ -187,8 +187,8 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginEnd="5dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
         android:orientation="horizontal">
@@ -198,10 +198,10 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_reporting"
+            android:drawableStart="@drawable/ic_reporting"
             android:drawablePadding="5dp"
-            android:paddingLeft="185dp"
-            android:paddingRight="185dp"
+            android:paddingStart="185dp"
+            android:paddingEnd="185dp"
             android:text="@string/str_reporting"
             style="@style/CustomFontTextViewStyle.Home.Buttons" />
 
@@ -210,10 +210,10 @@
             android:layout_width="0dp"
             android:layout_height="50dp"
             android:layout_weight="1"
-            android:drawableLeft="@drawable/ic_tv"
+            android:drawableStart="@drawable/ic_tv"
             android:drawablePadding="5dp"
-            android:paddingLeft="200dp"
-            android:paddingRight="200dp"
+            android:paddingStart="200dp"
+            android:paddingEnd="200dp"
             android:text="@string/str_videos"
             style="@style/CustomFontTextViewStyle.Home.Buttons" />
 
