@@ -105,7 +105,6 @@ public class CoreLibrary {
 
                 P2PLibrary.Options options = new P2PLibrary.Options(context.applicationContext()
                         , teamId, p2pUsername, p2PAuthorizationService, receiverTransferDao, senderTransferDao);
-                options.setBatchSize(5);
                 P2PLibrary.init(options);
             }
         }
