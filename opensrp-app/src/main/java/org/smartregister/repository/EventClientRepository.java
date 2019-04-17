@@ -17,6 +17,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Column;
@@ -58,7 +59,7 @@ public class EventClientRepository extends BaseRepository {
                 if (jsonObject.has(column.name())) {
                     Object value = jsonObject.get(column.name());
                     if (column.column().type().equals(ColumnAttribute.Type.date)) {
-                        values.put(column.name(), new DateTime(value).toDate().toString());
+                        values.put(column.name(), dateFormat.format(new DateTime(value).toDate()));
                     } else if (column.column().type().equals(ColumnAttribute.Type.longnum)) {
                         values.put(column.name(), Long.valueOf(value.toString()));
                     } else {
@@ -158,7 +159,7 @@ public class EventClientRepository extends BaseRepository {
                 if (jsonObject.has(column.name())) {
                     Object value = jsonObject.get(column.name());
                     if (column.column().type().equals(ColumnAttribute.Type.date)) {
-                        statement.bindString(columnOrder.get(column.name()), new DateTime(value).toDate().toString());
+                        statement.bindString(columnOrder.get(column.name()), dateFormat.format(new DateTime(value).toDate()));
                     } else if (column.column().type().equals(ColumnAttribute.Type.longnum)) {
                         statement.bindLong(columnOrder.get(column.name()), Long.valueOf(value.toString()));
                     } else {
@@ -407,7 +408,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
-        final String EVENTS = "events";
+        final String EVENTS = AllConstants.KEY.EVENTS;
         try {
             if (jsonObject != null && jsonObject.has(EVENTS)) {
                 JSONArray events = jsonObject.getJSONArray(EVENTS);
@@ -437,7 +438,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public List<JSONObject> getEvents(long startServerVersion, long lastServerVersion) {
-        List<JSONObject> list = new ArrayList<JSONObject>();
+        List<JSONObject> list = new ArrayList<>();
         Cursor cursor = null;
         try {
             cursor = getWritableDatabase().rawQuery("SELECT json FROM "
@@ -565,7 +566,7 @@ public class EventClientRepository extends BaseRepository {
 
         String lastSyncString = DateUtil.yyyyMMddHHmmss.format(lastSyncDate);
 
-        List<JSONObject> eventAndAlerts = new ArrayList<JSONObject>();
+        List<JSONObject> eventAndAlerts = new ArrayList<>();
 
         String query = "select "
                 + event_column.json
@@ -747,8 +748,8 @@ public class EventClientRepository extends BaseRepository {
 
     public Map<String, Object> getUnSyncedEvents(int limit) {
         Map<String, Object> result = new HashMap<>();
-        List<JSONObject> clients = new ArrayList<JSONObject>();
-        List<JSONObject> events = new ArrayList<JSONObject>();
+        List<JSONObject> clients = new ArrayList<>();
+        List<JSONObject> events = new ArrayList<>();
 
         String query = "select "
                 + event_column.json
@@ -788,10 +789,10 @@ public class EventClientRepository extends BaseRepository {
 
             }
             if (!clients.isEmpty()) {
-                result.put("clients", clients);
+                result.put(AllConstants.KEY.CLIENTS, clients);
             }
             if (!events.isEmpty()) {
-                result.put("events", events);
+                result.put(AllConstants.KEY.EVENTS, events);
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
@@ -806,7 +807,7 @@ public class EventClientRepository extends BaseRepository {
 
 
     public List<String> getUnValidatedEventFormSubmissionIds(int limit) {
-        List<String> ids = new ArrayList<String>();
+        List<String> ids = new ArrayList<>();
 
         final String validateFilter = " where "
                 + event_column.syncStatus + " = ? "
@@ -983,7 +984,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public List<JSONObject> getEventsByBaseEntityId(String baseEntityId) {
-        List<JSONObject> list = new ArrayList<JSONObject>();
+        List<JSONObject> list = new ArrayList<>();
         if (StringUtils.isBlank(baseEntityId)) {
             return list;
         }
@@ -1019,7 +1020,6 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public JSONObject getEventsByEventId(String eventId) {
-        List<JSONObject> list = new ArrayList<JSONObject>();
         if (StringUtils.isBlank(eventId)) {
             return null;
         }
@@ -1050,7 +1050,6 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
-        List<JSONObject> list = new ArrayList<JSONObject>();
         if (StringUtils.isBlank(formSubmissionId)) {
             return null;
         }
@@ -1388,11 +1387,11 @@ public class EventClientRepository extends BaseRepository {
     public void markEventsAsSynced(Map<String, Object> syncedEvents) {
         try {
             List<JSONObject> clients =
-                    syncedEvents.containsKey("clients") ? (List<JSONObject>) syncedEvents.get(
-                            "clients") : null;
+                    syncedEvents.containsKey(AllConstants.KEY.CLIENTS) ? (List<JSONObject>) syncedEvents.get(
+                            AllConstants.KEY.CLIENTS) : null;
             List<JSONObject> events =
-                    syncedEvents.containsKey("events") ? (List<JSONObject>) syncedEvents.get(
-                            "events") : null;
+                    syncedEvents.containsKey(AllConstants.KEY.EVENTS) ? (List<JSONObject>) syncedEvents.get(
+                            AllConstants.KEY.EVENTS) : null;
 
             if (clients != null && !clients.isEmpty()) {
                 for (JSONObject client : clients) {

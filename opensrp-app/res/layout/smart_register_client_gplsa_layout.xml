@@ -6,15 +6,15 @@
     android:layout_height="wrap_content"
     android:layout_weight="@integer/ec_list_gplsa_view_weight"
     android:paddingTop="5dp"
-    android:paddingLeft="5dp"
-    android:paddingRight="5dp"
+    android:paddingStart="5dp"
+    android:paddingEnd="5dp"
     android:orientation="vertical">
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/label_gravida"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
         android:text="@string/str_gravida" />
 
@@ -22,7 +22,7 @@
         android:id="@+id/label_parity"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/label_gravida"
+        android:layout_toEndOf="@id/label_gravida"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
         android:text="@string/str_parity" />
 
@@ -30,7 +30,7 @@
         android:id="@+id/label_number_of_living_children"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/label_parity"
+        android:layout_toEndOf="@id/label_parity"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
         android:text="@string/str_number_of_living_children" />
 
@@ -38,7 +38,7 @@
         android:id="@+id/label_number_of_still_births"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/label_number_of_living_children"
+        android:layout_toEndOf="@id/label_number_of_living_children"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
         android:text="@string/str_number_of_still_births" />
 
@@ -46,7 +46,7 @@
         android:id="@+id/label_number_of_abortions"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/label_number_of_still_births"
+        android:layout_toEndOf="@id/label_number_of_still_births"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA"
         android:text="@string/str_number_of_abortions" />
 
@@ -54,7 +54,7 @@
         android:id="@+id/txt_gravida"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/label_gravida"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA" />
 
@@ -62,7 +62,7 @@
         android:id="@+id/txt_parity"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/txt_gravida"
+        android:layout_toEndOf="@id/txt_gravida"
         android:layout_below="@id/label_parity"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA" />
 
@@ -70,7 +70,7 @@
         android:id="@+id/txt_number_of_living_children"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/txt_parity"
+        android:layout_toEndOf="@id/txt_parity"
         android:layout_below="@id/label_number_of_living_children"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA" />
 
@@ -78,7 +78,7 @@
         android:id="@+id/txt_number_of_still_births"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/txt_number_of_living_children"
+        android:layout_toEndOf="@id/txt_number_of_living_children"
         android:layout_below="@id/label_number_of_still_births"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA" />
 
@@ -86,7 +86,7 @@
         android:id="@+id/txt_number_of_abortions"
         android:layout_width="@dimen/gplsa_item_width"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/txt_number_of_still_births"
+        android:layout_toEndOf="@id/txt_number_of_still_births"
         android:layout_below="@id/label_number_of_abortions"
         style="@style/CustomFontTextViewStyle.ListView.Normal.GPLSA" />
 
