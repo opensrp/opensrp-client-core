@@ -3,8 +3,6 @@ package org.smartregister.repository;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.google.gson.JsonObject;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

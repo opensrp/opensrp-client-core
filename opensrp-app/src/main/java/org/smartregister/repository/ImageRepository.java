@@ -10,7 +10,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.smartregister.AllConstants;
 import org.smartregister.domain.ProfileImage;
 
-import java.sql.RowId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
