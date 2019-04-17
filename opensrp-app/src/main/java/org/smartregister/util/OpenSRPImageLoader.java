@@ -16,6 +16,7 @@ import android.graphics.drawable.TransitionDrawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.ImageView;
@@ -45,6 +46,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
+
+import timber.log.Timber;
 
 /**
  * A class that wraps up remote image loading requests using the Volley library combined with a
@@ -393,6 +396,43 @@ public class OpenSRPImageLoader extends ImageLoader {
                 }
             }
         }
+    }
+
+    /**
+     * Save image to the local storage.If an image is downloaded from the server it's compressed to
+     * jpeg format and the entityid becomes the file name
+     *
+     * @param entityId
+     * @param imageFile
+     */
+
+    public static boolean moveSyncedImageAndSaveProfilePic(@NonNull String syncStatus, @NonNull String entityId, @NonNull File imageFile) {
+
+        boolean successful = false;
+
+        if (!entityId.isEmpty()) {
+            final String absoluteFileName =
+                    DrishtiApplication.getAppDir() + File.separator + entityId + ".JPEG";
+            if (imageFile.renameTo(new File(absoluteFileName))) {
+
+                // insert into the db
+                ProfileImage profileImage = new ProfileImage();
+                profileImage.setImageid(UUID.randomUUID().toString());
+                profileImage.setEntityID(entityId);
+                profileImage.setFilepath(absoluteFileName);
+                profileImage.setFilecategory("profilepic");
+                profileImage.setSyncStatus(syncStatus);
+                ImageRepository imageRepo = CoreLibrary.getInstance().context().
+                        imageRepository();
+                imageRepo.add(profileImage);
+
+                successful = true;
+            } else {
+                Timber.e("An exception occurred trying to save synced image for entity %s on abs file path %s", entityId, absoluteFileName);
+            }
+        }
+
+        return successful;
     }
 
     public OpenSRPImageLoader setFadeInImage(boolean fadeInImage) {

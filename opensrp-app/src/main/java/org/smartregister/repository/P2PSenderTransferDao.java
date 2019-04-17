@@ -53,10 +53,23 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
             File inputFile = new File((String) imageDetails.get(ImageRepository.filepath_COLUMN));
 
             if (inputFile.exists()) {
-                new MultiMediaData(
+                MultiMediaData multiMediaData = new MultiMediaData(
                         inputFile,
                         (long) imageDetails.get(AllConstants.ROWID)
                 );
+
+                imageDetails.remove(ImageRepository.filepath_COLUMN);
+
+                HashMap<String, String> multimediaDataDetails = new HashMap<>();
+                multimediaDataDetails.put(ImageRepository.syncStatus_COLUMN, (String) imageDetails.get(ImageRepository.syncStatus_COLUMN));
+                multimediaDataDetails.put(AllConstants.ROWID, String.valueOf((long) imageDetails.get(AllConstants.ROWID)));
+                multimediaDataDetails.put(ImageRepository.filecategory_COLUMN, (String) imageDetails.get(ImageRepository.filecategory_COLUMN));
+                multimediaDataDetails.put(ImageRepository.anm_ID_COLUMN, (String) imageDetails.get(ImageRepository.anm_ID_COLUMN));
+                multimediaDataDetails.put(ImageRepository.entityID_COLUMN, (String) imageDetails.get(ImageRepository.entityID_COLUMN));
+
+                multiMediaData.setMediaDetails(multimediaDataDetails);
+
+                return multiMediaData;
             } else {
                 return null;
             }

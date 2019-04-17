@@ -49,7 +49,6 @@ public class ImageRepository extends DrishtiRepository {
     public void add(ProfileImage Image) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         database.insert(Image_TABLE_NAME, null, createValuesFor(Image, TYPE_ANC));
-        //database.close();
     }
 
     public List<ProfileImage> allProfileImages() {
@@ -65,8 +64,10 @@ public class ImageRepository extends DrishtiRepository {
 
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database
-                .query(Image_TABLE_NAME, new String[]{"rowid", filepath_COLUMN, syncStatus_COLUMN}, AllConstants.ROWID + " > ?",
-                        new String[]{String.valueOf(lastRowId)}, null, null, AllConstants.ROWID + " ASC", "1");
+                .query(Image_TABLE_NAME, new String[]{"rowid", filepath_COLUMN, syncStatus_COLUMN, entityID_COLUMN, anm_ID_COLUMN
+                                , filecategory_COLUMN}
+                , AllConstants.ROWID + " > ?", new String[]{String.valueOf(lastRowId)}
+                , null, null, AllConstants.ROWID + " ASC", "1");
         try {
             if (cursor != null && cursor.moveToFirst()) {
                 long rowId = cursor.getLong(0);
@@ -76,6 +77,9 @@ public class ImageRepository extends DrishtiRepository {
                 details.put(AllConstants.ROWID, rowId);
                 details.put(syncStatus_COLUMN, cursor.getString(2));
                 details.put(filepath_COLUMN, filePath);
+                details.put(entityID_COLUMN, cursor.getString(3));
+                details.put(anm_ID_COLUMN, cursor.getString(4));
+                details.put(filecategory_COLUMN, cursor.getString(5));
 
                 return details;
             }
