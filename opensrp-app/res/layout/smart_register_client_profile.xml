@@ -16,8 +16,8 @@
             android:id="@+id/img_profile"
             android:layout_width="@dimen/client_profile_pic_width"
             android:layout_height="@dimen/client_profile_pic_height"
-            android:layout_marginLeft="@dimen/client_profile_pic_margin_left"
-            android:layout_marginRight="@dimen/client_profile_pic_margin_right"
+            android:layout_marginStart="@dimen/client_profile_pic_margin_left"
+            android:layout_marginEnd="@dimen/client_profile_pic_margin_right"
             android:layout_marginTop="@dimen/client_profile_pic_margin_top" />
 
         <LinearLayout
@@ -74,8 +74,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/img_profile_layout"
-        android:layout_toLeftOf="@+id/txt_age"
+        android:layout_toEndOf="@id/img_profile_layout"
+        android:layout_toStartOf="@+id/txt_age"
         android:singleLine="true"
         style="@style/CustomFontTextViewStyle.ListView.Bold" />
 
@@ -84,7 +84,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_wife_name"
-        android:layout_toRightOf="@id/img_profile_layout"
+        android:layout_toEndOf="@id/img_profile_layout"
         style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
@@ -92,8 +92,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_husband_name"
-        android:layout_toRightOf="@id/img_profile_layout"
-        android:layout_toLeftOf="@+id/txt_out_of_area"
+        android:layout_toEndOf="@id/img_profile_layout"
+        android:layout_toStartOf="@+id/txt_out_of_area"
         android:layout_marginTop="@dimen/client_profile_village_margin"
         android:layout_marginBottom="@dimen/client_profile_village_margin"
         style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -102,18 +102,18 @@
         android:id="@+id/txt_age"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
         android:paddingTop="@dimen/client_age_padding"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
+        android:paddingEnd="5dp"
+        android:paddingStart="5dp"
         style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/txt_out_of_area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
         android:padding="5dp"
         style="@style/CustomFontTextViewStyle.ListView.Normal" />
