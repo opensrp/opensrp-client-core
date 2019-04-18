@@ -18,7 +18,6 @@ import org.apache.http.conn.params.ConnPerRouteBean;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntity;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.entity.mime.content.FileBody;
@@ -27,7 +26,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.client.GZipEncodingHttpClient;
@@ -41,12 +39,13 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
-import org.smartregister.util.FileUtilities;
-import org.smartregister.util.Utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -55,7 +54,6 @@ import java.text.ParseException;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static org.apache.http.HttpStatus.SC_CREATED;
 import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
@@ -126,73 +124,158 @@ public class HTTPAgent {
     }
 
     public Response<String> fetch(String requestURLPath) {
+        HttpURLConnection urlConnection = null;
+        String responseString;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            String responseContent = httpClient.fetchContent(new HttpGet(requestURLPath));
-            return new Response<>(ResponseStatus.success, responseContent);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            URL url = new URL(requestURLPath);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            if (urlConnection instanceof HttpsURLConnection) {
+                OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
+            }
+            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
+                    ":" + settings.fetchANMPassword()).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+
+            int statusCode = urlConnection.getResponseCode();
+
+            InputStream inputStream;
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+                inputStream = urlConnection.getErrorStream();
+            else
+                inputStream = urlConnection.getInputStream();
+
+            responseString = IOUtils.toString(inputStream);
+
+        } catch (MalformedURLException e) {
+            Log.e(TAG, MALFORMED_URL + e.toString(), e);
             return new Response<>(ResponseStatus.failure, null);
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, TIMEOUT + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (IOException e) {
+            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } finally {
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
+
+        return new Response<>(ResponseStatus.success, responseString);
+
     }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
-        HttpResponse httpResponse = null;
-        Response<String> response = null;
+        HttpURLConnection urlConnection = null;
+        String responseString;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            HttpPost httpPost = new HttpPost(postURLPath);
-            Log.v("jsonpayload", jsonPayload);
-            FileUtilities fu = new FileUtilities();
-            fu.write("jsonpayload.txt", jsonPayload);
+            URL url = new URL(postURLPath);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            if (urlConnection instanceof HttpsURLConnection) {
+                OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
+            }
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
+                    ":" + settings.fetchANMPassword()).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
-            entity.setContentType("application/json; charset=utf-8");
-            httpPost.setEntity(entity);
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonPayload);
+            writer.flush();
+            writer.close();
+            os.close();
 
-            httpResponse = httpClient.postContent(httpPost);
+            urlConnection.connect();
 
-            ResponseStatus responseStatus =
-                    httpResponse.getStatusLine().getStatusCode() == SC_CREATED
-                            ? ResponseStatus.success : ResponseStatus.failure;
-            response = new Response<>(responseStatus, null);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            response = new Response<>(ResponseStatus.failure, null);
+            int statusCode = urlConnection.getResponseCode();
+
+            InputStream inputStream;
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+                inputStream = urlConnection.getErrorStream();
+            else
+                inputStream = urlConnection.getInputStream();
+
+            responseString = IOUtils.toString(inputStream);
+
+        } catch (MalformedURLException e) {
+            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, TIMEOUT + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (IOException e) {
+            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
         } finally {
-            httpClient.consumeResponse(httpResponse);
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
-        return response;
+
+        return new Response<>(ResponseStatus.success, responseString);
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
-        HttpResponse httpResponse = null;
-        Response<String> response = null;
+        HttpURLConnection urlConnection = null;
+        String responseString;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            HttpPost httpPost = new HttpPost(postURLPath);
-            Log.v("jsonpayload", jsonPayload);
-            FileUtilities fu = new FileUtilities();
-            fu.write("jsonpayload.txt", jsonPayload);
-
-            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
-            entity.setContentType("application/json; charset=utf-8");
-            httpPost.setEntity(entity);
-
-            httpResponse = httpClient.postContent(httpPost);
-            if (!Utils.is2xxSuccessful(httpResponse.getStatusLine().getStatusCode())) {
-                return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
-            } else {
-                String payload = httpClient.retrieveStringResponse(httpResponse);
-                response = new Response<>(ResponseStatus.success, payload);
+            URL url = new URL(postURLPath);
+            urlConnection = (HttpURLConnection) url.openConnection();
+            if (urlConnection instanceof HttpsURLConnection) {
+                OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
             }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            response = new Response<>(ResponseStatus.failure, null);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+            urlConnection.setReadTimeout(READ_TIMEOUT);
+            final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
+                    ":" + settings.fetchANMPassword()).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonPayload);
+            writer.flush();
+            writer.close();
+            os.close();
+
+            urlConnection.connect();
+
+            int statusCode = urlConnection.getResponseCode();
+
+            InputStream inputStream;
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+                inputStream = urlConnection.getErrorStream();
+            else
+                inputStream = urlConnection.getInputStream();
+
+            responseString = IOUtils.toString(inputStream);
+
+        } catch (MalformedURLException e) {
+            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, TIMEOUT + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (IOException e) {
+            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
         } finally {
-            httpClient.consumeResponse(httpResponse);
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
         }
-        return response;
+
+        return new Response<>(ResponseStatus.success, responseString);
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
@@ -315,8 +398,8 @@ public class HTTPAgent {
                 int RESPONSE_OK_ = 201;
                 if (httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK_
                         && httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK) {
-                }
-                */
+                }*/
+
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
@@ -325,6 +408,7 @@ public class HTTPAgent {
         }
         return responseString;
     }
+
 
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {
