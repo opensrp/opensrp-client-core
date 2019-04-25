@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import org.smartregister.CoreLibrary;
 import org.smartregister.sync.DrishtiSyncScheduler;
 
 import static org.smartregister.util.Log.logInfo;

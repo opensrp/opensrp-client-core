@@ -105,43 +105,19 @@ public class HTTPAgent {
     }
 
     public Response<String> fetch(String requestURLPath) {
-        HttpURLConnection urlConnection = null;
-        String responseString;
+        HttpURLConnection urlConnection;
         try {
             urlConnection = initializeHttp(requestURLPath, true);
+            return handleResponse(urlConnection);
 
-            int statusCode = urlConnection.getResponseCode();
-
-            InputStream inputStream;
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
-                inputStream = urlConnection.getErrorStream();
-            else
-                inputStream = urlConnection.getInputStream();
-
-            responseString = IOUtils.toString(inputStream);
-
-        } catch (MalformedURLException e) {
-            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+        } catch (IOException ex) {
+            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
             return new Response<>(ResponseStatus.failure, null);
-        } catch (SocketTimeoutException e) {
-            Log.e(TAG, TIMEOUT + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } catch (IOException e) {
-            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
         }
-
-        return new Response<>(ResponseStatus.success, responseString);
-
     }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
-        HttpURLConnection urlConnection = null;
-        String responseString;
+        HttpURLConnection urlConnection;
         try {
             urlConnection = initializeHttp(postURLPath, true);
 
@@ -157,78 +133,16 @@ public class HTTPAgent {
 
             urlConnection.connect();
 
-            int statusCode = urlConnection.getResponseCode();
+            return handleResponse(urlConnection);
 
-            InputStream inputStream;
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
-                inputStream = urlConnection.getErrorStream();
-            else
-                inputStream = urlConnection.getInputStream();
-
-            responseString = IOUtils.toString(inputStream);
-
-        } catch (MalformedURLException e) {
-            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+        } catch (IOException ex) {
+            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
             return new Response<>(ResponseStatus.failure, null);
-        } catch (SocketTimeoutException e) {
-            Log.e(TAG, TIMEOUT + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } catch (IOException e) {
-            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
         }
-
-        return new Response<>(ResponseStatus.success, responseString);
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
-        HttpURLConnection urlConnection = null;
-        String responseString;
-        try {
-            urlConnection = initializeHttp(postURLPath, true);
-
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-
-            OutputStream os = urlConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(jsonPayload);
-            writer.flush();
-            writer.close();
-            os.close();
-
-            urlConnection.connect();
-
-            int statusCode = urlConnection.getResponseCode();
-
-            InputStream inputStream;
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
-                inputStream = urlConnection.getErrorStream();
-            else
-                inputStream = urlConnection.getInputStream();
-
-            responseString = IOUtils.toString(inputStream);
-
-        } catch (MalformedURLException e) {
-            Log.e(TAG, MALFORMED_URL + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } catch (SocketTimeoutException e) {
-            Log.e(TAG, TIMEOUT + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } catch (IOException e) {
-            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
-            return new Response<>(ResponseStatus.failure, null);
-        } finally {
-            if (urlConnection != null) {
-                urlConnection.disconnect();
-            }
-        }
-
-        return new Response<>(ResponseStatus.success, responseString);
+        return post(postURLPath, jsonPayload);
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
@@ -288,20 +202,31 @@ public class HTTPAgent {
     }
 
     public DownloadStatus downloadFromUrl(String url, String filename) {
-        Response<DownloadStatus> status = DownloadForm.DownloadFromURL(url, filename,
+        Response<DownloadStatus> status = DownloadForm.downloadFromURL(url, filename,
                 allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
         return status.payload();
     }
 
     public Response<String> fetchWithCredentials(String requestURL, String username, String password) {
         HttpURLConnection urlConnection = null;
-        String responseString;
         try {
             urlConnection = initializeHttp(requestURL, false);
 
             urlConnection.setRequestProperty("username", username);
             urlConnection.setRequestProperty("password", password);
 
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
+            return new Response<>(ResponseStatus.failure, null);
+        }
+
+    }
+
+    private Response<String> handleResponse(HttpURLConnection urlConnection) {
+        String responseString;
+        try {
             int statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream;
@@ -326,9 +251,7 @@ public class HTTPAgent {
                 urlConnection.disconnect();
             }
         }
-
         return new Response<>(ResponseStatus.success, responseString);
-
     }
 
 

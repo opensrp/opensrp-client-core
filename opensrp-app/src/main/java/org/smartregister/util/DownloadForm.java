@@ -31,7 +31,7 @@ public class DownloadForm {
      * @param password This is the password used to authenticate when accessing the url endpoint.
      * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
      */
-    public static Response<DownloadStatus> DownloadFromURL(String downloadURL, String fileName, String username, String password) {
+    public static Response<DownloadStatus> downloadFromURL(String downloadURL, String fileName, String username, String password) {
         HttpURLConnection httpUrlConnection;
         try {
             File dir = new File(FormPathService.sdcardPathDownload);
