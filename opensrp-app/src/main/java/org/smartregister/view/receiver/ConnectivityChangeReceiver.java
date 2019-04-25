@@ -24,12 +24,6 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
             if (isDeviceConnectedToNetwork(intent)) {
                 logInfo("Device got connected to network. Trying to start Dristhi Sync scheduler.");
                 DrishtiSyncScheduler.start(context);
-
-                //Re-initialize HTTP CLIENT
-                org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-                if (opensrpContext != null) {
-                    opensrpContext.getHttpAgent().setupHttpClient();
-                }
             }
         }
     }
