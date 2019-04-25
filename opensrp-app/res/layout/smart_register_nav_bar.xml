@@ -10,13 +10,13 @@
         android:id="@+id/btn_back_to_home"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:scaleType="center"
         android:src="@drawable/homestacks"
         android:background="@drawable/transparent_gray_background"
-        android:paddingLeft="8dp"
-        android:paddingRight="8dp" />
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp" />
 
     <ImageView
         android:id="@+id/home_title_separator"
@@ -24,15 +24,15 @@
         android:layout_height="fill_parent"
         android:src="@drawable/separator"
         android:scaleType="fitXY"
-        android:layout_toRightOf="@+id/btn_back_to_home" />
+        android:layout_toEndOf="@+id/btn_back_to_home" />
 
     <LinearLayout
         android:id="@+id/title_layout"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_toRightOf="@id/home_title_separator"
-        android:paddingLeft="5dp"
-        android:paddingRight="13dp"
+        android:layout_toEndOf="@id/home_title_separator"
+        android:paddingStart="5dp"
+        android:paddingEnd="13dp"
         android:orientation="horizontal"
         android:background="@drawable/transparent_gray_background">
 
@@ -47,7 +47,7 @@
             android:id="@+id/btn_report_month"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingLeft="7dp"
+            android:paddingStart="7dp"
             android:background="@android:color/transparent"
             style="@style/CustomFontTextViewStyle.NavBar.Black" />
     </LinearLayout>
@@ -56,19 +56,19 @@
         android:id="@+id/search_layout"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="@dimen/ec_main_header_search_layout_width"
             android:layout_height="fill_parent"
             android:layout_marginBottom="5dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="5dp"
             android:layout_marginTop="5dp"
             android:background="@drawable/rounded_edit_text_normal"
             android:orientation="horizontal"
-            android:paddingLeft="15dp">
+            android:paddingStart="15dp">
 
             <EditText
                 android:id="@+id/edt_search"
@@ -85,8 +85,8 @@
                 android:layout_width="@dimen/ec_main_header_search_cancel_button_width"
                 android:layout_height="fill_parent"
                 android:background="@android:color/transparent"
-                android:paddingLeft="15dp"
-                android:paddingRight="40dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="40dp"
                 android:src="@drawable/ic_cross"
                 android:visibility="invisible" />
         </LinearLayout>
@@ -96,7 +96,7 @@
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
-            android:drawableRight="@drawable/icon_search"
+            android:drawableEnd="@drawable/icon_search"
             android:gravity="center"
             android:text="@string/string_global"
             android:textAllCaps="false"
@@ -109,9 +109,9 @@
         android:id="@+id/register_client"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_toLeftOf="@id/search_layout"
-        android:paddingLeft="22dp"
-        android:paddingRight="22dp"
+        android:layout_toStartOf="@id/search_layout"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
         android:gravity="center"
         android:src="@drawable/ic_plus"
         android:background="@drawable/transparent_gray_background" />
@@ -121,15 +121,15 @@
         android:layout_height="fill_parent"
         android:src="@drawable/separator"
         android:scaleType="fitXY"
-        android:layout_toRightOf="@+id/register_client" />
+        android:layout_toEndOf="@+id/register_client" />
 
     <ImageButton
         android:id="@+id/filter_selection"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_toLeftOf="@id/register_client"
-        android:paddingLeft="22dp"
-        android:paddingRight="22dp"
+        android:layout_toStartOf="@id/register_client"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
         android:gravity="center"
         android:src="@drawable/ic_village_filter"
         android:background="@drawable/transparent_gray_background" />
@@ -139,15 +139,15 @@
         android:layout_height="fill_parent"
         android:src="@drawable/separator"
         android:scaleType="fitXY"
-        android:layout_toRightOf="@+id/filter_selection" />
+        android:layout_toEndOf="@+id/filter_selection" />
 
     <ImageButton
         android:id="@+id/sort_selection"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_toLeftOf="@id/filter_selection"
-        android:paddingLeft="22dp"
-        android:paddingRight="22dp"
+        android:layout_toStartOf="@id/filter_selection"
+        android:paddingStart="22dp"
+        android:paddingEnd="22dp"
         android:gravity="center"
         android:src="@drawable/ic_sort"
         android:background="@drawable/transparent_gray_background" />
@@ -157,7 +157,7 @@
         android:layout_height="fill_parent"
         android:src="@drawable/separator"
         android:scaleType="fitXY"
-        android:layout_toRightOf="@+id/sort_selection" />
+        android:layout_toEndOf="@+id/sort_selection" />
 
     <LinearLayout
         android:orientation="vertical"
@@ -168,12 +168,12 @@
         android:id="@+id/service_mode_selection"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_toLeftOf="@id/sort_selection"
-        android:paddingLeft="15dp"
-        android:paddingRight="5dp"
+        android:layout_toStartOf="@id/sort_selection"
+        android:paddingStart="15dp"
+        android:paddingEnd="5dp"
         android:drawablePadding="2dp"
         android:gravity="center"
-        android:drawableRight="@drawable/ic_down"
+        android:drawableEnd="@drawable/ic_down"
         android:background="@drawable/transparent_gray_background"
         style="@style/CustomFontTextViewStyle.NavBar.Bold"
         android:layout_alignParentTop="true" />
@@ -183,5 +183,5 @@
         android:layout_height="fill_parent"
         android:src="@drawable/separator"
         android:scaleType="fitXY"
-        android:layout_toRightOf="@+id/service_mode_selection" />
+        android:layout_toEndOf="@+id/service_mode_selection" />
 </RelativeLayout>

@@ -23,7 +23,7 @@
             android:id="@+id/txt_illness"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             style="@style/CustomFontTextViewStyle.ListView.Normal.TwoLine" />
 
@@ -31,7 +31,7 @@
             android:id="@+id/lbl_illness_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_below="@id/txt_illness"
             android:text="@string/illness_date"
             style="@style/CustomFontTextViewStyle.ListView.Medium" />
@@ -41,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/txt_illness"
-            android:layout_toRightOf="@id/lbl_illness_date"
+            android:layout_toEndOf="@id/lbl_illness_date"
             style="@style/CustomFontTextViewStyle.ListView.Normal.TwoLine" />
     </RelativeLayout>
 </FrameLayout>

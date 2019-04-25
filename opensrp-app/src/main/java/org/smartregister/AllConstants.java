@@ -431,4 +431,9 @@ public class AllConstants {
     public static class PeerToPeer {
         public static final String KEY_TEAM_ID = "team-id";
     }
+
+    public class KEY {
+        public static final String EVENTS = "events";
+        public static final String CLIENTS = "clients";
+    }
 }

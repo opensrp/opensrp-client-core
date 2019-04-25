@@ -67,8 +67,8 @@
             android:layout_below="@+id/top_section"
             android:layout_marginTop="@dimen/login_middle_section_padding_top"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/login_horizontal_margin"
-            android:paddingRight="@dimen/login_horizontal_margin">
+            android:paddingStart="@dimen/login_horizontal_margin"
+            android:paddingEnd="@dimen/login_horizontal_margin">
 
             <EditText
                 android:id="@+id/login_user_name_edit_text"
@@ -82,7 +82,7 @@
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:lines="1"
-                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
                 android:textColor="#666666"
                 android:textColorHint="#bfbfbf"
                 android:textCursorDrawable="@null"
@@ -103,7 +103,7 @@
                 android:imeActionId="@integer/login"
                 android:inputType="textPassword"
                 android:lines="1"
-                android:paddingLeft="10dp"
+                android:paddingStart="10dp"
                 android:textColor="#666666"
                 android:textColorHint="#bfbfbf"
                 android:textCursorDrawable="@null"
@@ -120,9 +120,9 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="3dp"
+                    android:layout_marginStart="3dp"
                     android:layout_marginTop="15dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     android:button="@drawable/white_checkbox_bg_selector"/>
 
                 <TextView
@@ -130,8 +130,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_toRightOf="@id/login_show_password_checkbox"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@id/login_show_password_checkbox"
                     android:text="@string/show_password_text"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/login_edit_text_textSize" />

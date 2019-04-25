@@ -8,6 +8,7 @@ import android.util.Log;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
@@ -46,7 +47,7 @@ public class ValidateIntentService extends IntentService {
         try {
 
             int fetchLimit = FETCH_LIMIT;
-            EventClientRepository db =  CoreLibrary.getInstance().context().getEventClientRepository();
+            EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
 
             List<String> clientIds = db.getUnValidatedClientBaseEntityIds(fetchLimit);
             if (!clientIds.isEmpty()) {
@@ -81,8 +82,8 @@ public class ValidateIntentService extends IntentService {
 
             JSONObject results = new JSONObject(response.payload());
 
-            if (results.has(getString(R.string.clients_key))) {
-                JSONArray inValidClients = results.getJSONArray(getString(R.string.clients_key));
+            if (results.has(AllConstants.KEY.CLIENTS)) {
+                JSONArray inValidClients = results.getJSONArray(AllConstants.KEY.CLIENTS);
 
                 for (int i = 0; i < inValidClients.length(); i++) {
                     String inValidClientId = inValidClients.getString(i);
@@ -95,8 +96,8 @@ public class ValidateIntentService extends IntentService {
                 }
             }
 
-            if (results.has(getString(R.string.events_key))) {
-                JSONArray inValidEvents = results.getJSONArray(getString(R.string.events_key));
+            if (results.has(AllConstants.KEY.EVENTS)) {
+                JSONArray inValidEvents = results.getJSONArray(AllConstants.KEY.EVENTS);
                 for (int i = 0; i < inValidEvents.length(); i++) {
                     String inValidEventId = inValidEvents.getString(i);
                     eventIds.remove(inValidEventId);
@@ -129,11 +130,11 @@ public class ValidateIntentService extends IntentService {
             if (clientIdArray != null || eventIdArray != null) {
                 JSONObject request = new JSONObject();
                 if (clientIdArray != null) {
-                    request.put(context.getString(R.string.clients_key), clientIdArray);
+                    request.put(AllConstants.KEY.CLIENTS, clientIdArray);
                 }
 
                 if (eventIdArray != null) {
-                    request.put(context.getString(R.string.events_key), eventIdArray);
+                    request.put(AllConstants.KEY.EVENTS, eventIdArray);
                 }
 
                 return request;
