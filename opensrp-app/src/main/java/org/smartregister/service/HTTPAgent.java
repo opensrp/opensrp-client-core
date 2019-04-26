@@ -70,6 +70,10 @@ public class HTTPAgent {
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
 
+    private String boundary = "===" + System.currentTimeMillis() + "===";
+    private String twoHyphens = "--";
+    private String crlf = "\r\n";
+
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
         this.context = context;
@@ -212,9 +216,7 @@ public class HTTPAgent {
         try {
             urlConnection = initializeHttp(requestURL, false);
 
-            urlConnection.setRequestProperty("username", username);
-            urlConnection.setRequestProperty("password", password);
-
+            setCustomCredentials(urlConnection, username, password);
             return handleResponse(urlConnection);
 
         } catch (IOException ex) {
@@ -222,6 +224,12 @@ public class HTTPAgent {
             return new Response<>(ResponseStatus.failure, null);
         }
 
+    }
+
+    private void setCustomCredentials(HttpURLConnection urlConnection, String username, String password) {
+        final String basicAuth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(),
+                Base64.NO_WRAP);
+        urlConnection.setRequestProperty("Authorization", basicAuth);
     }
 
     private Response<String> handleResponse(HttpURLConnection urlConnection) {
@@ -264,10 +272,6 @@ public class HTTPAgent {
      * @return String This returns the response obtained from the opensrp server.
      */
     public String httpImagePost(String urlString, ProfileImage image) {
-        String boundary = "===" + System.currentTimeMillis() + "===";
-        String twoHyphens = "--";
-        String crlf = "\r\n";
-
         OutputStream outputStream;
         PrintWriter writer;
         String responseString = "";
@@ -284,57 +288,13 @@ public class HTTPAgent {
             writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"),true);
 
             // attach image
-            File uploadImageFile = new File(image.getFilepath());
-            String fileName = uploadImageFile.getName();
-
-            writer.append(twoHyphens + boundary).append(crlf);
-            writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"").append(crlf);
-            writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(crlf);
-            writer.append("Content-Transfer-Encoding: binary").append(crlf);
-            writer.append(crlf);
-            writer.flush();
-
-            FileInputStream inputStream = new FileInputStream(uploadImageFile);
-            byte[] buffer = new byte[4096];
-            int bytesRead = -1;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
-            }
-            outputStream.flush();
-            inputStream.close();
-
-            writer.append(crlf);
-            writer.flush();
-            // end of attach image
+            attachImage(writer, image, outputStream);
 
             // adding string params
-            writer.append(twoHyphens + boundary).append(crlf);
-            writer.append("Content-Disposition: form-data; name=\"anm-id\"").append(crlf);
-            writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
-            writer.append(crlf);
-            writer.append(image.getAnmId()).append(crlf);
-            writer.flush();
-
-            writer.append(twoHyphens + boundary).append(crlf);
-            writer.append("Content-Disposition: form-data; name=\"entity-id\"").append(crlf);
-            writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
-            writer.append(crlf);
-            writer.append(image.getEntityID()).append(crlf);
-            writer.flush();
-
-            writer.append(twoHyphens + boundary).append(crlf);
-            writer.append("Content-Disposition: form-data; name=\"content-type\"").append(crlf);
-            writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
-            writer.append(crlf);
-            writer.append(image.getContenttype() != null ? image.getContenttype() : "jpeg").append(crlf);
-            writer.flush();
-
-            writer.append(twoHyphens + boundary).append(crlf);
-            writer.append("Content-Disposition: form-data; name=\"file-category\"").append(crlf);
-            writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
-            writer.append(crlf);
-            writer.append(image.getFilecategory() != null ? image.getFilecategory() : "profilepic").append(crlf);
-            writer.flush();
+            addParameter(writer, "anm-id", image.getAnmId());
+            addParameter(writer, "entity-id", image.getEntityID());
+            addParameter(writer, "content-type", image.getContenttype() != null ? image.getContenttype() : "jpeg");
+            addParameter(writer, "file-category", image.getFilecategory() != null ? image.getFilecategory() : "profilepic");
 
             // send request to server
             writer.append(crlf).flush();
@@ -367,6 +327,39 @@ public class HTTPAgent {
             Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
         }
         return responseString;
+    }
+
+    private void attachImage(PrintWriter writer, ProfileImage image, OutputStream outputStream) throws IOException {
+        File uploadImageFile = new File(image.getFilepath());
+        String fileName = uploadImageFile.getName();
+
+        writer.append("--" + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"").append(crlf);
+        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(crlf);
+        writer.append("Content-Transfer-Encoding: binary").append(crlf);
+        writer.append(crlf);
+        writer.flush();
+
+        FileInputStream inputStream = new FileInputStream(uploadImageFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(crlf);
+        writer.flush();
+    }
+
+    private void addParameter(PrintWriter writer, String paramName, String paramValue) {
+        writer.append(twoHyphens + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\""+ paramName +"\"").append(crlf);
+        writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
+        writer.append(crlf);
+        writer.append(paramValue).append(crlf);
+        writer.flush();
     }
 
 
