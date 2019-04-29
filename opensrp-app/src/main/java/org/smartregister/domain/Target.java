@@ -1,10 +1,8 @@
 package org.smartregister.domain;
 
-import com.google.gson.annotations.SerializedName;
+import org.joda.time.LocalDate;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.Date;
-import java.util.List;
 
 /**
  * Created by samuelgithengi on 4/29/19.
@@ -13,10 +11,9 @@ public class Target {
 
     private String measure;
 
-    private Date due;
+    private LocalDate due;
 
-    @SerializedName("detail")
-    private List<Detail> details;
+    private Detail detail;
 
     public String getMeasure() {
         return measure;
@@ -26,22 +23,21 @@ public class Target {
         this.measure = measure;
     }
 
-    public Date getDue() {
+    public LocalDate getDue() {
         return due;
     }
 
-    public void setDue(Date due) {
+    public void setDue(LocalDate due) {
         this.due = due;
     }
 
-    public List<Detail> getDetails() {
-        return details;
+    public Detail getDetail() {
+        return detail;
     }
 
-    public void setDetails(List<Detail> details) {
-        this.details = details;
+    public void setDetail(Detail detail) {
+        this.detail = detail;
     }
-
 
     class Detail {
 
@@ -77,17 +73,17 @@ public class Target {
     }
 
     class Measure {
-        private String value;
+        private float value;
 
         private String comparator;
 
-        private float unit;
+        private String unit;
 
-        public String getValue() {
+        public float getValue() {
             return value;
         }
 
-        public void setValue(String value) {
+        public void setValue(float value) {
             this.value = value;
         }
 
@@ -99,11 +95,11 @@ public class Target {
             this.comparator = comparator;
         }
 
-        public float getUnit() {
+        public String getUnit() {
             return unit;
         }
 
-        public void setUnit(float unit) {
+        public void setUnit(String unit) {
             this.unit = unit;
         }
     }

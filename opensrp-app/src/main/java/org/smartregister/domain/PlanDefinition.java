@@ -2,6 +2,11 @@ package org.smartregister.domain;
 
 import com.google.gson.annotations.SerializedName;
 
+import org.joda.time.LocalDate;
+
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,13 +25,13 @@ public class PlanDefinition {
 
     private String status;
 
-    private String date;
+    private LocalDate date;
 
     private ExecutionPeriod executionPeriod;
 
     private List<UseContext> useContext;
 
-    private Map<String, String> jurisdiction;
+    private List<SimpleEntry<String, String>> jurisdiction;
 
     @SerializedName("goal")
     private List<Goal> goals;
@@ -74,11 +79,11 @@ public class PlanDefinition {
         this.status = status;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -98,11 +103,11 @@ public class PlanDefinition {
         this.useContext = useContext;
     }
 
-    public Map<String, String> getJurisdiction() {
+    public List<SimpleEntry<String, String>> getJurisdiction() {
         return jurisdiction;
     }
 
-    public void setJurisdiction(Map<String, String> jurisdiction) {
+    public void setJurisdiction(List<SimpleEntry<String, String>> jurisdiction) {
         this.jurisdiction = jurisdiction;
     }
 
