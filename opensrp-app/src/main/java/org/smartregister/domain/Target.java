@@ -11,9 +11,9 @@ public class Target {
 
     private String measure;
 
-    private LocalDate due;
-
     private Detail detail;
+
+    private LocalDate due;
 
     public String getMeasure() {
         return measure;

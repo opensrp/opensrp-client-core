@@ -23,7 +23,7 @@ public class PlanDefinition {
 
     private LocalDate date;
 
-    private ExecutionPeriod executionPeriod;
+    private ExecutionPeriod effectivePeriod;
 
     private List<UseContext> useContext;
 
@@ -83,12 +83,12 @@ public class PlanDefinition {
         this.date = date;
     }
 
-    public ExecutionPeriod getExecutionPeriod() {
-        return executionPeriod;
+    public ExecutionPeriod getEffectivePeriod() {
+        return effectivePeriod;
     }
 
-    public void setExecutionPeriod(ExecutionPeriod executionPeriod) {
-        this.executionPeriod = executionPeriod;
+    public void setEffectivePeriod(ExecutionPeriod effectivePeriod) {
+        this.effectivePeriod = effectivePeriod;
     }
 
     public List<UseContext> getUseContext() {
