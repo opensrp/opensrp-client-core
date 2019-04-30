@@ -10,9 +10,9 @@ import java.util.TreeSet;
 
 public abstract class BaseP2PTransferDao {
 
-    protected DataType client = new DataType("client", DataType.Type.NON_MEDIA, 3);
+    protected DataType client = new DataType("client", DataType.Type.NON_MEDIA, 1);
     protected DataType event = new DataType("event", DataType.Type.NON_MEDIA, 2);
-    protected DataType profilePic = new DataType("profile-pic", DataType.Type.MEDIA, 1);
+    protected DataType profilePic = new DataType("profile-pic", DataType.Type.MEDIA, 3);
 
     protected TreeSet<DataType> dataTypes;
 

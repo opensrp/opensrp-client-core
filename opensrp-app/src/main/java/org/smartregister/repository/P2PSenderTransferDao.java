@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
+import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.p2p.sync.JsonData;
@@ -38,7 +40,8 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
             return CoreLibrary.getInstance().context()
                     .getEventClientRepository().getClients(l, i);
         } else {
-            Timber.e("The data type provided does not exist");
+            Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
+                    , dataType.getName());
             return null;
         }
     }
@@ -46,35 +49,42 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
     @Nullable
     @Override
     public MultiMediaData getMultiMediaData(@NonNull DataType dataType, long l) {
-        HashMap<String, Object> imageDetails = CoreLibrary.getInstance().context()
-                .imageRepository().getImage(l);
+        if (dataType.getName().equalsIgnoreCase(profilePic.getName())) {
+            HashMap<String, Object> imageDetails = CoreLibrary.getInstance().context()
+                    .imageRepository().getImage(l);
 
-        if (imageDetails != null) {
-            File inputFile = new File((String) imageDetails.get(ImageRepository.filepath_COLUMN));
+            if (imageDetails != null) {
+                File inputFile = new File((String) imageDetails.get(ImageRepository.filepath_COLUMN));
 
-            if (inputFile.exists()) {
-                MultiMediaData multiMediaData = new MultiMediaData(
-                        inputFile,
-                        (long) imageDetails.get(AllConstants.ROWID)
-                );
+                if (inputFile.exists()) {
+                    MultiMediaData multiMediaData = new MultiMediaData(
+                            inputFile,
+                            (long) imageDetails.get(AllConstants.ROWID)
+                    );
 
-                imageDetails.remove(ImageRepository.filepath_COLUMN);
+                    imageDetails.remove(ImageRepository.filepath_COLUMN);
 
-                HashMap<String, String> multimediaDataDetails = new HashMap<>();
-                multimediaDataDetails.put(ImageRepository.syncStatus_COLUMN, (String) imageDetails.get(ImageRepository.syncStatus_COLUMN));
-                multimediaDataDetails.put(AllConstants.ROWID, String.valueOf((long) imageDetails.get(AllConstants.ROWID)));
-                multimediaDataDetails.put(ImageRepository.filecategory_COLUMN, (String) imageDetails.get(ImageRepository.filecategory_COLUMN));
-                multimediaDataDetails.put(ImageRepository.anm_ID_COLUMN, (String) imageDetails.get(ImageRepository.anm_ID_COLUMN));
-                multimediaDataDetails.put(ImageRepository.entityID_COLUMN, (String) imageDetails.get(ImageRepository.entityID_COLUMN));
+                    HashMap<String, String> multimediaDataDetails = new HashMap<>();
+                    multimediaDataDetails.put(ImageRepository.syncStatus_COLUMN, (String) imageDetails.get(ImageRepository.syncStatus_COLUMN));
+                    multimediaDataDetails.put(AllConstants.ROWID, String.valueOf((long) imageDetails.get(AllConstants.ROWID)));
+                    multimediaDataDetails.put(ImageRepository.filecategory_COLUMN, (String) imageDetails.get(ImageRepository.filecategory_COLUMN));
+                    multimediaDataDetails.put(ImageRepository.anm_ID_COLUMN, (String) imageDetails.get(ImageRepository.anm_ID_COLUMN));
+                    multimediaDataDetails.put(ImageRepository.entityID_COLUMN, (String) imageDetails.get(ImageRepository.entityID_COLUMN));
 
-                multiMediaData.setMediaDetails(multimediaDataDetails);
+                    multiMediaData.setMediaDetails(multimediaDataDetails);
 
-                return multiMediaData;
-            } else {
-                return null;
+                    return multiMediaData;
+                } else {
+                    return null;
+                }
             }
-        }
 
-        return null;
+            return null;
+        } else {
+            Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
+                    , dataType.getName());
+            return null;
+        }
     }
+
 }
