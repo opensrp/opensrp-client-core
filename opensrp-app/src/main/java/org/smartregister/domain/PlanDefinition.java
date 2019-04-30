@@ -4,11 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.LocalDate;
 
-import java.util.AbstractMap;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by samuelgithengi on 4/29/19.
@@ -31,7 +27,7 @@ public class PlanDefinition {
 
     private List<UseContext> useContext;
 
-    private List<SimpleEntry<String, String>> jurisdiction;
+    private List<Jurisdiction> jurisdiction;
 
     @SerializedName("goal")
     private List<Goal> goals;
@@ -103,11 +99,11 @@ public class PlanDefinition {
         this.useContext = useContext;
     }
 
-    public List<SimpleEntry<String, String>> getJurisdiction() {
+    public List<Jurisdiction> getJurisdiction() {
         return jurisdiction;
     }
 
-    public void setJurisdiction(List<SimpleEntry<String, String>> jurisdiction) {
+    public void setJurisdiction(List<Jurisdiction> jurisdiction) {
         this.jurisdiction = jurisdiction;
     }
 
@@ -146,6 +142,19 @@ public class PlanDefinition {
 
         public void setValueCodableConcept(String valueCodableConcept) {
             this.valueCodableConcept = valueCodableConcept;
+        }
+    }
+
+    class Jurisdiction {
+
+        private String code;
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
         }
     }
 

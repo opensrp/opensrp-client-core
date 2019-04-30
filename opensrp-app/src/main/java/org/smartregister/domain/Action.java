@@ -1,7 +1,5 @@
 package org.smartregister.domain;
 
-import java.util.AbstractMap.SimpleEntry;
-
 /**
  * Created by samuelgithengi on 4/29/19.
  */
@@ -23,7 +21,7 @@ public class Action {
 
     private String goalId;
 
-    private SimpleEntry<String, String> subjectCodableConcept;
+    private SubjectConcept subjectCodableConcept;
 
     private String taskTemplate;
 
@@ -91,11 +89,11 @@ public class Action {
         this.goalId = goalId;
     }
 
-    public SimpleEntry<String, String> getSubjectCodableConcept() {
+    public SubjectConcept getSubjectCodableConcept() {
         return subjectCodableConcept;
     }
 
-    public void setSubjectCodableConcept(SimpleEntry<String, String> subjectCodableConcept) {
+    public void setSubjectCodableConcept(SubjectConcept subjectCodableConcept) {
         this.subjectCodableConcept = subjectCodableConcept;
     }
 
@@ -105,5 +103,17 @@ public class Action {
 
     public void setTaskTemplate(String taskTemplate) {
         this.taskTemplate = taskTemplate;
+    }
+
+    class SubjectConcept {
+        private String text;
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
     }
 }

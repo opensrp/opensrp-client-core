@@ -38,6 +38,9 @@ public class PlanDefinitionTest {
         assertEquals("active", planDefinition.getStatus());
         assertEquals("2019-03-27", planDefinition.getDate().toString(formatter));
 
+        assertEquals(4, planDefinition.getJurisdiction().size());
+        assertEquals("3421", planDefinition.getJurisdiction().get(0).getCode());
+
         assertEquals(2, planDefinition.getGoals().size());
 
         assertEquals("BCC_complete", planDefinition.getGoals().get(0).getId());
@@ -66,9 +69,17 @@ public class PlanDefinitionTest {
         assertEquals("2019-07-31", action.getTimingPeriod().getEnd().toString(formatter));
         assertEquals("Routine", action.getReason());
         assertEquals("90_percent_of_structures_sprayed", action.getGoalId());
-        //assertEquals("Residential_Structure", action.getSubjectCodableConcept().getValue());
+        assertEquals("Residential_Structure", action.getSubjectCodableConcept().getText());
         assertEquals("Action2_Spray_Structures", action.getTaskTemplate());
 
+    }
+
+
+    @Test
+    public void testSerialize() {
+        PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
+        assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
+        assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
     }
 
 }
