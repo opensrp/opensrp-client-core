@@ -354,29 +354,30 @@ public class JsonFormUtils {
         String value = getString(jsonObject, VALUE);
         String type = getString(jsonObject, AllConstants.TYPE);
         String entity = CONCEPT;
-        if (StringUtils.isNotBlank(value)) {
-            if (AllConstants.CHECK_BOX.equals(type)) {
-                try {
-                    if (jsonObject.has(AllConstants.OPTIONS)) {
-                        JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
-                        for (int i = 0; i < conceptsOptions.length(); i++) {
-                            JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.getBoolean(VALUE);
-                            if (optionValue) {
-                                option.put(AllConstants.TYPE, type);
-                                option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
-                                option.put(KEY, jsonObject.getString(KEY));
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
-                            }
+        if (AllConstants.CHECK_BOX.equals(type)) {
+            try {
+                if (jsonObject.has(AllConstants.OPTIONS)) {
+                    JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    for (int i = 0; i < conceptsOptions.length(); i++) {
+                        JSONObject option = conceptsOptions.getJSONObject(i);
+                        boolean optionValue = option.getBoolean(VALUE);
+                        if (optionValue) {
+                            option.put(AllConstants.TYPE, type);
+                            option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
+                            option.put(KEY, jsonObject.getString(KEY));
+                            createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
                         }
                     }
-                } catch (JSONException e1) {
-                    e1.printStackTrace();
                 }
-            } else {
+            } catch (JSONException e1) {
+                e1.printStackTrace();
+            }
+        } else {
+            if (StringUtils.isNotBlank(value)) {
                 createObservation(e, jsonObject, value, entity);
             }
         }
+
     }
 
     private static void createObservation(Event e, JSONObject jsonObject, String value, String entity) {
