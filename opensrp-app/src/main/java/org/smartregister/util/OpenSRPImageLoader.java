@@ -39,10 +39,12 @@ import org.smartregister.repository.ImageRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.UUID;
@@ -413,7 +415,7 @@ public class OpenSRPImageLoader extends ImageLoader {
         if (!entityId.isEmpty()) {
             final String absoluteFileName =
                     DrishtiApplication.getAppDir() + File.separator + entityId + ".JPEG";
-            if (imageFile.renameTo(new File(absoluteFileName))) {
+            if (copyFile(imageFile, new File(absoluteFileName))) {
 
                 // insert into the db
                 ProfileImage profileImage = new ProfileImage();
@@ -433,6 +435,35 @@ public class OpenSRPImageLoader extends ImageLoader {
         }
 
         return successful;
+    }
+
+    public static boolean copyFile(File src, File dst) {
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+        try {
+            inChannel = new FileInputStream(src).getChannel();
+            outChannel = new FileOutputStream(dst).getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } catch (IOException ex) {
+            Timber.e(ex, "An error occurred trying to copy file");
+            return false;
+        } finally {
+            try {
+                if (inChannel != null) {
+                    inChannel.close();
+                }
+
+                if (outChannel != null) {
+                    outChannel.close();
+                }
+            } catch (IOException e) {
+                Timber.e(e);
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public OpenSRPImageLoader setFadeInImage(boolean fadeInImage) {
