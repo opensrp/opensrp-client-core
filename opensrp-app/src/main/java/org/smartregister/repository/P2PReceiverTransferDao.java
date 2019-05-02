@@ -74,8 +74,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         List<EventClient> eventClientList = eventClientRepository.fetchEventClientsByRowId(eventsMaxRowId);
 
         try {
-            ClientProcessorForJava.getInstance(P2PLibrary.getInstance().getContext())
-                    .processClient(eventClientList);
+            getClientProcessor().processClient(eventClientList);
 
             Timber.e("Processing %s EventClients", String.valueOf(eventClientList.size()));
         } catch (Exception e) {
@@ -94,10 +93,9 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
             // Read the input stream to a file
             final String syncStatus = (String) multimediaDetails.get(ImageRepository.syncStatus_COLUMN);
             final String entityId = (String) multimediaDetails.get(ImageRepository.entityID_COLUMN);
-            long rowId = (long) multimediaDetails.get(AllConstants.ROWID);
 
             if (OpenSRPImageLoader.moveSyncedImageAndSaveProfilePic(syncStatus, entityId, file)) {
-                return rowId;
+                return fileRecordId;
             }
         }
 
@@ -109,5 +107,9 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
         CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
+    }
+
+    public ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(P2PLibrary.getInstance().getContext());
     }
 }
