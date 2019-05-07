@@ -20,6 +20,8 @@ public class SampleApplication extends DrishtiApplication {
 
         //Initialize Modules
         CoreLibrary.init(context,null);
+
+        getRepository().getReadableDatabase();
     }
 
     public static synchronized SampleApplication getInstance() {
@@ -32,5 +34,8 @@ public class SampleApplication extends DrishtiApplication {
 
     }
 
-
+    @Override
+    public String getPassword() {
+        return "sample-password";
+    }
 }
