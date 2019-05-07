@@ -440,6 +440,8 @@ public class OpenSRPImageLoader extends ImageLoader {
     public static boolean copyFile(File src, File dst) {
         FileChannel inChannel = null;
         FileChannel outChannel = null;
+
+        boolean isSuccessful = true;
         try {
             inChannel = new FileInputStream(src).getChannel();
             outChannel = new FileOutputStream(dst).getChannel();
@@ -459,11 +461,11 @@ public class OpenSRPImageLoader extends ImageLoader {
             } catch (IOException e) {
                 Timber.e(e);
 
-                return false;
+                isSuccessful = false;
             }
         }
 
-        return true;
+        return isSuccessful;
     }
 
     public OpenSRPImageLoader setFadeInImage(boolean fadeInImage) {
