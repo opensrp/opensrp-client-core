@@ -39,6 +39,7 @@ public class Repository extends SQLiteOpenHelper {
             if (!DatabaseMigrationUtils.performCipherMigrationToV4(database)) {
                 throw new RuntimeException("Database migration to SQLiteCipher v4 was not successful");
             } else {
+                CoreLibrary.getInstance().context().allSharedPreferences().setMigratedToSqlite4();
                 Timber.i("Database migration to Cipher 4 complete");
             }
 
@@ -86,8 +87,6 @@ public class Repository extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        CoreLibrary.getInstance().context().allSharedPreferences().setMigratedToSqlite4();
-
         for (DrishtiRepository repository : repositories) {
             repository.onCreate(database);
         }
