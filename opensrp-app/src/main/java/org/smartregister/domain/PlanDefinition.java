@@ -145,7 +145,7 @@ public class PlanDefinition {
         }
     }
 
-    class Jurisdiction {
+    public class Jurisdiction {
 
         private String code;
 
