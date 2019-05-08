@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -17,7 +16,6 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 
-import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -32,8 +30,8 @@ public class PlanDefinitionRepository extends BaseRepository {
             .disableHtmlEscaping()
             .create();
 
-    private static final String ID = "_id";
-    private static final String JSON = "json";
+    protected static final String ID = "_id";
+    protected static final String JSON = "json";
 
     private static final String PLAN_DEFINITION_TABLE = "plan_definition";
     private static final String TAG = PlanDefinitionRepository.class.getName();
@@ -43,7 +41,7 @@ public class PlanDefinitionRepository extends BaseRepository {
     private static final String CREATE_PLAN_DEFINITION_TABLE =
             "CREATE TABLE " + PLAN_DEFINITION_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
-                    JSON + " VARCHAR NOT NULL ) ";
+                    JSON + " VARCHAR NOT NULL)";
 
 
     public PlanDefinitionRepository(Repository repository) {

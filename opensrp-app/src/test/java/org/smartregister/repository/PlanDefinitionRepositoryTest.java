@@ -1,0 +1,146 @@
+package org.smartregister.repository;
+
+import android.content.ContentValues;
+
+import net.sqlcipher.Cursor;
+import net.sqlcipher.MatrixCursor;
+import net.sqlcipher.database.SQLiteDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
+import org.robolectric.RobolectricTestRunner;
+import org.smartregister.domain.PlanDefinition;
+import org.smartregister.domain.PlanDefinition.Jurisdiction;
+import org.smartregister.domain.Task;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static junit.framework.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.smartregister.domain.PlanDefinitionTest.gson;
+import static org.smartregister.domain.PlanDefinitionTest.planDefinitionJSON;
+import static org.smartregister.repository.PlanDefinitionRepository.ID;
+import static org.smartregister.repository.PlanDefinitionRepository.JSON;
+
+/**
+ * Created by samuelgithengi on 5/8/19.
+ */
+@RunWith(RobolectricTestRunner.class)
+public class PlanDefinitionRepositoryTest {
+
+    @Rule
+    public MockitoRule rule = MockitoJUnit.rule();
+
+    private PlanDefinitionRepository planDefinitionRepository;
+
+    @Mock
+    private Repository repository;
+
+    @Mock
+    private SQLiteDatabase sqLiteDatabase;
+
+    @Mock
+    private PlanDefinitionSearchRepository searchRepository;
+
+    @Captor
+    private ArgumentCaptor<ContentValues> contentValuesArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
+
+    @Before
+    public void setUp() {
+        planDefinitionRepository = new PlanDefinitionRepository(repository);
+        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
+        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
+    }
+
+    @Test
+    public void testCreateTable() {
+        PlanDefinitionRepository.createTable(sqLiteDatabase);
+        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        assertEquals("CREATE TABLE plan_definition (_id VARCHAR NOT NULL PRIMARY KEY,json VARCHAR NOT NULL)",
+                stringArgumentCaptor.getValue());
+    }
+
+    @Test
+    public void testAddOrUpdate() {
+        PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
+        planDefinitionRepository.addOrUpdate(planDefinition);
+        verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+
+        assertEquals(2, stringArgumentCaptor.getAllValues().size());
+        assertEquals("plan_definition", stringArgumentCaptor.getAllValues().get(0));
+        assertNull(stringArgumentCaptor.getAllValues().get(1));
+        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
+        assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getValue().get(ID));
+        assertEquals(planDefinitionJSON, contentValuesArgumentCaptor.getValue().get(JSON));
+    }
+
+
+    @Test
+    public void testAddOrUpdateSavesSearchTable() {
+        Whitebox.setInternalState(planDefinitionRepository, "searchRepository", searchRepository);
+
+        PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
+        String jurisdictionId = UUID.randomUUID().toString();
+        planDefinition.setJurisdiction(Collections.singletonList(planDefinition.new Jurisdiction(jurisdictionId)));
+        planDefinitionRepository.addOrUpdate(planDefinition);
+        verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+
+        assertEquals(2, stringArgumentCaptor.getAllValues().size());
+        assertEquals("plan_definition", stringArgumentCaptor.getAllValues().get(0));
+        assertNull(stringArgumentCaptor.getAllValues().get(1));
+        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
+        assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getValue().get(ID));
+
+        verify(searchRepository).addOrUpdate(planDefinition, jurisdictionId);
+    }
+
+    @Test
+    public void testFindPlanDefinitionById() {
+        when(sqLiteDatabase.rawQuery(anyString(), any(String[].class)))
+                .thenReturn(getCursor());
+        PlanDefinition planDefinition = planDefinitionRepository.findPlanDefinitionById("4708ca0a-d0d6-4199-bb1b-8701803c2d02");
+        assertNotNull(planDefinition);
+        assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
+        assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
+        verify(sqLiteDatabase).rawQuery("SELECT  json FROM plan_definition WHERE _id =?",
+                new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02"});
+    }
+
+    @Test
+    public void testFindPlanDefinitionByIdShouldReturnNull() {
+        when(sqLiteDatabase.rawQuery(anyString(), any(String[].class)))
+                .thenReturn(new MatrixCursor(new String[]{}));
+        PlanDefinition planDefinition = planDefinitionRepository.findPlanDefinitionById("4708ca0a-d0d6-4199-bb1b-8701803c2d02");
+        assertNull(planDefinition);
+        verify(sqLiteDatabase).rawQuery("SELECT  json FROM plan_definition WHERE _id =?",
+                new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02"});
+    }
+
+    private MatrixCursor getCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{PlanDefinitionRepository.JSON});
+        cursor.addRow(new Object[]{planDefinitionJSON});
+        return cursor;
+    }
+
+}
