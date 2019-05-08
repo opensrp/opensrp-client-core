@@ -36,7 +36,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     private static final String CREATE_PLAN_DEFINITION_TABLE =
             "CREATE TABLE " + PLAN_DEFINITION_SEARCH_TABLE + " (" +
-                    PLAN_ID + " VARCHAR NOT ," +
+                    PLAN_ID + " VARCHAR NOT NULL," +
                     JURISDICTION_ID + " VARCHAR NOT NULL," +
                     NAME + " VARCHAR NOT NULL," +
                     STATUS + " VARCHAR NOT NULL," +
