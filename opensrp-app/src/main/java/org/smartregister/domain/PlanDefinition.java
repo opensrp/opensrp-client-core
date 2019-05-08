@@ -147,11 +147,11 @@ public class PlanDefinition {
 
     public class Jurisdiction {
 
+        private String code;
+
         public Jurisdiction(String code) {
             this.code = code;
         }
-
-        private String code;
 
         public String getCode() {
             return code;
