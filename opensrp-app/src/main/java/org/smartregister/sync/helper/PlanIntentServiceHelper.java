@@ -8,7 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.http.NoHttpResponseException;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
@@ -16,7 +16,7 @@ import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.util.List;
@@ -28,7 +28,7 @@ public class PlanIntentServiceHelper {
 
     private PlanDefinitionRepository planDefinitionRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
+    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
     private final String TAG = PlanIntentServiceHelper.class.getName();
 
     protected final Context context;
