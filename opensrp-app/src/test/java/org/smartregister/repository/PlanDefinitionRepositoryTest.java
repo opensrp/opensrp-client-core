@@ -2,12 +2,9 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,12 +17,8 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.PlanDefinition;
-import org.smartregister.domain.PlanDefinition.Jurisdiction;
-import org.smartregister.domain.Task;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertNull;
