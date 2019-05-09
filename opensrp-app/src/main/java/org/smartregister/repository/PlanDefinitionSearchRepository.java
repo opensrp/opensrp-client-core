@@ -41,11 +41,8 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                     NAME + " VARCHAR NOT NULL," +
                     STATUS + " VARCHAR NOT NULL," +
                     START + " INTEGER NOT NULL," +
-                    END + " INTEGER NOT NULL ) ";
-
-    private static final String CREATE_PLAN_DEFINITION_PK = " ALTER TABLE "
-            + PLAN_DEFINITION_SEARCH_TABLE +
-            "ADD CONSTRAINT PK_PLAN_ID PRIMARY KEY (" + PLAN_ID + "," + JURISDICTION_ID + ")";
+                    END + " INTEGER NOT NULL, PRIMARY KEY (" +
+                    PLAN_ID + "," + JURISDICTION_ID + "))";
 
     public PlanDefinitionSearchRepository(Repository repository) {
         super(repository);
@@ -54,7 +51,6 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_PLAN_DEFINITION_TABLE);
-        database.execSQL(CREATE_PLAN_DEFINITION_PK);
     }
 
 
