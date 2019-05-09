@@ -13,6 +13,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
@@ -20,6 +21,8 @@ import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.util.List;
+
+import static org.smartregister.AllConstants.CURRENT_OPERATIONAL_AREA;
 
 /**
  * Created by Vincent Karuri on 08/05/2019
@@ -35,6 +38,7 @@ public class PlanIntentServiceHelper {
     protected static PlanIntentServiceHelper instance;
 
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
+    public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -50,7 +54,15 @@ public class PlanIntentServiceHelper {
 
     public void syncPlans() {
         try {
-            String plansResponse = fetchPlans();
+            long serverVersion = 0;
+            try {
+                serverVersion = Long.parseLong(allSharedPreferences.getPreference(PLAN_LAST_SYNC_DATE));
+            } catch (NumberFormatException e) {
+                Log.e(TAG, e.getMessage(), e);
+            }
+            if (serverVersion > 0) { serverVersion += 1; };
+            // fetch and save plans
+            String plansResponse = fetchPlans(allSharedPreferences.getPreference(CURRENT_OPERATIONAL_AREA), serverVersion);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {}.getType());
             for (PlanDefinition plan : plans) {
                 try {
@@ -59,20 +71,24 @@ public class PlanIntentServiceHelper {
                     e.printStackTrace();
                 }
             }
+            // update most recent server version
+            if (!Utils.isEmptyCollection(plans)) {
+                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, getPlanDefinitionMaxServerVersion(plans));
+            }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);
         }
     }
 
-    private String fetchPlans() throws Exception {
+    private String fetchPlans(String operationalAreaId, long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
-        String url = baseUrl + SYNC_PLANS_URL;
-
+        
+        String url = baseUrl + SYNC_PLANS_URL + "?operational_area_id=" + operationalAreaId + "&serverVersion=" + serverVersion;
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
@@ -83,7 +99,17 @@ public class PlanIntentServiceHelper {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
-
         return resp.payload().toString();
+    }
+
+    private String getPlanDefinitionMaxServerVersion(List<PlanDefinition> planDefinitions) {
+        long maxServerVersion = 0;
+        for (PlanDefinition planDefinition : planDefinitions) {
+            long serverVersion = planDefinition.getServerVersion();
+            if (serverVersion > maxServerVersion) {
+                maxServerVersion = serverVersion;
+            }
+        }
+        return String.valueOf(maxServerVersion);
     }
 }
