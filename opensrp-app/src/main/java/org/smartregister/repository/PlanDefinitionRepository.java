@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class PlanDefinitionRepository extends BaseRepository {
 
-    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd HH:mm:ss.SSSZ"))
+    public static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd HH:mm:ss.SSSZ"))
             .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
             .disableHtmlEscaping()
             .create();

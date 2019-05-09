@@ -76,7 +76,7 @@ public class PlanDefinitionRepositorySearchTest {
     @Test
     public void testCreateTable() {
         PlanDefinitionSearchRepository.createTable(sqLiteDatabase);
-        verify(sqLiteDatabase, times(2)).execSQL(stringArgumentCaptor.capture());
+        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
     }
 
     @Test

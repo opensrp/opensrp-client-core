@@ -131,7 +131,7 @@ public class PlanDefinitionRepositoryTest {
     }
 
     private MatrixCursor getCursor() {
-        MatrixCursor cursor = new MatrixCursor(new String[]{PlanDefinitionRepository.JSON});
+        MatrixCursor cursor = new MatrixCursor(new String[]{JSON});
         cursor.addRow(new Object[]{planDefinitionJSON});
         return cursor;
     }
