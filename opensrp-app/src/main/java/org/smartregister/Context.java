@@ -109,7 +109,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.preference.PreferenceManager.setDefaultValues;
 
 public class Context {
     private static final String TAG = "Context";

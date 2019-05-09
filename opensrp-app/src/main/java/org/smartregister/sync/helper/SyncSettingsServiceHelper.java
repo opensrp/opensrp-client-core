@@ -15,7 +15,6 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
 
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import static org.smartregister.util.Log.logError;

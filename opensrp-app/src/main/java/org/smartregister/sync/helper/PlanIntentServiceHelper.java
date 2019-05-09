@@ -13,7 +13,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
-import org.smartregister.domain.PlanDefinition;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
