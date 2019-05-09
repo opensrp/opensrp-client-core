@@ -1151,6 +1151,9 @@ public class Context {
     }
 
     public PlanDefinitionRepository getPlanDefinitionRepository() {
+        if (planDefinitionRepository == null) {
+            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+        }
         return planDefinitionRepository;
     }
 ///////////////////////////////////////////////////////////////////////////////
