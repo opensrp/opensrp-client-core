@@ -145,9 +145,13 @@ public class PlanDefinition {
         }
     }
 
-    class Jurisdiction {
+    public class Jurisdiction {
 
         private String code;
+
+        public Jurisdiction(String code) {
+            this.code = code;
+        }
 
         public String getCode() {
             return code;
