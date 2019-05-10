@@ -1,6 +1,5 @@
 package org.smartregister.repository;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -9,18 +8,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.db.EventClient;
-import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.util.OpenSRPImageLoader;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeSet;
 
 import timber.log.Timber;
@@ -71,18 +64,10 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
             return maxTableRowId;
         }
 
-        List<EventClient> eventClientList = eventClientRepository.fetchEventClientsByRowId(eventsMaxRowId);
-
-        try {
-            getClientProcessor().processClient(eventClientList);
-
-            Timber.e("Processing %s EventClients", String.valueOf(eventClientList.size()));
-        } catch (Exception e) {
-            Timber.e(e);
-            return 0;
+        AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        if (!allSharedPreferences.isPeerToPeerUnprocessedEvents()) {
+            allSharedPreferences.setLastPeerToPeerSyncProcessedEvent(eventsMaxRowId);
         }
-
-        sendSyncStatusBroadcastMessage(FetchStatus.fetched);
 
         return maxTableRowId;
     }
@@ -102,14 +87,5 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         return -1;
     }
 
-    private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
-        Intent intent = new Intent();
-        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
-        CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
-    }
 
-    public ClientProcessorForJava getClientProcessor() {
-        return ClientProcessorForJava.getInstance(P2PLibrary.getInstance().getContext());
-    }
 }

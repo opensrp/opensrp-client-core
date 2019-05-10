@@ -26,6 +26,7 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 
@@ -523,23 +524,31 @@ public class EventClientRepository extends BaseRepository {
         return list;
     }
 
-    public List<EventClient> fetchEventClientsByRowId(long lastProcessedRowId) {
+    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(long lastProcessedRowId) {
         List<EventClient> list = new ArrayList<>();
         Cursor cursor = null;
+        int maxRowId = 0;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+            cursor = getWritableDatabase().rawQuery("SELECT " + ROWID + ",json FROM "
                             + Table.event.name()
                             + " WHERE "
                             + ROWID
                             + " > ?"
-                            + "ORDER BY " + ROWID + " ASC",
+                            + "ORDER BY " + ROWID + " ASC LIMIT 250",
                     new Object[]{lastProcessedRowId});
             while (cursor.moveToNext()) {
-                String jsonEventStr = cursor.getString(0);
+                String jsonEventStr = cursor.getString(cursor.getColumnIndex("json"));
+                int rowId = cursor.getInt(cursor.getColumnIndex(ROWID));
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+
                 if (StringUtils.isBlank(jsonEventStr)
                         || "{}".equals(jsonEventStr)) { // Skip blank/empty json string
                     continue;
                 }
+
                 jsonEventStr = jsonEventStr.replaceAll("'", "");
 
                 Event event = convert(jsonEventStr, Event.class);
@@ -557,7 +566,7 @@ public class EventClientRepository extends BaseRepository {
                 cursor.close();
             }
         }
-        return list;
+        return new P2pProcessRecordsService.EventClientQueryResult(maxRowId, list);
     }
 
     /**
