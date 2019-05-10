@@ -12,17 +12,12 @@ import org.smartregister.sync.intent.P2pProcessRecordsService;
 
 public class P2pServiceJob extends BaseJob {
 
-    public static final String TAG = P2pServiceJob.class.getName();
-    private Class<? extends P2pProcessRecordsService> serviceClass;
-
-    public P2pServiceJob(Class<? extends P2pProcessRecordsService> serviceClass) {
-        this.serviceClass = serviceClass;
-    }
+    public static final String TAG = "P2PServiceJob";
 
     @NonNull
     @Override
     protected Result onRunJob(@NonNull Params params) {
-        Intent intent = new Intent(getApplicationContext(), serviceClass);
+        Intent intent = new Intent(getApplicationContext(), P2pProcessRecordsService.class);
         getApplicationContext().startService(intent);
         return params != null && params.getExtras().getBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, false) ? Result.RESCHEDULE : Result.SUCCESS;
     }

@@ -7,12 +7,14 @@ import android.text.TextUtils;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
+import org.smartregister.p2p.callback.SyncFinishedCallback;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.ClientProcessorForJava;
+import org.smartregister.sync.P2PSyncFinishCallback;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -101,10 +103,15 @@ public class CoreLibrary {
                     p2POptions.setClientProcessor(ClientProcessorForJava.getInstance(context.applicationContext()));
                 }
 
+                if (p2POptions.getSyncFinishedCallback() == null) {
+                    p2POptions.setSyncFinishedCallback(new P2PSyncFinishCallback());
+                }
+
                 P2PLibrary.Options options = new P2PLibrary.Options(context.applicationContext()
                         , teamId, p2pUsername, p2POptions.getAuthorizationService(), p2POptions.getReceiverTransferDao()
                         , p2POptions.getSenderTransferDao());
-                options.setBatchSize(options.getBatchSize());
+                options.setBatchSize(p2POptions.getBatchSize());
+                options.setSyncFinishedCallback(p2POptions.getSyncFinishedCallback());
 
                 P2PLibrary.init(options);
             }
@@ -166,6 +173,7 @@ public class CoreLibrary {
         private ReceiverTransferDao receiverTransferDao;
         private SenderTransferDao senderTransferDao;
         private ClientProcessorForJava clientProcessor;
+        private SyncFinishedCallback syncFinishedCallback;
 
         private boolean enableP2PLibrary;
         private int batchSize = AllConstants.PeerToPeer.P2P_LIBRARY_DEFAULT_BATCH_SIZE;
@@ -217,6 +225,14 @@ public class CoreLibrary {
 
         public void setBatchSize(int batchSize) {
             this.batchSize = batchSize;
+        }
+
+        public SyncFinishedCallback getSyncFinishedCallback() {
+            return syncFinishedCallback;
+        }
+
+        public void setSyncFinishedCallback(SyncFinishedCallback syncFinishedCallback) {
+            this.syncFinishedCallback = syncFinishedCallback;
         }
     }
 }
