@@ -25,6 +25,8 @@ public class Task {
 
     private String campaignIdentifier;
 
+    private String planIdentifier;
+
     private String groupIdentifier;
 
     private TaskStatus status;
@@ -73,6 +75,14 @@ public class Task {
 
     public void setCampaignIdentifier(String campaignIdentifier) {
         this.campaignIdentifier = campaignIdentifier;
+    }
+
+    public String getPlanIdentifier() {
+        return planIdentifier;
+    }
+
+    public void setPlanIdentifier(String planIdentifier) {
+        this.planIdentifier = planIdentifier;
     }
 
     public String getGroupIdentifier() {
