@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.PlanDefinition;
 
 import java.util.Collections;
+import java.util.Set;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertNull;
@@ -128,6 +130,21 @@ public class PlanDefinitionRepositoryTest {
         assertNull(planDefinition);
         verify(sqLiteDatabase).rawQuery("SELECT  json FROM plan_definition WHERE _id =?",
                 new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02"});
+    }
+
+    @Test
+    public void testFindAllPlanDefinitions() {
+        when(sqLiteDatabase.rawQuery(anyString(), any(String[].class)))
+                .thenReturn(getCursor());
+        Set<PlanDefinition> expected = Collections.singleton(gson.fromJson(planDefinitionJSON, PlanDefinition.class));
+        when(planDefinitionRepository.findAllPlanDefinitions()).thenReturn(expected);
+        Set<PlanDefinition> planDefinitions = planDefinitionRepository.findAllPlanDefinitions();
+        assertNotNull(planDefinitions);
+        PlanDefinition planDefinition = planDefinitions.iterator().next();
+        assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
+        assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
+        verify(sqLiteDatabase).rawQuery("SELECT json FROM plan_definition",
+                new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02", "active", String.valueOf(LocalDate.now().toDate().getTime())});
     }
 
     private MatrixCursor getCursor() {
