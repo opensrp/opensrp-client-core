@@ -6,10 +6,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.repository.AllSharedPreferences;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 /**
  * Created by ndegwamartin on 20/09/2018.
  */
