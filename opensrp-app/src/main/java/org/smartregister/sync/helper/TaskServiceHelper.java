@@ -27,8 +27,7 @@ import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
-
-import static org.smartregister.AllConstants.CAMPAIGNS;
+import java.util.Set;
 
 public class TaskServiceHelper {
     private static final String TAG = TaskServiceHelper.class.getCanonicalName();
@@ -66,7 +65,7 @@ public class TaskServiceHelper {
     }
 
     public List<Task> fetchTasksFromServer() {
-        String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
+        Set<String> planDefinitions = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds();
         String groups = TextUtils.join(",", CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds());
         long serverVersion = 0;
         try {
@@ -76,7 +75,7 @@ public class TaskServiceHelper {
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
-            String tasksResponse = fetchTasks(campaigns, groups, serverVersion);
+            String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
             for (Task task : tasks) {
@@ -97,7 +96,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(String campaign, String group, Long serverVersion) throws NoHttpResponseException {
+    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -106,7 +105,7 @@ public class TaskServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + SYNC_TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
+        String url = baseUrl + SYNC_TASK_URL + "?plan=" + plan + "&group=" + group + "&serverVersion=" + serverVersion;
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");

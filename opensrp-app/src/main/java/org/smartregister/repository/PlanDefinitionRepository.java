@@ -121,4 +121,22 @@ public class PlanDefinitionRepository extends BaseRepository {
         return planDefinitions;
     }
 
+    public Set<String> findAllPlanDefinitionIds() {
+        Cursor cursor = null;
+        Set<String> ids = new HashSet<>();
+        try {
+            String query = String.format("SELECT %s  FROM %s", ID, PLAN_DEFINITION_TABLE);
+            cursor = getReadableDatabase().rawQuery(query, null);
+            while (cursor.moveToNext()) {
+                ids.add(cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return ids;
+    }
+
 }
