@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -147,9 +146,28 @@ public class PlanDefinitionRepositoryTest {
         verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition", null);
     }
 
+
+    @Test
+    public void testFindAllPlanDefinitionIds() {
+        when(sqLiteDatabase.rawQuery(anyString(), argsCaptor.capture()))
+                .thenReturn(getIdCursor());
+        Set<String> planDefinitions = planDefinitionRepository.findAllPlanDefinitionIds();
+        assertNotNull(planDefinitions);
+        assertEquals(1, planDefinitions.size());
+        String planDefinition = planDefinitions.iterator().next();
+        assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition);
+        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition", null);
+    }
+
     private MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(new String[]{JSON});
         cursor.addRow(new Object[]{planDefinitionJSON});
+        return cursor;
+    }
+
+    private MatrixCursor getIdCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{ID});
+        cursor.addRow(new Object[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02"});
         return cursor;
     }
 
