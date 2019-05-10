@@ -9,8 +9,8 @@ import org.smartregister.R;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
-import org.smartregister.p2p.sync.JsonData;
-import org.smartregister.p2p.sync.MultiMediaData;
+import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.p2p.sync.data.MultiMediaData;
 
 import java.io.File;
 import java.util.HashMap;

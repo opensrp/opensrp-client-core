@@ -86,6 +86,10 @@ public class ImageRepository extends DrishtiRepository {
         } catch(Exception e) {
             Log.e(TAG, Log.getStackTraceString(e));
 
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return null;

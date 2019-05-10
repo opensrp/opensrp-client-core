@@ -25,7 +25,7 @@ import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.p2p.sync.JsonData;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 
