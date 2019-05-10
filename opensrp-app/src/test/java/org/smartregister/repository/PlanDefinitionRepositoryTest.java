@@ -61,6 +61,9 @@ public class PlanDefinitionRepositoryTest {
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<String[]> argsCaptor;
+
     @Before
     public void setUp() {
         planDefinitionRepository = new PlanDefinitionRepository(repository);
@@ -134,17 +137,14 @@ public class PlanDefinitionRepositoryTest {
 
     @Test
     public void testFindAllPlanDefinitions() {
-        when(sqLiteDatabase.rawQuery(anyString(), any(String[].class)))
+        when(sqLiteDatabase.rawQuery(anyString(), argsCaptor.capture()))
                 .thenReturn(getCursor());
-        Set<PlanDefinition> expected = Collections.singleton(gson.fromJson(planDefinitionJSON, PlanDefinition.class));
-        when(planDefinitionRepository.findAllPlanDefinitions()).thenReturn(expected);
         Set<PlanDefinition> planDefinitions = planDefinitionRepository.findAllPlanDefinitions();
         assertNotNull(planDefinitions);
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT json FROM plan_definition",
-                new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02", "active", String.valueOf(LocalDate.now().toDate().getTime())});
+        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition", null);
     }
 
     private MatrixCursor getCursor() {

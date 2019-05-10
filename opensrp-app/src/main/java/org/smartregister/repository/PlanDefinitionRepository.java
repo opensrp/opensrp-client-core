@@ -107,7 +107,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         Cursor cursor = null;
         Set<PlanDefinition> planDefinitions = new HashSet<>();
         try {
-            String query = String.format("SELECT %s  FROM %s ", JSON, PLAN_DEFINITION_TABLE);
+            String query = String.format("SELECT %s  FROM %s", JSON, PLAN_DEFINITION_TABLE);
             cursor = getReadableDatabase().rawQuery(query, null);
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
