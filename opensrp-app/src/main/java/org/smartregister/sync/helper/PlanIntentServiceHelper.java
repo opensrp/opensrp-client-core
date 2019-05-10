@@ -21,7 +21,7 @@ import org.smartregister.util.Utils;
 
 import java.util.List;
 
-import static org.smartregister.AllConstants.CURRENT_OPERATIONAL_AREA;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 /**
  * Created by Vincent Karuri on 08/05/2019
@@ -59,9 +59,9 @@ public class PlanIntentServiceHelper {
             } catch (NumberFormatException e) {
                 Log.e(TAG, e.getMessage(), e);
             }
-            if (serverVersion > 0) { serverVersion += 1; };
+            if (serverVersion > 0) { serverVersion += 1; }
             // fetch and save plans
-            String plansResponse = fetchPlans(allSharedPreferences.getPreference(CURRENT_OPERATIONAL_AREA), serverVersion);
+            String plansResponse = fetchPlans(allSharedPreferences.getPreference(OPERATIONAL_AREAS), serverVersion);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {}.getType());
             for (PlanDefinition plan : plans) {
                 try {
