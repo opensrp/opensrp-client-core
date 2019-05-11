@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -14,6 +15,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTypeConverter;
@@ -21,14 +23,13 @@ import org.smartregister.util.Utils;
 
 import java.util.List;
 
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
-
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
 public class PlanIntentServiceHelper {
 
     private PlanDefinitionRepository planDefinitionRepository;
+    private LocationRepository locationRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
     private final String TAG = PlanIntentServiceHelper.class.getName();
@@ -41,14 +42,16 @@ public class PlanIntentServiceHelper {
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
-            instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository());
+            instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository(),
+                    CoreLibrary.getInstance().context().getLocationRepository());
         }
         return instance;
     }
 
-    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository) {
+    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository, LocationRepository locationRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
+        this.locationRepository = locationRepository;
     }
 
     public void syncPlans() {
@@ -59,10 +62,14 @@ public class PlanIntentServiceHelper {
             } catch (NumberFormatException e) {
                 Log.e(TAG, e.getMessage(), e);
             }
-            if (serverVersion > 0) { serverVersion += 1; }
+            if (serverVersion > 0) {
+                serverVersion += 1;
+            }
             // fetch and save plans
-            String plansResponse = fetchPlans(allSharedPreferences.getPreference(OPERATIONAL_AREAS), serverVersion);
-            List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {}.getType());
+            String jurisdictions = TextUtils.join(",", locationRepository.getAllLocationIds());
+            String plansResponse = fetchPlans(jurisdictions, serverVersion);
+            List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
+            }.getType());
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
@@ -86,7 +93,7 @@ public class PlanIntentServiceHelper {
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
-        
+
         String url = baseUrl + SYNC_PLANS_URL + "?operational_area_id=" + operationalAreaId + "&serverVersion=" + serverVersion;
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
