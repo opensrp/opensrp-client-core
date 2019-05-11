@@ -24,11 +24,9 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.smartregister.domain.Task;
-import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -119,7 +117,7 @@ public class TaskRepositoryTest {
     public void testGetTasksByCampaignAndGroup() {
         when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE campaign_id=? AND group_id =?",
                 new String[]{"IRS_2018_S1", "2018_IRS-3734"})).thenReturn(getCursor());
-        Map<String, Task> allTasks = taskRepository.getTasksByCampaignAndGroup("IRS_2018_S1", "2018_IRS-3734");
+        Map<String, Task> allTasks = taskRepository.getTasksByPlanAndGroup("IRS_2018_S1", "2018_IRS-3734");
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
         assertEquals("SELECT * FROM task WHERE campaign_id=? AND group_id =?", stringArgumentCaptor.getValue());
