@@ -35,6 +35,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -1077,8 +1078,18 @@ public class FormUtils {
     public JSONObject getFormJson(String formIdentity) {
         if (mContext != null) {
             try {
-                InputStream inputStream = mContext.getApplicationContext().getAssets()
-                        .open("json" + ".form/" + formIdentity + ".json");
+                String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+                locale = locale.equalsIgnoreCase("en") ? "" : "_"+locale;
+
+                InputStream inputStream;
+                try {
+                    inputStream = mContext.getApplicationContext().getAssets()
+                            .open("json.form" + locale + "/" + formIdentity + ".json");
+                } catch (FileNotFoundException e) {
+                    // file for the language not found, defaulting to english language
+                    inputStream = mContext.getApplicationContext().getAssets()
+                            .open("json.form/" + formIdentity + ".json");
+                }
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(inputStream, "UTF-8"));
                 String jsonString;
@@ -1094,7 +1105,6 @@ public class FormUtils {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
 
