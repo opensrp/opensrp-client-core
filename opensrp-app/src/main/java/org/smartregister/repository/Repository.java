@@ -43,6 +43,8 @@ public class Repository extends SQLiteOpenHelper {
                 Timber.i("Database migration to Cipher 4 complete");
             }
 
+            // Disable cipher memory security which makes database operations slow
+            database.execSQL("PRAGMA cipher_memory_security = OFF;");
         }
     };
 
