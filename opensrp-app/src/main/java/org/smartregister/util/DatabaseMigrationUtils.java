@@ -209,6 +209,11 @@ public class DatabaseMigrationUtils {
 
             if (cursor != null && cursor.moveToFirst()) {
                 String value = cursor.getString(0);
+
+                if (cursor != null) {
+                    cursor.close();
+                }
+
                 return (!TextUtils.isEmpty(value) && value.equals("0"));
             }
 

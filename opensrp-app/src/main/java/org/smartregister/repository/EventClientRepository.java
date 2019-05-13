@@ -534,7 +534,7 @@ public class EventClientRepository extends BaseRepository {
                             + " WHERE "
                             + ROWID
                             + " > ?"
-                            + "ORDER BY " + ROWID + " ASC LIMIT 250",
+                            + "ORDER BY " + ROWID + " ASC LIMIT 100",
                     new Object[]{lastProcessedRowId});
             while (cursor.moveToNext()) {
                 String jsonEventStr = cursor.getString(cursor.getColumnIndex("json"));
