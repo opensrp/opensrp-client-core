@@ -38,8 +38,8 @@ subprojects {
     ext.androidCompileSdkVersion    = 28
     ext.androidTargetSdkVersion     = 28
 
-    ext.androidAnnotationsVersion = '3.0.1';
-    ext.androidAnnotationsAPIVersion = '3.0.1';
+    ext.androidAnnotationsVersion = '3.0.1'
+    ext.androidAnnotationsAPIVersion = '3.0.1'
 
     repositories {
         google()
@@ -77,4 +77,3 @@ test.reports.junitXml.enabled = false
 
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false
-}
