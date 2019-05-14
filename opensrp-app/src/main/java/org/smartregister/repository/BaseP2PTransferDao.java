@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import org.smartregister.p2p.model.DataType;
-
 import java.util.TreeSet;
 
 /**
@@ -10,9 +9,9 @@ import java.util.TreeSet;
 
 public abstract class BaseP2PTransferDao {
 
-    protected DataType client = new DataType("client", DataType.Type.NON_MEDIA, 1);
-    protected DataType event = new DataType("event", DataType.Type.NON_MEDIA, 2);
-    protected DataType profilePic = new DataType("profile-pic", DataType.Type.MEDIA, 3);
+    protected DataType client = new DataType("Client", DataType.Type.NON_MEDIA, 1);
+    protected DataType event = new DataType("Event", DataType.Type.NON_MEDIA, 2);
+    protected DataType profilePic = new DataType("Profile Pic", DataType.Type.MEDIA, 3);
 
     protected TreeSet<DataType> dataTypes;
 

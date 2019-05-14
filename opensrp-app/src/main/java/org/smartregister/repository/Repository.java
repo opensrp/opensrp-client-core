@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.exception.DatabaseMigrationException;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -37,7 +38,7 @@ public class Repository extends SQLiteOpenHelper {
         @Override
         public void postKey(SQLiteDatabase database) {
             if (!DatabaseMigrationUtils.performCipherMigrationToV4(database)) {
-                throw new RuntimeException("Database migration to SQLiteCipher v4 was not successful");
+                throw new DatabaseMigrationException("Database migration to SQLiteCipher v4 was not successful");
             } else {
                 CoreLibrary.getInstance().context().allSharedPreferences().setMigratedToSqlite4();
                 Timber.i("Database migration to Cipher 4 complete");

@@ -214,7 +214,7 @@ public class DatabaseMigrationUtils {
                     cursor.close();
                 }
 
-                return (!TextUtils.isEmpty(value) && value.equals("0"));
+                return (!TextUtils.isEmpty(value) && "0".equals(value));
             }
 
             return false;
