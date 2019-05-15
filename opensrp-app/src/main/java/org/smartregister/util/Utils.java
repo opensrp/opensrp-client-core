@@ -22,8 +22,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -85,7 +83,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static android.os.Build.VERSION_CODES.JELLY_BEAN_MR1;
 import static org.smartregister.util.Log.logError;
 
 
@@ -703,21 +700,5 @@ public class Utils {
         }
 
         return filterValue;
-    }
-
-    public static android.content.Context setAppLocale(android.content.Context context, String language) {
-        Locale locale = new Locale(language);
-        Locale.setDefault(locale);
-
-        Resources res = context.getResources();
-        Configuration config = new Configuration(res.getConfiguration());
-        if (Build.VERSION.SDK_INT >= JELLY_BEAN_MR1) {
-            config.setLocale(locale);
-            context = context.createConfigurationContext(config);
-        } else {
-            config.locale = locale;
-            res.updateConfiguration(config, res.getDisplayMetrics());
-        }
-        return context;
     }
 }
