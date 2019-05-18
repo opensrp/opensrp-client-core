@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.CoreLibrary;
@@ -84,7 +83,7 @@ public class CampaignIntentService extends IntentService {
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
             sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
-            throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
+            throw new RuntimeException(CAMPAIGN_URL + " not returned data");
         }
 
         return resp.payload().toString();

@@ -8,7 +8,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.LocalDate;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
@@ -103,7 +102,7 @@ public class PlanIntentServiceHelper {
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
-            throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
+            throw new RuntimeException(SYNC_PLANS_URL + " did not return any data");
         }
         return resp.payload().toString();
     }

@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -96,7 +95,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException {
+    private String fetchTasks(String plan, String group, Long serverVersion) {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -113,7 +112,7 @@ public class TaskServiceHelper {
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
+            throw new RuntimeException(SYNC_TASK_URL + " not returned data");
         }
 
         return resp.payload().toString();

@@ -9,7 +9,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
@@ -124,7 +123,7 @@ public class LocationServiceHelper {
 
         Response resp = httpAgent.fetch(makeURL(isJurisdiction, serverVersion, parentId));
         if (resp.isFailure()) {
-            throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+            throw new RuntimeException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
         return resp.payload().toString();
