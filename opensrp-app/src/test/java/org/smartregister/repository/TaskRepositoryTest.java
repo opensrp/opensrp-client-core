@@ -65,7 +65,7 @@ public class TaskRepositoryTest {
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
 
-    private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"campaignIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0}";
+    private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0}";
 
     private String taskUpdateJson ="{\"businessStatus\": \"Not Sprayed\",\"identifier\": \"076885f8-582e-4dc6-8a1a-510e1c8ed5d9\",\"status\": \"completed\",\"serverVersion\": 1543867945304}";
 
@@ -97,7 +97,7 @@ public class TaskRepositoryTest {
         assertEquals(17, contentValues.size());
 
         assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
-        assertEquals("IRS_2018_S1", contentValues.getAsString("campaign_id"));
+        assertEquals("IRS_2018_S1", contentValues.getAsString("plan_id"));
         assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
 
         verify(taskNotesRepository).addOrUpdate(task.getNotes().get(0), task.getIdentifier());
@@ -115,12 +115,12 @@ public class TaskRepositoryTest {
 
     @Test
     public void testGetTasksByCampaignAndGroup() {
-        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE campaign_id=? AND group_id =?",
+        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE plan_id=? AND group_id =?",
                 new String[]{"IRS_2018_S1", "2018_IRS-3734"})).thenReturn(getCursor());
         Map<String, Task> allTasks = taskRepository.getTasksByPlanAndGroup("IRS_2018_S1", "2018_IRS-3734");
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
-        assertEquals("SELECT * FROM task WHERE campaign_id=? AND group_id =?", stringArgumentCaptor.getValue());
+        assertEquals("SELECT * FROM task WHERE plan_id=? AND group_id =?", stringArgumentCaptor.getValue());
 
         assertEquals("IRS_2018_S1", argsCaptor.getValue()[0]);
         assertEquals("2018_IRS-3734", argsCaptor.getValue()[1]);
@@ -180,7 +180,7 @@ public class TaskRepositoryTest {
         MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
         Task task = gson.fromJson(taskJson, Task.class);
 
-        cursor.addRow(new Object[]{task.getIdentifier(), task.getCampaignIdentifier(), task.getGroupIdentifier(),
+        cursor.addRow(new Object[]{task.getIdentifier(), task.getPlanIdentifier(), task.getGroupIdentifier(),
                 task.getStatus().name(), task.getBusinessStatus(), task.getPriority(), task.getCode(),
                 task.getDescription(), task.getFocus(), task.getForEntity(),
                 task.getExecutionStartDate().getMillis(),
