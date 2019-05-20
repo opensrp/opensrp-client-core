@@ -17,6 +17,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
@@ -95,7 +96,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(String plan, String group, Long serverVersion) {
+    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -112,7 +113,7 @@ public class TaskServiceHelper {
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new RuntimeException(SYNC_TASK_URL + " not returned data");
+            throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
 
         return resp.payload().toString();

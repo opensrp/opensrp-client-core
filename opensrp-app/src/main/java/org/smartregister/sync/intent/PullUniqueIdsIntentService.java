@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.HTTPAgent;
 
@@ -69,7 +70,7 @@ public class PullUniqueIdsIntentService extends IntentService {
 
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
-            throw new RuntimeException(ID_URL + " not returned data");
+            throw new NoHttpResponseException(ID_URL + " not returned data");
         }
 
         return new JSONObject((String) resp.payload());

@@ -13,6 +13,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -102,7 +103,7 @@ public class PlanIntentServiceHelper {
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
-            throw new RuntimeException(SYNC_PLANS_URL + " did not return any data");
+            throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
         return resp.payload().toString();
     }

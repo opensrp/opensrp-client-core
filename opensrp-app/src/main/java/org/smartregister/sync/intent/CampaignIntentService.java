@@ -14,6 +14,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Campaign;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
@@ -65,7 +66,7 @@ public class CampaignIntentService extends IntentService {
         }
     }
 
-    private String fetchCampaigns() throws Exception {
+    private String fetchCampaigns() throws NoHttpResponseException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -83,7 +84,7 @@ public class CampaignIntentService extends IntentService {
         Response resp = httpAgent.fetch(url);
         if (resp.isFailure()) {
             sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
-            throw new RuntimeException(CAMPAIGN_URL + " not returned data");
+            throw new NoHttpResponseException(CAMPAIGN_URL + " not returned data");
         }
 
         return resp.payload().toString();

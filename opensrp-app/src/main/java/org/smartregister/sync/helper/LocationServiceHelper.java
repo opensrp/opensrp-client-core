@@ -14,6 +14,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
@@ -123,7 +124,7 @@ public class LocationServiceHelper {
 
         Response resp = httpAgent.fetch(makeURL(isJurisdiction, serverVersion, parentId));
         if (resp.isFailure()) {
-            throw new RuntimeException(LOCATION_STRUCTURE_URL + " not returned data");
+            throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
 
         return resp.payload().toString();
