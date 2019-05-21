@@ -9,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +17,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
