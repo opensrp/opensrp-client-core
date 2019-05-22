@@ -21,21 +21,18 @@ public class CryptographicHelper {
     private static AndroidLegacyCryptography legacyCryptography;
     private static AndroidMCryptography mCryptography;
 
-    private CryptographicHelper(Context context) {
 
-        this.context = new WeakReference<>(context);
-
-        legacyCryptography = new AndroidLegacyCryptography(this.context.get());
-        mCryptography = new AndroidMCryptography(this.context.get());
-
-
-    }
-
-    public static CryptographicHelper getInstance(Context context) {
+    public static CryptographicHelper getInstance(Context context_) {
 
         if (cryptographicHelper == null) {
             try {
-                cryptographicHelper = new CryptographicHelper(context);
+                cryptographicHelper = new CryptographicHelper();
+
+                context = new WeakReference<>(context_);
+
+                legacyCryptography = new AndroidLegacyCryptography(context.get());
+                mCryptography = new AndroidMCryptography(context.get());
+
             } catch (Exception e) {
                 Log.e(CryptographicHelper.class.getCanonicalName(), e.getMessage());
             }
@@ -85,11 +82,11 @@ public class CryptographicHelper {
         }
     }
 
-    public void setLegacyCryptography(AndroidLegacyCryptography legacyCryptography){
+    public void setLegacyCryptography(AndroidLegacyCryptography legacyCryptography) {
         this.legacyCryptography = legacyCryptography;
     }
 
-    public void setMCryptography(AndroidMCryptography androidMCryptography){
+    public void setMCryptography(AndroidMCryptography androidMCryptography) {
         this.mCryptography = androidMCryptography;
     }
 }

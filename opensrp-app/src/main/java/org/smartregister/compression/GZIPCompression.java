@@ -16,8 +16,6 @@ import java.util.zip.GZIPOutputStream;
  */
 public class GZIPCompression implements ICompression {
 
-    private static final String TAG = GZIPCompression.class.getCanonicalName();
-
     /**
      * Compression using gzip
      */

@@ -84,7 +84,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
     @Override
     public Key getKey(String keyAlias) {
         try {
-            return keyStore.getKey(keyAlias, null);
+            return getKeyStore().getKey(keyAlias, null);
         } catch (Exception e) {
             Log.e(AndroidMCryptography.class.getCanonicalName(), e.getMessage());
             return null;
@@ -97,7 +97,7 @@ public class AndroidMCryptography extends BaseCryptography implements ICryptogra
         {
             try {
 
-                if (!keyStore.containsAlias(keyAlias)) {
+                if (!getKeyStore().containsAlias(keyAlias)) {
                     KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, AndroidKeyStore);
                     keyGenerator.init(
                             new KeyGenParameterSpec.Builder(keyAlias,

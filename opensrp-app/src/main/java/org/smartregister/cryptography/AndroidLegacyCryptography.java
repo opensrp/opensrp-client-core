@@ -99,7 +99,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
     }
 
     private byte[] rsaEncrypt(byte[] secret, String rsaKeyAlias) throws Exception {
-        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(rsaKeyAlias, null);
+        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStore().getEntry(rsaKeyAlias, null);
         // Encrypt the text
         Cipher inputCipher = Cipher.getInstance(RSA_MODE, AndroidLegacyCryptography.PROVIDER.ANDROID_OPEN_SSL);
         inputCipher.init(Cipher.ENCRYPT_MODE, privateKeyEntry.getCertificate().getPublicKey());
@@ -113,7 +113,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
     }
 
     private byte[] rsaDecrypt(byte[] encrypted, String rsaKeyAlias) throws Exception {
-        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(rsaKeyAlias, null);
+        KeyStore.PrivateKeyEntry privateKeyEntry = (KeyStore.PrivateKeyEntry) getKeyStore().getEntry(rsaKeyAlias, null);
         Cipher output = Cipher.getInstance(RSA_MODE, AndroidLegacyCryptography.PROVIDER.ANDROID_OPEN_SSL);
         output.init(Cipher.DECRYPT_MODE, privateKeyEntry.getPrivateKey());
         CipherInputStream cipherInputStream = new CipherInputStream(
@@ -147,7 +147,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
     public void generateRSAKeys(String rsaKeyAlias) {
         try {
 // Generate the RSA key pairs
-            if (!keyStore.containsAlias(rsaKeyAlias)) {
+            if (!getKeyStore().containsAlias(rsaKeyAlias)) {
                 // Generate a key pair for encryption
                 Calendar start = Calendar.getInstance();
                 Calendar end = Calendar.getInstance();

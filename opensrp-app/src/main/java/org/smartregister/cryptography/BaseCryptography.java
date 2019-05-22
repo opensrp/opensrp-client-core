@@ -16,9 +16,9 @@ public abstract class BaseCryptography {
 
     public static final String RSA_MODE = "RSA/ECB/PKCS1Padding";
 
-    public static KeyStore keyStore;
+    private KeyStore keyStore;
 
-    public static Context context;
+    public Context context;
 
     public SecureRandom secureRandom;
 
