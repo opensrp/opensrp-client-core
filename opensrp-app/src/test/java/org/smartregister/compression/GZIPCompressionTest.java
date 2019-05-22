@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.smartregister.BaseUnitTest;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
 
 /**
  * Created by ndegwamartin on 2019-05-16.
@@ -41,7 +41,7 @@ public class GZIPCompressionTest extends BaseUnitTest {
     }
 
     @Test
-    public void testCompressMethodReturnsACompressedOutput() throws UnsupportedEncodingException {
+    public void testCompressMethodReturnsACompressedOutput() throws IOException {
 
         byte[] original = TEST_STRING.getBytes(CharEncoding.UTF_8);
         byte[] compressed = gzipCompression.compress(TEST_STRING);
@@ -50,7 +50,7 @@ public class GZIPCompressionTest extends BaseUnitTest {
     }
 
     @Test
-    public void testDecompressMethodDecompressesBackToCorrectInput() {
+    public void testDecompressMethodDecompressesBackToCorrectInput() throws IOException {
 
         byte[] compressed = gzipCompression.compress(TEST_STRING);
 
@@ -59,9 +59,8 @@ public class GZIPCompressionTest extends BaseUnitTest {
         Assert.assertEquals(TEST_STRING, decompressedString);
     }
 
-
     @Test
-    public void testCompressFileMethodReturnsACompressedOutputFile() {
+    public void testCompressFileMethodReturnsACompressedOutputFile() throws IOException {
 
         String filePath = getFilePath("compression_test_file.txt");
 
@@ -84,7 +83,7 @@ public class GZIPCompressionTest extends BaseUnitTest {
     }
 
     @Test
-    public void testDecompressFileMethodDecompressesBackToCorrectInputFile() {
+    public void testDecompressFileMethodDecompressesBackToCorrectInputFile() throws IOException {
 
         String filePath = getFilePath("compression_test_file.txt");
 

@@ -1,7 +1,5 @@
 package org.smartregister.compression;
 
-import android.util.Log;
-
 import org.apache.commons.lang3.CharEncoding;
 
 import java.io.ByteArrayInputStream;
@@ -24,43 +22,37 @@ public class GZIPCompression implements ICompression {
      * Compression using gzip
      */
     @Override
-    public byte[] compress(String rawString) {
-        try {
-            ByteArrayOutputStream os = new ByteArrayOutputStream();
-            GZIPOutputStream gos = new GZIPOutputStream(os);
-            gos.write(rawString.getBytes(CharEncoding.UTF_8));
-            gos.close();
-            byte[] compressed = os.toByteArray();
-            os.close();
-            return compressed;
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-            return null;
-        }
+    public byte[] compress(String rawString) throws IOException {
+
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        GZIPOutputStream gos = new GZIPOutputStream(os);
+        gos.write(rawString.getBytes(CharEncoding.UTF_8));
+        gos.close();
+        byte[] compressed = os.toByteArray();
+        os.close();
+        return compressed;
+
     }
 
     /**
      * Decompression from gzip to string
      */
     @Override
-    public String decompress(byte[] compressedBytes) {
-        try {
-            byte[] readBuffer = new byte[4096];
-            ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(compressedBytes);
+    public String decompress(byte[] compressedBytes) throws IOException {
 
-            GZIPInputStream inputStream = new GZIPInputStream(arrayInputStream);
+        byte[] readBuffer = new byte[4096];
+        ByteArrayInputStream arrayInputStream = new ByteArrayInputStream(compressedBytes);
 
-            int read = inputStream.read(readBuffer, 0, readBuffer.length);
-            inputStream.close();
+        GZIPInputStream inputStream = new GZIPInputStream(arrayInputStream);
 
-            byte[] result = Arrays.copyOf(readBuffer, read);
+        int read = inputStream.read(readBuffer, 0, readBuffer.length);
+        inputStream.close();
 
-            return new String(result, CharEncoding.UTF_8);
+        byte[] result = Arrays.copyOf(readBuffer, read);
 
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage());
-            return null;
-        }
+        return new String(result, CharEncoding.UTF_8);
+
+
     }
 
     /**
@@ -71,31 +63,26 @@ public class GZIPCompression implements ICompression {
      */
 
     @Override
-    public void compress(String inputFilePath, String compressedOutputFilepath) {
+    public void compress(String inputFilePath, String compressedOutputFilepath) throws IOException {
 
         byte[] buffer = new byte[1024];
 
-        try {
 
-            FileOutputStream os = new FileOutputStream(compressedOutputFilepath);
-            GZIPOutputStream gos = new GZIPOutputStream(os);
+        FileOutputStream os = new FileOutputStream(compressedOutputFilepath);
+        GZIPOutputStream gos = new GZIPOutputStream(os);
 
-            FileInputStream in = new FileInputStream(inputFilePath);
+        FileInputStream in = new FileInputStream(inputFilePath);
 
-            int len;
-            while ((len = in.read(buffer)) > 0) {
-                gos.write(buffer, 0, len);
-            }
-
-            in.close();
-
-            gos.finish();
-            gos.close();
-
-        } catch (IOException e) {
-
-            Log.e(TAG, e.getMessage());
+        int len;
+        while ((len = in.read(buffer)) > 0) {
+            gos.write(buffer, 0, len);
         }
+
+        in.close();
+
+        gos.finish();
+        gos.close();
+
     }
 
     /**
@@ -106,28 +93,24 @@ public class GZIPCompression implements ICompression {
      */
 
     @Override
-    public void decompress(String compressedInputFilePath, String decompressedOutputFilePath) {
+    public void decompress(String compressedInputFilePath, String decompressedOutputFilePath) throws IOException {
 
         byte[] buffer = new byte[1024];
 
-        try {
 
-            GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(compressedInputFilePath));
+        GZIPInputStream gzis = new GZIPInputStream(new FileInputStream(compressedInputFilePath));
 
-            FileOutputStream out = new FileOutputStream(decompressedOutputFilePath);
+        FileOutputStream out = new FileOutputStream(decompressedOutputFilePath);
 
-            int len;
-            while ((len = gzis.read(buffer)) > 0) {
-                out.write(buffer, 0, len);
-            }
-
-            gzis.close();
-            out.close();
-
-        } catch (IOException e) {
-
-            Log.e(TAG, e.getMessage());
+        int len;
+        while ((len = gzis.read(buffer)) > 0) {
+            out.write(buffer, 0, len);
         }
+
+        gzis.close();
+        out.close();
+
+
     }
 
 }
