@@ -6,13 +6,14 @@ import org.apache.commons.lang3.CharEncoding;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.smartregister.BaseUnitTest;
 
 import java.io.UnsupportedEncodingException;
 import java.security.KeyStoreException;
@@ -20,20 +21,23 @@ import java.security.KeyStoreException;
 /**
  * Created by ndegwamartin on 2019-05-22.
  */
-public class CryptographicHelperTest extends BaseUnitTest {
+
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = Build.VERSION_CODES.O_MR1)
+public class CryptographicHelperTest {
 
     public static final String SAMPLE_STRING = "I am a high security string that needs to be hidden from prying eyes";
 
 
     public static final String SAMPLE_KEY_ALIAS = "SampleKeyAlias";
 
-    CryptographicHelper cryptographicHelper;
+    private CryptographicHelper cryptographicHelper;
 
     @Mock
-    AndroidMCryptography androidMCryptography;
+    private AndroidMCryptography androidMCryptography;
 
     @Mock
-    AndroidLegacyCryptography androidLegacyCryptography;
+    private AndroidLegacyCryptography androidLegacyCryptography;
 
     @Before
     public void setUp() throws KeyStoreException {

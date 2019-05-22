@@ -5,7 +5,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.smartregister.BaseUnitTest;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +12,7 @@ import java.io.IOException;
 /**
  * Created by ndegwamartin on 2019-05-16.
  */
-public class GZIPCompressionTest extends BaseUnitTest {
+public class GZIPCompressionTest {
 
     public final String TEST_STRING = "I Am a Compression Test String with many bytes that totally needs compression, I Am a Compression " +
             "Test String with many bytes that totally needs compression, I Am a Compression Test String with many bytes that totally needs compression, " +
