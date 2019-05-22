@@ -31,9 +31,9 @@ android:
 
 addons:
   apt_packages:
-  - pandoc
+    - pandoc
 
-script: 
+script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
   - chmod 755 gradlew
@@ -43,9 +43,11 @@ script:
   #Run All tests Unit and Instrumentation
   - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport coveralls --stacktrace
 
-after_failure:
- - pandoc opensrp-app/build/reports/tests/index.html -t plain
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
+after_failure:
+  - pandoc opensrp-app/build/reports/tests/index.html -t plain
 
 notifications:
   slack:
