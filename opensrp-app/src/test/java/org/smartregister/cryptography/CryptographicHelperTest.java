@@ -58,7 +58,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    public void testCryptographicHelperInvokesAndroidMEncryptMethod() throws UnsupportedEncodingException {
+    public void testCryptographicHelperEncryptInvokesAndroidMEncryptMethod() throws UnsupportedEncodingException {
 
         cryptographicHelper.encrypt(SAMPLE_STRING.getBytes(CharEncoding.UTF_8), SAMPLE_KEY_ALIAS);
 
@@ -68,7 +68,7 @@ public class CryptographicHelperTest {
 
     @Test
     @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void testCryptographicHelperInvokesLegacyEncryptMethod() throws UnsupportedEncodingException {
+    public void testCryptographicHelperEncryptInvokesLegacyEncryptMethod() throws UnsupportedEncodingException {
         cryptographicHelper.encrypt(SAMPLE_STRING.getBytes(CharEncoding.UTF_8), SAMPLE_KEY_ALIAS);
 
         Mockito.verify(androidLegacyCryptography).encrypt(ArgumentMatchers.any(byte[].class), ArgumentMatchers.anyString());
@@ -77,7 +77,7 @@ public class CryptographicHelperTest {
 
 
     @Test
-    public void testCryptographicHelperInvokesAndroidMDecryptMethod() throws UnsupportedEncodingException {
+    public void testCryptographicHelperDecrypteInvokesAndroidMDecryptMethod() throws UnsupportedEncodingException {
 
         cryptographicHelper.decrypt(SAMPLE_STRING.getBytes(CharEncoding.UTF_8), SAMPLE_KEY_ALIAS);
 
@@ -87,7 +87,7 @@ public class CryptographicHelperTest {
 
     @Test
     @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void testCryptographicHelperInvokesLegacyDecryptMethod() throws UnsupportedEncodingException {
+    public void testCryptographicHelperDecryptInvokesLegacyDecryptMethod() throws UnsupportedEncodingException {
         cryptographicHelper.decrypt(SAMPLE_STRING.getBytes(CharEncoding.UTF_8), SAMPLE_KEY_ALIAS);
 
         Mockito.verify(androidLegacyCryptography).decrypt(ArgumentMatchers.any(byte[].class), ArgumentMatchers.anyString());
@@ -95,7 +95,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    public void testCryptographicHelperInvokesAndroidMGenerateKeyMethod() {
+    public void testCryptographicHelperGenerateKeyInvokesAndroidMGenerateKeyMethod() {
 
         cryptographicHelper.generateKey(SAMPLE_KEY_ALIAS);
 
@@ -105,7 +105,7 @@ public class CryptographicHelperTest {
 
     @Test
     @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void testCryptographicHelperInvokesLegacyGenerateKeyMethod() {
+    public void testCryptographicHelperGenerateKeyInvokesLegacyGenerateKeyMethod() {
         cryptographicHelper.generateKey(SAMPLE_KEY_ALIAS);
 
         Mockito.verify(androidLegacyCryptography).generateKey(SAMPLE_KEY_ALIAS);
@@ -113,7 +113,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    public void testCryptographicHelperInvokesAndroidMGetKeyMethod() {
+    public void testCryptographicHelperGetKeyInvokesAndroidMGetKeyMethod() {
 
         cryptographicHelper.getKey(SAMPLE_KEY_ALIAS);
 
@@ -123,10 +123,27 @@ public class CryptographicHelperTest {
 
     @Test
     @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
-    public void testCryptographicHelperInvokesLegacyGetKeyMethod() {
+    public void testCryptographicHelperGetKeyInvokesLegacyGetKeyMethod() {
         cryptographicHelper.getKey(SAMPLE_KEY_ALIAS);
 
         Mockito.verify(androidLegacyCryptography).getKey(SAMPLE_KEY_ALIAS);
+
+    }
+    @Test
+    public void testCryptographicHelperDeleteKeyInvokesAndroidMGetKeyMethod() {
+
+        cryptographicHelper.deleteKey(SAMPLE_KEY_ALIAS);
+
+        Mockito.verify(androidMCryptography).deleteKey(SAMPLE_KEY_ALIAS);
+
+    }
+
+    @Test
+    @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
+    public void testCryptographicHelperDeleteKeyInvokesLegacyGetKeyMethod() {
+        cryptographicHelper.deleteKey(SAMPLE_KEY_ALIAS);
+
+        Mockito.verify(androidLegacyCryptography).deleteKey(SAMPLE_KEY_ALIAS);
 
     }
 

@@ -1,28 +1,18 @@
 package org.smartregister.cryptography;
 
-import android.os.Build;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.annotation.Config;
-
-import java.security.KeyStore;
+import org.smartregister.BaseUnitTest;
 
 /**
  * Created by ndegwamartin on 2019-05-22.
  */
-@RunWith(RobolectricTestRunner.class)
-@Config(sdk = Build.VERSION_CODES.O_MR1)
-public class AndroidMCryptographyTest {
 
-    @Mock
-    private KeyStore keystore;
+public class AndroidMCryptographyTest extends BaseUnitTest {
+
 
     private AndroidMCryptography androidMCryptography;
 
@@ -32,7 +22,6 @@ public class AndroidMCryptographyTest {
         MockitoAnnotations.initMocks(this);
 
         androidMCryptography = new AndroidMCryptography(RuntimeEnvironment.application);
-        androidMCryptography.setKeyStore(keystore);
     }
 
 

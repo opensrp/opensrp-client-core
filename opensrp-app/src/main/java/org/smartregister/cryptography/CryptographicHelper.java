@@ -82,6 +82,15 @@ public class CryptographicHelper {
         }
     }
 
+    public void deleteKey(String keyAlias) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+
+            legacyCryptography.deleteKey(keyAlias);
+        } else {
+            mCryptography.deleteKey(keyAlias);
+        }
+    }
+
     public void setLegacyCryptography(AndroidLegacyCryptography legacyCryptography) {
         this.legacyCryptography = legacyCryptography;
     }
