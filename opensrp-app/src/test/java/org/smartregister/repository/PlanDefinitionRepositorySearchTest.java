@@ -9,13 +9,12 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
 
 import java.util.Collections;
@@ -42,8 +41,7 @@ import static org.smartregister.repository.PlanDefinitionSearchRepository.STATUS
 /**
  * Created by samuelgithengi on 5/8/19.
  */
-@RunWith(RobolectricTestRunner.class)
-public class PlanDefinitionRepositorySearchTest {
+public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();

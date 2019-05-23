@@ -3,19 +3,17 @@ package org.smartregister.view.contract;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 
 import java.util.Arrays;
 
-@RunWith(RobolectricTestRunner.class)
-public class FPClientTest {
+public class FPClientTest extends BaseUnitTest {
 
     @Mock
     private Context context;
