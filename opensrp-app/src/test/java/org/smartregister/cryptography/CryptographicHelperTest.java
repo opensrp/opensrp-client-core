@@ -16,7 +16,6 @@ import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 
 import java.io.UnsupportedEncodingException;
-import java.security.KeyStoreException;
 
 /**
  * Created by ndegwamartin on 2019-05-22.
@@ -40,7 +39,7 @@ public class CryptographicHelperTest {
     private AndroidLegacyCryptography androidLegacyCryptography;
 
     @Before
-    public void setUp() throws KeyStoreException {
+    public void setUp() {
 
         MockitoAnnotations.initMocks(this);
 
@@ -129,6 +128,7 @@ public class CryptographicHelperTest {
         Mockito.verify(androidLegacyCryptography).getKey(SAMPLE_KEY_ALIAS);
 
     }
+
     @Test
     public void testCryptographicHelperDeleteKeyInvokesAndroidMGetKeyMethod() {
 
