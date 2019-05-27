@@ -16,9 +16,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ###Added
 
-### [1.6.14] - 03-18-2019
+## [1.6.14] - 03-18-2019
 --------------------
 #### Added
 - Added the ability to create Event observations from the native radio button secondary values
 - Added the ability to create Event observations from the Expansion values which have the same format as the secondary values above
 - A test to verify the Event creation
+
+
+## [unreleased]
+___________________
+### Added
+- Compression helper classes
+- Cryptography helper classes
+
+### Changed
+- Upgrade Build tools to version 28

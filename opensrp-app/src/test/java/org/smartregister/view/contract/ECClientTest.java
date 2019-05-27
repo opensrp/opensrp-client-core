@@ -4,13 +4,11 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 
 import java.util.Calendar;
 
-@RunWith(RobolectricTestRunner.class)
-public class ECClientTest {
+public class ECClientTest extends BaseUnitTest {
 
     @Test
     public void shouldReturnTrueForIsBPLWhenEconomicStatusIsBPL() throws Exception {

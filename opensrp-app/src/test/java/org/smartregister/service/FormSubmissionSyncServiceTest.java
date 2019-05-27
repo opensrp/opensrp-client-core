@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
@@ -25,8 +26,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@RunWith(RobolectricTestRunner.class)
-public class FormSubmissionSyncServiceTest {
+public class FormSubmissionSyncServiceTest extends BaseUnitTest {
     @Mock
     private FormDataRepository repository;
     @Mock

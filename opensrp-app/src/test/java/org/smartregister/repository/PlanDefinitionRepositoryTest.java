@@ -8,14 +8,14 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
 
 import java.util.Collections;
@@ -37,8 +37,7 @@ import static org.smartregister.repository.PlanDefinitionRepository.JSON;
 /**
  * Created by samuelgithengi on 5/8/19.
  */
-@RunWith(RobolectricTestRunner.class)
-public class PlanDefinitionRepositoryTest {
+public class PlanDefinitionRepositoryTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -82,14 +81,14 @@ public class PlanDefinitionRepositoryTest {
     public void testAddOrUpdate() {
         PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
         planDefinitionRepository.addOrUpdate(planDefinition);
-        verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+        verify(sqLiteDatabase, Mockito.times(planDefinition.getJurisdiction().size() + 1)).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
 
-        assertEquals(2, stringArgumentCaptor.getAllValues().size());
+        assertEquals(((planDefinition.getJurisdiction().size()) + 1) * 2, stringArgumentCaptor.getAllValues().size());
         assertEquals("plan_definition", stringArgumentCaptor.getAllValues().get(0));
         assertNull(stringArgumentCaptor.getAllValues().get(1));
-        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
-        assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getValue().get(ID));
-        assertEquals(planDefinitionJSON, contentValuesArgumentCaptor.getValue().get(JSON));
+        assertEquals(planDefinition.getJurisdiction().size() + 1, contentValuesArgumentCaptor.getAllValues().size());
+        assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getAllValues().get(0).get(ID));
+        assertEquals(planDefinitionJSON, contentValuesArgumentCaptor.getAllValues().get(0).get(JSON));
     }
 
 
