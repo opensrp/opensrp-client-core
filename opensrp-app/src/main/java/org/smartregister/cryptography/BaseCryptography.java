@@ -18,9 +18,9 @@ public abstract class BaseCryptography {
 
     private KeyStore keyStore;
 
-    public Context context;
+    protected Context context;
 
-    public SecureRandom secureRandom;
+    protected SecureRandom secureRandom;
 
     public static class PROVIDER {
         public static final String ANDROID_OPEN_SSL = "AndroidOpenSSL";
