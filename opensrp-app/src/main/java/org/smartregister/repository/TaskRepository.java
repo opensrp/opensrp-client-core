@@ -14,8 +14,10 @@ import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -119,15 +121,21 @@ public class TaskRepository extends BaseRepository {
 
     }
 
-    public Map<String, Task> getTasksByPlanAndGroup(String planId, String groupId) {
+    public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
         Cursor cursor = null;
-        Map<String, Task> tasks = new HashMap<>();
+        Map<String, Set<Task>> tasks = new HashMap<>();
         try {
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =?",
                     TASK_TABLE, PLAN_ID, GROUP_ID), new String[]{planId, groupId});
             while (cursor.moveToNext()) {
+                Set<Task> taskSet;
                 Task task = readCursor(cursor);
-                tasks.put(task.getForEntity(), task);
+                if (tasks.containsKey(task.getForEntity()))
+                    taskSet = tasks.get(task.getForEntity());
+                else
+                    taskSet = new HashSet<>();
+                taskSet.add(task);
+                tasks.put(task.getForEntity(), taskSet);
             }
         } catch (Exception e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
