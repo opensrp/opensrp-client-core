@@ -24,6 +24,7 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -108,7 +109,7 @@ public class LocationServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
         if (isJurisdiction) {
-            String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
+            String preferenceLocationNames = URLEncoder.encode(allSharedPreferences.getPreference(OPERATIONAL_AREAS));
             return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + isJurisdiction + "&location_names=" + preferenceLocationNames + "&serverVersion=" + serverVersion;
         }
         return baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parentId + "&isJurisdiction=" + isJurisdiction + "&serverVersion=" + serverVersion;
