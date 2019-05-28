@@ -18,11 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.domain.db.Column;
-import org.smartregister.domain.db.EventClient;
-import org.smartregister.service.AlertService;
 import org.smartregister.sync.ClientData;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -31,7 +27,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -49,19 +44,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     private Repository repository;
 
     @Mock
-    private CommonFtsObject commonFtsObject;
-
-    @Mock
-    private AlertService alertService;
-
-    @Mock
-    private Context context;
-
-    @Mock
     private SQLiteDatabase sqliteDatabase;
-
-    @Mock
-    private List<EventClient> eventClientList;
 
     @Before
     public void setUp() {
@@ -72,7 +55,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void instantiatesSuccessfullyOnConstructorCall() throws Exception {
+    public void instantiatesSuccessfullyOnConstructorCall() {
         Assert.assertNotNull(new EventClientRepository(repository));
     }
 
