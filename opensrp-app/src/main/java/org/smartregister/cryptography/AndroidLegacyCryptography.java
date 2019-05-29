@@ -75,8 +75,8 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             String enryptedKeyB64 = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(keyAlias);
 
             byte[] encryptedKey = Base64.decode(enryptedKeyB64, Base64.DEFAULT);
-            byte[] key = rsaDecrypt(encryptedKey, keyAlias + ALGORITHIM.RSA);
-            return new SecretKeySpec(key, ALGORITHIM.AES);
+            byte[] key = rsaDecrypt(encryptedKey, keyAlias + ALGORITHM.RSA);
+            return new SecretKeySpec(key, ALGORITHM.AES);
         } catch (Exception e) {
             Log.e(TAG, e.getMessage());
             return null;
@@ -87,7 +87,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
     public void generateKey(String keyAlias) {
         try {
 
-            String RSA_KEY_ALIAS = keyAlias + ALGORITHIM.RSA;
+            String RSA_KEY_ALIAS = keyAlias + ALGORITHM.RSA;
 
             generateRSAKeys(RSA_KEY_ALIAS);
             generateAESKey(keyAlias, RSA_KEY_ALIAS);
