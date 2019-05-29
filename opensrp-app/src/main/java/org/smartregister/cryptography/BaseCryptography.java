@@ -27,7 +27,7 @@ public abstract class BaseCryptography {
         public static final String BOUNCY_CASTLE = "BC";
     }
 
-    public static class ALGORITHIM {
+    public static class ALGORITHM {
         public static final String AES = "AES";
         public static final String RSA = "RSA";
     }

@@ -7,6 +7,7 @@ import android.util.Xml;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.codec.CharEncoding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -416,7 +417,7 @@ public class FormUtils {
             XmlSerializer serializer = Xml.newSerializer();
             StringWriter writer = new StringWriter();
             serializer.setOutput(writer);
-            serializer.startDocument("UTF-8", true);
+            serializer.startDocument(CharEncoding.UTF_8, true);
 
             //skip processing <model><instance>
             NodeList els = ((Element) document.getElementsByTagName("model").item(0)).
@@ -1063,7 +1064,7 @@ public class FormUtils {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            fileContents = new String(buffer, "UTF-8");
+            fileContents = new String(buffer, CharEncoding.UTF_8);
         } catch (IOException ex) {
             android.util.Log.e(TAG, ex.toString(), ex);
 
@@ -1079,7 +1080,7 @@ public class FormUtils {
         if (mContext != null) {
             try {
                 String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase("en") ? "" : "_"+locale;
+                locale = locale.equalsIgnoreCase("en") ? "" : "-" + locale;
 
                 InputStream inputStream;
                 try {
@@ -1091,7 +1092,7 @@ public class FormUtils {
                             .open("json.form/" + formIdentity + ".json");
                 }
                 BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(inputStream, "UTF-8"));
+                        new InputStreamReader(inputStream, CharEncoding.UTF_8));
                 String jsonString;
                 StringBuilder stringBuilder = new StringBuilder();
 
