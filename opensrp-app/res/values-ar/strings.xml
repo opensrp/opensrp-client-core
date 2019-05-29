@@ -38,6 +38,8 @@
     <string name="str_page_info">صفحة {0} من {1}</string>
 
     <string name="header_name">الاسم</string>
+    <string name="header_ec_no">EC NO</string>
+    <string name="header_gplsa">GPLSA</string>
     <string name="header_fp">طريقة تنظيم الأسرة</string>
     <string name="header_children">الأطفال</string>
     <string name="header_status">الحالة</string>
@@ -58,6 +60,7 @@
 
     <string name="status_delivery">ولادة</string>
     <string name="str_lmp">آخر دورة شهرية</string>
+    <string name="str_edd">EDD</string>
     <string name="str_anc">علاجات ما قبل الولادة</string>
     <string name="str_pnc">علاجات ما بعد الولادة</string>
     <string name="str_fp">تنظيم الأسرة</string>
@@ -69,22 +72,38 @@
     <string name="str_number_of_still_births"> س</string>
     <string name="str_number_of_abortions">أ</string>
 
+    <string name="str_out_of_area">(O/A)</string>
+
     <string name="sort_by_name_label">(أ إلى ي)الاسم</string>
     <string name="sort_by_name_label_reverse">( ي إلى أ)الاسم</string>
+    <string name="sort_by_ec_number_label">EC Number</string>
     <string name="sort_by_date_of_delivery_label">تاريخ الولادة</string>
+    <string name="sort_by_sc_label">SC</string>
+    <string name="sort_by_st_label">ST</string>
     <string name="sort_by_high_priority_label">أولوية عالية</string>
+    <string name="sort_by_high_risk_pregnancy_label">HRP</string>
     <string name="sort_by_high_risk_label">خطر كبير</string>
+    <string name="sort_by_bpl_label">BPL</string>
+
     <string name="filter_by_all_label">الكل</string>
+    <string name="filter_by_out_of_area_label">O/A</string>
+    <string name="filter_by_leave_the_place_label">L/P</string>
+    <string name="ec_register_title_in_short">EC</string>
+
     <string name="str_register_anc_form">تسجىل علاجات ما قبل الولادة </string>
     <string name="str_register_fp_form">تسجيل تنظيم الأسرة </string>
     <string name="str_register_child_form">تسجيل الطفل</string>
     <string name="str_fp_change_form">تغير تنظيم الأسرة</string>
     <string name="str_fp_change_fp_form">تغير تنظيم الأسرة</string>
+    <string name="str_record_ecp_form">Record ECP</string>
+    <string name="str_edit_ec_form">Edit EC</string>
+    <string name="str_close_ec_form">Close EC</string>
     <string name="report_month_sample_text">26\03 - 25\04</string>
     <string name="str_switch_language">تغير اللغة </string>
 
     <string name="str_register_anc_visit_form">زيارة علاجات ما قبل الولادة</string>
     <string name="str_register_hb_test_form">فحص الهيموجلوبين</string>
+    <string name="str_register_ifa_form">IFA</string>
     <string name="str_register_tt_form">لقاح توكسويد الكزاز</string>
     <string name="str_register_delivery_plan_form">خطة الولادة</string>
     <string name="str_register_pnc_registration_form">تسجيل علاجات ما بعد الولادة</string>
@@ -110,7 +129,10 @@
     <string name="header_opv_booster">لقاح الشلل معزز</string>
     <string name="header_dpt_booster">لقاح الشلل معزز </string>
     <string name="header_vitamin_a">الفيتامين أ</string>
+    <string name="thayi_label">Thayi:</string>
+    <string name="mother_ec_label">Mother EC:</string>
     <string name="sort_by_child_age">العمر</string>
+    <string name="sort_by_child_hr">HR</string>
     <string name="str_child_immunizations">تلقيحات الطفل</string>
     <string name="str_child_illness">مرض الطفل</string>
     <string name="str_child_close">طفل مغلق</string>
@@ -131,6 +153,7 @@
     <string name="service_type_measles_booster">لقاح الحصبة معزز </string>
     <string name="service_type_measles_booster_short">لقاح الحصبة معزز</string>
     <string name="service_type_hepb_0">لقاح التهاب الكبد \"ب\"</string>
+    <string name="service_type_je">JE</string>
     <string name="service_type_mmr">لقاح الحصبة، النكاف والحصبة الألمانية </string>
     <string name="service_type_vitamin_a">الفيتامين أ</string>
     <string name="service_type_illness_visit">زيارة مريضة</string>
@@ -143,6 +166,7 @@
     <string name="hep_b_birth">لقاح التهاب الكبد \"ب\"</string>
     <string name="opv">لقاح الشلل</string>
     <string name="tt">لقاح توكسويد الكزاز</string>
+    <string name="ifa">IFA</string>
     <string name="pentavalent">الخماسي</string>
     <string name="measles">لقاح الحصبة معزز</string>
     <string name="opv_booster">لقاح الشلل معزز</string>
@@ -155,6 +179,7 @@
     <string name="service_type_dpt_booster_2_short"> اللقاح الثلاثى المعزز فيتامين ب 2</string>
     <string name="pentavalent_short">الخماسي</string>
 
+    <string name="fp_register_title_in_short">FP:</string>
     <string name="pnc_register_title_in_short">علاجات ما بعد الولادة:</string>
     <string name="header_method">طريقة</string>
     <string name="header_side_effects">آثار جانبية</string>
@@ -163,11 +188,20 @@
     <string name="fp_register_service_mode_all_methods">جميع الطرق</string>
     <string name="fp_register_service_mode_condom">الواقي</string>
     <string name="fp_register_service_mode_dmpa">DMPA\عن طريق الحقن</string>
+    <string name="fp_register_service_mode_iucd">IUCD</string>
+    <string name="fp_register_service_mode_ocp">OCP</string>
     <string name="fp_register_service_mode_female_sterilization">تعقيم الإناث</string>
     <string name="fp_register_service_mode_male_sterilization">تعقيم الذكور</string>
     <string name="fp_register_service_mode_others">اخرون</string>
 
+    <string name="fp_register_service_mode_ecp">ECP</string>
     <string name="fp_register_service_mode_traditional">طرق تقليدية</string>
+    <string name="fp_register_service_mode_lam">LAM</string>
+    <string name="fp_register_service_mode_centchroman">Centchroman</string>
+    <string name="fp_register_service_mode_none_ps">None - PS</string>
+    <string name="fp_register_service_mode_none_ss">None - SS</string>
+
+    <string name="fp_prioritization_all_ec_service_mode">All EC</string>
     <string name="fp_prioritization_high_priority_service_mode">أولوية عالية</string>
     <string name="fp_prioritization_two_plus_children_service_mode">2+طفل</string>
     <string name="fp_prioritization_one_child_service_mode">1طفل</string>
@@ -178,6 +212,7 @@
     <string name="fp_prioritization_add_fp">إضافة تنظيم الأسرة</string>
     <string name="fp_prioritization_fp_videos">فىديوهات تنظيم الأسرة</string>
 
+    <string name="header_thayi_number">THAYI NO.</string>
     <string name="header_delivery_info">معلومات الولادة </string>
     <string name="header_delivery_complications">مضاعفات</string>
     <string name="header_pp_fp">تنظيم الأسرة بعد الولادة</string>
@@ -202,10 +237,12 @@
 
     <string name="anc_label">علاجات ما قبل الولادة:</string>
     <string name="hb_test_label">فحص الهيموجلوبين</string>
+    <string name="edd_label">EDD: </string>
     <string name="str_days_past_due">عدد اليوم (الايام) المتاخرة</string>
     <string name="lmp_label">آخر دورة شهرية</string>
     <string name="str_weeks">أسابيع</string>
     <string name="anc_register_title_in_short">علاجات ما قبل الولادة</string>
+    <string name="str_bp">BP</string>
     <string name="str_weight">الوزن,</string>
     <string name="str_anc_search_hint">بحث سجل علاجات ما قبل الولادة</string>
     <string name="anc_service_mode_overview">استعراض عام</string>
@@ -234,8 +271,11 @@
     <string name="str_delivery_at">الولادة في</string>
     <string name="str_transport">النقل</string>
     <string name="str_has_companion">لديه مرافق:</string>
+    <string name="str_asha">Asha</string>
     <string name="str_contact">اتصال</string>
     <string name="str_risks_reviewed">المخاطر التي تم استعراضها:</string>
+    <string name="sort_by_edd_label">EDD</string>
+
     <string name="str_pnc_delivery_date">التاريخ</string>
     <string name="str_pnc_delivery_place">المكان</string>
     <string name="str_pnc_delivery_type">نوع:</string>
@@ -250,6 +290,9 @@
     <string name="str_pnc_circle_status_missed">مفقود</string>
     <string name="str_pnc_circle_color_yellow">اصفر</string>
     <string name="str_pnc_circle_color_green">أحمر</string>
+    <string name="str_pnc_circle_color_red">red</string>
+    <string name="str_child_illness_ari">ari</string>
+    <string name="str_child_illness_sam">sam</string>
     <string name="str_pnc_visit_button_label">زيارة علاجات ما بعد الولادة</string>
 
     <string name="ic_check_circle_blank">&#xe03e;</string>
@@ -280,7 +323,7 @@
     <string name="clients_key">زبائن</string>
     <string name="events_key">أحداث</string>
 
-    <string name="loading_client_settings">جاريٍ تحميل إعدادات الزبون &#8230;</string>
+    <string name="loading_client_settings">جاريٍ تحميل إعدادات الزبون & # 8230؛</string>
     <!-- login -->
     <string name="prompt_username">اسم المستخدم</string>
     <string name="prompt_password">كلمه السر(اختياري)</string>
@@ -299,7 +342,7 @@
     <string name="syncing">جارى التزامن</string>
     <string name="sync_failed">فشل التزامن</string>
     <string name="sync_complete"> اكتمل التزامن</string>
-    <string name="manual_sync_triggered">تم تشغيل المزامن اليدوي &#8230;</string>
+    <string name="manual_sync_triggered">تم تشغيل المزامن اليدوي & # 8230؛</string>
 
     <!-- base register -->
     <string name="filter">مرشّح</string>
@@ -325,7 +368,7 @@
     <string name="no_camera_permission">لا يمكن تشغيل هذا التطبيق لأنه لا يملك إذن الكاميرا. سيتم الآن الخروج من التطبيق.</string>
     <string name="low_storage_error">لا يمكن تنزيل تبعيات كاشف الوجه نظرًا لانخفاض سعة تخزين الجهاز</string>
     <string name="title_activity_main">عينة قارئ الشفرة</string>
-    <string name="barcode_header">انقر على &quot; قراءة الشفرة &quot; ؛ لقراءة الشفرة</string>
+    <string name="barcode_header">انقر على & quot؛ قراءة الشفرة & quot؛ لقراءة الشفرة</string>
     <string name="read_barcode">اقرأ الشفرة</string>
     <string name="auto_focus">التركيز التلقائي</string>
     <string name="use_flash">استعمل الوميض</string>
@@ -333,7 +376,7 @@
     <string name="barcode_failure">لم يتم التقاط الشفرة</string>
     <string name="barcode_error">خطأ في قراءة الشفرة:%1$s</string>
 
-    <string name="allow_camera_management">يلزمك السماح للتطبيق باستخدام الكاميرا لمسح رموزالاستجابة السريعة# &#8230;</string>
+    <string name="allow_camera_management">يلزمك السماح للتطبيق باستخدام الكاميرا لمسح رموزالاستجابة السريعة& # 8230;</string>
     <string name="unauthorized_group">غير مسموح لمجموعة المستخدم للوصول إلى هذا الجهاز</string>
     <string name="opensrp_url">http://27.147.129.50:9979</string>
     <string name="no_internet_connectivity">لا يوجد اتصال بالإنترنت. يرجى التأكد من اتصال البيانات</string>
@@ -348,6 +391,7 @@
     <string name="language_change_prepend_message">اللغة المفضلة مضبوطة على</string>
     <string name="language_change_append_message">من فضلك اعد تشغيل التطبيق</string>
     <string name="photo_captured">لقد تم التقاط الصورة</string>
+
 
 
 </resources>
