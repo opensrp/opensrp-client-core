@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
@@ -24,8 +25,7 @@ import java.util.Map;
 /*
  by Raihan Ahmed
  */
-@RunWith(RobolectricTestRunner.class)
-public class CommonPersonObjectControllerTest {
+public class CommonPersonObjectControllerTest extends BaseUnitTest {
 
     @Mock
     private AllCommonsRepository allCommonsRepository;

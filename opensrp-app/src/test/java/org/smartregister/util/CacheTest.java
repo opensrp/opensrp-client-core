@@ -3,16 +3,14 @@ package org.smartregister.util;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.event.Event;
 
-@RunWith(RobolectricTestRunner.class)
-public class CacheTest {
+public class CacheTest extends BaseUnitTest {
     @Mock
     private CacheableData<String> cacheableData;
 

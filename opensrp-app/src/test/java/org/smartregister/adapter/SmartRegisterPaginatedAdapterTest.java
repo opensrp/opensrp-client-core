@@ -5,8 +5,7 @@ import android.view.ViewGroup;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.contract.ECClient;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -16,8 +15,7 @@ import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.viewholder.OnClickFormLauncher;
 
-@RunWith(RobolectricTestRunner.class)
-public class SmartRegisterPaginatedAdapterTest {
+public class SmartRegisterPaginatedAdapterTest extends BaseUnitTest {
 
     private String NameZERO = "Name0";
     private String NameFOURTYNINE = "Name49";

@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.AllBeneficiaries;
 import org.smartregister.util.Cache;
 import org.smartregister.util.EasyMap;
@@ -19,8 +20,7 @@ import java.util.Map;
 /*
  by Raihan Ahmed
  */
-@RunWith(RobolectricTestRunner.class)
-public class CommonPersonObjectDateSortTest {
+public class CommonPersonObjectDateSortTest extends BaseUnitTest {
     @Mock
     private AllCommonsRepository allCommonsRepository;
     @Mock

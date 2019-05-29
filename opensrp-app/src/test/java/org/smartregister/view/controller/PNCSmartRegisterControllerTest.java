@@ -4,11 +4,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.domain.Child;
@@ -35,8 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class PNCSmartRegisterControllerTest {
+public class PNCSmartRegisterControllerTest extends BaseUnitTest {
     public static final String[] PNC_ALERTS = new String[]{
             "PNC 1"
     };

@@ -3,8 +3,7 @@ package org.smartregister.domain;
 import com.google.gson.Gson;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.form.FormData;
 import org.smartregister.domain.form.FormField;
 import org.smartregister.domain.form.FormInstance;
@@ -16,8 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.smartregister.util.FormSubmissionBuilder.create;
 
-@RunWith(RobolectricTestRunner.class)
-public class FormSubmissionTest {
+public class FormSubmissionTest extends BaseUnitTest {
 
     @Test
     public void shouldGetFieldValueByName() throws Exception {

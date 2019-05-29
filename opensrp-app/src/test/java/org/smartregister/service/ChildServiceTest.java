@@ -2,11 +2,10 @@ package org.smartregister.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.Mother;
 import org.smartregister.domain.ServiceProvided;
@@ -24,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class ChildServiceTest {
+public class ChildServiceTest extends BaseUnitTest {
 
     @Mock
     private AllTimelineEvents allTimelineEvents;

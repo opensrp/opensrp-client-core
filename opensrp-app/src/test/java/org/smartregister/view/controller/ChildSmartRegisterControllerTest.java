@@ -6,11 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.domain.Child;
@@ -33,8 +32,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class ChildSmartRegisterControllerTest {
+public class ChildSmartRegisterControllerTest extends BaseUnitTest {
 
     public static final String[] CHILD_ALERTS = new String[]{
             "bcg",
