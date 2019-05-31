@@ -2,11 +2,10 @@ package org.smartregister.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.TimelineEvent;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.repository.AllBeneficiaries;
@@ -16,8 +15,7 @@ import org.smartregister.repository.EligibleCoupleRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.util.EasyMap;
 
-@RunWith(RobolectricTestRunner.class)
-public class EligibleCoupleServiceTest {
+public class EligibleCoupleServiceTest extends BaseUnitTest {
 
     @Mock
     private EligibleCoupleRepository eligibleCoupleRepository;

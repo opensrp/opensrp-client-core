@@ -3,14 +3,12 @@ package org.smartregister.view.contract;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.util.DateUtil;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(RobolectricTestRunner.class)
-public class ECChildClientTest {
+public class ECChildClientTest extends BaseUnitTest {
 
     private LocalDate today;
 

@@ -2,9 +2,8 @@ package org.smartregister.service;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
@@ -33,8 +32,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 
-@RunWith(RobolectricTestRunner.class)
-public class UserServiceTest {
+public class UserServiceTest extends BaseUnitTest {
     @Mock
     private Repository repository;
     @Mock

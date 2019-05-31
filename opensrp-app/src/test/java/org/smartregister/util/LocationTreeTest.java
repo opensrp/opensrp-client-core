@@ -6,19 +6,17 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 
 /**
  * Created by Dimas Ciputra on 3/23/15.
  */
-@RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class LocationTreeTest {
+public class LocationTreeTest extends BaseUnitTest {
     private LocationTree locationTree;
     private String locationJSONString;
 

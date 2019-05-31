@@ -4,11 +4,10 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.EligibleCouple;
 
 import java.util.ArrayList;
@@ -17,8 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class AllEligibleCouplesTest {
+public class AllEligibleCouplesTest extends BaseUnitTest {
 
     @Mock
     private EligibleCoupleRepository eligibleCoupleRepository;
