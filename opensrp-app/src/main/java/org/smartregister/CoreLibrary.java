@@ -163,4 +163,9 @@ public class CoreLibrary {
         return p2POptions;
     }
 
+    @NonNull
+    public ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(context.applicationContext());
+    }
+
 }

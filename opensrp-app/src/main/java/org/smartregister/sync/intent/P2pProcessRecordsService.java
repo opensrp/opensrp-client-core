@@ -10,7 +10,6 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
-import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.util.Utils;
 
 import java.util.List;
@@ -50,7 +49,7 @@ public class P2pProcessRecordsService extends IntentService {
 
                 if (eventClientList.size() > 0) {
                     try {
-                        getClientProcessor().processClient(eventClientList);
+                        CoreLibrary.getInstance().getClientProcessor().processClient(eventClientList);
                         int tableMaxRowId = eventClientRepository.getMaxRowId(EventClientRepository.Table.event);
 
                         if (tableMaxRowId == eventClientQueryResult.maxRowId) {
@@ -80,18 +79,6 @@ public class P2pProcessRecordsService extends IntentService {
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
         CoreLibrary.getInstance().context().applicationContext().sendBroadcast(Utils.completeSync(fetchStatus));
-    }
-
-    @NonNull
-    public ClientProcessorForJava getClientProcessor() {
-        if (CoreLibrary.getInstance().getP2POptions() != null) {
-            return CoreLibrary.getInstance().getP2POptions().getClientProcessor();
-        } else {
-            throw new IllegalStateException(" P2POptions do not exist in the CoreLibrary!!! Call "
-                    + CoreLibrary.class.getName()
-                    + ".init method with the P2POptions in the onCreate method of "
-                    + "your Application class ");
-        }
     }
 
     public static class EventClientQueryResult {
