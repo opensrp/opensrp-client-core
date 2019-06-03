@@ -12,13 +12,12 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -37,8 +36,7 @@ import static org.smartregister.repository.StructureRepository.STRUCTURE_TABLE;
  * Created by samuelgithengi on 11/26/18.
  */
 
-@RunWith(RobolectricTestRunner.class)
-public class StructureRepositoryTest {
+public class StructureRepositoryTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -46,7 +44,7 @@ public class StructureRepositoryTest {
     private StructureRepository structureRepository;
 
     @Mock
-    private  Repository repository;
+    private Repository repository;
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;

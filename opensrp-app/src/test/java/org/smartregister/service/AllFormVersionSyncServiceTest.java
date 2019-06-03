@@ -5,12 +5,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.FetchStatus;
@@ -33,9 +32,8 @@ import static org.smartregister.domain.ResponseStatus.success;
 /**
  * Created by Dimas Ciputra on 3/31/15.
  */
-@RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class AllFormVersionSyncServiceTest {
+public class AllFormVersionSyncServiceTest extends BaseUnitTest {
 
     @Mock
     private HTTPAgent httpAgent;

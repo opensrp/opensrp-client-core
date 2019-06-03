@@ -115,8 +115,7 @@ public class JsonFormUtils {
 
     }
 
-    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId,
-                                    String encounterType, String bindType) {
+    public static Event createEvent(JSONArray fields, JSONObject metadata, FormTag formTag, String entityId, String encounterType, String bindType) {
 
         String encounterDateField = getFieldValue(fields, FormEntityConstants.Encounter.encounter_date);
         String encounterLocation = null;
@@ -138,10 +137,11 @@ public class JsonFormUtils {
             encounterLocation = formTag.locationId;
         }
 
+        String formSubmissionId = formTag != null && formTag.formSubmissionId != null ? formTag.formSubmissionId : generateRandomUUIDString();
         Event event =
                 (Event) new Event().withBaseEntityId(entityId).withEventDate(encounterDate).withEventType(encounterType)
                         .withLocationId(encounterLocation).withProviderId(formTag.providerId).withEntityType(bindType)
-                        .withFormSubmissionId(generateRandomUUIDString()).withDateCreated(new Date());
+                        .withFormSubmissionId(formSubmissionId).withDateCreated(new Date());
 
         event.setChildLocationId(formTag.childLocationId);
         event.setTeam(formTag.team);
@@ -167,7 +167,7 @@ public class JsonFormUtils {
                     createObsFromPopUpValues(event, jsonObject, false);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
 
             try {
@@ -175,7 +175,7 @@ public class JsonFormUtils {
                     addObservation(event, jsonObject);
                 }
             } catch (JSONException e) {
-                e.printStackTrace();
+                Log.e(TAG, e.getMessage());
             }
         }
 
@@ -310,7 +310,7 @@ public class JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, e.getMessage());
         }
     }
 
@@ -319,7 +319,7 @@ public class JsonFormUtils {
                                                      JSONArray valueOpenMRSAttributes, String secondaryValueKey,
                                                      String secondaryValueType, JSONObject checkBoxObsObject, int l,
                                                      JSONObject valueOpenMRSAttribute, JSONObject popupJson)
-    throws JSONException {
+            throws JSONException {
         JSONObject checkBoxOptionsObject = checkBoxObsObject;
         checkBoxOptionsObject.put(KEY, secondaryValueKey);
         checkBoxOptionsObject.put(OPENMRS_ENTITY, CONCEPT);
@@ -371,7 +371,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    e1.printStackTrace();
+                    Log.e(TAG, e1.getMessage());
                 }
             } else {
                 createObservation(e, jsonObject, value, entity);
@@ -427,7 +427,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    e1.printStackTrace();
+                    Log.e(TAG, e1.getMessage());
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -793,7 +793,6 @@ public class JsonFormUtils {
      * Returns a JSONArray of all the forms fields in a multi step form.
      *
      * @param jsonForm {@link JSONObject}
-     *
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
@@ -827,7 +826,6 @@ public class JsonFormUtils {
      * return field values that are in sections e.g for the hia2 monthly draft form which has sections
      *
      * @param jsonForm
-     *
      * @return
      */
     public static Map<String, String> sectionFields(JSONObject jsonForm) {

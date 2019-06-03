@@ -32,14 +32,14 @@ subprojects {
 
     group = 'org.smartregister'
 
-    ext.androidToolsBuildGradle     = '27.0.3'
-    ext.androidBuildToolsVersion    = '27.0.3'
+    ext.androidToolsBuildGradle     = '3.1.4'
+    ext.androidBuildToolsVersion    = '28.0.3'
     ext.androidMinSdkVersion        = 18
-    ext.androidCompileSdkVersion    = 27
-    ext.androidTargetSdkVersion     = 27
+    ext.androidCompileSdkVersion    = 28
+    ext.androidTargetSdkVersion     = 28
 
-    ext.androidAnnotationsVersion = '3.0.1';
-    ext.androidAnnotationsAPIVersion = '3.0.1';
+    ext.androidAnnotationsVersion = '3.0.1'
+    ext.androidAnnotationsAPIVersion = '3.0.1'
 
     repositories {
         google()
@@ -73,7 +73,6 @@ buildDashboard {
 
 test.reports.html.enabled = false
 test.reports.junitXml.enabled = false
-
 
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false

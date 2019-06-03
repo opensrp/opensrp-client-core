@@ -13,13 +13,12 @@ import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Campaign;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
@@ -38,8 +37,7 @@ import static org.smartregister.repository.CampaignRepository.CAMPAIGN_TABLE;
  * Created by samuelgithengi on 11/26/18.
  */
 
-@RunWith(RobolectricTestRunner.class)
-public class CampaignRepositoryTest {
+public class CampaignRepositoryTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();

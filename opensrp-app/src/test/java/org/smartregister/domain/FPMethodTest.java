@@ -1,13 +1,11 @@
 package org.smartregister.domain;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 
 import static junit.framework.Assert.assertEquals;
 
-@RunWith(RobolectricTestRunner.class)
-public class FPMethodTest {
+public class FPMethodTest extends BaseUnitTest {
 
     @Test
     public void shouldParseStringToFPMethod() throws Exception {
