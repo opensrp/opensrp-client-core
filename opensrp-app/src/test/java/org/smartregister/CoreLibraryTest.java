@@ -50,7 +50,7 @@ public class CoreLibraryTest extends BaseUnitTest {
         allSharedPreferences.saveDefaultTeamId(expectedUsername, expectedTeamIdPassword);
 
 
-        CoreLibrary.P2POptions p2POptions = new CoreLibrary.P2POptions(true);
+        P2POptions p2POptions = new P2POptions(true);
         CoreLibrary.init(context, null, 0, p2POptions);
 
         P2PLibrary p2PLibrary = P2PLibrary.getInstance();

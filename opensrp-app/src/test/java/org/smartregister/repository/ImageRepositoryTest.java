@@ -1,14 +1,12 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.support.annotation.NonNull;
 
 import junit.framework.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -107,8 +105,8 @@ public class ImageRepositoryTest extends BaseUnitTest {
 
         HashMap<String, Object> actualDetails = imageRepository.getImage(9);
 
-        org.junit.Assert.assertEquals(1l, actualDetails.get(AllConstants.ROWID));
-        org.junit.Assert.assertEquals(6, actualDetails.size());
+        Assert.assertEquals(1l, actualDetails.get(AllConstants.ROWID));
+        Assert.assertEquals(6, actualDetails.size());
     }
 
     public ProfileImage getProfileImage() {

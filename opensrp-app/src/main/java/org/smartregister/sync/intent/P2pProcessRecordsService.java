@@ -69,6 +69,7 @@ public class P2pProcessRecordsService extends IntentService {
                     }
                 } else {
                     allSharedPreferences.resetLastPeerToPeerSyncProcessedEvent();
+                    break;
                 }
 
             }

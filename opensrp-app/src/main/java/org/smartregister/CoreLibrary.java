@@ -6,10 +6,6 @@ import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
-import org.smartregister.p2p.authorizer.P2PAuthorizationService;
-import org.smartregister.p2p.callback.SyncFinishedCallback;
-import org.smartregister.p2p.model.dao.ReceiverTransferDao;
-import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
@@ -31,7 +27,7 @@ public class CoreLibrary {
 
     private String ecClientFieldsFile = "ec_client_fields.json";
 
-    private CoreLibrary.P2POptions p2POptions;
+    private P2POptions p2POptions;
 
 
     public static void init(Context context) {
@@ -167,72 +163,4 @@ public class CoreLibrary {
         return p2POptions;
     }
 
-    public static class P2POptions {
-
-        private P2PAuthorizationService authorizationService;
-        private ReceiverTransferDao receiverTransferDao;
-        private SenderTransferDao senderTransferDao;
-        private ClientProcessorForJava clientProcessor;
-        private SyncFinishedCallback syncFinishedCallback;
-
-        private boolean enableP2PLibrary;
-        private int batchSize = AllConstants.PeerToPeer.P2P_LIBRARY_DEFAULT_BATCH_SIZE;
-
-        public P2POptions(boolean enableP2PLibrary) {
-            this.enableP2PLibrary = enableP2PLibrary;
-        }
-
-        public void setAuthorizationService(P2PAuthorizationService authorizationService) {
-            this.authorizationService = authorizationService;
-        }
-
-        public void setReceiverTransferDao(ReceiverTransferDao receiverTransferDao) {
-            this.receiverTransferDao = receiverTransferDao;
-        }
-
-        public void setSenderTransferDao(SenderTransferDao senderTransferDao) {
-            this.senderTransferDao = senderTransferDao;
-        }
-
-        public P2PAuthorizationService getAuthorizationService() {
-            return authorizationService;
-        }
-
-        public ReceiverTransferDao getReceiverTransferDao() {
-            return receiverTransferDao;
-        }
-
-        public SenderTransferDao getSenderTransferDao() {
-            return senderTransferDao;
-        }
-
-        public boolean isEnableP2PLibrary() {
-            return enableP2PLibrary;
-        }
-
-        @Nullable
-        public ClientProcessorForJava getClientProcessor() {
-            return clientProcessor;
-        }
-
-        public void setClientProcessor(@NonNull ClientProcessorForJava clientProcessor) {
-            this.clientProcessor = clientProcessor;
-        }
-
-        public int getBatchSize() {
-            return batchSize;
-        }
-
-        public void setBatchSize(int batchSize) {
-            this.batchSize = batchSize;
-        }
-
-        public SyncFinishedCallback getSyncFinishedCallback() {
-            return syncFinishedCallback;
-        }
-
-        public void setSyncFinishedCallback(SyncFinishedCallback syncFinishedCallback) {
-            this.syncFinishedCallback = syncFinishedCallback;
-        }
-    }
 }
