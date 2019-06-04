@@ -35,6 +35,8 @@ public class MainActivity extends LanguageActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        setTitle(R.string.app_name);
+
         activity = this;
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
