@@ -8,7 +8,7 @@ import org.smartregister.util.LangUtils;
  * @author Rodgers Andati
  * @since 2019-05-03
  */
-public class LanguageActivity extends AppCompatActivity {
+public class MultiLanguageActivity extends AppCompatActivity {
 
     @Override
     protected void attachBaseContext(android.content.Context base) {

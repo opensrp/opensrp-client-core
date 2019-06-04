@@ -34,7 +34,7 @@ import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
  * Created by manu on 01/11/2018.
  */
 
-public abstract class BaseLoginActivity extends LanguageActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
+public abstract class BaseLoginActivity extends MultiLanguageActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
     private ProgressDialog progressDialog;
     protected BaseLoginContract.Presenter mLoginPresenter;
     private EditText userNameEditText;
