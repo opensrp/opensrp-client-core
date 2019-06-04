@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends LanguageActivity {
-    Spinner languageSpinner;
-    Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +32,7 @@ public class MainActivity extends LanguageActivity {
 
         setTitle(R.string.app_name);
 
-        activity = this;
+        Activity activity = this;
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -49,7 +47,7 @@ public class MainActivity extends LanguageActivity {
         System.out.println(query);
 
         // lang spinner
-        languageSpinner = findViewById(R.id.lang_spinner);
+        Spinner languageSpinner = findViewById(R.id.lang_spinner);
         List<String> langArray = new ArrayList<>();
         langArray.add("English");
         langArray.add("Français");
