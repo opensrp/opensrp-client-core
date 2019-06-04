@@ -33,7 +33,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
     private String TAG = BarcodeScanActivity.class.getSimpleName();
 
     @Override
-    protected void attachBaseContext(android.content.Context base) {
+    protected void attachBaseContext(Context base) {
         // get language from prefs
         String lang = LangUtils.getLanguage(base.getApplicationContext());
         super.attachBaseContext(LangUtils.setAppLocale(base, lang));
