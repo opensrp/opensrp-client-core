@@ -256,5 +256,12 @@ Class | Business logic related to
 
 The service classes can be found in `org.smartregister.service`
 
+## 8. App Localization
+
+This app provides capability to support multiple languages.
+
+Check out the sample app to see how to implement language switching.
+
+Ensure each class in your app extends (directly or indirectly) a class in client-core. If it doesn't then extend LanguageActivity instead of AppCompatActivity.
 
 

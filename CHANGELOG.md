@@ -29,6 +29,7 @@ ___________________
 ### Added
 - Compression helper classes
 - Cryptography helper classes
+- Added language switching support
 
 ### Changed
 - Upgrade Build tools to version 28
