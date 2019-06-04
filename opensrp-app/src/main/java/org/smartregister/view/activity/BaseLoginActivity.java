@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -35,7 +34,7 @@ import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
  * Created by manu on 01/11/2018.
  */
 
-public abstract class BaseLoginActivity extends AppCompatActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
+public abstract class BaseLoginActivity extends LanguageActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
     private ProgressDialog progressDialog;
     protected BaseLoginContract.Presenter mLoginPresenter;
     private EditText userNameEditText;
