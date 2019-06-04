@@ -95,10 +95,6 @@ public class CoreLibrary {
                     p2POptions.setSenderTransferDao(new P2PSenderTransferDao());
                 }
 
-                if (p2POptions.getClientProcessor() == null) {
-                    p2POptions.setClientProcessor(ClientProcessorForJava.getInstance(context.applicationContext()));
-                }
-
                 if (p2POptions.getSyncFinishedCallback() == null) {
                     p2POptions.setSyncFinishedCallback(new P2PSyncFinishCallback());
                 }

@@ -1,8 +1,5 @@
 package org.smartregister;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.p2p.callback.SyncFinishedCallback;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
@@ -53,15 +50,6 @@ public class P2POptions {
 
     public boolean isEnableP2PLibrary() {
         return enableP2PLibrary;
-    }
-
-    @Nullable
-    public ClientProcessorForJava getClientProcessor() {
-        return clientProcessor;
-    }
-
-    public void setClientProcessor(@NonNull ClientProcessorForJava clientProcessor) {
-        this.clientProcessor = clientProcessor;
     }
 
     public int getBatchSize() {

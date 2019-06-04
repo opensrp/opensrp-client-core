@@ -1288,20 +1288,9 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
 
             while (cursor.moveToNext()) {
-                String jsonEventStr = (cursor.getString(0));
                 long rowId = cursor.getLong(2);
-                String syncStatus = cursor.getString(1);
-
-                if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
-                    continue;
-                }
-
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-
-                JSONObject eventObject = new JSONObject(jsonEventStr);
-                eventObject.put(event_column.syncStatus.name(), syncStatus);
-                eventObject.put(ROWID, rowId);
+                JSONObject eventObject = getEventObject(cursor, rowId);
+                if (eventObject == null) continue;
 
                 jsonArray.put(eventObject);
 
@@ -1323,6 +1312,24 @@ public class EventClientRepository extends BaseRepository {
         }
 
         return jsonData;
+    }
+
+    @Nullable
+    private JSONObject getEventObject(Cursor cursor, long rowId) throws JSONException {
+        String jsonEventStr = (cursor.getString(0));
+        String syncStatus = cursor.getString(1);
+
+        if (StringUtils.isBlank(jsonEventStr)
+                || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+            return null;
+        }
+
+        jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+        JSONObject eventObject = new JSONObject(jsonEventStr);
+        eventObject.put(event_column.syncStatus.name(), syncStatus);
+        eventObject.put(ROWID, rowId);
+        return eventObject;
     }
 
     /**
@@ -1357,20 +1364,9 @@ public class EventClientRepository extends BaseRepository {
             cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
 
             while (cursor.moveToNext()) {
-                String jsonEventStr = (cursor.getString(0));
                 long rowId = cursor.getLong(2);
-                String syncStatus = cursor.getString(1);
-
-                if (StringUtils.isBlank(jsonEventStr)
-                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
-                    continue;
-                }
-
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-
-                JSONObject eventObject = new JSONObject(jsonEventStr);
-                eventObject.put(event_column.syncStatus.name(), syncStatus);
-                eventObject.put(ROWID, rowId);
+                JSONObject eventObject = getEventObject(cursor, rowId);
+                if (eventObject == null) continue;
 
                 jsonArray.put(eventObject);
 
