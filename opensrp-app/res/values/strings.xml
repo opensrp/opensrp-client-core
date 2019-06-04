@@ -397,6 +397,7 @@
     <string name="language_change_append_message">Please restart the application</string>
     <string name="photo_captured">Photo captured</string>
 
+    <string name="log_data_type_provided_does_not_exist_in_the_sender">The data type %s provided does not exist in the sender</string>
 
 
 </resources>

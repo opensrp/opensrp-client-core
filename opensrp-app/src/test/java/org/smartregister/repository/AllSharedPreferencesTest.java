@@ -244,4 +244,9 @@ public class AllSharedPreferencesTest extends TestCase {
         Assert.assertEquals(allSharedPreferences.getPreference(CAMPAIGNS), str);
     }
 
+    @Test
+    public void assertSaveIsSyncInitialIsFalse() {
+        Assert.assertFalse(allSharedPreferences.fetchIsSyncInitial());
+    }
+
 }

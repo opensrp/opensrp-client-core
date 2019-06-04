@@ -10,10 +10,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.P2POptions;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
+import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.login.task.RemoteLoginTask;
@@ -220,6 +222,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
      * Call super if you override this method.
      */
     protected void scheduleJobsImmediately() {
+        P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
+        if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
+            // Finish processing any unprocessed sync records here
+            P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+        }
+
         if (NetworkUtils.isNetworkAvailable()) {
             PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);

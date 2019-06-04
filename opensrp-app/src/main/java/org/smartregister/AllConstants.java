@@ -117,6 +117,7 @@ public class AllConstants {
     public static final String SECONDARY_VALUE = "secondary_value";
     public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String SPINNER = "spinner";
+    public static final String ROWID = "rowid";
 
 
     public static class Immunizations {
@@ -430,6 +431,7 @@ public class AllConstants {
 
     public static class PeerToPeer {
         public static final String KEY_TEAM_ID = "team-id";
+        public static final int P2P_LIBRARY_DEFAULT_BATCH_SIZE = 250;
     }
 
     public class KEY {

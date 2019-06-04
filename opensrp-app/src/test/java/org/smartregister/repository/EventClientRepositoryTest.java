@@ -20,6 +20,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Column;
 import org.smartregister.sync.ClientData;
+import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
@@ -264,6 +265,20 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         eventClientRepository.deleteEventsByBaseEntityId(baseEntityId, "eventType");
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
+    }
+
+    @Test
+    public void fetchEventClientsByRowId() throws Exception {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"rowid", "json"});
+        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
+        for (int i = 0; i < eventArray.length(); i++) {
+            matrixCursor.addRow(new String[]{(i+1) + "", eventArray.getJSONObject(i).toString()});
+        }
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(Object[].class))).thenReturn(matrixCursor);
+        P2pProcessRecordsService.EventClientQueryResult eventClientQueryResult = eventClientRepository.fetchEventClientsByRowId(0);
+
+        Assert.assertEquals(eventArray.length(), eventClientQueryResult.getMaxRowId());
     }
 
     @Test

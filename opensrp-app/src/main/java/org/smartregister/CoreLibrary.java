@@ -1,12 +1,16 @@
 package org.smartregister;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
-import org.smartregister.p2p.authorizer.P2PAuthorizationService;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.P2PReceiverTransferDao;
+import org.smartregister.repository.P2PSenderTransferDao;
+import org.smartregister.sync.ClientProcessorForJava;
+import org.smartregister.sync.P2PSyncFinishCallback;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -22,8 +26,8 @@ public class CoreLibrary {
     private static long buildTimeStamp;
 
     private String ecClientFieldsFile = "ec_client_fields.json";
-    private boolean enableP2pLibrary = false;
-    private P2PAuthorizationService p2PAuthorizationService;
+
+    private P2POptions p2POptions;
 
 
     public static void init(Context context) {
@@ -32,28 +36,20 @@ public class CoreLibrary {
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, false, null);
+            instance = new CoreLibrary(context, syncConfiguration, null);
         }
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, false, null);
+            instance = new CoreLibrary(context, syncConfiguration, null);
             buildTimeStamp = buildTimestamp;
         }
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, boolean enableP2pLibrary) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, enableP2pLibrary, null);
-            buildTimeStamp = buildTimestamp;
-        }
-    }
-
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, boolean enableP2pLibrary
-            , P2PAuthorizationService p2PAuthorizationService) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, enableP2pLibrary, p2PAuthorizationService);
+            instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
         }
     }
@@ -68,30 +64,48 @@ public class CoreLibrary {
         return instance;
     }
 
-    private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, boolean enableP2pLibrary
-            , @Nullable P2PAuthorizationService authorizationService) {
+    private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
-        this.enableP2pLibrary = enableP2pLibrary;
-        this.p2PAuthorizationService = authorizationService;
+        this.p2POptions = p2POptions;
 
         initP2pLibrary(null);
     }
 
     public void initP2pLibrary(@Nullable String username) {
-        if (enableP2pLibrary) {
+        if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
             String p2pUsername = username;
             AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
             if (p2pUsername == null) {
                 p2pUsername = allSharedPreferences.fetchRegisteredANM();
             }
 
-            if (p2PAuthorizationService == null) {
-                p2PAuthorizationService = new P2PSyncAuthorizationService(allSharedPreferences.fetchDefaultTeamId(p2pUsername));
-            }
-
             if (!TextUtils.isEmpty(p2pUsername)) {
-                P2PLibrary.init(new P2PLibrary.Options(p2pUsername, p2PAuthorizationService));
+                String teamId = allSharedPreferences.fetchDefaultTeamId(p2pUsername);
+
+                if (p2POptions.getAuthorizationService() == null) {
+                    p2POptions.setAuthorizationService(new P2PSyncAuthorizationService(teamId));
+                }
+
+                if (p2POptions.getReceiverTransferDao() == null) {
+                    p2POptions.setReceiverTransferDao(new P2PReceiverTransferDao());
+                }
+
+                if (p2POptions.getSenderTransferDao() == null) {
+                    p2POptions.setSenderTransferDao(new P2PSenderTransferDao());
+                }
+
+                if (p2POptions.getSyncFinishedCallback() == null) {
+                    p2POptions.setSyncFinishedCallback(new P2PSyncFinishCallback());
+                }
+
+                P2PLibrary.Options options = new P2PLibrary.Options(context.applicationContext()
+                        , teamId, p2pUsername, p2POptions.getAuthorizationService(), p2POptions.getReceiverTransferDao()
+                        , p2POptions.getSenderTransferDao());
+                options.setBatchSize(p2POptions.getBatchSize());
+                options.setSyncFinishedCallback(p2POptions.getSyncFinishedCallback());
+
+                P2PLibrary.init(options);
             }
         }
     }
@@ -108,13 +122,13 @@ public class CoreLibrary {
      */
     public static void reset(Context context) {
         if (context != null) {
-            instance = new CoreLibrary(context, null, false, null);
+            instance = new CoreLibrary(context, null, null);
         }
     }
 
     public static void reset(Context context, SyncConfiguration syncConfiguration) {
         if (context != null) {
-            instance = new CoreLibrary(context, syncConfiguration, false, null);
+            instance = new CoreLibrary(context, syncConfiguration, null);
         }
     }
 
@@ -139,4 +153,15 @@ public class CoreLibrary {
     public void setEcClientFieldsFile(String ecClientFieldsFile) {
         this.ecClientFieldsFile = ecClientFieldsFile;
     }
+
+    @Nullable
+    public P2POptions getP2POptions() {
+        return p2POptions;
+    }
+
+    @NonNull
+    public ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(context.applicationContext());
+    }
+
 }
