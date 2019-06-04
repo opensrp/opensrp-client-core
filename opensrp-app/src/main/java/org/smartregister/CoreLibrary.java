@@ -18,6 +18,7 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
  * Created by keyman on 31/07/17.
  */
 public class CoreLibrary {
+
     private final Context context;
 
     private static CoreLibrary instance;
@@ -64,7 +65,7 @@ public class CoreLibrary {
         return instance;
     }
 
-    private CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
+    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
         this.p2POptions = p2POptions;
