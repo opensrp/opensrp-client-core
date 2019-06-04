@@ -21,7 +21,6 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
@@ -166,7 +165,7 @@ public class SyncIntentService extends IntentService {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
-            getClientProcessor().processClient(events);
+            CoreLibrary.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Process Client Exception: " + e.getMessage(), e.getCause());
@@ -284,10 +283,6 @@ public class SyncIntentService extends IntentService {
             Log.e(getClass().getName(), e.getMessage(), e);
         }
         return count;
-    }
-
-    protected ClientProcessorForJava getClientProcessor() {
-        return ClientProcessorForJava.getInstance(context);
     }
 
 }

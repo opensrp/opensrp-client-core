@@ -12,8 +12,13 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.ProfileImage;
+import org.smartregister.domain.SyncStatus;
+
+import java.util.HashMap;
+
 
 /**
  * Created by kaderchowdhury on 21/11/17.
@@ -85,6 +90,23 @@ public class ImageRepositoryTest extends BaseUnitTest {
     public void assertfindByEntityId() {
         Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString(), Mockito.any(String[].class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(getCursor());
         Assert.assertNotNull(imageRepository.findByEntityId("1"));
+    }
+
+    @Test
+    public void getImageShouldReturnValidHashMap() {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"rowid", filepath_COLUMN, syncStatus_COLUMN
+                , entityID_COLUMN, anm_ID_COLUMN , filecategory_COLUMN});
+        matrixCursor.addRow(new String[]{"1", "sample_file_path", SyncStatus.SYNCED.toString(), "992jdwmkkk", "sample_anm_id", "profile_image"});
+
+        Mockito.when(sqLiteDatabase.query(Mockito.anyString(), Mockito.any(String[].class), Mockito.anyString()
+                , Mockito.any(String[].class), (String) Mockito.isNull(), (String) Mockito.isNull()
+                , Mockito.anyString(), Mockito.anyString()))
+                .thenReturn(matrixCursor);
+
+        HashMap<String, Object> actualDetails = imageRepository.getImage(9);
+
+        Assert.assertEquals(1l, actualDetails.get(AllConstants.ROWID));
+        Assert.assertEquals(6, actualDetails.size());
     }
 
     public ProfileImage getProfileImage() {
