@@ -15,13 +15,13 @@ import android.widget.Spinner;
 
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.util.LangUtils;
-import org.smartregister.view.activity.LanguageActivity;
+import org.smartregister.view.activity.MultiLanguageActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends LanguageActivity {
+public class MainActivity extends MultiLanguageActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
