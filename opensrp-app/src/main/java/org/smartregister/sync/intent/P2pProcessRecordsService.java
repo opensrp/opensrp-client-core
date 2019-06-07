@@ -11,6 +11,7 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class P2pProcessRecordsService extends IntentService {
 
                 if (eventClientList.size() > 0) {
                     try {
-                        CoreLibrary.getInstance().getClientProcessor().processClient(eventClientList);
+                        DrishtiApplication.getInstance().getClientProcessor().processClient(eventClientList);
                         int tableMaxRowId = eventClientRepository.getMaxRowId(EventClientRepository.Table.event);
 
                         if (tableMaxRowId == eventClientQueryResult.maxRowId) {

@@ -24,6 +24,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -165,7 +166,7 @@ public class SyncIntentService extends IntentService {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
-            CoreLibrary.getInstance().getClientProcessor().processClient(events);
+            DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Process Client Exception: " + e.getMessage(), e.getCause());
