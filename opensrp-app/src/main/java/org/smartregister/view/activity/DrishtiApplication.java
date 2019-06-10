@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.app.Application;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
 import net.sqlcipher.database.SQLiteDatabase;
@@ -12,6 +13,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
+import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.util.BitmapImageCache;
 import org.smartregister.util.OpenSRPImageLoader;
 
@@ -102,5 +104,10 @@ public abstract class DrishtiApplication extends Application {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @NonNull
+    public ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(context.applicationContext());
     }
 }
