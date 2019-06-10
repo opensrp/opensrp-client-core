@@ -22,6 +22,7 @@ import com.google.android.gms.vision.barcode.BarcodeDetector;
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.barcode.CameraSourcePreview;
+import org.smartregister.util.LangUtils;
 
 import java.io.IOException;
 
@@ -30,6 +31,13 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
     private CameraSourcePreview cameraSourcePreview;
 
     private String TAG = BarcodeScanActivity.class.getSimpleName();
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        // get language from prefs
+        String lang = LangUtils.getLanguage(base.getApplicationContext());
+        super.attachBaseContext(LangUtils.setAppLocale(base, lang));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

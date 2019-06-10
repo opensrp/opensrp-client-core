@@ -12,8 +12,34 @@
     tools:showIn="@layout/activity_main"
     tools:context="org.smartregister.sample.MainActivity">
 
-    <TextView
-        android:text="Hello World!"
+    <LinearLayout
+        android:id="@+id/lang_spinner_layout"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/colourLabel"
+            android:layout_width="wrap_content"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:layout_height="wrap_content"
+            android:text="@string/language_label" />
+
+        <Spinner
+            android:id="@+id/lang_spinner"
+            android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:dropDownWidth="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+
+    <TextView
+        android:text="@string/sample"
+        android:layout_below="@+id/lang_spinner_layout"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Medium"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="30dp"
         android:layout_height="wrap_content" />
+
 </RelativeLayout>

@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">opensrp-app-sample</string>
+    <string name="app_name">opensrp-app sample</string>
     <string name="action_settings">Settings</string>
+
+    <string name="sample">Night gathers, and now my watch begins</string>
+    <string name="language_label">Select Language</string>
 </resources>
