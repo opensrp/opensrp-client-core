@@ -119,6 +119,26 @@ Security is provided in the following:
 
 The security classes can be found in `org.smartregister.ssl`
 
+
+Under the cryptography package we have CryptographicHelper class whose instance exposes methods
+
+  `  byte[] encrypt(byte[] input, String keyAlias);`
+    - For encryption of a byte array input with key
+
+    `byte[] decrypt(byte[] encrypted, String keyAlias);`
+    - For decryption of encrypted byte array with key
+
+    `Key getKey(String keyAlias);`
+    - For retrieving a generated key stored in the Android keystore
+
+    void generateKey(String keyAlias);
+
+    - For key generation using a Key Alias parameter for use by Android keystore
+
+   * NB: *  - This class depends on `AndroidLegacyCryptography` class and the `AndroidMCryptography` class which both implement the above in different ways depending on the SDK version.
+              `AndroidLegacyCryptography` has method implementation that are used when the SDK version is less than API level 23
+
+
 ## 2. Data management
 
 This app provides data management.
@@ -264,4 +284,24 @@ Check out the sample app to see how to implement language switching.
 
 Ensure each class in your app extends (directly or indirectly) a class in client-core. If it doesn't then extend MultiLanguageActivity instead of AppCompatActivity.
 
+## 9. Data Compression
+
+The package `compression` contains an interface `ICompression` whose methods are Implemented using the GZIPCompression class (which uses a GZIP implementation)
+Other compression Algorithms can be used by adding a new class implementing the interface methods.
+
+Methods in the ICompression interface are
+
+
+    `byte[] compress(String rawString);`
+
+     - Compress the given string input
+
+    `String decompress(byte[] compressedBytes);`
+     - Decompress a byte array of compressed data
+
+    `void compress(String inputFilePath, String compressedOutputFilepath);`
+     - Compress file in file path `inputFilePath` and output to location `compressedOutputFilepath`
+
+    `void decompress(String compressedInputFilePath, String decompressedOutputFilePath);`
+     - Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
 
