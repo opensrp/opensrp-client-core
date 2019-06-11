@@ -122,13 +122,13 @@ The security classes can be found in `org.smartregister.ssl`
 
 Under the cryptography package we have CryptographicHelper class whose instance exposes methods
 
-  `  byte[] encrypt(byte[] input, String keyAlias);`
+   ```byte[] encrypt(byte[] input, String keyAlias);
     - For encryption of a byte array input with key
 
-    `byte[] decrypt(byte[] encrypted, String keyAlias);`
+    ```byte[] decrypt(byte[] encrypted, String keyAlias);
     - For decryption of encrypted byte array with key
 
-    `Key getKey(String keyAlias);`
+    ```Key getKey(String keyAlias);
     - For retrieving a generated key stored in the Android keystore
 
     void generateKey(String keyAlias);
@@ -292,16 +292,16 @@ Other compression Algorithms can be used by adding a new class implementing the 
 Methods in the ICompression interface are
 
 
-    `byte[] compress(String rawString);`
+    ```byte[] compress(String rawString);
 
      - Compress the given string input
 
-    `String decompress(byte[] compressedBytes);`
+    ```String decompress(byte[] compressedBytes);
      - Decompress a byte array of compressed data
 
-    `void compress(String inputFilePath, String compressedOutputFilepath);`
+    ```void compress(String inputFilePath, String compressedOutputFilepath);
      - Compress file in file path `inputFilePath` and output to location `compressedOutputFilepath`
 
-    `void decompress(String compressedInputFilePath, String decompressedOutputFilePath);`
+    ```void decompress(String compressedInputFilePath, String decompressedOutputFilePath);
      - Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
 
