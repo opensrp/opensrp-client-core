@@ -122,20 +122,15 @@ The security classes can be found in `org.smartregister.ssl`
 
 Under the cryptography package we have CryptographicHelper class whose instance exposes methods
 
-   ```byte[] encrypt(byte[] input, String keyAlias);
-    - For encryption of a byte array input with key
+   *__byte[] encrypt(byte[] input, String keyAlias)__* For encryption of a byte array input with key
 
-    ```byte[] decrypt(byte[] encrypted, String keyAlias);
-    - For decryption of encrypted byte array with key
+   *__byte[] decrypt(byte[] encrypted, String keyAlias)__* For decryption of encrypted byte array with key
 
-    ```Key getKey(String keyAlias);
-    - For retrieving a generated key stored in the Android keystore
+   *__Key getKey(String keyAlias)__* For retrieving a generated key stored in the Android keystore
 
-    void generateKey(String keyAlias);
+   *__void generateKey(String keyAlias)__* For key generation using a Key Alias parameter for use by Android keystore
 
-    - For key generation using a Key Alias parameter for use by Android keystore
-
-   * NB: *  - This class depends on `AndroidLegacyCryptography` class and the `AndroidMCryptography` class which both implement the above in different ways depending on the SDK version.
+   * NB: *  This class depends on `AndroidLegacyCryptography` class and the `AndroidMCryptography` class which both implement the above in different ways depending on the SDK version.
               `AndroidLegacyCryptography` has method implementation that are used when the SDK version is less than API level 23
 
 
@@ -291,17 +286,11 @@ Other compression Algorithms can be used by adding a new class implementing the 
 
 Methods in the ICompression interface are
 
+*__byte[] compress(String rawString)__* Compress the given string input
 
-    ```byte[] compress(String rawString);
+*__String decompress(byte[] compressedBytes)__* Decompress a byte array of compressed data
 
-     - Compress the given string input
+*__void compress(String inputFilePath, String compressedOutputFilepath)__* Compress file in file path `inputFilePath` and output to location `compressedOutputFilepath`
 
-    ```String decompress(byte[] compressedBytes);
-     - Decompress a byte array of compressed data
-
-    ```void compress(String inputFilePath, String compressedOutputFilepath);
-     - Compress file in file path `inputFilePath` and output to location `compressedOutputFilepath`
-
-    ```void decompress(String compressedInputFilePath, String decompressedOutputFilePath);
-     - Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
+*__void decompress(String compressedInputFilePath, String decompressedOutputFilePath)__* Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
 
