@@ -495,6 +495,17 @@ public class Utils {
         return String.format(KG_FORMAT, weight);
     }
 
+
+    private static String CM_FORMAT = "%s cm";
+
+    public static String cmStringSuffix(Float height) {
+        return String.format(CM_FORMAT, height);
+    }
+
+    public static String cmStringSuffix(String height) {
+        return String.format(CM_FORMAT, height);
+    }
+
     public static CommonPersonObjectClient convert(CommonPersonObject commonPersonObject) {
         CommonPersonObjectClient pc = new CommonPersonObjectClient(commonPersonObject.getCaseId(),
                 commonPersonObject.getDetails(), commonPersonObject.getColumnmaps().get("first_name"));
