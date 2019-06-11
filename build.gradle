@@ -32,14 +32,14 @@ subprojects {
 
     group = 'org.smartregister'
 
-    ext.androidToolsBuildGradle     = '27.0.3'
-    ext.androidBuildToolsVersion    = '27.0.3'
+    ext.androidToolsBuildGradle     = '3.1.4'
+    ext.androidBuildToolsVersion    = '28.0.3'
     ext.androidMinSdkVersion        = 18
-    ext.androidCompileSdkVersion    = 27
-    ext.androidTargetSdkVersion     = 27
+    ext.androidCompileSdkVersion    = 28
+    ext.androidTargetSdkVersion     = 28
 
-    ext.androidAnnotationsVersion = '3.0.1';
-    ext.androidAnnotationsAPIVersion = '3.0.1';
+    ext.androidAnnotationsVersion = '3.0.1'
+    ext.androidAnnotationsAPIVersion = '3.0.1'
 
     repositories {
         google()
@@ -49,6 +49,9 @@ subprojects {
         maven { url "http://acra.googlecode.com/svn/repository/releases" }
         maven { url "http://repo.maven.apache.org/maven2" }
         maven { url "http://cloudant.github.io/cloudant-sync-eap/repository" }
+        maven {
+            url "https://s3.amazonaws.com/repo.commonsware.com"
+        }
         mavenLocal()
     }
 
@@ -73,7 +76,6 @@ buildDashboard {
 
 test.reports.html.enabled = false
 test.reports.junitXml.enabled = false
-
 
 def isReleaseBuild() {
     return version.contains("SNAPSHOT") == false

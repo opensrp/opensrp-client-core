@@ -32,6 +32,7 @@ import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
@@ -108,7 +109,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.preference.PreferenceManager.setDefaultValues;
 
 public class Context {
     private static final String TAG = "Context";
@@ -208,6 +208,7 @@ public class Context {
     private TaskNotesRepository taskNotesRepository;
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
+    private PlanDefinitionRepository planDefinitionRepository;
 
 
     /////////////////////////////////////////////////
@@ -1148,5 +1149,11 @@ public class Context {
         return structureRepository;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    public PlanDefinitionRepository getPlanDefinitionRepository() {
+        if (planDefinitionRepository == null) {
+            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+        }
+        return planDefinitionRepository;
+    }
+///////////////////////////////////////////////////////////////////////////////
 }

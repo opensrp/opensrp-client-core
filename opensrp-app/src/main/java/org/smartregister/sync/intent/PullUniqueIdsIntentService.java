@@ -8,12 +8,12 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.HTTPAgent;
 

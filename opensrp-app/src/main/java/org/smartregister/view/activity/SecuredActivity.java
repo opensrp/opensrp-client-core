@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -37,7 +36,7 @@ import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_
 import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 
-public abstract class SecuredActivity extends AppCompatActivity {
+public abstract class SecuredActivity extends MultiLanguageActivity {
     public static final String LOG_TAG = "SecuredActivity";
     protected final int MENU_ITEM_LOGOUT = 2312;
     protected Listener<Boolean> logoutListener;

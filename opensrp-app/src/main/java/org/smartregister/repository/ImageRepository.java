@@ -2,13 +2,16 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.smartregister.AllConstants;
 import org.smartregister.domain.ProfileImage;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ImageRepository extends DrishtiRepository {
@@ -46,7 +49,6 @@ public class ImageRepository extends DrishtiRepository {
     public void add(ProfileImage Image) {
         SQLiteDatabase database = masterRepository.getWritableDatabase();
         database.insert(Image_TABLE_NAME, null, createValuesFor(Image, TYPE_ANC));
-        //database.close();
     }
 
     public List<ProfileImage> allProfileImages() {
@@ -55,6 +57,42 @@ public class ImageRepository extends DrishtiRepository {
                 .query(Image_TABLE_NAME, Image_TABLE_COLUMNS, syncStatus_COLUMN + " = ?",
                         new String[]{TYPE_Unsynced}, null, null, null, null);
         return readAll(cursor);
+    }
+
+    @Nullable
+    public HashMap<String, Object> getImage(long lastRowId) {
+
+        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        Cursor cursor = database
+                .query(Image_TABLE_NAME, new String[]{"rowid", filepath_COLUMN, syncStatus_COLUMN, entityID_COLUMN, anm_ID_COLUMN
+                                , filecategory_COLUMN}
+                , AllConstants.ROWID + " > ?", new String[]{String.valueOf(lastRowId)}
+                , null, null, AllConstants.ROWID + " ASC", "1");
+        try {
+            if (cursor != null && cursor.moveToFirst()) {
+                long rowId = cursor.getLong(0);
+                String filePath = cursor.getString(1);
+
+                HashMap<String, Object> details = new HashMap<>();
+                details.put(AllConstants.ROWID, rowId);
+                details.put(syncStatus_COLUMN, cursor.getString(2));
+                details.put(filepath_COLUMN, filePath);
+                details.put(entityID_COLUMN, cursor.getString(3));
+                details.put(anm_ID_COLUMN, cursor.getString(4));
+                details.put(filecategory_COLUMN, cursor.getString(5));
+
+                return details;
+            }
+        } catch(Exception e) {
+            Log.e(TAG, Log.getStackTraceString(e));
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return null;
     }
 
     public ProfileImage findByEntityId(String entityId) {

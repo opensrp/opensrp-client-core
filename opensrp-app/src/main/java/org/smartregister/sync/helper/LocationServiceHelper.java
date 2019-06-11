@@ -1,7 +1,6 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
-import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,12 +9,12 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
@@ -25,6 +24,8 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -55,7 +56,6 @@ public class LocationServiceHelper {
         return instance;
     }
 
-    @VisibleForTesting
     public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
@@ -110,7 +110,12 @@ public class LocationServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
         if (isJurisdiction) {
-            String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
+            String preferenceLocationNames = null;
+            try {
+                preferenceLocationNames = URLEncoder.encode(allSharedPreferences.getPreference(OPERATIONAL_AREAS), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Log.e(getClass().getName(), e.getMessage(), e);
+            }
             return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + isJurisdiction + "&location_names=" + preferenceLocationNames + "&serverVersion=" + serverVersion;
         }
         return baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parentId + "&isJurisdiction=" + isJurisdiction + "&serverVersion=" + serverVersion;

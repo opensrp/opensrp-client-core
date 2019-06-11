@@ -16,6 +16,7 @@ import android.widget.Toast;
 import org.apache.commons.validator.routines.UrlValidator;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.util.LangUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -24,6 +25,13 @@ import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
 public class SettingsActivity extends PreferenceActivity {
+
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        // get language from prefs
+        String lang = LangUtils.getLanguage(base.getApplicationContext());
+        super.attachBaseContext(LangUtils.setAppLocale(base, lang));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

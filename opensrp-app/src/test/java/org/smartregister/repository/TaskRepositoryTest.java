@@ -5,8 +5,6 @@ import android.content.ContentValues;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import junit.framework.Assert;
-
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -16,22 +14,21 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Task;
-import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateTimeTypeConverter;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -42,8 +39,7 @@ import static org.smartregister.repository.TaskRepository.TASK_TABLE;
  * Created by samuelgithengi on 11/26/18.
  */
 
-@RunWith(RobolectricTestRunner.class)
-public class TaskRepositoryTest {
+public class TaskRepositoryTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -67,9 +63,7 @@ public class TaskRepositoryTest {
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
 
-    private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"campaignIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0}";
-
-    private String taskUpdateJson ="{\"businessStatus\": \"Not Sprayed\",\"identifier\": \"076885f8-582e-4dc6-8a1a-510e1c8ed5d9\",\"status\": \"completed\",\"serverVersion\": 1543867945304}";
+    private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0}";
 
     private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .serializeNulls().create();
@@ -99,7 +93,7 @@ public class TaskRepositoryTest {
         assertEquals(17, contentValues.size());
 
         assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
-        assertEquals("IRS_2018_S1", contentValues.getAsString("campaign_id"));
+        assertEquals("IRS_2018_S1", contentValues.getAsString("plan_id"));
         assertEquals("2018_IRS-3734", contentValues.getAsString("group_id"));
 
         verify(taskNotesRepository).addOrUpdate(task.getNotes().get(0), task.getIdentifier());
@@ -117,18 +111,19 @@ public class TaskRepositoryTest {
 
     @Test
     public void testGetTasksByCampaignAndGroup() {
-        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE campaign_id=? AND group_id =?",
+        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE plan_id=? AND group_id =?",
                 new String[]{"IRS_2018_S1", "2018_IRS-3734"})).thenReturn(getCursor());
-        Map<String, Task> allTasks = taskRepository.getTasksByCampaignAndGroup("IRS_2018_S1", "2018_IRS-3734");
+        Map<String, Set<Task>> allTasks = taskRepository.getTasksByPlanAndGroup("IRS_2018_S1", "2018_IRS-3734");
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
-        assertEquals("SELECT * FROM task WHERE campaign_id=? AND group_id =?", stringArgumentCaptor.getValue());
+        assertEquals("SELECT * FROM task WHERE plan_id=? AND group_id =?", stringArgumentCaptor.getValue());
 
         assertEquals("IRS_2018_S1", argsCaptor.getValue()[0]);
         assertEquals("2018_IRS-3734", argsCaptor.getValue()[1]);
 
         assertEquals(1, allTasks.size());
-        Task task = allTasks.get("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc");
+        assertEquals(1, allTasks.get("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc").size());
+        Task task = allTasks.get("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc").iterator().next();
 
         assertEquals("tsk11231jh22", task.getIdentifier());
         assertEquals("2018_IRS-3734", task.getGroupIdentifier());
@@ -182,21 +177,21 @@ public class TaskRepositoryTest {
         MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
         Task task = gson.fromJson(taskJson, Task.class);
 
-        cursor.addRow(new Object[]{task.getIdentifier(), task.getCampaignIdentifier(), task.getGroupIdentifier(),
+        cursor.addRow(new Object[]{task.getIdentifier(), task.getPlanIdentifier(), task.getGroupIdentifier(),
                 task.getStatus().name(), task.getBusinessStatus(), task.getPriority(), task.getCode(),
                 task.getDescription(), task.getFocus(), task.getForEntity(),
                 task.getExecutionStartDate().getMillis(),
                 null,
                 task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
-                task.getOwner(),task.getSyncStatus(), task.getServerVersion()});
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion()});
         return cursor;
     }
 
     @Test
-    public void testGetUnSyncedTaskStatus(){
+    public void testGetUnSyncedTaskStatus() {
         taskRepository.getUnSyncedTaskStatus();
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
-        Assert.assertNotNull(taskRepository.getUnSyncedTaskStatus());
+        assertNotNull(taskRepository.getUnSyncedTaskStatus());
     }
 
 }

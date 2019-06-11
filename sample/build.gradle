@@ -4,7 +4,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1'
     }
@@ -78,6 +78,10 @@ dependencies {
 
     }
 
+    implementation 'net.zetetic:android-database-sqlcipher:4.1.3'
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+
     testImplementation 'junit:junit:4.12'
     testImplementation('org.robolectric:robolectric:3.8') {
 
@@ -90,7 +94,7 @@ dependencies {
     testImplementation("org.robolectric:shadows-multidex:3.8") {
         exclude group: 'com.google.guava', module: 'guava'
     }
-    testImplementation('org.robolectric:shadows-support-v4:3.3.2'){
+    testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'

@@ -7,7 +7,6 @@ import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.UniqueId;
 

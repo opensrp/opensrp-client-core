@@ -6,11 +6,10 @@ import com.google.gson.reflect.TypeToken;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Child;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
@@ -27,8 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class ECSmartRegisterControllerTest {
+public class ECSmartRegisterControllerTest extends BaseUnitTest {
     @Mock
     private AllEligibleCouples allEligibleCouples;
     @Mock

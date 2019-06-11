@@ -116,7 +116,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
                 <org.smartregister.view.customcontrols.CustomFontTextView
@@ -124,7 +124,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/txt_anc_visit_due_type"
-                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
                     style="@style/CustomFontTextViewStyle.ListView.Normal" />
 
             </RelativeLayout>
@@ -136,8 +136,8 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="3"
-            android:drawableLeft="@drawable/ic_yes_small"
-            android:paddingLeft="0dp"
+            android:drawableStart="@drawable/ic_yes_small"
+            android:paddingStart="0dp"
             style="@style/CustomFontTextViewStyle.ListView.VerySmall" />
     </LinearLayout>
 

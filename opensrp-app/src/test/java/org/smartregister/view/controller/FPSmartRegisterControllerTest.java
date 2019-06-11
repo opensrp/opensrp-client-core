@@ -3,11 +3,10 @@ package org.smartregister.view.controller;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -28,8 +27,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class FPSmartRegisterControllerTest {
+public class FPSmartRegisterControllerTest extends BaseUnitTest {
     @Mock
     private AllEligibleCouples allEligibleCouples;
     @Mock

@@ -31,6 +31,8 @@ public class AllSharedPreferences {
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
     private static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public final static String LAST_SETTINGS_SYNC_TIMESTAMP = "LAST_SETTINGS_SYNC_TIMESTAMP";
+    private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
+    private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
 
     private SharedPreferences preferences;
 
@@ -277,6 +279,30 @@ public class AllSharedPreferences {
 
     public long fetchLastSettingsSyncTimeStamp() {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
+    }
+
+    public boolean isMigratedToSqlite4() {
+        return preferences.getBoolean(MIGRATED_TO_SQLITE_4, false);
+    }
+
+    public void setMigratedToSqlite4() {
+        preferences.edit().putBoolean(MIGRATED_TO_SQLITE_4, true).commit();
+    }
+
+    public int getLastPeerToPeerSyncProcessedEvent() {
+        return preferences.getInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, -1);
+    }
+
+    public void setLastPeerToPeerSyncProcessedEvent(int lastEventRowId) {
+        preferences.edit().putInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, lastEventRowId).commit();
+    }
+
+    public boolean isPeerToPeerUnprocessedEvents() {
+        return getLastPeerToPeerSyncProcessedEvent() != -1;
+    }
+
+    public void resetLastPeerToPeerSyncProcessedEvent() {
+        setLastPeerToPeerSyncProcessedEvent(-1);
     }
 }
 

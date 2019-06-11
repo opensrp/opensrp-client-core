@@ -56,7 +56,7 @@
         android:layout_weight="@integer/fp_list_followup_view_weight"
         android:layout_margin="3dp"
         android:id="@+id/fp_alert_layout"
-        android:gravity="left|center_vertical"
+        android:gravity="start|center_vertical"
         android:orientation="vertical">
 
         <org.smartregister.view.customcontrols.CustomFontTextView

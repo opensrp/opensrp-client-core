@@ -46,7 +46,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="5dp"
-                    android:paddingLeft="0dp"
+                    android:paddingStart="0dp"
                     android:text="Charity Otala"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/activity_title_size" />
@@ -67,15 +67,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:paddingLeft="0dp"
+                        android:paddingStart="0dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/profile_dot_separator_margin"
-                        android:layout_marginRight="@dimen/profile_dot_separator_margin"
+                        android:layout_marginStart="@dimen/profile_dot_separator_margin"
+                        android:layout_marginEnd="@dimen/profile_dot_separator_margin"
                         android:text="\u00b7" />
 
                     <org.smartregister.view.customcontrols.CustomFontTextView
@@ -85,15 +85,15 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:paddingLeft="0dp"
+                        android:paddingStart="0dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/profile_dot_separator_margin"
-                        android:layout_marginRight="@dimen/profile_dot_separator_margin"
+                        android:layout_marginStart="@dimen/profile_dot_separator_margin"
+                        android:layout_marginEnd="@dimen/profile_dot_separator_margin"
                         android:text="\u00b7" />
 
                     <org.smartregister.view.customcontrols.CustomFontTextView
@@ -102,7 +102,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="center_horizontal"
-                        android:paddingLeft="0dp"
+                        android:paddingStart="0dp"
                         android:textAppearance="@style/TextAppearance.AppCompat.Small"
                         android:textColor="@color/white" />
                 </LinearLayout>
@@ -114,8 +114,8 @@
                     android:layout_marginBottom="15dp"
                     android:background="@drawable/transparent_white_button"
                     android:paddingBottom="0dp"
-                    android:paddingLeft="@dimen/profile_btn_registration_info_padding"
-                    android:paddingRight="@dimen/profile_btn_registration_info_padding"
+                    android:paddingStart="@dimen/profile_btn_registration_info_padding"
+                    android:paddingEnd="@dimen/profile_btn_registration_info_padding"
                     android:paddingTop="0dp"
                     android:text="@string/registration_info"
                     android:textAllCaps="false"

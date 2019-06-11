@@ -1,5 +1,7 @@
 package org.smartregister.util;
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 6/25/18.
@@ -196,6 +200,27 @@ public class DatabaseMigrationUtils {
                     database.execSQL(searchSql);
                 }
             }
+        }
+    }
+
+    public static boolean performCipherMigrationToV4(@NonNull SQLiteDatabase database) {
+        if (!CoreLibrary.getInstance().context().allSharedPreferences().isMigratedToSqlite4()) {
+            Cursor cursor = database.rawQuery("PRAGMA cipher_migrate", new Object[]{});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                String value = cursor.getString(0);
+
+                if (cursor != null) {
+                    cursor.close();
+                }
+
+                return (!TextUtils.isEmpty(value) && "0".equals(value));
+            }
+
+            return false;
+        } else {
+            Timber.i("SQLiteCipher database is already v4");
+            return true;
         }
     }
 }

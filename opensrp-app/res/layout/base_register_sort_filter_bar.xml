@@ -13,7 +13,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/register_search_bar_margin"
             android:ellipsize="end"
-            android:gravity="left|center_vertical"
+            android:gravity="start|center_vertical"
             android:padding="@dimen/min_padding_size"
             android:singleLine="true"
             android:text="@string/_0_clients_sort_updated"
@@ -44,7 +44,7 @@
 				android:id="@+id/separator_v"
 				android:layout_width="1dp"
 				android:layout_height="wrap_content"
-				android:layout_gravity="right|center_vertical"
+				android:layout_gravity="end|center_vertical"
 				android:layout_toStartOf="@id/filter_status"
 				android:background="@color/light_grey"
 				android:scaleType="fitXY"/>
