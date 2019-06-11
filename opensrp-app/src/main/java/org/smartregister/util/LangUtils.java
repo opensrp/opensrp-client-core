@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.preference.PreferenceManager;
-import android.util.DisplayMetrics;
 
 import org.smartregister.repository.AllSharedPreferences;
 
@@ -28,10 +27,9 @@ public class LangUtils {
         Locale locale = new Locale(language);
 
         Resources res = context.getResources();
-        DisplayMetrics dm = res.getDisplayMetrics();
         Configuration conf = res.getConfiguration();
-        conf.locale = locale;
-        res.updateConfiguration(conf, dm);
+        conf.setLocale(locale);
+        context = context.createConfigurationContext(conf);
 
         return context;
     }
