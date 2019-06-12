@@ -14,8 +14,10 @@ import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -25,7 +27,7 @@ import static org.smartregister.domain.Task.TaskStatus;
 public class TaskRepository extends BaseRepository {
 
     private static final String ID = "_id";
-    private static final String CAMPAIGN_ID = "campaign_id";
+    private static final String PLAN_ID = "plan_id";
     private static final String GROUP_ID = "group_id";
     private static final String STATUS = "status";
     private static final String BUSINESS_STATUS = "business_status";
@@ -47,14 +49,14 @@ public class TaskRepository extends BaseRepository {
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, CAMPAIGN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION};
+    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION};
 
     protected static final String TASK_TABLE = "task";
 
     private static final String CREATE_TASK_TABLE =
             "CREATE TABLE " + TASK_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
-                    CAMPAIGN_ID + " VARCHAR NOT NULL, " +
+                    PLAN_ID + " VARCHAR NOT NULL, " +
                     GROUP_ID + " VARCHAR NOT NULL, " +
                     STATUS + " VARCHAR  NOT NULL, " +
                     BUSINESS_STATUS + " VARCHAR,  " +
@@ -73,7 +75,7 @@ public class TaskRepository extends BaseRepository {
 
 
     private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
-            + TASK_TABLE + "_campaign_group_ind  ON " + TASK_TABLE + "(" + CAMPAIGN_ID + "," + GROUP_ID + ")";
+            + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + ")";
 
     public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
@@ -91,7 +93,7 @@ public class TaskRepository extends BaseRepository {
         }
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, task.getIdentifier());
-        contentValues.put(CAMPAIGN_ID, task.getCampaignIdentifier());
+        contentValues.put(PLAN_ID, task.getPlanIdentifier());
         contentValues.put(GROUP_ID, task.getGroupIdentifier());
         if (task.getStatus() != null) {
             contentValues.put(STATUS, task.getStatus().name());
@@ -119,15 +121,21 @@ public class TaskRepository extends BaseRepository {
 
     }
 
-    public Map<String, Task> getTasksByCampaignAndGroup(String campaignId, String groupId) {
+    public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
         Cursor cursor = null;
-        Map<String, Task> tasks = new HashMap<>();
+        Map<String, Set<Task>> tasks = new HashMap<>();
         try {
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =?",
-                    TASK_TABLE, CAMPAIGN_ID, GROUP_ID), new String[]{campaignId, groupId});
+                    TASK_TABLE, PLAN_ID, GROUP_ID), new String[]{planId, groupId});
             while (cursor.moveToNext()) {
+                Set<Task> taskSet;
                 Task task = readCursor(cursor);
-                tasks.put(task.getForEntity(), task);
+                if (tasks.containsKey(task.getForEntity()))
+                    taskSet = tasks.get(task.getForEntity());
+                else
+                    taskSet = new HashSet<>();
+                taskSet.add(task);
+                tasks.put(task.getForEntity(), taskSet);
             }
         } catch (Exception e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
@@ -159,7 +167,7 @@ public class TaskRepository extends BaseRepository {
     private Task readCursor(Cursor cursor) {
         Task task = new Task();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
-        task.setCampaignIdentifier(cursor.getString(cursor.getColumnIndex(CAMPAIGN_ID)));
+        task.setPlanIdentifier(cursor.getString(cursor.getColumnIndex(PLAN_ID)));
         task.setGroupIdentifier(cursor.getString(cursor.getColumnIndex(GROUP_ID)));
         if (cursor.getString(cursor.getColumnIndex(STATUS)) != null) {
             task.setStatus(TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(STATUS))));

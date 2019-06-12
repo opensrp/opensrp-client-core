@@ -3,11 +3,10 @@ package org.smartregister.commonregistry;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.repository.TimelineEventRepository;
 
@@ -18,8 +17,7 @@ import java.util.List;
 /*
  by Raihan Ahmed
  */
-@RunWith(RobolectricTestRunner.class)
-public class AllCommonsRepositoryTest {
+public class AllCommonsRepositoryTest extends BaseUnitTest {
 
     @Mock
     private CommonRepository personRepository;

@@ -6,31 +6,8 @@ import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRouteBean;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.smartregister.DristhiConfiguration;
-import org.smartregister.client.GZipEncodingHttpClient;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
@@ -41,22 +18,26 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
-import org.smartregister.util.FileUtilities;
-import org.smartregister.util.Utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.text.ParseException;
+import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static org.apache.http.HttpStatus.SC_CREATED;
-import static org.smartregister.AllConstants.REALM;
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
@@ -84,11 +65,14 @@ public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
     private static final int READ_TIMEOUT = 60000;
     private static final String TAG = HTTPAgent.class.getCanonicalName();
-    private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
+
+    private String boundary = "===" + System.currentTimeMillis() + "===";
+    private String twoHyphens = "--";
+    private String crlf = "\r\n";
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -96,103 +80,73 @@ public class HTTPAgent {
         this.settings = settings;
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
-
-        setupHttpClient();
     }
 
-    public void setupHttpClient() {
-        BasicHttpParams basicHttpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
-        HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
+    /**
+     * @author  Rodgers Andati
+     * @since   2019-04-25
+     * This method initializes httpurlconnection
+     * @param requestURLPath This is the url to be open http connection to.
+     * @param useBasicAuth This is whether to set up basic authentication or not.
+     * @return HttpURLConnection This returns the http connection to opensrp server.
+     */
+    private HttpURLConnection initializeHttp(String requestURLPath, boolean useBasicAuth) throws IOException {
+        URL url = new URL(requestURLPath);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        if (urlConnection instanceof HttpsURLConnection) {
+            OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
+        }
+        urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
+        urlConnection.setReadTimeout(READ_TIMEOUT);
 
-        ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
-        // how much connections do we need? - default: 20
-        ConnManagerParams.setMaxTotalConnections
-                (basicHttpParams, 20);
-        // connections per host (2 default)
-        ConnManagerParams.setMaxConnectionsPerRoute
-                (basicHttpParams, new ConnPerRouteBean(20));
-
-        SchemeRegistry registry = new SchemeRegistry();
-        OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        registry.register(new Scheme("https", opensrpSSLHelper.getSslSocketFactoryWithOpenSrpCertificate(), 443));
-
-        ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(basicHttpParams,
-                registry);
-
-        httpClient = new GZipEncodingHttpClient(
-                new DefaultHttpClient(connectionManager, basicHttpParams));
+        if(useBasicAuth) {
+            final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
+                    ":" + settings.fetchANMPassword()).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+        }
+        return urlConnection;
     }
 
     public Response<String> fetch(String requestURLPath) {
+        HttpURLConnection urlConnection;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            String responseContent = httpClient.fetchContent(new HttpGet(requestURLPath));
-            return new Response<>(ResponseStatus.success, responseContent);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            urlConnection = initializeHttp(requestURLPath, true);
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
             return new Response<>(ResponseStatus.failure, null);
         }
     }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
-        HttpResponse httpResponse = null;
-        Response<String> response = null;
+        HttpURLConnection urlConnection;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            HttpPost httpPost = new HttpPost(postURLPath);
-            Log.v("jsonpayload", jsonPayload);
-            FileUtilities fu = new FileUtilities();
-            fu.write("jsonpayload.txt", jsonPayload);
+            urlConnection = initializeHttp(postURLPath, true);
 
-            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
-            entity.setContentType("application/json; charset=utf-8");
-            httpPost.setEntity(entity);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-            httpResponse = httpClient.postContent(httpPost);
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonPayload);
+            writer.flush();
+            writer.close();
+            os.close();
 
-            ResponseStatus responseStatus =
-                    httpResponse.getStatusLine().getStatusCode() == SC_CREATED
-                            ? ResponseStatus.success : ResponseStatus.failure;
-            response = new Response<>(responseStatus, null);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            response = new Response<>(ResponseStatus.failure, null);
-        } finally {
-            httpClient.consumeResponse(httpResponse);
+            urlConnection.connect();
+
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
+            return new Response<>(ResponseStatus.failure, null);
         }
-        return response;
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
-        HttpResponse httpResponse = null;
-        Response<String> response = null;
-        try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            HttpPost httpPost = new HttpPost(postURLPath);
-            Log.v("jsonpayload", jsonPayload);
-            FileUtilities fu = new FileUtilities();
-            fu.write("jsonpayload.txt", jsonPayload);
-
-            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
-            entity.setContentType("application/json; charset=utf-8");
-            httpPost.setEntity(entity);
-
-            httpResponse = httpClient.postContent(httpPost);
-            if (!Utils.is2xxSuccessful(httpResponse.getStatusLine().getStatusCode())) {
-                return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
-            } else {
-                String payload = httpClient.retrieveStringResponse(httpResponse);
-                response = new Response<>(ResponseStatus.success, payload);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            response = new Response<>(ResponseStatus.failure, null);
-        } finally {
-            httpClient.consumeResponse(httpResponse);
-        }
-        return response;
+        return post(postURLPath, jsonPayload);
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
@@ -201,14 +155,8 @@ public class HTTPAgent {
         HttpURLConnection urlConnection = null;
         try {
             requestURL = requestURL.replaceAll("\\s+", "");
-            URL url = new URL(requestURL);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            if (urlConnection instanceof HttpsURLConnection) {
-                OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
-                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
-            }
-            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            urlConnection.setReadTimeout(READ_TIMEOUT);
+            urlConnection = initializeHttp(requestURL, false);
+
             final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
             urlConnection.setRequestProperty("Authorization", basicAuth);
             int statusCode = urlConnection.getResponseCode();
@@ -258,73 +206,162 @@ public class HTTPAgent {
     }
 
     public DownloadStatus downloadFromUrl(String url, String filename) {
-        setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-        Response<DownloadStatus> status = DownloadForm.DownloadFromURL(url, filename, httpClient);
+        Response<DownloadStatus> status = DownloadForm.downloadFromURL(url, filename,
+                allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
         return status.payload();
     }
 
-    private void setCredentials(String userName, String password) {
-        httpClient.getCredentialsProvider()
-                .setCredentials(new AuthScope(configuration.host(), configuration.port(), REALM),
-                        new UsernamePasswordCredentials(userName, password));
-    }
-
-    public Response<String> fetchWithCredentials(String uri, String username, String password) {
-        setCredentials(username, password);
+    public Response<String> fetchWithCredentials(String requestURL, String username, String password) {
+        HttpURLConnection urlConnection = null;
         try {
-            String responseContent = httpClient.fetchContent(new HttpGet(uri));
-            return new Response<>(ResponseStatus.success, responseContent);
-        } catch (IOException | ParseException e) {
-            logError("Failed to fetch unique id");
+            urlConnection = initializeHttp(requestURL, false);
+
+            setCustomCredentials(urlConnection, username, password);
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
             return new Response<>(ResponseStatus.failure, null);
         }
+
     }
 
-    public String httpImagePost(String url, ProfileImage image) {
+    private void setCustomCredentials(HttpURLConnection urlConnection, String username, String password) {
+        final String basicAuth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(),
+                Base64.NO_WRAP);
+        urlConnection.setRequestProperty("Authorization", basicAuth);
+    }
 
-        HttpResponse httpResponse = null;
-        String responseString = "";
+    private Response<String> handleResponse(HttpURLConnection urlConnection) {
+        String responseString;
         try {
-            File uploadFile = new File(image.getFilepath());
-            if (uploadFile.exists()) {
-                setCredentials(allSharedPreferences.fetchRegisteredANM(),
-                        settings.fetchANMPassword());
+            int statusCode = urlConnection.getResponseCode();
 
-                HttpPost httpost = new HttpPost(url);
+            InputStream inputStream;
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+                inputStream = urlConnection.getErrorStream();
+            else
+                inputStream = urlConnection.getInputStream();
 
-                httpost.setHeader("Accept", "multipart/form-data");
-                File filetoupload = new File(image.getFilepath());
-                Log.v("file to upload", "" + filetoupload.length());
-                MultipartEntity entity = new MultipartEntity();
-                entity.addPart("anm-id", new StringBody(image.getAnmId()));
-                entity.addPart("entity-id", new StringBody(image.getEntityID()));
-                entity.addPart("content-type", new StringBody(
-                        image.getContenttype() != null ? image.getContenttype() : "jpeg"));
-                entity.addPart("file-category", new StringBody(
-                        image.getFilecategory() != null ? image.getFilecategory() : "profilepic"));
-                ContentBody cbFile = new FileBody(uploadFile, "image/jpeg");
-                entity.addPart("file", cbFile);
-                httpost.setEntity(entity);
-                httpResponse = httpClient.postContent(httpost);
-                responseString = EntityUtils.toString(httpResponse.getEntity());
-                Log.v("response so many", responseString);
+            responseString = IOUtils.toString(inputStream);
 
-                //TODO if response status is not 200 or 201 ?
-                /*
-                int RESPONSE_OK = 200;
-                int RESPONSE_OK_ = 201;
-                if (httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK_
-                        && httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK) {
-                }
-                */
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, TIMEOUT + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (IOException e) {
+            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
+            return new Response<>(ResponseStatus.failure, null);
         } finally {
-            httpClient.consumeResponse(httpResponse);
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return new Response<>(ResponseStatus.success, responseString);
+    }
+
+
+    /**
+     * @author  Rodgers Andati
+     * @since   2019-04-25
+     * This method uploads an image to opensrp server. Migration from the old method that used httpclient
+     * @param urlString This is the url of the image
+     * @param image This is the image to be uploaded to opensrp server.
+     * @return String This returns the response obtained from the opensrp server.
+     */
+    public String httpImagePost(String urlString, ProfileImage image) {
+        OutputStream outputStream;
+        PrintWriter writer;
+        String responseString = "";
+
+        try {
+            HttpURLConnection httpUrlConnection = initializeHttp(urlString, true);
+
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            outputStream = httpUrlConnection.getOutputStream();
+            writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"),true);
+
+            // attach image
+            attachImage(writer, image, outputStream);
+
+            // adding string params
+            addParameter(writer, "anm-id", image.getAnmId());
+            addParameter(writer, "entity-id", image.getEntityID());
+            addParameter(writer, "content-type", image.getContenttype() != null ? image.getContenttype() : "jpeg");
+            addParameter(writer, "file-category", image.getFilecategory() != null ? image.getFilecategory() : "profilepic");
+
+            // send request to server
+            writer.append(crlf).flush();
+            writer.append(twoHyphens + boundary + twoHyphens).append(crlf);
+            writer.close();
+
+            // checks server's status code first
+            int status = httpUrlConnection.getResponseCode();
+            if (status == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        httpUrlConnection.getInputStream()));
+                String line = null;
+                while ((line = reader.readLine()) != null) {
+                    responseString = line;
+                    Log.d("RESPONSE", line);
+                }
+                reader.close();
+                httpUrlConnection.disconnect();
+            } else {
+                Log.d("RESPONSE", "Server returned non-OK status: " + status);
+            }
+
+        } catch (ProtocolException e) {
+            Log.e(TAG, "Protocol exception " + e.toString(), e);
+        } catch (SocketTimeoutException e) {
+            Log.e(TAG, TIMEOUT + e.toString(), e);
+        } catch (MalformedURLException e) {
+            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+        } catch (IOException e) {
+            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
         }
         return responseString;
     }
+
+    private void attachImage(PrintWriter writer, ProfileImage image, OutputStream outputStream) throws IOException {
+        File uploadImageFile = new File(image.getFilepath());
+        String fileName = uploadImageFile.getName();
+
+        writer.append("--" + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"").append(crlf);
+        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(crlf);
+        writer.append("Content-Transfer-Encoding: binary").append(crlf);
+        writer.append(crlf);
+        writer.flush();
+
+        FileInputStream inputStream = new FileInputStream(uploadImageFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(crlf);
+        writer.flush();
+    }
+
+    private void addParameter(PrintWriter writer, String paramName, String paramValue) {
+        writer.append(twoHyphens + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\""+ paramName +"\"").append(crlf);
+        writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
+        writer.append(crlf);
+        writer.append(paramValue).append(crlf);
+        writer.flush();
+    }
+
 
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {

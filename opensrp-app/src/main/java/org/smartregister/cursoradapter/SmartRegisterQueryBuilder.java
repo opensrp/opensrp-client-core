@@ -76,7 +76,11 @@ public class SmartRegisterQueryBuilder {
     }
 
     public String SelectInitiateMainTable(String tablename, String[] columns) {
-        Selectquery = "Select " + tablename + ".id as _id";
+        return selectInitiateMainTable(tablename, columns, "id");
+    }
+
+    public String selectInitiateMainTable(String tablename, String[] columns, String idColumn) {
+        Selectquery = "Select " + tablename + "." + idColumn + " as _id";
 
         for (String column : columns) {
             Selectquery = Selectquery + " , " + column;
@@ -265,18 +269,19 @@ public class SmartRegisterQueryBuilder {
                         + matchPhrase(phrase) + " )";
         return phraseClause;
     }
+
     private String phraseClause(String tableName, String joinTable[], String mainCondition, String
             phrase) {
         String join_queries[] = new String[joinTable.length];
         String join_query = "";
-        for(int i =0;i<joinTable.length;i++){
-            join_queries[i] = " SELECT "+ CommonFtsObject.relationalIdColumn + " " + "FROM " + CommonFtsObject
+        for (int i = 0; i < joinTable.length; i++) {
+            join_queries[i] = " SELECT " + CommonFtsObject.relationalIdColumn + " " + "FROM " + CommonFtsObject
                     .searchTableName(joinTable[i]) + " WHERE " + CommonFtsObject.phraseColumn
                     + matchPhrase(phrase) + " UNION ";
         }
-        join_queries[join_queries.length-1] = join_queries[join_queries.length-1].replace(" UNION ","");
-        for(int i=0;i<join_queries.length;i++){
-            join_query+=join_queries[i]+" ";
+        join_queries[join_queries.length - 1] = join_queries[join_queries.length - 1].replace(" UNION ", "");
+        for (int i = 0; i < join_queries.length; i++) {
+            join_query += join_queries[i] + " ";
         }
         String phraseClause =
                 " WHERE " + CommonFtsObject.idColumn + " IN ( SELECT " + CommonFtsObject.idColumn
@@ -301,6 +306,7 @@ public class SmartRegisterQueryBuilder {
                 + orderByClause(sort) + limitClause(limit, offset);
         return query;
     }
+
     private String matchPhrase(String phrase) {
         if (phrase == null) {
             phrase = "";

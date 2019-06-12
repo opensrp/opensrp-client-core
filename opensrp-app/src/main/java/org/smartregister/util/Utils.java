@@ -97,6 +97,8 @@ public class Utils {
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String KG_FORMAT = "%s kg";
+    private static String CM_FORMAT = "%s cm";
 
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
@@ -485,14 +487,20 @@ public class Utils {
         }
     }
 
-    private static String KG_FORMAT = "%s kg";
-
     public static String kgStringSuffix(Float weight) {
         return String.format(KG_FORMAT, weight);
     }
 
     public static String kgStringSuffix(String weight) {
         return String.format(KG_FORMAT, weight);
+    }
+
+    public static String cmStringSuffix(Float height) {
+        return String.format(CM_FORMAT, height);
+    }
+
+    public static String cmStringSuffix(String height) {
+        return String.format(CM_FORMAT, height);
     }
 
     public static CommonPersonObjectClient convert(CommonPersonObject commonPersonObject) {

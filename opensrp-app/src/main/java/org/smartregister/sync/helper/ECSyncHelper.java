@@ -102,6 +102,15 @@ public class ECSyncHelper {
         return new ArrayList<>();
     }
 
+    public List<EventClient> getEvents(List<String> formSubmissionIds) {
+        try {
+            return eventClientRepository.fetchEventClients(formSubmissionIds);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+        return new ArrayList<>();
+    }
+
     public JSONObject getClient(String baseEntityId) {
         try {
             return eventClientRepository.getClientByBaseEntityId(baseEntityId);
@@ -122,6 +131,14 @@ public class ECSyncHelper {
     public void addEvent(String baseEntityId, JSONObject jsonObject) {
         try {
             eventClientRepository.addEvent(baseEntityId, jsonObject);
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
+
+    public void addEvent(String baseEntityId, JSONObject jsonObject, String syncStatus) {
+        try {
+            eventClientRepository.addEvent(baseEntityId, jsonObject, syncStatus);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Exception", e);
         }

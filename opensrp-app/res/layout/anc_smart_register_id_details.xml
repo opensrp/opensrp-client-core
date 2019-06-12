@@ -9,7 +9,7 @@
         android:id="@+id/lbl_mother_ec"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:text="@string/anc_label"
         style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -18,7 +18,7 @@
         android:id="@+id/lbl_thayi"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_below="@id/lbl_mother_ec"
         android:text="@string/thayi_label"
         style="@style/CustomFontTextViewStyle.ListView.Normal" />
@@ -27,7 +27,7 @@
         android:id="@+id/txt_mother_ec_no"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/lbl_mother_ec"
+        android:layout_toEndOf="@id/lbl_mother_ec"
         android:layout_alignParentTop="true"
         style="@style/CustomFontTextViewStyle.ListView.Medium.NoPadding" />
 

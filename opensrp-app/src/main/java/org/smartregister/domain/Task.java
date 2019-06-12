@@ -23,7 +23,7 @@ public class Task {
 
     private String identifier;
 
-    private String campaignIdentifier;
+    private String planIdentifier;
 
     private String groupIdentifier;
 
@@ -67,12 +67,12 @@ public class Task {
         this.identifier = identifier;
     }
 
-    public String getCampaignIdentifier() {
-        return campaignIdentifier;
+    public String getPlanIdentifier() {
+        return planIdentifier;
     }
 
-    public void setCampaignIdentifier(String campaignIdentifier) {
-        this.campaignIdentifier = campaignIdentifier;
+    public void setPlanIdentifier(String planIdentifier) {
+        this.planIdentifier = planIdentifier;
     }
 
     public String getGroupIdentifier() {

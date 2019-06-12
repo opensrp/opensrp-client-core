@@ -7,6 +7,7 @@ import android.util.Xml;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.codec.CharEncoding;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +36,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -415,7 +417,7 @@ public class FormUtils {
             XmlSerializer serializer = Xml.newSerializer();
             StringWriter writer = new StringWriter();
             serializer.setOutput(writer);
-            serializer.startDocument("UTF-8", true);
+            serializer.startDocument(CharEncoding.UTF_8, true);
 
             //skip processing <model><instance>
             NodeList els = ((Element) document.getElementsByTagName("model").item(0)).
@@ -1062,7 +1064,7 @@ public class FormUtils {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            fileContents = new String(buffer, "UTF-8");
+            fileContents = new String(buffer, CharEncoding.UTF_8);
         } catch (IOException ex) {
             android.util.Log.e(TAG, ex.toString(), ex);
 
@@ -1077,10 +1079,20 @@ public class FormUtils {
     public JSONObject getFormJson(String formIdentity) {
         if (mContext != null) {
             try {
-                InputStream inputStream = mContext.getApplicationContext().getAssets()
-                        .open("json" + ".form/" + formIdentity + ".json");
+                String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+                locale = locale.equalsIgnoreCase("en") ? "" : "-" + locale;
+
+                InputStream inputStream;
+                try {
+                    inputStream = mContext.getApplicationContext().getAssets()
+                            .open("json.form" + locale + "/" + formIdentity + ".json");
+                } catch (FileNotFoundException e) {
+                    // file for the language not found, defaulting to english language
+                    inputStream = mContext.getApplicationContext().getAssets()
+                            .open("json.form/" + formIdentity + ".json");
+                }
                 BufferedReader reader = new BufferedReader(
-                        new InputStreamReader(inputStream, "UTF-8"));
+                        new InputStreamReader(inputStream, CharEncoding.UTF_8));
                 String jsonString;
                 StringBuilder stringBuilder = new StringBuilder();
 
@@ -1094,7 +1106,6 @@ public class FormUtils {
                 e.printStackTrace();
             }
         }
-
         return null;
     }
 

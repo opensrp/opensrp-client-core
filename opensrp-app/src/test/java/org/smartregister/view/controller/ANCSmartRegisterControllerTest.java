@@ -4,11 +4,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.domain.EligibleCouple;
@@ -32,8 +31,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class ANCSmartRegisterControllerTest {
+public class ANCSmartRegisterControllerTest extends BaseUnitTest {
     public static final String[] ANC_ALERTS = new String[]{
             "ANC 1",
             "ANC 2",

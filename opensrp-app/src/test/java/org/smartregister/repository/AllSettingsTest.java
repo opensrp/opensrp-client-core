@@ -4,16 +4,14 @@ import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class AllSettingsTest {
+public class AllSettingsTest extends BaseUnitTest {
 
     @Mock
     private SettingsRepository settingsRepository;
