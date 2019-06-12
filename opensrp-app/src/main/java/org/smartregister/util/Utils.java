@@ -97,6 +97,8 @@ public class Utils {
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static String KG_FORMAT = "%s kg";
+    private static String CM_FORMAT = "%s cm";
 
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
@@ -393,10 +395,10 @@ public class Utils {
         return is;
     }
 
-    @TargetApi(VERSION_CODES.HONEYCOMB)
+    @TargetApi (VERSION_CODES.HONEYCOMB)
     public static <T> void startAsyncTask(AsyncTask<T, ?, ?> asyncTask, T[] params) {
         if (params == null) {
-            @SuppressWarnings("unchecked")
+            @SuppressWarnings ("unchecked")
             T[] arr = (T[]) new Void[0];
             params = arr;
         }
@@ -485,8 +487,6 @@ public class Utils {
         }
     }
 
-    private static String KG_FORMAT = "%s kg";
-
     public static String kgStringSuffix(Float weight) {
         return String.format(KG_FORMAT, weight);
     }
@@ -494,9 +494,6 @@ public class Utils {
     public static String kgStringSuffix(String weight) {
         return String.format(KG_FORMAT, weight);
     }
-
-
-    private static String CM_FORMAT = "%s cm";
 
     public static String cmStringSuffix(Float height) {
         return String.format(CM_FORMAT, height);
