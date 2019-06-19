@@ -4,12 +4,16 @@ import android.content.ContentValues;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
+import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.domain.db.Client;
 import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
@@ -46,10 +50,11 @@ public class TaskRepository extends BaseRepository {
     private static final String OWNER = "owner";
     private static final String SYNC_STATUS = "sync_status";
     private static final String SERVER_VERSION = "server_version";
+    private static final String STRUCTURE_ID = "structure_id";
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION};
+    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID};
 
     protected static final String TASK_TABLE = "task";
 
@@ -71,7 +76,8 @@ public class TaskRepository extends BaseRepository {
                     LAST_MODIFIED + " INTEGER NOT NULL, " +
                     OWNER + " VARCHAR NOT NULL, " +
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
-                    SERVER_VERSION + " INTEGER ) ";
+                    SERVER_VERSION + " INTEGER, " +
+                    STRUCTURE_ID + " VARCHAR ) ";
 
 
     private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
@@ -111,6 +117,7 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(OWNER, task.getOwner());
         contentValues.put(SERVER_VERSION, task.getServerVersion());
         contentValues.put(SYNC_STATUS, task.getSyncStatus());
+        contentValues.put(STRUCTURE_ID, task.getStructureId());
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
 
@@ -185,6 +192,7 @@ public class TaskRepository extends BaseRepository {
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
         task.setSyncStatus(cursor.getString(cursor.getColumnIndex(SYNC_STATUS)));
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
+        task.setStructureId(cursor.getString(cursor.getColumnIndex(STRUCTURE_ID)));
 
         return task;
     }
@@ -251,6 +259,59 @@ public class TaskRepository extends BaseRepository {
                 cursor.close();
         }
         return tasks;
+    }
+
+    public void updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
+        if (clients == null || clients.size() < 1) {
+            return;
+        }
+        String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
+                TASK_TABLE, STRUCTURE_ID);
+        SQLiteStatement updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);;
+        try {
+            for (Client client: clients) {
+                String taskFor = client.getBaseEntityId();
+                if (client.getAttribute(attribute) == null) {
+                    continue;
+                }
+                String structureId = client.getAttribute(attribute).toString();
+
+                updateStatement.bindString(1, structureId);
+                updateStatement.bindString(2, taskFor);
+                updateStatement.executeUpdateDelete();
+
+            }
+
+        } catch (SQLException e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (updateStatement != null)
+                updateStatement.close();
+        }
+    }
+
+    public void updateTaskStructureIdFromStructure(List<Location> locations) {
+        if (locations == null || locations.size() < 1) {
+            return;
+        }
+        String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
+                TASK_TABLE, STRUCTURE_ID);
+        SQLiteStatement updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);;
+        try {
+            for (Location location: locations) {
+                updateTaskSructureIdQuery = updateTaskSructureIdQuery + String.format(" WHEN '%s'  THEN '%s' ", location.getId(), location.getId());
+
+                updateStatement.bindString(1, location.getId());
+                updateStatement.bindString(2, location.getId());
+                updateStatement.executeUpdateDelete();
+            }
+
+        } catch (SQLException e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+        }finally {
+            if (updateStatement != null)
+                updateStatement.close();
+        }
     }
 
 }

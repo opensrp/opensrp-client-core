@@ -59,6 +59,8 @@ public class Task {
 
     private Long serverVersion;
 
+    private String structureId;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -202,4 +204,8 @@ public class Task {
     public void setSyncStatus(String syncStatus) {
         this.syncStatus = syncStatus;
     }
+
+    public String getStructureId() { return structureId; }
+
+    public void setStructureId(String structureId) { this.structureId = structureId; }
 }
