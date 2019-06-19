@@ -30,14 +30,7 @@ public abstract class BaseJob extends Job {
 
             JobRequest.Builder jobRequest = new JobRequest.Builder(jobTag).setExtras(extras);
 
-            if (toReschedule) {
-
-                jobRequest.setBackoffCriteria(start, JobRequest.BackoffPolicy.LINEAR).setExact(start);
-
-            } else {
-
-                jobRequest.setPeriodic(TimeUnit.MINUTES.toMillis(start), TimeUnit.MINUTES.toMillis(flex));
-            }
+            jobRequest.setPeriodic(TimeUnit.MINUTES.toMillis(start), TimeUnit.MINUTES.toMillis(flex));
 
             try {
 

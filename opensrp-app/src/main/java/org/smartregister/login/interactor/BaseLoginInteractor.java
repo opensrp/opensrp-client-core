@@ -40,7 +40,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private BaseLoginContract.Presenter mLoginPresenter;
 
-    private static final int MINIMUM_JOB_FLEX_VALUE = 1;
+    private static final int MINIMUM_JOB_FLEX_VALUE = 5;
 
     private RemoteLoginTask remoteLoginTask;
 
@@ -78,15 +78,21 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, String password) {
         getLoginView().enableLoginButton(true);
-        if (getUserService().isUserInValidGroup(userName, password)
-                && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
-            localLoginWith(userName, password);
+        boolean isAuthenticated = getUserService().isUserInValidGroup(userName, password);
+        if (!isAuthenticated) {
+
+            getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
+
+        } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+
+            navigateToHomePage(userName, password);
+
         } else {
             loginWithLocalFlag(view, false, userName, password);
         }
     }
 
-    private void localLoginWith(String userName, String password) {
+    private void navigateToHomePage(String userName, String password) {
 
         getUserService().localLogin(userName, password);
         getLoginView().goToHome(false);
@@ -144,15 +150,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                 getLoginView().showErrorDialog("Sorry, your loginWithLocalFlag failed. Please try again");
                             } else {
                                 if (loginResponse == NO_INTERNET_CONNECTIVITY) {
-
-                                    if (userName.equalsIgnoreCase(getSharedPreferences().fetchRegisteredANM())) {
-
-                                        localLoginWith(userName, password);
-
-                                    } else {
-                                        getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
-
-                                    }
+                                    getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
                                 } else if (loginResponse == UNKNOWN_RESPONSE) {
                                     getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unknown_response));
                                 } else if (loginResponse == UNAUTHORIZED) {
@@ -242,7 +240,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             minutes = (int) Math.ceil(value / 3);
         }
 
-        return TimeUnit.MINUTES.toMillis(minutes);
+        return minutes < MINIMUM_JOB_FLEX_VALUE ? MINIMUM_JOB_FLEX_VALUE : minutes;
     }
 
     //Always call super.processServerSettings( ) if you ever Override this
