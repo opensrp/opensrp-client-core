@@ -40,7 +40,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private BaseLoginContract.Presenter mLoginPresenter;
 
-    private static final int MINIMUM_JOB_FLEX_VALUE = 1;
+    private static final int MINIMUM_JOB_FLEX_VALUE = 5;
 
     private RemoteLoginTask remoteLoginTask;
 
@@ -240,7 +240,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             minutes = (int) Math.ceil(value / 3);
         }
 
-        return TimeUnit.MINUTES.toMillis(minutes);
+        return minutes < MINIMUM_JOB_FLEX_VALUE ? MINIMUM_JOB_FLEX_VALUE : minutes;
     }
 
     //Always call super.processServerSettings( ) if you ever Override this
