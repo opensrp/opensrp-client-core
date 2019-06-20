@@ -75,7 +75,7 @@ public class TaskRepository extends BaseRepository {
 
 
     private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
-            + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + ")";
+            + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
 
     public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
