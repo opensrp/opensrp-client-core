@@ -137,12 +137,12 @@ public class TaskRepository extends BaseRepository {
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
                 Task task = readCursor(cursor);
-                if (tasks.containsKey(task.getForEntity()))
-                    taskSet = tasks.get(task.getForEntity());
+                if (tasks.containsKey(task.getStructureId()))
+                    taskSet = tasks.get(task.getStructureId());
                 else
                     taskSet = new HashSet<>();
                 taskSet.add(task);
-                tasks.put(task.getForEntity(), taskSet);
+                tasks.put(task.getStructureId(), taskSet);
             }
         } catch (Exception e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
@@ -261,14 +261,19 @@ public class TaskRepository extends BaseRepository {
         return tasks;
     }
 
-    public void updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
+    public boolean updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
         if (clients == null || clients.size() < 1) {
-            return;
+            return false;
         }
-        String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
-                TASK_TABLE, STRUCTURE_ID);
-        SQLiteStatement updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);;
+
+        SQLiteStatement updateStatement = null;
         try {
+            getWritableDatabase().beginTransaction();
+
+            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
+                    TASK_TABLE, STRUCTURE_ID);
+            updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
+
             for (Client client: clients) {
                 String taskFor = client.getBaseEntityId();
                 if (client.getAttribute(attribute) == null) {
@@ -282,22 +287,30 @@ public class TaskRepository extends BaseRepository {
 
             }
 
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
         } catch (SQLException e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            return false;
         } finally {
             if (updateStatement != null)
                 updateStatement.close();
         }
     }
 
-    public void updateTaskStructureIdFromStructure(List<Location> locations) {
+    public boolean updateTaskStructureIdFromStructure(List<Location> locations) {
         if (locations == null || locations.size() < 1) {
-            return;
+            return false;
         }
-        String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
-                TASK_TABLE, STRUCTURE_ID);
-        SQLiteStatement updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);;
+
+        SQLiteStatement updateStatement = null;
         try {
+            getWritableDatabase().beginTransaction();
+            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
+                    TASK_TABLE, STRUCTURE_ID);
+            updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
+
             for (Location location: locations) {
                 updateTaskSructureIdQuery = updateTaskSructureIdQuery + String.format(" WHEN '%s'  THEN '%s' ", location.getId(), location.getId());
 
@@ -306,8 +319,13 @@ public class TaskRepository extends BaseRepository {
                 updateStatement.executeUpdateDelete();
             }
 
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+
         } catch (SQLException e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            return false;
         }finally {
             if (updateStatement != null)
                 updateStatement.close();
