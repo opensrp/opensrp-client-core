@@ -75,7 +75,7 @@ public class TaskRepository extends BaseRepository {
 
 
     private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
-            + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + ")";
+            + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
 
     public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
@@ -125,8 +125,8 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         Map<String, Set<Task>> tasks = new HashMap<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =?",
-                    TASK_TABLE, PLAN_ID, GROUP_ID), new String[]{planId, groupId});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s != ?",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS), new String[]{planId, groupId, TaskStatus.CANCELLED.name()});
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
                 Task task = readCursor(cursor);
