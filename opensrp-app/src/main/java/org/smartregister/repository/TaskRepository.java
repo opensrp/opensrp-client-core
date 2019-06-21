@@ -51,6 +51,7 @@ public class TaskRepository extends BaseRepository {
     private static final String SYNC_STATUS = "sync_status";
     private static final String SERVER_VERSION = "server_version";
     private static final String STRUCTURE_ID = "structure_id";
+    private static final String REASON_REFERENCE = "reason_reference";
 
     private TaskNotesRepository taskNotesRepository;
 
@@ -77,8 +78,8 @@ public class TaskRepository extends BaseRepository {
                     OWNER + " VARCHAR NOT NULL, " +
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     SERVER_VERSION + " INTEGER, " +
-                    STRUCTURE_ID + " VARCHAR ) ";
-
+                    STRUCTURE_ID + " VARCHAR, " +
+                    REASON_REFERENCE + " VARCHAR ) ";
 
     private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
@@ -118,6 +119,7 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(SERVER_VERSION, task.getServerVersion());
         contentValues.put(SYNC_STATUS, task.getSyncStatus());
         contentValues.put(STRUCTURE_ID, task.getStructureId());
+        contentValues.put(REASON_REFERENCE, task.getReasonReference());
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
 
@@ -193,6 +195,7 @@ public class TaskRepository extends BaseRepository {
         task.setSyncStatus(cursor.getString(cursor.getColumnIndex(SYNC_STATUS)));
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
         task.setStructureId(cursor.getString(cursor.getColumnIndex(STRUCTURE_ID)));
+        task.setReasonReference(cursor.getString(cursor.getColumnIndex(REASON_REFERENCE)));
 
         return task;
     }
