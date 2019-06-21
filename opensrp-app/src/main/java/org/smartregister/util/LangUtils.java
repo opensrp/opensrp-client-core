@@ -9,6 +9,8 @@ import org.smartregister.repository.AllSharedPreferences;
 
 import java.util.Locale;
 
+import timber.log.Timber;
+
 public class LangUtils {
 
     public static void saveLanguage(Context ctx, String language) {
@@ -29,7 +31,11 @@ public class LangUtils {
         Resources res = context.getResources();
         Configuration conf = res.getConfiguration();
         conf.setLocale(locale);
-        context = context.createConfigurationContext(conf);
+        try {
+            context = context.createConfigurationContext(conf);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
 
         return context;
     }
