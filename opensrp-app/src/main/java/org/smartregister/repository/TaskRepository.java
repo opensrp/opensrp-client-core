@@ -265,7 +265,7 @@ public class TaskRepository extends BaseRepository {
     }
 
     public boolean updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
-        if (clients == null || clients.size() < 1) {
+        if (clients == null || clients.isEmpty() ) {
             return false;
         }
 
@@ -273,8 +273,8 @@ public class TaskRepository extends BaseRepository {
         try {
             getWritableDatabase().beginTransaction();
 
-            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
-                    TASK_TABLE, STRUCTURE_ID);
+            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE %s = ?  AND %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, FOR, STRUCTURE_ID);
             updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
 
             for (Client client: clients) {
@@ -303,19 +303,18 @@ public class TaskRepository extends BaseRepository {
     }
 
     public boolean updateTaskStructureIdFromStructure(List<Location> locations) {
-        if (locations == null || locations.size() < 1) {
+        if (locations == null || locations.isEmpty() ) {
             return false;
         }
 
         SQLiteStatement updateStatement = null;
         try {
             getWritableDatabase().beginTransaction();
-            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE for = ? ",
-                    TASK_TABLE, STRUCTURE_ID);
+            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE %s = ?   AND %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, FOR, STRUCTURE_ID);
             updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
 
             for (Location location: locations) {
-                updateTaskSructureIdQuery = updateTaskSructureIdQuery + String.format(" WHEN '%s'  THEN '%s' ", location.getId(), location.getId());
 
                 updateStatement.bindString(1, location.getId());
                 updateStatement.bindString(2, location.getId());
