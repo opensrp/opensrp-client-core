@@ -34,6 +34,7 @@ It provides:
 6. Security services that maintain global data and application security
 7. Utilities used for file storage, caching, image rendering, logging, session management and number conversions
 8. Access to tailored android views/widgets for OpenSRP
+9. Device-to-device sharing of application data - This includes events, clients and profile images
 
 # Why OpenSRP?
 
@@ -45,6 +46,7 @@ It provides:
 6. It generates custom reports eg. HIA 2
 7. It manages stock levels for stock provided to the health workers
 8. It implements the WHO-recommended **z-score** for child growth monitoring
+9. It provides device-to-device sharing of medical records in areas without an internet connection.
 
 
 # Website
@@ -91,6 +93,7 @@ If you want to contribute please refer to these resources:
    * [Getting started with OpenSRP](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619148/Getting+started+with+OpenSRP)
    * [Setup Instructions](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619255/Setup+Instructions)
    * [Complete OpenSRP Developer's Guide](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619193/OpenSRP+Developer%27s+Guide)
+   * [Peer-to-Peer Library Guide](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/1139212418/Android+Peer-to-peer+sync+library?atlOrigin=eyJpIjoiYWE5NmM1ZTk3MGQ2NGU4OWE0ZTdmM2U2YTFjODg2YTAiLCJwIjoiYyJ9)
 
 ### Wiki
 
