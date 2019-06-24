@@ -55,7 +55,7 @@ public class TaskRepository extends BaseRepository {
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID};
+    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE};
 
     protected static final String TASK_TABLE = "task";
 
