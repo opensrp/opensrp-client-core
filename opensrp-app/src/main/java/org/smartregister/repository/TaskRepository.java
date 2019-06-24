@@ -264,6 +264,15 @@ public class TaskRepository extends BaseRepository {
         return tasks;
     }
 
+    /**
+     * This method updates the task structureId field with a value from  the
+     * residence attribute field of a given client
+     *
+     * This is only done for tasks whose for field refers to a client's residence attribute field
+     *
+     * @param clients A list of clients
+     * @return bolean indicating whether the update was successful or not
+     */
     public boolean updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
         if (clients == null || clients.isEmpty() ) {
             return false;
@@ -302,6 +311,15 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
+    /**
+     * This method updates the task structureId field with a value from  the
+     * location's id field of a given structure
+     *
+     * This is only done for tasks whose for field refers to a structure's  id field
+     *
+     * @param locations A list of locations (structures)
+     * @return bolean indicating whether the update was successful or not
+     */
     public boolean updateTaskStructureIdFromStructure(List<Location> locations) {
         if (locations == null || locations.isEmpty() ) {
             return false;
