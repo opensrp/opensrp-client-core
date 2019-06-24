@@ -59,6 +59,8 @@ public class Task {
 
     private Long serverVersion;
 
+    private String structureId;
+  
     private String reasonReference;
 
     public String getIdentifier() {
@@ -205,7 +207,12 @@ public class Task {
         this.syncStatus = syncStatus;
     }
 
+    public String getStructureId() { return structureId; }
+
+    public void setStructureId(String structureId) { this.structureId = structureId; }
+
     public String getReasonReference() { return reasonReference; }
 
     public void setReasonReference(String reasonReference) { this.reasonReference = reasonReference; }
+
 }
