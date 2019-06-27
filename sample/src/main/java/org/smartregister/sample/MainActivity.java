@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
@@ -31,6 +32,8 @@ public class MainActivity extends MultiLanguageActivity {
         setSupportActionBar(toolbar);
 
         setTitle(R.string.app_name);
+
+        startService(new Intent(this, P2pProcessRecordsService.class));
 
         Activity activity = this;
 

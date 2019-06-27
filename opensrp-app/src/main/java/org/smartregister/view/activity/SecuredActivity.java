@@ -3,25 +3,34 @@ package org.smartregister.view.activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
+import org.smartregister.receiver.PeerProcessingStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.FormController;
 import org.smartregister.view.controller.NavigationController;
+import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.util.Map;
 
@@ -36,7 +45,7 @@ import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_
 import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 
-public abstract class SecuredActivity extends MultiLanguageActivity {
+public abstract class SecuredActivity extends MultiLanguageActivity implements PeerProcessingStatusBroadcastReceiver.StatusUpdate {
     public static final String LOG_TAG = "SecuredActivity";
     protected final int MENU_ITEM_LOGOUT = 2312;
     protected Listener<Boolean> logoutListener;
@@ -46,6 +55,9 @@ public abstract class SecuredActivity extends MultiLanguageActivity {
     protected ZiggyService ziggyService;
     private String metaData;
     private OpenSRPClientBroadCastReceiver openSRPClientBroadCastReceiver;
+
+    private ProcessingInProgressSnackbar processingInProgressSnackbar;
+    private PeerProcessingStatusBroadcastReceiver peerProcessingStatusBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -229,5 +241,86 @@ public abstract class SecuredActivity extends MultiLanguageActivity {
 
     protected Context context() {
         return CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
+    }
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+
+
+        if (CoreLibrary.getInstance().getP2POptions() != null && CoreLibrary.getInstance().getP2POptions().isEnableP2PLibrary()) {
+            if (peerProcessingStatusBroadcastReceiver == null) {
+                peerProcessingStatusBroadcastReceiver = new PeerProcessingStatusBroadcastReceiver(this);
+            }
+
+            // Register listener to remove the SnackBar
+            LocalBroadcastManager.getInstance(this)
+                    .registerReceiver(peerProcessingStatusBroadcastReceiver
+                            , new IntentFilter(AllConstants.PeerToPeer.PROCESSING_ACTION));
+        }
+
+        if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
+            showProcessingInProgressBottomSnackbar(this);
+        }
+    }
+
+    public void showProcessingInProgressSnackbar(@NonNull AppCompatActivity appCompatActivity, int margin) {
+        if (processingInProgressSnackbar == null) {
+            // Create the snackbar
+            View parentView = ((ViewGroup) appCompatActivity.findViewById(android.R.id.content))
+                    .getChildAt(0);
+
+            processingInProgressSnackbar = ProcessingInProgressSnackbar.make(parentView);
+
+            if (margin != 0) {
+                processingInProgressSnackbar.addBottomBarMargin(margin);
+            }
+            processingInProgressSnackbar.setDuration(BaseTransientBottomBar.LENGTH_INDEFINITE);
+            processingInProgressSnackbar.show();
+        } else if (!processingInProgressSnackbar.isShown()) {
+            processingInProgressSnackbar.show();
+        }
+    }
+
+    public void showProcessingInProgressBottomSnackbar(final @NonNull AppCompatActivity appCompatActivity) {
+        final View bottomNavigationBar = appCompatActivity.findViewById(R.id.bottom_navigation);
+        if (bottomNavigationBar != null) {
+            bottomNavigationBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    int height = bottomNavigationBar.getHeight();
+                    showProcessingInProgressSnackbar(appCompatActivity, height);
+
+                    bottomNavigationBar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        } else {
+            showProcessingInProgressSnackbar(appCompatActivity, 0);
+        }
+    }
+
+    public void removeProcessingInProgressSnackbar() {
+        if (processingInProgressSnackbar != null && processingInProgressSnackbar.isShown()) {
+            processingInProgressSnackbar.dismiss();
+        }
+    }
+
+    @Override
+    public void onStatusUpdate(boolean isProcessing) {
+        if (!isProcessing) {
+            removeProcessingInProgressSnackbar();
+        } else {
+            showProcessingInProgressBottomSnackbar(this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (peerProcessingStatusBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this)
+                    .unregisterReceiver(peerProcessingStatusBroadcastReceiver);
+        }
     }
 }
