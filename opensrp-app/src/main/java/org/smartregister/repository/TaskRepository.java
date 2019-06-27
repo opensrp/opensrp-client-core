@@ -173,6 +173,25 @@ public class TaskRepository extends BaseRepository {
         return null;
     }
 
+    public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
+        Cursor cursor = null;
+        Set<Task> taskSet = new HashSet<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s != ? AND %s =?  AND %s =? ",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS, FOR, CODE), new String[]{planId, groupId, TaskStatus.CANCELLED.name(), forEntity, code});
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                taskSet.add(task);
+            }
+        } catch (Exception e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return taskSet;
+    }
+
     private Task readCursor(Cursor cursor) {
         Task task = new Task();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
@@ -267,14 +286,14 @@ public class TaskRepository extends BaseRepository {
     /**
      * This method updates the task structureId field with a value from  the
      * residence attribute field of a given client
-     *
+     * <p>
      * This is only done for tasks whose for field refers to a client's residence attribute field
      *
      * @param clients A list of clients
      * @return bolean indicating whether the update was successful or not
      */
     public boolean updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
-        if (clients == null || clients.isEmpty() ) {
+        if (clients == null || clients.isEmpty()) {
             return false;
         }
 
@@ -282,11 +301,11 @@ public class TaskRepository extends BaseRepository {
         try {
             getWritableDatabase().beginTransaction();
 
-            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE %s = ?  AND %s IS NULL",
+            String updateTaskSructureIdQuery = String.format("UPDATE %s  SET %s = ? WHERE %s = ?  AND %s IS NULL",
                     TASK_TABLE, STRUCTURE_ID, FOR, STRUCTURE_ID);
             updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
 
-            for (Client client: clients) {
+            for (Client client : clients) {
                 String taskFor = client.getBaseEntityId();
                 if (client.getAttribute(attribute) == null) {
                     continue;
@@ -314,25 +333,25 @@ public class TaskRepository extends BaseRepository {
     /**
      * This method updates the task structureId field with a value from  the
      * location's id field of a given structure
-     *
+     * <p>
      * This is only done for tasks whose for field refers to a structure's  id field
      *
      * @param locations A list of locations (structures)
      * @return bolean indicating whether the update was successful or not
      */
     public boolean updateTaskStructureIdFromStructure(List<Location> locations) {
-        if (locations == null || locations.isEmpty() ) {
+        if (locations == null || locations.isEmpty()) {
             return false;
         }
 
         SQLiteStatement updateStatement = null;
         try {
             getWritableDatabase().beginTransaction();
-            String updateTaskSructureIdQuery =String.format("UPDATE %s  SET %s = ? WHERE %s = ?   AND %s IS NULL",
+            String updateTaskSructureIdQuery = String.format("UPDATE %s  SET %s = ? WHERE %s = ?   AND %s IS NULL",
                     TASK_TABLE, STRUCTURE_ID, FOR, STRUCTURE_ID);
             updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
 
-            for (Location location: locations) {
+            for (Location location : locations) {
 
                 updateStatement.bindString(1, location.getId());
                 updateStatement.bindString(2, location.getId());
@@ -346,7 +365,7 @@ public class TaskRepository extends BaseRepository {
         } catch (SQLException e) {
             Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
             return false;
-        }finally {
+        } finally {
             if (updateStatement != null)
                 updateStatement.close();
         }
