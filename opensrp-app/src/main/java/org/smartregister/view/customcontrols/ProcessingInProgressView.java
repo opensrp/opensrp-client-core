@@ -40,7 +40,7 @@ public class ProcessingInProgressView extends LinearLayout implements BaseTransi
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_sync_in_progress, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_processing_in_progress, this);
     }
 
     @Override

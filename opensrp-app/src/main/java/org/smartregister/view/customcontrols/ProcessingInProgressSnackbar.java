@@ -28,9 +28,6 @@ public class ProcessingInProgressSnackbar extends BaseTransientBottomBar<Snackba
         getView().setPadding(0, 0, 0, 0);
         getView().setClickable(false);
         getView().setFocusable(false);
-
-        ViewGroup.LayoutParams layoutParams = getView().getLayoutParams();
-        layoutParams.width = ViewGroup.LayoutParams.MATCH_PARENT;
     }
 
     public void addBottomBarMargin(int margin) {
@@ -54,7 +51,7 @@ public class ProcessingInProgressSnackbar extends BaseTransientBottomBar<Snackba
         }
 
         ProcessingInProgressView processingInProgressView = (ProcessingInProgressView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.snackbar_sync_in_process, parent, false);
+                .inflate(R.layout.snackbar_processing_in_progress, parent, false);
         return new ProcessingInProgressSnackbar(parent, processingInProgressView, processingInProgressView);
     }
 

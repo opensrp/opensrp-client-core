@@ -33,8 +33,6 @@ public class MainActivity extends MultiLanguageActivity {
 
         setTitle(R.string.app_name);
 
-        startService(new Intent(this, P2pProcessRecordsService.class));
-
         Activity activity = this;
 
         FloatingActionButton fab = findViewById(R.id.fab);
