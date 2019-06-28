@@ -98,6 +98,22 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
         onResumption();
         setupReplicationBroadcastReceiver();
+
+        if (CoreLibrary.getInstance().getP2POptions() != null
+                && CoreLibrary.getInstance().getP2POptions().isEnableP2PLibrary()) {
+            if (p2pProcessingStatusBroadcastReceiver == null) {
+                p2pProcessingStatusBroadcastReceiver = new P2pProcessingStatusBroadcastReceiver(this);
+            }
+
+            // Register listener to remove the SnackBar
+            LocalBroadcastManager.getInstance(this)
+                    .registerReceiver(p2pProcessingStatusBroadcastReceiver
+                            , new IntentFilter(AllConstants.PeerToPeer.PROCESSING_ACTION));
+
+            if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
+                showProcessingInProgressBottomSnackbar(this);
+            }
+        }
     }
 
     @Override
@@ -243,27 +259,6 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         return CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
     }
 
-    @Override
-    protected void onPostResume() {
-        super.onPostResume();
-
-
-        if (CoreLibrary.getInstance().getP2POptions() != null && CoreLibrary.getInstance().getP2POptions().isEnableP2PLibrary()) {
-            if (p2pProcessingStatusBroadcastReceiver == null) {
-                p2pProcessingStatusBroadcastReceiver = new P2pProcessingStatusBroadcastReceiver(this);
-            }
-
-            // Register listener to remove the SnackBar
-            LocalBroadcastManager.getInstance(this)
-                    .registerReceiver(p2pProcessingStatusBroadcastReceiver
-                            , new IntentFilter(AllConstants.PeerToPeer.PROCESSING_ACTION));
-        }
-
-        if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
-            showProcessingInProgressBottomSnackbar(this);
-        }
-    }
-
     public void showProcessingInProgressSnackbar(@NonNull AppCompatActivity appCompatActivity, int margin) {
         if (processingInProgressSnackbar == null) {
             // Create the snackbar
@@ -307,10 +302,10 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
     @Override
     public void onStatusUpdate(boolean isProcessing) {
-        if (!isProcessing) {
-            removeProcessingInProgressSnackbar();
-        } else {
+        if (isProcessing) {
             showProcessingInProgressBottomSnackbar(this);
+        } else {
+            removeProcessingInProgressSnackbar();
         }
     }
 
@@ -322,5 +317,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
             LocalBroadcastManager.getInstance(this)
                     .unregisterReceiver(p2pProcessingStatusBroadcastReceiver);
         }
+
+        removeProcessingInProgressSnackbar();
     }
 }
