@@ -11,20 +11,18 @@ import org.smartregister.AllConstants;
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-06-27
  */
 
-public class PeerProcessingStatusBroadcastReceiver extends BroadcastReceiver {
+public class P2pProcessingStatusBroadcastReceiver extends BroadcastReceiver {
 
     private StatusUpdate statusUpdate;
 
-    public PeerProcessingStatusBroadcastReceiver(@NonNull StatusUpdate statusUpdate) {
+    public P2pProcessingStatusBroadcastReceiver(@NonNull StatusUpdate statusUpdate) {
         this.statusUpdate = statusUpdate;
     }
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (intent.hasExtra(AllConstants.PeerToPeer.KEY_IS_PROCESSING)) {
-            if (statusUpdate != null) {
-                statusUpdate.onStatusUpdate(intent.getBooleanExtra(AllConstants.PeerToPeer.KEY_IS_PROCESSING, false));
-            }
+        if (intent.hasExtra(AllConstants.PeerToPeer.KEY_IS_PROCESSING) && statusUpdate != null) {
+            statusUpdate.onStatusUpdate(intent.getBooleanExtra(AllConstants.PeerToPeer.KEY_IS_PROCESSING, false));
         }
     }
 

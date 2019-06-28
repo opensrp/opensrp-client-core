@@ -25,7 +25,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
-import org.smartregister.receiver.PeerProcessingStatusBroadcastReceiver;
+import org.smartregister.receiver.P2pProcessingStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.FormController;
@@ -45,7 +45,7 @@ import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_
 import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 
-public abstract class SecuredActivity extends MultiLanguageActivity implements PeerProcessingStatusBroadcastReceiver.StatusUpdate {
+public abstract class SecuredActivity extends MultiLanguageActivity implements P2pProcessingStatusBroadcastReceiver.StatusUpdate {
     public static final String LOG_TAG = "SecuredActivity";
     protected final int MENU_ITEM_LOGOUT = 2312;
     protected Listener<Boolean> logoutListener;
@@ -57,7 +57,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     private OpenSRPClientBroadCastReceiver openSRPClientBroadCastReceiver;
 
     private ProcessingInProgressSnackbar processingInProgressSnackbar;
-    private PeerProcessingStatusBroadcastReceiver peerProcessingStatusBroadcastReceiver;
+    private P2pProcessingStatusBroadcastReceiver p2pProcessingStatusBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -249,13 +249,13 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
 
         if (CoreLibrary.getInstance().getP2POptions() != null && CoreLibrary.getInstance().getP2POptions().isEnableP2PLibrary()) {
-            if (peerProcessingStatusBroadcastReceiver == null) {
-                peerProcessingStatusBroadcastReceiver = new PeerProcessingStatusBroadcastReceiver(this);
+            if (p2pProcessingStatusBroadcastReceiver == null) {
+                p2pProcessingStatusBroadcastReceiver = new P2pProcessingStatusBroadcastReceiver(this);
             }
 
             // Register listener to remove the SnackBar
             LocalBroadcastManager.getInstance(this)
-                    .registerReceiver(peerProcessingStatusBroadcastReceiver
+                    .registerReceiver(p2pProcessingStatusBroadcastReceiver
                             , new IntentFilter(AllConstants.PeerToPeer.PROCESSING_ACTION));
         }
 
@@ -318,9 +318,9 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     protected void onPause() {
         super.onPause();
 
-        if (peerProcessingStatusBroadcastReceiver != null) {
+        if (p2pProcessingStatusBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(this)
-                    .unregisterReceiver(peerProcessingStatusBroadcastReceiver);
+                    .unregisterReceiver(p2pProcessingStatusBroadcastReceiver);
         }
     }
 }

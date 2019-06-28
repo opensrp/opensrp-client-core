@@ -30,18 +30,6 @@ public class ProcessingInProgressSnackbar extends BaseTransientBottomBar<Snackba
         getView().setFocusable(false);
     }
 
-    public void addBottomBarMargin(int margin) {
-        View view = getView();
-        if (view instanceof Snackbar.SnackbarLayout) {
-            ViewGroup.LayoutParams layoutParams = ((Snackbar.SnackbarLayout) view).getLayoutParams();
-
-            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
-                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
-                marginLayoutParams.bottomMargin = marginLayoutParams.bottomMargin + margin;
-            }
-        }
-    }
-
     @NonNull
     public static ProcessingInProgressSnackbar make(@NonNull View view) {
         final ViewGroup parent = findSuitableParent(view);
@@ -55,7 +43,8 @@ public class ProcessingInProgressSnackbar extends BaseTransientBottomBar<Snackba
         return new ProcessingInProgressSnackbar(parent, processingInProgressView, processingInProgressView);
     }
 
-    private static ViewGroup findSuitableParent(View view) {
+    private static ViewGroup findSuitableParent(View proposedView) {
+        View view = proposedView;
         ViewGroup fallback = null;
         do {
             if (view instanceof CoordinatorLayout) {
@@ -81,5 +70,17 @@ public class ProcessingInProgressSnackbar extends BaseTransientBottomBar<Snackba
 
         // If we reach here then we didn't find a CoL or a suitable content view so we'll fallback
         return fallback;
+    }
+
+    public void addBottomBarMargin(int margin) {
+        View view = getView();
+        if (view instanceof Snackbar.SnackbarLayout) {
+            ViewGroup.LayoutParams layoutParams = ((Snackbar.SnackbarLayout) view).getLayoutParams();
+
+            if (layoutParams instanceof ViewGroup.MarginLayoutParams) {
+                ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) layoutParams;
+                marginLayoutParams.bottomMargin = marginLayoutParams.bottomMargin + margin;
+            }
+        }
     }
 }

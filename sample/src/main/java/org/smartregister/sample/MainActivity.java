@@ -14,7 +14,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
-import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
