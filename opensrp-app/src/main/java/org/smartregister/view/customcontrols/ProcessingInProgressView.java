@@ -4,7 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BaseTransientBottomBar;
+import android.support.design.snackbar.ContentViewCallback;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -16,7 +16,7 @@ import org.smartregister.R;
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-06-27
  */
 
-public class ProcessingInProgressView extends LinearLayout implements BaseTransientBottomBar.ContentViewCallback {
+public class ProcessingInProgressView extends LinearLayout implements ContentViewCallback {
 
     public ProcessingInProgressView(Context context) {
         super(context);

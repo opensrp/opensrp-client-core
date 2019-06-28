@@ -21,7 +21,7 @@ import org.smartregister.R;
 public class ProcessingInProgressSnackbar extends BaseTransientBottomBar<Snackbar> {
 
     protected ProcessingInProgressSnackbar(@NonNull ViewGroup parent, @NonNull View content
-            , @NonNull ContentViewCallback contentViewCallback) {
+            , @NonNull android.support.design.snackbar.ContentViewCallback contentViewCallback) {
         super(parent, content, contentViewCallback);
 
         getView().setBackgroundColor(ContextCompat.getColor(parent.getContext(), android.R.color.transparent));
