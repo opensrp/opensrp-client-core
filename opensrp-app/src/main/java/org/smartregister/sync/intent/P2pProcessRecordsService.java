@@ -34,10 +34,12 @@ public class P2pProcessRecordsService extends IntentService {
 
     public P2pProcessRecordsService() {
         super("P2pProcessRecordsService");
+        CoreLibrary.getInstance().setPeerToPeerProcessing(true);
     }
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
         AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
         if (allSharedPreferences.isPeerToPeerUnprocessedEvents()) {
@@ -63,7 +65,7 @@ public class P2pProcessRecordsService extends IntentService {
 
                         // Profile images do not have a foreign key to the clients and can therefore be saved during the sync.
                         // They also do not take long to save and therefore happen during sync
-                        Timber.e("Finished processing %s EventClients", String.valueOf(eventClientList.size()));
+                        Timber.i("Finished processing %s EventClients", String.valueOf(eventClientList.size()));
                     } catch (Exception e) {
                         Timber.e(e);
                     }
@@ -107,5 +109,11 @@ public class P2pProcessRecordsService extends IntentService {
         public void setMaxRowId(int maxRowId) {
             this.maxRowId = maxRowId;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        CoreLibrary.getInstance().setPeerToPeerProcessing(false);
+        super.onDestroy();
     }
 }

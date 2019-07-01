@@ -432,6 +432,9 @@ public class AllConstants {
     public static class PeerToPeer {
         public static final String KEY_TEAM_ID = "team-id";
         public static final int P2P_LIBRARY_DEFAULT_BATCH_SIZE = 250;
+
+        public static final String PROCESSING_ACTION = "peer-to-peer-processing-action";
+        public static final String KEY_IS_PROCESSING = "is-processing";
     }
 
     public class KEY {
