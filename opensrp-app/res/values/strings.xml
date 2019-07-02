@@ -401,6 +401,7 @@
 
     <string name="currently_processing_transferred_records">Currently processing transferred records.</string>
     <string name="do_not_edit_client_records_until_complete">Do not edit client records until complete.</string>
+    <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit medical records until the process is complete.</string>
 
 
 </resources>
