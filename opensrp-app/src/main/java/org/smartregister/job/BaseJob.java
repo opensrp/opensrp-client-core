@@ -35,7 +35,7 @@ public abstract class BaseJob extends Job {
             try {
 
                 int jobId = jobRequest.build().schedule();
-                Log.d(TAG, "Scheduling job with name " + jobTag + " periodically with JOB ID " + jobId);
+                Log.d(TAG, "Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + start + " minutes and flex value of " + flex + " minutes");
 
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());
