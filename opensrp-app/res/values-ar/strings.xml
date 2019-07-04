@@ -323,7 +323,7 @@
     <string name="clients_key">زبائن</string>
     <string name="events_key">أحداث</string>
 
-    <string name="loading_client_settings">جاريٍ تحميل إعدادات الزبون & # 8230؛</string>
+    <string name="loading_client_settings">&#8230;جاريٍ تحميل إعدادات الزبون </string>
     <!-- login -->
     <string name="prompt_username">اسم المستخدم</string>
     <string name="prompt_password">كلمه السر(اختياري)</string>
@@ -342,7 +342,7 @@
     <string name="syncing">جارى التزامن</string>
     <string name="sync_failed">فشل التزامن</string>
     <string name="sync_complete"> اكتمل التزامن</string>
-    <string name="manual_sync_triggered">تم تشغيل المزامن اليدوي & # 8230؛</string>
+    <string name="manual_sync_triggered">&#8230;تم تشغيل المزامن اليدوي </string>
 
     <!-- base register -->
     <string name="filter">مرشّح</string>
@@ -368,7 +368,7 @@
     <string name="no_camera_permission">لا يمكن تشغيل هذا التطبيق لأنه لا يملك إذن الكاميرا. سيتم الآن الخروج من التطبيق.</string>
     <string name="low_storage_error">لا يمكن تنزيل تبعيات كاشف الوجه نظرًا لانخفاض سعة تخزين الجهاز</string>
     <string name="title_activity_main">عينة قارئ الشفرة</string>
-    <string name="barcode_header">انقر على & quot؛ قراءة الشفرة & quot؛ لقراءة الشفرة</string>
+    <string name="barcode_header">انقر على &quot;؛ قراءة الشفرة&quot; لقراءة الشفرة</string>
     <string name="read_barcode">اقرأ الشفرة</string>
     <string name="auto_focus">التركيز التلقائي</string>
     <string name="use_flash">استعمل الوميض</string>
@@ -376,7 +376,7 @@
     <string name="barcode_failure">لم يتم التقاط الشفرة</string>
     <string name="barcode_error">خطأ في قراءة الشفرة:%1$s</string>
 
-    <string name="allow_camera_management">يلزمك السماح للتطبيق باستخدام الكاميرا لمسح رموزالاستجابة السريعة& # 8230;</string>
+    <string name="allow_camera_management">&#8230;يلزمك السماح للتطبيق باستخدام الكاميرا لمسح رموزالاستجابة السريعة</string>
     <string name="unauthorized_group">غير مسموح لمجموعة المستخدم للوصول إلى هذا الجهاز</string>
     <string name="opensrp_url">http://27.147.129.50:9979</string>
     <string name="no_internet_connectivity">لا يوجد اتصال بالإنترنت. يرجى التأكد من اتصال البيانات</string>
