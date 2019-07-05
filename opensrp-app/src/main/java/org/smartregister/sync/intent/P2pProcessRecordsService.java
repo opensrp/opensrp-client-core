@@ -34,7 +34,6 @@ public class P2pProcessRecordsService extends IntentService {
 
     public P2pProcessRecordsService() {
         super("P2pProcessRecordsService");
-        CoreLibrary.getInstance().setPeerToPeerProcessing(true);
     }
 
     @Override
@@ -43,6 +42,8 @@ public class P2pProcessRecordsService extends IntentService {
         AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
         if (allSharedPreferences.isPeerToPeerUnprocessedEvents()) {
+            CoreLibrary.getInstance().setPeerToPeerProcessing(true);
+
             long eventsMaxRowId = allSharedPreferences.getLastPeerToPeerSyncProcessedEvent();
             EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
 
@@ -113,7 +114,11 @@ public class P2pProcessRecordsService extends IntentService {
 
     @Override
     public void onDestroy() {
-        CoreLibrary.getInstance().setPeerToPeerProcessing(false);
+        // This ensure that even if the `onHandleIntent` is closed prematurely, we remove the Snackbar since
+        // onDestroy will always be called
+        if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
+            CoreLibrary.getInstance().setPeerToPeerProcessing(false);
+        }
         super.onDestroy();
     }
 }
