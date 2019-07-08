@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,7 +18,7 @@ public class LocationProperty {
         @SerializedName("Inactive")
         INACTIVE,
         @SerializedName("Pending Review")
-        PENDING_REVIEW;
+        PENDING_REVIEW
 
     }
 
@@ -41,7 +42,7 @@ public class LocationProperty {
 
     private int version;
 
-    private transient Map<String, String> customProperties;
+    private transient Map<String, String> customProperties = new HashMap<>();
 
     public String getUid() {
         return uid;
