@@ -70,7 +70,7 @@ public class HTTPAgent {
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
 
-    private String boundary = "===" + System.currentTimeMillis() + "===";
+    private String boundary = "***" + System.currentTimeMillis() + "***";
     private String twoHyphens = "--";
     private String crlf = "\r\n";
 
