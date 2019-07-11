@@ -303,19 +303,25 @@ public class HTTPAgent {
 
             // checks server's status code first
             int status = httpUrlConnection.getResponseCode();
+            String line;
             if (status == HttpURLConnection.HTTP_OK) {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(
                         httpUrlConnection.getInputStream()));
-                String line = null;
+
                 while ((line = reader.readLine()) != null) {
                     responseString = line;
-                    Log.d("RESPONSE", line);
+                    Log.d("SERVER RESPONSE", line);
                 }
                 reader.close();
-                httpUrlConnection.disconnect();
             } else {
-                Log.d("RESPONSE", "Server returned non-OK status: " + status);
+                Log.d("SERVER RESPONSE", "Server returned non-OK status: " + status + " - " + httpUrlConnection.getResponseMessage() + " :-");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(httpUrlConnection.getErrorStream()));
+                while ((line = reader.readLine()) != null) {
+                    Log.d("SERVER RESPONSE", line);
+                }
+                reader.close();
             }
+            httpUrlConnection.disconnect();
 
         } catch (ProtocolException e) {
             Log.e(TAG, "Protocol exception " + e.toString(), e);
