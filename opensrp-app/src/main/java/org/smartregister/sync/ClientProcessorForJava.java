@@ -21,7 +21,6 @@ import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.JsonMapping;
 import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
-import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
 
