@@ -64,7 +64,9 @@ public abstract class RecyclerViewFragment extends
     public String mainCondition = "";
     public String Sortqueries;
     public String tablename;
+
     public String countSelect;
+    public String registerCondition = "";
     public String joinTable = "";
     public String joinTables[];
     public RecyclerView clientsView;
@@ -450,12 +452,22 @@ public abstract class RecyclerViewFragment extends
         String query = "";
         try {
             if (isValidFilterForFts(commonRepository())) {
-                String sql = sqb
-                        .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
-                                clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
-                List<String> ids = commonRepository().findSearchIds(sql);
-                query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
-                        Sortqueries);
+                String sql;
+                List<String> ids;
+                if(StringUtils.isBlank(registerCondition)){
+                    sql = sqb
+                            .searchQueryFts(tablename, joinTables, mainCondition, filters, Sortqueries,
+                                    clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
+                    ids =  commonRepository().findSearchIds(sql);
+                    query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
+                            Sortqueries);
+                }else{
+                    sql = sqb.searchQueryFts(tablename,mainSelect,mainCondition,registerCondition,joinTables,filters,Sortqueries,clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
+                    ids =  commonRepository().findSearchIds(sql);
+                    query = sqb.toStringFts(ids, tablename, CommonRepository.ID_COLUMN,
+                            Sortqueries,registerCondition);
+                }
+
                 query = sqb.Endquery(query);
             } else {
                 sqb.addCondition(filters);
@@ -477,7 +489,12 @@ public abstract class RecyclerViewFragment extends
             SmartRegisterQueryBuilder sqb = new SmartRegisterQueryBuilder(countSelect);
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
-                String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
+                String sql = "";
+                if(StringUtils.isBlank(registerCondition)) {
+                    sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
+                }else{
+                    sql = countSelect;
+                }
                 Log.i(getClass().getName(), query);
 
                 clientAdapter.setTotalcount(commonRepository().countSearchIds(sql));
