@@ -155,7 +155,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(openSRPClientBroadCastReceiver);
+        unregisterReceiver(openSRPClientBroadCastReceiver);
 
     }
 
@@ -242,13 +242,13 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
                 CloudantSync.ACTION_DATABASE_CREATED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_COMPLETED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_ERROR);
-        opensrpClientIntentFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
-        opensrpClientIntentFilter.addAction("android.intent.action.TIME_SET");
+        opensrpClientIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_DATE_CHANGED);
 
         openSRPClientBroadCastReceiver = new OpenSRPClientBroadCastReceiver(this);
         // Registers the OpenSRPClientBroadCastReceiver and its intent filters
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
+        registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
     }
 
     public void showToast(String msg) {
