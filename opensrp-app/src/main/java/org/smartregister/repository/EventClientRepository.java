@@ -39,6 +39,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import static org.smartregister.AllConstants.ROWID;
 
 /**
@@ -1262,7 +1263,7 @@ public class EventClientRepository extends BaseRepository {
      *
      * @param lastRowId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     *          of {@link Event}s returned. This enables this method to be called again for the consequent batches
+     * of {@link Event}s returned. This enables this method to be called again for the consequent batches
      */
     @Nullable
     public JsonData getEvents(long lastRowId, int limit) {
@@ -1337,8 +1338,8 @@ public class EventClientRepository extends BaseRepository {
      *
      * @param lastRowId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     *          of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
-     *          This enables this method to be called again for the consequent batches
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
      */
     @Nullable
     public JsonData getClients(long lastRowId, int limit) {
@@ -1418,7 +1419,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject) {//Backward compatibility
-        addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
+        addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Task_Unprocessed);
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject, String syncStatus) {
@@ -1468,6 +1469,23 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
+    public void markEventAsProcessed(String formSubmissionId, String eventID) {
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put(event_column.formSubmissionId.name(), formSubmissionId);
+            values.put(event_column.syncStatus.name(), StringUtils.isNotBlank(eventID) ? BaseRepository.TYPE_Synced : BaseRepository.TYPE_Unsynced);
+            values.put(ROWID, getMaxRowId(Table.event) + 1);
+
+            getWritableDatabase().update(Table.event.name(),
+                    values,
+                    event_column.formSubmissionId.name() + " = ?",
+                    new String[]{formSubmissionId});
+
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "Exception", e);
+        }
+    }
 
     public void markEventAsSynced(String formSubmissionId) {
         try {

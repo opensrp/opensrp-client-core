@@ -21,6 +21,7 @@ import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.JsonMapping;
 import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
 
@@ -73,8 +74,22 @@ public class ClientProcessorForJava {
                 if (eventClient.getClient() != null) {
                     processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassification);
                 }
+
+                completeProcessing(eventClient);
             }
         }
+    }
+
+    public void completeProcessing(EventClient eventClient) {
+        if (eventClient == null)
+            return;
+
+        Event event = eventClient.getEvent();
+        if (event == null)
+            return;
+
+        CoreLibrary.getInstance().context()
+                .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId(), event.getEventId());
     }
 
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
