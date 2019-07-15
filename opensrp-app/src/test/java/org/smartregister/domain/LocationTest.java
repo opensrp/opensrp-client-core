@@ -93,6 +93,22 @@ public class LocationTest {
 
     }
 
+
+    @Test
+    public void testDeserializeCustomProperties() {
+
+        Location structure = gson.fromJson("{\"type\":\"Feature\",\"id\":\"90397\",\"geometry\":{\"type\":\"Polygon\",\"coordinates\":[[[32.5978597,-14.1699446],[32.5978956,-14.1699609],[32.5978794,-14.1699947],[32.5978434,-14.1699784],[32.5978597,-14.1699446]]]},\"properties\":{\"uid\":\"41587456-b7c8-4c4e-b433-23a786f742fc\",\"code\":\"21384443\",\"type\":\"Residential Structure\",\"status\":\"Active\",\"parentId\":\"3734\",\"geographicLevel\":5,\"effectiveStartDate\":\"2017-01-10T00:00:00.000\",\"version\":0,\"taskBusinessStatus\":\"Not Visited\",\"taskIdentifier\":\"0d15fcac-df64-4f53-b01a-b650d1e45252\",\"taskStatus\":\"In Progress\"}}"
+                , Location.class);
+
+        Map<String, String> customProperties = structure.getProperties().getCustomProperties();
+        assertEquals(3, customProperties.size());
+        assertEquals("0d15fcac-df64-4f53-b01a-b650d1e45252", customProperties.get("taskIdentifier"));
+        assertEquals("Not Visited", customProperties.get("taskBusinessStatus"));
+        assertEquals("In Progress", customProperties.get("taskStatus"));
+
+
+    }
+
     public static String stripTimezone(String locationJson) {
         return locationJson.replaceAll("[\\+-]\\d{2}:00", "").replace(".000Z", ".000");
     }
