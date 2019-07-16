@@ -40,6 +40,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ROWID;
 
 /**
@@ -1419,7 +1421,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject) {//Backward compatibility
-        addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Task_Unprocessed);
+        addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject, String syncStatus) {
@@ -1465,7 +1467,7 @@ public class EventClientRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1483,7 +1485,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 

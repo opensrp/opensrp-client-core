@@ -73,17 +73,11 @@ public class ClientProcessorForJava {
                 if (eventClient.getClient() != null) {
                     processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassification);
                 }
-
-                completeProcessing(eventClient);
             }
         }
     }
 
-    public void completeProcessing(EventClient eventClient) {
-        if (eventClient == null)
-            return;
-
-        Event event = eventClient.getEvent();
+    public void completeProcessing(Event event) {
         if (event == null)
             return;
 
@@ -93,6 +87,9 @@ public class ClientProcessorForJava {
 
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
         try {
+            // mark event as processed regardless of any errors
+            completeProcessing(event);
+
             if (event.getCreator() != null) {
                 Log.i(TAG, "EVENT from openmrs");
             }
