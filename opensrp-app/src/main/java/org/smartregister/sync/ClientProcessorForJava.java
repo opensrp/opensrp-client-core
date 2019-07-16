@@ -18,6 +18,7 @@ import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.ClientField;
 import org.smartregister.domain.jsonmapping.Column;
+import org.smartregister.domain.jsonmapping.ColumnType;
 import org.smartregister.domain.jsonmapping.JsonMapping;
 import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
@@ -25,13 +26,17 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 
@@ -401,7 +406,8 @@ public class ClientProcessorForJava {
                     // in Content value
                     if (columnValue != null) {
                         columnValue = getHumanReadableConceptResponse(columnValue, segment);
-                        contentValues.put(columnName, columnValue);
+                        String formattedValue = getFormattedValue(column, columnValue);
+                        contentValues.put(columnName, formattedValue);
                     }
                 }
 
@@ -433,8 +439,34 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
+    }
+
+    protected String getFormattedValue(Column column, String columnValue) {
+        // covert the column if its a formatted column with both
+
+        String data_type = StringUtils.isNotBlank(column.data_type) ? column.data_type : "";
+        switch (data_type) {
+            case ColumnType.Date:
+                if (StringUtils.isNotBlank(column.save_format) && StringUtils.isNotBlank(column.source_format)) {
+                    try {
+                        Date source_date = new SimpleDateFormat(column.source_format, Locale.getDefault()).parse(columnValue);
+                        return new SimpleDateFormat(column.save_format, Locale.getDefault()).format(source_date);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                    }
+                }
+            case ColumnType.String:
+                if (StringUtils.isNotBlank(column.save_format)) {
+                    return String.format(column.save_format, columnValue);
+                }
+                break;
+            default:
+                return columnValue;
+        }
+
+        return columnValue;
     }
 
     /**
