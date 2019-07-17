@@ -77,6 +77,11 @@ public class ClientProcessorForJava {
         }
     }
 
+    /**
+     * Call this method to flag the event as processed in the local repository.
+     * All events valid or otherwise must be flagged to avoid re-processing
+     * @param event
+     */
     public void completeProcessing(Event event) {
         if (event == null)
             return;

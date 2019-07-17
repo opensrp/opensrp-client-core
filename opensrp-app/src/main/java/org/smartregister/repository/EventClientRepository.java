@@ -1471,11 +1471,15 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
+    /**
+     * Flag an event as locally processed.
+     * This method only updates locally created and processed events and prevents reprocessing locally
+     * @param formSubmissionId
+     */
     public void markEventAsProcessed(String formSubmissionId) {
         try {
 
             ContentValues values = new ContentValues();
-            values.put(event_column.formSubmissionId.name(), formSubmissionId);
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
             values.put(ROWID, getMaxRowId(Table.event) + 1);
 
@@ -1493,7 +1497,6 @@ public class EventClientRepository extends BaseRepository {
         try {
 
             ContentValues values = new ContentValues();
-            values.put(event_column.formSubmissionId.name(), formSubmissionId);
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Synced);
             values.put(ROWID, getMaxRowId(Table.event) + 1);
 
