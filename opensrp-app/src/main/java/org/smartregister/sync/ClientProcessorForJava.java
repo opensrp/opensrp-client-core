@@ -82,7 +82,7 @@ public class ClientProcessorForJava {
             return;
 
         CoreLibrary.getInstance().context()
-                .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId(), event.getEventId());
+                .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
     }
 
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {

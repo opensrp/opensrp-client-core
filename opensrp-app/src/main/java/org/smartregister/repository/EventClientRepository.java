@@ -798,7 +798,7 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.syncStatus
-                + " = ?  and length("
+                + " in (? , ?)  and length("
                 + event_column.json
                 + ")>2 order by "
                 + event_column.updatedAt
@@ -806,7 +806,7 @@ public class EventClientRepository extends BaseRepository {
                 + limit;
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
 
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
@@ -1471,18 +1471,18 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-    public void markEventAsProcessed(String formSubmissionId, String eventID) {
+    public void markEventAsProcessed(String formSubmissionId) {
         try {
 
             ContentValues values = new ContentValues();
             values.put(event_column.formSubmissionId.name(), formSubmissionId);
-            values.put(event_column.syncStatus.name(), StringUtils.isNotBlank(eventID) ? BaseRepository.TYPE_Synced : BaseRepository.TYPE_Unsynced);
+            values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
             values.put(ROWID, getMaxRowId(Table.event) + 1);
 
             getWritableDatabase().update(Table.event.name(),
                     values,
-                    event_column.formSubmissionId.name() + " = ?",
-                    new String[]{formSubmissionId});
+                    event_column.formSubmissionId.name() + " = ? and " + event_column.syncStatus.name() + " = ? ",
+                    new String[]{formSubmissionId, BaseRepository.TYPE_Unprocessed});
 
         } catch (Exception e) {
             Timber.e(e);
