@@ -176,7 +176,8 @@ public class SmartRegisterQueryBuilder {
 
         return res;
     }
-    public String toStringFts(List<String> foundIds, String tName, String idCol, String sortBy,String condition) {
+
+    public String toStringFts(List<String> foundIds, String tName, String idCol, String sortBy, String condition) {
         String res = Selectquery;
         List<String> ids = foundIds;
         String tableName = tName;
@@ -200,7 +201,7 @@ public class SmartRegisterQueryBuilder {
             String joinedIds = "'" + StringUtils.join(ids, "','") + "'";
             res += String.format(" WHERE %s IN (%s) ", idColumn, joinedIds);
 
-            if(StringUtils.isNotBlank(condition)){
+            if (StringUtils.isNotBlank(condition)) {
                 res += " AND " + condition;
             }
             if (StringUtils.isNotBlank(sort)) {
@@ -210,6 +211,7 @@ public class SmartRegisterQueryBuilder {
 
         return res;
     }
+
     public String toStringFts(List<String> foundIds, String tName, String idCol, String sortBy) {
         String res = Selectquery;
         List<String> ids = foundIds;
@@ -327,25 +329,26 @@ public class SmartRegisterQueryBuilder {
         return phraseClause;
     }
 
-    public String searchQueryFts(String tablename,String mainselect,String mainCondition,String condition,String searchJoinTable[],String searchFilter, String sort,int limit, int offset) {
+    public String searchQueryFts(String tablename, String mainselect, String mainCondition, String condition, String searchJoinTable[], String searchFilter, String sort, int limit, int offset) {
 
         String search_phrase = "";
-        if(StringUtils.isNotBlank(searchFilter)){
+        if (StringUtils.isNotBlank(searchFilter)) {
             search_phrase = phraseClause(tablename, searchJoinTable,
                     mainCondition, searchFilter);
-            search_phrase = search_phrase.replaceFirst("WHERE"," AND ");
-            search_phrase = search_phrase.replaceFirst(CommonFtsObject.idColumn," id ");
+            search_phrase = search_phrase.replaceFirst("WHERE", " AND ");
+            search_phrase = search_phrase.replaceFirst(CommonFtsObject.idColumn, " id ");
         }
 
         String query;
-        if(mainselect.contains(mainCondition)){
-            query = mainselect + " AND " + condition + " "  +search_phrase  + orderByClause(sort) + limitClause(limit, offset);
-        }else{
-            query = mainselect + " WHERE " + mainCondition + " AND " + condition +  search_phrase + orderByClause(sort) + limitClause(limit, offset);
+        if (mainselect.contains(mainCondition)) {
+            query = mainselect + " AND " + condition + " " + search_phrase + orderByClause(sort) + limitClause(limit, offset);
+        } else {
+            query = mainselect + " WHERE " + mainCondition + " AND " + condition + search_phrase + orderByClause(sort) + limitClause(limit, offset);
         }
 
         return query;
     }
+
     public String searchQueryFts(String tablename, String searchJoinTable[], String mainCondition,
                                  String searchFilter, String sort, int limit, int offset) {
         if (ArrayUtils.isNotEmpty(searchJoinTable) && StringUtils.isNotBlank(searchFilter)) {
