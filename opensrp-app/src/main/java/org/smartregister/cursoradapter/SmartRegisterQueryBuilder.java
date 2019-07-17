@@ -3,7 +3,6 @@ package org.smartregister.cursoradapter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.commonregistry.CommonFtsObject;
-import org.smartregister.util.StringUtil;
 
 import java.util.List;
 
