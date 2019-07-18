@@ -272,7 +272,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"rowid", "json"});
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for (int i = 0; i < eventArray.length(); i++) {
-            matrixCursor.addRow(new String[]{(i+1) + "", eventArray.getJSONObject(i).toString()});
+            matrixCursor.addRow(new String[]{(i + 1) + "", eventArray.getJSONObject(i).toString()});
         }
 
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(Object[].class))).thenReturn(matrixCursor);
@@ -318,4 +318,17 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.verify(sqliteDatabase, Mockito.times(count)).execSQL(Mockito.anyString());
     }
 
+    /**
+     * Events manually saved should always have an unprocessed status
+     */
+    @Test
+    public void testAddEventDefaultStatus() {
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+        String baseEntityId = "12345";
+        JSONObject jsonObject = Mockito.mock(JSONObject.class);
+
+        eventClientRepository.addEvent(baseEntityId, jsonObject);
+
+        Mockito.verify(eventClientRepository).addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
+    }
 }

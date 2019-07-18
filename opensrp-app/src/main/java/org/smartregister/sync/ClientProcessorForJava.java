@@ -77,8 +77,24 @@ public class ClientProcessorForJava {
         }
     }
 
+    /**
+     * Call this method to flag the event as processed in the local repository.
+     * All events valid or otherwise must be flagged to avoid re-processing
+     * @param event
+     */
+    public void completeProcessing(Event event) {
+        if (event == null)
+            return;
+
+        CoreLibrary.getInstance().context()
+                .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
+    }
+
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
         try {
+            // mark event as processed regardless of any errors
+            completeProcessing(event);
+
             if (event.getCreator() != null) {
                 Log.i(TAG, "EVENT from openmrs");
             }
