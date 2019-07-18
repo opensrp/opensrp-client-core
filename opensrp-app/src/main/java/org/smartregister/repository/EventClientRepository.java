@@ -39,6 +39,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ROWID;
 
 /**
@@ -795,7 +798,7 @@ public class EventClientRepository extends BaseRepository {
                 + Table.event.name()
                 + " where "
                 + event_column.syncStatus
-                + " = ?  and length("
+                + " in (? , ?)  and length("
                 + event_column.json
                 + ")>2 order by "
                 + event_column.updatedAt
@@ -803,7 +806,7 @@ public class EventClientRepository extends BaseRepository {
                 + limit;
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced});
+            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
 
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
@@ -1262,7 +1265,7 @@ public class EventClientRepository extends BaseRepository {
      *
      * @param lastRowId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     *          of {@link Event}s returned. This enables this method to be called again for the consequent batches
+     * of {@link Event}s returned. This enables this method to be called again for the consequent batches
      */
     @Nullable
     public JsonData getEvents(long lastRowId, int limit) {
@@ -1337,8 +1340,8 @@ public class EventClientRepository extends BaseRepository {
      *
      * @param lastRowId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     *          of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
-     *          This enables this method to be called again for the consequent batches
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
      */
     @Nullable
     public JsonData getClients(long lastRowId, int limit) {
@@ -1418,7 +1421,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject) {//Backward compatibility
-        addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
+        addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
     }
 
     public void addEvent(String baseEntityId, JSONObject jsonObject, String syncStatus) {
@@ -1464,16 +1467,36 @@ public class EventClientRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
+    /**
+     * Flag an event as locally processed.
+     * This method only updates locally created and processed events and prevents reprocessing locally
+     * @param formSubmissionId
+     */
+    public void markEventAsProcessed(String formSubmissionId) {
+        try {
+
+            ContentValues values = new ContentValues();
+            values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Unsynced);
+            values.put(ROWID, getMaxRowId(Table.event) + 1);
+
+            getWritableDatabase().update(Table.event.name(),
+                    values,
+                    event_column.formSubmissionId.name() + " = ? and " + event_column.syncStatus.name() + " = ? ",
+                    new String[]{formSubmissionId, BaseRepository.TYPE_Unprocessed});
+
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
 
     public void markEventAsSynced(String formSubmissionId) {
         try {
 
             ContentValues values = new ContentValues();
-            values.put(event_column.formSubmissionId.name(), formSubmissionId);
             values.put(event_column.syncStatus.name(), BaseRepository.TYPE_Synced);
             values.put(ROWID, getMaxRowId(Table.event) + 1);
 
