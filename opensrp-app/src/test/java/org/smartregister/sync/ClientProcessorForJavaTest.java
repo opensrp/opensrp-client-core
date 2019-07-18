@@ -21,9 +21,9 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
 
         Column column = new Column();
-        column.data_type = ColumnType.Date;
-        column.save_format = "yyyy-MM-dd";
-        column.source_format = "dd-MM-yyyy";
+        column.dataType = ColumnType.Date;
+        column.saveFormat = "yyyy-MM-dd";
+        column.sourceFormat = "dd-MM-yyyy";
         String columnValue = "16-04-2019";
 
         String res = Whitebox.invokeMethod(clientProcessor, "getFormattedValue", column, columnValue);
@@ -36,8 +36,8 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
 
         Column column = new Column();
-        column.data_type = ColumnType.String;
-        column.save_format = "Sheila is %s";
+        column.dataType = ColumnType.String;
+        column.saveFormat = "Sheila is %s";
         String columnValue = "smart";
 
         String res = Whitebox.invokeMethod(clientProcessor, "getFormattedValue", column, columnValue);

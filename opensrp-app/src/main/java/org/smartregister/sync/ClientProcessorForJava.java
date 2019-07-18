@@ -443,23 +443,30 @@ public class ClientProcessorForJava {
         }
     }
 
+    /**
+     * Reformat the data to be persisted in the database.
+     * This function will reformat dates with supplied types for storage in the DB
+     * @param column
+     * @param columnValue
+     * @return
+     */
     protected String getFormattedValue(Column column, String columnValue) {
         // covert the column if its a formatted column with both
 
-        String data_type = StringUtils.isNotBlank(column.data_type) ? column.data_type : "";
-        switch (data_type) {
+        String dataType = StringUtils.isNotBlank(column.dataType) ? column.dataType : "";
+        switch (dataType) {
             case ColumnType.Date:
-                if (StringUtils.isNotBlank(column.save_format) && StringUtils.isNotBlank(column.source_format)) {
+                if (StringUtils.isNotBlank(column.saveFormat) && StringUtils.isNotBlank(column.sourceFormat)) {
                     try {
-                        Date source_date = new SimpleDateFormat(column.source_format, Locale.getDefault()).parse(columnValue);
-                        return new SimpleDateFormat(column.save_format, Locale.getDefault()).format(source_date);
+                        Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.getDefault()).parse(columnValue);
+                        return new SimpleDateFormat(column.saveFormat, Locale.getDefault()).format(sourceDate);
                     } catch (Exception e) {
                         Timber.e(e);
                     }
                 }
             case ColumnType.String:
-                if (StringUtils.isNotBlank(column.save_format)) {
-                    return String.format(column.save_format, columnValue);
+                if (StringUtils.isNotBlank(column.saveFormat)) {
+                    return String.format(column.saveFormat, columnValue);
                 }
                 break;
             default:
