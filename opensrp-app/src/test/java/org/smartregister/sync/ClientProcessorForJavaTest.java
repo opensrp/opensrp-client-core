@@ -2,14 +2,19 @@ package org.smartregister.sync;
 
 import android.content.Context;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.db.Event;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
 
 import static org.junit.Assert.assertEquals;
+
 
 public class ClientProcessorForJavaTest extends BaseUnitTest {
 
@@ -43,5 +48,19 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         String res = Whitebox.invokeMethod(clientProcessor, "getFormattedValue", column, columnValue);
 
         assertEquals(res, "Sheila is smart");
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @Test
+    public void testProcessEventMarksItSaved() throws Exception {
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(new ClientProcessorForJava(context));
+        Event mockEvent = Mockito.mock(Event.class);
+        clientProcessorForJava.processEvent(mockEvent, null, null);
+
+        Mockito.verify(clientProcessorForJava).completeProcessing(mockEvent);
     }
 }
