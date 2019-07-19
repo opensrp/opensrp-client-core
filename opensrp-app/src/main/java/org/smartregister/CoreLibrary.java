@@ -1,7 +1,9 @@
 package org.smartregister;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
@@ -9,7 +11,6 @@ import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
-import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PSyncFinishCallback;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
@@ -25,6 +26,8 @@ public class CoreLibrary {
 
     private final SyncConfiguration syncConfiguration;
     private static long buildTimeStamp;
+
+    private boolean isPeerToPeerProcessing = false;
 
     private String ecClientFieldsFile = "ec_client_fields.json";
 
@@ -160,4 +163,22 @@ public class CoreLibrary {
         return p2POptions;
     }
 
+    public boolean isPeerToPeerProcessing() {
+        return isPeerToPeerProcessing;
+    }
+
+    public void setPeerToPeerProcessing(boolean peerToPeerProcessing) {
+        isPeerToPeerProcessing = peerToPeerProcessing;
+
+        sendPeerToPeerProcessingStatus(isPeerToPeerProcessing);
+    }
+
+    private void sendPeerToPeerProcessingStatus(boolean status) {
+        Intent intent = new Intent();
+        intent.setAction(AllConstants.PeerToPeer.PROCESSING_ACTION);
+        intent.putExtra(AllConstants.PeerToPeer.KEY_IS_PROCESSING, status);
+
+        LocalBroadcastManager.getInstance(context.applicationContext())
+                .sendBroadcast(intent);
+    }
 }

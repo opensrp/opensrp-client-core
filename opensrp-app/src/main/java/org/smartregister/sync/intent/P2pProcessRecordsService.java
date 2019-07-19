@@ -38,9 +38,12 @@ public class P2pProcessRecordsService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
+
         AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
         if (allSharedPreferences.isPeerToPeerUnprocessedEvents()) {
+            CoreLibrary.getInstance().setPeerToPeerProcessing(true);
+
             long eventsMaxRowId = allSharedPreferences.getLastPeerToPeerSyncProcessedEvent();
             EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
 
@@ -63,7 +66,7 @@ public class P2pProcessRecordsService extends IntentService {
 
                         // Profile images do not have a foreign key to the clients and can therefore be saved during the sync.
                         // They also do not take long to save and therefore happen during sync
-                        Timber.e("Finished processing %s EventClients", String.valueOf(eventClientList.size()));
+                        Timber.i("Finished processing %s EventClients", String.valueOf(eventClientList.size()));
                     } catch (Exception e) {
                         Timber.e(e);
                     }
@@ -107,5 +110,15 @@ public class P2pProcessRecordsService extends IntentService {
         public void setMaxRowId(int maxRowId) {
             this.maxRowId = maxRowId;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        // This ensure that even if the `onHandleIntent` is closed prematurely, we remove the Snackbar since
+        // onDestroy will always be called
+        if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
+            CoreLibrary.getInstance().setPeerToPeerProcessing(false);
+        }
+        super.onDestroy();
     }
 }

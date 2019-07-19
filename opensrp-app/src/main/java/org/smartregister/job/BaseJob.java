@@ -30,19 +30,12 @@ public abstract class BaseJob extends Job {
 
             JobRequest.Builder jobRequest = new JobRequest.Builder(jobTag).setExtras(extras);
 
-            if (toReschedule) {
-
-                jobRequest.setBackoffCriteria(start, JobRequest.BackoffPolicy.LINEAR).setExact(start);
-
-            } else {
-
-                jobRequest.setPeriodic(TimeUnit.MINUTES.toMillis(start), TimeUnit.MINUTES.toMillis(flex));
-            }
+            jobRequest.setPeriodic(TimeUnit.MINUTES.toMillis(start), TimeUnit.MINUTES.toMillis(flex));
 
             try {
 
                 int jobId = jobRequest.build().schedule();
-                Log.d(TAG, "Scheduling job with name " + jobTag + " periodically with JOB ID " + jobId);
+                Log.d(TAG, "Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + start + " minutes and flex value of " + flex + " minutes");
 
             } catch (Exception e) {
                 Log.e(TAG, e.getMessage());

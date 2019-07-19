@@ -133,7 +133,7 @@ public class PlanDefinition {
         this.serverVersion = serverVersion;
     }
 
-    class UseContext {
+    public class UseContext {
         private String code;
 
         private String valueCodableConcept;
