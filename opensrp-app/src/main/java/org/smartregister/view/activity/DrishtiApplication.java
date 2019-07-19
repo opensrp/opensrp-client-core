@@ -72,7 +72,7 @@ public abstract class DrishtiApplication extends Application {
     public void onCreate() {
         try {
             super.onCreate();
-            plantCrashLyticsTree();
+            initializeCrashLyticsTree();
 
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
@@ -81,7 +81,10 @@ public abstract class DrishtiApplication extends Application {
         }
     }
 
-    public void plantCrashLyticsTree(){
+    /**
+     * Plant the crashlytics tree fro every application to use
+     */
+    public void initializeCrashLyticsTree(){
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         } else {

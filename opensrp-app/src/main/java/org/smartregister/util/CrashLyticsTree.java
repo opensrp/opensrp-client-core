@@ -12,7 +12,6 @@ import org.smartregister.view.activity.DrishtiApplication;
 import timber.log.Timber;
 
 public class CrashLyticsTree extends Timber.Tree {
-
     private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
     private static final String CRASHLYTICS_KEY_TAG = "tag";
     private static final String CRASHLYTICS_KEY_MESSAGE = "message";
