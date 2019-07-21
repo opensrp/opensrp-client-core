@@ -1,22 +1,16 @@
 package org.smartregister.util;
 
-
 import android.util.Log;
-
 import com.crashlytics.android.Crashlytics;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.smartregister.view.activity.DrishtiApplication;
-
 import timber.log.Timber;
 
 public class CrashLyticsTree extends Timber.Tree {
     private static final String CRASHLYTICS_KEY_PRIORITY = "priority";
     private static final String CRASHLYTICS_KEY_TAG = "tag";
     private static final String CRASHLYTICS_KEY_MESSAGE = "message";
-
-
     private String userName;
 
     @Override
