@@ -12,6 +12,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.P2PSyncFinishCallback;
+import org.smartregister.util.AppProperties;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
