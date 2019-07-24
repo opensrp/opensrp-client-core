@@ -88,8 +88,10 @@ import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
@@ -209,7 +211,7 @@ public class Context {
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
     private PlanDefinitionRepository planDefinitionRepository;
-
+    private AppProperties appProperties;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -814,8 +816,7 @@ public class Context {
 
     public DristhiConfiguration configuration() {
         if (configuration == null) {
-            configuration = new DristhiConfiguration(
-                    this.applicationContext().getAssets());
+            configuration = new DristhiConfiguration();
         }
         return configuration;
     }
@@ -1155,5 +1156,13 @@ public class Context {
         }
         return planDefinitionRepository;
     }
+
+    public AppProperties getAppProperties() {
+        if (appProperties == null) {
+            appProperties = Utils.getProperties(this.applicationContext);
+        }
+        return appProperties;
+    }
+
 ///////////////////////////////////////////////////////////////////////////////
 }
