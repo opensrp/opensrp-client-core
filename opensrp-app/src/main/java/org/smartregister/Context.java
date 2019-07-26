@@ -21,6 +21,7 @@ import org.smartregister.repository.AllServicesProvided;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
+import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
@@ -29,11 +30,16 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
+import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
+import org.smartregister.repository.StructureRepository;
+import org.smartregister.repository.TaskNotesRepository;
+import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.TimelineEventRepository;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.ANMService;
@@ -82,8 +88,10 @@ import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
@@ -103,7 +111,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.preference.PreferenceManager.setDefaultValues;
 
 public class Context {
     private static final String TAG = "Context";
@@ -198,6 +205,13 @@ public class Context {
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
+    private CampaignRepository campaignRepository;
+    private TaskRepository taskRepository;
+    private TaskNotesRepository taskNotesRepository;
+    private LocationRepository locationRepository;
+    private StructureRepository structureRepository;
+    private PlanDefinitionRepository planDefinitionRepository;
+    private AppProperties appProperties;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -802,8 +816,7 @@ public class Context {
 
     public DristhiConfiguration configuration() {
         if (configuration == null) {
-            configuration = new DristhiConfiguration(
-                    this.applicationContext().getAssets());
+            configuration = new DristhiConfiguration();
         }
         return configuration;
     }
@@ -972,7 +985,7 @@ public class Context {
             if (this.applicationContext() == null) {
                 return;
             }
-            String str = ReadFromfile("ec_client_fields.json", this.applicationContext());
+            String str = ReadFromfile(CoreLibrary.getInstance().getEcClientFieldsFile(), this.applicationContext());
             if (StringUtils.isBlank(str)) {
                 return;
             }
@@ -1108,5 +1121,48 @@ public class Context {
         return uniqueIdRepository;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    public CampaignRepository getCampaignRepository() {
+        if (campaignRepository == null) {
+            campaignRepository = new CampaignRepository(getRepository());
+        }
+        return campaignRepository;
+    }
+
+    public TaskRepository getTaskRepository() {
+        if (taskRepository == null) {
+            taskNotesRepository = new TaskNotesRepository(getRepository());
+            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
+        }
+        return taskRepository;
+    }
+
+    public LocationRepository getLocationRepository() {
+        if (locationRepository == null) {
+            locationRepository = new LocationRepository(getRepository());
+        }
+        return locationRepository;
+    }
+
+    public StructureRepository getStructureRepository() {
+        if (structureRepository == null) {
+            structureRepository = new StructureRepository(getRepository());
+        }
+        return structureRepository;
+    }
+
+    public PlanDefinitionRepository getPlanDefinitionRepository() {
+        if (planDefinitionRepository == null) {
+            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+        }
+        return planDefinitionRepository;
+    }
+
+    public AppProperties getAppProperties() {
+        if (appProperties == null) {
+            appProperties = Utils.getProperties(this.applicationContext);
+        }
+        return appProperties;
+    }
+
+///////////////////////////////////////////////////////////////////////////////
 }

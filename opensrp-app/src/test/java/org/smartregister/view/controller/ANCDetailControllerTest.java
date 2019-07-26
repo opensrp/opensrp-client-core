@@ -8,11 +8,10 @@ import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
 import org.smartregister.domain.TimelineEvent;
@@ -30,8 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@RunWith(RobolectricTestRunner.class)
-public class ANCDetailControllerTest {
+public class ANCDetailControllerTest extends BaseUnitTest {
 
     @Mock
     private Context context;

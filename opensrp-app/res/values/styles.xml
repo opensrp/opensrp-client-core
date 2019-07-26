@@ -4,7 +4,7 @@
     <style name="CustomFontTextViewStyle" parent="@android:style/Widget.TextView">
         <item name="fontVariant">regular</item>
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingStart">10dp</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">end</item>
     </style>
@@ -23,13 +23,13 @@
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Normal.NoPadding">
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Normal.TwoLine">
         <item name="android:maxLines">2</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
         <item name="android:ellipsize">none</item>
     </style>
 
@@ -40,20 +40,20 @@
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Small.NoPadding">
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Small.NoHeight" parent="@android:style/Widget.TextView">
         <item name="fontVariant">medium</item>
         <item name="android:textColor">@android:color/black</item>
-        <!--<item name="android:paddingLeft">10dp</item>-->
+        <!--<item name="android:paddingStart">10dp</item>-->
         <item name="android:ellipsize">none</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Small.paddingNoHeight" parent="@android:style/Widget.TextView">
         <item name="fontVariant">medium</item>
         <item name="android:textColor">@android:color/black</item>
-        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingStart">10dp</item>
         <item name="android:ellipsize">none</item>
     </style>
 
@@ -67,8 +67,8 @@
         <item name="fontVariant">medium</item>
         <item name="android:textSize">16sp</item>
         <item name="android:gravity">center</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">3dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">3dp</item>
         <item name="android:ellipsize">none</item>
     </style>
 
@@ -79,8 +79,8 @@
 
     <style name="CustomFontTextViewStyle.ListView.Medium.TwoLine">
         <item name="android:maxLines">2</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
         <item name="android:ellipsize">none</item>
     </style>
 
@@ -89,13 +89,13 @@
         <item name="fontVariant">regular</item>
         <item name="android:singleLine">false</item>
         <item name="android:maxLines">4</item>
-        <item name="android:paddingLeft">5dp</item>
-        <item name="android:paddingRight">5dp</item>
+        <item name="android:paddingStart">5dp</item>
+        <item name="android:paddingEnd">5dp</item>
         <item name="android:ellipsize">end</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Medium.NoPadding">
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Medium.White">
@@ -109,7 +109,7 @@
 
     <style name="CustomFontTextViewStyle.ListView.Bold.NoPadding">
         <item name="android:ellipsize">none</item>
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Bold.NoPadding.SmallSize">
@@ -145,7 +145,7 @@
 
     <style name="CustomFontTextViewStyle.StatusBar.Bold.NoPadding">
         <item name="fontVariant">bold</item>
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="CustomFontTextViewStyle.StatusBar.Black">
@@ -199,9 +199,9 @@
         <item name="fontVariant">bold</item>
         <item name="android:layout_gravity">top|right</item>
         <item name="android:layout_marginTop">10dp</item>
-        <item name="android:layout_marginRight">28dp</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:paddingRight">0dp</item>
+        <item name="android:layout_marginEnd">28dp</item>
+        <item name="android:paddingStart">0dp</item>
+        <item name="android:paddingEnd">0dp</item>
         <item name="android:paddingBottom">5dp</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/badge</item>
@@ -220,7 +220,7 @@
 
 
     <style name="TreeNodeStyle">
-        <item name="android:paddingLeft">20dp</item>
+        <item name="android:paddingStart">20dp</item>
     </style>
 
     <style name="TreeNodeStyleDivided">
@@ -251,9 +251,9 @@
 
 
     <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
-       <!-- <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/primaryDark</item>
-        <item name="colorAccent">@color/accent</item> -->
+        <!-- <item name="colorPrimary">@color/primary</item>
+         <item name="colorPrimaryDark">@color/primaryDark</item>
+         <item name="colorAccent">@color/accent</item> -->
     </style>
 
     <style name="CustomFontTextViewStyle.ListView.Small.Bold" parent="CustomFontTextViewStyle">
@@ -275,7 +275,7 @@
     </style>
 
     <style name="CustomFontTextViewStyle.ClientList.NoPadding" parent="CustomFontTextViewStyle">
-        <item name="android:paddingLeft">0dp</item>
+        <item name="android:paddingStart">0dp</item>
     </style>
 
     <style name="CustomFontTextViewStyle.ClientList.Medium" parent="CustomFontTextViewStyle">
@@ -300,6 +300,18 @@
         <item name="fontVariant">medium</item>
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.tabIndicator.sub" parent="CustomFontTextViewStyle.tabIndicator">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">@dimen/activity_sub_title_size</item>
+        <item name="android:textColor">@color/dark_grey</item>
+    </style>
+
+    <style name="CustomFontTextViewStyle.tabIndicator.sub.white" parent="CustomFontTextViewStyle.tabIndicator">
+        <item name="fontVariant">medium</item>
+        <item name="android:textSize">@dimen/activity_sub_title_size</item>
+        <item name="android:textColor">@color/white</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

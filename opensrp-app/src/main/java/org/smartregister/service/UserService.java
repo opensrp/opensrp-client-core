@@ -7,7 +7,10 @@ import android.util.Base64;
 import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.SyncConfiguration;
+import org.smartregister.SyncFilter;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -15,6 +18,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
+import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
@@ -359,6 +363,7 @@ public class UserService {
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
         saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
+        saveUserLocationId(userName, getUserLocationId(userInfo));
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
@@ -382,7 +387,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -393,7 +398,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -404,7 +409,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -421,7 +426,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
     }
@@ -438,7 +443,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
 
         return null;
@@ -456,9 +461,30 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.v("Error : ", e.getMessage());
+            Log.e("Error : ", e.getMessage());
         }
         return null;
+    }
+
+    public String getUserLocationId(LoginResponseData userInfo) {
+        try {
+            if (userInfo != null && userInfo.team != null && userInfo.team.locations != null && !userInfo.team.locations.isEmpty()) {
+                for (TeamLocation teamLocation : userInfo.team.locations) {
+                    if (teamLocation != null) {
+                        return teamLocation.uuid;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("Error : ", e.getMessage());
+        }
+        return null;
+    }
+
+    public void saveUserLocationId(String userName, String locationId) {
+        if (userName != null) {
+            allSharedPreferences.saveUserLocalityId(userName, locationId);
+        }
     }
 
     public void saveAnmLocation(LocationTree anmLocation) {
@@ -499,13 +525,36 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
-                if (privateKeyEntry != null && userInfo.team != null && userInfo.team.team != null && userInfo.team.team.uuid != null) {
+
+                if (password == null) {
+                    return;
+                }
+
+
+                String groupId = null;
+
+                SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
+                if (syncConfiguration.getEncryptionParam() != null) {
+                    SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
+                    if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
+                        groupId = getUserDefaultTeamId(userInfo);
+                    } else if (SyncFilter.LOCATION.equals(syncFilter)) {
+                        groupId = getUserLocationId(userInfo);
+                    } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
+                        groupId = password;
+                    }
+                }
+
+                if (StringUtils.isBlank(groupId)) {
+                    return;
+                }
+
+                if (privateKeyEntry != null) {
                     // First save the encrypted password
                     String encryptedPassword = encryptString(privateKeyEntry, password);
                     allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
 
                     // Then save the encrypted group
-                    String groupId = userInfo.team.team.uuid;
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
                     allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 

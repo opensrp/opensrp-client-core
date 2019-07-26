@@ -1,18 +1,24 @@
 package org.smartregister.util;
 
+import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.repository.EventClientRepository;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 6/25/18.
@@ -135,5 +141,86 @@ public class DatabaseMigrationUtils {
 
         database.endTransaction();
 
+    }
+
+
+    private static boolean tableExists(SQLiteDatabase database, String tableName) {
+        Cursor cursor = database.rawQuery("SELECT name FROM sqlite_master WHERE type='table' AND name= ?", new String[]{tableName});
+        boolean exists = false;
+        if (cursor != null) {
+            exists = cursor.getCount() > 0;
+            cursor.close();
+        }
+        return exists;
+    }
+
+    public static void createAddedECTables(SQLiteDatabase database, Set<String> bindings, CommonFtsObject commonFtsObject) {
+        ArrayList<CommonRepositoryInformationHolder> bindTypes = org.smartregister.Context.bindtypes;
+        for (CommonRepositoryInformationHolder bindType : bindTypes) {
+            if (bindings.contains(bindType.getBindtypename()) && !tableExists(database, bindType.getBindtypename())) {
+                CoreLibrary.getInstance().context().commonrepository(bindType.getBindtypename()).onCreate(database);
+            }
+        }
+
+
+        if (commonFtsObject != null) {
+            for (String ftsTable : commonFtsObject.getTables()) {
+                String ftsSearchTableName = CommonFtsObject.searchTableName(ftsTable);
+                if (bindings.contains(ftsTable) && !tableExists(database, ftsSearchTableName)) {
+                    Set<String> searchColumns = new LinkedHashSet<String>();
+                    searchColumns.add(CommonFtsObject.idColumn);
+                    searchColumns.add(CommonFtsObject.relationalIdColumn);
+                    searchColumns.add(CommonFtsObject.phraseColumn);
+                    searchColumns.add(CommonFtsObject.isClosedColumn);
+
+                    String[] mainConditions = commonFtsObject.getMainConditions(ftsTable);
+                    if (mainConditions != null) {
+                        for (String mainCondition : mainConditions) {
+                            if (!mainCondition.equals(CommonFtsObject.isClosedColumnName)) {
+                                searchColumns.add(mainCondition);
+                            }
+                        }
+                    }
+
+                    String[] sortFields = commonFtsObject.getSortFields(ftsTable);
+                    if (sortFields != null) {
+                        for (String sortValue : sortFields) {
+                            if (sortValue.startsWith("alerts.")) {
+                                sortValue = sortValue.split("\\.")[1];
+                            }
+                            searchColumns.add(sortValue);
+                        }
+                    }
+
+                    String joinedSearchColumns = StringUtils.join(searchColumns, ",");
+
+                    String searchSql =
+                            "create virtual table " + ftsSearchTableName
+                                    + " using fts4 (" + joinedSearchColumns + ");";
+                    database.execSQL(searchSql);
+                }
+            }
+        }
+    }
+
+    public static boolean performCipherMigrationToV4(@NonNull SQLiteDatabase database) {
+        if (!CoreLibrary.getInstance().context().allSharedPreferences().isMigratedToSqlite4()) {
+            Cursor cursor = database.rawQuery("PRAGMA cipher_migrate", new Object[]{});
+
+            if (cursor != null && cursor.moveToFirst()) {
+                String value = cursor.getString(0);
+
+                if (cursor != null) {
+                    cursor.close();
+                }
+
+                return (!TextUtils.isEmpty(value) && "0".equals(value));
+            }
+
+            return false;
+        } else {
+            Timber.i("SQLiteCipher database is already v4");
+            return true;
+        }
     }
 }

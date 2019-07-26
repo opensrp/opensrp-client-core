@@ -1,6 +1,7 @@
 package org.smartregister.view.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,6 +36,8 @@ import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.DialogOption;
 
+import java.util.HashMap;
+
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -64,9 +67,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             return false;
         }
     };
-    private ImageView qrCodeScanImageView;
-    private ProgressBar syncProgressBar;
-    private ImageView syncButton;
+    protected ImageView qrCodeScanImageView;
+    protected ProgressBar syncProgressBar;
+    protected ImageView syncButton;
     protected boolean globalQrSearch = false;
     protected final TextWatcher textWatcher = new TextWatcher() {
         @Override
@@ -122,7 +125,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_base_register, container, false);
+        View view = inflater.inflate(getLayout(), container, false);
         rootView = view;//handle to the root
 
         Toolbar toolbar = view.findViewById(R.id.register_toolbar);
@@ -138,6 +141,12 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         setupViews(view);
         return view;
+    }
+
+
+    @LayoutRes
+    protected int getLayout() {
+        return R.layout.fragment_base_register;
     }
 
     protected abstract void initializePresenter();
@@ -172,6 +181,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     public abstract void setUniqueID(String qrCode);
+
+    public abstract void setAdvancedSearchFormData(HashMap<String, String> advancedSearchFormData);
 
     @Override
     public void setupViews(View view) {
@@ -425,7 +436,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         super.onPause();
     }
 
-    private void refreshSyncProgressSpinner() {
+    protected void refreshSyncProgressSpinner() {
         if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
             if (syncProgressBar != null) {
                 syncProgressBar.setVisibility(View.VISIBLE);

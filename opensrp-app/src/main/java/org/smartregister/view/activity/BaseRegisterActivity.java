@@ -94,7 +94,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         registerBottomNavigation();
     }
 
-    private void registerBottomNavigation() {
+    protected void registerBottomNavigation() {
         bottomNavigationHelper = new BottomNavigationHelper();
         bottomNavigationView = findViewById(R.id.bottom_navigation);
         if (bottomNavigationView != null) {
@@ -243,7 +243,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     @Override
     public void onResume() {
         super.onResume();
-        if (bottomNavigationView.getSelectedItemId() != R.id.action_clients) {
+        if (bottomNavigationView != null && bottomNavigationView.getSelectedItemId() != R.id.action_clients) {
             setSelectedBottomBarMenuItem(R.id.action_clients);
         }
     }
@@ -298,23 +298,24 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[], @NonNull int[] grantResults) {switch (requestCode) {
-        case PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE:
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                try {
-                    Intent intent = new Intent(this, BarcodeScanActivity.class);
-                    startActivityForResult(intent, AllConstants.BARCODE.BARCODE_REQUEST_CODE);
-                } catch (SecurityException e) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    try {
+                        Intent intent = new Intent(this, BarcodeScanActivity.class);
+                        startActivityForResult(intent, AllConstants.BARCODE.BARCODE_REQUEST_CODE);
+                    } catch (SecurityException e) {
+                        Utils.showToast(this, getString(R.string.allow_camera_management));
+                    }
+                } else {
                     Utils.showToast(this, getString(R.string.allow_camera_management));
                 }
-            } else {
-                Utils.showToast(this, getString(R.string.allow_camera_management));
-            }
-            break;
-        default:
-            break;
-    }    }
-
+                break;
+            default:
+                break;
+        }
+    }
 
     public void switchToFragment(final int position) {
         Log.v("we are here", "switchtofragragment");
@@ -344,7 +345,9 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void setSelectedBottomBarMenuItem(int itemId) {
-        bottomNavigationView.setSelectedItemId(itemId);
+        if (bottomNavigationView != null) {
+            bottomNavigationView.setSelectedItemId(itemId);
+        }
     }
 
     public void setSearchTerm(String searchTerm) {

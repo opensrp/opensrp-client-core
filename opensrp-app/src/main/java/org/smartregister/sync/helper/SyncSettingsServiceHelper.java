@@ -15,10 +15,8 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
 
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.List;
 
-import static org.smartregister.repository.AllSharedPreferences.LAST_SETTINGS_SYNC_TIMESTAMP;
 import static org.smartregister.util.Log.logError;
 
 /**
@@ -59,20 +57,18 @@ public class SyncSettingsServiceHelper {
             Log.e(TAG, e.getMessage());
         }
 
-        JSONArray settings = pullSettingsFromServer();
+        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
 
         if (settings != null && settings.length() > 0) {
-            settings = saveSetting(settings);
-            sharedPreferences.updateLastSettingsSyncTimeStamp(Calendar.getInstance().getTimeInMillis());
+            settings = ServerSettingsHelper.saveSetting(settings);
         }
 
         return settings == null ? 0 : settings.length();
     }
 
-    public JSONArray pullSettingsFromServer() throws JSONException {
-        return pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
-    }
-
+    /**
+     * @param syncFilterValue the actual value to use with the filter param
+     */
     public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
 
         String endString = "/";
@@ -81,7 +77,7 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam() + "=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
                 syncFilterValue + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
@@ -139,13 +135,7 @@ public class SyncSettingsServiceHelper {
 
         for (int i = 0; i < unsyncedSettings.size(); i++) {
 
-            SyncableJSONObject settingsWrapper = new SyncableJSONObject();
-
-            settingsWrapper.put("settings", new JSONArray(unsyncedSettings.get(i).getValue()));
-
-            settingsWrapper.put("identifier", unsyncedSettings.get(i).getKey());
-
-            settingsWrapper.put("version", unsyncedSettings.get(i).getVersion());
+            SyncableJSONObject settingsWrapper = new SyncableJSONObject(unsyncedSettings.get(i).getValue());
 
             settingsArray.put(settingsWrapper);
         }
@@ -172,22 +162,6 @@ public class SyncSettingsServiceHelper {
         this.password = password;
     }
 
-    private JSONArray saveSetting(JSONArray serverSettings) throws JSONException {
-        for (int i = 0; i < serverSettings.length(); i++) {
-
-            JSONObject jsonObject = serverSettings.getJSONObject(i);
-            Setting characteristic = new Setting();
-            characteristic.setKey(jsonObject.getString("identifier"));
-            characteristic.setValue(jsonObject.getString("settings"));
-            characteristic.setSyncStatus(SyncStatus.SYNCED.name());
-
-            CoreLibrary.getInstance().context().allSettings().put(LAST_SETTINGS_SYNC_TIMESTAMP, characteristic.getVersion());
-            CoreLibrary.getInstance().context().allSettings().putSetting(characteristic);
-
-        }
-
-        return serverSettings;
-    }
 
 }
 

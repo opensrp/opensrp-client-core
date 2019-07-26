@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import android.content.Intent;
 import android.widget.TableRow;
 
 import org.joda.time.DateTime;
@@ -8,6 +9,8 @@ import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.domain.FetchStatus;
+import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -189,5 +192,22 @@ public class UtilsTest extends BaseUnitTest {
         Assert.assertEquals(view.getText().toString(), "hello world");
     }
 
+    @Test
+    public void testCompleteSyncIntent() throws Exception {
+        Intent intent = new Intent();
+        Assert.assertEquals(intent.getExtras(), null);
+        intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, FetchStatus.fetched);
+        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
+
+        Intent UtilIntent = Utils.completeSync(FetchStatus.fetched);
+
+        Assert.assertSame(intent.getExtras().get("complete_status"), UtilIntent.getExtras().get("complete_status"));
+        Assert.assertSame(intent.getExtras().get("fetch_status"), UtilIntent.getExtras().get("fetch_status"));
+        Assert.assertEquals(FetchStatus.fetched, UtilIntent.getExtras().get("fetch_status"));
+        Assert.assertSame(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, UtilIntent.getAction());
+        Assert.assertSame(0, Utils.completeSync(FetchStatus.fetched).getFlags());
+
+    }
 
 }

@@ -13,6 +13,7 @@ import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 /**
@@ -44,7 +45,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     @Override
     protected LoginResponse doInBackground(Void... params) {
         LoginResponse loginResponse = getOpenSRPContext().userService().isValidRemoteLogin(mUsername, mPassword);
-        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) == null) {
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
 
             publishProgress(R.string.loading_client_settings);
@@ -53,13 +54,11 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setUsername(mUsername);
             syncSettingsServiceHelper.setPassword(mPassword);
 
-            String teamId = mLoginView.getUserTeamId(loginResponse);
-
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(teamId);
+                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
 
                 JSONObject data = new JSONObject();
-                data.put(AllConstants.PREF_KEY.SITE_CHARACTERISTICS, settings);
+                data.put(AllConstants.PREF_KEY.SETTINGS, settings);
                 loginResponse.setRawData(data);
 
             } catch (JSONException e) {

@@ -19,6 +19,7 @@ import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.LANGUAGE_PREFERENCE_KEY;
 import static org.smartregister.AllConstants.PIONEER_USER;
 import static org.smartregister.AllConstants.SERVER_TIMEZONE;
+import static org.smartregister.AllConstants.USER_LOCALITY_ID_PREFIX;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
@@ -30,6 +31,8 @@ public class AllSharedPreferences {
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
     private static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public final static String LAST_SETTINGS_SYNC_TIMESTAMP = "LAST_SETTINGS_SYNC_TIMESTAMP";
+    private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
+    private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
 
     private SharedPreferences preferences;
 
@@ -92,6 +95,20 @@ public class AllSharedPreferences {
     public String fetchDefaultLocalityId(String username) {
         if (username != null) {
             return preferences.getString(DEFAULT_LOCALITY_ID_PREFIX + username, null);
+        }
+        return null;
+    }
+
+    public void saveUserLocalityId(String username, String localityId) {
+        if (username != null) {
+            preferences.edit().putString(USER_LOCALITY_ID_PREFIX + username, localityId)
+                    .commit();
+        }
+    }
+
+    public String fetchUserLocalityId(String username) {
+        if (username != null) {
+            return preferences.getString(USER_LOCALITY_ID_PREFIX + username, null);
         }
         return null;
     }
@@ -249,7 +266,7 @@ public class AllSharedPreferences {
     }
 
     public long fetchLastCheckTimeStamp() {
-        return preferences.getLong(LAST_CHECK_TIMESTAMP,0);
+        return preferences.getLong(LAST_CHECK_TIMESTAMP, 0);
     }
 
     public void updateLastCheckTimeStamp(long lastSyncTimeStamp) {
@@ -264,4 +281,28 @@ public class AllSharedPreferences {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
     }
 
+    public boolean isMigratedToSqlite4() {
+        return preferences.getBoolean(MIGRATED_TO_SQLITE_4, false);
+    }
+
+    public void setMigratedToSqlite4() {
+        preferences.edit().putBoolean(MIGRATED_TO_SQLITE_4, true).commit();
+    }
+
+    public int getLastPeerToPeerSyncProcessedEvent() {
+        return preferences.getInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, -1);
+    }
+
+    public void setLastPeerToPeerSyncProcessedEvent(int lastEventRowId) {
+        preferences.edit().putInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, lastEventRowId).commit();
+    }
+
+    public boolean isPeerToPeerUnprocessedEvents() {
+        return getLastPeerToPeerSyncProcessedEvent() != -1;
+    }
+
+    public void resetLastPeerToPeerSyncProcessedEvent() {
+        setLastPeerToPeerSyncProcessedEvent(-1);
+    }
 }
+

@@ -2,8 +2,6 @@ package org.smartregister.view.contract;
 
 import android.app.Activity;
 
-import org.smartregister.domain.LoginResponse;
-
 import java.lang.ref.WeakReference;
 
 public interface BaseLoginContract {
@@ -25,7 +23,7 @@ public interface BaseLoginContract {
 
         org.smartregister.Context getOpenSRPContext();
 
-        boolean isSiteCharacteristicsSet();
+        boolean isServerSettingsSet();
     }
 
     interface View {
@@ -51,8 +49,6 @@ public interface BaseLoginContract {
         void goToHome(boolean isRemote);
 
         Activity getActivityContext();
-
-        String getUserTeamId(LoginResponse loginResponse);
     }
 
     interface Interactor {

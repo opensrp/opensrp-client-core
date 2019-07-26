@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">échantillon opensrp-app</string>
+    <string name="action_settings">Réglages</string>
+
+    <string name="sample">La nuit se rassemble et ma montre commence</string>
+    <string name="language_label">Choisir la langue</string>
+</resources>

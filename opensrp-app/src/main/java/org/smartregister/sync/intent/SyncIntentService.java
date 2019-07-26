@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
@@ -20,9 +21,10 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
+import org.smartregister.util.SyncUtils;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
 import java.util.Date;
@@ -35,6 +37,7 @@ public class SyncIntentService extends IntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
+    private SyncUtils syncUtils;
 
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
@@ -47,6 +50,7 @@ public class SyncIntentService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = getBaseContext();
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        syncUtils = new SyncUtils(getBaseContext());
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -69,14 +73,22 @@ public class SyncIntentService extends IntentService {
         }
 
         try {
-            pushToServer();
-            pullECFromServer();
+            boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+            if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
+                pushToServer();
+            }
+            if (hasValidAuthorization) {
+                pullECFromServer();
+            } else {
+                syncUtils.logoutUser();
+            }
 
         } catch (Exception e) {
             Log.e(getClass().getName(), e.getMessage(), e);
             complete(FetchStatus.fetchedFailed);
         }
     }
+
 
     private void pullECFromServer() {
         fetchRetry(0);
@@ -85,7 +97,7 @@ public class SyncIntentService extends IntentService {
     private synchronized void fetchRetry(final int count) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-            if (StringUtils.isBlank(configs.getSyncFilterParam()) || StringUtils.isBlank(configs.getSyncFilterValue())) {
+            if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -100,7 +112,7 @@ public class SyncIntentService extends IntentService {
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
 
-            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
+            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
             Log.i(SyncIntentService.class.getName(), "URL: " + url);
 
             if (httpAgent == null) {
@@ -154,7 +166,7 @@ public class SyncIntentService extends IntentService {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
-            ClientProcessorForJava.getInstance(context).processClient(events);
+            DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Log.e(getClass().getName(), "Process Client Exception: " + e.getMessage(), e.getCause());
@@ -184,11 +196,11 @@ public class SyncIntentService extends IntentService {
                 }
                 // create request body
                 JSONObject request = new JSONObject();
-                if (pendingEvents.containsKey(context.getString(R.string.clients_key))) {
-                    request.put(context.getString(R.string.clients_key), pendingEvents.get(context.getString(R.string.clients_key)));
+                if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
+                    request.put(AllConstants.KEY.CLIENTS, pendingEvents.get(AllConstants.KEY.CLIENTS));
                 }
-                if (pendingEvents.containsKey(context.getString(R.string.events_key))) {
-                    request.put(context.getString(R.string.events_key), pendingEvents.get(context.getString(R.string.events_key)));
+                if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
+                    request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
                 String jsonPayload = request.toString();
                 Response<String> response = httpAgent.post(

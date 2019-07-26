@@ -2,8 +2,7 @@ package org.smartregister.view.contract;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.EasyMap;
 
@@ -16,8 +15,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 
-@RunWith(RobolectricTestRunner.class)
-public class ANCClientTest {
+public class ANCClientTest extends BaseUnitTest {
 
     private ANCClient getClient() {
         return new ANCClient("entity id 1", "village name 1", "anc name", "1234567", "Tue, 25 Feb 2014 00:00:00 GMT", "2013-05-25");

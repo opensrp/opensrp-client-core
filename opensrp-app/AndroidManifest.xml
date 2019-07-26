@@ -99,6 +99,8 @@
 
         <service android:name=".service.intentservices.ReplicationIntentService" />
 
+        <service android:name=".sync.intent.P2pProcessRecordsService"/>
+
         <meta-data
             android:name="com.google.android.gms.vision.Dependencies"
             android:value="barcode" />

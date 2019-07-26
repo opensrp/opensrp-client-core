@@ -27,6 +27,10 @@ public class ANMLocationController {
         });
     }
 
+    public void evict() {
+        cache.evict(ANM_LOCATION);
+    }
+
     public String getLocationJSON() {
         return cache.get(ANM_LOCATION_JSON, new CacheableData<String>() {
             @Override

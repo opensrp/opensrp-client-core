@@ -2,22 +2,28 @@ package org.smartregister.view.activity;
 
 import android.app.Application;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.AllConstants;
+import org.smartregister.BuildConfig;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
+import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.util.BitmapImageCache;
+import org.smartregister.util.CrashLyticsTree;
 import org.smartregister.util.OpenSRPImageLoader;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 import static org.smartregister.util.Log.logError;
 
@@ -30,6 +36,7 @@ public abstract class DrishtiApplication extends Application {
     protected Context context;
     protected Repository repository;
     private String password;
+    private String username;
 
     public static synchronized DrishtiApplication getInstance() {
         return mInstance;
@@ -65,10 +72,23 @@ public abstract class DrishtiApplication extends Application {
     public void onCreate() {
         try {
             super.onCreate();
+            initializeCrashLyticsTree();
+
             mInstance = this;
             SQLiteDatabase.loadLibs(this);
         } catch (UnsatisfiedLinkError e) {
             logError("Error on onCreate: " + e);
+        }
+    }
+
+    /**
+     * Plant the crashlytics tree fro every application to use
+     */
+    public void initializeCrashLyticsTree(){
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            Timber.plant(new CrashLyticsTree());
         }
     }
 
@@ -102,5 +122,17 @@ public abstract class DrishtiApplication extends Application {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    @NonNull
+    public ClientProcessorForJava getClientProcessor() {
+        return ClientProcessorForJava.getInstance(context.applicationContext());
+    }
+
+    public String getUsername() {
+        if (username == null) {
+            username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
+        }
+        return username;
     }
 }

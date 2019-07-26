@@ -12,10 +12,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.smartregister.AllConstants;
 import org.smartregister.sync.mock.MockEditor;
 
+import static org.smartregister.AllConstants.CAMPAIGNS;
+
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 27)
 public class AllSharedPreferencesTest extends TestCase {
     @Mock
     private SharedPreferences preferences;
@@ -227,6 +231,22 @@ public class AllSharedPreferencesTest extends TestCase {
 
         Mockito.verify(editor).putBoolean(AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY, true);
         Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void shouldSaveCampaignsOperationalArea() {
+        allSharedPreferences.savePreference(CAMPAIGNS,"Miti Rural Health Centre");
+        Mockito.verify(preferences, Mockito.times(1)).edit();
+    }
+
+    @Test
+    public void shouldGetCampaignsOperationalArea() {
+        Assert.assertEquals(allSharedPreferences.getPreference(CAMPAIGNS), str);
+    }
+
+    @Test
+    public void assertSaveIsSyncInitialIsFalse() {
+        Assert.assertFalse(allSharedPreferences.fetchIsSyncInitial());
     }
 
 }

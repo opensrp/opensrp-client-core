@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import org.smartregister.AllConstants;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.SecuredActivity;
 
 /**
@@ -26,15 +27,17 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         try {
             String action = intent.getAction();
-
             switch (action) {
+
                 case Intent.ACTION_TIME_CHANGED:
-                    ((SecuredActivity) activity).showToast("TIME CHANGED");
+                    //((SecuredActivity) activity).showToast("TIME CHANGED");
                     Log.d(TAG, "timechanged");
+                    forceFullySignOut();
                     break;
                 case Intent.ACTION_TIMEZONE_CHANGED:
-                    ((SecuredActivity) activity).showToast("TIMEZONE CHANGED");
+                    //((SecuredActivity) activity).showToast("TIMEZONE CHANGED");
                     Log.d(TAG, "timezonechanged");
+                    forceFullySignOut();
                     break;
                 case AllConstants.CloudantSync.ACTION_DATABASE_CREATED:
 //                      ((SecuredActivity) activity).loadDatabase();
@@ -56,5 +59,9 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
             Log.e(TAG, e.getMessage());
         }
 
+    }
+    private void forceFullySignOut(){
+        DrishtiApplication application = (DrishtiApplication) activity.getApplication();
+        application.logoutCurrentUser();
     }
 }

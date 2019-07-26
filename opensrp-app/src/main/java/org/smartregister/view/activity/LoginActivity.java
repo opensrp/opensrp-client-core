@@ -25,6 +25,8 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.util.LangUtils;
+import org.smartregister.util.Utils;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
 import org.smartregister.view.ProgressIndicator;
@@ -45,6 +47,13 @@ public class LoginActivity extends Activity {
     private EditText userNameEditText;
     private EditText passwordEditText;
     private ProgressDialog progressDialog;
+
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        // get language from prefs
+        String lang = LangUtils.getLanguage(base.getApplicationContext());
+        super.attachBaseContext(LangUtils.setAppLocale(base, lang));
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,10 +84,10 @@ public class LoginActivity extends Activity {
     }
 
     private void initializeBuildDetails() {
-        TextView buildDetailsTextView = (TextView) findViewById(R.id.login_build);
+        TextView buildDetailsTextView = findViewById(R.id.login_build);
         try {
-            buildDetailsTextView
-                    .setText("Version " + getVersion() + ", Built on: " + getBuildDate());
+            buildDetailsTextView.setText(String.format(getString(R.string.app_version), Utils.getVersion(this
+                    .getApplicationContext()), Utils.getBuildDate(true)));
         } catch (Exception e) {
             logError("Error fetching build details: " + e);
         }
