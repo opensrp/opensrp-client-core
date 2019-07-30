@@ -1,13 +1,9 @@
 package org.smartregister;
 
-import android.content.res.AssetManager;
-import android.util.Log;
-
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.IntegerUtil;
 import org.smartregister.view.activity.DrishtiApplication;
 
-import java.io.IOException;
 import java.util.Properties;
 
 public class DristhiConfiguration {
@@ -22,16 +18,12 @@ public class DristhiConfiguration {
     protected static final String APP_NAME = "APP_NAME";
     protected static final String SYNC_FORM = "SYNC_FORM";
     protected static AllSharedPreferences preferences;
-    protected Properties properties = new Properties();
+    protected Properties properties;
     protected String dummyData = null;
 
-    public DristhiConfiguration(AssetManager assetManager) {
+    public DristhiConfiguration() {
         preferences = CoreLibrary.getInstance().context().allSharedPreferences();
-        try {
-            properties.load(assetManager.open("app.properties"));
-        } catch (IOException e) {
-            Log.e(TAG, e.toString(), e);
-        }
+        properties = CoreLibrary.getInstance().context().getAppProperties();
     }
 
     public String getDummyData() {
@@ -77,4 +69,5 @@ public class DristhiConfiguration {
     public DrishtiApplication getDrishtiApplication() {
         return DrishtiApplication.getInstance();
     }
+
 }
