@@ -1,5 +1,6 @@
 package org.smartregister;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -233,7 +234,13 @@ public class Context {
     }
 
     public android.content.Context applicationContext() {
-        return applicationContext;
+        if (applicationContext != null) {//Fix to enable Multi language support for this context
+            Configuration configuration = applicationContext.getResources().getConfiguration();
+            configuration.setLocale(configuration.locale);
+            return applicationContext.createConfigurationContext(configuration);
+        } else {
+            return applicationContext;
+        }
     }
 
     public BeneficiaryService beneficiaryService() {

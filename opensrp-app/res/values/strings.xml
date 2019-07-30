@@ -403,5 +403,16 @@
     <string name="do_not_edit_client_records_until_complete">Do not edit client records until complete.</string>
     <string name="processing_disclaimer">Records will be processed for up to 10 minutes before your records will be updated. Do not edit medical records until the process is complete.</string>
 
+    <!-- Duration -->
+    <string name="x_seconds">%1$ds</string>
+    <string name="x_minutes">%1$dm</string>
+    <string name="x_hours">%1$dh</string>
+    <string name="x_days">%1$dd</string>
+    <string name="x_weeks">%1$dw</string>
+    <string name="x_weeks_days">%1$dw %2$dd</string>
+    <string name="x_months">%1$dm</string>
+    <string name="x_months_weeks">%1$dm %2$dw</string>
+    <string name="x_years">%1$dy</string>
+    <string name="x_years_months">%1$dy %2$dm</string>
 
 </resources>

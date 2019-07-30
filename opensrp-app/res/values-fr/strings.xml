@@ -399,4 +399,15 @@
     <string name="processing_disclaimer">Les enregistrements seront traités pour 10 minutes avant que vos enregistrements ne soient mis à jour. N\'éditez pas les enregistrements médicaux tant que le processus n\'est pas terminé. </string>
 
 
+    <!-- Duration -->
+    <string name="x_seconds">%1$ds</string>
+    <string name="x_minutes">%1$dm</string>
+    <string name="x_hours">%1$dh</string>
+    <string name="x_days">%1$dj</string>
+    <string name="x_weeks">%1$ds</string>
+    <string name="x_weeks_days">%1$ds %2$dj</string>
+    <string name="x_months">%1$dm</string>
+    <string name="x_months_weeks">%1$dm %2$ds</string>
+    <string name="x_years">%1$da</string>
+    <string name="x_years_months">%1$da %2$dm</string>
 </resources>

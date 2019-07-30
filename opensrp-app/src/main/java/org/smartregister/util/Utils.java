@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -726,5 +727,17 @@ public class Utils {
         }
         return properties;
 
+    }
+
+    public static String getTranslatedIdentifier(String key) {
+
+        String myKey;
+        try {
+            myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
+
+        } catch (Resources.NotFoundException resourceNotFoundException) {
+            myKey = key;
+        }
+        return myKey;
     }
 }
