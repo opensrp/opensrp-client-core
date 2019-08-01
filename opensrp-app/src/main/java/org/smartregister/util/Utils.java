@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -726,5 +727,21 @@ public class Utils {
         }
         return properties;
 
+    }
+/**
+ * This util does a look up from the strings file without specifying an android resource id , rather the identifier(key) of the resource
+ * @param key a string identifier that corresponds to a key in the strings.xml file e.g. for R.string.key key is the identifier
+ * @return String value from resource file
+ * */
+    public static String getTranslatedIdentifier(String key) {
+
+        String myKey;
+        try {
+            myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
+
+        } catch (Resources.NotFoundException resourceNotFoundException) {
+            myKey = key;
+        }
+        return myKey;
     }
 }
