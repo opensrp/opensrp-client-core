@@ -3,6 +3,8 @@ package org.smartregister.util;
 import android.content.Intent;
 import android.widget.TableRow;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -55,6 +58,11 @@ public class UtilsTest extends BaseUnitTest {
     public void assertConvertDateTimeFormatReturnsDate() throws Exception {
         org.junit.Assert.assertEquals("24-07-1985 00:00:00", Utils.convertDateTimeFormat("1985-07-24T00:00:00.000Z", true));
 //        org.junit.Assert.assertEquals("", Utils.convertDateTimeFormat("19850724", true));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void assertConvertDateTimeFormatThrowsExceptionIfUnpasrsableDate() {
+        Utils.convertDateTimeFormat("1985-07-24XXXYYY", false);
     }
 
     @Test
@@ -208,6 +216,51 @@ public class UtilsTest extends BaseUnitTest {
         Assert.assertSame(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, UtilIntent.getAction());
         Assert.assertSame(0, Utils.completeSync(FetchStatus.fetched).getFlags());
 
+    }
+
+    @Test
+    public void testKgStringSuffixReturnsCorrectValueIfParamFloat() {
+
+        String result = Utils.kgStringSuffix(2.5f);
+        Assert.assertNotNull(result);
+        Assert.assertEquals("2.5 kg", result);
+    }
+
+    @Test
+    public void testKgStringSuffixReturnsCorrectValueIfParamString() {
+
+        String result = Utils.kgStringSuffix("3.4");
+        Assert.assertNotNull(result);
+        Assert.assertEquals("3.4 kg", result);
+    }
+
+    @Test
+    public void testCmStringSuffixReturnsCorrectValueIfParamFloat() {
+
+        String result = Utils.kgStringSuffix(1.5f);
+        Assert.assertNotNull(result);
+        Assert.assertEquals("1.5 cm", result);
+    }
+
+    @Test
+    public void testCmStringSuffixReturnsCorrectValueIfParamString() {
+
+        String result = Utils.kgStringSuffix("45.9");
+        Assert.assertNotNull(result);
+        Assert.assertEquals("45.9 cm", result);
+    }
+
+
+    @Test
+    public void testConvertConvertsCommonPersonObjectToCommonPersonObjectClient() {
+
+        Map<String, String> map = ImmutableMap.of("first_name", "Martin", "last_name", "Bull", "dob", "10-01-1970", "phone_number", "07246738839", "gender", "Male");
+        CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient("dfh45453483-34dfd893-394343cds3", map, "Marchello");
+
+        Assert.assertNotNull(commonPersonObjectClient);
+        Assert.assertNotNull(commonPersonObjectClient.getCaseId());
+        Assert.assertNotNull(commonPersonObjectClient.getDetails());
+        Assert.assertEquals(commonPersonObjectClient.getDetails().get("first_name"), "Martin");
     }
 
 }

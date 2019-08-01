@@ -728,7 +728,11 @@ public class Utils {
         return properties;
 
     }
-
+/**
+ * This util does a look up from the strings file without specifying an android resource id , rather the identifier(key) of the resource
+ * @param key a string identifier that corresponds to a key in the strings.xml file e.g. for R.string.key key is the identifier
+ * @return String value from resource file
+ * */
     public static String getTranslatedIdentifier(String key) {
 
         String myKey;

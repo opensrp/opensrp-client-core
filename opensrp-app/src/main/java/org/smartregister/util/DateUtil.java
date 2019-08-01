@@ -1,6 +1,8 @@
 package org.smartregister.util;
 
 
+import android.content.Context;
+
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -111,8 +113,11 @@ public class DateUtil {
 
     }
 
-
     public static String getDuration(DateTime dateTime) {
+        return getDuration(CoreLibrary.getInstance().context().applicationContext(), dateTime);
+    }
+
+    public static String getDuration(Context context, DateTime dateTime) {
         if (dateTime != null) {
             Calendar dateCalendar = Calendar.getInstance();
             dateCalendar.setTime(dateTime.toDate());
@@ -128,19 +133,25 @@ public class DateUtil {
             today.set(Calendar.MILLISECOND, 0);
 
             long timeDiff = Math.abs(dateCalendar.getTimeInMillis() - today.getTimeInMillis());
-            return getDuration(timeDiff);
+            return getDuration(context, timeDiff);
         }
         return null;
     }
 
     public static String getDuration(long timeDiff) {
 
+        return getDuration(CoreLibrary.getInstance().context().applicationContext(), timeDiff);
+
+    }
+
+    public static String getDuration(Context context, long timeDiff) {
+
         String duration = "";
         if (timeDiff >= 0
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
             // Represent in days
             long days = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
-            duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_days, days);
+            duration = context.getResources().getString(R.string.x_days, days);
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
             // Represent in weeks and days
@@ -156,9 +167,9 @@ public class DateUtil {
             }
 
             if (days > 0) {
-                duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_weeks_days, weeks, days);
+                duration = context.getResources().getString(R.string.x_weeks_days, weeks, days);
             } else {
-                duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_weeks, weeks);
+                duration = context.getResources().getString(R.string.x_weeks, weeks);
             }
 
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
@@ -177,12 +188,12 @@ public class DateUtil {
 
             if (months < 12) {
                 if (weeks > 0 && months < 12) {
-                    duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_months_weeks, months, weeks);
+                    duration = context.getResources().getString(R.string.x_months_weeks, months, weeks);
                 } else {
-                    duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_months, months);
+                    duration = context.getResources().getString(R.string.x_months, months);
                 }
             } else if (months >= 12) {
-                duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_years, 1);
+                duration = context.getResources().getString(R.string.x_years, 1);
             }
         } else {
             // Represent in years and months
@@ -198,9 +209,9 @@ public class DateUtil {
             }
 
             if (months > 0) {
-                duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_years_months, years, months);
+                duration = context.getResources().getString(R.string.x_years_months, years, months);
             } else {
-                duration = CoreLibrary.getInstance().context().applicationContext().getResources().getString(R.string.x_years, years);
+                duration = context.getResources().getString(R.string.x_years, years);
             }
         }
 
