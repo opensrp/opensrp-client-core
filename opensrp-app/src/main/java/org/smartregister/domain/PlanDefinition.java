@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by samuelgithengi on 4/29/19.
  */
-public class PlanDefinition {
+public class PlanDefinition implements Comparable<PlanDefinition> {
 
     private String identifier;
 
@@ -131,6 +131,11 @@ public class PlanDefinition {
 
     public void setServerVersion(Long serverVersion) {
         this.serverVersion = serverVersion;
+    }
+
+    @Override
+    public int compareTo(PlanDefinition o) {
+        return this.getName().compareTo(o.getName());
     }
 
     public class UseContext {
