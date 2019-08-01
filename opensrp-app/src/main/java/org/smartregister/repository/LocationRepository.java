@@ -10,9 +10,9 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.smartregister.domain.Location;
-import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.domain.LocationProperty;
+import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +22,8 @@ import java.util.List;
  */
 public class LocationRepository extends BaseRepository {
 
-    protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
+    protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
+            .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
 
     protected static final String ID = "_id";
     protected static final String UUID = "uuid";
@@ -90,11 +90,12 @@ public class LocationRepository extends BaseRepository {
         }
         return locations;
     }
+
     public List<String> getAllLocationIds() {
         Cursor cursor = null;
         List<String> locationIds = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT "+ID+" FROM " + getLocationTableName(), null);
+            cursor = getReadableDatabase().rawQuery("SELECT " + ID + " FROM " + getLocationTableName(), null);
             while (cursor.moveToNext()) {
                 locationIds.add(cursor.getString(0));
             }

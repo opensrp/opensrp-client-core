@@ -10,7 +10,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import org.joda.time.DateTime;
 import org.smartregister.domain.LocationProperty;
 
 import java.lang.reflect.Field;
@@ -24,8 +23,7 @@ import java.util.Set;
  */
 public class PropertiesConverter implements JsonSerializer<LocationProperty>, JsonDeserializer<LocationProperty> {
 
-    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-            .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
+    public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm").create();
 
     @Override
     public JsonElement serialize(LocationProperty src, Type typeOfSrc, JsonSerializationContext context) {
