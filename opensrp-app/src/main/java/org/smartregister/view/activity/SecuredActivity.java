@@ -155,8 +155,9 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(openSRPClientBroadCastReceiver);
-
+        if (openSRPClientBroadCastReceiver != null) {
+            unregisterReceiver(openSRPClientBroadCastReceiver);
+        }
     }
 
     protected abstract void onCreation();
