@@ -103,7 +103,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(19, contentValues.size());
+        assertEquals(21, contentValues.size());
 
         assertEquals("tsk11231jh22", contentValues.getAsString("_id"));
         assertEquals("IRS_2018_S1", contentValues.getAsString("plan_id"));
@@ -197,7 +197,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
                 task.getExecutionStartDate().getMillis(),
                 null,
                 task.getAuthoredOn().getMillis(), task.getLastModified().getMillis(),
-                task.getOwner(), task.getSyncStatus(), task.getServerVersion(),task.getStructureId(), task.getReasonReference()});
+                task.getOwner(), task.getSyncStatus(), task.getServerVersion(), task.getStructureId(), task.getReasonReference(), null, null});
         return cursor;
     }
 

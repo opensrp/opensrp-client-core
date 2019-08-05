@@ -60,7 +60,7 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     private String locationJson = LocationTest.structureJson;
 
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
 
@@ -150,7 +150,7 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
-        Location location = gson.fromJson(locationJson, Location.class);
+        Location location = LocationTest.gson.fromJson(locationJson, Location.class);
         cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
                 location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;
