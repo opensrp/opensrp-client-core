@@ -52,10 +52,12 @@ public class TaskRepository extends BaseRepository {
     private static final String SERVER_VERSION = "server_version";
     private static final String STRUCTURE_ID = "structure_id";
     private static final String REASON_REFERENCE = "reason_reference";
+    private static final String LOCATION = "location";
+    private static final String REQUESTER = "requester";
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE};
+    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER};
 
     protected static final String TASK_TABLE = "task";
 
@@ -79,9 +81,11 @@ public class TaskRepository extends BaseRepository {
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     SERVER_VERSION + " INTEGER, " +
                     STRUCTURE_ID + " VARCHAR, " +
-                    REASON_REFERENCE + " VARCHAR ) ";
+                    REASON_REFERENCE + " VARCHAR " +
+                    LOCATION + " VARCHAR " +
+                    REQUESTER + " VARCHAR  )";
 
-    private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
+    private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
 
     public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
@@ -91,7 +95,7 @@ public class TaskRepository extends BaseRepository {
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_TASK_TABLE);
-        database.execSQL(CREATE_TASK_CAMPAIGN_GROUP_INDEX);
+        database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
     public void addOrUpdate(Task task) {
@@ -120,6 +124,8 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(SYNC_STATUS, task.getSyncStatus());
         contentValues.put(STRUCTURE_ID, task.getStructureId());
         contentValues.put(REASON_REFERENCE, task.getReasonReference());
+        contentValues.put(LOCATION, task.getLocation());
+        contentValues.put(REQUESTER, task.getRequester());
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
 
@@ -215,6 +221,8 @@ public class TaskRepository extends BaseRepository {
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
         task.setStructureId(cursor.getString(cursor.getColumnIndex(STRUCTURE_ID)));
         task.setReasonReference(cursor.getString(cursor.getColumnIndex(REASON_REFERENCE)));
+        task.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
+        task.setRequester(cursor.getString(cursor.getColumnIndex(REQUESTER)));
 
         return task;
     }

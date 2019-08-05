@@ -60,7 +60,7 @@ public class Task {
     private Long serverVersion;
 
     private String structureId;
-  
+
     private String reasonReference;
 
     private String location;
@@ -211,13 +211,35 @@ public class Task {
         this.syncStatus = syncStatus;
     }
 
-    public String getStructureId() { return structureId; }
+    public String getStructureId() {
+        return structureId;
+    }
 
-    public void setStructureId(String structureId) { this.structureId = structureId; }
+    public void setStructureId(String structureId) {
+        this.structureId = structureId;
+    }
 
-    public String getReasonReference() { return reasonReference; }
+    public String getReasonReference() {
+        return reasonReference;
+    }
 
-    public void setReasonReference(String reasonReference) { this.reasonReference = reasonReference; }
+    public void setReasonReference(String reasonReference) {
+        this.reasonReference = reasonReference;
+    }
 
+    public String getLocation() {
+        return location;
+    }
 
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
 }
