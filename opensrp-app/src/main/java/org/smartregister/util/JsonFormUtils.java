@@ -361,7 +361,7 @@ public class JsonFormUtils {
                         JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
                         for (int i = 0; i < conceptsOptions.length(); i++) {
                             JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.getBoolean(VALUE);
+                            boolean optionValue =option.optBoolean(VALUE);
                             if (optionValue) {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
@@ -442,7 +442,12 @@ public class JsonFormUtils {
             e.addObs(new Obs(CONCEPT, dataType, entityIdVal, entityParentVal, vall, humanReadableValues, null,
                     formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
-            vall.add(obsValue);
+            String widgetType = getString(jsonObject, AllConstants.TYPE);
+            if (AllConstants.CHECK_BOX.equals(widgetType)){
+                vall.add(jsonObject.optString(AllConstants.TEXT));
+            } else {
+                vall.add(obsValue);
+            }
 
             e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
                     formSubmissionField));
