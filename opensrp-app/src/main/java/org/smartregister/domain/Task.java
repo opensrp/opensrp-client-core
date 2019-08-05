@@ -63,6 +63,10 @@ public class Task {
   
     private String reasonReference;
 
+    private String location;
+
+    private String requester;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -214,5 +218,6 @@ public class Task {
     public String getReasonReference() { return reasonReference; }
 
     public void setReasonReference(String reasonReference) { this.reasonReference = reasonReference; }
+
 
 }
