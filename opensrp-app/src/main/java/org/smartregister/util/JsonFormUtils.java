@@ -61,6 +61,8 @@ public class JsonFormUtils {
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
+
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
@@ -354,14 +356,35 @@ public class JsonFormUtils {
         String value = getString(jsonObject, VALUE);
         String type = getString(jsonObject, AllConstants.TYPE);
         String entity = CONCEPT;
+        boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
         if (StringUtils.isNotBlank(value)) {
-            if (AllConstants.CHECK_BOX.equals(type)) {
+            if (AllConstants.CHECK_BOX.equals(type) && combineCheckboxOptionValues) {
+                try {
+                    List<Object> vall = new ArrayList<>();
+                    if (jsonObject.has(AllConstants.OPTIONS)) {
+                        JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                        for (int i = 0; i < conceptsOptions.length(); i++) {
+                            JSONObject option = conceptsOptions.getJSONObject(i);
+                            boolean optionValue = option.optBoolean(VALUE);
+                            if (optionValue) {
+                                option.put(AllConstants.TYPE, type);
+                                option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
+                                option.put(KEY, jsonObject.getString(KEY));
+                                vall.add(option.optString(AllConstants.TEXT));
+                            }
+                        }
+                        createObservation(e, jsonObject, vall, entity);
+                    }
+                } catch (JSONException e1) {
+                    Log.e(TAG, e1.getMessage());
+                }
+            } else if (AllConstants.CHECK_BOX.equals(type)) {
                 try {
                     if (jsonObject.has(AllConstants.OPTIONS)) {
                         JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
                         for (int i = 0; i < conceptsOptions.length(); i++) {
                             JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue =option.optBoolean(VALUE);
+                            boolean optionValue = option.optBoolean(VALUE);
                             if (optionValue) {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
@@ -442,16 +465,23 @@ public class JsonFormUtils {
             e.addObs(new Obs(CONCEPT, dataType, entityIdVal, entityParentVal, vall, humanReadableValues, null,
                     formSubmissionField));
         } else if (StringUtils.isBlank(entityVal)) {
-            String widgetType = getString(jsonObject, AllConstants.TYPE);
-            if (AllConstants.CHECK_BOX.equals(widgetType)){
-                vall.add(jsonObject.optString(AllConstants.TEXT));
-            } else {
-                vall.add(obsValue);
-            }
+            vall.add(obsValue);
 
             e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
                     formSubmissionField));
         }
+    }
+
+    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall, String entity) {
+
+        String formSubmissionField = jsonObject.optString(KEY);
+        String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
+        if (StringUtils.isBlank(dataType)) {
+            dataType = AllConstants.TEXT;
+        }
+
+        e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
+                formSubmissionField));
     }
 
 
