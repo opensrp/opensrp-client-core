@@ -373,7 +373,7 @@ public class JsonFormUtils {
                                 vall.add(option.optString(AllConstants.TEXT));
                             }
                         }
-                        createObservation(e, jsonObject, vall, entity);
+                        createObservation(e, jsonObject, vall);
                     }
                 } catch (JSONException e1) {
                     Log.e(TAG, e1.getMessage());
@@ -472,7 +472,7 @@ public class JsonFormUtils {
         }
     }
 
-    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall, String entity) {
+    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
 
         String formSubmissionField = jsonObject.optString(KEY);
         String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
