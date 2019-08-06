@@ -154,7 +154,7 @@ public class Repository extends SQLiteOpenHelper {
         try {
             SQLiteDatabase database = SQLiteDatabase
                     .openDatabase(databasePath.getPath(), password, null,
-                            SQLiteDatabase.OPEN_READONLY);
+                            SQLiteDatabase.OPEN_READONLY, hook);
             database.close();
             return true;
         } catch (Exception e) {
