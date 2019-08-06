@@ -142,7 +142,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition", null);
+        verify(sqLiteDatabase).rawQuery("SELECT json, name  FROM plan_definition INNER JOIN plan_definition_search ON plan_definition._id = plan_definition_search.plan_id ORDER BY name ASC", null);
     }
 
 
