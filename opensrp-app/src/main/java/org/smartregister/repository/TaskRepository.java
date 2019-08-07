@@ -81,8 +81,8 @@ public class TaskRepository extends BaseRepository {
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     SERVER_VERSION + " INTEGER, " +
                     STRUCTURE_ID + " VARCHAR, " +
-                    REASON_REFERENCE + " VARCHAR " +
-                    LOCATION + " VARCHAR " +
+                    REASON_REFERENCE + " VARCHAR, " +
+                    LOCATION + " VARCHAR, " +
                     REQUESTER + " VARCHAR  )";
 
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
