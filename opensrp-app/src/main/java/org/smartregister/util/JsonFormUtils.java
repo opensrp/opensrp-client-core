@@ -358,7 +358,7 @@ public class JsonFormUtils {
         String entity = CONCEPT;
         boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
         if (StringUtils.isNotBlank(value)) {
-            if (AllConstants.CHECK_BOX.equals(type) && combineCheckboxOptionValues) {
+            if (AllConstants.CHECK_BOX.equals(type) ) {
                 try {
                     List<Object> vall = new ArrayList<>();
                     if (jsonObject.has(AllConstants.OPTIONS)) {
@@ -370,27 +370,15 @@ public class JsonFormUtils {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                                 option.put(KEY, jsonObject.getString(KEY));
-                                vall.add(option.optString(AllConstants.TEXT));
+                                if (combineCheckboxOptionValues) {
+                                    vall.add(option.optString(AllConstants.TEXT));
+                                } else { // For options with concepts create an observation for each
+                                    createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                }
                             }
                         }
-                        createObservation(e, jsonObject, vall);
-                    }
-                } catch (JSONException e1) {
-                    Log.e(TAG, e1.getMessage());
-                }
-            } else if (AllConstants.CHECK_BOX.equals(type)) {
-                try {
-                    if (jsonObject.has(AllConstants.OPTIONS)) {
-                        JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
-                        for (int i = 0; i < conceptsOptions.length(); i++) {
-                            JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.optBoolean(VALUE);
-                            if (optionValue) {
-                                option.put(AllConstants.TYPE, type);
-                                option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
-                                option.put(KEY, jsonObject.getString(KEY));
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
-                            }
+                        if (combineCheckboxOptionValues) { // For options without concepts combine the values into one observation
+                            createObservation(e, jsonObject, vall);
                         }
                     }
                 } catch (JSONException e1) {
@@ -472,6 +460,12 @@ public class JsonFormUtils {
         }
     }
 
+    /**
+     * This method creates an observation with single or multiple values combined
+     * @param e The event that the observation is added to
+     * @param jsonObject The JSONObject representing the checkbox values
+     * @param vall A list of option values to be added to the observation
+     */
     private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
 
         String formSubmissionField = jsonObject.optString(KEY);
