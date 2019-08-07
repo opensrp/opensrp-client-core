@@ -198,6 +198,26 @@ public class TaskRepository extends BaseRepository {
         return taskSet;
     }
 
+
+    public Set<Task> getTasksByEntityAndStatus(String planId, String forEntity, TaskStatus taskStatus) {
+        Cursor cursor = null;
+        Set<Task> taskSet = new HashSet<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
+                    TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                taskSet.add(task);
+            }
+        } catch (Exception e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return taskSet;
+    }
+
     private Task readCursor(Cursor cursor) {
         Task task = new Task();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
