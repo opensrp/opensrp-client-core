@@ -64,9 +64,17 @@ public class TaskServiceHelper {
         return fetchTasksFromServer();
     }
 
+    protected List<String> getLocationIds() {
+        return CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds();
+    }
+
+    protected Set<String> getPlanDefinitionIds() {
+        return CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds();
+    }
+
     public List<Task> fetchTasksFromServer() {
-        Set<String> planDefinitions = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds();
-        String groups = TextUtils.join(",", CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds());
+        Set<String> planDefinitions = getPlanDefinitionIds();
+        String groups = TextUtils.join(",", getLocationIds());
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -187,6 +195,7 @@ public class TaskServiceHelper {
             }
         }
     }
+
 
 }
 
