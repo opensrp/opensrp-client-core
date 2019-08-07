@@ -4,12 +4,14 @@ import android.content.Context;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
+import net.sqlcipher.database.SQLiteException;
 import net.sqlcipher.database.SQLiteOpenHelper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.exception.DatabaseMigrationException;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.Session;
@@ -46,6 +48,8 @@ public class Repository extends SQLiteOpenHelper {
 
             // Disable cipher memory security which makes database operations slow
             database.execSQL("PRAGMA cipher_memory_security = OFF;");
+            //set journal mode to TRUNCATE
+            database.execSQL("PRAGMA journal_mode = TRUNCATE;");
         }
     };
 
@@ -157,6 +161,16 @@ public class Repository extends SQLiteOpenHelper {
                             SQLiteDatabase.OPEN_READONLY, hook);
             database.close();
             return true;
+        } catch (SQLiteException e) {
+            Timber.e(e);
+            if (e.getMessage().contains("attempt to write a readonly database")) {
+                File journal = new File(databasePath.getPath() + "-journal");
+                Timber.i("Journal exists: %s", journal.exists());
+                if (journal.exists()) {
+                    Timber.i("Journal space: %s , can write %s ", journal.getTotalSpace(), journal.canWrite());
+                }
+            }
+            return false;
         } catch (Exception e) {
             return false;
         }
