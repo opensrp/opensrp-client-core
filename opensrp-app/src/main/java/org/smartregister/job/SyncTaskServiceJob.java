@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 
 import org.smartregister.AllConstants;
-import org.smartregister.sync.intent.SyncIntentService;
 import org.smartregister.sync.intent.SyncTaskIntentService;
 
 public class SyncTaskServiceJob extends BaseJob {
