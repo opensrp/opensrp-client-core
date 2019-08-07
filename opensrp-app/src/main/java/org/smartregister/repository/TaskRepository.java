@@ -379,4 +379,29 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
+    /**
+     * This method updates the task.structure_id field with
+     * ids of existing structures where the structure._id equals
+     * the task.for value.
+     *
+     * <p>
+     * This is only done for tasks that have a null structure_id field
+     *
+     * @return bolean indicating whether the update was successful
+     */
+    public boolean updateTaskStructureIdsFromExistingStructures() {
+
+        try {
+            getReadableDatabase().execSQL(String.format("UPDATE %s SET %s =(SELECT %s FROM structure WHERE %s = %s) WHERE %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, ID, ID, FOR, STRUCTURE_ID));
+
+            getReadableDatabase().execSQL(String.format("UPDATE %s SET %s =(SELECT %s FROM ec_family_member WHERE base_entity_id = %s) WHERE %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, STRUCTURE_ID, FOR, STRUCTURE_ID));
+            return true;
+        } catch (Exception e) {
+            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            return false;
+        }
+    }
+
 }
