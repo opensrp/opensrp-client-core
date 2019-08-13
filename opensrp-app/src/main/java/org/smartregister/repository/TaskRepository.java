@@ -426,7 +426,7 @@ public class TaskRepository extends BaseRepository {
                     TASK_TABLE, STRUCTURE_ID, STRUCTURE_ID, FOR, STRUCTURE_ID));
             return true;
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
             return false;
         }
     }
