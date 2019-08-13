@@ -14,7 +14,6 @@ buildscript {
     }
 }
 
-
 allprojects {
     repositories {
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
@@ -103,7 +102,6 @@ android {
         androidTest.setRoot('src/androidTest')
     }
 
-
     aaptOptions {
         noCompress 'apk'
     }
@@ -167,20 +165,22 @@ dependencies {
     api 'joda-time:joda-time:2.10.3'
     implementation 'com.github.bmelnychuk:atv:1.2.9'
     implementation 'com.github.johnkil.print:print:1.2.3'
+
     implementation('com.crashlytics.sdk.android:crashlytics:2.10.1@aar') {
         transitive = true
     }
+
     implementation('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
+
     implementation 'com.github.ybq:Android-SpinKit:1.2.0'
-
-
     implementation 'com.mcxiaoke.volley:library:1.0.19'
+
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
-    implementation 'com.cloudant:cloudant-http:2.7.0'
 
+    implementation 'com.cloudant:cloudant-http:2.7.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
 
     implementation('com.android.support:design:28.0.0') {
@@ -202,7 +202,6 @@ dependencies {
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
     androidTestImplementation 'junit:junit:4.12'
 
     testImplementation group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
@@ -219,6 +218,7 @@ dependencies {
     testImplementation('org.robolectric:shadows-multidex:3.8') {
         exclude group: 'com.google.guava', module: 'guava'
     }
+
     testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
@@ -230,8 +230,8 @@ dependencies {
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
-
 }
+
 task clearJar(type: Delete) {
     delete 'build/libs/myCompiledLibrary.jar'
 }
