@@ -235,11 +235,15 @@ public class Context {
 
     public android.content.Context applicationContext() {
         if (applicationContext != null) {//Fix to enable Multi language support for this context
-            Configuration configuration = applicationContext.getResources().getConfiguration();
-            configuration.setLocale(configuration.locale);
-            return applicationContext.createConfigurationContext(configuration);
+            try {
+                Configuration configuration = applicationContext.getResources().getConfiguration();
+                configuration.setLocale(configuration.locale);
+                return applicationContext.createConfigurationContext(configuration);
+            } catch (Exception e) {
+                return applicationContext;
+            }
         } else {
-            return applicationContext;
+            return null;
         }
     }
 
