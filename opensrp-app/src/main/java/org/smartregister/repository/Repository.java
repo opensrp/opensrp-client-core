@@ -11,13 +11,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
-import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.exception.DatabaseMigrationException;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -154,20 +156,32 @@ public class Repository extends SQLiteOpenHelper {
         return getWritableDatabase(password());
     }
 
+    private boolean isDatabaseWritable(String password) {
+        SQLiteDatabase database = SQLiteDatabase
+                .openDatabase(databasePath.getPath(), password, null,
+                        SQLiteDatabase.OPEN_READONLY, hook);
+        database.close();
+        return true;
+    }
+
     public boolean canUseThisPassword(String password) {
         try {
-            SQLiteDatabase database = SQLiteDatabase
-                    .openDatabase(databasePath.getPath(), password, null,
-                            SQLiteDatabase.OPEN_READONLY, hook);
-            database.close();
-            return true;
+            return isDatabaseWritable(password);
         } catch (SQLiteException e) {
             Timber.e(e);
             if (e.getMessage().contains("attempt to write a readonly database")) {
                 File journal = new File(databasePath.getPath() + "-journal");
-                Timber.i("Journal exists: %s", journal.exists());
-                if (journal.exists()) {
-                    Timber.i("Journal space: %s , can write %s ", journal.getTotalSpace(), journal.canWrite());
+                Timber.w("Journal exists: %s", journal.exists());
+                if (journal.exists() && journal.canWrite()) {
+                    Timber.w("Journal space: %s, its not possible to recover transactions!!! deleting Journal ", journal.getTotalSpace());
+                    try {
+                        new FileOutputStream(journal).write(new byte[]{});
+                        return isDatabaseWritable(password);
+                    } catch (FileNotFoundException e1) {
+                        Timber.e(e1);
+                    } catch (IOException e1) {
+                        Timber.e(e1);
+                    }
                 }
             }
             return false;
