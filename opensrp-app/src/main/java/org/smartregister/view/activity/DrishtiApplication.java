@@ -147,6 +147,7 @@ public abstract class DrishtiApplication extends Application {
                 && repository.getWritableDatabase().inTransaction()) {
             Timber.e(new RuntimeException("Application closed while transactions are in progress. Data maybe lost"));
             repository.getWritableDatabase().endTransaction();
+            context.allSharedPreferences().updateTransactionsKilledFlag(true);
         }
     }
 }
