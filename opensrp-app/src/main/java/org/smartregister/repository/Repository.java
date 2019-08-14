@@ -49,7 +49,7 @@ public class Repository extends SQLiteOpenHelper {
             // Disable cipher memory security which makes database operations slow
             database.execSQL("PRAGMA cipher_memory_security = OFF;");
             //set journal mode to TRUNCATE
-            database.execSQL("PRAGMA journal_mode = TRUNCATE;");
+            database.rawExecSQL("PRAGMA journal_mode = TRUNCATE;");
         }
     };
 
