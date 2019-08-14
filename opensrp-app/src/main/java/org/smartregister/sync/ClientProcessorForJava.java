@@ -85,12 +85,16 @@ public class ClientProcessorForJava {
     /**
      * Call this method to flag the event as processed in the local repository.
      * All events valid or otherwise must be flagged to avoid re-processing
+     *
      * @param event
      */
     public void completeProcessing(Event event) {
         if (event == null)
             return;
 
+        if (event.getServerVersion() != 0) {
+            CoreLibrary.getInstance().context().allSharedPreferences().updateLastClientProcessedTimeStamp(event.getServerVersion());
+        }
         CoreLibrary.getInstance().context()
                 .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
     }
@@ -462,6 +466,7 @@ public class ClientProcessorForJava {
     /**
      * Reformat the data to be persisted in the database.
      * This function will reformat dates with supplied types for storage in the DB
+     *
      * @param column
      * @param columnValue
      * @return

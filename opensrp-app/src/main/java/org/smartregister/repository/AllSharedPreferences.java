@@ -31,6 +31,7 @@ public class AllSharedPreferences {
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
     private static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public final static String LAST_SETTINGS_SYNC_TIMESTAMP = "LAST_SETTINGS_SYNC_TIMESTAMP";
+    private static final String LAST_CLIENT_PROCESSED_TIMESTAMP = "LAST_CLIENT_PROCESSED_TIMESTAMP";
     private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
     private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
 
@@ -303,6 +304,15 @@ public class AllSharedPreferences {
 
     public void resetLastPeerToPeerSyncProcessedEvent() {
         setLastPeerToPeerSyncProcessedEvent(-1);
+    }
+
+
+    public void updateLastClientProcessedTimeStamp(long lastProcessed) {
+        preferences.edit().putLong(LAST_CLIENT_PROCESSED_TIMESTAMP, lastProcessed).commit();
+    }
+
+    public long fetchLastClientProcessedTimeStamp() {
+        return preferences.getLong(LAST_CLIENT_PROCESSED_TIMESTAMP, 0);
     }
 }
 
