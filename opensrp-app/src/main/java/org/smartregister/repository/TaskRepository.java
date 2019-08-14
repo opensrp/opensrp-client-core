@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -22,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import timber.log.Timber;
 
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -81,8 +82,8 @@ public class TaskRepository extends BaseRepository {
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     SERVER_VERSION + " INTEGER, " +
                     STRUCTURE_ID + " VARCHAR, " +
-                    REASON_REFERENCE + " VARCHAR " +
-                    LOCATION + " VARCHAR " +
+                    REASON_REFERENCE + " VARCHAR, " +
+                    LOCATION + " VARCHAR, " +
                     REQUESTER + " VARCHAR  )";
 
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
@@ -153,7 +154,7 @@ public class TaskRepository extends BaseRepository {
                 tasks.put(task.getStructureId(), taskSet);
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -171,7 +172,7 @@ public class TaskRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -190,7 +191,33 @@ public class TaskRepository extends BaseRepository {
                 taskSet.add(task);
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return taskSet;
+    }
+
+    /**
+     * Gets tasks for an entity using plan and task status
+     * @param planId the plan id
+     * @param forEntity the entity id
+     * @param taskStatus the task status {@link TaskStatus }
+     * @return the set of tasks matching the above params
+     */
+    public Set<Task> getTasksByEntityAndStatus(String planId, String forEntity, TaskStatus taskStatus) {
+        Cursor cursor = null;
+        Set<Task> taskSet = new HashSet<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
+                    TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                taskSet.add(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -236,7 +263,7 @@ public class TaskRepository extends BaseRepository {
                 taskUpdates.add(readUpdateCursor(cursor));
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -253,7 +280,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().update(TaskRepository.TASK_TABLE, values, TaskRepository.ID + " = ?",
                     new String[]{taskID});
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -283,7 +310,7 @@ public class TaskRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -330,7 +357,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (SQLException e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
             return false;
         } finally {
             if (updateStatement != null)
@@ -371,11 +398,55 @@ public class TaskRepository extends BaseRepository {
             return true;
 
         } catch (SQLException e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
             return false;
         } finally {
             if (updateStatement != null)
                 updateStatement.close();
+        }
+    }
+
+    /**
+     * This method updates the task.structure_id field with
+     * ids of existing structures where the structure._id equals
+     * the task.for value.
+     *
+     * <p>
+     * This is only done for tasks that have a null structure_id field
+     *
+     * @return bolean indicating whether the update was successful
+     */
+    public boolean updateTaskStructureIdsFromExistingStructures() {
+
+        try {
+            getReadableDatabase().execSQL(String.format("UPDATE %s SET %s =(SELECT %s FROM structure WHERE %s = %s) WHERE %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, ID, ID, FOR, STRUCTURE_ID));
+            return true;
+        } catch (Exception e) {
+            Timber.e(e);
+            return false;
+        }
+    }
+
+    /**
+     * This method updates the task.structure_id field with
+     * structure_ids of existing clients where the base_entity_id equals
+     * the task.for value.
+     *
+     * <p>
+     * This is only done for tasks that have a null structure_id field
+     *
+     * @return bolean indicating whether the update was successful
+     */
+    public boolean updateTaskStructureIdsFromExistingClients(String clientTable) {
+
+        try {
+            getReadableDatabase().execSQL(String.format("UPDATE %s SET %s =(SELECT %s FROM %s WHERE base_entity_id = %s) WHERE %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, STRUCTURE_ID, clientTable, FOR, STRUCTURE_ID));
+            return true;
+        } catch (Exception e) {
+            Timber.e(e);
+            return false;
         }
     }
 

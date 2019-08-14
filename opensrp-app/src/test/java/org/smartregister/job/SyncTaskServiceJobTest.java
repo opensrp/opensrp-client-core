@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.sync.intent.SyncTaskIntentService;
 
 public class SyncTaskServiceJobTest extends BaseUnitTest {
 
@@ -32,7 +33,7 @@ public class SyncTaskServiceJobTest extends BaseUnitTest {
     @Test
     public void testOnRunJobStartsCorrectService() {
 
-        SyncTaskServiceJob syncTaskServiceJob = new SyncTaskServiceJob();
+        SyncTaskServiceJob syncTaskServiceJob = new SyncTaskServiceJob(SyncTaskIntentService.class);
         SyncTaskServiceJob syncTaskServiceJobSpy = Mockito.spy(syncTaskServiceJob);
 
         ArgumentCaptor<Intent> intent = ArgumentCaptor.forClass(Intent.class);
