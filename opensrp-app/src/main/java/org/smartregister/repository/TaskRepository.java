@@ -358,6 +358,7 @@ public class TaskRepository extends BaseRepository {
             return true;
         } catch (SQLException e) {
             Timber.e(e);
+            getWritableDatabase().endTransaction();
             return false;
         } finally {
             if (updateStatement != null)
@@ -399,6 +400,7 @@ public class TaskRepository extends BaseRepository {
 
         } catch (SQLException e) {
             Timber.e(e);
+            getWritableDatabase().endTransaction();
             return false;
         } finally {
             if (updateStatement != null)
