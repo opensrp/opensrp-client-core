@@ -61,6 +61,8 @@ public class JsonFormUtils {
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
+
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
@@ -354,20 +356,29 @@ public class JsonFormUtils {
         String value = getString(jsonObject, VALUE);
         String type = getString(jsonObject, AllConstants.TYPE);
         String entity = CONCEPT;
+        boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
         if (StringUtils.isNotBlank(value)) {
-            if (AllConstants.CHECK_BOX.equals(type)) {
+            if (AllConstants.CHECK_BOX.equals(type) ) {
                 try {
+                    List<Object> vall = new ArrayList<>();
                     if (jsonObject.has(AllConstants.OPTIONS)) {
                         JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
                         for (int i = 0; i < conceptsOptions.length(); i++) {
                             JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.getBoolean(VALUE);
+                            boolean optionValue = option.optBoolean(VALUE);
                             if (optionValue) {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                                 option.put(KEY, jsonObject.getString(KEY));
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                if (combineCheckboxOptionValues) {
+                                    vall.add(option.optString(AllConstants.TEXT));
+                                } else { // For options with concepts create an observation for each
+                                    createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                }
                             }
+                        }
+                        if (combineCheckboxOptionValues) { // For options without concepts combine the values into one observation
+                            createObservation(e, jsonObject, vall);
                         }
                     }
                 } catch (JSONException e1) {
@@ -447,6 +458,24 @@ public class JsonFormUtils {
             e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
                     formSubmissionField));
         }
+    }
+
+    /**
+     * This method creates an observation with single or multiple values combined
+     * @param e The event that the observation is added to
+     * @param jsonObject The JSONObject representing the checkbox values
+     * @param vall A list of option values to be added to the observation
+     */
+    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
+
+        String formSubmissionField = jsonObject.optString(KEY);
+        String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
+        if (StringUtils.isBlank(dataType)) {
+            dataType = AllConstants.TEXT;
+        }
+
+        e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
+                formSubmissionField));
     }
 
 

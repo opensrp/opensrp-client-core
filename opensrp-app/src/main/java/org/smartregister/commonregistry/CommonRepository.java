@@ -735,6 +735,8 @@ public class CommonRepository extends DrishtiRepository {
             if (afftectedRows > 0) {
                 return true;
             }
+            database.setTransactionSuccessful();
+            database.endTransaction();
         } catch (Exception e) {
             Log.e("", "Update Search Error", e);
             database.endTransaction();
