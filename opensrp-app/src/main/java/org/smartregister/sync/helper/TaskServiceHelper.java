@@ -29,6 +29,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class TaskServiceHelper {
     private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
@@ -86,12 +88,14 @@ public class TaskServiceHelper {
             String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
-            for (Task task : tasks) {
-                try {
-                    task.setSyncStatus(BaseRepository.TYPE_Synced);
-                    taskRepository.addOrUpdate(task);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
+            if (tasks != null && tasks.size() > 0) {
+                for (Task task : tasks) {
+                    try {
+                        task.setSyncStatus(BaseRepository.TYPE_Synced);
+                        taskRepository.addOrUpdate(task);
+                    } catch (Exception e) {
+                        Timber.e(e, "Error saving task " + task.getIdentifier());
+                    }
                 }
             }
             if (!Utils.isEmptyCollection(tasks)) {
@@ -99,7 +103,7 @@ public class TaskServiceHelper {
             }
             return tasks;
         } catch (Exception e) {
-            Log.e(TAG, "Error fetching tasks from server ", e);
+            Timber.e(e, "Error fetching tasks from server");
         }
         return null;
     }
