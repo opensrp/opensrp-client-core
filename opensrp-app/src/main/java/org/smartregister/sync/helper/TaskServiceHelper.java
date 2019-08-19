@@ -86,12 +86,14 @@ public class TaskServiceHelper {
             String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
-            for (Task task : tasks) {
-                try {
-                    task.setSyncStatus(BaseRepository.TYPE_Synced);
-                    taskRepository.addOrUpdate(task);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
+            if (tasks != null && tasks.size() > 0) {
+                for (Task task : tasks) {
+                    try {
+                        task.setSyncStatus(BaseRepository.TYPE_Synced);
+                        taskRepository.addOrUpdate(task);
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
+                    }
                 }
             }
             if (!Utils.isEmptyCollection(tasks)) {
