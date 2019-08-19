@@ -29,6 +29,8 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Set;
 
+import timber.log.Timber;
+
 public class TaskServiceHelper {
     private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
@@ -92,7 +94,7 @@ public class TaskServiceHelper {
                         task.setSyncStatus(BaseRepository.TYPE_Synced);
                         taskRepository.addOrUpdate(task);
                     } catch (Exception e) {
-                        Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
+                        Timber.e(e, "Error saving task " + task.getIdentifier());
                     }
                 }
             }
@@ -101,7 +103,7 @@ public class TaskServiceHelper {
             }
             return tasks;
         } catch (Exception e) {
-            Log.e(TAG, "Error fetching tasks from server ", e);
+            Timber.e(e, "Error fetching tasks from server");
         }
         return null;
     }
