@@ -41,7 +41,6 @@ import java.util.HashMap;
 import timber.log.Timber;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.smartregister.util.Log.logInfo;
 
 /**
  * Created by keyman on 26/06/2018.
