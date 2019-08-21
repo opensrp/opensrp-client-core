@@ -12,6 +12,7 @@ import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSettings;
@@ -247,9 +248,11 @@ public class HTTPAgent {
 
         } catch (MalformedURLException e) {
             Log.e(TAG, MALFORMED_URL + e.toString(), e);
+            ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.malformed_url.name());
             return new Response<>(ResponseStatus.failure, null);
         } catch (SocketTimeoutException e) {
             Log.e(TAG, TIMEOUT + e.toString(), e);
+            ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.timeout.name());
             return new Response<>(ResponseStatus.failure, null);
         } catch (IOException e) {
             Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);

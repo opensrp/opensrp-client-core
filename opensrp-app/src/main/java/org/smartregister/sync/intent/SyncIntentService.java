@@ -120,7 +120,18 @@ public class SyncIntentService extends IntentService {
             }
 
             Response resp = httpAgent.fetch(url);
-            if (resp.isFailure()) {
+
+            if(resp.isUrlError()){
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+            }
+
+            if(resp.isTimeoutError()){
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+            }
+
+            if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
             }
 

@@ -25,6 +25,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -39,6 +40,7 @@ import org.smartregister.view.dialog.DialogOption;
 import java.util.HashMap;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.smartregister.util.Log.logInfo;
 
 /**
  * Created by keyman on 26/06/2018.
@@ -398,12 +400,23 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
             Utils.showShortToast(getActivity(), getString(R.string.syncing));
+            logInfo(TAG+": " + getString(R.string.syncing));
         } else {
             if (fetchStatus != null) {
 
                 if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
-
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
+                    if(fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
+                        logInfo(TAG+": " + getString(R.string.sync_failed_malformed_url));
+                    }
+                    else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
+                        logInfo(TAG+": " + getString(R.string.sync_failed_timeout_error));
+                    }
+                    else {
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
+                        logInfo(TAG+": " + getString(R.string.sync_failed)+"  ---   " + fetchStatus.displayValue());
+                    }
 
                 } else if (fetchStatus.equals(FetchStatus.fetched)
                         || fetchStatus.equals(FetchStatus.nothingFetched)) {
@@ -412,11 +425,16 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
                     renderView();
 
                     Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
+                    logInfo(TAG+": "+getString(R.string.sync_complete));
 
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {
 
                     Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
+                    logInfo(TAG+": "+getString(R.string.sync_failed_no_internet));
                 }
+            }
+            else{
+                logInfo(TAG+": Fetch Status NULL");
             }
 
         }
