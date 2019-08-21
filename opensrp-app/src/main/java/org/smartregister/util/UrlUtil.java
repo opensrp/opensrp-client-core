@@ -1,9 +1,9 @@
 package org.smartregister.util;
 
-import android.util.Patterns;
+import org.apache.commons.validator.routines.UrlValidator;
 
 public class UrlUtil {
     public static boolean isValidUrl(String s){
-        return Patterns.WEB_URL.matcher(s).matches();
+        return new UrlValidator(new String[]{"http", "https"}).isValid(s);
     }
 }
