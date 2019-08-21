@@ -44,7 +44,6 @@ public class SettingsActivity extends PreferenceActivity {
 
 
     public static class MyPreferenceFragment extends PreferenceFragment {
-        private static String TAG = MyPreferenceFragment.class.getName();
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
