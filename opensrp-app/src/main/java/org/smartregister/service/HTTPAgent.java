@@ -2,7 +2,6 @@ package org.smartregister.service;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +38,8 @@ import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
+import timber.log.Timber;
+
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
@@ -60,7 +61,6 @@ import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
-import static org.smartregister.util.Log.logError;
 
 public class HTTPAgent {
     public static final int CONNECTION_TIMEOUT = 60000;
@@ -116,7 +116,7 @@ public class HTTPAgent {
             return handleResponse(urlConnection);
 
         } catch (IOException ex) {
-            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
+            Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -141,7 +141,7 @@ public class HTTPAgent {
             return handleResponse(urlConnection);
 
         } catch (IOException ex) {
-            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
+            Timber.e(ex,  "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
@@ -150,8 +150,7 @@ public class HTTPAgent {
         return post(postURLPath, jsonPayload);
     }
 
-    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
-                                                            String password) {
+    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
         LoginResponse loginResponse = null;
         HttpURLConnection urlConnection = null;
         try {
@@ -171,7 +170,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                logError("Invalid credentials for: " + userName + " using " + requestURL);
+                Timber.e("Invalid credentials for: %s using %s", userName, requestURL);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
@@ -182,21 +181,18 @@ public class HTTPAgent {
                     loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
                 }
             } else {
-                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
-                        + userName + " using " + requestURL);
+                Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, requestURL);
                 loginResponse = UNKNOWN_RESPONSE;
             }
         } catch (MalformedURLException e) {
-            Log.e(TAG, "Failed to check credentials bad url " + requestURL, e);
+            Timber.e(e,  "Failed to check credentials bad url %s", requestURL);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
-            Log.e(TAG, "SocketTimeoutException when authenticating " + userName, e);
+            Timber.e(e,"SocketTimeoutException when authenticating %s", userName);
             loginResponse = TIMEOUT;
-            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
-                    + "" + "" + "Error: " + e.toString(), e);
+            Timber.e(e,"Failed to check credentials of: %s using %s . Error: %s", userName, requestURL, e.toString());
         } catch (IOException e) {
-            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
-                    + "" + "" + "Error: " + e.toString(), e);
+            Timber.e(e,"Failed to check credentials of: %s  using %s . Error: %s", userName, requestURL, e.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
             if (urlConnection != null) {
@@ -221,7 +217,7 @@ public class HTTPAgent {
             return handleResponse(urlConnection);
 
         } catch (IOException ex) {
-            Log.e(TAG, "EXCEPTION" + ex.toString(), ex);
+            Timber.e(ex,  "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
 
@@ -247,15 +243,15 @@ public class HTTPAgent {
             responseString = IOUtils.toString(inputStream);
 
         } catch (MalformedURLException e) {
-            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+            Timber.e(e,  "%s %s", MALFORMED_URL, e.toString());
             ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.malformed_url.name());
             return new Response<>(ResponseStatus.failure, null);
         } catch (SocketTimeoutException e) {
-            Log.e(TAG, TIMEOUT + e.toString(), e);
+            Timber.e(e,  "%s %s", TIMEOUT, e.toString());
             ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.timeout.name());
             return new Response<>(ResponseStatus.failure, null);
         } catch (IOException e) {
-            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
+            Timber.e(e,  "%s %s", NO_INTERNET_CONNECTIVITY, e.toString());
             return new Response<>(ResponseStatus.failure, null);
         } finally {
             if (urlConnection != null) {
@@ -270,7 +266,7 @@ public class HTTPAgent {
      * @author  Rodgers Andati
      * @since   2019-04-25
      * This method uploads an image to opensrp server. Migration from the old method that used httpclient
-     * @param urlString This is the url of the image
+     * @param urlString This is the url of the image, TAG,
      * @param image This is the image to be uploaded to opensrp server.
      * @return String This returns the response obtained from the opensrp server.
      */
@@ -313,27 +309,27 @@ public class HTTPAgent {
 
                 while ((line = reader.readLine()) != null) {
                     responseString = line;
-                    Log.d("SERVER RESPONSE", line);
+                    Timber.d("SERVER RESPONSE %s", line);
                 }
                 reader.close();
             } else {
-                Log.d("SERVER RESPONSE", "Server returned non-OK status: " + status + " - " + httpUrlConnection.getResponseMessage() + " :-");
+                Timber.d("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpUrlConnection.getErrorStream()));
                 while ((line = reader.readLine()) != null) {
-                    Log.d("SERVER RESPONSE", line);
+                    Timber.d("SERVER RESPONSE %s", line);
                 }
                 reader.close();
             }
             httpUrlConnection.disconnect();
 
         } catch (ProtocolException e) {
-            Log.e(TAG, "Protocol exception " + e.toString(), e);
+            Timber.e(e, "Protocol exception %s", e.toString());
         } catch (SocketTimeoutException e) {
-            Log.e(TAG, TIMEOUT + e.toString(), e);
+            Timber.e(e,  "SocketTimeout %s %s", TIMEOUT, e.toString());
         } catch (MalformedURLException e) {
-            Log.e(TAG, MALFORMED_URL + e.toString(), e);
+            Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
         } catch (IOException e) {
-            Log.e(TAG, NO_INTERNET_CONNECTIVITY + e.toString(), e);
+            Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
         }
         return responseString;
     }
@@ -374,50 +370,50 @@ public class HTTPAgent {
 
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {
-            logError("Empty Response using " + SUCCESS_WITH_EMPTY_RESPONSE.name());
+            Timber.e("Empty Response using: %s ", SUCCESS_WITH_EMPTY_RESPONSE.name());
             return SUCCESS_WITH_EMPTY_RESPONSE;
         }
 
         if (responseData.team == null || responseData.team.team == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_DETAILS.name());
+            Timber.e("Empty Response in: %s ", SUCCESS_WITHOUT_TEAM_DETAILS.name());
             return SUCCESS_WITHOUT_TEAM_DETAILS.withPayload(responseData);
         } else if (responseData.team.team.location == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_LOCATION.name());
             return SUCCESS_WITHOUT_TEAM_LOCATION.withPayload(responseData);
         } else if (responseData.team.team.location.uuid == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
             return SUCCESS_WITHOUT_TEAM_LOCATION_UUID.withPayload(responseData);
         } else if (responseData.team.team.uuid == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_UUID.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_UUID.name());
             return SUCCESS_WITHOUT_TEAM_UUID.withPayload(responseData);
         } else if (responseData.team.team.teamName == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_NAME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_NAME.name());
             return SUCCESS_WITHOUT_TEAM_NAME.withPayload(responseData);
         }
 
         if (responseData.user == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_DETAILS.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_DETAILS.name());
             return SUCCESS_WITHOUT_USER_DETAILS.withPayload(responseData);
         } else if (responseData.user.getUsername() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_USERNAME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_USERNAME.name());
             return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
         } else if (responseData.user.getPreferredName() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
             return SUCCESS_WITHOUT_USER_PREFERREDNAME.withPayload(responseData);
         }
 
         if (responseData.locations == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_LOCATION.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_LOCATION.name());
             return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
         }
         if (responseData.time == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_DETAILS.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME_DETAILS.name());
             return SUCCESS_WITHOUT_TIME_DETAILS.withPayload(responseData);
         } else if (responseData.time.getTime() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TIME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME.name());
             return SUCCESS_WITHOUT_TIME.withPayload(responseData);
         } else if (responseData.time.getTimeZone() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_ZONE.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME_ZONE.name());
             return SUCCESS_WITHOUT_TIME_ZONE.withPayload(responseData);
         }
 

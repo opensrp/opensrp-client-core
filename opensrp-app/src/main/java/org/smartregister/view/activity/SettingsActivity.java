@@ -23,10 +23,10 @@ import org.smartregister.util.UrlUtil;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logInfo;
+import timber.log.Timber;
 
 public class SettingsActivity extends PreferenceActivity {
+
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -44,6 +44,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 
     public static class MyPreferenceFragment extends PreferenceFragment {
+        private static String TAG = MyPreferenceFragment.class.getName();
         @Override
         public void onCreate(final Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -74,11 +75,12 @@ public class SettingsActivity extends PreferenceActivity {
                 baseUrlEditTextPreference.getEditText().addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
+                        Timber.i("baseUrl before text change");
                     }
 
                     @Override
                     public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        Timber.i("baseUrl on text change");
                     }
 
                     @Override
@@ -104,8 +106,8 @@ public class SettingsActivity extends PreferenceActivity {
                     @Override
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         if (newValue != null) {
-                                updateUrl(newValue.toString());
-                            }
+                            updateUrl(newValue.toString());
+                        }
                         return true;
                     }
                 });
@@ -122,16 +124,16 @@ public class SettingsActivity extends PreferenceActivity {
                 String base = url.getProtocol() + "://" + url.getHost();
                 int port = url.getPort();
 
-                logInfo("Base URL: " + base);
-                logInfo("Port: " + port);
+                Timber.i("Base URL: %s", base);
+                Timber.i("Port: %s", port);
 
                 allSharedPreferences.saveHost(base);
                 allSharedPreferences.savePort(port);
 
-                logInfo("Saved URL: " + allSharedPreferences.fetchHost(""));
-                logInfo("Port: " + allSharedPreferences.fetchPort(0));
+                Timber.i("Saved URL: %s", allSharedPreferences.fetchHost(""));
+                Timber.i("Port: %s", allSharedPreferences.fetchPort(0));
             } catch (MalformedURLException e) {
-                logError("Malformed Url: " + baseUrl);
+                Timber.e("Malformed Url: %s", baseUrl);
             }
         }
     }
