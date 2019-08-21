@@ -295,7 +295,7 @@ public class UserService {
         requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
 
         LoginResponse loginResponse = httpAgent
-                .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
+                .urlCanBeAccessWithGivenCredentials(requestURL.replaceAll("\\s+", ""), userName, password);
 
         if (loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
