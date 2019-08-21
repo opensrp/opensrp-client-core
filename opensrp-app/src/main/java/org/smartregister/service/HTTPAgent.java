@@ -154,7 +154,6 @@ public class HTTPAgent {
         LoginResponse loginResponse = null;
         HttpURLConnection urlConnection = null;
         try {
-            requestURL = requestURL.replaceAll("\\s+", "");
             urlConnection = initializeHttp(requestURL, false);
 
             final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
