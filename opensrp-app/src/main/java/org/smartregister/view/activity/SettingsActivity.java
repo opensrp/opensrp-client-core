@@ -10,21 +10,15 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
-import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.LangUtils;
 import org.smartregister.util.UrlUtil;
-import org.smartregister.util.Utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
