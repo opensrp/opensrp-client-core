@@ -10,13 +10,21 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import org.apache.commons.validator.routines.UrlValidator;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.UrlUtil;
+import org.smartregister.util.Utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -58,8 +66,7 @@ public class SettingsActivity extends PreferenceActivity {
                             @Override
                             public void onClick(View v) {
                                 String newValue = baseUrlEditTextPreference.getEditText().getText().toString();
-                                UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
-                                if (newValue != null && urlValidator.isValid(newValue)) {
+                                if (newValue != null && UrlUtil.isValidUrl(newValue)) {
                                     baseUrlEditTextPreference.onClick(null, DialogInterface.BUTTON_POSITIVE);
                                     dialog.dismiss();
                                 } else {
@@ -70,13 +77,41 @@ public class SettingsActivity extends PreferenceActivity {
                         return false;
                     }
                 });
+                baseUrlEditTextPreference.getEditText().addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        String text = editable.toString();
+                        boolean validUrl = UrlUtil.isValidUrl(text);
+                        if(!validUrl) {
+                            if(text.isEmpty()){
+                                baseUrlEditTextPreference.getEditText().setError(getString(R.string.msg_empty_url));
+                            }
+                            else{
+                                baseUrlEditTextPreference.getEditText().setError(getString(R.string.invalid_url_massage));
+                            }
+                        }
+                        else{
+                            baseUrlEditTextPreference.getEditText().setError(null);
+                        }
+
+                    }
+                });
 
                 baseUrlEditTextPreference.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                     @Override
                     public boolean onPreferenceChange(Preference preference, Object newValue) {
                         if (newValue != null) {
-                            updateUrl(newValue.toString());
-                        }
+                                updateUrl(newValue.toString());
+                            }
                         return true;
                     }
                 });
