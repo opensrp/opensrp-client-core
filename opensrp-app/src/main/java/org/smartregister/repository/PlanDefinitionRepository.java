@@ -36,7 +36,7 @@ public class PlanDefinitionRepository extends BaseRepository {
     protected static final String NAME = "name";
     protected static final String PLAN_ID = "plan_id";
     private static final String STATUS = "status";
-    private static final String ACTIVE = "active";
+    protected static final String ACTIVE = "active";
 
     private static final String PLAN_DEFINITION_TABLE = "plan_definition";
     private static final String PLAN_DEFINITION_SEARCH_TABLE = "plan_definition_search";
@@ -115,9 +115,9 @@ public class PlanDefinitionRepository extends BaseRepository {
         Cursor cursor = null;
         Set<PlanDefinition> planDefinitions = new TreeSet<>();
         try {
-            String query = String.format("SELECT %s, %s  FROM %s INNER JOIN %s ON %s.%s = %s.%s WHERE %s =? ORDER BY %s ASC",
+            String query = String.format("SELECT %s, %s  FROM %s INNER JOIN %s ON %s.%s = %s.%s WHERE %s.%s =? ORDER BY %s ASC",
                     JSON, NAME, PLAN_DEFINITION_TABLE, PLAN_DEFINITION_SEARCH_TABLE,
-                    PLAN_DEFINITION_TABLE, ID, PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, STATUS, NAME);
+                    PLAN_DEFINITION_TABLE, ID, PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, PLAN_DEFINITION_TABLE, STATUS, NAME);
             cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE});
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
