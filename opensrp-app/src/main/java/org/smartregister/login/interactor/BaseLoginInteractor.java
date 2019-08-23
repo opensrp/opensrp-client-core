@@ -238,12 +238,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
     }
 
-    protected long getFlexValue(int value) {
+    protected int getFlexValue(int valueMins) {
         int minutes = MINIMUM_JOB_FLEX_VALUE;
 
-        if (value > MINIMUM_JOB_FLEX_VALUE) {
-
-            minutes = (int) Math.ceil(value / 3);
+        if (valueMins > MINIMUM_JOB_FLEX_VALUE) {
+            minutes = (int) Math.ceil(valueMins / 3);
         }
 
         return minutes < MINIMUM_JOB_FLEX_VALUE ? MINIMUM_JOB_FLEX_VALUE : minutes;
