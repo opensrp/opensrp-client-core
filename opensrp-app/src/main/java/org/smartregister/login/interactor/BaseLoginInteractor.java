@@ -112,6 +112,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }).start();
     }
 
+    /**
+     * This method implements any evernote job cancellation before {@link #scheduleJobsPeriodically()} is
+     * called. This will prevent a case where the {@link #scheduleJobsPeriodically()} fails due to existing
+     * jobs. New periodic jobs cannot be scheduled with the current {@link org.smartregister.job.BaseJob}
+     * if there are currently scheduled jobs with the same tag.
+     */
     protected void cancelPreviousPeriodicJobs() {
         // This method can or cannot be implemented
     }
