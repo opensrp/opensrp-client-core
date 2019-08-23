@@ -19,30 +19,25 @@ public abstract class BaseJob extends Job {
 
     private static final String TAG = BaseJob.class.getCanonicalName();
 
-    public static void scheduleJob(String jobTag, Long start, Long flex) {
-
+    public static void scheduleJob(String jobTag, int intervalMins, int flexMins) {
         if (JobManager.instance().getAllJobRequestsForTag(jobTag).isEmpty()) {
-
-            boolean toReschedule = start < TimeUnit.MINUTES.toMillis(15); //evernote doesn't allow less than 15 mins periodic schedule, keep flag ref for workaround
+            boolean toReschedule = intervalMins < 15;
+            //evernote doesn't allow less than 15 mins periodic schedule, keep flag ref for workaround
 
             PersistableBundleCompat extras = new PersistableBundleCompat();
             extras.putBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, toReschedule);
 
             JobRequest.Builder jobRequest = new JobRequest.Builder(jobTag).setExtras(extras);
-
-            jobRequest.setPeriodic(TimeUnit.MINUTES.toMillis(start), TimeUnit.MINUTES.toMillis(flex));
+            jobRequest.setPeriodic(TimeUnit.MINUTES.toMillis(intervalMins), TimeUnit.MINUTES.toMillis(flexMins));
 
             try {
-
                 int jobId = jobRequest.build().schedule();
-                Log.d(TAG, "Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + start + " minutes and flex value of " + flex + " minutes");
-
+                Log.d(TAG, "Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + intervalMins + " minutes and flex value of " + flexMins + " minutes");
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                Log.e(TAG, Log.getStackTraceString(e));
             }
         } else {
-            Log.d(TAG, "Skipping schedule for job with name " + jobTag + " : Already Exists!");
-
+            Log.e(TAG, "Skipping schedule for job with name " + jobTag + " : Already Exists!");
         }
     }
 

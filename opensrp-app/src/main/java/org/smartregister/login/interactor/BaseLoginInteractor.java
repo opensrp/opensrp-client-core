@@ -27,7 +27,6 @@ import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
@@ -104,11 +103,17 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             public void run() {
                 Log.i(getClass().getName(), "Starting DrishtiSyncScheduler " + DateTime.now().toString());
 
+                cancelPreviousPeriodicJobs();
+                scheduleJobsPeriodically();
                 scheduleJobsImmediately();
 
                 Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
             }
         }).start();
+    }
+
+    protected void cancelPreviousPeriodicJobs() {
+        // This method can or cannot be implemented
     }
 
     private void remoteLogin(final String userName, final String password) {
@@ -186,6 +191,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         processServerSettings(loginResponse);
 
+        cancelPreviousPeriodicJobs();
         scheduleJobsPeriodically();
         scheduleJobsImmediately();
 
