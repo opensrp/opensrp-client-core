@@ -16,6 +16,7 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -64,12 +65,15 @@ public class PlanDefinitionRepository extends BaseRepository {
     public void addOrUpdate(PlanDefinition planDefinition) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, planDefinition.getIdentifier());
-        contentValues.put(JSON, gson.toJson(planDefinition));
+
         contentValues.put(STATUS, planDefinition.getStatus());
-        getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);
+
         for (PlanDefinition.Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
             searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
         }
+        planDefinition.setJurisdiction(new ArrayList<PlanDefinition.Jurisdiction>());
+        contentValues.put(JSON, gson.toJson(planDefinition));
+        getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);
 
     }
 
@@ -115,9 +119,8 @@ public class PlanDefinitionRepository extends BaseRepository {
         Cursor cursor = null;
         Set<PlanDefinition> planDefinitions = new TreeSet<>();
         try {
-            String query = String.format("SELECT %s, %s  FROM %s INNER JOIN %s ON %s.%s = %s.%s WHERE %s.%s =? ORDER BY %s ASC",
-                    JSON, NAME, PLAN_DEFINITION_TABLE, PLAN_DEFINITION_SEARCH_TABLE,
-                    PLAN_DEFINITION_TABLE, ID, PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, PLAN_DEFINITION_TABLE, STATUS, NAME);
+            String query = String.format("SELECT %s  FROM %s WHERE %s =?",
+                    JSON, PLAN_DEFINITION_TABLE, STATUS);
             cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE});
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
