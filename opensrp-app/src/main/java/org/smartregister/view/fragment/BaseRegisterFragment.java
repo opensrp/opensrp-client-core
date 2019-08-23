@@ -8,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +24,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
@@ -37,6 +37,8 @@ import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.DialogOption;
 
 import java.util.HashMap;
+
+import timber.log.Timber;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -173,7 +175,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     public void onQRCodeSucessfullyScanned(String qrCode) {
-        Log.i(TAG, "QR code: " + qrCode);
+        Timber.i( "QR code: %s", qrCode);
         if (StringUtils.isNotBlank(qrCode)) {
             filter(qrCode.replace("-", ""), "", getMainCondition(), true);
             setUniqueID(qrCode);
@@ -398,12 +400,23 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
         if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
             Utils.showShortToast(getActivity(), getString(R.string.syncing));
+            Timber.i( getString(R.string.syncing));
         } else {
             if (fetchStatus != null) {
 
                 if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
-
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
+                    if(fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
+                        Timber.i( getString(R.string.sync_failed_malformed_url));
+                    }
+                    else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
+                        Timber.i(getString(R.string.sync_failed_timeout_error));
+                    }
+                    else {
+                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
+                        Timber.i(getString(R.string.sync_failed));
+                    }
 
                 } else if (fetchStatus.equals(FetchStatus.fetched)
                         || fetchStatus.equals(FetchStatus.nothingFetched)) {
@@ -412,11 +425,16 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
                     renderView();
 
                     Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
+                    Timber.i( getString(R.string.sync_complete));
 
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {
 
                     Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
+                    Timber.i( getString(R.string.sync_failed_no_internet));
                 }
+            }
+            else{
+                Timber.i("Fetch Status NULL");
             }
 
         }
