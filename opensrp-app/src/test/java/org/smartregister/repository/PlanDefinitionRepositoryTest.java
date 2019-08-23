@@ -31,6 +31,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.PlanDefinitionTest.gson;
 import static org.smartregister.domain.PlanDefinitionTest.planDefinitionJSON;
+import static org.smartregister.repository.PlanDefinitionRepository.ACTIVE;
 import static org.smartregister.repository.PlanDefinitionRepository.ID;
 import static org.smartregister.repository.PlanDefinitionRepository.JSON;
 
@@ -73,7 +74,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
     public void testCreateTable() {
         PlanDefinitionRepository.createTable(sqLiteDatabase);
         verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
-        assertEquals("CREATE TABLE plan_definition (_id VARCHAR NOT NULL PRIMARY KEY,json VARCHAR NOT NULL)",
+        assertEquals("CREATE TABLE plan_definition (_id VARCHAR NOT NULL PRIMARY KEY,json VARCHAR NOT NULL,status VARCHAR NOT NULL)",
                 stringArgumentCaptor.getValue());
     }
 
@@ -105,7 +106,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         assertEquals(2, stringArgumentCaptor.getAllValues().size());
         assertEquals("plan_definition", stringArgumentCaptor.getAllValues().get(0));
         assertNull(stringArgumentCaptor.getAllValues().get(1));
-        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
+        assertEquals(3, contentValuesArgumentCaptor.getValue().size());
         assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getValue().get(ID));
 
         verify(searchRepository).addOrUpdate(planDefinition, jurisdictionId);
@@ -142,7 +143,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT json, name  FROM plan_definition INNER JOIN plan_definition_search ON plan_definition._id = plan_definition_search.plan_id ORDER BY name ASC", null);
+        verify(sqLiteDatabase).rawQuery("SELECT json, name  FROM plan_definition INNER JOIN plan_definition_search ON plan_definition._id = plan_definition_search.plan_id WHERE plan_definition.status =? ORDER BY name ASC", new String[]{ACTIVE});
     }
 
 
@@ -155,7 +156,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         assertEquals(1, planDefinitions.size());
         String planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition);
-        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition", null);
+        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
     }
 
     private MatrixCursor getCursor() {
