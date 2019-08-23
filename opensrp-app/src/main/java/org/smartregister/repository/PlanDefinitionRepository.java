@@ -63,6 +63,8 @@ public class PlanDefinitionRepository extends BaseRepository {
     }
 
     public void addOrUpdate(PlanDefinition planDefinition) {
+        if (!planDefinition.getStatus().equalsIgnoreCase(ACTIVE))
+            return;
         try {
             getWritableDatabase().beginTransaction();
             ContentValues contentValues = new ContentValues();
