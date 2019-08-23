@@ -153,8 +153,10 @@ public class HTTPAgent {
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
         LoginResponse loginResponse = null;
         HttpURLConnection urlConnection = null;
+        String url = null;
         try {
-            urlConnection = initializeHttp(requestURL, false);
+            url = requestURL.replaceAll("\\s+", "");
+            urlConnection = initializeHttp(url, false);
 
             final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
             urlConnection.setRequestProperty("Authorization", basicAuth);
@@ -169,7 +171,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                Timber.e("Invalid credentials for: %s using %s", userName, requestURL);
+                Timber.e("Invalid credentials for: %s using %s", userName, url);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
@@ -180,18 +182,18 @@ public class HTTPAgent {
                     loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
                 }
             } else {
-                Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, requestURL);
+                Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
         } catch (MalformedURLException e) {
-            Timber.e(e,  "Failed to check credentials bad url %s", requestURL);
+            Timber.e(e,  "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
             Timber.e(e,"SocketTimeoutException when authenticating %s", userName);
             loginResponse = TIMEOUT;
-            Timber.e(e,"Failed to check credentials of: %s using %s . Error: %s", userName, requestURL, e.toString());
+            Timber.e(e,"Failed to check credentials of: %s using %s . Error: %s", userName, url, e.toString());
         } catch (IOException e) {
-            Timber.e(e,"Failed to check credentials of: %s  using %s . Error: %s", userName, requestURL, e.toString());
+            Timber.e(e,"Failed to check credentials of: %s  using %s . Error: %s", userName, url, e.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
             if (urlConnection != null) {
