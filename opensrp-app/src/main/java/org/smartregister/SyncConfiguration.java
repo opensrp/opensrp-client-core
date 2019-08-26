@@ -56,10 +56,16 @@ public abstract class SyncConfiguration {
         return connectionTimeout;
     }
 
+    /**
+     * Sets the connection timeout in milliseconds
+     */
     public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
+    /**
+     * Sets the read timeout in milliseconds
+     */
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }
