@@ -5,6 +5,9 @@ package org.smartregister;
  */
 public abstract class SyncConfiguration {
 
+    private int connectionTimeout = 60000;
+    private int readTimeout = 60000;
+
     public abstract int getSyncMaxRetries();
 
     public abstract SyncFilter getSyncFilterParam();
@@ -41,7 +44,7 @@ public abstract class SyncConfiguration {
      * @return read timeout value in milliseconds
      */
     public int getReadTimeout() {
-        return 60000;
+        return readTimeout;
     }
 
     /**
@@ -50,6 +53,14 @@ public abstract class SyncConfiguration {
      * @return connection timeout value in milliseconds
      */
     public int getConnectionTime() {
-        return 60000;
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 }

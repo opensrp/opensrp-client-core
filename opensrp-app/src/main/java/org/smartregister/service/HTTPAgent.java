@@ -64,9 +64,6 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
-    public static final int CONNECTION_TIMEOUT = CoreLibrary.getInstance().getSyncConfiguration().getConnectionTime();
-    private static final int READ_TIMEOUT = CoreLibrary.getInstance().getSyncConfiguration().getReadTimeout();
-
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
@@ -99,8 +96,8 @@ public class HTTPAgent {
             OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
             ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
         }
-        urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-        urlConnection.setReadTimeout(READ_TIMEOUT);
+        urlConnection.setConnectTimeout(CoreLibrary.getInstance().getSyncConfiguration().getConnectionTime());
+        urlConnection.setReadTimeout(CoreLibrary.getInstance().getSyncConfiguration().getReadTimeout());
 
         if(useBasicAuth) {
             final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
@@ -421,5 +418,4 @@ public class HTTPAgent {
 
         return SUCCESS.withPayload(responseData);
     }
-
 }
