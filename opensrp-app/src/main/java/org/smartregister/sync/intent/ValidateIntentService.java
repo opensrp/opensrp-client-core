@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by keyman on 11/10/2017.
  */
-public class ValidateIntentService extends IntentService {
+public class ValidateIntentService extends BaseSyncIntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
@@ -45,7 +45,7 @@ public class ValidateIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         try {
-
+            super.onHandleIntent(intent);
             int fetchLimit = FETCH_LIMIT;
             EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
 

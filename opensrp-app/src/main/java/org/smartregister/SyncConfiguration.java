@@ -5,7 +5,7 @@ package org.smartregister;
  */
 public abstract class SyncConfiguration {
 
-    private int connectionTimeout = 60000;
+    private int connectTimeout = 60000;
     private int readTimeout = 60000;
 
     public abstract int getSyncMaxRetries();
@@ -41,6 +41,8 @@ public abstract class SyncConfiguration {
     /**
      * Returns the read timeout in milliseconds
      *
+     * This value will be read when setting the default value for sync read timeout in {@link org.smartregister.sync.intent.BaseSyncIntentService}
+     *
      * @return read timeout value in milliseconds
      */
     public int getReadTimeout() {
@@ -50,29 +52,11 @@ public abstract class SyncConfiguration {
     /**
      * Returns the connection timeout in milliseconds
      *
+     * This value will be read when setting the default value for sync connection timeout in {@link org.smartregister.sync.intent.BaseSyncIntentService}
+     *
      * @return connection timeout value in milliseconds
      */
-    public int getConnectionTime() {
-        return connectionTimeout;
-    }
-
-    /**
-     * Sets the connection timeout in milliseconds
-     *
-     * Setting this will call {@link java.net.HttpURLConnection#setConnectTimeout(int)}
-     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
-     */
-    public void setConnectionTimeout(int connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    /**
-     * Sets the read timeout in milliseconds
-     *
-     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
-     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
-     */
-    public void setReadTimeout(int readTimeout) {
-        this.readTimeout = readTimeout;
+    public int getConnectTimeout() {
+        return connectTimeout;
     }
 }

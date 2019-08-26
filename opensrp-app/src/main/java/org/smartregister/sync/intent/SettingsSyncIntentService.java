@@ -4,6 +4,8 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -14,7 +16,7 @@ import static org.smartregister.util.Log.logError;
 /**
  * Created by ndegwamartin on 14/09/2018.
  */
-public class SettingsSyncIntentService extends IntentService {
+public class SettingsSyncIntentService extends BaseSyncIntentService {
     public static final String SETTINGS_URL = "/rest/settings/sync";
 
     private static final String TAG = SettingsSyncIntentService.class.getCanonicalName();
@@ -32,7 +34,7 @@ public class SettingsSyncIntentService extends IntentService {
         Log.d("ssssssss", "In Settings Sync Intent Service...");
         if (intent != null) {
             try {
-
+                super.onHandleIntent(intent);
                 int count = syncSettingsServiceHelper.processIntent();
                 if (count > 0) {
                     intent.putExtra(AllConstants.INTENT_KEY.SYNC_TOTAL_RECORDS, count);
