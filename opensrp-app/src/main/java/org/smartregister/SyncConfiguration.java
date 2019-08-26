@@ -59,4 +59,24 @@ public abstract class SyncConfiguration {
     public int getConnectTimeout() {
         return connectTimeout;
     }
+
+    /**
+     * Sets the connection timeout in milliseconds
+     *
+     * Setting this will call {@link java.net.HttpURLConnection#setConnectTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    /**
+     * Sets the read timeout in milliseconds
+     *
+     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
 }

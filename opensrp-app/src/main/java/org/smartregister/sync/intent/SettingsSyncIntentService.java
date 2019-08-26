@@ -1,10 +1,7 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
-
-import com.fasterxml.jackson.databind.ser.Serializers;
 
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
