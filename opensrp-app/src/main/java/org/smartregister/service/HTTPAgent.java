@@ -6,6 +6,7 @@ import android.util.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
@@ -63,9 +64,9 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
-    public static final int CONNECTION_TIMEOUT = 60000;
-    private static final int READ_TIMEOUT = 60000;
-    private static final String TAG = HTTPAgent.class.getCanonicalName();
+    public static final int CONNECTION_TIMEOUT = CoreLibrary.getInstance().getSyncConfiguration().getConnectionTime();
+    private static final int READ_TIMEOUT = CoreLibrary.getInstance().getSyncConfiguration().getReadTimeout();
+
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;

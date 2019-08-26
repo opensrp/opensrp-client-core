@@ -34,4 +34,22 @@ public abstract class SyncConfiguration {
     public abstract SyncFilter getEncryptionParam();
 
     public abstract boolean updateClientDetailsTable();
+
+    /**
+     * Returns the read timeout in milliseconds
+     *
+     * @return read timeout value in milliseconds
+     */
+    public int getReadTimeout() {
+        return 60000;
+    }
+
+    /**
+     * Returns the connection timeout in milliseconds
+     *
+     * @return connection timeout value in milliseconds
+     */
+    public int getConnectionTime() {
+        return 60000;
+    }
 }
