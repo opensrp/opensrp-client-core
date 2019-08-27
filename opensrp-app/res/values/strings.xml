@@ -414,5 +414,8 @@
     <string name="x_months_weeks">%1$dm %2$dw</string>
     <string name="x_years">%1$dy</string>
     <string name="x_years_months">%1$dy %2$dm</string>
+    <string name="msg_empty_url">URL cannot be empty</string>
+    <string name="sync_failed_malformed_url">Sync failed. Check Url Configuration</string>
+    <string name="sync_failed_timeout_error">Sync Failed. Could not connect to the server</string>
 
 </resources>
