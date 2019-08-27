@@ -17,7 +17,7 @@ public class BaseSyncIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         CoreLibrary coreLibrary =  CoreLibrary.getInstance();
-        coreLibrary.context().getHttpAgent().setConnectTimeout(coreLibrary.getSyncConfiguration().getConnectTimeout());
-        coreLibrary.context().getHttpAgent().setReadTimeout(coreLibrary.getSyncConfiguration().getReadTimeout());
+        coreLibrary.context().httpAgent().setConnectTimeout(coreLibrary.getSyncConfiguration().getConnectTimeout());
+        coreLibrary.context().httpAgent().setReadTimeout(coreLibrary.getSyncConfiguration().getReadTimeout());
     }
 }
