@@ -4,7 +4,7 @@
 [![Dristhi](opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
 
-# Table of Contents
+# Table of Contents 
 
 * [Introduction](#introduction)
 * [Features](#features)
