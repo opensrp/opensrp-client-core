@@ -135,7 +135,7 @@ public class PlanDefinition implements Comparable<PlanDefinition> {
 
     @Override
     public int compareTo(PlanDefinition o) {
-        return this.getName().compareTo(o.getName());
+        return name.equals(o.getName()) ? identifier.compareTo(o.getIdentifier()) : this.getName().compareTo(o.getName());
     }
 
     public class UseContext {
