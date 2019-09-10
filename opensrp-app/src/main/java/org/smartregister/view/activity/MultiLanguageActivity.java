@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.support.v7.app.AppCompatActivity;
+
 import org.smartregister.util.LangUtils;
 
 

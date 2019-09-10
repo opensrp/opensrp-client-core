@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import org.smartregister.p2p.model.DataType;
+
 import java.util.TreeSet;
 
 /**
