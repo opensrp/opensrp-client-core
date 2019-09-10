@@ -225,7 +225,7 @@ public class TaskRepository extends BaseRepository {
         return taskSet;
     }
 
-    private Task readCursor(Cursor cursor) {
+    public Task readCursor(Cursor cursor) {
         Task task = new Task();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
         task.setPlanIdentifier(cursor.getString(cursor.getColumnIndex(PLAN_ID)));
@@ -284,7 +284,7 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
-    private TaskUpdate readUpdateCursor(Cursor cursor) {
+    public TaskUpdate readUpdateCursor(Cursor cursor) {
         TaskUpdate taskUpdate = new TaskUpdate();
         taskUpdate.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
 
