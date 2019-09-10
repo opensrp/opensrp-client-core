@@ -225,7 +225,8 @@ public class TaskRepository extends BaseRepository {
         return taskSet;
     }
 
-    private Task readCursor(Cursor cursor) {
+    //Do not make private - used in deriving classes
+    protected Task readCursor(Cursor cursor) {
         Task task = new Task();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
         task.setPlanIdentifier(cursor.getString(cursor.getColumnIndex(PLAN_ID)));
@@ -284,7 +285,8 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
-    private TaskUpdate readUpdateCursor(Cursor cursor) {
+    //Do not make private - used in deriving classes
+    protected TaskUpdate readUpdateCursor(Cursor cursor) {
         TaskUpdate taskUpdate = new TaskUpdate();
         taskUpdate.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
 
