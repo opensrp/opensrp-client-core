@@ -23,9 +23,9 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
-import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -76,8 +76,9 @@ public class TaskServiceHelper {
 
     public List<Task> fetchTasksFromServer() {
         Set<String> planDefinitions = getPlanDefinitionIds();
-        String groups = TextUtils.join(",", getLocationIds());
+        List<String> locationIds = getLocationIds();
         long serverVersion = 0;
+        List<Task> allSyncedtasks = new ArrayList<>();
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
@@ -85,23 +86,31 @@ public class TaskServiceHelper {
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
-            String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), groups, serverVersion);
-            List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
-            }.getType());
-            if (tasks != null && tasks.size() > 0) {
-                for (Task task : tasks) {
-                    try {
-                        task.setSyncStatus(BaseRepository.TYPE_Synced);
-                        taskRepository.addOrUpdate(task);
-                    } catch (Exception e) {
-                        Timber.e(e, "Error saving task " + task.getIdentifier());
+            Long maxServerVersion = 0l;
+            int BATCH_SIZE = 5;
+            for (int i = 0; i < locationIds.size(); i = i + BATCH_SIZE) {
+                int lastIndex = i + BATCH_SIZE < locationIds.size() ? i + BATCH_SIZE : locationIds.size();
+                String jurisdictions = TextUtils.join(",", locationIds.subList(i, lastIndex));
+                String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), jurisdictions, serverVersion);
+                List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
+                }.getType());
+                if (tasks != null && tasks.size() > 0) {
+                    for (Task task : tasks) {
+                        try {
+                            task.setSyncStatus(BaseRepository.TYPE_Synced);
+                            taskRepository.addOrUpdate(task);
+                        } catch (Exception e) {
+                            Timber.e(e, "Error saving task " + task.getIdentifier());
+                        }
                     }
                 }
+                maxServerVersion = getTaskMaxServerVersion(tasks, maxServerVersion);
+                allSyncedtasks.addAll(tasks);
             }
-            if (!Utils.isEmptyCollection(tasks)) {
-                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, getTaskMaxServerVersion(tasks));
+            if (maxServerVersion > 0) {
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, maxServerVersion.toString());
             }
-            return tasks;
+            return allSyncedtasks;
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
         }
@@ -131,9 +140,7 @@ public class TaskServiceHelper {
         return resp.payload().toString();
     }
 
-    private String getTaskMaxServerVersion(List<Task> tasks) {
-        long maxServerVersion = 0;
-
+    private long getTaskMaxServerVersion(List<Task> tasks, long maxServerVersion) {
         for (Task task : tasks) {
             long serverVersion = task.getServerVersion();
             if (serverVersion > maxServerVersion) {
@@ -141,7 +148,7 @@ public class TaskServiceHelper {
             }
         }
 
-        return String.valueOf(maxServerVersion);
+        return maxServerVersion;
     }
 
     public void syncTaskStatusToServer() {
