@@ -82,7 +82,8 @@ public class OpensrpSSLHelper {
             tmf.init(trustedKeystore);
             //Create new SSLContext using our new TrustManagerFactory
             SSLContext context = SSLContext.getInstance(BuildConfig.SSL_CONTEXT_PROTOCOL);
-            context.init(null, tmf.getTrustManagers(), null);
+            context.init(null, null, null);
+            // context.init(null, tmf.getTrustManagers(), null);
             //Get a SSLSocketFactory from our SSLContext
             return context.getSocketFactory();
         } catch (Exception e) {
