@@ -501,7 +501,7 @@ public class UserService {
     }
 
     public void saveJurisdictions(List<String> jurisdictions) {
-        if (jurisdictions != null)
+        if (jurisdictions != null && !jurisdictions.isEmpty())
             allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
     }
 
