@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
@@ -99,26 +100,6 @@ public class LocationServiceHelper {
         return null;
     }
 
-    private String makeURL(boolean isJurisdiction, long serverVersion, String parentId) {
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-        }
-        if (isJurisdiction) {
-            String preferenceLocationNames = null;
-            try {
-                preferenceLocationNames = URLEncoder.encode(allSharedPreferences.getPreference(OPERATIONAL_AREAS), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Log.e(getClass().getName(), e.getMessage(), e);
-            }
-            return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + isJurisdiction + "&location_names=" + preferenceLocationNames + "&serverVersion=" + serverVersion;
-        }
-        return baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parentId + "&isJurisdiction=" + isJurisdiction + "&serverVersion=" + serverVersion;
-
-    }
-
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String parentId) throws Exception {
 
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
@@ -126,7 +107,45 @@ public class LocationServiceHelper {
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(makeURL(isJurisdiction, serverVersion, parentId));
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+
+        Response resp;
+        JSONObject request = new JSONObject();
+        if (isJurisdiction) {
+            String preferenceLocationNames = null;
+            try {
+                preferenceLocationNames = URLEncoder.encode(allSharedPreferences.getPreference(OPERATIONAL_AREAS), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Log.e(getClass().getName(), e.getMessage(), e);
+            }
+            request.put("is_jurisdiction", isJurisdiction);
+            request.put("location_names", preferenceLocationNames);
+            request.put("parent_id", "");
+            request.put("serverVersion", serverVersion);
+
+            resp = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            LOCATION_STRUCTURE_URL),
+                    request.toString());
+        } else {
+            request.put("is_jurisdiction", isJurisdiction);
+            request.put("location_names", "");
+            request.put("parent_id", parentId);
+            request.put("serverVersion", serverVersion);
+
+            resp = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            LOCATION_STRUCTURE_URL),
+                    request.toString());
+        }
+
         if (resp.isFailure()) {
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
