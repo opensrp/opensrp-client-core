@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.LocalDate;
+import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
@@ -21,6 +22,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -103,13 +105,21 @@ public class PlanIntentServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + SYNC_PLANS_URL + "?operational_area_id=" + operationalAreaId + "&serverVersion=" + serverVersion;
+        JSONObject request = new JSONObject();
+        request.put("operational_area_id", operationalAreaId);
+        request.put("serverVersion", serverVersion);
+
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(url);
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}/{1}",
+                        baseUrl,
+                        SYNC_PLANS_URL),
+                request.toString());
+
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
