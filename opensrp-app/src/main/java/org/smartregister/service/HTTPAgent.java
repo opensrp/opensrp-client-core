@@ -63,9 +63,6 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
-    public static final int CONNECTION_TIMEOUT = 60000;
-    private static final int READ_TIMEOUT = 60000;
-    private static final String TAG = HTTPAgent.class.getCanonicalName();
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
@@ -74,6 +71,9 @@ public class HTTPAgent {
     private String boundary = "***" + System.currentTimeMillis() + "***";
     private String twoHyphens = "--";
     private String crlf = "\r\n";
+
+    private int connectTimeout = 60000;
+    private int readTimeout = 60000;
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -98,8 +98,8 @@ public class HTTPAgent {
             OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
             ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
         }
-        urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-        urlConnection.setReadTimeout(READ_TIMEOUT);
+        urlConnection.setConnectTimeout(getConnectTimeout());
+        urlConnection.setReadTimeout(getReadTimeout());
 
         if(useBasicAuth) {
             final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
@@ -421,4 +421,41 @@ public class HTTPAgent {
         return SUCCESS.withPayload(responseData);
     }
 
+    /**
+     * Returns the read timeout in milliseconds
+     *
+     * @return read timeout value in milliseconds
+     */
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Returns the connection timeout in milliseconds
+     *
+     * @return connection timeout value in milliseconds
+     */
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Sets the connection timeout in milliseconds
+     *
+     * Setting this will call {@link java.net.HttpURLConnection#setConnectTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    /**
+     * Sets the read timeout in milliseconds
+     *
+     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
 }

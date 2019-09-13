@@ -21,7 +21,7 @@ import timber.log.Timber;
  * Created by Ephraim Kigamba - ekigamba@ona.io on 10/05/2019
  */
 
-public class P2pProcessRecordsService extends IntentService {
+public class P2pProcessRecordsService extends BaseSyncIntentService {
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -39,6 +39,7 @@ public class P2pProcessRecordsService extends IntentService {
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
 
+        super.onHandleIntent(intent);
         AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
         if (allSharedPreferences.isPeerToPeerUnprocessedEvents()) {

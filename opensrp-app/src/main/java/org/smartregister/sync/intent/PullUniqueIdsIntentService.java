@@ -20,7 +20,7 @@ import org.smartregister.service.HTTPAgent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PullUniqueIdsIntentService extends IntentService {
+public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private static final String TAG = PullUniqueIdsIntentService.class.getCanonicalName();
@@ -34,6 +34,7 @@ public class PullUniqueIdsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            super.onHandleIntent(intent);
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             int numberToGenerate;
             if (uniqueIdRepo.countUnUsedIds() == 0) { // first time pull no ids at all

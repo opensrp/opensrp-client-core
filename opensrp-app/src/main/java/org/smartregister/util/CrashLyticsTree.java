@@ -1,10 +1,13 @@
 package org.smartregister.util;
 
 import android.util.Log;
+
 import com.crashlytics.android.Crashlytics;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.smartregister.view.activity.DrishtiApplication;
+
 import timber.log.Timber;
 
 public class CrashLyticsTree extends Timber.Tree {

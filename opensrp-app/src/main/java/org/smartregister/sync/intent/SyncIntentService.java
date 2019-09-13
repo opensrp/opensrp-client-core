@@ -32,7 +32,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-public class SyncIntentService extends IntentService {
+public class SyncIntentService extends BaseSyncIntentService {
     private static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
 
@@ -57,7 +57,7 @@ public class SyncIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        super.onHandleIntent(intent);
         handleSync();
     }
 

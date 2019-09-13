@@ -5,7 +5,7 @@ import android.content.Intent;
 
 import org.smartregister.sync.helper.TaskServiceHelper;
 
-public class SyncTaskIntentService extends IntentService {
+public class SyncTaskIntentService extends BaseSyncIntentService {
     private static final String TAG = "SyncTaskIntentService";
     private TaskServiceHelper taskServiceHelper;
 
@@ -24,8 +24,8 @@ public class SyncTaskIntentService extends IntentService {
         if (taskServiceHelper == null) {
             taskServiceHelper = TaskServiceHelper.getInstance();
         }
+        super.onHandleIntent(intent);
         taskServiceHelper.syncTasks();
-
     }
 
 }

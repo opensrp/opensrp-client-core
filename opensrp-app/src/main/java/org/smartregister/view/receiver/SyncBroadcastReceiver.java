@@ -11,8 +11,6 @@ import org.smartregister.sync.UpdateActionsTask;
 
 import timber.log.Timber;
 
-import static org.smartregister.util.Log.logInfo;
-
 public class SyncBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
