@@ -117,7 +117,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException {
+    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException, JSONException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -126,13 +126,20 @@ public class TaskServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + SYNC_TASK_URL + "?plan=" + plan + "&group=" + group + "&serverVersion=" + serverVersion;
+        JSONObject request = new JSONObject();
+        request.put("plan", plan);
+        request.put("group", group);
+        request.put("serverVersion", serverVersion);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(url);
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}/{1}",
+                        baseUrl,
+                        SYNC_TASK_URL),
+                request.toString());
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
