@@ -117,7 +117,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException, JSONException {
+    private String fetchTasks(String plan, String group, Long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
