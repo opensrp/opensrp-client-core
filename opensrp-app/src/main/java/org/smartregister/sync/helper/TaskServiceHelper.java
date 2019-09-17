@@ -136,7 +136,7 @@ public class TaskServiceHelper {
         }
 
         Response resp = httpAgent.post(
-                MessageFormat.format("{0}/{1}",
+                MessageFormat.format("{0}{1}",
                         baseUrl,
                         SYNC_TASK_URL),
                 request.toString());

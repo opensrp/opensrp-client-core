@@ -115,7 +115,7 @@ public class PlanIntentServiceHelper {
         }
 
         Response resp = httpAgent.post(
-                MessageFormat.format("{0}/{1}",
+                MessageFormat.format("{0}{1}",
                         baseUrl,
                         SYNC_PLANS_URL),
                 request.toString());
