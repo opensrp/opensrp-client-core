@@ -117,19 +117,15 @@ public class LocationServiceHelper {
         Response resp;
         JSONObject request = new JSONObject();
         if (isJurisdiction) {
-            String preferenceLocationNames = null;
-            try {
-                preferenceLocationNames = URLEncoder.encode(allSharedPreferences.getPreference(OPERATIONAL_AREAS), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Log.e(getClass().getName(), e.getMessage(), e);
-            }
+            String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
+
             request.put("is_jurisdiction", isJurisdiction);
             request.put("location_names", preferenceLocationNames);
             request.put("parent_id", "");
             request.put("serverVersion", serverVersion);
 
             resp = httpAgent.post(
-                    MessageFormat.format("{0}/{1}",
+                    MessageFormat.format("{0}{1}",
                             baseUrl,
                             LOCATION_STRUCTURE_URL),
                     request.toString());
@@ -140,7 +136,7 @@ public class LocationServiceHelper {
             request.put("serverVersion", serverVersion);
 
             resp = httpAgent.post(
-                    MessageFormat.format("{0}/{1}",
+                    MessageFormat.format("{0}{1}",
                             baseUrl,
                             LOCATION_STRUCTURE_URL),
                     request.toString());
