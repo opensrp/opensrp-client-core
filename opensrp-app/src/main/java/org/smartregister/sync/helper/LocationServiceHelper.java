@@ -23,8 +23,6 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
