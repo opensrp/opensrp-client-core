@@ -69,6 +69,8 @@ public class PlanIntentServiceHelper {
             }
 
             List<String> locationIds = locationRepository.getAllLocationIds();
+            if (locationIds.isEmpty())
+                return;
             Long maxServerVersion = 0l;
 
             int BATCH_SIZE = 10;

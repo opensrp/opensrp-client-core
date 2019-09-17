@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
 
 import javax.crypto.Cipher;
@@ -58,6 +59,7 @@ import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
@@ -367,6 +369,7 @@ public class UserService {
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
+        saveJurisdictions(userInfo.jurisdictions);
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
                         StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
@@ -495,6 +498,11 @@ public class UserService {
     public void saveAnmTeam(TeamMember anmTeam) {
         String anmTeamString = AssetHandler.javaToJsonString(anmTeam);
         saveANMTeamTask.save(anmTeamString);
+    }
+
+    public void saveJurisdictions(List<String> jurisdictions) {
+        if (jurisdictions != null && !jurisdictions.isEmpty())
+            allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
     }
 
     public void saveUserInfo(User user) {

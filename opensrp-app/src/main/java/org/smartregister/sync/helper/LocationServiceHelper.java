@@ -26,6 +26,7 @@ import org.smartregister.util.Utils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
@@ -70,21 +71,30 @@ public class LocationServiceHelper {
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
-            List<String> parentIds = locationRepository.getAllLocationIds();
-            String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
-            List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
-            }.getType());
+            int BATCH_SIZE = 10;
 
-            for (Location location : locations) {
-                try {
-                    location.setSyncStatus(BaseRepository.TYPE_Synced);
-                    if (isJurisdiction)
-                        locationRepository.addOrUpdate(location);
-                    else {
-                        structureRepository.addOrUpdate(location);
+            List<String> locationFilter = isJurisdiction ?
+                    Arrays.asList(allSharedPreferences.getPreference(OPERATIONAL_AREAS).split(",")) : locationRepository.getAllLocationIds();
+            List<Location> locations = null;
+
+            for (int i = 0; i < locationFilter.size(); i = i + BATCH_SIZE) {
+                int lastIndex = i + BATCH_SIZE < locationFilter.size() ? i + BATCH_SIZE : locationFilter.size();
+                String locationFilterValue = TextUtils.join(",", locationFilter.subList(i, lastIndex));
+                String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, locationFilterValue);
+                locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
+                }.getType());
+
+                for (Location location : locations) {
+                    try {
+                        location.setSyncStatus(BaseRepository.TYPE_Synced);
+                        if (isJurisdiction)
+                            locationRepository.addOrUpdate(location);
+                        else {
+                            structureRepository.addOrUpdate(location);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
             if (!Utils.isEmptyCollection(locations)) {
@@ -106,7 +116,6 @@ public class LocationServiceHelper {
         if (httpAgent == null) {
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
-
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
         String endString = "/";
