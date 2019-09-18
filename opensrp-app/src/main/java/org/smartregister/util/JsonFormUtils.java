@@ -435,6 +435,7 @@ public class JsonFormUtils {
                             entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                             entityParentVal = "";
                             vall.add(option.getString(OPENMRS_ENTITY_ID));
+                            humanReadableValues.add(option.getString(KEY));
                         }
                     }
                 } catch (JSONException e1) {
