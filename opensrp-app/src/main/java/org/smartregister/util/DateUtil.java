@@ -14,6 +14,7 @@ import org.smartregister.R;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 interface DateUtility {
@@ -72,7 +73,7 @@ public class DateUtil {
 
     public static LocalDate getLocalDate(String date) {
         try {
-            SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+            SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
             Date formattedDate = format.parse(date);
             return new LocalDate(formattedDate);
         } catch (Exception e) {

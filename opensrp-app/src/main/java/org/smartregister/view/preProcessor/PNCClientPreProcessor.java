@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import static org.smartregister.util.DateUtil.dayDifference;
@@ -304,7 +305,7 @@ public class PNCClientPreProcessor {
         @Override
         public int compare(ServiceProvidedDTO serviceProvidedDTO1, ServiceProvidedDTO
                 serviceProvidedDTO2) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             Date date1;
             Date date2;
             try {

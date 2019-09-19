@@ -2,13 +2,14 @@ package org.smartregister.domain.jsonmapping;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
  * Created by Jason Rogena (jrogena@ona.io) on 19/05/2017.
  */
 public class Time {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     private String time;
     private String timeZone;
 
