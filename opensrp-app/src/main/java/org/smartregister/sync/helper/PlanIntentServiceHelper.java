@@ -70,7 +70,7 @@ public class PlanIntentServiceHelper {
             // fetch and save plans
             Long maxServerVersion = 0l;
 
-            String jurisdictions = TextUtils.join(",", locationRepository.getAllLocationIds());
+            List<String> jurisdictions = locationRepository.getAllLocationIds();
             String plansResponse = fetchPlans(jurisdictions, serverVersion);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
@@ -90,7 +90,7 @@ public class PlanIntentServiceHelper {
         }
     }
 
-    private String fetchPlans(String operationalAreaId, long serverVersion) throws Exception {
+    private String fetchPlans(List<String> operationalAreaId, long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";

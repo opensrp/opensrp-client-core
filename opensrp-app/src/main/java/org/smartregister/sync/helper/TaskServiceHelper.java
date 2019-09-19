@@ -26,7 +26,6 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -77,7 +76,7 @@ public class TaskServiceHelper {
 
     public List<Task> fetchTasksFromServer() {
         Set<String> planDefinitions = getPlanDefinitionIds();
-        String groups = TextUtils.join(",", getLocationIds());
+        List<String> groups = getLocationIds();
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -87,7 +86,7 @@ public class TaskServiceHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             Long maxServerVersion = 0l;
-            String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), groups, serverVersion);
+            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
             if (tasks != null && tasks.size() > 0) {
@@ -110,7 +109,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(String plan, String group, Long serverVersion) throws Exception {
+    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();

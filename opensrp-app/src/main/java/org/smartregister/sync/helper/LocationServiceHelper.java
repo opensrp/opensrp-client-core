@@ -99,7 +99,7 @@ public class LocationServiceHelper {
         return null;
     }
 
-    private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String parentId) throws Exception {
+    private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue) throws Exception {
 
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
@@ -113,32 +113,22 @@ public class LocationServiceHelper {
         }
 
         Response resp;
+
         JSONObject request = new JSONObject();
+        request.put("is_jurisdiction", isJurisdiction);
         if (isJurisdiction) {
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
-
-            request.put("is_jurisdiction", isJurisdiction);
-            request.put("location_names", preferenceLocationNames);
-            request.put("parent_id", "");
-            request.put("serverVersion", serverVersion);
-
-            resp = httpAgent.post(
-                    MessageFormat.format("{0}{1}",
-                            baseUrl,
-                            LOCATION_STRUCTURE_URL),
-                    request.toString());
+            request.put("location_names", Arrays.asList(preferenceLocationNames.split(",")));
         } else {
-            request.put("is_jurisdiction", isJurisdiction);
-            request.put("location_names", "");
-            request.put("parent_id", parentId);
-            request.put("serverVersion", serverVersion);
-
-            resp = httpAgent.post(
-                    MessageFormat.format("{0}{1}",
-                            baseUrl,
-                            LOCATION_STRUCTURE_URL),
-                    request.toString());
+            request.put("parent_id", Arrays.asList(locationFilterValue.split(",")));
         }
+        request.put("serverVersion", serverVersion);
+
+        resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        LOCATION_STRUCTURE_URL),
+                request.toString());
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
