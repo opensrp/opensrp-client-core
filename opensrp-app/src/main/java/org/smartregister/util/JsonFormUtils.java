@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import timber.log.Timber;
+
 /**
  * Created by keyman on 08/02/2017.
  */
@@ -441,7 +443,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    Log.e(TAG, e1.getMessage());
+                    Timber.e("%s : %s",TAG , e1.getMessage());
                 }
             } else {
                 if (values != null && values.length() > 0) {
