@@ -1,6 +1,11 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -8,12 +13,17 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.domain.db.Client;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateUtil;
+import org.smartregister.util.P2PUtil;
+import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +34,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.TaskStatus;
 
 /**
@@ -31,6 +42,10 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
+    protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
+            .registerTypeAdapter(Task.class, new PropertiesConverter()).create();
+
+    private static final String TAG = TaskRepository.class.getCanonicalName();
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
     private static final String GROUP_ID = "group_id";
@@ -454,4 +469,94 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
+    public boolean batchInsertTasks(JSONArray array, long serverVersion) {
+        if (array == null || array.length() == 0) {
+            return false;
+        }
+
+        try {
+            getWritableDatabase().beginTransaction();
+            int maxRowId = 0;
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                String formSubmissionId = jsonObject.getString(ID);
+
+                if (maxRowId == 0) {
+                    maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+                }
+
+                maxRowId++;
+                if (P2PUtil.checkIfExistsById(TASK_TABLE, formSubmissionId, getWritableDatabase())) {
+                    jsonObject.put(ID, maxRowId);
+                    Task task = gson.fromJson(jsonObject.toString(), Task.class);
+                    addOrUpdate(task);
+                } else {
+                    Task task = gson.fromJson(jsonObject.toString(), Task.class);
+                    addOrUpdate(task);
+                }
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "", e);
+            getWritableDatabase().endTransaction();
+            return false;
+        }
+    }
+
+    /**
+     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     *
+     * @param lastRowId
+     * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
+     */
+    @Nullable
+    public JsonData getTasks(long lastRowId, int limit) {
+        JsonData jsonData = null;
+        //JSONArray jsonArray = new JSONArray();
+        long maxRowId = 0;
+
+        String query = "SELECT ROWID, * "
+                + " FROM "
+                + TASK_TABLE
+                + " WHERE "
+                + ROWID
+                + " > ? "
+                + " ORDER BY " + ROWID + " ASC LIMIT ?";
+
+        Cursor cursor = null;
+        final List<Task> tasks = new ArrayList<>();
+
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+
+                tasks.add(readCursor(cursor));
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        JSONArray jsonArray = gson.fromJson(tasks.toString(), JSONArray.class);
+        if (jsonArray.length() > 0) {
+            jsonData = new JsonData(jsonArray, maxRowId);
+        }
+        return jsonData;
+    }
 }

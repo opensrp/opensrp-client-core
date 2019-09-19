@@ -1,23 +1,34 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.smartregister.domain.Geometry;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.db.Client;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.repository.helper.MappingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.smartregister.AllConstants.ROWID;
+
+import org.smartregister.util.P2PUtil;
+
 /**
  * Created by samuelgithengi on 11/23/18.
  */
 public class StructureRepository extends LocationRepository {
+
+    private static final String TAG = StructureRepository.class.getCanonicalName();
 
     protected static String STRUCTURE_TABLE = "structure";
     private static final String SYNC_STATUS = "sync_status";
@@ -114,5 +125,95 @@ public class StructureRepository extends LocationRepository {
 
     public void setHelper(MappingHelper helper) {
         this.helper = helper;
+    }
+
+    public boolean batchInsertStructures(JSONArray array, long serverVersion) {
+        if (array == null || array.length() == 0) {
+            return false;
+        }
+
+        try {
+            getWritableDatabase().beginTransaction();
+            int maxRowId = 0;
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                String formSubmissionId = jsonObject.getString(ID);
+
+                if (maxRowId == 0) {
+                    maxRowId = P2PUtil.getMaxRowId(STRUCTURE_TABLE, getWritableDatabase());
+                }
+
+                maxRowId++;
+                if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, formSubmissionId, getWritableDatabase())) {
+                    jsonObject.put(ID, maxRowId);
+                    Location structure = gson.fromJson(jsonObject.toString(), Location.class);
+                    addOrUpdate(structure);
+                } else {
+                    Location structure = gson.fromJson(jsonObject.toString(), Location.class);
+                    addOrUpdate(structure);
+                }
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+        } catch (Exception e) {
+            Log.e(getClass().getName(), "", e);
+            getWritableDatabase().endTransaction();
+            return false;
+        }
+    }
+
+    /**
+     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     *
+     * @param lastRowId
+     * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
+     */
+    @Nullable
+    public JsonData getStructures(long lastRowId, int limit) {
+        JsonData jsonData = null;
+        long maxRowId = 0;
+
+        String query = "SELECT ROWID, * "
+                + " FROM "
+                + STRUCTURE_TABLE
+                + " WHERE "
+                + ROWID
+                + " > ? "
+                + " ORDER BY " + ROWID + " ASC LIMIT ?";
+
+        Cursor cursor = null;
+        final List<Location> structures = new ArrayList<>();
+
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+
+                structures.add(readCursor(cursor));
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        JSONArray jsonArray = gson.fromJson(structures.toString(), JSONArray.class);
+        if (jsonArray.length() > 0) {
+            jsonData = new JsonData(jsonArray, maxRowId);
+        }
+        return jsonData;
     }
 }
