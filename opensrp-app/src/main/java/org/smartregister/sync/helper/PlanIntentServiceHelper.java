@@ -67,32 +67,23 @@ public class PlanIntentServiceHelper {
             if (serverVersion > 0) {
                 serverVersion += 1;
             }
-
-            List<String> locationIds = locationRepository.getAllLocationIds();
-            if (locationIds.isEmpty())
-                return;
+            // fetch and save plans
             Long maxServerVersion = 0l;
 
-            int BATCH_SIZE = 10;
-            for (int i = 0; i < locationIds.size(); i = i + BATCH_SIZE) {
-                int lastIndex = i + BATCH_SIZE < locationIds.size() ? i + BATCH_SIZE : locationIds.size();
-                String jurisdictions = TextUtils.join(",", locationIds.subList(i, lastIndex));
-                String plansResponse = fetchPlans(jurisdictions, serverVersion);
-                List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
-                }.getType());
-                for (PlanDefinition plan : plans) {
-                    try {
-                        planDefinitionRepository.addOrUpdate(plan);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            String jurisdictions = TextUtils.join(",", locationRepository.getAllLocationIds());
+            String plansResponse = fetchPlans(jurisdictions, serverVersion);
+            List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
+            }.getType());
+            for (PlanDefinition plan : plans) {
+                try {
+                    planDefinitionRepository.addOrUpdate(plan);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                maxServerVersion = getPlanDefinitionMaxServerVersion(plans, maxServerVersion);
             }
-
             // update most recent server version
-            if (maxServerVersion > 0) {
-                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, maxServerVersion.toString());
+            if (!Utils.isEmptyCollection(plans)) {
+                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
             }
         } catch (Exception e) {
             Log.e(TAG, e.getMessage(), e);

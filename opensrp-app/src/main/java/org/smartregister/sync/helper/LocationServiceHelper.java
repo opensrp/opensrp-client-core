@@ -69,30 +69,21 @@ public class LocationServiceHelper {
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
-            int BATCH_SIZE = 10;
+            List<String> parentIds = locationRepository.getAllLocationIds();
+            String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
+            List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
+            }.getType());
 
-            List<String> locationFilter = isJurisdiction ?
-                    Arrays.asList(allSharedPreferences.getPreference(OPERATIONAL_AREAS).split(",")) : locationRepository.getAllLocationIds();
-            List<Location> locations = null;
-
-            for (int i = 0; i < locationFilter.size(); i = i + BATCH_SIZE) {
-                int lastIndex = i + BATCH_SIZE < locationFilter.size() ? i + BATCH_SIZE : locationFilter.size();
-                String locationFilterValue = TextUtils.join(",", locationFilter.subList(i, lastIndex));
-                String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, locationFilterValue);
-                locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
-                }.getType());
-
-                for (Location location : locations) {
-                    try {
-                        location.setSyncStatus(BaseRepository.TYPE_Synced);
-                        if (isJurisdiction)
-                            locationRepository.addOrUpdate(location);
-                        else {
-                            structureRepository.addOrUpdate(location);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+            for (Location location : locations) {
+                try {
+                    location.setSyncStatus(BaseRepository.TYPE_Synced);
+                    if (isJurisdiction)
+                        locationRepository.addOrUpdate(location);
+                    else {
+                        structureRepository.addOrUpdate(location);
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             if (!Utils.isEmptyCollection(locations)) {

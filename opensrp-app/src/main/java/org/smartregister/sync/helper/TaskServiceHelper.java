@@ -23,6 +23,7 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -76,9 +77,8 @@ public class TaskServiceHelper {
 
     public List<Task> fetchTasksFromServer() {
         Set<String> planDefinitions = getPlanDefinitionIds();
-        List<String> locationIds = getLocationIds();
+        String groups = TextUtils.join(",", getLocationIds());
         long serverVersion = 0;
-        List<Task> allSyncedtasks = new ArrayList<>();
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
@@ -87,30 +87,23 @@ public class TaskServiceHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             Long maxServerVersion = 0l;
-            int BATCH_SIZE = 5;
-            for (int i = 0; i < locationIds.size(); i = i + BATCH_SIZE) {
-                int lastIndex = i + BATCH_SIZE < locationIds.size() ? i + BATCH_SIZE : locationIds.size();
-                String jurisdictions = TextUtils.join(",", locationIds.subList(i, lastIndex));
-                String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), jurisdictions, serverVersion);
-                List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
-                }.getType());
-                if (tasks != null && tasks.size() > 0) {
-                    for (Task task : tasks) {
-                        try {
-                            task.setSyncStatus(BaseRepository.TYPE_Synced);
-                            taskRepository.addOrUpdate(task);
-                        } catch (Exception e) {
-                            Timber.e(e, "Error saving task " + task.getIdentifier());
-                        }
+            String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), groups, serverVersion);
+            List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
+            }.getType());
+            if (tasks != null && tasks.size() > 0) {
+                for (Task task : tasks) {
+                    try {
+                        task.setSyncStatus(BaseRepository.TYPE_Synced);
+                        taskRepository.addOrUpdate(task);
+                    } catch (Exception e) {
+                        Timber.e(e, "Error saving task " + task.getIdentifier());
                     }
                 }
-                maxServerVersion = getTaskMaxServerVersion(tasks, maxServerVersion);
-                allSyncedtasks.addAll(tasks);
             }
-            if (maxServerVersion > 0) {
-                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, maxServerVersion.toString());
+            if (!Utils.isEmptyCollection(tasks)) {
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
             }
-            return allSyncedtasks;
+            return tasks;
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
         }
