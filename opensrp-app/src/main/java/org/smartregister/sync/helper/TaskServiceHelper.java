@@ -2,7 +2,6 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -119,8 +118,8 @@ public class TaskServiceHelper {
         }
 
         JSONObject request = new JSONObject();
-        request.put("plan", plan);
-        request.put("group", group);
+        request.put("plan", new JSONArray(plan));
+        request.put("group", new JSONArray(group));
         request.put("serverVersion", serverVersion);
 
         if (httpAgent == null) {

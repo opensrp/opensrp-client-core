@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
@@ -118,9 +119,9 @@ public class LocationServiceHelper {
         request.put("is_jurisdiction", isJurisdiction);
         if (isJurisdiction) {
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
-            request.put("location_names", Arrays.asList(preferenceLocationNames.split(",")));
+            request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
         } else {
-            request.put("parent_id", Arrays.asList(locationFilterValue.split(",")));
+            request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
         request.put("serverVersion", serverVersion);
 

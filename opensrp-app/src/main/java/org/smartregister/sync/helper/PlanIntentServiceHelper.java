@@ -1,7 +1,6 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -9,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.LocalDate;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
@@ -99,7 +99,7 @@ public class PlanIntentServiceHelper {
         }
 
         JSONObject request = new JSONObject();
-        request.put("operational_area_id", operationalAreaId);
+        request.put("operational_area_id", new JSONArray(operationalAreaId));
         request.put("serverVersion", serverVersion);
 
         if (httpAgent == null) {
