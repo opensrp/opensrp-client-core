@@ -42,9 +42,6 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
-    protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
-            .registerTypeAdapter(Task.class, new PropertiesConverter()).create();
-
     private static final String TAG = TaskRepository.class.getCanonicalName();
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
@@ -489,10 +486,10 @@ public class TaskRepository extends BaseRepository {
                 maxRowId++;
                 if (P2PUtil.checkIfExistsById(TASK_TABLE, formSubmissionId, getWritableDatabase())) {
                     jsonObject.put(ID, maxRowId);
-                    Task task = gson.fromJson(jsonObject.toString(), Task.class);
+                    Task task = new Gson().fromJson(jsonObject.toString(), Task.class);
                     addOrUpdate(task);
                 } else {
-                    Task task = gson.fromJson(jsonObject.toString(), Task.class);
+                    Task task = new Gson().fromJson(jsonObject.toString(), Task.class);
                     addOrUpdate(task);
                 }
             }
@@ -518,11 +515,11 @@ public class TaskRepository extends BaseRepository {
     @Nullable
     public JsonData getTasks(long lastRowId, int limit) {
         JsonData jsonData = null;
-        //JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
 
-        String query = "SELECT ROWID, * "
-                + " FROM "
+        String query = "SELECT "
+                + ROWID
+                +",* FROM "
                 + TASK_TABLE
                 + " WHERE "
                 + ROWID
@@ -534,7 +531,6 @@ public class TaskRepository extends BaseRepository {
 
         try {
             cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
-
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
@@ -553,7 +549,7 @@ public class TaskRepository extends BaseRepository {
             }
         }
 
-        JSONArray jsonArray = gson.fromJson(tasks.toString(), JSONArray.class);
+        JSONArray jsonArray = new Gson().fromJson(tasks.toString(), JSONArray.class);
         if (jsonArray.length() > 0) {
             jsonData = new JsonData(jsonArray, maxRowId);
         }

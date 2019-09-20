@@ -178,8 +178,9 @@ public class StructureRepository extends LocationRepository {
         JsonData jsonData = null;
         long maxRowId = 0;
 
-        String query = "SELECT ROWID, * "
-                + " FROM "
+        String query = "SELECT "
+                + ROWID
+                +",* FROM "
                 + STRUCTURE_TABLE
                 + " WHERE "
                 + ROWID

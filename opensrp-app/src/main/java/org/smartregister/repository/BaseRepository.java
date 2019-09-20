@@ -55,7 +55,7 @@ public class BaseRepository {
         return this.repository.getReadableDatabase();
     }
 
-    public interface BaseTable {
+    interface BaseTable {
         Column[] columns();
 
         String name();
