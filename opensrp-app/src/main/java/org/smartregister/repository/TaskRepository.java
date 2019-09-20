@@ -549,7 +549,7 @@ public class TaskRepository extends BaseRepository {
             }
         }
 
-        JSONArray jsonArray = new Gson().fromJson(tasks.toString(), JSONArray.class);
+        JSONArray jsonArray = new JSONArray(tasks);
         if (jsonArray.length() > 0) {
             jsonData = new JsonData(jsonArray, maxRowId);
         }

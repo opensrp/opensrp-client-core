@@ -211,7 +211,7 @@ public class StructureRepository extends LocationRepository {
             }
         }
 
-        JSONArray jsonArray = gson.fromJson(structures.toString(), JSONArray.class);
+        JSONArray jsonArray = new JSONArray(structures);
         if (jsonArray.length() > 0) {
             jsonData = new JsonData(jsonArray, maxRowId);
         }
