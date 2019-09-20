@@ -1,7 +1,6 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -25,6 +24,8 @@ import org.smartregister.util.Utils;
 import java.text.MessageFormat;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
@@ -34,7 +35,6 @@ public class PlanIntentServiceHelper {
     private LocationRepository locationRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
-    private final String TAG = PlanIntentServiceHelper.class.getName();
 
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
@@ -62,7 +62,7 @@ public class PlanIntentServiceHelper {
             try {
                 serverVersion = Long.parseLong(allSharedPreferences.getPreference(PLAN_LAST_SYNC_DATE));
             } catch (NumberFormatException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e, "EXCEPTION %s", e.toString());
             }
             if (serverVersion > 0) {
                 serverVersion += 1;
@@ -78,7 +78,7 @@ public class PlanIntentServiceHelper {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
             // update most recent server version
@@ -86,7 +86,7 @@ public class PlanIntentServiceHelper {
                 allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
     }
 

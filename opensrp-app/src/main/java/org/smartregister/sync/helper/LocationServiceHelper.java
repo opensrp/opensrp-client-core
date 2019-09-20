@@ -2,7 +2,6 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -27,6 +26,8 @@ import org.smartregister.util.Utils;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
@@ -66,7 +67,7 @@ public class LocationServiceHelper {
         try {
             serverVersion = (StringUtils.isEmpty(currentServerVersion) ? 0 : Long.parseLong(currentServerVersion));
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
@@ -84,7 +85,7 @@ public class LocationServiceHelper {
                         structureRepository.addOrUpdate(location);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
             if (!Utils.isEmptyCollection(locations)) {
@@ -95,7 +96,7 @@ public class LocationServiceHelper {
             return locations;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         return null;
     }
@@ -168,7 +169,7 @@ public class LocationServiceHelper {
                             CREATE_STRUCTURE_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Failed to create new locations on server.");
+                Timber.e("Failed to create new locations on server: %s", response.payload());
                 return;
             }
 

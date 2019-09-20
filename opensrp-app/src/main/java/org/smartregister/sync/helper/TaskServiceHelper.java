@@ -2,7 +2,6 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -31,7 +30,6 @@ import java.util.Set;
 import timber.log.Timber;
 
 public class TaskServiceHelper {
-    private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
@@ -80,7 +78,7 @@ public class TaskServiceHelper {
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
@@ -163,7 +161,7 @@ public class TaskServiceHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Update Status failed.");
+                Timber.e("Update Status failedd: %s", response.payload());
                 return;
             }
 
@@ -177,7 +175,7 @@ public class TaskServiceHelper {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass().getName(), "Error processing the tasks payload: " + response.payload());
+                    Timber.e(e, "Error processing the tasks payload: %s", response.payload());
                 }
             }
         }
@@ -195,7 +193,7 @@ public class TaskServiceHelper {
                             ADD_TASK_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Failed to create new tasks on server.");
+                Timber.e("Failed to create new tasks on server.: %s", response.payload());
                 return;
             }
 
