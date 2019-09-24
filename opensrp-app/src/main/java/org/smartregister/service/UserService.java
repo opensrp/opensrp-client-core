@@ -6,11 +6,7 @@ import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
 import android.util.Log;
 
-import org.apache.commons.lang3.StringUtils;
-import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
-import org.smartregister.SyncConfiguration;
-import org.smartregister.SyncFilter;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -18,7 +14,6 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
-import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
@@ -297,7 +292,7 @@ public class UserService {
         LoginResponse loginResponse = httpAgent
                 .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
 
-        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
+        if (loginResponse!=null&&loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
         }
 
@@ -313,8 +308,7 @@ public class UserService {
         return httpAgent.fetch(requestURL);
     }
 
-    private boolean loginWith(String userName, String password) {
-        boolean loginSuccessful = true;
+    private void loginWith(String userName, String password) {
         if (usesGroupIdAsDBPassword(userName)) {
             String encryptedGroupId = allSharedPreferences.fetchEncryptedGroupId(userName);
             try {
@@ -325,13 +319,11 @@ public class UserService {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                loginSuccessful = false;
             }
         } else {
             setupContextForLogin(userName, password);
         }
         allSettings.registerANM(userName, password);
-        return loginSuccessful;
     }
 
     /**
@@ -358,23 +350,15 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        boolean loginSuccessful = loginWith(userName, password);
+        allSharedPreferences.saveForceRemoteLogin(false);
+        loginWith(userName, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
         saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
-        saveUserLocationId(userName, getUserLocationId(userInfo));
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
-        if (loginSuccessful &&
-                (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
-                (StringUtils.isBlank(getUserDefaultTeamId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName))) &&
-                (getUserLocation(userInfo) != null ||
-                        StringUtils.isNotBlank(allSettings.fetchANMLocation())))
-            allSharedPreferences.saveForceRemoteLogin(false);
     }
 
     public void forceRemoteLogin() {
@@ -387,7 +371,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Log.v("Error : ", e.getMessage());
         }
         return null;
     }
@@ -398,7 +382,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Log.v("Error : ", e.getMessage());
         }
         return null;
     }
@@ -409,7 +393,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Log.v("Error : ", e.getMessage());
         }
         return null;
     }
@@ -426,7 +410,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Log.v("Error : ", e.getMessage());
         }
         return null;
     }
@@ -443,7 +427,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Log.v("Error : ", e.getMessage());
         }
 
         return null;
@@ -461,30 +445,9 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Log.v("Error : ", e.getMessage());
         }
         return null;
-    }
-
-    public String getUserLocationId(LoginResponseData userInfo) {
-        try {
-            if (userInfo != null && userInfo.team != null && userInfo.team.locations != null && !userInfo.team.locations.isEmpty()) {
-                for (TeamLocation teamLocation : userInfo.team.locations) {
-                    if (teamLocation != null) {
-                        return teamLocation.uuid;
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
-        }
-        return null;
-    }
-
-    public void saveUserLocationId(String userName, String locationId) {
-        if (userName != null) {
-            allSharedPreferences.saveUserLocalityId(userName, locationId);
-        }
     }
 
     public void saveAnmLocation(LocationTree anmLocation) {
@@ -525,36 +488,13 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
-
-                if (password == null) {
-                    return;
-                }
-
-
-                String groupId = null;
-
-                SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
-                if (syncConfiguration.getEncryptionParam() != null) {
-                    SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
-                    if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
-                        groupId = getUserDefaultTeamId(userInfo);
-                    } else if (SyncFilter.LOCATION.equals(syncFilter)) {
-                        groupId = getUserLocationId(userInfo);
-                    } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = password;
-                    }
-                }
-
-                if (StringUtils.isBlank(groupId)) {
-                    return;
-                }
-
-                if (privateKeyEntry != null) {
+                if (privateKeyEntry != null && userInfo.team != null && userInfo.team.team != null && userInfo.team.team.uuid != null) {
                     // First save the encrypted password
                     String encryptedPassword = encryptString(privateKeyEntry, password);
                     allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
 
                     // Then save the encrypted group
+                    String groupId = userInfo.team.team.uuid;
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
                     allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
 

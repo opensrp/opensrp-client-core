@@ -63,7 +63,7 @@ import timber.log.Timber;
 public class OpenSRPImageLoader extends ImageLoader {
 
     private static final int HALF_FADE_IN_TIME = AllConstants.ANIMATION_FADE_IN_TIME / 2;
-
+    public static int IMAGE_QUALITY = 20;
     private static final float IMAGE_SCALE_PROPORTION = 0.95F;
 
     private static final String TAG = "OpenSRPImageLoader";
@@ -366,7 +366,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                     CompressFormat compressFormat = OpenSRPImageLoader
                             .getCompressFormat(absoluteFileName);
                     if (compressFormat != null) {
-                        image.compress(compressFormat, 100, os);
+                        image.compress(compressFormat, IMAGE_QUALITY, os);
                     } else {
                         throw new IllegalArgumentException(
                                 "Failed to save static image, could " + "not"
