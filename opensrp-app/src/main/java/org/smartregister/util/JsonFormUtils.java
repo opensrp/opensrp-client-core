@@ -29,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -65,7 +66,7 @@ public class JsonFormUtils {
 
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
-    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
+    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -360,7 +361,7 @@ public class JsonFormUtils {
         String entity = CONCEPT;
         boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
         if (StringUtils.isNotBlank(value)) {
-            if (AllConstants.CHECK_BOX.equals(type) ) {
+            if (AllConstants.CHECK_BOX.equals(type)) {
                 try {
                     List<Object> vall = new ArrayList<>();
                     if (jsonObject.has(AllConstants.OPTIONS)) {
@@ -467,9 +468,10 @@ public class JsonFormUtils {
 
     /**
      * This method creates an observation with single or multiple values combined
-     * @param e The event that the observation is added to
+     *
+     * @param e          The event that the observation is added to
      * @param jsonObject The JSONObject representing the checkbox values
-     * @param vall A list of option values to be added to the observation
+     * @param vall       A list of option values to be added to the observation
      */
     private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
 
@@ -1072,7 +1074,7 @@ public class JsonFormUtils {
 
             if (dateString.matches("\\d{2}-\\d{2}-\\d{4}")) {
                 return dd_MM_yyyy.parse(dateString);
-            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}") || dateString.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")) {
                 return DateUtil.parseDate(dateString);
             }
 
@@ -1101,7 +1103,7 @@ public class JsonFormUtils {
 
     public static String formatDate(String date) throws ParseException {
         Date inputDate = dd_MM_yyyy.parse(date);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
         return fmt.format(inputDate);
     }
 
