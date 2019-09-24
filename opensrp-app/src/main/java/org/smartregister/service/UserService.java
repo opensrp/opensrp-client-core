@@ -550,7 +550,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = password;
+                        groupId = userName + password;
                     }
                 }
 
