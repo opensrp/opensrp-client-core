@@ -2,7 +2,6 @@ package org.smartregister.util;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -21,10 +20,11 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.lang.reflect.Type;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ROWID;
 
 public class P2PUtil {
-    private static final String TAG = P2PUtil.class.getCanonicalName();
     private static final String ID = "_id";
 
 
@@ -58,7 +58,7 @@ public class P2PUtil {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -68,7 +68,7 @@ public class P2PUtil {
     }
 
     public static Gson gsonDateTime() {
-        Gson gson = new GsonBuilder()
+        return new GsonBuilder()
                 .registerTypeAdapter(DateTime.class, new JsonSerializer<DateTime>() {
                     @Override
                     public JsonElement serialize(DateTime json, Type typeOfSrc, JsonSerializationContext context) {
@@ -83,6 +83,5 @@ public class P2PUtil {
                     }
                 })
                 .create();
-        return gson;
     }
 }
