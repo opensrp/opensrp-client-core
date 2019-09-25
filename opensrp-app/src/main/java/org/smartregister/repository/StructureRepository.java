@@ -2,7 +2,8 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.support.annotation.Nullable;
-import android.util.Log;
+
+import com.google.gson.Gson;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -22,6 +23,8 @@ import java.util.List;
 import static org.smartregister.AllConstants.ROWID;
 
 import org.smartregister.util.P2PUtil;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 11/23/18.
@@ -81,7 +84,7 @@ public class StructureRepository extends LocationRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -127,7 +130,7 @@ public class StructureRepository extends LocationRepository {
         this.helper = helper;
     }
 
-    public boolean batchInsertStructures(JSONArray array, long serverVersion) {
+    public boolean batchInsertStructures(JSONArray array) {
         if (array == null || array.length() == 0) {
             return false;
         }
@@ -138,19 +141,19 @@ public class StructureRepository extends LocationRepository {
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
-                String formSubmissionId = jsonObject.getString(ID);
+                String structureId = jsonObject.getString("id");
 
                 if (maxRowId == 0) {
                     maxRowId = P2PUtil.getMaxRowId(STRUCTURE_TABLE, getWritableDatabase());
                 }
 
                 maxRowId++;
-                if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, formSubmissionId, getWritableDatabase())) {
-                    jsonObject.put(ID, maxRowId);
-                    Location structure = gson.fromJson(jsonObject.toString(), Location.class);
+                if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, structureId, getWritableDatabase())) {
+                    jsonObject.put(ROWID, maxRowId);
+                    Location structure = new Gson().fromJson(jsonObject.toString(), Location.class);
                     addOrUpdate(structure);
                 } else {
-                    Location structure = gson.fromJson(jsonObject.toString(), Location.class);
+                    Location structure = new Gson().fromJson(jsonObject.toString(), Location.class);
                     addOrUpdate(structure);
                 }
             }
@@ -159,7 +162,7 @@ public class StructureRepository extends LocationRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
             getWritableDatabase().endTransaction();
             return false;
         }
@@ -188,7 +191,7 @@ public class StructureRepository extends LocationRepository {
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
 
         Cursor cursor = null;
-        final List<Location> structures = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray();
 
         try {
             cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
@@ -197,21 +200,24 @@ public class StructureRepository extends LocationRepository {
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
 
-                structures.add(readCursor(cursor));
+                Location location = readCursor(cursor);
+                location.setRowid(cursor.getLong(0));
+
+                JSONObject structureObject = new JSONObject(new Gson().toJson(location));
+                jsonArray.put(structureObject);
 
                 if (rowId > maxRowId) {
                     maxRowId = rowId;
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
 
-        JSONArray jsonArray = new JSONArray(structures);
         if (jsonArray.length() > 0) {
             jsonData = new JsonData(jsonArray, maxRowId);
         }

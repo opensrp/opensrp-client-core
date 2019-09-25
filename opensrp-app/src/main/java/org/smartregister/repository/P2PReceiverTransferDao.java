@@ -64,10 +64,10 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
             eventClientRepository.batchInsertClients(jsonArray);
         } else if (dataType.getName().equals(structure.getName())) {
             Timber.e("Received %s structures", String.valueOf(jsonArray.length()));
-            structureRepository.batchInsertStructures(jsonArray, 0);
+            structureRepository.batchInsertStructures(jsonArray);
         } else if (dataType.getName().equals(task.getName())) {
             Timber.e("Received %s tasks", String.valueOf(jsonArray.length()));
-            taskRepository.batchInsertTasks(jsonArray, 0);
+            taskRepository.batchInsertTasks(jsonArray);
         } else {
             Timber.e("The data type provided does not exist");
             return maxTableRowId;

@@ -2,10 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.support.annotation.Nullable;
-import android.util.Log;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -23,7 +19,6 @@ import org.smartregister.domain.db.Client;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
-import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -466,7 +461,7 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
-    public boolean batchInsertTasks(JSONArray array, long serverVersion) {
+    public boolean batchInsertTasks(JSONArray array) {
         if (array == null || array.length() == 0) {
             return false;
         }
@@ -477,19 +472,20 @@ public class TaskRepository extends BaseRepository {
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
-                String formSubmissionId = jsonObject.getString(ID);
+                String formSubmissionId = jsonObject.getString("identifier");
 
                 if (maxRowId == 0) {
                     maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
                 }
-
                 maxRowId++;
+
                 if (P2PUtil.checkIfExistsById(TASK_TABLE, formSubmissionId, getWritableDatabase())) {
-                    jsonObject.put(ID, maxRowId);
-                    Task task = new Gson().fromJson(jsonObject.toString(), Task.class);
+                    jsonObject.put(ROWID, maxRowId);
+
+                    Task task = P2PUtil.gsonDateTime().fromJson(jsonObject.toString(), Task.class);
                     addOrUpdate(task);
                 } else {
-                    Task task = new Gson().fromJson(jsonObject.toString(), Task.class);
+                    Task task = P2PUtil.gsonDateTime().fromJson(jsonObject.toString(), Task.class);
                     addOrUpdate(task);
                 }
             }
@@ -498,7 +494,7 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
             getWritableDatabase().endTransaction();
             return false;
         }
@@ -527,7 +523,7 @@ public class TaskRepository extends BaseRepository {
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
 
         Cursor cursor = null;
-        final List<Task> tasks = new ArrayList<>();
+        JSONArray jsonArray = new JSONArray();
 
         try {
             cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
@@ -535,21 +531,26 @@ public class TaskRepository extends BaseRepository {
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
 
-                tasks.add(readCursor(cursor));
+                Task task = readCursor(cursor);
+                task.setRowid(cursor.getLong(0));
+
+                String taskString = P2PUtil.gsonDateTime().toJson(task);
+                JSONObject taskObject = new JSONObject(taskString);
+
+                jsonArray.put(taskObject);
 
                 if (rowId > maxRowId) {
                     maxRowId = rowId;
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null) {
                 cursor.close();
             }
         }
 
-        JSONArray jsonArray = new JSONArray(tasks);
         if (jsonArray.length() > 0) {
             jsonData = new JsonData(jsonArray, maxRowId);
         }

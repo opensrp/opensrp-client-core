@@ -68,6 +68,8 @@ public class Task implements Serializable {
 
     private String requester;
 
+    private Long rowid;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -242,5 +244,13 @@ public class Task implements Serializable {
 
     public void setRequester(String requester) {
         this.requester = requester;
+    }
+
+    public Long getRowid() {
+        return rowid;
+    }
+
+    public void setRowid(Long rowid) {
+        this.rowid = rowid;
     }
 }
