@@ -111,6 +111,12 @@ public class TaskRepository extends BaseRepository {
             throw new IllegalArgumentException("identifier must be specified");
         }
         ContentValues contentValues = new ContentValues();
+
+        if (P2PUtil.checkIfExistsById(TASK_TABLE, task.getIdentifier(), getWritableDatabase())) {
+            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+            contentValues.put(ROWID, ++maxRowId);
+        }
+
         contentValues.put(ID, task.getIdentifier());
         contentValues.put(PLAN_ID, task.getPlanIdentifier());
         contentValues.put(GROUP_ID, task.getGroupIdentifier());
@@ -468,26 +474,11 @@ public class TaskRepository extends BaseRepository {
 
         try {
             getWritableDatabase().beginTransaction();
-            int maxRowId = 0;
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
-                String formSubmissionId = jsonObject.getString("identifier");
-
-                if (maxRowId == 0) {
-                    maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
-                }
-                maxRowId++;
-
-                if (P2PUtil.checkIfExistsById(TASK_TABLE, formSubmissionId, getWritableDatabase())) {
-                    jsonObject.put(ROWID, maxRowId);
-
-                    Task task = P2PUtil.gsonDateTime().fromJson(jsonObject.toString(), Task.class);
-                    addOrUpdate(task);
-                } else {
-                    Task task = P2PUtil.gsonDateTime().fromJson(jsonObject.toString(), Task.class);
-                    addOrUpdate(task);
-                }
+                Task task = P2PUtil.gsonDateTime().fromJson(jsonObject.toString(), Task.class);
+                addOrUpdate(task);
             }
 
             getWritableDatabase().setTransactionSuccessful();

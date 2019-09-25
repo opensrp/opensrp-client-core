@@ -108,6 +108,12 @@ public class StructureRepository extends LocationRepository {
         if (StringUtils.isBlank(location.getId()))
             throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
+
+        if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, location.getId(), getWritableDatabase())) {
+            int maxRowId = P2PUtil.getMaxRowId(STRUCTURE_TABLE, getWritableDatabase());
+            contentValues.put(ROWID, ++maxRowId);
+        }
+
         contentValues.put(ID, location.getId());
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
@@ -137,25 +143,11 @@ public class StructureRepository extends LocationRepository {
 
         try {
             getWritableDatabase().beginTransaction();
-            int maxRowId = 0;
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
-                String structureId = jsonObject.getString("id");
-
-                if (maxRowId == 0) {
-                    maxRowId = P2PUtil.getMaxRowId(STRUCTURE_TABLE, getWritableDatabase());
-                }
-
-                maxRowId++;
-                if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, structureId, getWritableDatabase())) {
-                    jsonObject.put(ROWID, maxRowId);
-                    Location structure = new Gson().fromJson(jsonObject.toString(), Location.class);
-                    addOrUpdate(structure);
-                } else {
-                    Location structure = new Gson().fromJson(jsonObject.toString(), Location.class);
-                    addOrUpdate(structure);
-                }
+                Location structure = new Gson().fromJson(jsonObject.toString(), Location.class);
+                addOrUpdate(structure);
             }
 
             getWritableDatabase().setTransactionSuccessful();

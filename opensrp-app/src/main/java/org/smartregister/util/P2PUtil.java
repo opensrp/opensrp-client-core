@@ -42,7 +42,7 @@ public class P2PUtil {
         return rowId;
     }
 
-    public static Boolean checkIfExistsById(String table, String formSubmissionId, SQLiteDatabase sqLiteDatabase) {
+    public static Boolean checkIfExistsById(String table, String Id, SQLiteDatabase sqLiteDatabase) {
         Cursor mCursor = null;
         try {
             String query = "SELECT "
@@ -52,7 +52,7 @@ public class P2PUtil {
                     + " WHERE "
                     + ID
                     + " =?";
-            mCursor = sqLiteDatabase.rawQuery(query, new String[]{formSubmissionId});
+            mCursor = sqLiteDatabase.rawQuery(query, new String[]{Id});
             if (mCursor != null && mCursor.moveToFirst()) {
 
                 return true;
