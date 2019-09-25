@@ -1,12 +1,15 @@
 package org.smartregister.util;
 
-import android.support.v4.util.TimeUtils;
+
+import android.content.Context;
 
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.Weeks;
+import org.smartregister.CoreLibrary;
+import org.smartregister.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -110,8 +113,11 @@ public class DateUtil {
 
     }
 
-
     public static String getDuration(DateTime dateTime) {
+        return getDuration(CoreLibrary.getInstance().context().applicationContext(), dateTime);
+    }
+
+    public static String getDuration(Context context, DateTime dateTime) {
         if (dateTime != null) {
             Calendar dateCalendar = Calendar.getInstance();
             dateCalendar.setTime(dateTime.toDate());
@@ -127,20 +133,25 @@ public class DateUtil {
             today.set(Calendar.MILLISECOND, 0);
 
             long timeDiff = Math.abs(dateCalendar.getTimeInMillis() - today.getTimeInMillis());
-            return getDuration(timeDiff);
+            return getDuration(context, timeDiff);
         }
         return null;
     }
 
     public static String getDuration(long timeDiff) {
-        StringBuilder builder = new StringBuilder();
-        TimeUtils.formatDuration(timeDiff, builder);
+
+        return getDuration(CoreLibrary.getInstance().context().applicationContext(), timeDiff);
+
+    }
+
+    public static String getDuration(Context context, long timeDiff) {
+
         String duration = "";
         if (timeDiff >= 0
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
             // Represent in days
             long days = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
-            duration = days + "d";
+            duration = context.getResources().getString(R.string.x_days, days);
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
             // Represent in weeks and days
@@ -155,10 +166,12 @@ public class DateUtil {
                 weeks++;
             }
 
-            duration = weeks + "w";
             if (days > 0) {
-                duration += " " + days + "d";
+                duration = context.getResources().getString(R.string.x_weeks_days, weeks, days);
+            } else {
+                duration = context.getResources().getString(R.string.x_weeks, weeks);
             }
+
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(363, TimeUnit.DAYS)) {
             // Represent in months and weeks
@@ -174,12 +187,13 @@ public class DateUtil {
             }
 
             if (months < 12) {
-                duration = months + "m";
                 if (weeks > 0 && months < 12) {
-                    duration += " " + weeks + "w";
+                    duration = context.getResources().getString(R.string.x_months_weeks, months, weeks);
+                } else {
+                    duration = context.getResources().getString(R.string.x_months, months);
                 }
             } else if (months >= 12) {
-                duration = "1y";
+                duration = context.getResources().getString(R.string.x_years, 1);
             }
         } else {
             // Represent in years and months
@@ -194,9 +208,10 @@ public class DateUtil {
                 years++;
             }
 
-            duration = years + "y";
             if (months > 0) {
-                duration += " " + months + "m";
+                duration = context.getResources().getString(R.string.x_years_months, years, months);
+            } else {
+                duration = context.getResources().getString(R.string.x_years, years);
             }
         }
 

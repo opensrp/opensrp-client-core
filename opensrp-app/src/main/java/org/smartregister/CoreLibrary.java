@@ -33,7 +33,6 @@ public class CoreLibrary {
 
     private P2POptions p2POptions;
 
-
     public static void init(Context context) {
         init(context, null);
     }
