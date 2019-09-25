@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.crypto.Cipher;
@@ -69,7 +70,7 @@ public class UserService {
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     private final Repository repository;
     private final AllSettings allSettings;
@@ -549,7 +550,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = password;
+                        groupId = userName + "-" + password;
                     }
                 }
 

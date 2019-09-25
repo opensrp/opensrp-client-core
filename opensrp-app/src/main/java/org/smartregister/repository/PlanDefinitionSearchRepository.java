@@ -77,11 +77,11 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             String query = String.format("SELECT %s FROM %s " +
-                            "WHERE %s=? AND %s=?  AND %s  <=", PLAN_ID,
+                            "WHERE %s=? AND %s=?  AND %s  >=? ", PLAN_ID,
                     PLAN_DEFINITION_SEARCH_TABLE, JURISDICTION_ID, STATUS, END);
             cursor = getReadableDatabase().rawQuery(query, new String[]{jurisdiction, ACTIVE,
                     String.valueOf(LocalDate.now().toDate().getTime())});
-            if (cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 planIds.add(cursor.getString(0));
             }
         } catch (Exception e) {

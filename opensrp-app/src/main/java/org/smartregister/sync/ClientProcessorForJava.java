@@ -479,8 +479,8 @@ public class ClientProcessorForJava {
             case ColumnType.Date:
                 if (StringUtils.isNotBlank(column.saveFormat) && StringUtils.isNotBlank(column.sourceFormat)) {
                     try {
-                        Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.getDefault()).parse(columnValue);
-                        return new SimpleDateFormat(column.saveFormat, Locale.getDefault()).format(sourceDate);
+                        Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.ENGLISH).parse(columnValue);
+                        return new SimpleDateFormat(column.saveFormat, Locale.ENGLISH).format(sourceDate);
                     } catch (Exception e) {
                         Timber.e(e);
                     }

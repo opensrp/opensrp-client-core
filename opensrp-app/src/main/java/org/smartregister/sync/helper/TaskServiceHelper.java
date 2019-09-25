@@ -2,8 +2,6 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -23,16 +21,15 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import timber.log.Timber;
 
 public class TaskServiceHelper {
-    private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
@@ -76,48 +73,40 @@ public class TaskServiceHelper {
 
     public List<Task> fetchTasksFromServer() {
         Set<String> planDefinitions = getPlanDefinitionIds();
-        List<String> locationIds = getLocationIds();
+        List<String> groups = getLocationIds();
         long serverVersion = 0;
-        List<Task> allSyncedtasks = new ArrayList<>();
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
             Long maxServerVersion = 0l;
-            int BATCH_SIZE = 5;
-            for (int i = 0; i < locationIds.size(); i = i + BATCH_SIZE) {
-                int lastIndex = i + BATCH_SIZE < locationIds.size() ? i + BATCH_SIZE : locationIds.size();
-                String jurisdictions = TextUtils.join(",", locationIds.subList(i, lastIndex));
-                String tasksResponse = fetchTasks(TextUtils.join(",", planDefinitions), jurisdictions, serverVersion);
-                List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
-                }.getType());
-                if (tasks != null && tasks.size() > 0) {
-                    for (Task task : tasks) {
-                        try {
-                            task.setSyncStatus(BaseRepository.TYPE_Synced);
-                            taskRepository.addOrUpdate(task);
-                        } catch (Exception e) {
-                            Timber.e(e, "Error saving task " + task.getIdentifier());
-                        }
+            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
+            List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
+            }.getType());
+            if (tasks != null && tasks.size() > 0) {
+                for (Task task : tasks) {
+                    try {
+                        task.setSyncStatus(BaseRepository.TYPE_Synced);
+                        taskRepository.addOrUpdate(task);
+                    } catch (Exception e) {
+                        Timber.e(e, "Error saving task " + task.getIdentifier());
                     }
                 }
-                maxServerVersion = getTaskMaxServerVersion(tasks, maxServerVersion);
-                allSyncedtasks.addAll(tasks);
             }
-            if (maxServerVersion > 0) {
-                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, maxServerVersion.toString());
+            if (!Utils.isEmptyCollection(tasks)) {
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
             }
-            return allSyncedtasks;
+            return tasks;
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
         }
         return null;
     }
 
-    private String fetchTasks(String plan, String group, Long serverVersion) throws NoHttpResponseException {
+    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -126,13 +115,20 @@ public class TaskServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + SYNC_TASK_URL + "?plan=" + plan + "&group=" + group + "&serverVersion=" + serverVersion;
+        JSONObject request = new JSONObject();
+        request.put("plan", new JSONArray(plan));
+        request.put("group", new JSONArray(group));
+        request.put("serverVersion", serverVersion);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(url);
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        SYNC_TASK_URL),
+                request.toString());
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
@@ -165,7 +161,7 @@ public class TaskServiceHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Update Status failed.");
+                Timber.e("Update Status failedd: %s", response.payload());
                 return;
             }
 
@@ -179,7 +175,7 @@ public class TaskServiceHelper {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass().getName(), "Error processing the tasks payload: " + response.payload());
+                    Timber.e(e, "Error processing the tasks payload: %s", response.payload());
                 }
             }
         }
@@ -197,7 +193,7 @@ public class TaskServiceHelper {
                             ADD_TASK_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Failed to create new tasks on server.");
+                Timber.e("Failed to create new tasks on server.: %s", response.payload());
                 return;
             }
 
