@@ -44,6 +44,10 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                     END + " INTEGER NOT NULL, PRIMARY KEY (" +
                     PLAN_ID + "," + JURISDICTION_ID + "))";
 
+    private static final String CREATE_PLAN_DEFINITION_STATUS_INDEX = "CREATE INDEX "
+            + PLAN_DEFINITION_SEARCH_TABLE + "_status_ind  ON " + PLAN_DEFINITION_SEARCH_TABLE + "(" + STATUS + ")";
+
+
     public PlanDefinitionSearchRepository(Repository repository) {
         super(repository);
     }
@@ -51,6 +55,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_PLAN_DEFINITION_TABLE);
+        database.execSQL(CREATE_PLAN_DEFINITION_STATUS_INDEX);
     }
 
 
@@ -72,11 +77,11 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             String query = String.format("SELECT %s FROM %s " +
-                            "WHERE %s=? AND %s=?  AND %s  <=", PLAN_ID,
+                            "WHERE %s=? AND %s=?  AND %s  >=? ", PLAN_ID,
                     PLAN_DEFINITION_SEARCH_TABLE, JURISDICTION_ID, STATUS, END);
             cursor = getReadableDatabase().rawQuery(query, new String[]{jurisdiction, ACTIVE,
                     String.valueOf(LocalDate.now().toDate().getTime())});
-            if (cursor.moveToNext()) {
+            while (cursor.moveToNext()) {
                 planIds.add(cursor.getString(0));
             }
         } catch (Exception e) {

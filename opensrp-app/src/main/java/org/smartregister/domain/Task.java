@@ -4,12 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by samuelgithengi on 11/22/18.
  */
-public class Task {
+public class Task implements Serializable {
 
     public enum TaskStatus {
         @SerializedName("Draft")
@@ -60,8 +61,12 @@ public class Task {
     private Long serverVersion;
 
     private String structureId;
-  
+
     private String reasonReference;
+
+    private String location;
+
+    private String requester;
 
     public String getIdentifier() {
         return identifier;
@@ -207,12 +212,35 @@ public class Task {
         this.syncStatus = syncStatus;
     }
 
-    public String getStructureId() { return structureId; }
+    public String getStructureId() {
+        return structureId;
+    }
 
-    public void setStructureId(String structureId) { this.structureId = structureId; }
+    public void setStructureId(String structureId) {
+        this.structureId = structureId;
+    }
 
-    public String getReasonReference() { return reasonReference; }
+    public String getReasonReference() {
+        return reasonReference;
+    }
 
-    public void setReasonReference(String reasonReference) { this.reasonReference = reasonReference; }
+    public void setReasonReference(String reasonReference) {
+        this.reasonReference = reasonReference;
+    }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
 }

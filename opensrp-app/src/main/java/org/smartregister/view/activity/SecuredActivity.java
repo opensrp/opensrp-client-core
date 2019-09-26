@@ -155,8 +155,6 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(openSRPClientBroadCastReceiver);
-
     }
 
     protected abstract void onCreation();
@@ -311,7 +309,12 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
     @Override
     protected void onPause() {
+
         super.onPause();
+
+        if (openSRPClientBroadCastReceiver != null) {
+            unregisterReceiver(openSRPClientBroadCastReceiver);
+        }
 
         if (p2pProcessingStatusBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(this)

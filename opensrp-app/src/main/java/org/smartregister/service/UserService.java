@@ -45,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.crypto.Cipher;
@@ -58,6 +60,7 @@ import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
@@ -67,7 +70,7 @@ public class UserService {
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     private final Repository repository;
     private final AllSettings allSettings;
@@ -297,7 +300,7 @@ public class UserService {
         LoginResponse loginResponse = httpAgent
                 .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
 
-        if (loginResponse.equals(LoginResponse.SUCCESS)) {
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
         }
 
@@ -367,6 +370,7 @@ public class UserService {
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
+        saveJurisdictions(userInfo.jurisdictions);
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
                         StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
@@ -497,6 +501,11 @@ public class UserService {
         saveANMTeamTask.save(anmTeamString);
     }
 
+    public void saveJurisdictions(List<String> jurisdictions) {
+        if (jurisdictions != null && !jurisdictions.isEmpty())
+            allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
+    }
+
     public void saveUserInfo(User user) {
         try {
             if (user != null && user.getPreferredName() != null) {
@@ -541,7 +550,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = password;
+                        groupId = userName + "-" + password;
                     }
                 }
 

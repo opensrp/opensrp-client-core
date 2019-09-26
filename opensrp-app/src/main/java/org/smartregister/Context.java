@@ -1,5 +1,6 @@
 package org.smartregister;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -234,7 +235,17 @@ public class Context {
     }
 
     public android.content.Context applicationContext() {
-        return applicationContext;
+        if (applicationContext != null) {//Fix to enable Multi language support for this context
+            try {
+                Configuration configuration = applicationContext.getResources().getConfiguration();
+                configuration.setLocale(configuration.locale);
+                return applicationContext.createConfigurationContext(configuration);
+            } catch (Exception e) {
+                return applicationContext;
+            }
+        } else {
+            return null;
+        }
     }
 
     public BeneficiaryService beneficiaryService() {
@@ -504,7 +515,7 @@ public class Context {
         return formSubmissionSyncService;
     }
 
-    protected HTTPAgent httpAgent() {
+    public HTTPAgent httpAgent() {
         if (httpAgent == null) {
             httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
                     configuration());

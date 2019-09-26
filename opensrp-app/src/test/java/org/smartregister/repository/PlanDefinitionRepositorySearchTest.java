@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.PlanDefinitionTest.gson;
@@ -73,7 +74,7 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
     @Test
     public void testCreateTable() {
         PlanDefinitionSearchRepository.createTable(sqLiteDatabase);
-        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        verify(sqLiteDatabase, times(2)).execSQL(stringArgumentCaptor.capture());
     }
 
     @Test
@@ -110,7 +111,7 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT plan_id FROM plan_definition_search WHERE jurisdiction_id=? AND status=?  AND end  <=",
+        verify(sqLiteDatabase).rawQuery("SELECT plan_id FROM plan_definition_search WHERE jurisdiction_id=? AND status=?  AND end  >=? ",
                 new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02", "active", String.valueOf(LocalDate.now().toDate().getTime())});
     }
 

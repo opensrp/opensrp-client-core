@@ -12,8 +12,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import org.joda.time.DateTime;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
@@ -43,7 +46,7 @@ public class MainActivity extends MultiLanguageActivity {
             }
         });
         SmartRegisterQueryBuilder srqb = new SmartRegisterQueryBuilder();
-        String query = srqb.searchQueryFts("ec_household",new String[]{"ec_woman","ec_child","ec_member"},"date_removed IS NULL ","ali","",20,0);
+        String query = srqb.searchQueryFts("ec_household", new String[]{"ec_woman", "ec_child", "ec_member"}, "date_removed IS NULL ", "ali", "", 20, 0);
         System.out.println(query);
 
         // lang spinner
@@ -106,6 +109,8 @@ public class MainActivity extends MultiLanguageActivity {
                 // sometimes you need nothing here
             }
         });
+
+        ((TextView) findViewById(R.id.time)).setText(DateUtil.getDuration(new DateTime().minusYears(4).minusMonths(3).minusWeeks(2).minusDays(1)));
 
     }
 

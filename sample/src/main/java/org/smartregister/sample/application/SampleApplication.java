@@ -23,7 +23,7 @@ public class SampleApplication extends DrishtiApplication {
         context.updateApplicationContext(getApplicationContext());
 
         //Initialize Modules
-        CoreLibrary.init(context,null);
+        CoreLibrary.init(context, null);
 
         getRepository().getReadableDatabase();
     }
@@ -42,4 +42,5 @@ public class SampleApplication extends DrishtiApplication {
     public String getPassword() {
         return "sample-password";
     }
+
 }

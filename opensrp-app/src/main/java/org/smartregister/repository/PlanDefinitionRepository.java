@@ -16,6 +16,7 @@ import org.smartregister.domain.PlanDefinition;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,10 +35,11 @@ public class PlanDefinitionRepository extends BaseRepository {
     protected static final String ID = "_id";
     protected static final String JSON = "json";
     protected static final String NAME = "name";
-    protected static final String PLAN_ID = "plan_id";
+    private static final String STATUS = "status";
+    protected static final String ACTIVE = "active";
+    protected static final String DRAFT = "draft";
 
     private static final String PLAN_DEFINITION_TABLE = "plan_definition";
-    private static final String PLAN_DEFINITION_SEARCH_TABLE = "plan_definition_search";
     private static final String TAG = PlanDefinitionRepository.class.getName();
 
     private PlanDefinitionSearchRepository searchRepository;
@@ -45,7 +47,8 @@ public class PlanDefinitionRepository extends BaseRepository {
     private static final String CREATE_PLAN_DEFINITION_TABLE =
             "CREATE TABLE " + PLAN_DEFINITION_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
-                    JSON + " VARCHAR NOT NULL)";
+                    JSON + " VARCHAR NOT NULL," +
+                    STATUS + " VARCHAR NOT NULL)";
 
 
     public PlanDefinitionRepository(Repository repository) {
@@ -59,12 +62,25 @@ public class PlanDefinitionRepository extends BaseRepository {
     }
 
     public void addOrUpdate(PlanDefinition planDefinition) {
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, planDefinition.getIdentifier());
-        contentValues.put(JSON, gson.toJson(planDefinition));
-        getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);
-        for (PlanDefinition.Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
-            searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
+        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus()))
+            return;
+        try {
+            getWritableDatabase().beginTransaction();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ID, planDefinition.getIdentifier());
+
+            contentValues.put(STATUS, planDefinition.getStatus());
+
+            for (PlanDefinition.Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
+                searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
+            }
+            planDefinition.setJurisdiction(new ArrayList<PlanDefinition.Jurisdiction>());
+            contentValues.put(JSON, gson.toJson(planDefinition));
+            getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);
+
+            getWritableDatabase().setTransactionSuccessful();
+        } finally {
+            getWritableDatabase().endTransaction();
         }
 
     }
@@ -111,10 +127,9 @@ public class PlanDefinitionRepository extends BaseRepository {
         Cursor cursor = null;
         Set<PlanDefinition> planDefinitions = new TreeSet<>();
         try {
-            String query = String.format("SELECT %s, %s  FROM %s INNER JOIN %s ON %s.%s = %s.%s ORDER BY %s ASC",
-                    JSON, NAME, PLAN_DEFINITION_TABLE, PLAN_DEFINITION_SEARCH_TABLE,
-                    PLAN_DEFINITION_TABLE, ID, PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, NAME );
-            cursor = getReadableDatabase().rawQuery(query, null);
+            String query = String.format("SELECT %s  FROM %s WHERE %s =?",
+                    JSON, PLAN_DEFINITION_TABLE, STATUS);
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE});
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
@@ -131,8 +146,8 @@ public class PlanDefinitionRepository extends BaseRepository {
         Cursor cursor = null;
         Set<String> ids = new HashSet<>();
         try {
-            String query = String.format("SELECT %s  FROM %s", ID, PLAN_DEFINITION_TABLE);
-            cursor = getReadableDatabase().rawQuery(query, null);
+            String query = String.format("SELECT %s  FROM %s WHERE %s =?", ID, PLAN_DEFINITION_TABLE, STATUS);
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE});
             while (cursor.moveToNext()) {
                 ids.add(cursor.getString(0));
             }

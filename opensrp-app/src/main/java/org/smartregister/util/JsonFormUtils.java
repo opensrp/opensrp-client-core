@@ -29,8 +29,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+
+import timber.log.Timber;
 
 /**
  * Created by keyman on 08/02/2017.
@@ -61,7 +64,9 @@ public class JsonFormUtils {
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
-    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
+
+    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -354,20 +359,29 @@ public class JsonFormUtils {
         String value = getString(jsonObject, VALUE);
         String type = getString(jsonObject, AllConstants.TYPE);
         String entity = CONCEPT;
+        boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
         if (StringUtils.isNotBlank(value)) {
             if (AllConstants.CHECK_BOX.equals(type)) {
                 try {
+                    List<Object> vall = new ArrayList<>();
                     if (jsonObject.has(AllConstants.OPTIONS)) {
                         JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
                         for (int i = 0; i < conceptsOptions.length(); i++) {
                             JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.getBoolean(VALUE);
+                            boolean optionValue = option.optBoolean(VALUE);
                             if (optionValue) {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                                 option.put(KEY, jsonObject.getString(KEY));
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                if (combineCheckboxOptionValues) {
+                                    vall.add(option.optString(AllConstants.TEXT));
+                                } else { // For options with concepts create an observation for each
+                                    createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                }
                             }
+                        }
+                        if (combineCheckboxOptionValues) { // For options without concepts combine the values into one observation
+                            createObservation(e, jsonObject, vall);
                         }
                     }
                 } catch (JSONException e1) {
@@ -424,10 +438,13 @@ public class JsonFormUtils {
                             entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                             entityParentVal = "";
                             vall.add(option.getString(OPENMRS_ENTITY_ID));
+                            if (option.has(KEY)) {
+                                humanReadableValues.add(option.getString(KEY));
+                            }
                         }
                     }
                 } catch (JSONException e1) {
-                    Log.e(TAG, e1.getMessage());
+                    Timber.e("%s : %s",TAG , e1.getMessage());
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -447,6 +464,25 @@ public class JsonFormUtils {
             e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
                     formSubmissionField));
         }
+    }
+
+    /**
+     * This method creates an observation with single or multiple values combined
+     *
+     * @param e          The event that the observation is added to
+     * @param jsonObject The JSONObject representing the checkbox values
+     * @param vall       A list of option values to be added to the observation
+     */
+    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
+
+        String formSubmissionField = jsonObject.optString(KEY);
+        String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
+        if (StringUtils.isBlank(dataType)) {
+            dataType = AllConstants.TEXT;
+        }
+
+        e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
+                formSubmissionField));
     }
 
 
@@ -1038,7 +1074,7 @@ public class JsonFormUtils {
 
             if (dateString.matches("\\d{2}-\\d{2}-\\d{4}")) {
                 return dd_MM_yyyy.parse(dateString);
-            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}") || dateString.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")) {
                 return DateUtil.parseDate(dateString);
             }
 
@@ -1067,7 +1103,7 @@ public class JsonFormUtils {
 
     public static String formatDate(String date) throws ParseException {
         Date inputDate = dd_MM_yyyy.parse(date);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
         return fmt.format(inputDate);
     }
 

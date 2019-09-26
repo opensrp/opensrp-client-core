@@ -60,7 +60,7 @@ public class LocationRepositoryTest extends BaseUnitTest {
 
     private String locationJson = LocationTest.parentJson;
 
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     @Before

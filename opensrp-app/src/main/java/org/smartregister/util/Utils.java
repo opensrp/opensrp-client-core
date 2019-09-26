@@ -23,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -95,11 +96,11 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy");
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
 
-    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static String KG_FORMAT = "%s kg";
     private static String CM_FORMAT = "%s cm";
     public static final String APP_PROPERTIES_FILE = "app.properties";
@@ -726,5 +727,23 @@ public class Utils {
         }
         return properties;
 
+    }
+
+    /**
+     * This util does a look up from the strings file without specifying an android resource id , rather the identifier(key) of the resource
+     *
+     * @param key a string identifier that corresponds to a key in the strings.xml file e.g. for R.string.key key is the identifier
+     * @return String value from resource file
+     */
+    public static String getTranslatedIdentifier(String key) {
+
+        String myKey;
+        try {
+            myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
+
+        } catch (Resources.NotFoundException resourceNotFoundException) {
+            myKey = key;
+        }
+        return myKey;
     }
 }

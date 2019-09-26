@@ -2,14 +2,14 @@ apply plugin: 'maven'
 apply plugin: 'signing'
 
 def sonatypeRepositoryURL
-def mavenLocalFlag = hasProperty('mavenLocal') ? mavenLocal.toBoolean() : true;
-
+def mavenLocalFlag = hasProperty('mavenLocal') ? mavenLocal.toBoolean() : true
+def timestampMsg = " at " + getDate()
 if (isReleaseBuild()) {
-    println 'PROCESSING MAVEN ' + (mavenLocalFlag ? 'LOCAL' : 'REMOTE') + ' RELEASE BUILD VERSION ' + project.VERSION_NAME + '...'
+    println 'PROCESSING MAVEN ' + (mavenLocalFlag ? 'LOCAL' : 'REMOTE') + ' RELEASE BUILD VERSION ' + project.VERSION_NAME + timestampMsg + '...'
     sonatypeRepositoryURL = hasProperty('RELEASE_REPOSITORY_URL') ? RELEASE_REPOSITORY_URL
             : "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
 } else {
-    println 'PROCESSING MAVEN ' + (mavenLocalFlag ? 'LOCAL' : 'REMOTE') + ' SNAPSHOT BUILD VERSION ' + project.VERSION_NAME + '...'
+    println 'PROCESSING MAVEN ' + (mavenLocalFlag ? 'LOCAL' : 'REMOTE') + ' SNAPSHOT BUILD VERSION ' + project.VERSION_NAME + timestampMsg + '...'
     sonatypeRepositoryURL = hasProperty('SNAPSHOT_REPOSITORY_URL') ? SNAPSHOT_REPOSITORY_URL
             : "https://oss.sonatype.org/content/repositories/snapshots/"
 
@@ -131,4 +131,8 @@ afterEvaluate { project ->
         username getRepositoryUsername()
         password getRepositoryPassword()
     }
+}
+
+def getDate() {
+    return new Date().format('yyyy-MM-dd HH:mm:ss')
 }
