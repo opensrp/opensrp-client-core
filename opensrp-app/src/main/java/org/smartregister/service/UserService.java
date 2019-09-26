@@ -300,7 +300,7 @@ public class UserService {
         LoginResponse loginResponse = httpAgent
                 .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
 
-        if (loginResponse.equals(LoginResponse.SUCCESS)) {
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
         }
 
