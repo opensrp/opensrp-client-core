@@ -586,12 +586,16 @@ public class UserService {
         logoutSession();
         allSettings.registerANM("", "");
         allSettings.savePreviousFetchIndex("0");
+        allSharedPreferences.updateRememberLogin(false);
         repository.deleteRepository();
     }
 
     public void logoutSession() {
         session().expire();
         ON_LOGOUT.notifyListeners(true);
+    }
+    public boolean isRememberLogin(){
+       return allSharedPreferences.fetchIsRememberLogin();
     }
 
     public boolean hasSessionExpired() {
