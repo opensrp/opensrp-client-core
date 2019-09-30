@@ -409,5 +409,8 @@
     <string name="x_months_weeks">%1$dm %2$ds</string>
     <string name="x_years">%1$da</string>
     <string name="x_years_months"> %1$da %2$dm</string>
+    <string name="msg_empty_url">l\'addresse URL ne peut pas être vide</string>
+    <string name="sync_failed_malformed_url">Synchronisation échouée. Vérifier configuration URL</string>
+    <string name="sync_failed_timeout_error">Synchronisation échouée. Impossible de connecter au serveur</string>
 
 </resources>
