@@ -134,25 +134,26 @@ public class DateUtil {
             today.set(Calendar.MILLISECOND, 0);
 
             long timeDiff = Math.abs(dateCalendar.getTimeInMillis() - today.getTimeInMillis());
-            return getDuration(context, timeDiff);
+            return getDuration(timeDiff, context.getResources().getConfiguration().locale);
         }
         return null;
     }
 
     public static String getDuration(long timeDiff) {
 
-        return getDuration(CoreLibrary.getInstance().context().applicationContext(), timeDiff);
+        return getDuration(timeDiff, CoreLibrary.getInstance().context().applicationContext().getResources().getConfiguration().locale);
 
     }
 
-    public static String getDuration(Context context, long timeDiff) {
+    public static String getDuration(long timeDiff, Locale locale) {
 
+        Context context = CoreLibrary.getInstance().context().applicationContext();
         String duration = "";
         if (timeDiff >= 0
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
             // Represent in days
             long days = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
-            duration = context.getResources().getString(R.string.x_days, days);
+            duration = String.format(locale, context.getResources().getString(R.string.x_days), days);
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
             // Represent in weeks and days
@@ -168,9 +169,9 @@ public class DateUtil {
             }
 
             if (days > 0) {
-                duration = context.getResources().getString(R.string.x_weeks_days, weeks, days);
+                duration = String.format(locale, context.getResources().getString(R.string.x_weeks_days), weeks, days);
             } else {
-                duration = context.getResources().getString(R.string.x_weeks, weeks);
+                duration = String.format(locale, context.getResources().getString(R.string.x_weeks), weeks);
             }
 
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
@@ -188,13 +189,13 @@ public class DateUtil {
             }
 
             if (months < 12) {
-                if (weeks > 0 && months < 12) {
-                    duration = context.getResources().getString(R.string.x_months_weeks, months, weeks);
+                if (weeks > 0) {
+                    duration = String.format(locale, context.getResources().getString(R.string.x_months_weeks), months, weeks);
                 } else {
-                    duration = context.getResources().getString(R.string.x_months, months);
+                    duration = String.format(locale, context.getResources().getString(R.string.x_months), months);
                 }
-            } else if (months >= 12) {
-                duration = context.getResources().getString(R.string.x_years, 1);
+            } else {
+                duration = String.format(locale, context.getResources().getString(R.string.x_years),1);
             }
         } else {
             // Represent in years and months
@@ -210,9 +211,9 @@ public class DateUtil {
             }
 
             if (months > 0) {
-                duration = context.getResources().getString(R.string.x_years_months, years, months);
+                duration = String.format(locale, context.getResources().getString(R.string.x_years_months), years, months);
             } else {
-                duration = context.getResources().getString(R.string.x_years, years);
+                duration = String.format(locale, context.getResources().getString(R.string.x_years), years);
             }
         }
 
