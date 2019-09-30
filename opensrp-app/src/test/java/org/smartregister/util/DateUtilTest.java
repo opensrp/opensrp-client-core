@@ -37,13 +37,18 @@ public class DateUtilTest extends BaseUnitTest {
     @Test
     public void assertGetDurationTest() {
 
+        Locale locale = RuntimeEnvironment.application.getApplicationContext().getResources().getConfiguration().locale;
+
+        Assert.assertEquals("1d", DateUtil.getDuration(100000000l, locale));
+        Assert.assertEquals("5w 1d", DateUtil.getDuration(3110400000l, locale));
+        Assert.assertEquals("5w", DateUtil.getDuration(3024000000l, locale));
+        Assert.assertEquals("3m 1w", DateUtil.getDuration(TimeUnit.DAYS.toMillis(100), locale));
+        Assert.assertEquals("1y", DateUtil.getDuration(31363200000l, locale));
+        Assert.assertEquals("1y 1m", DateUtil.getDuration(36500000000l, locale));
+        Assert.assertEquals("2y", DateUtil.getDuration(63113852000l, locale));
+
         Assert.assertEquals("1d", DateUtil.getDuration(100000000l));
-        Assert.assertEquals("5w 1d", DateUtil.getDuration(3110400000l));
-        Assert.assertEquals("5w", DateUtil.getDuration(3024000000l));
-        Assert.assertEquals("3m 1w", DateUtil.getDuration(TimeUnit.DAYS.toMillis(100)));
-        Assert.assertEquals("1y", DateUtil.getDuration(31363200000l));
-        Assert.assertEquals("1y 1m", DateUtil.getDuration(36500000000l));
-        Assert.assertEquals("2y", DateUtil.getDuration(63113852000l));
+
         Assert.assertNotNull(DateUtil.getDuration(RuntimeEnvironment.application, new DateTime(0)));
         Assert.assertNull(DateUtil.getDuration(RuntimeEnvironment.application, null));
     }
