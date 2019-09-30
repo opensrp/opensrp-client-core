@@ -134,93 +134,18 @@ public class DateUtil {
             today.set(Calendar.MILLISECOND, 0);
 
             long timeDiff = Math.abs(dateCalendar.getTimeInMillis() - today.getTimeInMillis());
-            return getDuration(context, timeDiff);
+            return getDuration(timeDiff, context.getResources().getConfiguration().locale);
         }
         return null;
     }
 
     public static String getDuration(long timeDiff) {
 
-        return getDuration(CoreLibrary.getInstance().context().applicationContext(), timeDiff);
+        return getDuration(timeDiff, CoreLibrary.getInstance().context().applicationContext().getResources().getConfiguration().locale);
 
     }
 
-    public static String getDuration(Context context, long timeDiff) {
-
-        String duration = "";
-        if (timeDiff >= 0
-                && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
-            // Represent in days
-            long days = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
-            duration = context.getResources().getString(R.string.x_days, days);
-        } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)
-                && timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
-            // Represent in weeks and days
-            int weeks = (int) Math.floor((float) timeDiff /
-                    TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));
-            int days = (int) Math.floor((float) (timeDiff -
-                    TimeUnit.MILLISECONDS.convert(weeks * 7, TimeUnit.DAYS)) /
-                    TimeUnit.MILLISECONDS.convert(1, TimeUnit.DAYS));
-
-            if (days >= 7) {
-                days = 0;
-                weeks++;
-            }
-
-            if (days > 0) {
-                duration = context.getResources().getString(R.string.x_weeks_days, weeks, days);
-            } else {
-                duration = context.getResources().getString(R.string.x_weeks, weeks);
-            }
-
-        } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
-                && timeDiff <= TimeUnit.MILLISECONDS.convert(363, TimeUnit.DAYS)) {
-            // Represent in months and weeks
-            int months = (int) Math.floor((float) timeDiff /
-                    TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
-            int weeks = (int) Math.floor((float) (timeDiff - TimeUnit.MILLISECONDS.convert(
-                    months * 30, TimeUnit.DAYS)) /
-                    TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS));
-
-            if (weeks >= 4) {
-                weeks = 0;
-                months++;
-            }
-
-            if (months < 12) {
-                if (weeks > 0 && months < 12) {
-                    duration = context.getResources().getString(R.string.x_months_weeks, months, weeks);
-                } else {
-                    duration = context.getResources().getString(R.string.x_months, months);
-                }
-            } else {
-                duration = context.getResources().getString(R.string.x_years, 1);
-            }
-        } else {
-            // Represent in years and months
-            int years = (int) Math.floor((float) timeDiff
-                    / TimeUnit.MILLISECONDS.convert(365, TimeUnit.DAYS));
-            int months = (int) Math.floor((float) (timeDiff -
-                    TimeUnit.MILLISECONDS.convert(years * 365, TimeUnit.DAYS)) /
-                    TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS));
-
-            if (months >= 12) {
-                months = 0;
-                years++;
-            }
-
-            if (months > 0) {
-                duration = context.getResources().getString(R.string.x_years_months, years, months);
-            } else {
-                duration = context.getResources().getString(R.string.x_years, years);
-            }
-        }
-
-        return duration;
-
-    }
-
-    public static String getDurationInArabicNumerals(long timeDiff) {
+    public static String getDuration(long timeDiff, Locale locale) {
 
         Context context = CoreLibrary.getInstance().context().applicationContext();
         String duration = "";
@@ -228,7 +153,7 @@ public class DateUtil {
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)) {
             // Represent in days
             long days = TimeUnit.DAYS.convert(timeDiff, TimeUnit.MILLISECONDS);
-            duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_days), days);
+            duration = String.format(locale, context.getResources().getString(R.string.x_days), days);
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(13, TimeUnit.DAYS)
                 && timeDiff <= TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)) {
             // Represent in weeks and days
@@ -244,9 +169,9 @@ public class DateUtil {
             }
 
             if (days > 0) {
-                duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_weeks_days), weeks, days);
+                duration = String.format(locale, context.getResources().getString(R.string.x_weeks_days), weeks, days);
             } else {
-                duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_weeks), weeks);
+                duration = String.format(locale, context.getResources().getString(R.string.x_weeks), weeks);
             }
 
         } else if (timeDiff > TimeUnit.MILLISECONDS.convert(97, TimeUnit.DAYS)
@@ -264,13 +189,13 @@ public class DateUtil {
             }
 
             if (months < 12) {
-                if (weeks > 0 && months < 12) {
-                    duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_months_weeks), months, weeks);
+                if (weeks > 0) {
+                    duration = String.format(locale, context.getResources().getString(R.string.x_months_weeks), months, weeks);
                 } else {
-                    duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_months), months);
+                    duration = String.format(locale, context.getResources().getString(R.string.x_months), months);
                 }
             } else {
-                duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_years),1);
+                duration = String.format(locale, context.getResources().getString(R.string.x_years),1);
             }
         } else {
             // Represent in years and months
@@ -286,9 +211,9 @@ public class DateUtil {
             }
 
             if (months > 0) {
-                duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_years_months), years, months);
+                duration = String.format(locale, context.getResources().getString(R.string.x_years_months), years, months);
             } else {
-                duration = String.format(Locale.ENGLISH, context.getResources().getString(R.string.x_years), years);
+                duration = String.format(locale, context.getResources().getString(R.string.x_years), years);
             }
         }
 
