@@ -68,6 +68,9 @@ public class ServerSettingsHelper {
             serverSetting.setValue(jsonObject.toString());
             serverSetting.setVersion(jsonObject.optString(AllConstants.SERVER_VERSION));
             serverSetting.setSyncStatus(SyncStatus.SYNCED.name());
+            JSONArray valuesJsonArray = jsonObject.optJSONArray(AllConstants.VALUES);
+            String valuesJsonArrayString =  valuesJsonArray != null ? valuesJsonArray.toString() : null;
+            serverSetting.setValues(valuesJsonArrayString);
 
 
             CoreLibrary.getInstance().context().allSharedPreferences().updateLastSettingsSyncTimeStamp(!TextUtils.isEmpty(serverSetting.getVersion()) ? Long.valueOf(serverSetting.getVersion()) : 0l);

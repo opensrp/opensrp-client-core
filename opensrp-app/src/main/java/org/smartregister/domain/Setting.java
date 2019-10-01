@@ -12,6 +12,7 @@ public class Setting {
     private String version;
     private String type;
     private String syncStatus;
+    private String values;
 
     public String getKey() {
         return key;
@@ -75,5 +76,13 @@ public class Setting {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getValues() {
+        return values;
+    }
+
+    public void setValues(String values) {
+        this.values = values;
     }
 }

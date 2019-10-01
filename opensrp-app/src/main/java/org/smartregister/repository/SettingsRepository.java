@@ -19,6 +19,7 @@ public class SettingsRepository extends DrishtiRepository {
     public static final String SETTINGS_VERSION_COLUMN = "version";
     public static final String SETTINGS_TYPE_COLUMN = "type";
     public static final String SETTINGS_SYNC_STATUS_COLUMN = "sync_status";
+    public static final String SETTINGS_VALUES_COLUMN = "values";
 
     public static final String SETTINGS_SQL = "CREATE TABLE " + SETTINGS_TABLE_NAME + "(key VARCHAR PRIMARY KEY, value BLOB)";
 
@@ -54,6 +55,7 @@ public class SettingsRepository extends DrishtiRepository {
         values.put(SETTINGS_VERSION_COLUMN, setting.getVersion());
         values.put(SETTINGS_TYPE_COLUMN, setting.getType());
         values.put(SETTINGS_SYNC_STATUS_COLUMN, setting.getSyncStatus());
+        values.put(SETTINGS_VALUES_COLUMN, setting.getValues());
 
         replace(values);
     }
@@ -188,6 +190,8 @@ public class SettingsRepository extends DrishtiRepository {
         value.setType(cursor.getString(cursor.getColumnIndex(SETTINGS_TYPE_COLUMN)));
         value.setVersion(cursor.getString(cursor.getColumnIndex(SETTINGS_VERSION_COLUMN)));
         value.setSyncStatus(cursor.getString(cursor.getColumnIndex(SETTINGS_SYNC_STATUS_COLUMN)));
+        value.setValues(cursor.getString(cursor.getColumnIndex(SETTINGS_VALUES_COLUMN)));
+
 
         return value;
     }
