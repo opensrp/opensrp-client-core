@@ -12,6 +12,7 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -36,13 +37,18 @@ public class DateUtilTest extends BaseUnitTest {
     @Test
     public void assertGetDurationTest() {
 
-        Assert.assertEquals("1d", DateUtil.getDuration(RuntimeEnvironment.application, 100000000l));
-        Assert.assertEquals("5w 1d", DateUtil.getDuration(RuntimeEnvironment.application, 3110400000l));
-        Assert.assertEquals("5w", DateUtil.getDuration(RuntimeEnvironment.application, 3024000000l));
-        Assert.assertEquals("3m 1w", DateUtil.getDuration(RuntimeEnvironment.application, TimeUnit.DAYS.toMillis(100)));
-        Assert.assertEquals("1y", DateUtil.getDuration(RuntimeEnvironment.application, 31363200000l));
-        Assert.assertEquals("1y 1m", DateUtil.getDuration(RuntimeEnvironment.application, 36500000000l));
-        Assert.assertEquals("2y", DateUtil.getDuration(RuntimeEnvironment.application, 63113852000l));
+        Locale locale = RuntimeEnvironment.application.getApplicationContext().getResources().getConfiguration().locale;
+
+        Assert.assertEquals("1d", DateUtil.getDuration(100000000l, locale));
+        Assert.assertEquals("5w 1d", DateUtil.getDuration(3110400000l, locale));
+        Assert.assertEquals("5w", DateUtil.getDuration(3024000000l, locale));
+        Assert.assertEquals("3m 1w", DateUtil.getDuration(TimeUnit.DAYS.toMillis(100), locale));
+        Assert.assertEquals("1y", DateUtil.getDuration(31363200000l, locale));
+        Assert.assertEquals("1y 1m", DateUtil.getDuration(36500000000l, locale));
+        Assert.assertEquals("2y", DateUtil.getDuration(63113852000l, locale));
+
+        Assert.assertEquals("1d", DateUtil.getDuration(100000000l));
+
         Assert.assertNotNull(DateUtil.getDuration(RuntimeEnvironment.application, new DateTime(0)));
         Assert.assertNull(DateUtil.getDuration(RuntimeEnvironment.application, null));
     }
