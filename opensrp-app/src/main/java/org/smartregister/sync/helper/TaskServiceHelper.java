@@ -40,7 +40,7 @@ public class TaskServiceHelper {
     public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
 
-    private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
+    public static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
 
     protected static TaskServiceHelper instance;
 

@@ -17,6 +17,7 @@ import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.domain.db.Client;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
 
@@ -477,7 +478,7 @@ public class TaskRepository extends BaseRepository {
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
-                Task task = P2PUtil.gsonDateTime().fromJson(jsonObject.toString(), Task.class);
+                Task task = TaskServiceHelper.taskGson.fromJson(jsonObject.toString(), Task.class);
                 addOrUpdate(task);
             }
 
@@ -525,7 +526,7 @@ public class TaskRepository extends BaseRepository {
                 Task task = readCursor(cursor);
                 task.setRowid(cursor.getLong(0));
 
-                String taskString = P2PUtil.gsonDateTime().toJson(task);
+                String taskString = TaskServiceHelper.taskGson.toJson(task);
                 JSONObject taskObject = new JSONObject(taskString);
 
                 jsonArray.put(taskObject);

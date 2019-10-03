@@ -22,6 +22,7 @@ import java.util.List;
 
 import static org.smartregister.AllConstants.ROWID;
 
+import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.util.P2PUtil;
 
 import timber.log.Timber;
@@ -146,7 +147,7 @@ public class StructureRepository extends LocationRepository {
 
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
-                Location structure = new Gson().fromJson(jsonObject.toString(), Location.class);
+                Location structure = LocationServiceHelper.locationGson.fromJson(jsonObject.toString(), Location.class);
                 addOrUpdate(structure);
             }
 
@@ -195,7 +196,7 @@ public class StructureRepository extends LocationRepository {
                 Location location = readCursor(cursor);
                 location.setRowid(cursor.getLong(0));
 
-                JSONObject structureObject = new JSONObject(new Gson().toJson(location));
+                JSONObject structureObject = new JSONObject(LocationServiceHelper.locationGson.toJson(location));
                 jsonArray.put(structureObject);
 
                 if (rowId > maxRowId) {
