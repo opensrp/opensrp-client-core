@@ -19,6 +19,8 @@ public class Location {
 
     private transient boolean isJurisdiction;
 
+    private Long rowid;
+
     public String getType() {
         return type;
     }
@@ -73,5 +75,13 @@ public class Location {
 
     public void setSyncStatus(String syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+    public Long getRowid() {
+        return rowid;
+    }
+
+    public void setRowid(Long rowid) {
+        this.rowid = rowid;
     }
 }

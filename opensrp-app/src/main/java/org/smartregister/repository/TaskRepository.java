@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -8,12 +9,17 @@ import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.domain.db.Client;
+import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
+import org.smartregister.util.P2PUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,6 +30,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.TaskStatus;
 
 /**
@@ -31,6 +38,7 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
+    private static final String TAG = TaskRepository.class.getCanonicalName();
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
     private static final String GROUP_ID = "group_id";
@@ -104,6 +112,12 @@ public class TaskRepository extends BaseRepository {
             throw new IllegalArgumentException("identifier must be specified");
         }
         ContentValues contentValues = new ContentValues();
+
+        if (P2PUtil.checkIfExistsById(TASK_TABLE, task.getIdentifier(), getWritableDatabase())) {
+            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+            contentValues.put(ROWID, ++maxRowId);
+        }
+
         contentValues.put(ID, task.getIdentifier());
         contentValues.put(PLAN_ID, task.getPlanIdentifier());
         contentValues.put(GROUP_ID, task.getGroupIdentifier());
@@ -454,4 +468,84 @@ public class TaskRepository extends BaseRepository {
         }
     }
 
+    public boolean batchInsertTasks(JSONArray array) {
+        if (array == null || array.length() == 0) {
+            return false;
+        }
+
+        try {
+            getWritableDatabase().beginTransaction();
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                Task task = TaskServiceHelper.taskGson.fromJson(jsonObject.toString(), Task.class);
+                addOrUpdate(task);
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+            getWritableDatabase().endTransaction();
+            return false;
+        }
+    }
+
+    /**
+     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     *
+     * @param lastRowId
+     * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
+     */
+    @Nullable
+    public JsonData getTasks(long lastRowId, int limit) {
+        JsonData jsonData = null;
+        long maxRowId = 0;
+
+        String query = "SELECT "
+                + ROWID
+                +",* FROM "
+                + TASK_TABLE
+                + " WHERE "
+                + ROWID
+                + " > ? "
+                + " ORDER BY " + ROWID + " ASC LIMIT ?";
+
+        Cursor cursor = null;
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+
+                Task task = readCursor(cursor);
+                task.setRowid(cursor.getLong(0));
+
+                String taskString = TaskServiceHelper.taskGson.toJson(task);
+                JSONObject taskObject = new JSONObject(taskString);
+
+                jsonArray.put(taskObject);
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        if (jsonArray.length() > 0) {
+            jsonData = new JsonData(jsonArray, maxRowId);
+        }
+        return jsonData;
+    }
 }
