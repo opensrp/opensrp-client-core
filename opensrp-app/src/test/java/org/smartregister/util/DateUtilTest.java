@@ -71,4 +71,22 @@ public class DateUtilTest extends BaseUnitTest {
         LocalDate end = new LocalDate(1510645708000l);
         Assert.assertEquals(DateUtil.weekDifference(start, end), 104);
     }
+
+    @Test
+    public void formatDateTest() {
+        Assert.assertEquals( "03-10-2019", DateUtil.formatDate(new LocalDate("2019-10-03"), "dd-MM-YYY"));
+        Assert.assertEquals( "", DateUtil.formatDate(new LocalDate("2019-10-03"), "KK-TT"));
+    }
+
+    @Test
+    public void getLocalDateTest() {
+        Assert.assertEquals( new LocalDate("2019-10-03"), DateUtil.getLocalDate("03/10/2019"));
+        Assert.assertEquals( null, DateUtil.getLocalDate("03-15-2019"));
+    }
+
+    @Test
+    public void differenceTest(){
+        Assert.assertEquals( 2, DateUtil.dayDifference(new LocalDate("2019-10-01"), new LocalDate("2019-10-03")));
+        Assert.assertEquals( 1, DateUtil.weekDifference(new LocalDate("2019-09-26"), new LocalDate("2019-10-03")));
+    }
 }
