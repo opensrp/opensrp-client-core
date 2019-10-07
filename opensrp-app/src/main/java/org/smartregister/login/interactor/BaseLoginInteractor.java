@@ -1,7 +1,6 @@
 package org.smartregister.login.interactor;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -28,6 +27,8 @@ import org.smartregister.view.contract.BaseLoginContract;
 import java.lang.ref.WeakReference;
 import java.util.TimeZone;
 
+import timber.log.Timber;
+
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
@@ -42,8 +43,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private static final int MINIMUM_JOB_FLEX_VALUE = 5;
 
     private RemoteLoginTask remoteLoginTask;
-
-    private static final String TAG = BaseLoginInteractor.class.getCanonicalName();
 
     public BaseLoginInteractor(BaseLoginContract.Presenter loginPresenter) {
         this.mLoginPresenter = loginPresenter;
@@ -72,7 +71,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             remoteLogin(userName, password);
         }
 
-        Log.i(getClass().getName(), "Login result finished " + DateTime.now().toString());
+        Timber.i("Login result finished " + DateTime.now().toString());
     }
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, String password) {
@@ -101,11 +100,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.i(getClass().getName(), "Starting DrishtiSyncScheduler " + DateTime.now().toString());
+                Timber.i("Starting DrishtiSyncScheduler " + DateTime.now().toString());
 
                 scheduleJobsImmediately();
 
-                Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
+                Timber.i("Started DrishtiSyncScheduler " + DateTime.now().toString());
             }
         }).start();
     }
@@ -166,8 +165,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 getLoginView().showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-
+            Timber.e(e);
             getLoginView().showErrorDialog("Error occurred trying to loginWithLocalFlag in. Please try again...");
         }
     }
@@ -256,7 +254,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
 
             }
         }
