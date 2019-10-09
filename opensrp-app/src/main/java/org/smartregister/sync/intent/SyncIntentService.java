@@ -113,22 +113,31 @@ public class SyncIntentService extends BaseSyncIntentService {
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
 
-            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
-            Timber.i("URL: %s", url);
-
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
             }
 
-            Response resp = httpAgent.fetch(url);
+            String url = baseUrl + SYNC_URL;
+            Response resp;
+            if (configs.isSyncUsingPost()) {
+                JSONObject syncParams = new JSONObject();
+                syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
+                syncParams.put("serverVersion", lastSyncDatetime);
+                syncParams.put("limit",  SyncIntentService.EVENT_PULL_LIMIT);
+                resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
+            } else {
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
+                Timber.i("URL: %s", url);
+                resp = httpAgent.fetch(url);
+            }
 
-            if(resp.isUrlError()){
+            if (resp.isUrlError()) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
 
-            if(resp.isTimeoutError()){
+            if (resp.isTimeoutError()) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                 complete(FetchStatus.fetchedFailed);
             }
@@ -140,7 +149,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             JSONObject jsonObject = new JSONObject((String) resp.payload());
 
             int eCount = fetchNumberOfEvents(jsonObject);
-            Timber.i("Parse Network Event Count: %s",eCount);
+            Timber.i("Parse Network Event Count: %s", eCount);
 
             if (eCount == 0) {
                 complete(FetchStatus.nothingFetched);
@@ -161,7 +170,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 fetchRetry(0);
             }
         } catch (Exception e) {
-            Timber.e(e,"Fetch Retry Exception:  %s", e.getMessage());
+            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
         }
     }
@@ -182,7 +191,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
-            Timber.e(e,"Process Client Exception: %s",e.getMessage());
+            Timber.e(e, "Process Client Exception: %s", e.getMessage());
         }
     }
 
