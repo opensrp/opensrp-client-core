@@ -84,7 +84,7 @@ public abstract class DrishtiApplication extends Application {
     /**
      * Plant the crashlytics tree fro every application to use
      */
-    public void initializeCrashLyticsTree(){
+    public void initializeCrashLyticsTree() {
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
         } else {
@@ -134,5 +134,20 @@ public abstract class DrishtiApplication extends Application {
             username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
         }
         return username;
+    }
+
+    @Override
+    public void onTerminate() {
+        closePendingTransactions();
+        super.onTerminate();
+    }
+
+    private void closePendingTransactions() {
+        if (repository != null && repository.getWritableDatabase().isOpen()
+                && repository.getWritableDatabase().inTransaction()) {
+            Timber.e(new RuntimeException("Application closed while transactions are in progress. Data maybe lost"));
+            repository.getWritableDatabase().endTransaction();
+            context.allSharedPreferences().updateTransactionsKilledFlag(true);
+        }
     }
 }

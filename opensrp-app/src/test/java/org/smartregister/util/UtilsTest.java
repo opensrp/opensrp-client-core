@@ -237,7 +237,7 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void testCmStringSuffixReturnsCorrectValueIfParamFloat() {
 
-        String result = Utils.kgStringSuffix(1.5f);
+        String result = Utils.cmStringSuffix(1.5f);
         Assert.assertNotNull(result);
         Assert.assertEquals("1.5 cm", result);
     }
@@ -245,7 +245,7 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void testCmStringSuffixReturnsCorrectValueIfParamString() {
 
-        String result = Utils.kgStringSuffix("45.9");
+        String result = Utils.cmStringSuffix("45.9");
         Assert.assertNotNull(result);
         Assert.assertEquals("45.9 cm", result);
     }

@@ -1,5 +1,8 @@
 package org.smartregister.domain;
 
+import static org.smartregister.domain.ResponseErrorStatus.malformed_url;
+import static org.smartregister.domain.ResponseErrorStatus.not_found;
+import static org.smartregister.domain.ResponseErrorStatus.timeout;
 import static org.smartregister.domain.ResponseStatus.failure;
 
 public class Response<T> {
@@ -21,5 +24,13 @@ public class Response<T> {
 
     public boolean isFailure() {
         return status.equals(failure);
+    }
+
+    public boolean isUrlError(){
+        return status.displayValue().equals(malformed_url.name()) || status.displayValue().equals(not_found.name());
+    }
+
+    public boolean isTimeoutError(){
+        return status.displayValue().equals(timeout.name());
     }
 }

@@ -302,6 +302,7 @@ public class EventClientRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
+            getWritableDatabase().endTransaction();
             Log.e(getClass().getName(), "", e);
             return false;
         } finally {
@@ -375,6 +376,7 @@ public class EventClientRepository extends BaseRepository {
             return true;
         } catch (Exception e) {
             Log.e(getClass().getName(), "", e);
+            getWritableDatabase().endTransaction();
             return false;
         } finally {
             if (insertStatement != null)
