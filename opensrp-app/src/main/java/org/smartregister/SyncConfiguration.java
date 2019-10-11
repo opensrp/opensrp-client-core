@@ -79,4 +79,13 @@ public abstract class SyncConfiguration {
     public void setReadTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
     }
+
+
+    /**
+     * This method control if POST of GET HTTP method is used to sync clients and events
+     * @return true to sync using POST, false to sync using GET
+     */
+    public boolean isSyncUsingPost() {
+        return false;
+    }
 }
