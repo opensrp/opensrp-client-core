@@ -25,15 +25,15 @@ android:
     # tools required
     - tools
     # The BuildTools version used by your project
-    - build-tools-27.0.3
+    - build-tools-28.0.3
     # The SDK version used to compile your projects
-    - android-27
+    - android-28
 
 addons:
   apt_packages:
-  - pandoc
+    - pandoc
 
-script: 
+script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
   - chmod 755 gradlew
@@ -43,9 +43,11 @@ script:
   #Run All tests Unit and Instrumentation
   - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport coveralls --stacktrace
 
-after_failure:
- - pandoc opensrp-app/build/reports/tests/index.html -t plain
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 
+after_failure:
+  - pandoc opensrp-app/build/reports/tests/index.html -t plain
 
 notifications:
   slack:

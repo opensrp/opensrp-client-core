@@ -18,6 +18,7 @@ import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.ClientField;
 import org.smartregister.domain.jsonmapping.Column;
+import org.smartregister.domain.jsonmapping.ColumnType;
 import org.smartregister.domain.jsonmapping.JsonMapping;
 import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
@@ -25,13 +26,17 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.util.AssetHandler;
 
 import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 
@@ -77,8 +82,28 @@ public class ClientProcessorForJava {
         }
     }
 
+    /**
+     * Call this method to flag the event as processed in the local repository.
+     * All events valid or otherwise must be flagged to avoid re-processing
+     *
+     * @param event
+     */
+    public void completeProcessing(Event event) {
+        if (event == null)
+            return;
+
+        if (event.getServerVersion() != 0) {
+            CoreLibrary.getInstance().context().allSharedPreferences().updateLastClientProcessedTimeStamp(event.getServerVersion());
+        }
+        CoreLibrary.getInstance().context()
+                .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
+    }
+
     public Boolean processEvent(Event event, Client client, ClientClassification clientClassification) throws Exception {
         try {
+            // mark event as processed regardless of any errors
+            completeProcessing(event);
+
             if (event.getCreator() != null) {
                 Log.i(TAG, "EVENT from openmrs");
             }
@@ -388,7 +413,10 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    columnValue = getValues((List) values).get(0);
+                                    List<String> li = getValues((List) values);
+                                    if (!li.isEmpty()) {
+                                        columnValue = li.get(0);
+                                    }
                                 }
                             }
                         }
@@ -398,7 +426,8 @@ public class ClientProcessorForJava {
                     // in Content value
                     if (columnValue != null) {
                         columnValue = getHumanReadableConceptResponse(columnValue, segment);
-                        contentValues.put(columnName, columnValue);
+                        String formattedValue = getFormattedValue(column, columnValue);
+                        contentValues.put(columnName, formattedValue);
                     }
                 }
 
@@ -430,8 +459,42 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
+    }
+
+    /**
+     * Reformat the data to be persisted in the database.
+     * This function will reformat dates with supplied types for storage in the DB
+     *
+     * @param column
+     * @param columnValue
+     * @return
+     */
+    protected String getFormattedValue(Column column, String columnValue) {
+        // covert the column if its a formatted column with both
+
+        String dataType = StringUtils.isNotBlank(column.dataType) ? column.dataType : "";
+        switch (dataType) {
+            case ColumnType.Date:
+                if (StringUtils.isNotBlank(column.saveFormat) && StringUtils.isNotBlank(column.sourceFormat)) {
+                    try {
+                        Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.ENGLISH).parse(columnValue);
+                        return new SimpleDateFormat(column.saveFormat, Locale.ENGLISH).format(sourceDate);
+                    } catch (Exception e) {
+                        Timber.e(e);
+                    }
+                }
+            case ColumnType.String:
+                if (StringUtils.isNotBlank(column.saveFormat)) {
+                    return String.format(column.saveFormat, columnValue);
+                }
+                break;
+            default:
+                return columnValue;
+        }
+
+        return columnValue;
     }
 
     /**
@@ -466,7 +529,7 @@ public class ClientProcessorForJava {
         try {
             Log.d(TAG, "Started updateClientDetailsTable");
 
-            if(CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
+            if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
                 String baseEntityId = client.getBaseEntityId();
                 Long timestamp = getEventDate(event.getEventDate());
 
@@ -674,7 +737,7 @@ public class ClientProcessorForJava {
 
     public Table getColumnMappings(String registerName) {
         try {
-            ClientField clientField = assetJsonToJava("ec_client_fields.json", ClientField.class);
+            ClientField clientField = assetJsonToJava(CoreLibrary.getInstance().getEcClientFieldsFile(), ClientField.class);
             if (clientField == null) {
                 return null;
             }

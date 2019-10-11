@@ -2,13 +2,12 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
-
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,14 +18,14 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.domain.db.Column;
-import org.smartregister.service.AlertService;
 import org.smartregister.sync.ClientData;
+import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -41,17 +40,9 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     private EventClientRepository eventClientRepository;
     private String baseEntityId = "baseEntityId";
     private String syncStatus = "syncStatus";
+    private String eventType = "eventType";
     @Mock
     private Repository repository;
-
-    @Mock
-    private CommonFtsObject commonFtsObject;
-
-    @Mock
-    private AlertService alertService;
-
-    @Mock
-    private Context context;
 
     @Mock
     private SQLiteDatabase sqliteDatabase;
@@ -65,7 +56,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void instantiatesSuccessfullyOnConstructorCall() throws Exception {
+    public void instantiatesSuccessfullyOnConstructorCall() {
         Assert.assertNotNull(new EventClientRepository(repository));
     }
 
@@ -82,35 +73,54 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void getEventsByServerVersionsReturnsNotNull() throws Exception {
         String query = "SELECT json FROM event WHERE serverVersion > 0 AND serverVersion <= 0 ORDER BY serverVersion";
-        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(getEvetCursor());
+        Mockito.when(sqliteDatabase.rawQuery(query, null)).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(0l, 0l));
 
     }
 
     @Test
     public void getEventsBySyncDateAndSyncStatusReturnsNotNull() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(new Date(), "unsynced"));
 
     }
 
     @Test
     public void getEventsBySyncDateReturnsNotNull() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getEvents(new Date()));
 
     }
 
     @Test
+    public void fetchEventClientsByEventVersion() throws Exception {
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+        Assert.assertNotNull(eventClientRepository.fetchEventClientsByEventTypes(Collections.singletonList("Registration")));
+    }
+
+    @Test
+    public void testFetchEventClients() throws Exception {
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+        Assert.assertNotNull(eventClientRepository.fetchEventClients(Collections.singletonList("123")));
+    }
+
+    @Test
+    public void testFetchEventClientsByMinMaxTimestamp() throws Exception {
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+        Assert.assertNotNull(eventClientRepository.fetchEventClients(10000l, 20000l));
+    }
+
+    @Test
     public void getUnsyncedEventsReturnsNotNull() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getUnSyncedEvents(100));
 
     }
 
     @Test
     public void getEventsByBaseEntityIdReturnsNotNull() throws Exception {
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(baseEntityId));
 
     }
@@ -118,12 +128,27 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void getEventsByEventIdReturnsNotNull() throws Exception {
 
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEvetCursor());
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
         Assert.assertNotNull(eventClientRepository.getEventsByEventId("EventId"));
 
     }
 
-    public MatrixCursor getEvetCursor() throws Exception {
+    @Test
+    public void testGetEventsByBaseEntityIdAndEventTypeReturnsNotNull() throws Exception {
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityIdAndEventType(baseEntityId, eventType));
+
+    }
+
+    @Test
+    public void testGetEventsByBaseEntityIdsAndSyncStatusReturnsNotNull() throws Exception {
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityIdsAndSyncStatus(syncStatus, Arrays.asList(baseEntityId)));
+
+    }
+
+    public MatrixCursor getEventCursor() throws Exception {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", "timestamp"});
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for (int i = 0; i < eventArray.length(); i++) {
@@ -229,21 +254,35 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void deleteClientCallsDelete1time() throws Exception {
+    public void deleteClientCallsDelete1time() {
         eventClientRepository.deleteClient(baseEntityId);
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
-    public void deleteEventCallsDelete1time() throws Exception {
+    public void deleteEventCallsDelete1time() {
         eventClientRepository.deleteEventsByBaseEntityId(baseEntityId, "eventType");
         Mockito.verify(sqliteDatabase, Mockito.times(1)).delete(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
 
     }
 
     @Test
-    public void assertConvertToJson() throws Exception {
+    public void fetchEventClientsByRowId() throws Exception {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"rowid", "json"});
+        JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
+        for (int i = 0; i < eventArray.length(); i++) {
+            matrixCursor.addRow(new String[]{(i + 1) + "", eventArray.getJSONObject(i).toString()});
+        }
+
+        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(Object[].class))).thenReturn(matrixCursor);
+        P2pProcessRecordsService.EventClientQueryResult eventClientQueryResult = eventClientRepository.fetchEventClientsByRowId(0);
+
+        Assert.assertEquals(eventArray.length(), eventClientQueryResult.getMaxRowId());
+    }
+
+    @Test
+    public void assertConvertToJson() {
         Assert.assertNull(eventClientRepository.convertToJson(null));
     }
 
@@ -258,7 +297,6 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getCursorSyncStatus());
         org.junit.Assert.assertNotNull(eventClientRepository.getUnValidatedEventFormSubmissionIds(1));
     }
-
 
 
     @Test
@@ -280,4 +318,17 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.verify(sqliteDatabase, Mockito.times(count)).execSQL(Mockito.anyString());
     }
 
+    /**
+     * Events manually saved should always have an unprocessed status
+     */
+    @Test
+    public void testAddEventDefaultStatus() {
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+        String baseEntityId = "12345";
+        JSONObject jsonObject = Mockito.mock(JSONObject.class);
+
+        eventClientRepository.addEvent(baseEntityId, jsonObject);
+
+        Mockito.verify(eventClientRepository).addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
+    }
 }

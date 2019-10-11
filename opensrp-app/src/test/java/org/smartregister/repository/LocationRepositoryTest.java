@@ -12,14 +12,12 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
-import org.smartregister.Context;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -38,8 +36,7 @@ import static org.smartregister.repository.LocationRepository.LOCATION_TABLE;
  * Created by samuelgithengi on 11/26/18.
  */
 
-@RunWith(RobolectricTestRunner.class)
-public class LocationRepositoryTest {
+public class LocationRepositoryTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -47,7 +44,7 @@ public class LocationRepositoryTest {
     private LocationRepository locationRepository;
 
     @Mock
-    private static Repository repository;
+    private Repository repository;
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
@@ -63,12 +60,12 @@ public class LocationRepositoryTest {
 
     private String locationJson = LocationTest.parentJson;
 
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     @Before
     public void setUp() {
-        locationRepository = Context.getInstance().getLocationRepository();
+        locationRepository = new LocationRepository(repository);
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -118,6 +115,7 @@ public class LocationRepositoryTest {
         assertEquals(locationJson, stripTimezone(gson.toJson(location)));
 
     }
+
     @Test
     public void tesGetAllLocationIds() {
         when(sqLiteDatabase.rawQuery("SELECT _id FROM location", null)).thenReturn(getCursor());
@@ -130,8 +128,8 @@ public class LocationRepositoryTest {
 
         when(sqLiteDatabase.rawQuery("SELECT * FROM location", null)).thenReturn(getCursor());
         List<Location> allLocations = locationRepository.getAllLocations();
-        assertEquals(1,allLocations.size());
-        assertEquals(allLocationIds.get(0),allLocations.get(0).getId());
+        assertEquals(1, allLocations.size());
+        assertEquals(allLocationIds.get(0), allLocations.get(0).getId());
 
     }
 

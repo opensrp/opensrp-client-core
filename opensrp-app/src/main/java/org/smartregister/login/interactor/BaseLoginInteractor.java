@@ -1,8 +1,6 @@
 package org.smartregister.login.interactor;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -11,22 +9,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.P2POptions;
 import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
+import org.smartregister.job.P2pServiceJob;
+import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
-import org.smartregister.sync.helper.CharacteristicsHelper;
-import org.smartregister.sync.intent.PullUniqueIdsIntentService;
+import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
@@ -39,11 +40,9 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private BaseLoginContract.Presenter mLoginPresenter;
 
-    private static final int MINIMUM_JOB_FLEX_VALUE = 1;
+    private static final int MINIMUM_JOB_FLEX_VALUE = 5;
 
     private RemoteLoginTask remoteLoginTask;
-
-    private static final String TAG = BaseLoginInteractor.class.getCanonicalName();
 
     public BaseLoginInteractor(BaseLoginContract.Presenter loginPresenter) {
         this.mLoginPresenter = loginPresenter;
@@ -72,31 +71,40 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             remoteLogin(userName, password);
         }
 
-        Log.i(getClass().getName(), "Login result finished " + DateTime.now().toString());
+        Timber.i("Login result finished " + DateTime.now().toString());
     }
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, String password) {
         getLoginView().enableLoginButton(true);
-        if (getUserService().isUserInValidGroup(userName, password)
-                && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
-            localLoginWith(userName, password);
+        boolean isAuthenticated = getUserService().isUserInValidGroup(userName, password);
+        if (!isAuthenticated) {
+
+            getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
+
+        } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+
+            navigateToHomePage(userName, password);
+
         } else {
             loginWithLocalFlag(view, false, userName, password);
         }
     }
 
-    private void localLoginWith(String userName, String password) {
+    private void navigateToHomePage(String userName, String password) {
 
         getUserService().localLogin(userName, password);
         getLoginView().goToHome(false);
+
+        CoreLibrary.getInstance().initP2pLibrary(userName);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.i(getClass().getName(), "Starting DrishtiSyncScheduler " + DateTime.now().toString());
-                if (NetworkUtils.isNetworkAvailable()) {
-                    SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-                }
-                Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
+                Timber.i("Starting DrishtiSyncScheduler " + DateTime.now().toString());
+
+                scheduleJobsImmediately();
+
+                Timber.i("Started DrishtiSyncScheduler " + DateTime.now().toString());
             }
         }).start();
     }
@@ -157,8 +165,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 getLoginView().showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-
+            Timber.e(e);
             getLoginView().showErrorDialog("Error occurred trying to loginWithLocalFlag in. Please try again...");
         }
     }
@@ -176,18 +183,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         processServerSettings(loginResponse);
 
-        if (NetworkUtils.isNetworkAvailable()) {
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
-        }
+        scheduleJobsPeriodically();
+        scheduleJobsImmediately();
+
+        CoreLibrary.getInstance().initP2pLibrary(userName);
 
         getLoginView().goToHome(true);
-
-        scheduleJobs();
-    }
-
-    public void startPullUniqueIdsService() {
-        Intent intent = new Intent(CoreLibrary.getInstance().context().applicationContext(), PullUniqueIdsIntentService.class);
-        getApplicationContext().startService(intent);
     }
 
     public Context getApplicationContext() {
@@ -206,9 +207,24 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         return mLoginPresenter.getOpenSRPContext().userService();
     }
 
-    protected void scheduleJobs() {
+    /**
+     * Add all the metnods that should be scheduled remotely
+     */
+    protected abstract void scheduleJobsPeriodically();
+
+    /**
+     * Sync and pull unique ids are scheduleds by default.
+     * Call super if you override this method.
+     */
+    protected void scheduleJobsImmediately() {
+        P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
+        if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
+            // Finish processing any unprocessed sync records here
+            P2pServiceJob.scheduleJobImmediately(P2pServiceJob.TAG);
+        }
+
         if (NetworkUtils.isNetworkAvailable()) {
-            startPullUniqueIdsService();
+            PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
             SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
         }
     }
@@ -221,7 +237,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             minutes = (int) Math.ceil(value / 3);
         }
 
-        return TimeUnit.MINUTES.toMillis(minutes);
+        return minutes < MINIMUM_JOB_FLEX_VALUE ? MINIMUM_JOB_FLEX_VALUE : minutes;
     }
 
     //Always call super.processServerSettings( ) if you ever Override this
@@ -234,12 +250,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 JSONArray settings = data.has(AllConstants.PREF_KEY.SETTINGS) ? data.getJSONArray(AllConstants.PREF_KEY.SETTINGS) : null;
 
                 if (settings != null && settings.length() > 0) {
-                    CharacteristicsHelper.saveSetting(settings);
-                    CharacteristicsHelper.updateLastSettingServerSyncTimetamp();
+                    ServerSettingsHelper.saveSetting(settings);
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
 
             }
         }

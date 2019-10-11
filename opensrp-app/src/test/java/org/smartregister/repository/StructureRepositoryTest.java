@@ -12,13 +12,12 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
@@ -37,8 +36,7 @@ import static org.smartregister.repository.StructureRepository.STRUCTURE_TABLE;
  * Created by samuelgithengi on 11/26/18.
  */
 
-@RunWith(RobolectricTestRunner.class)
-public class StructureRepositoryTest {
+public class StructureRepositoryTest extends BaseUnitTest {
 
     @Rule
     public MockitoRule rule = MockitoJUnit.rule();
@@ -46,7 +44,7 @@ public class StructureRepositoryTest {
     private StructureRepository structureRepository;
 
     @Mock
-    private static Repository repository;
+    private Repository repository;
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
@@ -62,7 +60,7 @@ public class StructureRepositoryTest {
 
     private String locationJson = LocationTest.structureJson;
 
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
 
@@ -87,7 +85,7 @@ public class StructureRepositoryTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(5, contentValues.size());
+        assertEquals(6, contentValues.size());
 
         assertEquals("90397", contentValues.getAsString("_id"));
         assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
@@ -152,7 +150,7 @@ public class StructureRepositoryTest {
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
-        Location location = gson.fromJson(locationJson, Location.class);
+        Location location = LocationTest.gson.fromJson(locationJson, Location.class);
         cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
                 location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;

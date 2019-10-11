@@ -2,8 +2,8 @@ package org.smartregister.domain;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.joda.time.DateTime;
-
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -17,7 +17,7 @@ public class LocationProperty {
         @SerializedName("Inactive")
         INACTIVE,
         @SerializedName("Pending Review")
-        PENDING_REVIEW;
+        PENDING_REVIEW
 
     }
 
@@ -35,13 +35,13 @@ public class LocationProperty {
 
     private int geographicLevel;
 
-    private DateTime effectiveStartDate;
+    private Date effectiveStartDate;
 
-    private DateTime effectiveEndDate;
+    private Date effectiveEndDate;
 
     private int version;
 
-    private transient Map<String, String> customProperties;
+    private transient Map<String, String> customProperties = new HashMap<>();
 
     public String getUid() {
         return uid;
@@ -99,19 +99,19 @@ public class LocationProperty {
         this.geographicLevel = geographicLevel;
     }
 
-    public DateTime getEffectiveStartDate() {
+    public Date getEffectiveStartDate() {
         return effectiveStartDate;
     }
 
-    public void setEffectiveStartDate(DateTime effectiveStartDate) {
+    public void setEffectiveStartDate(Date effectiveStartDate) {
         this.effectiveStartDate = effectiveStartDate;
     }
 
-    public DateTime getEffectiveEndDate() {
+    public Date getEffectiveEndDate() {
         return effectiveEndDate;
     }
 
-    public void setEffectiveEndDate(DateTime effectiveEndDate) {
+    public void setEffectiveEndDate(Date effectiveEndDate) {
         this.effectiveEndDate = effectiveEndDate;
     }
 

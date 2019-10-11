@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">عينة openrp التطبيق</string>
+    <string name="action_settings">الإعدادات</string>
+
+    <string name="sample">يعم الظلام والآن تبدأ المشاهدة</string>
+    <string name="language_label">اختار اللغة</string>
+</resources>

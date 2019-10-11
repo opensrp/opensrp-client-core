@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.EligibleCouple;
 import org.smartregister.domain.Mother;
 import org.smartregister.domain.TimelineEvent;
@@ -28,8 +29,7 @@ import org.smartregister.view.contract.pnc.PNCDetail;
 import java.util.Arrays;
 import java.util.HashMap;
 
-@RunWith(RobolectricTestRunner.class)
-public class PNCDetailControllerTest {
+public class PNCDetailControllerTest extends BaseUnitTest {
     @Mock
     private Context context;
     @Mock

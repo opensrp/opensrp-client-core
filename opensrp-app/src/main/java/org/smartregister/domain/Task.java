@@ -4,12 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by samuelgithengi on 11/22/18.
  */
-public class Task {
+public class Task implements Serializable {
 
     public enum TaskStatus {
         @SerializedName("Draft")
@@ -23,7 +24,7 @@ public class Task {
 
     private String identifier;
 
-    private String campaignIdentifier;
+    private String planIdentifier;
 
     private String groupIdentifier;
 
@@ -59,6 +60,16 @@ public class Task {
 
     private Long serverVersion;
 
+    private String structureId;
+
+    private String reasonReference;
+
+    private String location;
+
+    private String requester;
+
+    private Long rowid;
+
     public String getIdentifier() {
         return identifier;
     }
@@ -67,12 +78,12 @@ public class Task {
         this.identifier = identifier;
     }
 
-    public String getCampaignIdentifier() {
-        return campaignIdentifier;
+    public String getPlanIdentifier() {
+        return planIdentifier;
     }
 
-    public void setCampaignIdentifier(String campaignIdentifier) {
-        this.campaignIdentifier = campaignIdentifier;
+    public void setPlanIdentifier(String planIdentifier) {
+        this.planIdentifier = planIdentifier;
     }
 
     public String getGroupIdentifier() {
@@ -201,5 +212,45 @@ public class Task {
 
     public void setSyncStatus(String syncStatus) {
         this.syncStatus = syncStatus;
+    }
+
+    public String getStructureId() {
+        return structureId;
+    }
+
+    public void setStructureId(String structureId) {
+        this.structureId = structureId;
+    }
+
+    public String getReasonReference() {
+        return reasonReference;
+    }
+
+    public void setReasonReference(String reasonReference) {
+        this.reasonReference = reasonReference;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
+
+    public Long getRowid() {
+        return rowid;
+    }
+
+    public void setRowid(Long rowid) {
+        this.rowid = rowid;
     }
 }

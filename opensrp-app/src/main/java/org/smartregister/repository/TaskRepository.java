@@ -1,22 +1,36 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
+import android.support.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
+import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.domain.db.Client;
+import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
+import org.smartregister.util.P2PUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import timber.log.Timber;
+
+import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.TaskStatus;
 
 /**
@@ -24,8 +38,9 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
+    private static final String TAG = TaskRepository.class.getCanonicalName();
     private static final String ID = "_id";
-    private static final String CAMPAIGN_ID = "campaign_id";
+    private static final String PLAN_ID = "plan_id";
     private static final String GROUP_ID = "group_id";
     private static final String STATUS = "status";
     private static final String BUSINESS_STATUS = "business_status";
@@ -44,17 +59,21 @@ public class TaskRepository extends BaseRepository {
     private static final String OWNER = "owner";
     private static final String SYNC_STATUS = "sync_status";
     private static final String SERVER_VERSION = "server_version";
+    private static final String STRUCTURE_ID = "structure_id";
+    private static final String REASON_REFERENCE = "reason_reference";
+    private static final String LOCATION = "location";
+    private static final String REQUESTER = "requester";
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, CAMPAIGN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION};
+    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER};
 
     protected static final String TASK_TABLE = "task";
 
     private static final String CREATE_TASK_TABLE =
             "CREATE TABLE " + TASK_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
-                    CAMPAIGN_ID + " VARCHAR NOT NULL, " +
+                    PLAN_ID + " VARCHAR NOT NULL, " +
                     GROUP_ID + " VARCHAR NOT NULL, " +
                     STATUS + " VARCHAR  NOT NULL, " +
                     BUSINESS_STATUS + " VARCHAR,  " +
@@ -69,11 +88,14 @@ public class TaskRepository extends BaseRepository {
                     LAST_MODIFIED + " INTEGER NOT NULL, " +
                     OWNER + " VARCHAR NOT NULL, " +
                     SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
-                    SERVER_VERSION + " INTEGER ) ";
+                    SERVER_VERSION + " INTEGER, " +
+                    STRUCTURE_ID + " VARCHAR, " +
+                    REASON_REFERENCE + " VARCHAR, " +
+                    LOCATION + " VARCHAR, " +
+                    REQUESTER + " VARCHAR  )";
 
-
-    private static final String CREATE_TASK_CAMPAIGN_GROUP_INDEX = "CREATE INDEX "
-            + TASK_TABLE + "_campaign_group_ind  ON " + TASK_TABLE + "(" + CAMPAIGN_ID + "," + GROUP_ID + ")";
+    private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
+            + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
 
     public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
         super(repository);
@@ -82,7 +104,7 @@ public class TaskRepository extends BaseRepository {
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_TASK_TABLE);
-        database.execSQL(CREATE_TASK_CAMPAIGN_GROUP_INDEX);
+        database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
     public void addOrUpdate(Task task) {
@@ -90,8 +112,14 @@ public class TaskRepository extends BaseRepository {
             throw new IllegalArgumentException("identifier must be specified");
         }
         ContentValues contentValues = new ContentValues();
+
+        if (P2PUtil.checkIfExistsById(TASK_TABLE, task.getIdentifier(), getWritableDatabase())) {
+            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+            contentValues.put(ROWID, ++maxRowId);
+        }
+
         contentValues.put(ID, task.getIdentifier());
-        contentValues.put(CAMPAIGN_ID, task.getCampaignIdentifier());
+        contentValues.put(PLAN_ID, task.getPlanIdentifier());
         contentValues.put(GROUP_ID, task.getGroupIdentifier());
         if (task.getStatus() != null) {
             contentValues.put(STATUS, task.getStatus().name());
@@ -109,6 +137,10 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(OWNER, task.getOwner());
         contentValues.put(SERVER_VERSION, task.getServerVersion());
         contentValues.put(SYNC_STATUS, task.getSyncStatus());
+        contentValues.put(STRUCTURE_ID, task.getStructureId());
+        contentValues.put(REASON_REFERENCE, task.getReasonReference());
+        contentValues.put(LOCATION, task.getLocation());
+        contentValues.put(REQUESTER, task.getRequester());
 
         getWritableDatabase().replace(TASK_TABLE, null, contentValues);
 
@@ -119,18 +151,24 @@ public class TaskRepository extends BaseRepository {
 
     }
 
-    public Map<String, Task> getTasksByCampaignAndGroup(String campaignId, String groupId) {
+    public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
         Cursor cursor = null;
-        Map<String, Task> tasks = new HashMap<>();
+        Map<String, Set<Task>> tasks = new HashMap<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =?",
-                    TASK_TABLE, CAMPAIGN_ID, GROUP_ID), new String[]{campaignId, groupId});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s != ?",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS), new String[]{planId, groupId, TaskStatus.CANCELLED.name()});
             while (cursor.moveToNext()) {
+                Set<Task> taskSet;
                 Task task = readCursor(cursor);
-                tasks.put(task.getForEntity(), task);
+                if (tasks.containsKey(task.getStructureId()))
+                    taskSet = tasks.get(task.getStructureId());
+                else
+                    taskSet = new HashSet<>();
+                taskSet.add(task);
+                tasks.put(task.getStructureId(), taskSet);
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -148,7 +186,7 @@ public class TaskRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -156,10 +194,56 @@ public class TaskRepository extends BaseRepository {
         return null;
     }
 
-    private Task readCursor(Cursor cursor) {
+    public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
+        Cursor cursor = null;
+        Set<Task> taskSet = new HashSet<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s != ? AND %s =?  AND %s =? ",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS, FOR, CODE), new String[]{planId, groupId, TaskStatus.CANCELLED.name(), forEntity, code});
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                taskSet.add(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return taskSet;
+    }
+
+    /**
+     * Gets tasks for an entity using plan and task status
+     * @param planId the plan id
+     * @param forEntity the entity id
+     * @param taskStatus the task status {@link TaskStatus }
+     * @return the set of tasks matching the above params
+     */
+    public Set<Task> getTasksByEntityAndStatus(String planId, String forEntity, TaskStatus taskStatus) {
+        Cursor cursor = null;
+        Set<Task> taskSet = new HashSet<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
+                    TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                taskSet.add(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return taskSet;
+    }
+
+    //Do not make private - used in deriving classes
+    protected Task readCursor(Cursor cursor) {
         Task task = new Task();
         task.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
-        task.setCampaignIdentifier(cursor.getString(cursor.getColumnIndex(CAMPAIGN_ID)));
+        task.setPlanIdentifier(cursor.getString(cursor.getColumnIndex(PLAN_ID)));
         task.setGroupIdentifier(cursor.getString(cursor.getColumnIndex(GROUP_ID)));
         if (cursor.getString(cursor.getColumnIndex(STATUS)) != null) {
             task.setStatus(TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(STATUS))));
@@ -177,6 +261,10 @@ public class TaskRepository extends BaseRepository {
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
         task.setSyncStatus(cursor.getString(cursor.getColumnIndex(SYNC_STATUS)));
         task.setServerVersion(cursor.getLong(cursor.getColumnIndex(SERVER_VERSION)));
+        task.setStructureId(cursor.getString(cursor.getColumnIndex(STRUCTURE_ID)));
+        task.setReasonReference(cursor.getString(cursor.getColumnIndex(REASON_REFERENCE)));
+        task.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
+        task.setRequester(cursor.getString(cursor.getColumnIndex(REQUESTER)));
 
         return task;
     }
@@ -190,7 +278,7 @@ public class TaskRepository extends BaseRepository {
                 taskUpdates.add(readUpdateCursor(cursor));
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -207,11 +295,12 @@ public class TaskRepository extends BaseRepository {
             getWritableDatabase().update(TaskRepository.TASK_TABLE, values, TaskRepository.ID + " = ?",
                     new String[]{taskID});
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
-    private TaskUpdate readUpdateCursor(Cursor cursor) {
+    //Do not make private - used in deriving classes
+    protected TaskUpdate readUpdateCursor(Cursor cursor) {
         TaskUpdate taskUpdate = new TaskUpdate();
         taskUpdate.setIdentifier(cursor.getString(cursor.getColumnIndex(ID)));
 
@@ -237,7 +326,7 @@ public class TaskRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -245,4 +334,218 @@ public class TaskRepository extends BaseRepository {
         return tasks;
     }
 
+    /**
+     * This method updates the task structureId field with a value from  the
+     * residence attribute field of a given client
+     * <p>
+     * This is only done for tasks whose for field refers to a client's residence attribute field
+     *
+     * @param clients A list of clients
+     * @return bolean indicating whether the update was successful or not
+     */
+    public boolean updateTaskStructureIdFromClient(List<Client> clients, String attribute) {
+        if (clients == null || clients.isEmpty()) {
+            return false;
+        }
+
+        SQLiteStatement updateStatement = null;
+        try {
+            getWritableDatabase().beginTransaction();
+
+            String updateTaskSructureIdQuery = String.format("UPDATE %s  SET %s = ? WHERE %s = ?  AND %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, FOR, STRUCTURE_ID);
+            updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
+
+            for (Client client : clients) {
+                String taskFor = client.getBaseEntityId();
+                if (client.getAttribute(attribute) == null) {
+                    continue;
+                }
+                String structureId = client.getAttribute(attribute).toString();
+
+                updateStatement.bindString(1, structureId);
+                updateStatement.bindString(2, taskFor);
+                updateStatement.executeUpdateDelete();
+
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+        } catch (SQLException e) {
+            Timber.e(e);
+            getWritableDatabase().endTransaction();
+            return false;
+        } finally {
+            if (updateStatement != null)
+                updateStatement.close();
+        }
+    }
+
+    /**
+     * This method updates the task structureId field with a value from  the
+     * location's id field of a given structure
+     * <p>
+     * This is only done for tasks whose for field refers to a structure's  id field
+     *
+     * @param locations A list of locations (structures)
+     * @return bolean indicating whether the update was successful or not
+     */
+    public boolean updateTaskStructureIdFromStructure(List<Location> locations) {
+        if (locations == null || locations.isEmpty()) {
+            return false;
+        }
+
+        SQLiteStatement updateStatement = null;
+        try {
+            getWritableDatabase().beginTransaction();
+            String updateTaskSructureIdQuery = String.format("UPDATE %s  SET %s = ? WHERE %s = ?   AND %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, FOR, STRUCTURE_ID);
+            updateStatement = getWritableDatabase().compileStatement(updateTaskSructureIdQuery);
+
+            for (Location location : locations) {
+
+                updateStatement.bindString(1, location.getId());
+                updateStatement.bindString(2, location.getId());
+                updateStatement.executeUpdateDelete();
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+
+        } catch (SQLException e) {
+            Timber.e(e);
+            getWritableDatabase().endTransaction();
+            return false;
+        } finally {
+            if (updateStatement != null)
+                updateStatement.close();
+        }
+    }
+
+    /**
+     * This method updates the task.structure_id field with
+     * ids of existing structures where the structure._id equals
+     * the task.for value.
+     *
+     * <p>
+     * This is only done for tasks that have a null structure_id field
+     *
+     * @return bolean indicating whether the update was successful
+     */
+    public boolean updateTaskStructureIdsFromExistingStructures() {
+
+        try {
+            getReadableDatabase().execSQL(String.format("UPDATE %s SET %s =(SELECT %s FROM structure WHERE %s = %s) WHERE %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, ID, ID, FOR, STRUCTURE_ID));
+            return true;
+        } catch (Exception e) {
+            Timber.e(e);
+            return false;
+        }
+    }
+
+    /**
+     * This method updates the task.structure_id field with
+     * structure_ids of existing clients where the base_entity_id equals
+     * the task.for value.
+     *
+     * <p>
+     * This is only done for tasks that have a null structure_id field
+     *
+     * @return bolean indicating whether the update was successful
+     */
+    public boolean updateTaskStructureIdsFromExistingClients(String clientTable) {
+
+        try {
+            getReadableDatabase().execSQL(String.format("UPDATE %s SET %s =(SELECT %s FROM %s WHERE base_entity_id = %s) WHERE %s IS NULL",
+                    TASK_TABLE, STRUCTURE_ID, STRUCTURE_ID, clientTable, FOR, STRUCTURE_ID));
+            return true;
+        } catch (Exception e) {
+            Timber.e(e);
+            return false;
+        }
+    }
+
+    public boolean batchInsertTasks(JSONArray array) {
+        if (array == null || array.length() == 0) {
+            return false;
+        }
+
+        try {
+            getWritableDatabase().beginTransaction();
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                Task task = TaskServiceHelper.taskGson.fromJson(jsonObject.toString(), Task.class);
+                addOrUpdate(task);
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+            getWritableDatabase().endTransaction();
+            return false;
+        }
+    }
+
+    /**
+     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     *
+     * @param lastRowId
+     * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
+     */
+    @Nullable
+    public JsonData getTasks(long lastRowId, int limit) {
+        JsonData jsonData = null;
+        long maxRowId = 0;
+
+        String query = "SELECT "
+                + ROWID
+                +",* FROM "
+                + TASK_TABLE
+                + " WHERE "
+                + ROWID
+                + " > ? "
+                + " ORDER BY " + ROWID + " ASC LIMIT ?";
+
+        Cursor cursor = null;
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+
+                Task task = readCursor(cursor);
+                task.setRowid(cursor.getLong(0));
+
+                String taskString = TaskServiceHelper.taskGson.toJson(task);
+                JSONObject taskObject = new JSONObject(taskString);
+
+                jsonArray.put(taskObject);
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        if (jsonArray.length() > 0) {
+            jsonData = new JsonData(jsonArray, maxRowId);
+        }
+        return jsonData;
+    }
 }

@@ -12,12 +12,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 import org.smartregister.AllConstants;
 import org.smartregister.sync.mock.MockEditor;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
 @RunWith(RobolectricTestRunner.class)
+@Config(sdk = 27)
 public class AllSharedPreferencesTest extends TestCase {
     @Mock
     private SharedPreferences preferences;
@@ -240,6 +242,11 @@ public class AllSharedPreferencesTest extends TestCase {
     @Test
     public void shouldGetCampaignsOperationalArea() {
         Assert.assertEquals(allSharedPreferences.getPreference(CAMPAIGNS), str);
+    }
+
+    @Test
+    public void assertSaveIsSyncInitialIsFalse() {
+        Assert.assertFalse(allSharedPreferences.fetchIsSyncInitial());
     }
 
 }

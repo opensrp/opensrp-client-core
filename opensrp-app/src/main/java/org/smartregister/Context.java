@@ -1,5 +1,6 @@
 package org.smartregister;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -32,6 +33,7 @@ import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
+import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
@@ -87,8 +89,10 @@ import org.smartregister.service.formsubmissionhandler.VitaminAHandler;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
+import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
@@ -105,10 +109,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
-import static android.preference.PreferenceManager.setDefaultValues;
 
 public class Context {
     private static final String TAG = "Context";
@@ -208,7 +212,8 @@ public class Context {
     private TaskNotesRepository taskNotesRepository;
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
-
+    private PlanDefinitionRepository planDefinitionRepository;
+    private AppProperties appProperties;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -230,7 +235,17 @@ public class Context {
     }
 
     public android.content.Context applicationContext() {
-        return applicationContext;
+        if (applicationContext != null) {//Fix to enable Multi language support for this context
+            try {
+                Configuration configuration = applicationContext.getResources().getConfiguration();
+                configuration.setLocale(configuration.locale);
+                return applicationContext.createConfigurationContext(configuration);
+            } catch (Exception e) {
+                return applicationContext;
+            }
+        } else {
+            return null;
+        }
     }
 
     public BeneficiaryService beneficiaryService() {
@@ -500,7 +515,7 @@ public class Context {
         return formSubmissionSyncService;
     }
 
-    protected HTTPAgent httpAgent() {
+    public HTTPAgent httpAgent() {
         if (httpAgent == null) {
             httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
                     configuration());
@@ -813,8 +828,7 @@ public class Context {
 
     public DristhiConfiguration configuration() {
         if (configuration == null) {
-            configuration = new DristhiConfiguration(
-                    this.applicationContext().getAssets());
+            configuration = new DristhiConfiguration();
         }
         return configuration;
     }
@@ -983,7 +997,7 @@ public class Context {
             if (this.applicationContext() == null) {
                 return;
             }
-            String str = ReadFromfile("ec_client_fields.json", this.applicationContext());
+            String str = ReadFromfile(CoreLibrary.getInstance().getEcClientFieldsFile(), this.applicationContext());
             if (StringUtils.isBlank(str)) {
                 return;
             }
@@ -994,12 +1008,22 @@ public class Context {
                 JSONObject columnDefinitionObject = bindtypeObjects.getJSONObject(i);
                 String bindname = columnDefinitionObject.getString("name");
                 JSONArray columnsJsonArray = columnDefinitionObject.getJSONArray("columns");
-                String[] columnNames = new String[columnsJsonArray.length()];
-                for (int j = 0; j < columnNames.length; j++) {
+                ArrayList<String> columnNames = new ArrayList<>();
+
+                // This adds the ability to have multiple mappings for one column and at the same time
+                // Prevents the app from crashing when creating the common repository
+                HashSet<String> uniqueColumnNames = new HashSet<>();
+
+                for (int j = 0; j < columnsJsonArray.length(); j++) {
                     JSONObject columnObject = columnsJsonArray.getJSONObject(j);
-                    columnNames[j] = columnObject.getString("column_name");
+                    String colName = columnObject.getString("column_name");
+
+                    if (!uniqueColumnNames.contains(colName)) {
+                        uniqueColumnNames.add(colName);
+                        columnNames.add(colName);
+                    }
                 }
-                bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames));
+                bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames.toArray(new String[0])));
                 Log.v("bind type logs", bindname);
             }
         } catch (Exception e) {
@@ -1125,13 +1149,15 @@ public class Context {
         }
         return campaignRepository;
     }
+
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
             taskNotesRepository = new TaskNotesRepository(getRepository());
-            taskRepository = new TaskRepository(getRepository(),taskNotesRepository);
+            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
         }
         return taskRepository;
     }
+
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
             locationRepository = new LocationRepository(getRepository());
@@ -1146,5 +1172,19 @@ public class Context {
         return structureRepository;
     }
 
-    ///////////////////////////////////////////////////////////////////////////////
+    public PlanDefinitionRepository getPlanDefinitionRepository() {
+        if (planDefinitionRepository == null) {
+            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+        }
+        return planDefinitionRepository;
+    }
+
+    public AppProperties getAppProperties() {
+        if (appProperties == null) {
+            appProperties = Utils.getProperties(this.applicationContext);
+        }
+        return appProperties;
+    }
+
+///////////////////////////////////////////////////////////////////////////////
 }

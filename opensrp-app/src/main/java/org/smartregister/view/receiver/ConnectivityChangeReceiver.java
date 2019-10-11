@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import org.smartregister.CoreLibrary;
 import org.smartregister.sync.DrishtiSyncScheduler;
 
 import static org.smartregister.util.Log.logInfo;
@@ -24,12 +23,6 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver {
             if (isDeviceConnectedToNetwork(intent)) {
                 logInfo("Device got connected to network. Trying to start Dristhi Sync scheduler.");
                 DrishtiSyncScheduler.start(context);
-
-                //Re-initialize HTTP CLIENT
-                org.smartregister.Context opensrpContext = CoreLibrary.getInstance().context();
-                if (opensrpContext != null) {
-                    opensrpContext.getHttpAgent().setupHttpClient();
-                }
             }
         }
     }

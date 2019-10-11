@@ -2,11 +2,9 @@ package org.smartregister.view.contract;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 
-@RunWith(RobolectricTestRunner.class)
-public class PregnancyDetailsTest {
+public class PregnancyDetailsTest extends BaseUnitTest {
 
     private String magicDate = "2012-09-17";
 

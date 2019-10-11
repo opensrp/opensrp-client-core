@@ -17,4 +17,8 @@ public enum FetchStatus implements Displayable, Serializable {
     public String displayValue() {
         return displayValue;
     }
+
+    public void setDisplayValue(String displayValue) {
+        this.displayValue = displayValue;
+    }
 }

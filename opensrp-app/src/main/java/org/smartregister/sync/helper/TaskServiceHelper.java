@@ -2,14 +2,11 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,6 +15,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskRepository;
@@ -27,11 +25,11 @@ import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Set;
 
-import static org.smartregister.AllConstants.CAMPAIGNS;
+import timber.log.Timber;
 
 public class TaskServiceHelper {
-    private static final String TAG = TaskServiceHelper.class.getCanonicalName();
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
@@ -42,7 +40,7 @@ public class TaskServiceHelper {
     public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
 
-    private static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
+    public static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
 
     protected static TaskServiceHelper instance;
 
@@ -65,39 +63,50 @@ public class TaskServiceHelper {
         return fetchTasksFromServer();
     }
 
+    protected List<String> getLocationIds() {
+        return CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds();
+    }
+
+    protected Set<String> getPlanDefinitionIds() {
+        return CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds();
+    }
+
     public List<Task> fetchTasksFromServer() {
-        String campaigns = allSharedPreferences.getPreference(CAMPAIGNS);
-        String groups = TextUtils.join(",", CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds());
+        Set<String> planDefinitions = getPlanDefinitionIds();
+        List<String> groups = getLocationIds();
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
         } catch (NumberFormatException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
-            String tasksResponse = fetchTasks(campaigns, groups, serverVersion);
+            Long maxServerVersion = 0l;
+            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
-            for (Task task : tasks) {
-                try {
-                    task.setSyncStatus(BaseRepository.TYPE_Synced);
-                    taskRepository.addOrUpdate(task);
-                } catch (Exception e) {
-                    Log.e(TAG, "Error saving task " + task.getIdentifier(), e);
+            if (tasks != null && tasks.size() > 0) {
+                for (Task task : tasks) {
+                    try {
+                        task.setSyncStatus(BaseRepository.TYPE_Synced);
+                        taskRepository.addOrUpdate(task);
+                    } catch (Exception e) {
+                        Timber.e(e, "Error saving task " + task.getIdentifier());
+                    }
                 }
             }
             if (!Utils.isEmptyCollection(tasks)) {
-                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, getTaskMaxServerVersion(tasks));
+                allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
             }
             return tasks;
         } catch (Exception e) {
-            Log.e(TAG, "Error fetching tasks from server ", e);
+            Timber.e(e, "Error fetching tasks from server");
         }
         return null;
     }
 
-    private String fetchTasks(String campaign, String group, Long serverVersion) throws NoHttpResponseException {
+    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -106,13 +115,20 @@ public class TaskServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + SYNC_TASK_URL + "?campaign=" + campaign + "&group=" + group + "&serverVersion=" + serverVersion;
+        JSONObject request = new JSONObject();
+        request.put("plan", new JSONArray(plan));
+        request.put("group", new JSONArray(group));
+        request.put("serverVersion", serverVersion);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(url);
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        SYNC_TASK_URL),
+                request.toString());
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
@@ -120,9 +136,7 @@ public class TaskServiceHelper {
         return resp.payload().toString();
     }
 
-    private String getTaskMaxServerVersion(List<Task> tasks) {
-        long maxServerVersion = 0;
-
+    private long getTaskMaxServerVersion(List<Task> tasks, long maxServerVersion) {
         for (Task task : tasks) {
             long serverVersion = task.getServerVersion();
             if (serverVersion > maxServerVersion) {
@@ -130,7 +144,7 @@ public class TaskServiceHelper {
             }
         }
 
-        return String.valueOf(maxServerVersion);
+        return maxServerVersion;
     }
 
     public void syncTaskStatusToServer() {
@@ -147,7 +161,7 @@ public class TaskServiceHelper {
                     jsonPayload);
 
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Update Status failed.");
+                Timber.e("Update Status failedd: %s", response.payload());
                 return;
             }
 
@@ -161,7 +175,7 @@ public class TaskServiceHelper {
                         }
                     }
                 } catch (JSONException e) {
-                    Log.e(getClass().getName(), "Error processing the tasks payload: " + response.payload());
+                    Timber.e(e, "Error processing the tasks payload: %s", response.payload());
                 }
             }
         }
@@ -179,7 +193,7 @@ public class TaskServiceHelper {
                             ADD_TASK_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Failed to create new tasks on server.");
+                Timber.e("Failed to create new tasks on server.: %s", response.payload());
                 return;
             }
 
@@ -188,6 +202,7 @@ public class TaskServiceHelper {
             }
         }
     }
+
 
 }
 

@@ -2,61 +2,44 @@ package org.smartregister.service;
 
 import android.content.Context;
 import android.util.Base64;
-import android.util.Log;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRouteBean;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.entity.mime.MultipartEntity;
-import org.apache.http.entity.mime.content.ContentBody;
-import org.apache.http.entity.mime.content.FileBody;
-import org.apache.http.entity.mime.content.StringBody;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.smartregister.DristhiConfiguration;
-import org.smartregister.client.GZipEncodingHttpClient;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
-import org.smartregister.util.FileUtilities;
-import org.smartregister.util.Utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.text.ParseException;
+import java.net.URLConnection;
 
 import javax.net.ssl.HttpsURLConnection;
 
-import static org.apache.http.HttpStatus.SC_CREATED;
-import static org.smartregister.AllConstants.REALM;
+import timber.log.Timber;
+
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 import static org.smartregister.domain.LoginResponse.MALFORMED_URL;
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
@@ -78,17 +61,19 @@ import static org.smartregister.domain.LoginResponse.TIMEOUT;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
 import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
-import static org.smartregister.util.Log.logError;
 
 public class HTTPAgent {
-    public static final int CONNECTION_TIMEOUT = 60000;
-    private static final int READ_TIMEOUT = 60000;
-    private static final String TAG = HTTPAgent.class.getCanonicalName();
-    private GZipEncodingHttpClient httpClient;
     private Context context;
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
+
+    private String boundary = "***" + System.currentTimeMillis() + "***";
+    private String twoHyphens = "--";
+    private String crlf = "\r\n";
+
+    private int connectTimeout = 60000;
+    private int readTimeout = 60000;
 
     public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -96,119 +81,83 @@ public class HTTPAgent {
         this.settings = settings;
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
-
-        setupHttpClient();
     }
 
-    public void setupHttpClient() {
-        BasicHttpParams basicHttpParams = new BasicHttpParams();
-        HttpConnectionParams.setConnectionTimeout(basicHttpParams, 30000);
-        HttpConnectionParams.setSoTimeout(basicHttpParams, 60000);
+    /**
+     * @author  Rodgers Andati
+     * @since   2019-04-25
+     * This method initializes httpurlconnection
+     * @param requestURLPath This is the url to be open http connection to.
+     * @param useBasicAuth This is whether to set up basic authentication or not.
+     * @return HttpURLConnection This returns the http connection to opensrp server.
+     */
+    private HttpURLConnection initializeHttp(String requestURLPath, boolean useBasicAuth) throws IOException {
+        URL url = new URL(requestURLPath);
+        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+        if (urlConnection instanceof HttpsURLConnection) {
+            OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
+            ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
+        }
+        urlConnection.setConnectTimeout(getConnectTimeout());
+        urlConnection.setReadTimeout(getReadTimeout());
 
-        ConnManagerParams.setTimeout(basicHttpParams, CONNECTION_TIMEOUT);
-        // how much connections do we need? - default: 20
-        ConnManagerParams.setMaxTotalConnections
-                (basicHttpParams, 20);
-        // connections per host (2 default)
-        ConnManagerParams.setMaxConnectionsPerRoute
-                (basicHttpParams, new ConnPerRouteBean(20));
-
-        SchemeRegistry registry = new SchemeRegistry();
-        OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
-        registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-        registry.register(new Scheme("https", opensrpSSLHelper.getSslSocketFactoryWithOpenSrpCertificate(), 443));
-
-        ClientConnectionManager connectionManager = new ThreadSafeClientConnManager(basicHttpParams,
-                registry);
-
-        httpClient = new GZipEncodingHttpClient(
-                new DefaultHttpClient(connectionManager, basicHttpParams));
+        if(useBasicAuth) {
+            final String basicAuth = "Basic " + Base64.encodeToString((allSharedPreferences.fetchRegisteredANM() +
+                    ":" + settings.fetchANMPassword()).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty("Authorization", basicAuth);
+        }
+        return urlConnection;
     }
 
     public Response<String> fetch(String requestURLPath) {
+        HttpURLConnection urlConnection;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            String responseContent = httpClient.fetchContent(new HttpGet(requestURLPath));
-            return new Response<>(ResponseStatus.success, responseContent);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            urlConnection = initializeHttp(requestURLPath, true);
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Timber.e(ex, "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
     }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
-        HttpResponse httpResponse = null;
-        Response<String> response = null;
+        HttpURLConnection urlConnection;
         try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            HttpPost httpPost = new HttpPost(postURLPath);
-            Log.v("jsonpayload", jsonPayload);
-            FileUtilities fu = new FileUtilities();
-            fu.write("jsonpayload.txt", jsonPayload);
+            urlConnection = initializeHttp(postURLPath, true);
 
-            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
-            entity.setContentType("application/json; charset=utf-8");
-            httpPost.setEntity(entity);
+            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 
-            httpResponse = httpClient.postContent(httpPost);
+            OutputStream os = urlConnection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+            writer.write(jsonPayload);
+            writer.flush();
+            writer.close();
+            os.close();
 
-            ResponseStatus responseStatus =
-                    httpResponse.getStatusLine().getStatusCode() == SC_CREATED
-                            ? ResponseStatus.success : ResponseStatus.failure;
-            response = new Response<>(responseStatus, null);
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            response = new Response<>(ResponseStatus.failure, null);
-        } finally {
-            httpClient.consumeResponse(httpResponse);
+            urlConnection.connect();
+
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Timber.e(ex,  "EXCEPTION: %s", ex.toString());
+            return new Response<>(ResponseStatus.failure, null);
         }
-        return response;
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
-        HttpResponse httpResponse = null;
-        Response<String> response = null;
-        try {
-            setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-            HttpPost httpPost = new HttpPost(postURLPath);
-            Log.v("jsonpayload", jsonPayload);
-            FileUtilities fu = new FileUtilities();
-            fu.write("jsonpayload.txt", jsonPayload);
-
-            StringEntity entity = new StringEntity(jsonPayload, HTTP.UTF_8);
-            entity.setContentType("application/json; charset=utf-8");
-            httpPost.setEntity(entity);
-
-            httpResponse = httpClient.postContent(httpPost);
-            if (!Utils.is2xxSuccessful(httpResponse.getStatusLine().getStatusCode())) {
-                return new Response<>(ResponseStatus.failure, "Invalid status code: " + httpResponse.getStatusLine().getStatusCode());
-            } else {
-                String payload = httpClient.retrieveStringResponse(httpResponse);
-                response = new Response<>(ResponseStatus.success, payload);
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
-            response = new Response<>(ResponseStatus.failure, null);
-        } finally {
-            httpClient.consumeResponse(httpResponse);
-        }
-        return response;
+        return post(postURLPath, jsonPayload);
     }
 
-    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName,
-                                                            String password) {
+    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
         LoginResponse loginResponse = null;
         HttpURLConnection urlConnection = null;
+        String url = null;
         try {
-            requestURL = requestURL.replaceAll("\\s+", "");
-            URL url = new URL(requestURL);
-            urlConnection = (HttpURLConnection) url.openConnection();
-            if (urlConnection instanceof HttpsURLConnection) {
-                OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
-                ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
-            }
-            urlConnection.setConnectTimeout(CONNECTION_TIMEOUT);
-            urlConnection.setReadTimeout(READ_TIMEOUT);
+            url = requestURL.replaceAll("\\s+", "");
+            urlConnection = initializeHttp(url, false);
+
             final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
             urlConnection.setRequestProperty("Authorization", basicAuth);
             int statusCode = urlConnection.getResponseCode();
@@ -222,7 +171,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                logError("Invalid credentials for: " + userName + " using " + requestURL);
+                Timber.e("Invalid credentials for: %s using %s", userName, url);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>
@@ -233,21 +182,18 @@ public class HTTPAgent {
                     loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(responseString);
                 }
             } else {
-                logError("Bad response from Dristhi. Status code:  " + statusCode + " username: "
-                        + userName + " using " + requestURL);
+                Timber.e("Bad response from Dristhi. Status code: %s username: %s using %s ", statusCode, userName, url);
                 loginResponse = UNKNOWN_RESPONSE;
             }
         } catch (MalformedURLException e) {
-            Log.e(TAG, "Failed to check credentials bad url " + requestURL, e);
+            Timber.e(e,  "Failed to check credentials bad url %s", url);
             loginResponse = MALFORMED_URL;
         } catch (SocketTimeoutException e) {
-            Log.e(TAG, "SocketTimeoutException when authenticating " + userName, e);
+            Timber.e(e,"SocketTimeoutException when authenticating %s", userName);
             loginResponse = TIMEOUT;
-            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
-                    + "" + "" + "Error: " + e.toString(), e);
+            Timber.e(e,"Failed to check credentials of: %s using %s . Error: %s", userName, url, e.toString());
         } catch (IOException e) {
-            Log.e(TAG, "Failed to check credentials of: " + userName + " using " + requestURL + ". "
-                    + "" + "" + "Error: " + e.toString(), e);
+            Timber.e(e,"Failed to check credentials of: %s  using %s . Error: %s", userName, url, e.toString());
             loginResponse = NO_INTERNET_CONNECTIVITY;
         } finally {
             if (urlConnection != null) {
@@ -258,124 +204,258 @@ public class HTTPAgent {
     }
 
     public DownloadStatus downloadFromUrl(String url, String filename) {
-        setCredentials(allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
-        Response<DownloadStatus> status = DownloadForm.DownloadFromURL(url, filename, httpClient);
+        Response<DownloadStatus> status = DownloadForm.downloadFromURL(url, filename,
+                allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
         return status.payload();
     }
 
-    private void setCredentials(String userName, String password) {
-        httpClient.getCredentialsProvider()
-                .setCredentials(new AuthScope(configuration.host(), configuration.port(), REALM),
-                        new UsernamePasswordCredentials(userName, password));
-    }
-
-    public Response<String> fetchWithCredentials(String uri, String username, String password) {
-        setCredentials(username, password);
+    public Response<String> fetchWithCredentials(String requestURL, String username, String password) {
+        HttpURLConnection urlConnection = null;
         try {
-            String responseContent = httpClient.fetchContent(new HttpGet(uri));
-            return new Response<>(ResponseStatus.success, responseContent);
-        } catch (IOException | ParseException e) {
-            logError("Failed to fetch unique id");
+            urlConnection = initializeHttp(requestURL, false);
+
+            setCustomCredentials(urlConnection, username, password);
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Timber.e(ex,  "EXCEPTION %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
+
     }
 
-    public String httpImagePost(String url, ProfileImage image) {
+    private void setCustomCredentials(HttpURLConnection urlConnection, String username, String password) {
+        final String basicAuth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(),
+                Base64.NO_WRAP);
+        urlConnection.setRequestProperty("Authorization", basicAuth);
+    }
 
-        HttpResponse httpResponse = null;
-        String responseString = "";
+    private Response<String> handleResponse(HttpURLConnection urlConnection) {
+        String responseString;
         try {
-            File uploadFile = new File(image.getFilepath());
-            if (uploadFile.exists()) {
-                setCredentials(allSharedPreferences.fetchRegisteredANM(),
-                        settings.fetchANMPassword());
+            int statusCode = urlConnection.getResponseCode();
 
-                HttpPost httpost = new HttpPost(url);
+            InputStream inputStream;
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+                inputStream = urlConnection.getErrorStream();
+            else
+                inputStream = urlConnection.getInputStream();
 
-                httpost.setHeader("Accept", "multipart/form-data");
-                File filetoupload = new File(image.getFilepath());
-                Log.v("file to upload", "" + filetoupload.length());
-                MultipartEntity entity = new MultipartEntity();
-                entity.addPart("anm-id", new StringBody(image.getAnmId()));
-                entity.addPart("entity-id", new StringBody(image.getEntityID()));
-                entity.addPart("content-type", new StringBody(
-                        image.getContenttype() != null ? image.getContenttype() : "jpeg"));
-                entity.addPart("file-category", new StringBody(
-                        image.getFilecategory() != null ? image.getFilecategory() : "profilepic"));
-                ContentBody cbFile = new FileBody(uploadFile, "image/jpeg");
-                entity.addPart("file", cbFile);
-                httpost.setEntity(entity);
-                httpResponse = httpClient.postContent(httpost);
-                responseString = EntityUtils.toString(httpResponse.getEntity());
-                Log.v("response so many", responseString);
+            responseString = IOUtils.toString(inputStream);
 
-                //TODO if response status is not 200 or 201 ?
-                /*
-                int RESPONSE_OK = 200;
-                int RESPONSE_OK_ = 201;
-                if (httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK_
-                        && httpResponse.getStatusLine().getStatusCode() != RESPONSE_OK) {
-                }
-                */
-            }
-        } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+        } catch (MalformedURLException e) {
+            Timber.e(e,  "%s %s", MALFORMED_URL, e.toString());
+            ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.malformed_url.name());
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (SocketTimeoutException e) {
+            Timber.e(e,  "%s %s", TIMEOUT, e.toString());
+            ResponseStatus.failure.setDisplayValue(ResponseErrorStatus.timeout.name());
+            return new Response<>(ResponseStatus.failure, null);
+        } catch (IOException e) {
+            Timber.e(e,  "%s %s", NO_INTERNET_CONNECTIVITY, e.toString());
+            return new Response<>(ResponseStatus.failure, null);
         } finally {
-            httpClient.consumeResponse(httpResponse);
+            if (urlConnection != null) {
+                urlConnection.disconnect();
+            }
+        }
+        return new Response<>(ResponseStatus.success, responseString);
+    }
+
+
+    /**
+     * @author  Rodgers Andati
+     * @since   2019-04-25
+     * This method uploads an image to opensrp server. Migration from the old method that used httpclient
+     * @param urlString This is the url of the image, TAG,
+     * @param image This is the image to be uploaded to opensrp server.
+     * @return String This returns the response obtained from the opensrp server.
+     */
+    public String httpImagePost(String urlString, ProfileImage image) {
+        OutputStream outputStream;
+        PrintWriter writer;
+        String responseString = "";
+
+        try {
+            HttpURLConnection httpUrlConnection = initializeHttp(urlString, true);
+
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+
+            outputStream = httpUrlConnection.getOutputStream();
+            writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"),true);
+
+            // attach image
+            attachImage(writer, image, outputStream);
+
+            // adding string params
+            addParameter(writer, "anm-id", image.getAnmId());
+            addParameter(writer, "entity-id", image.getEntityID());
+            addParameter(writer, "content-type", image.getContenttype() != null ? image.getContenttype() : "jpeg");
+            addParameter(writer, "file-category", image.getFilecategory() != null ? image.getFilecategory() : "profilepic");
+
+            // send request to server
+            writer.append(crlf).flush();
+            writer.append(twoHyphens + boundary + twoHyphens).append(crlf);
+            writer.close();
+
+            // checks server's status code first
+            int status = httpUrlConnection.getResponseCode();
+            String line;
+            if (status == HttpURLConnection.HTTP_OK) {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(
+                        httpUrlConnection.getInputStream()));
+
+                while ((line = reader.readLine()) != null) {
+                    responseString = line;
+                    Timber.d("SERVER RESPONSE %s", line);
+                }
+                reader.close();
+            } else {
+                Timber.d("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
+                BufferedReader reader = new BufferedReader(new InputStreamReader(httpUrlConnection.getErrorStream()));
+                while ((line = reader.readLine()) != null) {
+                    Timber.d("SERVER RESPONSE %s", line);
+                }
+                reader.close();
+            }
+            httpUrlConnection.disconnect();
+
+        } catch (ProtocolException e) {
+            Timber.e(e, "Protocol exception %s", e.toString());
+        } catch (SocketTimeoutException e) {
+            Timber.e(e,  "SocketTimeout %s %s", TIMEOUT, e.toString());
+        } catch (MalformedURLException e) {
+            Timber.e(e, "MalformedUrl %s %s", MALFORMED_URL, e.toString());
+        } catch (IOException e) {
+            Timber.e(e, "IOException %s %s", NO_INTERNET_CONNECTIVITY, e.toString());
         }
         return responseString;
     }
 
+    private void attachImage(PrintWriter writer, ProfileImage image, OutputStream outputStream) throws IOException {
+        File uploadImageFile = new File(image.getFilepath());
+        String fileName = uploadImageFile.getName();
+
+        writer.append("--" + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\"file\"; filename=\"" + fileName + "\"").append(crlf);
+        writer.append("Content-Type: " + URLConnection.guessContentTypeFromName(fileName)).append(crlf);
+        writer.append("Content-Transfer-Encoding: binary").append(crlf);
+        writer.append(crlf);
+        writer.flush();
+
+        FileInputStream inputStream = new FileInputStream(uploadImageFile);
+        byte[] buffer = new byte[4096];
+        int bytesRead = -1;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            outputStream.write(buffer, 0, bytesRead);
+        }
+        outputStream.flush();
+        inputStream.close();
+
+        writer.append(crlf);
+        writer.flush();
+    }
+
+    private void addParameter(PrintWriter writer, String paramName, String paramValue) {
+        writer.append(twoHyphens + boundary).append(crlf);
+        writer.append("Content-Disposition: form-data; name=\""+ paramName +"\"").append(crlf);
+        writer.append("Content-Type: text/plain; charset=" + "UTF-8").append(crlf);
+        writer.append(crlf);
+        writer.append(paramValue).append(crlf);
+        writer.flush();
+    }
+
+
     private LoginResponse retrieveResponse(LoginResponseData responseData) {
         if (responseData == null) {
-            logError("Empty Response using " + SUCCESS_WITH_EMPTY_RESPONSE.name());
+            Timber.e("Empty Response using: %s ", SUCCESS_WITH_EMPTY_RESPONSE.name());
             return SUCCESS_WITH_EMPTY_RESPONSE;
         }
 
         if (responseData.team == null || responseData.team.team == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_DETAILS.name());
+            Timber.e("Empty Response in: %s ", SUCCESS_WITHOUT_TEAM_DETAILS.name());
             return SUCCESS_WITHOUT_TEAM_DETAILS.withPayload(responseData);
         } else if (responseData.team.team.location == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_LOCATION.name());
             return SUCCESS_WITHOUT_TEAM_LOCATION.withPayload(responseData);
         } else if (responseData.team.team.location.uuid == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_LOCATION_UUID.name());
             return SUCCESS_WITHOUT_TEAM_LOCATION_UUID.withPayload(responseData);
         } else if (responseData.team.team.uuid == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_UUID.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_UUID.name());
             return SUCCESS_WITHOUT_TEAM_UUID.withPayload(responseData);
         } else if (responseData.team.team.teamName == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TEAM_NAME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TEAM_NAME.name());
             return SUCCESS_WITHOUT_TEAM_NAME.withPayload(responseData);
         }
 
         if (responseData.user == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_DETAILS.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_DETAILS.name());
             return SUCCESS_WITHOUT_USER_DETAILS.withPayload(responseData);
         } else if (responseData.user.getUsername() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_USERNAME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_USERNAME.name());
             return SUCCESS_WITHOUT_USER_USERNAME.withPayload(responseData);
         } else if (responseData.user.getPreferredName() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_PREFERREDNAME.name());
             return SUCCESS_WITHOUT_USER_PREFERREDNAME.withPayload(responseData);
         }
 
         if (responseData.locations == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_USER_LOCATION.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_USER_LOCATION.name());
             return SUCCESS_WITHOUT_USER_LOCATION.withPayload(responseData);
         }
         if (responseData.time == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_DETAILS.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME_DETAILS.name());
             return SUCCESS_WITHOUT_TIME_DETAILS.withPayload(responseData);
         } else if (responseData.time.getTime() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TIME.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME.name());
             return SUCCESS_WITHOUT_TIME.withPayload(responseData);
         } else if (responseData.time.getTimeZone() == null) {
-            logError("Empty Response in " + SUCCESS_WITHOUT_TIME_ZONE.name());
+            Timber.e("Empty Response in: %s", SUCCESS_WITHOUT_TIME_ZONE.name());
             return SUCCESS_WITHOUT_TIME_ZONE.withPayload(responseData);
         }
 
         return SUCCESS.withPayload(responseData);
     }
 
+    /**
+     * Returns the read timeout in milliseconds
+     *
+     * @return read timeout value in milliseconds
+     */
+    public int getReadTimeout() {
+        return readTimeout;
+    }
+
+    /**
+     * Returns the connection timeout in milliseconds
+     *
+     * @return connection timeout value in milliseconds
+     */
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    /**
+     * Sets the connection timeout in milliseconds
+     *
+     * Setting this will call {@link java.net.HttpURLConnection#setConnectTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
+    }
+
+    /**
+     * Sets the read timeout in milliseconds
+     *
+     * Setting this will call {@link java.net.HttpURLConnection#setReadTimeout(int)}
+     * on the {@link java.net.HttpURLConnection} instance in {@link org.smartregister.service.HTTPAgent}
+     */
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+    }
 }

@@ -7,7 +7,6 @@ import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
-
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.UniqueId;
 
@@ -15,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by ndegwamartin on 09/04/2018.
@@ -35,7 +35,7 @@ public class UniqueIdRepository extends BaseRepository {
 
     private static final String STATUS_USED = "used";
     private static final String STATUS_NOT_USED = "not_used";
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
 
     public UniqueIdRepository(Repository repository) {

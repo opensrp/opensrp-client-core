@@ -25,6 +25,7 @@ import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.DrishtiSyncScheduler;
+import org.smartregister.util.LangUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
@@ -46,6 +47,13 @@ public class LoginActivity extends Activity {
     private EditText userNameEditText;
     private EditText passwordEditText;
     private ProgressDialog progressDialog;
+
+    @Override
+    protected void attachBaseContext(android.content.Context base) {
+        // get language from prefs
+        String lang = LangUtils.getLanguage(base.getApplicationContext());
+        super.attachBaseContext(LangUtils.setAppLocale(base, lang));
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

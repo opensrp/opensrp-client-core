@@ -4,7 +4,7 @@
 [![Dristhi](opensrp-app/res/drawable-mdpi/login_logo.png)](https://smartregister.atlassian.net/wiki/dashboard.action)
 
 
-# Table of Contents
+# Table of Contents 
 
 * [Introduction](#introduction)
 * [Features](#features)
@@ -34,6 +34,7 @@ It provides:
 6. Security services that maintain global data and application security
 7. Utilities used for file storage, caching, image rendering, logging, session management and number conversions
 8. Access to tailored android views/widgets for OpenSRP
+9. Device-to-device sharing of application data - This includes events, clients and profile images
 
 # Why OpenSRP?
 
@@ -45,6 +46,7 @@ It provides:
 6. It generates custom reports eg. HIA 2
 7. It manages stock levels for stock provided to the health workers
 8. It implements the WHO-recommended **z-score** for child growth monitoring
+9. It provides device-to-device sharing of medical records in areas without an internet connection.
 
 
 # Website
@@ -91,6 +93,7 @@ If you want to contribute please refer to these resources:
    * [Getting started with OpenSRP](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619148/Getting+started+with+OpenSRP)
    * [Setup Instructions](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619255/Setup+Instructions)
    * [Complete OpenSRP Developer's Guide](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/6619193/OpenSRP+Developer%27s+Guide)
+   * [Peer-to-Peer Library Guide](https://smartregister.atlassian.net/wiki/spaces/Documentation/pages/1139212418/Android+Peer-to-peer+sync+library?atlOrigin=eyJpIjoiYWE5NmM1ZTk3MGQ2NGU4OWE0ZTdmM2U2YTFjODg2YTAiLCJwIjoiYyJ9)
 
 ### Wiki
 
@@ -118,6 +121,21 @@ Security is provided in the following:
    * Data encryption - The database on the android client is encrypted with 256-bit AES encryption using [SQLCipher](https://guardianproject.info/code/sqlcipher/).
 
 The security classes can be found in `org.smartregister.ssl`
+
+
+Under the cryptography package we have CryptographicHelper class whose instance exposes methods
+
+   *__byte[] encrypt(byte[] input, String keyAlias)__* For encryption of a byte array input with key
+
+   *__byte[] decrypt(byte[] encrypted, String keyAlias)__* For decryption of encrypted byte array with key
+
+   *__Key getKey(String keyAlias)__* For retrieving a generated key stored in the Android keystore
+
+   *__void generateKey(String keyAlias)__* For key generation using a Key Alias parameter for use by Android keystore
+
+   * NB: *  This class depends on `AndroidLegacyCryptography` class and the `AndroidMCryptography` class which both implement the above in different ways depending on the SDK version.
+              `AndroidLegacyCryptography` has method implementation that are used when the SDK version is less than API level 23
+
 
 ## 2. Data management
 
@@ -256,5 +274,26 @@ Class | Business logic related to
 
 The service classes can be found in `org.smartregister.service`
 
+## 8. App Localization
 
+This app provides capability to support multiple languages.
+
+Check out the sample app to see how to implement language switching.
+
+Ensure each class in your app extends (directly or indirectly) a class in client-core. If it doesn't then extend MultiLanguageActivity instead of AppCompatActivity.
+
+## 9. Data Compression
+
+The package `compression` contains an interface `ICompression` whose methods are Implemented using the GZIPCompression class (which uses a GZIP implementation)
+Other compression Algorithms can be used by adding a new class implementing the interface methods.
+
+Methods in the ICompression interface are
+
+*__byte[] compress(String rawString)__* Compress the given string input
+
+*__String decompress(byte[] compressedBytes)__* Decompress a byte array of compressed data
+
+*__void compress(String inputFilePath, String compressedOutputFilepath)__* Compress file in file path `inputFilePath` and output to location `compressedOutputFilepath`
+
+*__void decompress(String compressedInputFilePath, String decompressedOutputFilePath)__* Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
 

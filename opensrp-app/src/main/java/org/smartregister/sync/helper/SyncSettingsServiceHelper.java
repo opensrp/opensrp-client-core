@@ -15,10 +15,8 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
 
 import java.text.MessageFormat;
-import java.util.Calendar;
 import java.util.List;
 
-import static org.smartregister.repository.AllSharedPreferences.LAST_SETTINGS_SYNC_TIMESTAMP;
 import static org.smartregister.util.Log.logError;
 
 /**
@@ -62,8 +60,7 @@ public class SyncSettingsServiceHelper {
         JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
 
         if (settings != null && settings.length() > 0) {
-            settings = saveSetting(settings);
-            sharedPreferences.updateLastSettingsSyncTimeStamp(Calendar.getInstance().getTimeInMillis());
+            settings = ServerSettingsHelper.saveSetting(settings);
         }
 
         return settings == null ? 0 : settings.length();
@@ -138,13 +135,7 @@ public class SyncSettingsServiceHelper {
 
         for (int i = 0; i < unsyncedSettings.size(); i++) {
 
-            SyncableJSONObject settingsWrapper = new SyncableJSONObject();
-
-            settingsWrapper.put("settings", new JSONArray(unsyncedSettings.get(i).getValue()));
-
-            settingsWrapper.put("identifier", unsyncedSettings.get(i).getKey());
-
-            settingsWrapper.put("version", unsyncedSettings.get(i).getVersion());
+            SyncableJSONObject settingsWrapper = new SyncableJSONObject(unsyncedSettings.get(i).getValue());
 
             settingsArray.put(settingsWrapper);
         }
@@ -171,22 +162,6 @@ public class SyncSettingsServiceHelper {
         this.password = password;
     }
 
-    private JSONArray saveSetting(JSONArray serverSettings) throws JSONException {
-        for (int i = 0; i < serverSettings.length(); i++) {
-
-            JSONObject jsonObject = serverSettings.getJSONObject(i);
-            Setting characteristic = new Setting();
-            characteristic.setKey(jsonObject.getString(AllConstants.IDENTIFIER));
-            characteristic.setValue(jsonObject.getString(AllConstants.SETTINGS));
-            characteristic.setSyncStatus(SyncStatus.SYNCED.name());
-
-            CoreLibrary.getInstance().context().allSettings().put(LAST_SETTINGS_SYNC_TIMESTAMP, characteristic.getVersion());
-            CoreLibrary.getInstance().context().allSettings().putSetting(characteristic);
-
-        }
-
-        return serverSettings;
-    }
 
 }
 

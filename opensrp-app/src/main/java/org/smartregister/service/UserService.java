@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
@@ -45,6 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.crypto.Cipher;
@@ -52,22 +53,24 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
-    private static final String TAG = UserService.class.getCanonicalName();
     private static final String KEYSTORE = "AndroidKeyStore";
     private static final String CIPHER = "RSA/ECB/PKCS1Padding";
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 
     private final Repository repository;
     private final AllSettings allSettings;
@@ -114,7 +117,7 @@ public class UserService {
                     return timeZone;
                 }
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
 
@@ -129,7 +132,7 @@ public class UserService {
                     return DATE_FORMAT.parse(time.getTime());
                 }
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
 
@@ -142,7 +145,7 @@ public class UserService {
             this.keyStore.load(null);
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException |
                 CertificateException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -161,7 +164,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         if (!result.equals(TimeStatus.OK)) {
@@ -229,7 +232,7 @@ public class UserService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 
@@ -246,7 +249,7 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 return getGroupId(userName, privateKeyEntry);
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -259,7 +262,7 @@ public class UserService {
                 try {
                     return decryptString(privateKeyEntry, encryptedGroupId);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
         }
@@ -297,7 +300,7 @@ public class UserService {
         LoginResponse loginResponse = httpAgent
                 .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
 
-        if (loginResponse.equals(LoginResponse.SUCCESS)) {
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
         }
 
@@ -324,7 +327,7 @@ public class UserService {
                     setupContextForLogin(userName, groupId);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
                 loginSuccessful = false;
             }
         } else {
@@ -348,7 +351,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return false;
     }
@@ -367,6 +370,7 @@ public class UserService {
         saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
+        saveJurisdictions(userInfo.jurisdictions);
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
                         StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
@@ -387,7 +391,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -398,7 +402,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -409,7 +413,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -426,7 +430,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -443,7 +447,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
 
         return null;
@@ -461,7 +465,7 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -476,7 +480,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -497,6 +501,11 @@ public class UserService {
         saveANMTeamTask.save(anmTeamString);
     }
 
+    public void saveJurisdictions(List<String> jurisdictions) {
+        if (jurisdictions != null && !jurisdictions.isEmpty())
+            allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
+    }
+
     public void saveUserInfo(User user) {
         try {
             if (user != null && user.getPreferredName() != null) {
@@ -505,7 +514,7 @@ public class UserService {
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
@@ -541,7 +550,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = password;
+                        groupId = userName + "-" + password;
                     }
                 }
 
@@ -564,7 +573,7 @@ public class UserService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
     }

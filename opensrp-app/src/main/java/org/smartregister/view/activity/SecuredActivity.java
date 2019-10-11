@@ -3,26 +3,34 @@ package org.smartregister.view.activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
+import org.smartregister.receiver.P2pProcessingStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.FormController;
 import org.smartregister.view.controller.NavigationController;
+import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.util.Map;
 
@@ -37,7 +45,7 @@ import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_
 import static org.smartregister.event.Event.ON_LOGOUT;
 import static org.smartregister.util.Log.logInfo;
 
-public abstract class SecuredActivity extends AppCompatActivity {
+public abstract class SecuredActivity extends MultiLanguageActivity implements P2pProcessingStatusBroadcastReceiver.StatusUpdate {
     public static final String LOG_TAG = "SecuredActivity";
     protected final int MENU_ITEM_LOGOUT = 2312;
     protected Listener<Boolean> logoutListener;
@@ -47,6 +55,9 @@ public abstract class SecuredActivity extends AppCompatActivity {
     protected ZiggyService ziggyService;
     private String metaData;
     private OpenSRPClientBroadCastReceiver openSRPClientBroadCastReceiver;
+
+    private ProcessingInProgressSnackbar processingInProgressSnackbar;
+    private P2pProcessingStatusBroadcastReceiver p2pProcessingStatusBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +98,22 @@ public abstract class SecuredActivity extends AppCompatActivity {
 
         onResumption();
         setupReplicationBroadcastReceiver();
+
+        if (CoreLibrary.getInstance().getP2POptions() != null
+                && CoreLibrary.getInstance().getP2POptions().isEnableP2PLibrary()) {
+            if (p2pProcessingStatusBroadcastReceiver == null) {
+                p2pProcessingStatusBroadcastReceiver = new P2pProcessingStatusBroadcastReceiver(this);
+            }
+
+            // Register listener to remove the SnackBar
+            LocalBroadcastManager.getInstance(this)
+                    .registerReceiver(p2pProcessingStatusBroadcastReceiver
+                            , new IntentFilter(AllConstants.PeerToPeer.PROCESSING_ACTION));
+
+            if (CoreLibrary.getInstance().isPeerToPeerProcessing()) {
+                showProcessingInProgressBottomSnackbar(this);
+            }
+        }
     }
 
     @Override
@@ -94,8 +121,8 @@ public abstract class SecuredActivity extends AppCompatActivity {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(this, "Language preference set to " + newLanguagePreference + ". "
-                    + "Please restart the application.", LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.language_change_prepend_message + " " + newLanguagePreference + ". "
+                    + R.string.language_change_prepend_message + ".", LENGTH_SHORT).show();
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
@@ -128,8 +155,6 @@ public abstract class SecuredActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(openSRPClientBroadCastReceiver);
-
     }
 
     protected abstract void onCreation();
@@ -215,13 +240,13 @@ public abstract class SecuredActivity extends AppCompatActivity {
                 CloudantSync.ACTION_DATABASE_CREATED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_COMPLETED);
         opensrpClientIntentFilter.addAction(CloudantSync.ACTION_REPLICATION_ERROR);
-        opensrpClientIntentFilter.addAction("android.intent.action.TIMEZONE_CHANGED");
-        opensrpClientIntentFilter.addAction("android.intent.action.TIME_SET");
+        opensrpClientIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_TIME_CHANGED);
+        opensrpClientIntentFilter.addAction(Intent.ACTION_DATE_CHANGED);
 
         openSRPClientBroadCastReceiver = new OpenSRPClientBroadCastReceiver(this);
         // Registers the OpenSRPClientBroadCastReceiver and its intent filters
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
+        registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
     }
 
     public void showToast(String msg) {
@@ -230,5 +255,72 @@ public abstract class SecuredActivity extends AppCompatActivity {
 
     protected Context context() {
         return CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
+    }
+
+    public void showProcessingInProgressSnackbar(@NonNull AppCompatActivity appCompatActivity, int margin) {
+        if (processingInProgressSnackbar == null) {
+            // Create the snackbar
+            View parentView = ((ViewGroup) appCompatActivity.findViewById(android.R.id.content))
+                    .getChildAt(0);
+
+            processingInProgressSnackbar = ProcessingInProgressSnackbar.make(parentView);
+
+            if (margin != 0) {
+                processingInProgressSnackbar.addBottomBarMargin(margin);
+            }
+            processingInProgressSnackbar.setDuration(BaseTransientBottomBar.LENGTH_INDEFINITE);
+            processingInProgressSnackbar.show();
+        } else if (!processingInProgressSnackbar.isShown()) {
+            processingInProgressSnackbar.show();
+        }
+    }
+
+    public void showProcessingInProgressBottomSnackbar(final @NonNull AppCompatActivity appCompatActivity) {
+        final View bottomNavigationBar = appCompatActivity.findViewById(R.id.bottom_navigation);
+        if (bottomNavigationBar != null) {
+            bottomNavigationBar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    int height = bottomNavigationBar.getHeight();
+                    showProcessingInProgressSnackbar(appCompatActivity, height);
+
+                    bottomNavigationBar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                }
+            });
+        } else {
+            showProcessingInProgressSnackbar(appCompatActivity, 0);
+        }
+    }
+
+    public void removeProcessingInProgressSnackbar() {
+        if (processingInProgressSnackbar != null && processingInProgressSnackbar.isShown()) {
+            processingInProgressSnackbar.dismiss();
+        }
+    }
+
+    @Override
+    public void onStatusUpdate(boolean isProcessing) {
+        if (isProcessing) {
+            showProcessingInProgressBottomSnackbar(this);
+        } else {
+            removeProcessingInProgressSnackbar();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
+
+        if (openSRPClientBroadCastReceiver != null) {
+            unregisterReceiver(openSRPClientBroadCastReceiver);
+        }
+
+        if (p2pProcessingStatusBroadcastReceiver != null) {
+            LocalBroadcastManager.getInstance(this)
+                    .unregisterReceiver(p2pProcessingStatusBroadcastReceiver);
+        }
+
+        removeProcessingInProgressSnackbar();
     }
 }

@@ -31,6 +31,10 @@ public class AllSharedPreferences {
     private static final String LAST_UPDATED_AT_DATE = "LAST_UPDATED_AT_DATE";
     private static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
     public final static String LAST_SETTINGS_SYNC_TIMESTAMP = "LAST_SETTINGS_SYNC_TIMESTAMP";
+    private static final String LAST_CLIENT_PROCESSED_TIMESTAMP = "LAST_CLIENT_PROCESSED_TIMESTAMP";
+    private static final String TRANSACTIONS_KILLED_FLAG = "TRANSACTIONS_KILLED_FLAG";
+    private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
+    private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
 
     private SharedPreferences preferences;
 
@@ -277,6 +281,48 @@ public class AllSharedPreferences {
 
     public long fetchLastSettingsSyncTimeStamp() {
         return preferences.getLong(LAST_SETTINGS_SYNC_TIMESTAMP, 0);
+    }
+
+    public boolean isMigratedToSqlite4() {
+        return preferences.getBoolean(MIGRATED_TO_SQLITE_4, false);
+    }
+
+    public void setMigratedToSqlite4() {
+        preferences.edit().putBoolean(MIGRATED_TO_SQLITE_4, true).commit();
+    }
+
+    public int getLastPeerToPeerSyncProcessedEvent() {
+        return preferences.getInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, -1);
+    }
+
+    public void setLastPeerToPeerSyncProcessedEvent(int lastEventRowId) {
+        preferences.edit().putInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, lastEventRowId).commit();
+    }
+
+    public boolean isPeerToPeerUnprocessedEvents() {
+        return getLastPeerToPeerSyncProcessedEvent() != -1;
+    }
+
+    public void resetLastPeerToPeerSyncProcessedEvent() {
+        setLastPeerToPeerSyncProcessedEvent(-1);
+    }
+
+
+    public void updateLastClientProcessedTimeStamp(long lastProcessed) {
+        preferences.edit().putLong(LAST_CLIENT_PROCESSED_TIMESTAMP, lastProcessed).commit();
+    }
+
+    public long fetchLastClientProcessedTimeStamp() {
+        return preferences.getLong(LAST_CLIENT_PROCESSED_TIMESTAMP, 0);
+    }
+
+
+    public void updateTransactionsKilledFlag(boolean transactionsKilled) {
+        preferences.edit().putBoolean(TRANSACTIONS_KILLED_FLAG, transactionsKilled).commit();
+    }
+
+    public boolean fetchTransactionsKilledFlag() {
+        return preferences.getBoolean(TRANSACTIONS_KILLED_FLAG, false);
     }
 }
 

@@ -8,13 +8,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
-import org.apache.http.NoHttpResponseException;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Campaign;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.service.HTTPAgent;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
-public class CampaignIntentService extends IntentService {
+public class CampaignIntentService extends BaseSyncIntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
@@ -41,6 +41,7 @@ public class CampaignIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        super.onHandleIntent(intent);
         syncCampaigns();
     }
 
@@ -66,7 +67,7 @@ public class CampaignIntentService extends IntentService {
         }
     }
 
-    private String fetchCampaigns() throws Exception {
+    private String fetchCampaigns() throws NoHttpResponseException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();

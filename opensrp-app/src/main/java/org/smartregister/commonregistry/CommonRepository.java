@@ -105,7 +105,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     @Override
-    protected void onCreate(SQLiteDatabase database) {
+    public void onCreate(SQLiteDatabase database) {
         database.execSQL(common_SQL);
         if (StringUtils.isNotBlank(common_ID_INDEX_SQL)) {
             database.execSQL(common_ID_INDEX_SQL);
@@ -735,6 +735,8 @@ public class CommonRepository extends DrishtiRepository {
             if (afftectedRows > 0) {
                 return true;
             }
+            database.setTransactionSuccessful();
+            database.endTransaction();
         } catch (Exception e) {
             Log.e("", "Update Search Error", e);
             database.endTransaction();

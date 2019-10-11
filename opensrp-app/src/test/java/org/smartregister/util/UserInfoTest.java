@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.User;
 
@@ -18,9 +19,8 @@ import java.util.Map;
 /**
  * Created by Dimas Ciputra on 3/24/15.
  */
-@RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
-public class UserInfoTest {
+public class UserInfoTest extends BaseUnitTest {
     private String responseJSON;
 
     @Before
