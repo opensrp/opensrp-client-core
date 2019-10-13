@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
@@ -54,6 +53,8 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
@@ -64,7 +65,6 @@ import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
-    private static final String TAG = UserService.class.getCanonicalName();
     private static final String KEYSTORE = "AndroidKeyStore";
     private static final String CIPHER = "RSA/ECB/PKCS1Padding";
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
@@ -117,7 +117,7 @@ public class UserService {
                     return timeZone;
                 }
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
 
@@ -132,7 +132,7 @@ public class UserService {
                     return DATE_FORMAT.parse(time.getTime());
                 }
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
 
@@ -145,7 +145,7 @@ public class UserService {
             this.keyStore.load(null);
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException |
                 CertificateException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         if (!result.equals(TimeStatus.OK)) {
@@ -232,7 +232,7 @@ public class UserService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 
@@ -249,7 +249,7 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 return getGroupId(userName, privateKeyEntry);
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -262,7 +262,7 @@ public class UserService {
                 try {
                     return decryptString(privateKeyEntry, encryptedGroupId);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
         }
@@ -327,7 +327,7 @@ public class UserService {
                     setupContextForLogin(userName, groupId);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
                 loginSuccessful = false;
             }
         } else {
@@ -351,7 +351,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return false;
     }
@@ -391,7 +391,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -402,7 +402,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -413,7 +413,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -430,7 +430,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -447,7 +447,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
 
         return null;
@@ -465,7 +465,7 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -480,7 +480,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -514,7 +514,7 @@ public class UserService {
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
@@ -573,7 +573,7 @@ public class UserService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
     }
