@@ -50,7 +50,7 @@ public class AbstractDaoTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetCursorValueAsDate() {
+    public void testObjectsConstructedEqualsCursorSize() {
         MatrixCursor cursor = new MatrixCursor(new String[]{"count"});
         cursor.addRow(new Object[]{"1"});
         Mockito.doReturn(cursor).when(sqLiteDatabase).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
@@ -95,7 +95,7 @@ public class AbstractDaoTest extends BaseUnitTest {
     }
 
     @Test
-    public void testUpdateDB(){
+    public void testUpdateDB() {
         String sql = "update table set col1 = 'value' where id = x";
         AbstractDao.setRepository(repository);
         AbstractDao.updateDB(sql);
