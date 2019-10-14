@@ -28,14 +28,14 @@ public class AbstractDao {
 
     public static SimpleDateFormat getDobDateFormat() {
         if (DOB_DATE_FORMAT == null)
-            DOB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            DOB_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
         return DOB_DATE_FORMAT;
     }
 
     public static SimpleDateFormat getNativeFormsDateFormat() {
         if (NATIVE_FORMS_DATE_FORMAT == null)
-            NATIVE_FORMS_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+            NATIVE_FORMS_DATE_FORMAT = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
         return NATIVE_FORMS_DATE_FORMAT;
     }
@@ -112,8 +112,7 @@ public class AbstractDao {
         } catch (Exception e) {
             Timber.e(e);
         } finally {
-            if (cursor != null)
-                cursor.close();
+            if (cursor != null) cursor.close();
         }
         return null;
     }
@@ -181,11 +180,8 @@ public class AbstractDao {
     }
 
     protected static Integer getCursorIntValue(Cursor c, String column_name, int defaultValue) {
-        int column_index = c.getColumnIndex(column_name);
-        if (column_index < 0)
-            return null;
-
-        return c.getType(column_index) == Cursor.FIELD_TYPE_NULL ? defaultValue : c.getInt(column_index);
+        Integer res = getCursorIntValue(c, column_name);
+        return res == null ? defaultValue : res;
     }
 
     @Nullable

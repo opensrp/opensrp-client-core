@@ -64,7 +64,6 @@ public class SampleAbstractDaoImp extends AbstractDao {
         return AbstractDao.readData(sql, dataMap);
     }
 
-
     public static class SampleObject {
         private Integer sampleInt;
         private Date sampleDate;

@@ -1,5 +1,7 @@
 package org.smartregister.dao;
 
+import android.database.Cursor;
+
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -9,10 +11,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Alert;
 import org.smartregister.repository.Repository;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +29,9 @@ public class AbstractDaoTest extends BaseUnitTest {
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
+
+    @Mock
+    private AbstractDao.DataMap<String> dataMap;
 
     @Before
     public void setUp() {
@@ -116,5 +123,71 @@ public class AbstractDaoTest extends BaseUnitTest {
         Assert.assertEquals(vals.get(0).get("age"), "25");
         Assert.assertEquals(vals.get(1).get("name"), "Jessica");
         Assert.assertEquals(vals.get(1).get("age"), "22");
+    }
+
+    @Test
+    public void testReadInvalidSingleValue() throws Exception {
+        List result = Whitebox.invokeMethod(AbstractDao.class, "readSingleValue", "test_sql", dataMap);
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testReadInvalidSingleValueWithDB() throws Exception {
+        SQLiteDatabase db = Mockito.mock(SQLiteDatabase.class);
+        String result = Whitebox.invokeMethod(AbstractDao.class, "readSingleValue", "test_sql", dataMap, db, "0");
+        Assert.assertEquals("0", result);
+    }
+
+    @Test
+    public void testGetCursorValueWithNullValue() throws Exception {
+        MatrixCursor cursor = Mockito.mock(MatrixCursor.class);
+        Mockito.doReturn(-1).when(cursor).getColumnIndex(Mockito.anyString());
+
+        String result = Whitebox.invokeMethod(AbstractDao.class, "getCursorValue", cursor, "column_name", "0");
+        Assert.assertEquals("0", result);
+    }
+
+    @Test
+    public void testGetCursorLongValueWithNullValue() throws Exception {
+        MatrixCursor cursor = Mockito.mock(MatrixCursor.class);
+        Mockito.doReturn(-1).when(cursor).getColumnIndex(Mockito.anyString());
+
+        Long result = Whitebox.invokeMethod(AbstractDao.class, "getCursorLongValue", cursor, "column_name");
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testGetCursorIntValueWithNullValue() throws Exception {
+        MatrixCursor cursor = Mockito.mock(MatrixCursor.class);
+        Mockito.doReturn(-1).when(cursor).getColumnIndex(Mockito.anyString());
+
+        int result = Whitebox.invokeMethod(AbstractDao.class, "getCursorIntValue", cursor, "column_name", 0);
+        Assert.assertEquals(0, result);
+    }
+
+    @Test
+    public void testGetCursorDateValueWithBlankColumn() throws Exception {
+        MatrixCursor cursor = Mockito.mock(MatrixCursor.class);
+        Mockito.doReturn(-1).when(cursor).getColumnIndex(Mockito.anyString());
+
+        Date result = Whitebox.invokeMethod(AbstractDao.class, "getCursorValueAsDate", cursor, "");
+        Assert.assertNull(result);
+    }
+
+    @Test
+    public void testGetCursorDateValueWithDateParserColumn() throws Exception {
+        MatrixCursor cursor = Mockito.mock(MatrixCursor.class);
+        Mockito.doReturn(0).when(cursor).getColumnIndex(Mockito.anyString());
+        Mockito.doReturn("24234234").when(cursor).getString(Mockito.anyInt());
+
+        SimpleDateFormat sdf = Mockito.mock(SimpleDateFormat.class);
+
+        Date result1 = Whitebox.invokeMethod(AbstractDao.class, "getCursorValueAsDate", cursor, "", sdf);
+        Assert.assertNull(result1);
+        Mockito.doReturn(Cursor.FIELD_TYPE_INTEGER).when(cursor).getType(Mockito.anyInt());
+
+        Mockito.doThrow(new ParseException("Test exception", 0)).when(sdf).parse(Mockito.anyString());
+        Date result2 = Whitebox.invokeMethod(AbstractDao.class, "getCursorValueAsDate", cursor, "sample_date", sdf);
+        Assert.assertNull(result2);
     }
 }
