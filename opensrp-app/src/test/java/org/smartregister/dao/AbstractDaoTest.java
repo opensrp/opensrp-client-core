@@ -11,10 +11,12 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Alert;
 import org.smartregister.repository.Repository;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+@PrepareForTest(DrishtiApplication.class)
 public class AbstractDaoTest extends BaseUnitTest {
 
     @Mock
@@ -105,6 +108,15 @@ public class AbstractDaoTest extends BaseUnitTest {
     public void testUpdateDB() {
         String sql = "update table set col1 = 'value' where id = x";
         AbstractDao.setRepository(repository);
+        AbstractDao.updateDB(sql);
+        Mockito.verify(sqLiteDatabase).rawExecSQL(sql);
+    }
+
+    @Test
+    public void testUpdateDBWithException() {
+        String sql = "update table set col1 = 'value' where id = x";
+        AbstractDao.setRepository(repository);
+        Mockito.doThrow(new NullPointerException()).when(sqLiteDatabase).rawExecSQL(Mockito.anyString());
         AbstractDao.updateDB(sql);
         Mockito.verify(sqLiteDatabase).rawExecSQL(sql);
     }
