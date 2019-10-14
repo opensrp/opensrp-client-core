@@ -6,6 +6,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
+import org.smartregister.repository.Repository;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.ParseException;
@@ -23,6 +24,7 @@ public class AbstractDao {
 
     private static SimpleDateFormat DOB_DATE_FORMAT;
     private static SimpleDateFormat NATIVE_FORMS_DATE_FORMAT;
+    private static Repository repository;
 
     public static SimpleDateFormat getDobDateFormat() {
         if (DOB_DATE_FORMAT == null)
@@ -38,9 +40,20 @@ public class AbstractDao {
         return NATIVE_FORMS_DATE_FORMAT;
     }
 
+    protected static Repository getRepository() {
+        if (repository == null)
+            repository = DrishtiApplication.getInstance().getRepository();
+
+        return repository;
+    }
+
+    protected static void setRepository(Repository repository) {
+        AbstractDao.repository = repository;
+    }
+
     protected static void updateDB(String sql) {
         try {
-            SQLiteDatabase db = DrishtiApplication.getInstance().getRepository().getWritableDatabase();
+            SQLiteDatabase db = getRepository().getWritableDatabase();
             db.rawExecSQL(sql);
         } catch (Exception e) {
             Timber.e(e);
@@ -57,8 +70,32 @@ public class AbstractDao {
      * @return
      */
     protected static <T> List<T> readData(String query, DataMap<T> dataMap) {
-        SQLiteDatabase db = DrishtiApplication.getInstance().getRepository().getReadableDatabase();
+        SQLiteDatabase db = getRepository().getReadableDatabase();
         return readData(query, dataMap, db);
+    }
+
+    @Nullable
+    protected static <T> T readSingleValue(String query, DataMap<T> dataMap, SQLiteDatabase db) {
+        List<T> tList = readData(query, dataMap, db);
+        if (tList == null || tList.size() == 0)
+            return null;
+
+        return tList.get(0);
+    }
+
+    protected static <T> T readSingleValue(String query, DataMap<T> dataMap, SQLiteDatabase db, T defaultValue) {
+        T res = readSingleValue(query, dataMap, db);
+        return res == null ? defaultValue : res;
+    }
+
+    @Nullable
+    protected static <T> T readSingleValue(String query, DataMap<T> dataMap) {
+        return readSingleValue(query, dataMap, getRepository().getReadableDatabase());
+    }
+
+    protected static <T> T readSingleValue(String query, DataMap<T> dataMap, T defaultValue) {
+        T res = readSingleValue(query, dataMap, getRepository().getReadableDatabase());
+        return res == null ? defaultValue : res;
     }
 
     protected static <T> List<T> readData(String query, DataMap<T> dataMap, SQLiteDatabase db) {
@@ -90,7 +127,7 @@ public class AbstractDao {
      */
     public static List<Map<String, String>> readData(String query, String[] selectionArgs) {
         List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = DrishtiApplication.getInstance().getRepository().getReadableDatabase().rawQuery(query, selectionArgs);
+        Cursor cursor = getRepository().getReadableDatabase().rawQuery(query, selectionArgs);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             Map<String, String> res = new HashMap<>();
