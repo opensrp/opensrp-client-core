@@ -35,19 +35,12 @@ public class AllSharedPreferences {
     private static final String TRANSACTIONS_KILLED_FLAG = "TRANSACTIONS_KILLED_FLAG";
     private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
     private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
-    private static final String IS_LOGIN_REMEMBER = "is_login_remember";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
         this.preferences = preferences;
     }
 
-    public void updateRememberLogin(boolean isRemember){
-        preferences.edit().putBoolean(IS_LOGIN_REMEMBER, isRemember).commit();
-    }
-    public boolean fetchIsRememberLogin(){
-        return preferences.getBoolean(IS_LOGIN_REMEMBER,false);
-    }
 
     public void updateANMUserName(String userName) {
         preferences.edit().putString(ANM_IDENTIFIER_PREFERENCE_KEY, userName).commit();
