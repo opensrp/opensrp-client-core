@@ -16,6 +16,7 @@ import org.smartregister.repository.Repository;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class AbstractDaoTest extends BaseUnitTest {
 
@@ -93,4 +94,27 @@ public class AbstractDaoTest extends BaseUnitTest {
         Assert.assertNull(alerts);
     }
 
+    @Test
+    public void testUpdateDB(){
+        String sql = "update table set col1 = 'value' where id = x";
+        AbstractDao.setRepository(repository);
+        AbstractDao.updateDB(sql);
+        Mockito.verify(sqLiteDatabase).rawExecSQL(sql);
+    }
+
+    @Test
+    public void testReadValue() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"name", "age"});
+        cursor.addRow(new Object[]{"Tony", "25"});
+        cursor.addRow(new Object[]{"Jessica", "22"});
+        Mockito.doReturn(cursor).when(sqLiteDatabase).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
+
+        AbstractDao.setRepository(repository);
+        List<Map<String, String>> vals = AbstractDao.readData("select * from people", new String[]{"1234"});
+        Assert.assertEquals(vals.size(), 2);
+        Assert.assertEquals(vals.get(0).get("name"), "Tony");
+        Assert.assertEquals(vals.get(0).get("age"), "25");
+        Assert.assertEquals(vals.get(1).get("name"), "Jessica");
+        Assert.assertEquals(vals.get(1).get("age"), "22");
+    }
 }
