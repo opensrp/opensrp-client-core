@@ -1,6 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
@@ -30,8 +29,9 @@ public class ExtendedSyncIntentService extends BaseSyncIntentService {
         try {
             super.onHandleIntent(workIntent);
             if (NetworkUtils.isNetworkAvailable()) {
-                actionService.fetchNewActions();
-
+                if(!CoreLibrary.getInstance().getSyncConfiguration().disableActionService()){
+                    actionService.fetchNewActions();
+                }
                 startSyncValidation();
             }
 
