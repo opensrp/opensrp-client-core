@@ -20,6 +20,12 @@ public abstract class SyncConfiguration {
 
     public abstract int getUniqueIdInitialBatchSize();
 
+    //if need to set it true override this method and return true.
+
+    public boolean disableActionService() {
+        return false;
+    }
+
     // determines whether to sync settings from server side. return false if not
     public boolean isSyncSettings() {
         return false;

@@ -256,9 +256,12 @@ public class SyncIntentService extends BaseSyncIntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
+        //sync time not update if sync is fail
+        if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
+            ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
+            ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
+        }
 
-        ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-        ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
     }
 
     private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
