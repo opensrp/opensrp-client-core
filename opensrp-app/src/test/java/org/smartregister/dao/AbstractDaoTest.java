@@ -124,17 +124,17 @@ public class AbstractDaoTest extends BaseUnitTest {
     @Test
     public void testReadValue() {
         MatrixCursor cursor = new MatrixCursor(new String[]{"name", "age"});
-        cursor.addRow(new Object[]{"Tony", "25"});
-        cursor.addRow(new Object[]{"Jessica", "22"});
+        cursor.addRow(new Object[]{"Tony", 25});
+        cursor.addRow(new Object[]{"Jessica", 22});
         Mockito.doReturn(cursor).when(sqLiteDatabase).rawQuery(Mockito.anyString(), Mockito.any(String[].class));
 
         AbstractDao.setRepository(repository);
-        List<Map<String, String>> vals = AbstractDao.readData("select * from people", new String[]{"1234"});
+        List<Map<String, Object>> vals = AbstractDao.readData("select * from people", new String[]{"1234"});
         Assert.assertEquals(vals.size(), 2);
         Assert.assertEquals(vals.get(0).get("name"), "Tony");
-        Assert.assertEquals(vals.get(0).get("age"), "25");
+        Assert.assertEquals(vals.get(0).get("age"), 25);
         Assert.assertEquals(vals.get(1).get("name"), "Jessica");
-        Assert.assertEquals(vals.get(1).get("age"), "22");
+        Assert.assertEquals(vals.get(1).get("age"), 22);
     }
 
     @Test
