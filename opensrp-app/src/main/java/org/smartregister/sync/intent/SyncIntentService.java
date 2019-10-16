@@ -162,8 +162,9 @@ public class SyncIntentService extends BaseSyncIntentService {
                     lastServerVersion = serverVersionPair.second;
                 }
 
-                ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+                //update sync time if all event client is save.
+                if(isSaved) ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
 
                 processClient(serverVersionPair);
 

@@ -51,7 +51,7 @@ public class UpdateActionsTask {
             public FetchStatus actionToDoInBackgroundThread() {
 
                 FetchStatus fetchStatusForForms = formSubmissionSyncService.sync();
-                FetchStatus fetchStatusForActions = actionService.fetchNewActions();
+                FetchStatus fetchStatusForActions =  CoreLibrary.getInstance().getSyncConfiguration().disableActionService()? nothingFetched: actionService.fetchNewActions();
                 FetchStatus fetchStatusAdditional = additionalSyncService == null ? nothingFetched
                         : additionalSyncService.sync();
 
