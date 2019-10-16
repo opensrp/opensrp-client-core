@@ -98,23 +98,24 @@ public class AbstractDao {
         return res == null ? defaultValue : res;
     }
 
-    protected static <T> List<T> readData(String query, DataMap<T> dataMap, SQLiteDatabase db) {
+    protected @Nullable
+    static <T> List<T> readData(String query, DataMap<T> dataMap, SQLiteDatabase db) {
         Cursor cursor = null;
+        List<T> list = new ArrayList<>();
         try {
-            List<T> list = new ArrayList<>();
             cursor = db.rawQuery(query, new String[]{});
-            cursor.moveToFirst();
-            while (!cursor.isAfterLast()) {
-                list.add(dataMap.readCursor(cursor));
-                cursor.moveToNext();
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    list.add(dataMap.readCursor(cursor));
+                }
             }
-            return list;
         } catch (Exception e) {
             Timber.e(e);
+            list = null;
         } finally {
             if (cursor != null) cursor.close();
         }
-        return null;
+        return list;
     }
 
     /**
@@ -124,17 +125,41 @@ public class AbstractDao {
      * @param query
      * @return
      */
-    public static List<Map<String, String>> readData(String query, String[] selectionArgs) {
-        List<Map<String, String>> list = new ArrayList<>();
-        Cursor cursor = getRepository().getReadableDatabase().rawQuery(query, selectionArgs);
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            Map<String, String> res = new HashMap<>();
-            for (int i = 0; i < cursor.getColumnCount(); i++) {
-                res.put(cursor.getColumnName(i), getCursorValue(cursor, i));
+    public static @Nullable List<Map<String, Object>> readData(String query, String[] selectionArgs) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = getRepository().getReadableDatabase().rawQuery(query, selectionArgs);
+            if (cursor != null) {
+                while (cursor.moveToNext()) {
+                    Map<String, Object> res = new HashMap<>();
+                    for (int i = 0; i < cursor.getColumnCount(); i++) {
+                        Object result;
+                        switch (cursor.getType(i)) {
+                            case Cursor.FIELD_TYPE_NULL:
+                                result = null;
+                                break;
+                            case Cursor.FIELD_TYPE_FLOAT:
+                                result = getCursorLongValue(cursor, cursor.getColumnName(i));
+                                break;
+                            case Cursor.FIELD_TYPE_INTEGER:
+                                result = getCursorIntValue(cursor, cursor.getColumnName(i));
+                                break;
+                            default:
+                                result = getCursorValue(cursor, i);
+                                break;
+                        }
+
+                        res.put(cursor.getColumnName(i), result);
+                    }
+                    list.add(res);
+                }
             }
-            list.add(res);
-            cursor.moveToNext();
+        } catch (Exception e) {
+            Timber.e(e);
+            list = null;
+        } finally {
+            if (cursor != null) cursor.close();
         }
         return list;
     }

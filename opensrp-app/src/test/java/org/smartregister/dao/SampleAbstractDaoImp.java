@@ -19,10 +19,6 @@ public class SampleAbstractDaoImp extends AbstractDao {
 
         DataMap<Integer> dataMap = cursor -> getCursorIntValue(cursor, "count");
 
-        List<Integer> res = readData(sql, dataMap);
-        if (res == null || res.size() == 0)
-            return 0;
-
         return readSingleValue(sql, dataMap, 0);
     }
 
