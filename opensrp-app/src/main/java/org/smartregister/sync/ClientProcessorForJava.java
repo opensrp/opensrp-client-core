@@ -504,6 +504,9 @@ public class ClientProcessorForJava {
      * @param eventDate
      */
     protected void addContentValuesToDetailsTable(ContentValues values, Long eventDate) {
+        if (!CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable())
+            return;
+
         try {
             String baseEntityId = values.getAsString("base_entity_id");
 
