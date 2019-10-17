@@ -2,7 +2,6 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -41,7 +40,6 @@ import timber.log.Timber;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
-    protected static final String TAG = ClientProcessorForJava.class.getName();
 
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
@@ -105,7 +103,7 @@ public class ClientProcessorForJava {
             completeProcessing(event);
 
             if (event.getCreator() != null) {
-                Log.i(TAG, "EVENT from openmrs");
+                Timber.i("EVENT from openmrs");
             }
             // For data integrity check if a client exists, if not pull one from cloudant and
             // insert in drishti sqlite db
@@ -137,7 +135,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -164,7 +162,7 @@ public class ClientProcessorForJava {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -254,7 +252,7 @@ public class ClientProcessorForJava {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -274,7 +272,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -313,7 +311,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -504,6 +502,9 @@ public class ClientProcessorForJava {
      * @param eventDate
      */
     protected void addContentValuesToDetailsTable(ContentValues values, Long eventDate) {
+        if (!CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable())
+            return;
+
         try {
             String baseEntityId = values.getAsString("base_entity_id");
 
@@ -512,7 +513,7 @@ public class ClientProcessorForJava {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e.toString(), e);
         }
     }
 
@@ -527,7 +528,7 @@ public class ClientProcessorForJava {
      */
     public void updateClientDetailsTable(Event event, Client client) {
         try {
-            Log.d(TAG, "Started updateClientDetailsTable");
+            Timber.d("Started updateClientDetailsTable");
 
             if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
                 String baseEntityId = client.getBaseEntityId();
@@ -548,10 +549,10 @@ public class ClientProcessorForJava {
 
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
 
-            Log.d(TAG, "Finished updateClientDetailsTable");
+            Timber.d("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e.toString(), e);
         }
     }
 
@@ -580,7 +581,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return obsMap;
     }
@@ -598,7 +599,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return attributes;
@@ -613,7 +614,7 @@ public class ClientProcessorForJava {
                 map.put(GENDER, gender);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return map;
@@ -677,7 +678,7 @@ public class ClientProcessorForJava {
             return humanReadableValues.size() == 1 ? humanReadableValues.get(0).toString()
                     : humanReadableValues.toString();
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return value;
     }
@@ -712,7 +713,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return addressMap;
     }
@@ -748,7 +749,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -844,7 +845,7 @@ public class ClientProcessorForJava {
 
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
-        Log.d(TAG, "Starting updateFTSsearch table: " + tableName);
+        Timber.d("Starting updateFTSsearch table: " + tableName);
         AllCommonsRepository allCommonsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 allCommonsRepositoryobjects(tableName);
 
@@ -853,7 +854,7 @@ public class ClientProcessorForJava {
             updateRegisterCount(entityId);
         }
 
-        Log.d(TAG, "Finished updateFTSsearch table: " + tableName);
+        Timber.d("Finished updateFTSsearch table: " + tableName);
     }
 
     protected void updateRegisterCount(String entityId) {
@@ -878,7 +879,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
