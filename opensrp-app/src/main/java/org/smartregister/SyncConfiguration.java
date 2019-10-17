@@ -97,7 +97,7 @@ public abstract class SyncConfiguration {
 
     /**
      * This method determines the param used for Settings Sync
-     * @return
+     * @return the settings sync filter name
      */
     public  SyncFilter getSettingsSyncFilterParam(){
         return getSyncFilterParam();
@@ -105,7 +105,7 @@ public abstract class SyncConfiguration {
 
     /**
      * This method determines the param value used for Settings Sync
-     * @return
+     * @return the settings sync filter value
      */
     public  String getSettingsSyncFilterValue(){
         return getSyncFilterValue();
