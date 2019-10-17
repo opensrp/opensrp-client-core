@@ -94,4 +94,20 @@ public abstract class SyncConfiguration {
     public boolean isSyncUsingPost() {
         return false;
     }
+
+    /**
+     * This method determines the param used for Settings Sync
+     * @return
+     */
+    public  SyncFilter getSettingsSyncFilterParam(){
+        return getSyncFilterParam();
+    }
+
+    /**
+     * This method determines the param value used for Settings Sync
+     * @return
+     */
+    public  String getSettingsSyncFilterValue(){
+        return getSyncFilterValue();
+    }
 }

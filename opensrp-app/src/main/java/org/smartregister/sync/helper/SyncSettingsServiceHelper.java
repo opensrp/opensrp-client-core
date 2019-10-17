@@ -57,7 +57,7 @@ public class SyncSettingsServiceHelper {
             Log.e(TAG, e.getMessage());
         }
 
-        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
+        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterValue());
 
         if (settings != null && settings.length() > 0) {
             settings = ServerSettingsHelper.saveSetting(settings);
@@ -77,7 +77,7 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterParam().value() + "=" +
                 syncFilterValue + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
