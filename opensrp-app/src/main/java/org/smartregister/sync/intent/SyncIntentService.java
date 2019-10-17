@@ -164,10 +164,10 @@ public class SyncIntentService extends BaseSyncIntentService {
 
                 boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
                 //update sync time if all event client is save.
-                if(isSaved) ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
-
-                processClient(serverVersionPair);
-
+                if(isSaved){
+                    processClient(serverVersionPair);
+                    ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+                }
                 fetchRetry(0);
             }
         } catch (Exception e) {
