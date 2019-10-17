@@ -123,10 +123,10 @@ public class SyncIntentService extends BaseSyncIntentService {
                 JSONObject syncParams = new JSONObject();
                 syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
                 syncParams.put("serverVersion", lastSyncDatetime);
-                syncParams.put("limit",  SyncIntentService.EVENT_PULL_LIMIT);
+                syncParams.put("limit",  getEventPullLimit());
                 resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
             } else {
-                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
                 Timber.i("URL: %s", url);
                 resp = httpAgent.fetch(url);
             }
@@ -158,7 +158,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             } else if (eCount > 0) {
                 final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
                 long lastServerVersion = serverVersionPair.second - 1;
-                if (eCount < EVENT_PULL_LIMIT) {
+                if (eCount < getEventPullLimit()) {
                     lastServerVersion = serverVersionPair.second;
                 }
 
@@ -312,4 +312,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         return count;
     }
 
+    public int getEventPullLimit() {
+        return EVENT_PULL_LIMIT;
+    }
 }
