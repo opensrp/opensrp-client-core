@@ -20,7 +20,6 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -810,6 +809,29 @@ public class JsonFormUtils {
     // Helper functions
 
     /**
+     * Returns a JSONArray of all the forms fields in a single step form.
+     *
+     * @param jsonForm {@link JSONObject}
+     * @return fields {@link JSONArray}
+     */
+    public static JSONArray getSingleStepFormfields(JSONObject jsonForm) {
+        try {
+
+            JSONObject step1 = jsonForm.has(STEP1) ? jsonForm.getJSONObject(STEP1) : null;
+            if (step1 == null) {
+                return null;
+            }
+
+            return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
+
+        } catch (JSONException e) {
+            Log.e(TAG, "", e);
+        }
+        return null;
+    }
+
+
+    /**
      * Refactored for backward compatibility invokes getMultiStepFormFields which provides the same result
      * Returns a JSONArray of all the forms fields in a single or multi step form.
      *
@@ -817,14 +839,9 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      */
     public static JSONArray fields(JSONObject jsonForm) {
-        try {
 
-            return getMultiStepFormFields(jsonForm);
+        return getMultiStepFormFields(jsonForm);
 
-        } catch (JsonFormMissingStepCountException e) {
-            Log.e(TAG, "", e);
-            return null;
-        }
     }
 
     /**
@@ -834,11 +851,17 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
-    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) throws JsonFormMissingStepCountException {
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
         JSONArray fields = new JSONArray();
         try {
-            if (jsonForm.has(AllConstants.COUNT)) {
-                int stepCount = Integer.parseInt(jsonForm.getString(AllConstants.COUNT));
+            int stepCount = Integer.parseInt(jsonForm.optString(AllConstants.COUNT, "1"));
+
+            if (stepCount == 1) {
+
+                return getSingleStepFormfields(jsonForm);
+
+            } else {
+
                 for (int i = 0; i < stepCount; i++) {
                     String stepName = AllConstants.STEP + (i + 1);
                     JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
@@ -850,8 +873,6 @@ public class JsonFormUtils {
                         }
                     }
                 }
-            } else {
-                throw new JsonFormMissingStepCountException("The form step count is needed for the fields to be fetched");
             }
 
         } catch (JSONException e) {

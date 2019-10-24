@@ -12,7 +12,6 @@ import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,16 +29,6 @@ import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
  */
 public class JsonFormUtilsTest {
 
-    private JsonFormUtils formUtils;
-    private String FORMNAME = "birthnotificationpregnancystatusfollowup";
-    private String formDefinition = "www/form/" + FORMNAME + "/form_definition.json";
-    private String model = "www/form/" + FORMNAME + "/model.xml";
-    private String formJSON = "www/form/" + FORMNAME + "/form.json";
-    private String formMultiJSON = "www/form/" + FORMNAME + "/form_multi.json";
-    private String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
-    private String formSubmissionXML = "www/form/form_submission/form_submission_xml.xml";
-    private String formSubmissionJSON = "www/form/form_submission/form_submission_json.json";
-    private String entityRelationShip = "www/form/entity_relationship.json";
     private String formresultJson =
             "{\"count\":\"1\",\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\"," +
                     "\"relational_id\":\"\",\"step1\":{\"title\":\"Birth Registration\"," +
@@ -188,6 +177,65 @@ public class JsonFormUtilsTest {
                     "            \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
                     "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true\n" + "        }\n" +
                     "      }\n" + "    ]\n" + "  }\n" + "}";
+    private String jsonFormNoStepCount =
+            "{\n" +
+                    "  \"step1\": {\n" +
+                    "    \"title\": \"Demographic Info\",\n" +
+                    "    \"next\": \"step2\",\n" +
+                    "    \"fields\": [\n" +
+                    "      {\n" +
+                    "        \"key\": \"educ_level\",\n" +
+                    "        \"openmrs_entity_parent\": \"\",\n" +
+                    "        \"openmrs_entity\": \"concept\",\n" +
+                    "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "        \"type\": \"native_radio\",\n" +
+                    "        \"label\": \"Highest level of school\",\n" +
+                    "        \"label_text_style\": \"bold\",\n" +
+                    "        \"options\": [\n" +
+                    "          {\n" +
+                    "            \"key\": \"none\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "            \"text\": \"None\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"dont_know\",\n" +
+                    "            \"text\": \"Don't know\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"primary\",\n" +
+                    "            \"text\": \"Primary\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"secondary\",\n" +
+                    "            \"text\": \"Secondary\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"higher\",\n" +
+                    "            \"text\": \"Higher\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          }\n" +
+                    "        ],\n" +
+                    "        \"v_required\": {\n" +
+                    "          \"value\": true,\n" +
+                    "          \"err\": \"Please specify your education level\"\n" +
+                    "        }\n" +
+                    "      }\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "}";
 
     private String eventFormFields = "[{\"key\":\"contact_reason\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
@@ -291,7 +339,7 @@ public class JsonFormUtilsTest {
             "        \"value\":\"+3u465632453\"\n" + "    },\n" + "    \"encounter_location\": \"\",\n" +
             "    \"look_up\": {\n" + "      \"entity_id\": \"\",\n" + "      \"value\": \"\"\n" + "    }\n" + "  }";
 
-    private String clientFormFields ="[{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\"," +
+    private String clientFormFields = "[{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\",\"type\":\"edit_text\",\"hint\":\"First " +
             "name\",\"edit_type\":\"name\",\"value\":\"John\"},{\"key\":\"last_name\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"last_name\",\"type\":\"edit_text\",\"hint\":\"Last " +
@@ -756,7 +804,7 @@ public class JsonFormUtilsTest {
     }
 
     @Test
-    public void testGetMultiStepFormFields() throws JSONException, JsonFormMissingStepCountException {
+    public void testGetMultiStepFormFields() throws JSONException {
         Assert.assertNotNull(miltiStepForm);
 
         JSONObject jsonForm = new JSONObject(miltiStepForm);
@@ -766,28 +814,14 @@ public class JsonFormUtilsTest {
         Assert.assertNotNull(formFields);
     }
 
-    @Test(expected = JsonFormMissingStepCountException.class)
-    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException, JsonFormMissingStepCountException {
-        String json = " {\n" + "    \"key\": \"lmp_known\",\n" + "    \"openmrs_entity_parent\": \"\",\n" +
-                "    \"openmrs_entity\": \"concept\",\n" +
-                "    \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "    \"type\": \"native_radio\",\n" + "    \"label\": \"LMP known?\",\n" +
-                "    \"label_text_style\": \"bold\",\n" + "    \"max_date\": \"today\",\n" + "    \"options\": [\n" +
-                "      {\n" + "        \"key\": \"yes\",\n" + "        \"text\": \"Yes\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "        \"specify_info\": \"specify date\",\n" + "        \"specify_widget\": \"date_picker\",\n" +
-                "        \"max_date\": \"today\",\n" + "        \"min_date\": \"today-280d\"\n" + "      },\n" +
-                "      {\n" + "        \"key\": \"no\",\n" + "        \"text\": \"No\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "      }\n" + "    ],\n" +
-                "    \"v_required\": {\n" + "      \"value\": true\n" + "    }\n" + "  }";
-        JSONObject jsonForm = new JSONObject(json);
+    @Test
+    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException {
+        JSONObject jsonForm = new JSONObject(jsonFormNoStepCount);
         Assert.assertNotNull(jsonForm);
 
         JSONArray formFields = JsonFormUtils.getMultiStepFormFields(jsonForm);
         Assert.assertNotNull(formFields);
-        Assert.assertEquals(formFields.length(), 0);
+        Assert.assertEquals(1, formFields.length());
     }
 
     @Test
@@ -823,24 +857,24 @@ public class JsonFormUtilsTest {
         formTag.databaseVersion = 20;
 
         Assert.assertNotNull(formTag);
-        Client client = JsonFormUtils.createBaseClient(fields,formTag,"97dc48f681ddcf188b2758fba89635fe");
-        Assert.assertEquals(client.getGender(), "F" );
+        Client client = JsonFormUtils.createBaseClient(fields, formTag, "97dc48f681ddcf188b2758fba89635fe");
+        Assert.assertEquals(client.getGender(), "F");
         Assert.assertEquals(client.getFirstName(), "John");
     }
 
     @Test
-    public void testConvertToOpenMRSDate(){
+    public void testConvertToOpenMRSDate() {
         String date = "12-12-2019";
         String openmrsDate = JsonFormUtils.convertToOpenMRSDate(date);
-        Assert.assertEquals(openmrsDate,"2019-12-12");
+        Assert.assertEquals(openmrsDate, "2019-12-12");
     }
 
     @Test
-    public void testGetFieldJsonObject() throws  JSONException{
+    public void testGetFieldJsonObject() throws JSONException {
         JSONArray fields = new JSONArray(clientFormFields);
         Assert.assertNotNull(fields);
 
-        JSONObject field = JsonFormUtils.getFieldJSONObject(fields,"first_name");
+        JSONObject field = JsonFormUtils.getFieldJSONObject(fields, "first_name");
         Assert.assertNotNull(field);
         Assert.assertTrue(field.has("value"));
         Assert.assertEquals(field.get("value"), "John");
