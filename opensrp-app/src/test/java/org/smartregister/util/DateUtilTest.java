@@ -4,11 +4,16 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 
 import java.util.Date;
@@ -19,14 +24,27 @@ import java.util.concurrent.TimeUnit;
  * Created by kaderchowdhury on 12/11/17.
  */
 
+@PrepareForTest({CoreLibrary.class})
 public class DateUtilTest extends BaseUnitTest {
 
     @Mock
-    public CoreLibrary coreLibrary;
+    private CoreLibrary coreLibrary;
+
+    @Mock
+    private Context context;
+
+    @Rule
+    public PowerMockRule rule = new PowerMockRule();
 
     @Before
     public void setUp() {
+
         MockitoAnnotations.initMocks(this);
+        PowerMockito.mockStatic(CoreLibrary.class);
+        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+        PowerMockito.when(coreLibrary.context()).thenReturn(context);
+        PowerMockito.when(context.applicationContext()).thenReturn(RuntimeEnvironment.application);
+
     }
 
     @Test
@@ -74,19 +92,19 @@ public class DateUtilTest extends BaseUnitTest {
 
     @Test
     public void formatDateTest() {
-        Assert.assertEquals( "03-10-2019", DateUtil.formatDate(new LocalDate("2019-10-03"), "dd-MM-YYY"));
-        Assert.assertEquals( "", DateUtil.formatDate(new LocalDate("2019-10-03"), "KK-TT"));
+        Assert.assertEquals("03-10-2019", DateUtil.formatDate(new LocalDate("2019-10-03"), "dd-MM-YYY"));
+        Assert.assertEquals("", DateUtil.formatDate(new LocalDate("2019-10-03"), "KK-TT"));
     }
 
     @Test
     public void getLocalDateTest() {
-        Assert.assertEquals( new LocalDate("2019-10-03"), DateUtil.getLocalDate("03/10/2019"));
-        Assert.assertEquals( null, DateUtil.getLocalDate("03-15-2019"));
+        Assert.assertEquals(new LocalDate("2019-10-03"), DateUtil.getLocalDate("03/10/2019"));
+        Assert.assertEquals(null, DateUtil.getLocalDate("03-15-2019"));
     }
 
     @Test
-    public void differenceTest(){
-        Assert.assertEquals( 2, DateUtil.dayDifference(new LocalDate("2019-10-01"), new LocalDate("2019-10-03")));
-        Assert.assertEquals( 1, DateUtil.weekDifference(new LocalDate("2019-09-26"), new LocalDate("2019-10-03")));
+    public void differenceTest() {
+        Assert.assertEquals(2, DateUtil.dayDifference(new LocalDate("2019-10-01"), new LocalDate("2019-10-03")));
+        Assert.assertEquals(1, DateUtil.weekDifference(new LocalDate("2019-09-26"), new LocalDate("2019-10-03")));
     }
 }

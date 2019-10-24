@@ -817,8 +817,14 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      */
     public static JSONArray fields(JSONObject jsonForm) {
+        try {
 
-        return getMultiStepFormFields(jsonForm);
+            return getMultiStepFormFields(jsonForm);
+
+        } catch (JsonFormMissingStepCountException e) {
+            Log.e(TAG, "", e);
+            return null;
+        }
     }
 
     /**
@@ -828,7 +834,7 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
-    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) throws JsonFormMissingStepCountException {
         JSONArray fields = new JSONArray();
         try {
             if (jsonForm.has(AllConstants.COUNT)) {
@@ -848,7 +854,7 @@ public class JsonFormUtils {
                 throw new JsonFormMissingStepCountException("The form step count is needed for the fields to be fetched");
             }
 
-        } catch (JSONException | JsonFormMissingStepCountException e) {
+        } catch (JSONException e) {
             Log.e(TAG, "", e);
         }
         return fields;
