@@ -444,7 +444,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    Timber.e("%s : %s",TAG , e1.getMessage());
+                    Timber.e("%s : %s", TAG, e1.getMessage());
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -809,20 +809,16 @@ public class JsonFormUtils {
 
     // Helper functions
 
+    /**
+     * Refactored for backward compatibility invokes getMultiStepFormFields which provides the same result
+     * Returns a JSONArray of all the forms fields in a single or multi step form.
+     *
+     * @param jsonForm {@link JSONObject}
+     * @return fields {@link JSONArray}
+     */
     public static JSONArray fields(JSONObject jsonForm) {
-        try {
 
-            JSONObject step1 = jsonForm.has(STEP1) ? jsonForm.getJSONObject(STEP1) : null;
-            if (step1 == null) {
-                return null;
-            }
-
-            return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
-
-        } catch (JSONException e) {
-            Log.e(TAG, "", e);
-        }
-        return null;
+        return getMultiStepFormFields(jsonForm);
     }
 
     /**
@@ -832,7 +828,7 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
-    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) throws JsonFormMissingStepCountException {
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
         JSONArray fields = new JSONArray();
         try {
             if (jsonForm.has(AllConstants.COUNT)) {
@@ -852,7 +848,7 @@ public class JsonFormUtils {
                 throw new JsonFormMissingStepCountException("The form step count is needed for the fields to be fetched");
             }
 
-        } catch (JSONException e) {
+        } catch (JSONException | JsonFormMissingStepCountException e) {
             Log.e(TAG, "", e);
         }
         return fields;
