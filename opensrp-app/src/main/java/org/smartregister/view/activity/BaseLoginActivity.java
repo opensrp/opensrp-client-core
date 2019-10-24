@@ -9,7 +9,6 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.StringRes;
-import android.support.v7.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -26,7 +25,6 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.smartregister.R;
-import org.smartregister.domain.LoginResponse;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
@@ -36,7 +34,7 @@ import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
  * Created by manu on 01/11/2018.
  */
 
-public abstract class BaseLoginActivity extends AppCompatActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
+public abstract class BaseLoginActivity extends MultiLanguageActivity implements BaseLoginContract.View, TextView.OnEditorActionListener, View.OnClickListener {
     private ProgressDialog progressDialog;
     protected BaseLoginContract.Presenter mLoginPresenter;
     private EditText userNameEditText;
@@ -236,11 +234,6 @@ public abstract class BaseLoginActivity extends AppCompatActivity implements Bas
     @Override
     public Activity getActivityContext() {
         return this;
-    }
-
-    @Override
-    public String getUserTeamId(LoginResponse loginResponse) {
-        return Utils.getUserDefaultTeamId(loginResponse.payload());
     }
 
     @Override

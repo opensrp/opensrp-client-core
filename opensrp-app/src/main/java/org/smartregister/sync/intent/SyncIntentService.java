@@ -3,7 +3,6 @@ package org.smartregister.sync.intent;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +10,7 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
@@ -20,17 +20,19 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class SyncIntentService extends IntentService {
+import timber.log.Timber;
+
+public class SyncIntentService extends BaseSyncIntentService {
     private static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
 
@@ -55,7 +57,7 @@ public class SyncIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        super.onHandleIntent(intent);
         handleSync();
     }
 
@@ -83,7 +85,7 @@ public class SyncIntentService extends IntentService {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
             complete(FetchStatus.fetchedFailed);
         }
     }
@@ -96,7 +98,7 @@ public class SyncIntentService extends IntentService {
     private synchronized void fetchRetry(final int count) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-            if (StringUtils.isBlank(configs.getSyncFilterParam()) || StringUtils.isBlank(configs.getSyncFilterValue())) {
+            if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
                 complete(FetchStatus.fetchedFailed);
                 return;
             }
@@ -109,24 +111,45 @@ public class SyncIntentService extends IntentService {
             }
 
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
-            Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
-
-            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
-            Log.i(SyncIntentService.class.getName(), "URL: " + url);
+            Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
 
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
             }
 
-            Response resp = httpAgent.fetch(url);
-            if (resp.isFailure()) {
+            String url = baseUrl + SYNC_URL;
+            Response resp;
+            if (configs.isSyncUsingPost()) {
+                JSONObject syncParams = new JSONObject();
+                syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
+                syncParams.put("serverVersion", lastSyncDatetime);
+                syncParams.put("limit",  getEventPullLimit());
+                resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
+            } else {
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
+                Timber.i("URL: %s", url);
+                resp = httpAgent.fetch(url);
+            }
+
+            if (resp.isUrlError()) {
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+                return;
+            }
+
+            if (resp.isTimeoutError()) {
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+            }
+
+            if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
             }
 
             JSONObject jsonObject = new JSONObject((String) resp.payload());
 
             int eCount = fetchNumberOfEvents(jsonObject);
-            Log.i(getClass().getName(), "Parse Network Event Count: " + eCount);
+            Timber.i("Parse Network Event Count: %s", eCount);
 
             if (eCount == 0) {
                 complete(FetchStatus.nothingFetched);
@@ -135,19 +158,20 @@ public class SyncIntentService extends IntentService {
             } else if (eCount > 0) {
                 final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
                 long lastServerVersion = serverVersionPair.second - 1;
-                if (eCount < EVENT_PULL_LIMIT) {
+                if (eCount < getEventPullLimit()) {
                     lastServerVersion = serverVersionPair.second;
                 }
 
-                ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
-
-                processClient(serverVersionPair);
-
+                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+                //update sync time if all event client is save.
+                if(isSaved){
+                    processClient(serverVersionPair);
+                    ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+                }
                 fetchRetry(0);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Fetch Retry Exception: " + e.getMessage(), e.getCause());
+            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
         }
     }
@@ -165,10 +189,10 @@ public class SyncIntentService extends IntentService {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
-            getClientProcessor().processClient(events);
+            DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Process Client Exception: " + e.getMessage(), e.getCause());
+            Timber.e(e, "Process Client Exception: %s", e.getMessage());
         }
     }
 
@@ -195,11 +219,11 @@ public class SyncIntentService extends IntentService {
                 }
                 // create request body
                 JSONObject request = new JSONObject();
-                if (pendingEvents.containsKey(context.getString(R.string.clients_key))) {
-                    request.put(context.getString(R.string.clients_key), pendingEvents.get(context.getString(R.string.clients_key)));
+                if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
+                    request.put(AllConstants.KEY.CLIENTS, pendingEvents.get(AllConstants.KEY.CLIENTS));
                 }
-                if (pendingEvents.containsKey(context.getString(R.string.events_key))) {
-                    request.put(context.getString(R.string.events_key), pendingEvents.get(context.getString(R.string.events_key)));
+                if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
+                    request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
                 String jsonPayload = request.toString();
                 Response<String> response = httpAgent.post(
@@ -208,13 +232,13 @@ public class SyncIntentService extends IntentService {
                                 ADD_URL),
                         jsonPayload);
                 if (response.isFailure()) {
-                    Log.e(getClass().getName(), "Events sync failed.");
+                    Timber.e("Events sync failed.");
                     return;
                 }
                 db.markEventsAsSynced(pendingEvents);
-                Log.i(getClass().getName(), "Events synced successfully.");
+                Timber.i("Events synced successfully.");
             } catch (Exception e) {
-                Log.e(getClass().getName(), e.getMessage(), e);
+                Timber.e(e);
             }
         }
     }
@@ -233,9 +257,12 @@ public class SyncIntentService extends IntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
+        //sync time not update if sync is fail
+        if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
+            ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
+            ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
+        }
 
-        ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-        ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
     }
 
     private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
@@ -267,7 +294,7 @@ public class SyncIntentService extends IntentService {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
         }
         return Pair.create(0L, 0L);
     }
@@ -280,13 +307,12 @@ public class SyncIntentService extends IntentService {
                 count = jsonObject.getInt(NO_OF_EVENTS);
             }
         } catch (JSONException e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
         }
         return count;
     }
 
-    protected ClientProcessorForJava getClientProcessor() {
-        return ClientProcessorForJava.getInstance(context);
+    public int getEventPullLimit() {
+        return EVENT_PULL_LIMIT;
     }
-
 }

@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Report;
 import org.smartregister.domain.ReportIndicator;
 import org.smartregister.util.ActionBuilder;
@@ -16,8 +17,7 @@ import org.smartregister.util.ActionBuilder;
 import java.util.Arrays;
 import java.util.List;
 
-@RunWith(RobolectricTestRunner.class)
-public class AllReportsTest {
+public class AllReportsTest extends BaseUnitTest {
 
     @Mock
     private ReportRepository repository;

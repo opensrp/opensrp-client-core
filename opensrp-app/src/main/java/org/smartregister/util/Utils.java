@@ -22,6 +22,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -48,14 +50,16 @@ import com.google.gson.JsonParseException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.WordUtils;
+import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
-import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
@@ -80,6 +84,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static org.smartregister.util.Log.logError;
 
@@ -90,11 +96,14 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy");
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
 
-    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+    private static String KG_FORMAT = "%s kg";
+    private static String CM_FORMAT = "%s cm";
+    public static final String APP_PROPERTIES_FILE = "app.properties";
 
     public static String convertDateFormat(String date, boolean suppressException) {
         try {
@@ -161,7 +170,8 @@ public class Utils {
         v.setText(val);
     }
 
-    public static void addToList(Map<String, String> locations, Map<String, TreeNode<String, Location>> locationMap, String locationTag) {
+    public static void addToList(Map<String, String> locations, Map<String, TreeNode<String, Location>> locationMap,
+                                 String locationTag) {
         for (Map.Entry<String, TreeNode<String, Location>> entry : locationMap.entrySet()) {
             boolean tagFound = false;
             if (entry.getValue() != null) {
@@ -317,7 +327,8 @@ public class Utils {
     }
 
     public static boolean isConnectedToNetwork(Context context) {
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
@@ -419,7 +430,8 @@ public class Utils {
      * @param columns     this map has the db column name as value and the csv column no as the key
      * @return each map is db row with key as the column name and value as the value from the csv file
      */
-    public static List<Map<String, String>> populateTableFromCSV(Context context, String csvFileName, Map<Integer, String> columns) {
+    public static List<Map<String, String>> populateTableFromCSV(Context context, String csvFileName,
+                                                                 Map<Integer, String> columns) {
         List<Map<String, String>> result = new ArrayList<>();
 
         try {
@@ -480,14 +492,20 @@ public class Utils {
         }
     }
 
-    private static String KG_FORMAT = "%s kg";
-
     public static String kgStringSuffix(Float weight) {
         return String.format(KG_FORMAT, weight);
     }
 
     public static String kgStringSuffix(String weight) {
         return String.format(KG_FORMAT, weight);
+    }
+
+    public static String cmStringSuffix(Float height) {
+        return String.format(CM_FORMAT, height);
+    }
+
+    public static String cmStringSuffix(String height) {
+        return String.format(CM_FORMAT, height);
     }
 
     public static CommonPersonObjectClient convert(CommonPersonObject commonPersonObject) {
@@ -542,9 +560,12 @@ public class Utils {
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
-            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
+            simpleDateFormat =
+                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+                            .format(new Date(CoreLibrary.getBuildTimeStamp()));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault()).format(new Date(AllConstants.BUILD_TIMESTAMP));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
+                    .format(new Date(CoreLibrary.getBuildTimeStamp()));
         }
         return simpleDateFormat;
     }
@@ -660,5 +681,69 @@ public class Utils {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
         return intent;
+    }
+
+    public static boolean is2xxSuccessful(int httpStatus) {
+        return httpStatus >= HttpStatus.SC_OK && httpStatus <= HttpStatus.SC_MULTI_STATUS;
+    }
+
+    public static String getFilterValue(LoginResponse loginResponse, SyncFilter syncFilterParam) {
+        String filterValue = "";
+        LoginResponseData response = loginResponse.payload();
+        switch (syncFilterParam) {
+
+            case TEAM:
+            case TEAM_ID:
+
+                filterValue = response.team.team.uuid;
+                break;
+
+            case LOCATION:
+
+                filterValue = response.team.team.location.uuid;
+                break;
+            case PROVIDER:
+
+                filterValue = response.user.getUsername();
+                break;
+
+
+            default:
+                break;
+        }
+
+        return filterValue;
+    }
+
+    public static AppProperties getProperties(Context context) {
+
+        AppProperties properties = new AppProperties();
+        try {
+            AssetManager assetManager = context.getAssets();
+            InputStream inputStream = assetManager.open(APP_PROPERTIES_FILE);
+            properties.load(inputStream);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return properties;
+
+    }
+
+    /**
+     * This util does a look up from the strings file without specifying an android resource id , rather the identifier(key) of the resource
+     *
+     * @param key a string identifier that corresponds to a key in the strings.xml file e.g. for R.string.key key is the identifier
+     * @return String value from resource file
+     */
+    public static String getTranslatedIdentifier(String key) {
+
+        String myKey;
+        try {
+            myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
+
+        } catch (Resources.NotFoundException resourceNotFoundException) {
+            myKey = key;
+        }
+        return myKey;
     }
 }

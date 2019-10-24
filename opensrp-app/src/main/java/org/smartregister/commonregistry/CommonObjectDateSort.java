@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Raihan Ahmed on 3/22/15.
@@ -27,7 +28,7 @@ public class CommonObjectDateSort implements SortOption {
             switch (byColumnAndByDetails) {
                 case byColumn:
                     try {
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                         Date date1 = dateFormat
                                 .parse(commonPersonObjectClient.getColumnmaps().get(field));
                         Date date2 = dateFormat
@@ -40,7 +41,7 @@ public class CommonObjectDateSort implements SortOption {
 
                 case byDetails:
                     try {
-                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
                         Date date1 = dateFormat
                                 .parse(commonPersonObjectClient.getDetails().get(field));
                         Date date2 = dateFormat

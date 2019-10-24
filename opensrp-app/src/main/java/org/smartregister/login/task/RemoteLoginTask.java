@@ -1,7 +1,6 @@
 package org.smartregister.login.task;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,14 +12,15 @@ import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
+
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 22/06/2018.
  */
 public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
-
-    private final String TAG = RemoteLoginTask.class.getCanonicalName();
 
     private BaseLoginContract.View mLoginView;
     private final String mUsername;
@@ -53,17 +53,15 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setUsername(mUsername);
             syncSettingsServiceHelper.setPassword(mPassword);
 
-            String teamId = mLoginView.getUserTeamId(loginResponse);
-
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(teamId);
+                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
 
                 JSONObject data = new JSONObject();
-                data.put(AllConstants.PREF_KEY.SITE_CHARACTERISTICS, settings);
+                data.put(AllConstants.PREF_KEY.SETTINGS, settings);
                 loginResponse.setRawData(data);
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
             }
 
         }

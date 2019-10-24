@@ -15,7 +15,9 @@ public class AllConstants {
     public static final String APP_NAME_INDONESIA = "OpenSRPIndonesia";
     public static final String DATABASE_NAME = "drishti.db";
     public static final int DATABASE_VERSION = 1;
-    public static final long BUILD_TIMESTAMP = 1541081122510L;
+    public static final String IDENTIFIER = "identifier";
+    public static final String SETTINGS = "settings";
+    public static final String SERVER_VERSION = "serverVersion";
 
 
     // Maximum time difference between server and client time in milliseconds
@@ -27,6 +29,7 @@ public class AllConstants {
     public static final String DEFAULT_LOCALITY_ID_PREFIX = "dfltLoc-";
     public static final String DEFAULT_TEAM_PREFIX = "dfltTeam-";
     public static final String DEFAULT_TEAM_ID_PREFIX = "dfltTeamId-";
+    public static final String USER_LOCALITY_ID_PREFIX = "userLoc-";
     public static final String PIONEER_USER = "pioneerUser";
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
@@ -97,6 +100,25 @@ public class AllConstants {
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
+    public static final String OPTIONS = "options";
+    public static final String CHECK_BOX = "check_box";
+    public static final String TRUE = "true";
+    public static final String DATE = "date";
+    public static final String TEXT = "text";
+    public static final String NATIVE_RADIO = "native_radio";
+    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String PARENT_ENTITY_ID = "parent_entity_id";
+    public static final String COUNT = "count";
+    public static final String STEP = "step";
+    public static final String EXTRA_REL = "extra_rel";
+    public static final String HAS_EXTRA_REL = "has_extra_rel";
+    public static final String OPENMRS_ATTRIBUTES = "openmrs_attributes";
+    public static final String VALUE_OPENMRS_ATTRIBUTES = "value_openmrs_attributes";
+    public static final String SECONDARY_VALUE = "secondary_value";
+    public static final String EXPANSION_PANEL = "expansion_panel";
+    public static final String SPINNER = "spinner";
+    public static final String ROWID = "rowid";
+
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -144,16 +166,7 @@ public class AllConstants {
 
     }
 
-    public static class SyncFilters {
-        // These pull filters must be defined in your couchDB server for them to work
-        // Filters
-        public static final String FILTER_LOCATION_ID = "locationId";
-        public static final String FILTER_PROVIDER = "providerId";
-
-        //filter by team e.g. team = user1,user2,user3
-        public static final String FILTER_TEAM = "team";
-
-    }
+    // Sync Filters moved to org.smartregister.SyncFilter class
 
     public class FormNames {
         public static final String EC_REGISTRATION = "ec_registration";
@@ -413,8 +426,19 @@ public class AllConstants {
     }
 
     public static class PREF_KEY {
-        public static final String SITE_CHARACTERISTICS = "site_characteristics";
-        public static final String POPULATION_CHARACTERISTICS = "population_characteristics";
+        public static final String SETTINGS = "settings";
+    }
 
+    public static class PeerToPeer {
+        public static final String KEY_TEAM_ID = "team-id";
+        public static final int P2P_LIBRARY_DEFAULT_BATCH_SIZE = 250;
+
+        public static final String PROCESSING_ACTION = "peer-to-peer-processing-action";
+        public static final String KEY_IS_PROCESSING = "is-processing";
+    }
+
+    public class KEY {
+        public static final String EVENTS = "events";
+        public static final String CLIENTS = "clients";
     }
 }

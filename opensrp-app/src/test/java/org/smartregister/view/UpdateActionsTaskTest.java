@@ -4,10 +4,9 @@ import android.content.Context;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.DownloadStatus;
@@ -28,8 +27,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.domain.FetchStatus.nothingFetched;
 
-@RunWith(RobolectricTestRunner.class)
-public class UpdateActionsTaskTest {
+public class UpdateActionsTaskTest extends BaseUnitTest {
     @Mock
     private ActionService actionService;
     @Mock

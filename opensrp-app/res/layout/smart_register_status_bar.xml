@@ -5,7 +5,7 @@
     android:layout_height="@dimen/smart_register_status_bar_height"
     android:background="@color/status_bar_background_dark_grey"
     android:orientation="horizontal"
-    android:paddingLeft="10dp">
+    android:paddingStart="10dp">
 
     <org.smartregister.view.customcontrols.CustomFontTextView
         android:id="@+id/label_sorted_by"
@@ -18,7 +18,7 @@
         android:id="@+id/sorted_by"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="1dp"
+        android:paddingStart="1dp"
         style="@style/CustomFontTextViewStyle.StatusBar.Black" />
 
     <org.smartregister.view.customcontrols.CustomFontTextView
@@ -31,7 +31,7 @@
         android:id="@+id/village"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingLeft="1dp"
+        android:paddingStart="1dp"
         style="@style/CustomFontTextViewStyle.StatusBar.Black" />
 
 </LinearLayout>

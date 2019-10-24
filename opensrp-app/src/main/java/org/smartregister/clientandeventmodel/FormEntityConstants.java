@@ -1,13 +1,14 @@
 package org.smartregister.clientandeventmodel;
 
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Mappings in OpenSRP for OpenMRS entities and properties
  */
 public class FormEntityConstants {
 
-    public static final SimpleDateFormat FORM_DATE = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat FORM_DATE = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public enum FieldType {
         concept, person, person_address, person_attribute, person_identifier,
@@ -63,7 +64,7 @@ public class FormEntityConstants {
     public enum Address {
         start_date, startDate, end_date, endDate, latitude, longitute, geopoint, postal_code,
         postalCode, sub_town, subTown, town, sub_district, subDistrict, district, county,
-        county_district,countyDistrict, city, village, cityVillage, city_village, state,
+        county_district, countyDistrict, city, village, cityVillage, city_village, state,
         state_province, stateProvince, country
     }
 }

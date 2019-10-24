@@ -94,8 +94,8 @@ public abstract class SecuredFragment extends Fragment {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(getActivity(), "Language preference set to " + newLanguagePreference
-                    + ". Please restart the application.", LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.language_change_prepend_message + " " + newLanguagePreference
+                    + ". " + R.string.language_change_append_message + ".", LENGTH_SHORT).show();
 
             return super.onOptionsItemSelected(item);
         } else {

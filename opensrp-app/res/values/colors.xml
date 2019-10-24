@@ -61,4 +61,6 @@
 
     <color name="white">#FFFFFF</color>
 
+    <color name="translucent_yellow">#CCEDCA00</color>
+
 </resources>

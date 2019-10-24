@@ -4,12 +4,11 @@ import org.ei.drishti.dto.Action;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
@@ -24,8 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@RunWith(RobolectricTestRunner.class)
-public class ActionServiceTest {
+public class ActionServiceTest extends BaseUnitTest {
     @Mock
     private DrishtiService drishtiService;
     @Mock

@@ -3,13 +3,13 @@ package org.smartregister.domain;
 /**
  * Created by ndegwamartin on 13/08/2018.
  */
-public class Characteristic {
+public class ServerSetting {
     private String key;
     private boolean value;
     private String label;
     private String description;
 
-    public Characteristic() {
+    public ServerSetting() {
 
     }
 
@@ -19,7 +19,7 @@ public class Characteristic {
      * @param label       the label
      * @param description
      */
-    public Characteristic(String key, boolean value, String label, String description) {
+    public ServerSetting(String key, boolean value, String label, String description) {
         this.key = key;
         this.value = value;
         this.label = label;

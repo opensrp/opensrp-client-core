@@ -11,6 +11,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.UUID;
 
 
@@ -25,10 +26,11 @@ public class BaseRepository {
     public static String TYPE_Valid = "Valid";
     public static String TYPE_InValid = "Invalid";
     public static String TYPE_Task_Unprocessed = "task_unprocessed";
+    public static String TYPE_Unprocessed = "unprocessed";
     public static String TYPE_Created = "Created";
     protected static final String ORDER_BY = " order by ";
 
-    public static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     public static String COLLATE_NOCASE = " COLLATE NOCASE ";
 

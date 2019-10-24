@@ -8,19 +8,19 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import org.apache.http.NoHttpResponseException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Response;
+import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.HTTPAgent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PullUniqueIdsIntentService extends IntentService {
+public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
     private static final String TAG = PullUniqueIdsIntentService.class.getCanonicalName();
@@ -34,6 +34,7 @@ public class PullUniqueIdsIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
+            super.onHandleIntent(intent);
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             int numberToGenerate;
             if (uniqueIdRepo.countUnUsedIds() == 0) { // first time pull no ids at all
