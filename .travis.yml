@@ -43,12 +43,6 @@ script:
   #Run All tests Unit and Instrumentation
   - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport coveralls --stacktrace
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
-after_failure:
-  - pandoc opensrp-app/build/reports/tests/index.html -t plain
-
 notifications:
   slack:
     secure: fAiZ4yA7DM6nUKh7nqsCTqZBb03VEAvi5NcRu5mNh5coNn/50XNeZl+qpv7Dw70Ef85Y/k68uc6KwTGVqPXEmVq9Hk3e7lqpBNN8rufvgCYDDGPmywBmU5BhSeykKo0Ee7llM3mRR/EipjIWw1+YvMcS3hCoygf/UlMDDhG0Jo0=
