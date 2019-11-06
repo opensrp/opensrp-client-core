@@ -147,7 +147,13 @@ public class HTTPAgent {
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
+        logResponse(postURLPath, jsonPayload);
         return post(postURLPath, jsonPayload);
+    }
+
+    private void logResponse(String postURLPath, String jsonPayload) {
+        Timber.d("postURLPath: %s", postURLPath);
+        Timber.d("jsonPayLoad: %s", jsonPayload);
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
@@ -168,6 +174,8 @@ public class HTTPAgent {
                 inputStream = urlConnection.getInputStream();
             String responseString = IOUtils.toString(inputStream);
             if (statusCode == HttpStatus.SC_OK) {
+
+                Timber.d("response String: %s using request url %s", responseString, url);
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
@@ -206,6 +214,7 @@ public class HTTPAgent {
     public DownloadStatus downloadFromUrl(String url, String filename) {
         Response<DownloadStatus> status = DownloadForm.downloadFromURL(url, filename,
                 allSharedPreferences.fetchRegisteredANM(), settings.fetchANMPassword());
+        Timber.d("downloading file name : %s and url %s", filename,url);
         return status.payload();
     }
 
@@ -242,6 +251,8 @@ public class HTTPAgent {
                 inputStream = urlConnection.getInputStream();
 
             responseString = IOUtils.toString(inputStream);
+
+            Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
         } catch (MalformedURLException e) {
             Timber.e(e,  "%s %s", MALFORMED_URL, e.toString());
@@ -366,6 +377,8 @@ public class HTTPAgent {
         writer.append(crlf);
         writer.append(paramValue).append(crlf);
         writer.flush();
+
+        Timber.d("http agent param name: %s and param value %s ", paramName,paramValue);
     }
 
 
