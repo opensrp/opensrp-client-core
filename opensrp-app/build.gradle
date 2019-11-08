@@ -1,11 +1,13 @@
 description = 'OpenSRP core client library'
 
 buildscript {
+
     repositories {
         google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
     }
+
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
@@ -29,6 +31,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
+
 jacoco {
     toolVersion = "0.8.0"
 }

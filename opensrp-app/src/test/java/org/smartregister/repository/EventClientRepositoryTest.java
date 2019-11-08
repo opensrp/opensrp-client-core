@@ -18,7 +18,9 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Column;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -28,6 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -330,5 +333,53 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         eventClientRepository.addEvent(baseEntityId, jsonObject);
 
         Mockito.verify(eventClientRepository).addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
+    }
+
+    @Test
+    public void fetchEventClientsCoreShouldReturnValidEventsWithEventIdWhenEventIdIsAQueryColumn() {
+        String baseEntityId = "base-entity-id";
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+
+        Client returnClient = new Client(baseEntityId);
+        Mockito.doReturn(returnClient)
+                .when(eventClientRepository)
+                .fetchClientByBaseEntityId(Mockito.eq(baseEntityId));
+
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", "eventId"}, 2);
+        matrixCursor.addRow(new String[]{String.format("{'locationId': '909sddklk', 'baseEntityId': '%s'}", baseEntityId), "eventId1",});
+        matrixCursor.addRow(new String[]{String.format("{'locationId': '909sddklk', 'baseEntityId': '%s'}", baseEntityId), "eventId2"});
+
+        Mockito.doReturn(matrixCursor)
+                .when(sqliteDatabase)
+                .rawQuery(Mockito.anyString(), Mockito.nullable(String[].class));
+
+        List<EventClient> eventClients = eventClientRepository.fetchEventClientsCore("SELECT json, eventId FROM event LIMIT 2", null);
+
+        Assert.assertEquals(eventClients.get(0).getEvent().getEventId(), "eventId1");
+        Assert.assertEquals(eventClients.get(1).getEvent().getEventId(), "eventId2");
+    }
+
+    @Test
+    public void fetchEventClientsCoreShouldReturnEventsWithoutEventIdWhenOnlyJsonIsAQueryColumn() {
+        String baseEntityId = "base-entity-id";
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+
+        Client returnClient = new Client(baseEntityId);
+        Mockito.doReturn(returnClient)
+                .when(eventClientRepository)
+                .fetchClientByBaseEntityId(Mockito.eq(baseEntityId));
+
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json"}, 2);
+        matrixCursor.addRow(new String[]{String.format("{'locationId': '909sddklk', 'baseEntityId': '%s'}", baseEntityId)});
+        matrixCursor.addRow(new String[]{String.format("{'locationId': '909sddklk', 'baseEntityId': '%s'}", baseEntityId)});
+
+        Mockito.doReturn(matrixCursor)
+                .when(sqliteDatabase)
+                .rawQuery(Mockito.anyString(), Mockito.nullable(String[].class));
+
+        List<EventClient> eventClients = eventClientRepository.fetchEventClientsCore("SELECT json FROM event LIMIT 2", null);
+
+        Assert.assertNull(eventClients.get(0).getEvent().getEventId());
+        Assert.assertNull(eventClients.get(1).getEvent().getEventId());
     }
 }

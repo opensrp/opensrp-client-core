@@ -543,6 +543,11 @@ public class EventClientRepository extends BaseRepository {
 
         Event event = convert(jsonEventStr, Event.class);
 
+        int eventIdColumnIndex = cursor.getColumnIndex(event_column.eventId.name());
+        if (eventIdColumnIndex != -1) {
+            event.setEventId(cursor.getString(eventIdColumnIndex));
+        }
+
         String baseEntityId = event.getBaseEntityId();
         Client client = fetchClientByBaseEntityId(baseEntityId);
 
@@ -554,7 +559,7 @@ public class EventClientRepository extends BaseRepository {
     public List<EventClient> fetchEventClients(long startServerVersion, long lastServerVersion) {
 
 
-        return fetchEventClientsCore("SELECT json FROM "
+        return fetchEventClientsCore("SELECT json, event_id FROM "
                         + Table.event.name()
                         + " WHERE "
                         + event_column.serverVersion.name()
