@@ -14,5 +14,6 @@ public class FormTag {
     public Integer appVersion;
     public Integer databaseVersion;
     public String formSubmissionId;
+    public String appVersionName;
 
 }
