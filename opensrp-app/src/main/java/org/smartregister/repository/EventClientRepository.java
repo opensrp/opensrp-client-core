@@ -557,9 +557,7 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public List<EventClient> fetchEventClients(long startServerVersion, long lastServerVersion) {
-
-
-        return fetchEventClientsCore("SELECT json, event_id FROM "
+        return fetchEventClientsCore("SELECT json, eventId FROM "
                         + Table.event.name()
                         + " WHERE "
                         + event_column.serverVersion.name()
