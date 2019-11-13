@@ -4,7 +4,6 @@ import android.content.Context;
 import android.security.KeyPairGeneratorSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
-import android.util.Log;
 
 import org.smartregister.CoreLibrary;
 
@@ -23,14 +22,14 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.x500.X500Principal;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 26/04/2019.
  */
 public class AndroidLegacyCryptography extends BaseCryptography implements ICryptography {
 
     public static final String AES_MODE = "AES/ECB/PKCS7Padding";
-
-    private static final String TAG = AndroidLegacyCryptography.class.getCanonicalName();
 
     public AndroidLegacyCryptography(Context context) {
         super(context);
@@ -50,7 +49,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             return encodedBytes;
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
             return null;
         }
     }
@@ -63,7 +62,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             byte[] decodedBytes = c.doFinal(encrypted);
             return decodedBytes;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
             return null;
         }
     }
@@ -78,7 +77,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             byte[] key = rsaDecrypt(encryptedKey, keyAlias + ALGORITHM.RSA);
             return new SecretKeySpec(key, ALGORITHM.AES);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
             return null;
         }
     }
@@ -93,7 +92,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             generateAESKey(keyAlias, RSA_KEY_ALIAS);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
     }
@@ -165,7 +164,7 @@ public class AndroidLegacyCryptography extends BaseCryptography implements ICryp
             }
         } catch (Exception e) {
 
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
     }
 }

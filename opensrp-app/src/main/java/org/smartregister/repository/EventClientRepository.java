@@ -73,7 +73,7 @@ public class EventClientRepository extends BaseRepository {
                     }
                 }
             } catch (JSONException e) {
-                Log.e(TAG, "Error extracting " + column.name(), e);
+                Timber.e( "Error extracting " + column.name(), e);
             }
         }
 
@@ -95,7 +95,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e( e.toString(), e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -120,7 +120,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e( e.toString(), e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();
@@ -295,7 +295,7 @@ public class EventClientRepository extends BaseRepository {
                             Log.w(TAG, "Unable to add client with baseEntityId: " + baseEntityId);
                     }
                 } catch (JSONException e) {
-                    Log.e(TAG, "JSONException", e);
+                    Timber.e( "JSONException", e);
                 }
             }
             getWritableDatabase().setTransactionSuccessful();
@@ -686,11 +686,11 @@ public class EventClientRepository extends BaseRepository {
                     lastSyncDate.setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1))
                             .getTime());
                 } catch (ParseException e) {
-                    Log.e(TAG, e.toString(), e);
+                    Timber.e( e.toString(), e);
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             cursor.close();
         }
@@ -755,11 +755,11 @@ public class EventClientRepository extends BaseRepository {
                     lastSyncDate.setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1))
                             .getTime());
                 } catch (ParseException e) {
-                    Log.e(TAG, e.toString(), e);
+                    Timber.e( e.toString(), e);
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             cursor.close();
         }
@@ -836,7 +836,7 @@ public class EventClientRepository extends BaseRepository {
                 result.put(AllConstants.KEY.EVENTS, events);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -877,7 +877,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -917,7 +917,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -990,7 +990,7 @@ public class EventClientRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1305,7 +1305,7 @@ public class EventClientRepository extends BaseRepository {
 
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1380,7 +1380,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e( e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();

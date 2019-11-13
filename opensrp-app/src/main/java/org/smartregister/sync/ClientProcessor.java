@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -31,6 +30,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessor {
@@ -38,7 +39,6 @@ public class ClientProcessor {
     public static final String baseEntityIdJSONKey = "baseEntityId";
     protected static final String providerIdJSONKey = "providerId";
     protected static final String VALUES_KEY = "values";
-    private static final String TAG = "ClientProcessor";
     private static final String detailsUpdated = "detailsUpdated";
     private static final String[] openmrs_gen_ids = {"zeir_id"};
     private static ClientProcessor instance;
@@ -51,7 +51,7 @@ public class ClientProcessor {
         try {
             mCloudantDataHandler = CloudantDataHandler.getInstance(context);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
     }
@@ -133,7 +133,7 @@ public class ClientProcessor {
             String baseEntityId = event.getString(baseEntityIdJSONKey);
 
             if (event.has("creator")) {
-                Log.i(TAG, "EVENT from openmrs");
+                Timber.i("EVENT from openmrs");
             }
 
             // For data integrity check if a client exists, if not pull one from cloudant and
@@ -169,7 +169,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -181,7 +181,7 @@ public class ClientProcessor {
         try {
             String baseEntityId = event.getString(baseEntityIdJSONKey);
             if (event.has("creator")) {
-                Log.i(TAG, "EVENT from openmrs");
+                Timber.i("EVENT from openmrs");
             }
             // For data integrity check if a client exists, if not pull one from cloudant and
             // insert in drishti sqlite db
@@ -217,7 +217,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -247,7 +247,7 @@ public class ClientProcessor {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -331,7 +331,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -401,7 +401,7 @@ public class ClientProcessor {
             return true;
 
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -423,7 +423,7 @@ public class ClientProcessor {
 
             return true;
         } catch (JSONException e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -588,7 +588,7 @@ public class ClientProcessor {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -610,7 +610,7 @@ public class ClientProcessor {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -625,7 +625,7 @@ public class ClientProcessor {
      */
     public void updateClientDetailsTable(JSONObject event, JSONObject client) {
         try {
-            Log.i(TAG, "Started updateClientDetailsTable");
+            Timber.i("Started updateClientDetailsTable");
 
             if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
                 String baseEntityId = client.getString(baseEntityIdJSONKey);
@@ -646,10 +646,10 @@ public class ClientProcessor {
 
             event.put(detailsUpdated, true);
 
-            Log.i(TAG, "Finished updateClientDetailsTable");
+            Timber.i("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -685,7 +685,7 @@ public class ClientProcessor {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return obs;
     }
@@ -713,7 +713,7 @@ public class ClientProcessor {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return attributes;
@@ -728,7 +728,7 @@ public class ClientProcessor {
                 map.put(key, value);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return map;
@@ -831,7 +831,7 @@ public class ClientProcessor {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return addressMap;
     }
@@ -895,7 +895,7 @@ public class ClientProcessor {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -932,7 +932,7 @@ public class ClientProcessor {
     }
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
-        Log.i(TAG, "Starting updateFTSsearch table: " + tableName);
+        Timber.i("Starting updateFTSsearch table: %s", tableName);
         AllCommonsRepository allCommonsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 allCommonsRepositoryobjects(tableName);
 
@@ -941,14 +941,14 @@ public class ClientProcessor {
             updateRegisterCount(entityId);
         }
 
-        Log.i(TAG, "Finished updateFTSsearch table: " + tableName);
+        Timber.i("Finished updateFTSsearch table: %s", tableName);
     }
 
     private JSONObject getClient(String baseEntityId) {
         try {
             return mCloudantDataHandler.getClientByBaseEntityId(baseEntityId);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e);
 
             return null;
         }

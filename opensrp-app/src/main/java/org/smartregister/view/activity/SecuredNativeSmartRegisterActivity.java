@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -52,6 +51,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -69,7 +70,6 @@ import static org.smartregister.util.EasyMap.create;
 
 public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity {
 
-    public static final String TAG = "SecuredNativeSmartRegisterActivity";
     public static final String DIALOG_TAG = "dialog";
     public static final List<? extends DialogOption> DEFAULT_FILTER_OPTIONS = asList(
             new AllClientsFilter());
@@ -378,7 +378,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
     public void saveFormSubmission(String formSubmision, String id, String formName, JSONObject
             fieldOverrides) {
-        Log.e("saveFormSubmission()", "Override this method in child class");
+        Timber.i("Override this method in child class");
     }
 
     protected String getParams(FormSubmission submission) {
@@ -407,7 +407,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
             editor.commit();
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -448,7 +448,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -482,7 +482,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
             return JSONML.toString(parentJson);
 
         } catch (JSONException e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e);
 
         }
         return savedDataStr;

@@ -382,7 +382,7 @@ public class Utils {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
+            Timber.e( Log.getStackTraceString(ex));
         }
 
         return fileContents;
@@ -394,7 +394,7 @@ public class Utils {
             is = context.getAssets().open(path);
 
         } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
+            Timber.e( Log.getStackTraceString(ex));
         }
 
         return is;
@@ -458,19 +458,19 @@ public class Utils {
                     result.add(csvValues);
                 }
             } catch (IOException e) {
-                Log.e(TAG, "populateTableFromCSV: error reading csv file " + e.getMessage());
+                Timber.e( "populateTableFromCSV: error reading csv file " + e.getMessage());
 
             } finally {
                 try {
                     is.close();
                     reader.close();
                 } catch (Exception e) {
-                    Log.e(TAG, "populateTableFromCSV: unable to close inputstream/bufferedreader " + e.getMessage());
+                    Timber.e( "populateTableFromCSV: unable to close inputstream/bufferedreader " + e.getMessage());
                 }
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "populateTableFromCSV " + e.getMessage());
+            Timber.e( "populateTableFromCSV " + e.getMessage());
         }
         return result;
     }
@@ -621,7 +621,7 @@ public class Utils {
                 duration = new DateTime(date);
                 return DateUtil.getDuration(duration);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e( e.toString(), e);
             }
         }
         return "";

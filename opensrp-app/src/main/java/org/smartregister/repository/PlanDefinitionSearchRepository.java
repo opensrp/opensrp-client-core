@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -12,12 +11,12 @@ import org.smartregister.domain.PlanDefinition;
 import java.util.HashSet;
 import java.util.Set;
 
+import timber.log.Timber;
+
 /**
  * Created by samuelgithengi on 5/7/19.
  */
 public class PlanDefinitionSearchRepository extends BaseRepository {
-
-    private static final String TAG = "PlanDefinitionSearch";
 
     protected static final String PLAN_ID = "plan_id";
     protected static final String JURISDICTION_ID = "jurisdiction_id";
@@ -85,7 +84,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                 planIds.add(cursor.getString(0));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();

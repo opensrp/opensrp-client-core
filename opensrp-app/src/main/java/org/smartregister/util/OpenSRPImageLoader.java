@@ -386,13 +386,13 @@ public class OpenSRPImageLoader extends ImageLoader {
                 }
 
             } catch (FileNotFoundException e) {
-                Log.e(TAG, "Failed to save static image to disk");
+                Timber.e( "Failed to save static image to disk");
             } finally {
                 if (os != null) {
                     try {
                         os.close();
                     } catch (IOException e) {
-                        Log.e(TAG, "Failed to close static images output stream after attempting"
+                        Timber.e( "Failed to close static images output stream after attempting"
                                 + " to write image");
                     }
                 }
@@ -515,7 +515,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e( e.getMessage(), e);
         }
     }
 
@@ -537,7 +537,7 @@ public class OpenSRPImageLoader extends ImageLoader {
             startAsyncTask(loadBitmap, filePathArray);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e( e.getMessage(), e);
         }
     }
 
@@ -701,7 +701,7 @@ public class OpenSRPImageLoader extends ImageLoader {
 
             } catch (Exception exc) {
 
-                Log.e(TAG, exc.getMessage(), exc);
+                Timber.e( exc.getMessage(), exc);
 
             }
 
