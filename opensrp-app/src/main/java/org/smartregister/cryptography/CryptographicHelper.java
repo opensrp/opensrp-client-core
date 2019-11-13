@@ -7,6 +7,8 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 import java.security.Key;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 26/04/2019.
  * <p>
@@ -34,7 +36,7 @@ public class CryptographicHelper {
                 mCryptography = new AndroidMCryptography(context.get());
 
             } catch (Exception e) {
-                Log.e(CryptographicHelper.class.getCanonicalName(), e.getMessage());
+                Timber.e(e);
             }
         }
 

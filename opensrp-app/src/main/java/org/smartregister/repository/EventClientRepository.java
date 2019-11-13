@@ -181,7 +181,7 @@ public class EventClientRepository extends BaseRepository {
             }
             return true;
         } catch (JSONException e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(getClass().getName(), e.getMessage(), e);
             return false;
         }
     }
@@ -303,7 +303,7 @@ public class EventClientRepository extends BaseRepository {
             return true;
         } catch (Exception e) {
             getWritableDatabase().endTransaction();
-            Log.e(getClass().getName(), "", e);
+            Timber.e(getClass().getName(), "", e);
             return false;
         } finally {
             if (insertStatement != null)
@@ -375,7 +375,7 @@ public class EventClientRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
             return true;
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(getClass().getName(), "", e);
             getWritableDatabase().endTransaction();
             return false;
         } finally {
@@ -400,8 +400,8 @@ public class EventClientRepository extends BaseRepository {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, t);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
-            Log.e(getClass().getName(), "Unable to convert: " + jsonString);
+            Timber.e(getClass().getName(), "", e);
+            Timber.e(getClass().getName(), "Unable to convert: " + jsonString);
             return null;
         }
     }
@@ -413,8 +413,8 @@ public class EventClientRepository extends BaseRepository {
         try {
             return new JSONObject(JsonFormUtils.gson.toJson(object));
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
-            Log.e(getClass().getName(), "Unable to convert to json : " + object.toString());
+            Timber.e(getClass().getName(), "", e);
+            Timber.e(getClass().getName(), "Unable to convert to json : " + object.toString());
             return null;
         }
     }
@@ -444,7 +444,7 @@ public class EventClientRepository extends BaseRepository {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(getClass().getName(), e.getMessage(), e);
         }
         return Pair.create(0L, 0L);
     }
@@ -481,7 +481,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(ev);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -500,7 +500,7 @@ public class EventClientRepository extends BaseRepository {
                 if (processEventClientCursor(list, cursor)) continue;
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -601,7 +601,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(eventClient);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1015,7 +1015,7 @@ public class EventClientRepository extends BaseRepository {
                 return cl;
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1051,7 +1051,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(ev);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1081,7 +1081,7 @@ public class EventClientRepository extends BaseRepository {
 
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1110,7 +1110,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonEventStr);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1135,7 +1135,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonString);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1160,7 +1160,7 @@ public class EventClientRepository extends BaseRepository {
                 return convert(jsonString, Client.class);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1187,7 +1187,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(json);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1216,7 +1216,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonEventStr);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1251,7 +1251,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(new EventClient(event));
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1418,7 +1418,7 @@ public class EventClientRepository extends BaseRepository {
                 getWritableDatabase().insert(Table.client.name(), null, values);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
     }
 
@@ -1508,7 +1508,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
     }
 
@@ -1526,7 +1526,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{baseEntityId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
     }
 
@@ -1546,7 +1546,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
     }
 
@@ -1568,7 +1568,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{baseEntityId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
     }
 
@@ -1583,7 +1583,7 @@ public class EventClientRepository extends BaseRepository {
                     event_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
     }
 
@@ -1610,7 +1610,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
 
     }
@@ -1640,7 +1640,7 @@ public class EventClientRepository extends BaseRepository {
 
             createIndex(db, table, columns);
         } catch (Exception e) {
-            Log.e(EventClientRepository.class.getName(), "Exception", e);
+            Timber.e(EventClientRepository.class.getName(), "Exception", e);
         }
     }
 
@@ -1659,7 +1659,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(EventClientRepository.class.getName(), "Exception", e);
+            Timber.e(EventClientRepository.class.getName(), "Exception", e);
         }
     }
 
@@ -1672,7 +1672,7 @@ public class EventClientRepository extends BaseRepository {
                 db.execSQL("DROP INDEX " + cursor.getString(0));
             }
         } catch (Exception e) {
-            Log.e(EventClientRepository.class.getName(), "SQLException", e);
+            Timber.e(EventClientRepository.class.getName(), "SQLException", e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -1771,7 +1771,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
         return false;
     }
@@ -1789,7 +1789,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(getClass().getName(), "Exception", e);
         }
         return false;
     }
