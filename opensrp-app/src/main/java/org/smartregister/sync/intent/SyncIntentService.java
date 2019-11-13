@@ -123,8 +123,8 @@ public class SyncIntentService extends BaseSyncIntentService {
                 JSONObject syncParams = new JSONObject();
                 syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
                 syncParams.put("serverVersion", lastSyncDatetime);
-                syncParams.put("limit",  getEventPullLimit());
-                resp = httpAgent.postWithJsonResponse(url,syncParams.toString());
+                syncParams.put("limit", getEventPullLimit());
+                resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
             } else {
                 url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
                 Timber.i("URL: %s", url);
@@ -155,12 +155,11 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.i("Parse Network Event Count: %s", eCount);
             }
 
-
             if (eCount == 0) {
                 complete(FetchStatus.nothingFetched);
             } else if (eCount < 0) {
                 fetchFailed(count);
-            } else  {
+            } else {
                 final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
                 long lastServerVersion = serverVersionPair.second - 1;
                 if (eCount < getEventPullLimit()) {
@@ -169,7 +168,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
                 boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
                 //update sync time if all event client is save.
-                if(isSaved){
+                if (isSaved) {
                     processClient(serverVersionPair);
                     ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
                 }
@@ -211,40 +210,40 @@ public class SyncIntentService extends BaseSyncIntentService {
         boolean keepSyncing = true;
 
         while (keepSyncing) {
+            Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
+
+            if (pendingEvents.isEmpty()) {
+                return;
+            }
+
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
+                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
+            }
+            // create request body
+            JSONObject request = new JSONObject();
             try {
-                Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
-
-                if (pendingEvents.isEmpty()) {
-                    return;
-                }
-
-                String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-                if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
-                    baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
-                }
-                // create request body
-                JSONObject request = new JSONObject();
                 if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
                     request.put(AllConstants.KEY.CLIENTS, pendingEvents.get(AllConstants.KEY.CLIENTS));
                 }
                 if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
-                String jsonPayload = request.toString();
-                Response<String> response = httpAgent.post(
-                        MessageFormat.format("{0}/{1}",
-                                baseUrl,
-                                ADD_URL),
-                        jsonPayload);
-                if (response.isFailure()) {
-                    Timber.e("Events sync failed.");
-                    return;
-                }
-                db.markEventsAsSynced(pendingEvents);
-                Timber.i("Events synced successfully.");
-            } catch (Exception e) {
+            } catch (JSONException e) {
                 Timber.e(e);
             }
+            String jsonPayload = request.toString();
+            Response<String> response = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            ADD_URL),
+                    jsonPayload);
+            if (response.isFailure()) {
+                Timber.e("Events sync failed.");
+                return;
+            }
+            db.markEventsAsSynced(pendingEvents);
+            Timber.i("Events synced successfully.");
         }
     }
 
