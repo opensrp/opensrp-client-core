@@ -179,7 +179,7 @@ public class EventClientRepository extends BaseRepository {
             }
             return true;
         } catch (JSONException e) {
-            Timber.e(getClass().getName(), e, e);
+            Timber.e(e);
             return false;
         }
     }
@@ -398,8 +398,7 @@ public class EventClientRepository extends BaseRepository {
         try {
             return JsonFormUtils.gson.fromJson(jsonString, t);
         } catch (Exception e) {
-            Timber.e(e);
-            Timber.e(getClass().getName(), "Unable to convert: " + jsonString);
+            Timber.e(e, "Unable to convert: %s", jsonString);
             return null;
         }
     }
@@ -411,8 +410,7 @@ public class EventClientRepository extends BaseRepository {
         try {
             return new JSONObject(JsonFormUtils.gson.toJson(object));
         } catch (Exception e) {
-            Timber.e(e);
-            Timber.e(getClass().getName(), "Unable to convert to json : " + object.toString());
+            Timber.e(e, "Unable to convert to json %s ", object);
             return null;
         }
     }
@@ -442,7 +440,7 @@ public class EventClientRepository extends BaseRepository {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), e, e);
+            Timber.e(e);
         }
         return Pair.create(0L, 0L);
     }
@@ -479,7 +477,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(ev);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -498,7 +496,7 @@ public class EventClientRepository extends BaseRepository {
                 if (processEventClientCursor(list, cursor)) continue;
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -599,7 +597,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(eventClient);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1013,7 +1011,7 @@ public class EventClientRepository extends BaseRepository {
                 return cl;
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1049,7 +1047,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(ev);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1079,7 +1077,7 @@ public class EventClientRepository extends BaseRepository {
 
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1108,7 +1106,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonEventStr);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1133,7 +1131,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonString);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1158,7 +1156,7 @@ public class EventClientRepository extends BaseRepository {
                 return convert(jsonString, Client.class);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1185,7 +1183,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(json);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1214,7 +1212,7 @@ public class EventClientRepository extends BaseRepository {
                 return new JSONObject(jsonEventStr);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1249,7 +1247,7 @@ public class EventClientRepository extends BaseRepository {
                 list.add(new EventClient(event));
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1416,7 +1414,7 @@ public class EventClientRepository extends BaseRepository {
                 getWritableDatabase().insert(Table.client.name(), null, values);
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1507,7 +1505,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1525,7 +1523,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{baseEntityId});
 
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1545,7 +1543,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1567,7 +1565,7 @@ public class EventClientRepository extends BaseRepository {
                     new String[]{baseEntityId});
 
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1582,7 +1580,7 @@ public class EventClientRepository extends BaseRepository {
                     event_column.formSubmissionId.name() + " = ?",
                     new String[]{formSubmissionId});
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -1609,7 +1607,7 @@ public class EventClientRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
 
     }
@@ -1770,7 +1768,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return false;
     }
@@ -1788,7 +1786,7 @@ public class EventClientRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Timber.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return false;
     }

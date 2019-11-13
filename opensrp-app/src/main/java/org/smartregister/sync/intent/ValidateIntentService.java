@@ -76,7 +76,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
             if (response.isFailure() || StringUtils.isBlank(response.payload())) {
-                Timber.e(getClass().getName(), "Validation sync failed.");
+                Timber.e("Validation sync failed.");
                 return;
             }
 
