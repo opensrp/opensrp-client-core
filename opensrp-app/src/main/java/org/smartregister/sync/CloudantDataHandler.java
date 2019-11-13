@@ -188,7 +188,7 @@ public class CloudantDataHandler {
                     lastSyncDate
                             .setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1)).getTime());
                 } catch (ParseException e) {
-                    Timber.e(e.toString(), e);
+                    Timber.e(e);
                 }
             }
         } finally {
@@ -311,7 +311,7 @@ public class CloudantDataHandler {
             }
 
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
 
         return null;
@@ -326,7 +326,7 @@ public class CloudantDataHandler {
             return Client.fromRevision(created);
 
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
 
         return null;
@@ -375,7 +375,7 @@ public class CloudantDataHandler {
             try {
                 client = Client.fromRevision(rev);
             } catch (ParseException e) {
-                Timber.e(e.toString(), e);
+                Timber.e(e);
             }
             if (client != null) {
                 clients.add(client);

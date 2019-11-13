@@ -213,7 +213,7 @@ public class CommonRepository extends DrishtiRepository {
             }
             return commons.get(0);
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
