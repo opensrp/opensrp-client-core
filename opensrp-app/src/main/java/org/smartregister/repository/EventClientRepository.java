@@ -1436,6 +1436,7 @@ public class EventClientRepository extends BaseRepository {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             }
             populateAdditionalColumns(values, event_column.values(), jsonObject);
+            long affected=0;
             //update existing event if eventid present
             if (jsonObject.has(event_column.formSubmissionId.name())
                     && jsonObject.getString(event_column.formSubmissionId.name()) != null) {
@@ -1446,7 +1447,7 @@ public class EventClientRepository extends BaseRepository {
                                 .name()))) {
 
                     values.put(ROWID, getMaxRowId(Table.event) + 1);
-                    getWritableDatabase().update(Table.event.name(),
+                    affected=  getWritableDatabase().update(Table.event.name(),
                             values,
                             event_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
@@ -1456,13 +1457,16 @@ public class EventClientRepository extends BaseRepository {
                     values.put(event_column.formSubmissionId.name(),
                             jsonObject.getString(event_column.formSubmissionId.name()));
 
-                    getWritableDatabase().insert(Table.event.name(), null, values);
+                    affected=  getWritableDatabase().insert(Table.event.name(), null, values);
 
                 }
             } else {
 // a case here would be if an event comes from openmrs
-                getWritableDatabase().insert(Table.event.name(), null, values);
+                affected=getWritableDatabase().insert(Table.event.name(), null, values);
             }
+
+            if (affected < 1)
+                Timber.e("event for %s not created or updated: %s", baseEntityId, jsonObject);
 
         } catch (Exception e) {
             Timber.e(e);
