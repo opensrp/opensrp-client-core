@@ -1403,16 +1403,20 @@ public class EventClientRepository extends BaseRepository {
             values.put(client_column.syncStatus.name(), syncStatus);
             values.put(client_column.baseEntityId.name(), baseEntityId);
             populateAdditionalColumns(values, client_column.values(), jsonObject);
+            long affected;
             if (checkIfExists(Table.client, baseEntityId)) {
                 values.put(ROWID, getMaxRowId(Table.client) + 1);
 
-                getWritableDatabase().update(Table.client.name(),
+                affected = getWritableDatabase().update(Table.client.name(),
                         values,
                         client_column.baseEntityId.name() + " = ?",
                         new String[]{baseEntityId});
             } else {
-                getWritableDatabase().insert(Table.client.name(), null, values);
+                affected = getWritableDatabase().insert(Table.client.name(), null, values);
             }
+
+            if (affected < 1)
+                Timber.e("Client %s not saved: %s", baseEntityId, jsonObject);
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -1436,7 +1440,7 @@ public class EventClientRepository extends BaseRepository {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             }
             populateAdditionalColumns(values, event_column.values(), jsonObject);
-            long affected=0;
+            long affected ;
             //update existing event if eventid present
             if (jsonObject.has(event_column.formSubmissionId.name())
                     && jsonObject.getString(event_column.formSubmissionId.name()) != null) {
@@ -1447,7 +1451,7 @@ public class EventClientRepository extends BaseRepository {
                                 .name()))) {
 
                     values.put(ROWID, getMaxRowId(Table.event) + 1);
-                    affected=  getWritableDatabase().update(Table.event.name(),
+                    affected = getWritableDatabase().update(Table.event.name(),
                             values,
                             event_column.formSubmissionId.name() + "=?",
                             new String[]{jsonObject.getString(
@@ -1457,12 +1461,12 @@ public class EventClientRepository extends BaseRepository {
                     values.put(event_column.formSubmissionId.name(),
                             jsonObject.getString(event_column.formSubmissionId.name()));
 
-                    affected=  getWritableDatabase().insert(Table.event.name(), null, values);
+                    affected = getWritableDatabase().insert(Table.event.name(), null, values);
 
                 }
             } else {
 // a case here would be if an event comes from openmrs
-                affected=getWritableDatabase().insert(Table.event.name(), null, values);
+                affected = getWritableDatabase().insert(Table.event.name(), null, values);
             }
 
             if (affected < 1)
