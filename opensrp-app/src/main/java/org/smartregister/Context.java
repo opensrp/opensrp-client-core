@@ -1079,7 +1079,7 @@ public class Context {
     }
 
     public HTTPAgent getHttpAgent() {
-        return httpAgent;
+        return httpAgent();
     }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {
