@@ -145,17 +145,22 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
             }
+            int eCount;
+            JSONObject jsonObject = new JSONObject();
+            if (resp.payload() == null) {
+                eCount = 0;
+            } else {
+                jsonObject = new JSONObject((String) resp.payload());
+                eCount = fetchNumberOfEvents(jsonObject);
+                Timber.i("Parse Network Event Count: %s", eCount);
+            }
 
-            JSONObject jsonObject = new JSONObject((String) resp.payload());
-
-            int eCount = fetchNumberOfEvents(jsonObject);
-            Timber.i("Parse Network Event Count: %s", eCount);
 
             if (eCount == 0) {
                 complete(FetchStatus.nothingFetched);
             } else if (eCount < 0) {
                 fetchFailed(count);
-            } else if (eCount > 0) {
+            } else  {
                 final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
                 long lastServerVersion = serverVersionPair.second - 1;
                 if (eCount < getEventPullLimit()) {
