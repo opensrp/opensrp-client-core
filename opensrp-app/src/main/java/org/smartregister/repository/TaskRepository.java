@@ -113,7 +113,11 @@ public class TaskRepository extends BaseRepository {
         }
         ContentValues contentValues = new ContentValues();
 
-        if (P2PUtil.checkIfExistsById(TASK_TABLE, task.getIdentifier(), getWritableDatabase())) {
+        Task existingTask = getTaskByIdentifier(task.getIdentifier());
+        if (existingTask != null) {
+            if(existingTask.getLastModified().isAfter(task.getLastModified())) {
+                return;
+            }
             int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
             contentValues.put(ROWID, ++maxRowId);
         }

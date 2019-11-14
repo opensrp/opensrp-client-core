@@ -34,6 +34,8 @@ import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static android.widget.Toast.LENGTH_SHORT;
 import static org.smartregister.AllConstants.ALERT_NAME_PARAM;
 import static org.smartregister.AllConstants.CloudantSync;
@@ -313,7 +315,12 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         super.onPause();
 
         if (openSRPClientBroadCastReceiver != null) {
-            unregisterReceiver(openSRPClientBroadCastReceiver);
+            try {
+                unregisterReceiver(openSRPClientBroadCastReceiver);
+                openSRPClientBroadCastReceiver = null;
+            } catch (IllegalArgumentException e) {
+                Timber.e(e, "EXCEPTION %s", e.toString());
+            }
         }
 
         if (p2pProcessingStatusBroadcastReceiver != null) {
