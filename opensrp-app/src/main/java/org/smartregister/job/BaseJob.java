@@ -1,7 +1,6 @@
 package org.smartregister.job;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobManager;
@@ -12,12 +11,13 @@ import org.smartregister.AllConstants;
 
 import java.util.concurrent.TimeUnit;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 05/09/2018.
  */
 public abstract class BaseJob extends Job {
 
-    private static final String TAG = BaseJob.class.getCanonicalName();
 
     public static void scheduleJob(String jobTag, Long start, Long flex) {
 
@@ -35,13 +35,13 @@ public abstract class BaseJob extends Job {
             try {
 
                 int jobId = jobRequest.build().schedule();
-                Log.d(TAG, "Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + start + " minutes and flex value of " + flex + " minutes");
+                Timber.d("Scheduling job with name " + jobTag + " : JOB ID " + jobId + " periodically every " + start + " minutes and flex value of " + flex + " minutes");
 
             } catch (Exception e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
             }
         } else {
-            Log.d(TAG, "Skipping schedule for job with name " + jobTag + " : Already Exists!");
+            Timber.d("Skipping schedule for job with name " + jobTag + " : Already Exists!");
 
         }
     }
@@ -56,14 +56,14 @@ public abstract class BaseJob extends Job {
                 .build()
                 .schedule();
 
-        Log.d(TAG, "Scheduling job with name " + jobTag + " immediately with JOB ID " + jobId);
+        Timber.d("Scheduling job with name " + jobTag + " immediately with JOB ID " + jobId);
 
     }
 
     @Override
     protected void onReschedule(int newJobId) {
 
-        Log.d(TAG, "Rescheduling job with name " + this.getParams().getTag() + " JOB ID " + newJobId);
+        Timber.d("Rescheduling job with name " + this.getParams().getTag() + " JOB ID " + newJobId);
     }
 
     //Custom app context method to aid unit testing

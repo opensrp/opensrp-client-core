@@ -1,11 +1,12 @@
 package org.smartregister.cryptography;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.SecureRandom;
+
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 26/04/2019.
@@ -41,7 +42,7 @@ public abstract class BaseCryptography {
             keyStore.load(null);
 
         } catch (Exception e) {
-            Log.e(BaseCryptography.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
         }
 
         secureRandom = new SecureRandom();
@@ -51,7 +52,7 @@ public abstract class BaseCryptography {
         try {
             keyStore.deleteEntry(alias);
         } catch (KeyStoreException e) {
-            Log.e(BaseCryptography.class.getCanonicalName(), Log.getStackTraceString(e));
+            Timber.e(e);
         }
     }
 

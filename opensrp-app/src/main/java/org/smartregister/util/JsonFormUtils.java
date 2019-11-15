@@ -87,7 +87,7 @@ public class JsonFormUtils {
             try {
                 birthDateEstimated = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             birthdateApprox = birthDateEstimated > 0;
         }
@@ -98,7 +98,7 @@ public class JsonFormUtils {
             try {
                 deathDateEstimated = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             deathdateApprox = deathDateEstimated > 0;
         }
@@ -135,7 +135,7 @@ public class JsonFormUtils {
         try {
             encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
         if (StringUtils.isBlank(encounterLocation)) {
@@ -173,7 +173,7 @@ public class JsonFormUtils {
                     createObsFromPopUpValues(event, jsonObject, false);
                 }
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
             }
 
             try {
@@ -181,7 +181,7 @@ public class JsonFormUtils {
                     addObservation(event, jsonObject);
                 }
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
             }
         }
 
@@ -316,7 +316,7 @@ public class JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
     }
 
@@ -386,7 +386,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    Log.e(TAG, e1.getMessage());
+                    Timber.e(e1);
                 }
             } else {
                 createObservation(e, jsonObject, value, entity);
@@ -445,7 +445,7 @@ public class JsonFormUtils {
                         }
                     }
                 } catch (JSONException e1) {
-                    Timber.e("%s : %s", TAG, e1.getMessage());
+                    Timber.e(e1);
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -632,7 +632,7 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
     }
 
@@ -804,7 +804,7 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
     }
 
@@ -827,7 +827,7 @@ public class JsonFormUtils {
             return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
 
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
         return null;
     }
@@ -878,7 +878,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
         return fields;
     }
@@ -920,7 +920,7 @@ public class JsonFormUtils {
             return result;
 
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
             return null;
         }
 
@@ -930,7 +930,7 @@ public class JsonFormUtils {
         try {
             return new JSONObject(jsonString);
         } catch (JSONException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
             return null;
         }
     }
@@ -1104,7 +1104,7 @@ public class JsonFormUtils {
             }
 
         } catch (ParseException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
 
         return null;
@@ -1122,7 +1122,7 @@ public class JsonFormUtils {
 
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
     }
 
@@ -1141,7 +1141,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
         return mergedJSON;
     }
@@ -1172,7 +1172,7 @@ public class JsonFormUtils {
                 return DateUtil.yyyyMMdd.format(date);
             }
         } catch (Exception e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
         return null;
     }

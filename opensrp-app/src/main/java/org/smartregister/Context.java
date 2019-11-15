@@ -3,7 +3,6 @@ package org.smartregister;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -112,10 +111,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class Context {
-    private static final String TAG = "Context";
+
     ///////////////////common bindtypes///////////////
     public static ArrayList<CommonRepositoryInformationHolder> bindtypes;
     private static Context context = new Context();
@@ -985,10 +986,10 @@ public class Context {
                             .getJSONObject(j).getString("name");
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columNames));
-                Log.v("bind type logs", bindtypeObjects.getJSONObject(i).getString("name"));
+                Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString("name"));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e( e);
         }
     }
 
@@ -1024,10 +1025,10 @@ public class Context {
                     }
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames.toArray(new String[0])));
-                Log.v("bind type logs", bindname);
+                Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e( e);
         }
 
     }
@@ -1047,7 +1048,7 @@ public class Context {
                 returnString.append(line);
             }
         } catch (Exception e) {
-            e.getMessage();
+          Timber.e(e);
         } finally {
             try {
                 if (isr != null) {
@@ -1060,7 +1061,7 @@ public class Context {
                     input.close();
                 }
             } catch (Exception e2) {
-                e2.getMessage();
+                Timber.e(e2);
             }
         }
         return returnString.toString();
@@ -1079,7 +1080,7 @@ public class Context {
     }
 
     public HTTPAgent getHttpAgent() {
-        return httpAgent;
+        return httpAgent();
     }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {

@@ -513,7 +513,7 @@ public class ClientProcessorForJava {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -552,7 +552,7 @@ public class ClientProcessorForJava {
             Timber.d("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Timber.e(e.toString(), e);
+            Timber.e(e);
         }
     }
 

@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -13,10 +12,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class Hia2ReportRepository extends BaseRepository {
 
-
-    private static final String TAG = "Hia2ReportRepository";
 
     public Hia2ReportRepository(Repository repository) {
         super(repository);
@@ -107,7 +106,7 @@ public class Hia2ReportRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e.getMessage());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -147,7 +146,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -194,7 +193,7 @@ public class Hia2ReportRepository extends BaseRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -211,7 +210,7 @@ public class Hia2ReportRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -230,7 +229,7 @@ public class Hia2ReportRepository extends BaseRepository {
                     new String[]{formSubmissionId});
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -245,7 +244,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 }
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
 
     }
@@ -266,7 +265,7 @@ public class Hia2ReportRepository extends BaseRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (mCursor != null) {
                 mCursor.close();

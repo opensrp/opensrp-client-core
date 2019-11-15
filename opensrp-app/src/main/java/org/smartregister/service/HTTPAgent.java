@@ -7,6 +7,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.compression.GZIPCompression;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
@@ -19,6 +20,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
 
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,6 +69,7 @@ public class HTTPAgent {
     private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
+    private GZIPCompression gzipCompression;
 
     private String boundary = "***" + System.currentTimeMillis() + "***";
     private String twoHyphens = "--";
@@ -81,6 +84,7 @@ public class HTTPAgent {
         this.settings = settings;
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
+        gzipCompression= new GZIPCompression();
     }
 
     /**
@@ -128,10 +132,11 @@ public class HTTPAgent {
 
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+            urlConnection.setRequestProperty("Content-Encoding", "gzip");
 
             OutputStream os = urlConnection.getOutputStream();
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-            writer.write(jsonPayload);
+            BufferedOutputStream writer = new BufferedOutputStream(os);
+            writer.write(gzipCompression.compress(jsonPayload));
             writer.flush();
             writer.close();
             os.close();

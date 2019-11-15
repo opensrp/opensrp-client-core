@@ -53,6 +53,8 @@ import java.util.UUID;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import timber.log.Timber;
+
 /**
  * Created by koros on 9/28/15.
  */
@@ -139,7 +141,7 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return false;
@@ -291,20 +293,20 @@ public class FormUtils {
     }
 
     private void printClient(Client client) {
-        Log.logDebug("============== CLIENT ================");
+        Timber.d("============== CLIENT ================");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
         String clientJson = gson.toJson(client);
-        Log.logDebug(clientJson);
-        Log.logDebug("====================================");
+        Timber.d(clientJson);
+        Timber.d("====================================");
 
     }
 
     private void printEvent(Event event) {
-        Log.logDebug("============== EVENT ================");
+        Timber.d("============== EVENT ================");
         Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
         String eventJson = gson.toJson(event);
-        Log.logDebug(eventJson);
-        Log.logDebug("====================================");
+        Timber.d(eventJson);
+        Timber.d("====================================");
     }
 
     /**
@@ -444,7 +446,7 @@ public class FormUtils {
             return xml;
 
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return "";
     }
@@ -569,7 +571,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return entityJson;
     }
@@ -594,7 +596,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -644,7 +646,7 @@ public class FormUtils {
                 }
             }
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return "";
@@ -848,7 +850,7 @@ public class FormUtils {
 
                     item.put("value", val);
                 } catch (Exception e) {
-                    android.util.Log.e(TAG, e.toString(), e);
+                    Timber.e(e);
                 }
             }
         }
@@ -865,7 +867,7 @@ public class FormUtils {
             String entityRelationships = readFileFromAssetsFolder(
                     "www/form/entity_relationship" + ".json");
             JSONArray json = new JSONArray(entityRelationships);
-            Log.logInfo(json.toString());
+            Timber.i(json.toString());
 
             JSONObject rJson;
 
@@ -887,7 +889,7 @@ public class FormUtils {
                                 : rJson.getString("from");
                 String sql =
                         "select * from " + childTable + " where " + joinField + "=?";
-                Log.logInfo(sql);
+                Timber.d(sql);
                 String dbEntity = theAppContext.formDataRepository().queryUniqueResult(sql, new String[]{val});
                 JSONObject linkedEntityJson = new JSONObject();
 
@@ -905,7 +907,7 @@ public class FormUtils {
             }
 
         } catch (Exception e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -1020,7 +1022,7 @@ public class FormUtils {
             }
 
         } catch (JSONException e) {
-            android.util.Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -1067,7 +1069,7 @@ public class FormUtils {
             is.close();
             fileContents = new String(buffer, CharEncoding.UTF_8);
         } catch (IOException ex) {
-            android.util.Log.e(TAG, ex.toString(), ex);
+            Timber.e(ex);
 
             return null;
         }
@@ -1104,7 +1106,7 @@ public class FormUtils {
 
                 return new JSONObject(stringBuilder.toString());
             } catch (IOException | JSONException e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;

@@ -3,7 +3,6 @@ package org.smartregister.commonregistry;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.provider.BaseColumns;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -21,6 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static net.sqlcipher.DatabaseUtils.longForQuery;
 import static org.apache.commons.lang3.StringUtils.repeat;
 
@@ -34,7 +35,6 @@ public class CommonRepository extends DrishtiRepository {
     public static final String DETAILS_COLUMN = "details";
     public static final String IS_CLOSED_COLUMN = "is_closed";
     public static final String BASE_ENTITY_ID_COLUMN = "base_entity_id";
-    private static final String TAG = "CommonRepository";
     public String TABLE_NAME = "common";
     public String[] common_TABLE_COLUMNS = new String[]{ID_COLUMN, Relational_ID, DETAILS_COLUMN,
             IS_CLOSED_COLUMN};
@@ -213,7 +213,7 @@ public class CommonRepository extends DrishtiRepository {
             }
             return commons.get(0);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -323,7 +323,7 @@ public class CommonRepository extends DrishtiRepository {
                 cursor.moveToNext();
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             cursor.close();
         }
@@ -363,7 +363,7 @@ public class CommonRepository extends DrishtiRepository {
                 cursor.moveToNext();
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             cursor.close();
         }
@@ -372,7 +372,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public Cursor rawCustomQueryForAdapter(String query) {
-        Log.i(getClass().getName(), query);
+        Timber.i(query);
         SQLiteDatabase database = masterRepository.getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         return cursor;
@@ -452,7 +452,7 @@ public class CommonRepository extends DrishtiRepository {
                     try {
                         rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                     } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+                        Timber.d(e.getMessage());
                     }
                 }
             }
@@ -478,7 +478,7 @@ public class CommonRepository extends DrishtiRepository {
             cv.put(IS_CLOSED_COLUMN, 1);
             db.update(tableName, cv, BASE_ENTITY_ID_COLUMN + "=?", new String[]{baseEntityId});
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -497,7 +497,7 @@ public class CommonRepository extends DrishtiRepository {
                 return true;
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return false;
     }
@@ -520,6 +520,7 @@ public class CommonRepository extends DrishtiRepository {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
+            Timber.e(e);
 
         } finally {
             if (cursor != null) {
@@ -605,7 +606,7 @@ public class CommonRepository extends DrishtiRepository {
             searchValues.put(CommonFtsObject.isClosedColumnName, commonPersonObject.getClosed());
             return searchValues;
         } catch (Exception e) {
-            Log.e("", "Update Search Error", e);
+            Timber.e(e, "Update Search Error");
             return null;
         }
     }
@@ -704,11 +705,11 @@ public class CommonRepository extends DrishtiRepository {
                 if (!mapList.isEmpty()) {
                     int updated = database.update(ftsSearchTable, searchValues,
                             CommonFtsObject.idColumn + " = " + "" + "?", new String[]{caseId});
-                    Log.i(getClass().getName(), "Fts Row Updated: " + String.valueOf(updated));
+                    Timber.i("Fts Row Updated: %s", String.valueOf(updated));
 
                 } else {
                     long rowId = database.insert(ftsSearchTable, null, searchValues);
-                    Log.i(getClass().getName(), "Details Row Inserted : " + String.valueOf(rowId));
+                    Timber.i("Details Row Inserted : %s", String.valueOf(rowId));
                 }
             }
             database.setTransactionSuccessful();
@@ -716,7 +717,7 @@ public class CommonRepository extends DrishtiRepository {
 
             return true;
         } catch (Exception e) {
-            Log.e("", "Update Search Error", e);
+            Timber.e(e, "Update Search Error");
             database.endTransaction();
             return false;
         }
@@ -738,7 +739,7 @@ public class CommonRepository extends DrishtiRepository {
             database.setTransactionSuccessful();
             database.endTransaction();
         } catch (Exception e) {
-            Log.e("", "Update Search Error", e);
+            Timber.e(e, "Update Search Error");
             database.endTransaction();
         }
 
@@ -752,7 +753,7 @@ public class CommonRepository extends DrishtiRepository {
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
 
-            Log.i(getClass().getName(), query);
+            Timber.i(query);
             cursor = database.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
@@ -763,7 +764,7 @@ public class CommonRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.i(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -779,7 +780,7 @@ public class CommonRepository extends DrishtiRepository {
         try {
             SQLiteDatabase database = masterRepository.getReadableDatabase();
 
-            Log.i(getClass().getName(), query);
+            Timber.i(query);
             cursor = database.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
@@ -787,7 +788,7 @@ public class CommonRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.i(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
