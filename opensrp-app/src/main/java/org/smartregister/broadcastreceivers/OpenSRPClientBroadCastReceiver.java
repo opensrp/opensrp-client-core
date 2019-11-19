@@ -4,17 +4,17 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import org.smartregister.AllConstants;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.SecuredActivity;
 
+import timber.log.Timber;
+
 /**
  * Created by onamacuser on 16/03/2016.
  */
 public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
-    private static final String TAG = OpenSRPClientBroadCastReceiver.class.getCanonicalName();
     Activity activity;
 
     public OpenSRPClientBroadCastReceiver(Activity _activity) {
@@ -31,12 +31,12 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
 
                 case Intent.ACTION_TIME_CHANGED:
                     //((SecuredActivity) activity).showToast("TIME CHANGED");
-                    Log.d(TAG, "timechanged");
+                    Timber.d("timechanged");
                     forceFullySignOut();
                     break;
                 case Intent.ACTION_TIMEZONE_CHANGED:
                     //((SecuredActivity) activity).showToast("TIMEZONE CHANGED");
-                    Log.d(TAG, "timezonechanged");
+                    Timber.d("timezonechanged");
                     forceFullySignOut();
                     break;
                 case AllConstants.CloudantSync.ACTION_DATABASE_CREATED:
@@ -56,11 +56,12 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
                     // Do nothing
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
     }
-    private void forceFullySignOut(){
+
+    private void forceFullySignOut() {
         DrishtiApplication application = (DrishtiApplication) activity.getApplication();
         application.logoutCurrentUser();
     }

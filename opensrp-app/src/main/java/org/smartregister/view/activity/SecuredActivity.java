@@ -232,7 +232,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
      * TasksModel takes care of calling this on the main thread.
      */
     public void replicationError() {
-        Log.e(LOG_TAG, "error()");
+        Timber.e(LOG_TAG, "error()");
         //Toast.makeText(getApplicationContext(), "Replication Error", Toast.LENGTH_LONG).show();
     }
 

@@ -12,7 +12,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +41,8 @@ import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -438,7 +439,7 @@ public abstract class RecyclerViewFragment extends
 
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e( e);
         }
 
         return query;
@@ -464,7 +465,7 @@ public abstract class RecyclerViewFragment extends
 
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         }
 
         return query;
@@ -478,10 +479,10 @@ public abstract class RecyclerViewFragment extends
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
-                Log.i(getClass().getName(), query);
+                Timber.i( query);
 
                 clientAdapter.setTotalcount(commonRepository().countSearchIds(sql));
-                Log.v("total count here", "" + clientAdapter.getTotalcount());
+                Timber.v("total count here %d",clientAdapter.getTotalcount());
 
 
             } else {
@@ -489,11 +490,11 @@ public abstract class RecyclerViewFragment extends
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(query);
 
-                Log.i(getClass().getName(), query);
+                Timber.i(query);
                 c = commonRepository().rawCustomQueryForAdapter(query);
                 c.moveToFirst();
                 clientAdapter.setTotalcount(c.getInt(0));
-                Log.v("total count here", "" + clientAdapter.getTotalcount());
+                Timber.v("total count here %d",  clientAdapter.getTotalcount());
             }
 
             clientAdapter.setCurrentlimit(20);
@@ -501,7 +502,7 @@ public abstract class RecyclerViewFragment extends
 
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (c != null) {
                 c.close();
