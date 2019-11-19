@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -22,6 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
 
+import timber.log.Timber;
+
 /**
  * Created by samuelgithengi on 5/7/19.
  */
@@ -40,7 +41,6 @@ public class PlanDefinitionRepository extends BaseRepository {
     protected static final String DRAFT = "draft";
 
     private static final String PLAN_DEFINITION_TABLE = "plan_definition";
-    private static final String TAG = PlanDefinitionRepository.class.getName();
 
     private PlanDefinitionSearchRepository searchRepository;
 
@@ -94,7 +94,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 return gson.fromJson(cursor.getString(0), PlanDefinition.class);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -114,7 +114,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -134,7 +134,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -152,7 +152,7 @@ public class PlanDefinitionRepository extends BaseRepository {
                 ids.add(cursor.getString(0));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();

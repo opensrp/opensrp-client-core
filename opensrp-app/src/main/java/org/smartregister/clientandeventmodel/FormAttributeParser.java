@@ -1,7 +1,6 @@
 package org.smartregister.clientandeventmodel;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -39,13 +38,14 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import timber.log.Timber;
+
 /**
  * The class is the bridge that allows parsing and mapping of formSubmission fields with
  * those defined in xls form for external system entity mappings.
  */
 public class FormAttributeParser {
 
-    private static final String TAG = "FormAttributeParser";
     Context mContext;
     private String jsonFilePath;
     private String xmlFilePath;
@@ -851,7 +851,7 @@ public class FormAttributeParser {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Log.e(TAG, ex.toString(), ex);
+            Timber.e(  ex);
             return null;
         }
         //Log.d("File", fileContents);

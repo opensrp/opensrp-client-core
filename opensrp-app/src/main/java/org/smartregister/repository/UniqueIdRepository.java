@@ -3,7 +3,6 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -16,12 +15,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 09/04/2018.
  */
 
 public class UniqueIdRepository extends BaseRepository {
-    private static final String TAG = UniqueIdRepository.class.getCanonicalName();
     private static final String UniqueIds_SQL = "CREATE TABLE unique_ids(_id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,openmrs_id VARCHAR NOT NULL,status VARCHAR NULL, used_by VARCHAR NULL,synced_by VARCHAR NULL,created_at DATETIME NULL,updated_at TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP )";
     private static final String UniqueIds_TABLE_NAME = "unique_ids";
     private static final String ID_COLUMN = "_id";
@@ -52,7 +52,7 @@ public class UniqueIdRepository extends BaseRepository {
             database.insert(UniqueIds_TABLE_NAME, null, createValuesFor(uniqueId));
             //database.close();
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
@@ -78,7 +78,7 @@ public class UniqueIdRepository extends BaseRepository {
             }
             database.setTransactionSuccessful();
         } catch (SQLException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             database.endTransaction();
         }
@@ -96,7 +96,7 @@ public class UniqueIdRepository extends BaseRepository {
             }
 
         } catch (SQLException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -117,7 +117,7 @@ public class UniqueIdRepository extends BaseRepository {
             List<UniqueId> ids = readAll(cursor);
             uniqueId = ids.isEmpty() ? null : ids.get(0);
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -145,7 +145,7 @@ public class UniqueIdRepository extends BaseRepository {
             values.put(USED_BY_COLUMN, userName);
             getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id});
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
@@ -164,7 +164,7 @@ public class UniqueIdRepository extends BaseRepository {
             values.put(USED_BY_COLUMN, "");
             getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{openmrsId_});
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 

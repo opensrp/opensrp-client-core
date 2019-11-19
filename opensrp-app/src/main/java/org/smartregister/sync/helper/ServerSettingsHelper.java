@@ -1,7 +1,6 @@
 package org.smartregister.sync.helper;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -20,12 +19,12 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 13/08/2018.
  */
 public class ServerSettingsHelper {
-
-    private static final String TAG = ServerSettingsHelper.class.getCanonicalName();
 
     public static List<ServerSetting> serverSettings;
 
@@ -54,7 +53,7 @@ public class ServerSettingsHelper {
             return gson.fromJson(settingArray.toString(), SERVER_SETTING_TYPE); // contains the whole reviews list
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
             return new ArrayList<>();
         }
     }

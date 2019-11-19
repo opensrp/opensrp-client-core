@@ -20,7 +20,6 @@ import android.Manifest;
 import android.content.Context;
 import android.support.annotation.RequiresPermission;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
@@ -29,8 +28,9 @@ import com.google.android.gms.vision.CameraSource;
 
 import java.io.IOException;
 
+import timber.log.Timber;
+
 public class CameraSourcePreview extends ViewGroup {
-    private static final String TAG = CameraSourcePreview.class.getSimpleName();
 
     private SurfaceView surfaceView;
     private boolean startRequested;
@@ -89,9 +89,9 @@ public class CameraSourcePreview extends ViewGroup {
             try {
                 startIfReady();
             } catch (SecurityException se) {
-                Log.e(TAG, "Do not have permission to start the camera", se);
+                Timber.e(se, "Do not have permission to start the camera");
             } catch (IOException e) {
-                Log.e(TAG, "Could not start camera source.", e);
+                Timber.e(e, "Could not start camera source.");
             }
         }
 
@@ -116,9 +116,9 @@ public class CameraSourcePreview extends ViewGroup {
         try {
             startIfReady();
         } catch (SecurityException se) {
-            Log.e(TAG,"Do not have permission to start the camera", se);
+            Timber.e(se, "Do not have permission to start the camera");
         } catch (IOException e) {
-            Log.e(TAG, "Could not start camera source.", e);
+            Timber.e(e, "Could not start camera source.");
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.database.Cursor;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -14,12 +13,13 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.UUID;
 
+import timber.log.Timber;
+
 
 /**
  * Created by keyman on 09/03/2017.
  */
 public class BaseRepository {
-    private static final String TAG = BaseRepository.class.getCanonicalName();
 
     public static String TYPE_Unsynced = "Unsynced";
     public static String TYPE_Synced = "Synced";
@@ -82,7 +82,7 @@ public class BaseRepository {
 
             return maplist;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

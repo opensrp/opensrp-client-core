@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.util.Base64;
-import android.util.Log;
 
 import org.apache.http.HttpStatus;
 import org.smartregister.CoreLibrary;
@@ -15,6 +14,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
 /**
@@ -22,7 +23,6 @@ import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
  */
 public class SyncUtils {
 
-    private static final String TAG = "SyncUtils";
 
     private static final String DETAILS_URL = "/user-details?anm-id=";
 
@@ -50,16 +50,16 @@ public class SyncUtils {
             int statusCode = urlConnection.getResponseCode();
             urlConnection.disconnect();
             if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                android.util.Log.i(TAG, "User not authorized. User access was revoked, will log off user");
+                Timber.i("User not authorized. User access was revoked, will log off user");
                 return false;
             } else if (statusCode != HttpStatus.SC_OK) {
-                android.util.Log.w(TAG, "Error occurred verifying authorization, User will not be logged off");
+                Timber.w("Error occurred verifying authorization, User will not be logged off");
             } else {
-                android.util.Log.i(TAG, "User is Authorized");
+                Timber.i("User is Authorized");
             }
 
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
         return true;
     }

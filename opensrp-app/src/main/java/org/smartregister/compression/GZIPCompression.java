@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 26/04/2019.
  */
@@ -35,7 +37,7 @@ public class GZIPCompression implements ICompression {
             return compressed;
         } catch (IOException e) {
 
-            Log.e(GZIPCompression.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
             return null;
         }
 
@@ -62,7 +64,7 @@ public class GZIPCompression implements ICompression {
 
         } catch (IOException e) {
 
-            Log.e(GZIPCompression.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
             return null;
         }
 
@@ -98,7 +100,7 @@ public class GZIPCompression implements ICompression {
 
         } catch (IOException e) {
 
-            Log.e(GZIPCompression.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
         }
 
     }
@@ -131,7 +133,7 @@ public class GZIPCompression implements ICompression {
             out.close();
 
         } catch (IOException e) {
-            Log.e(GZIPCompression.class.getCanonicalName(), e.getMessage());
+            Timber.e(e);
         }
 
 

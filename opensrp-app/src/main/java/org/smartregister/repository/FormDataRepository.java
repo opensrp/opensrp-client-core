@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 import android.webkit.JavascriptInterface;
 
 import com.google.gson.Gson;
@@ -19,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.asList;
@@ -53,7 +54,6 @@ public class FormDataRepository extends DrishtiRepository {
     private static final String FORM_SUBMISSION_TABLE_NAME = "form_submission";
     private static final String DETAILS_COLUMN_NAME = "details";
     private static final String FORM_NAME_PARAM = "formName";
-    private static final String TAG = "FormDataRepository";
     private Map<String, String[]> TABLE_COLUMN_MAP;
 
     public FormDataRepository() {
@@ -333,7 +333,7 @@ public class FormDataRepository extends DrishtiRepository {
             cursor = database.rawQuery(sql, selectionArgs);
             map = sqliteRowToMap(cursor);
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -351,7 +351,7 @@ public class FormDataRepository extends DrishtiRepository {
                     try {
                         rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                     } catch (Exception e) {
-                        Log.d(TAG, e.getMessage());
+                        Timber.d(e.getMessage());
                     }
                 }
             }
