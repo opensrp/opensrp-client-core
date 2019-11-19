@@ -101,8 +101,8 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -565,12 +565,9 @@ public class Utils {
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
-            simpleDateFormat =
-                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                            .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         }
         return simpleDateFormat;
     }
@@ -753,13 +750,13 @@ public class Utils {
     }
 
     /**
-    * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
+     * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
      *
-     * @param dbName name of the database that was created by the app e.g. drishti.db
+     * @param dbName     name of the database that was created by the app e.g. drishti.db
      * @param copyDbName name of the database file once copied to Downloads folder e.g. reveal.db
-     * @param context application context when calling the function
+     * @param context    application context when calling the function
      */
-    public static void copyDatabase(String dbName, String copyDbName, Context context){
+    public static void copyDatabase(String dbName, String copyDbName, Context context) {
         try {
             final String inFileName = context.getDatabasePath(dbName).getPath();
             final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
@@ -777,8 +774,12 @@ public class Utils {
             output.close();
             fis.close();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Timber.e("copyDatabase: backup error " + e.toString());
         }
+    }
+
+    public static Locale getDefaultLocale() {
+        return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
     }
 }

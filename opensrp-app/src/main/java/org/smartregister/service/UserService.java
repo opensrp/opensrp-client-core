@@ -70,7 +70,7 @@ public class UserService {
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     private final Repository repository;
     private final AllSettings allSettings;

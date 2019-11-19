@@ -8,11 +8,11 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.FPMethod;
 import org.smartregister.util.IntegerUtil;
+import org.smartregister.util.Utils;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static org.smartregister.AllConstants.COMMA_WITH_SPACE;
@@ -274,7 +274,7 @@ public class FPClient implements FPSmartRegisterClient {
 
     @Override
     public boolean satisfiesFilter(String filter) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filter.toLowerCase()) || String
+        return name.toLowerCase(Utils.getDefaultLocale()).startsWith(filter.toLowerCase()) || String
                 .valueOf(ec_number).startsWith(filter);
     }
 
