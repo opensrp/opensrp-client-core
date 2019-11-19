@@ -8,8 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
+import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
@@ -22,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 
 /**
@@ -878,6 +883,45 @@ public class JsonFormUtilsTest {
         Assert.assertNotNull(field);
         Assert.assertTrue(field.has("value"));
         Assert.assertEquals(field.get("value"), "John");
+    }
+
+    @Test
+    public void testAddMultiSelectListObservations() throws Exception {
+        Event event = new Event();
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put(OPENMRS_ENTITY_ID, "entityId");
+        jsonObject1.put(OPENMRS_ENTITY, "concept");
+        jsonObject1.put(AllConstants.TEXT,"text");
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put(OPENMRS_ENTITY_ID, "entityId2");
+        jsonObject2.put(OPENMRS_ENTITY, "concept");
+        jsonObject2.put(AllConstants.TEXT,"text2");
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(jsonObject1);
+        jsonArray.put(jsonObject2);
+        jsonObject.put(JsonFormUtils.KEY, "key");
+        jsonObject.put(JsonFormUtils.OPENMRS_ENTITY_PARENT, "parentCode");
+
+        jsonObject.put(JsonFormUtils.VALUE, jsonArray);
+        Whitebox.invokeMethod(JsonFormUtils.class, "addMultiSelectListObservations", event, jsonObject);
+
+        Assert.assertEquals(2, event.getObs().size());
+        Obs obs = event.getObs().get(0);
+        Assert.assertEquals("key", obs.getFormSubmissionField());
+        Assert.assertEquals("entityId", obs.getValue());
+        Assert.assertEquals("text", obs.getHumanReadableValues().get(0));
+        Assert.assertEquals("concept", obs.getFieldType());
+        Assert.assertEquals("parentCode", obs.getParentCode());
+
+        Obs obs2 = event.getObs().get(1);
+        Assert.assertEquals("key", obs2.getFormSubmissionField());
+        Assert.assertEquals("entityId2", obs2.getValue());
+        Assert.assertEquals("concept", obs2.getFieldType());
+        Assert.assertEquals("parentCode", obs2.getParentCode());
+        Assert.assertEquals("text2", obs2.getHumanReadableValues().get(0));
     }
 
     public static boolean areEqual(Object ob1, Object ob2) throws JSONException {

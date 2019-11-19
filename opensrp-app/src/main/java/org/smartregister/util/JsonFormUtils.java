@@ -24,6 +24,7 @@ import org.smartregister.domain.tag.FormTag;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -161,7 +162,7 @@ public class JsonFormUtils {
             try {
                 if (jsonObject.has(AllConstants.TYPE) &&
                         (AllConstants.NATIVE_RADIO.equals(jsonObject.getString(AllConstants.TYPE)) ||
-                                AllConstants.ANC_RADIO_BUTTON.equals(jsonObject.getString(AllConstants.TYPE))) &&
+                                AllConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(AllConstants.TYPE))) &&
                         jsonObject.has(AllConstants.EXTRA_REL) && jsonObject.getBoolean(AllConstants.EXTRA_REL) &&
                         jsonObject.has(AllConstants.HAS_EXTRA_REL)) {
                     String extraFieldsKey = jsonObject.getString(AllConstants.HAS_EXTRA_REL);
@@ -177,9 +178,17 @@ public class JsonFormUtils {
             }
 
             try {
-                if (!AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
-                    addObservation(event, jsonObject);
+                if (AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
+                    continue;
                 }
+
+                if (AllConstants.MULTI_SELECT_LIST.equals(jsonObject.getString(AllConstants.TYPE))) {
+                    addMultiSelectListObservations(event, jsonObject);
+                    continue;
+                }
+
+                addObservation(event, jsonObject);
+
             } catch (JSONException e) {
                 Timber.e(e);
             }
@@ -189,6 +198,26 @@ public class JsonFormUtils {
 
         return event;
 
+    }
+
+    private static void addMultiSelectListObservations(@NonNull Event event, @NonNull JSONObject jsonObject) {
+        JSONArray valuesJsonArray;
+        try {
+            valuesJsonArray = new JSONArray(jsonObject.optString(VALUE));
+            for(int i = 0; i < valuesJsonArray.length(); i++){
+                JSONObject jsonValObject = valuesJsonArray.optJSONObject(i);
+                String fieldType = jsonValObject.optString(OPENMRS_ENTITY);
+                String fieldCode = jsonObject.optString(OPENMRS_ENTITY_ID);
+                String parentCode = jsonObject.optString(OPENMRS_ENTITY_PARENT);
+                String value = jsonValObject.optString(OPENMRS_ENTITY_ID);
+                String humanReadableValues = jsonValObject.optString(AllConstants.TEXT);
+                String formSubmissionField = jsonObject.optString(KEY);
+                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList(value),
+                        Collections.singletonList(humanReadableValues), "", formSubmissionField));
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
     }
 
     private static void initiateOptionsObsCreation(Event event, String extraFieldsKey, JSONArray options) throws JSONException {
@@ -277,7 +306,7 @@ public class JsonFormUtils {
                                     popupJson.put(AllConstants.TYPE, secondaryValueType);
 
                                     if (AllConstants.NATIVE_RADIO.equals(secondaryValueType) ||
-                                            AllConstants.ANC_RADIO_BUTTON.equals(secondaryValueType)) {
+                                            AllConstants.EXTENDED_RADIO_BUTTON.equals(secondaryValueType)) {
                                         popupJson.put(OPENMRS_ENTITY_PARENT, "");
                                     } else if (AllConstants.SPINNER.equals(secondaryValueType)) {
                                         popupJson.put(OPENMRS_ENTITY_PARENT,
@@ -429,7 +458,7 @@ public class JsonFormUtils {
                 if (jsonObject.has(AllConstants.TEXT)) {
                     humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
                 }
-            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON.equals(widgetType)) &&
+            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.EXTENDED_RADIO_BUTTON.equals(widgetType)) &&
                     jsonObject.has(AllConstants.OPTIONS)) {
                 try {
                     JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
