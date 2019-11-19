@@ -190,7 +190,7 @@ public class JsonFormUtils {
                 addObservation(event, jsonObject);
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
             }
         }
 
