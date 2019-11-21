@@ -152,8 +152,7 @@ public class HTTPAgent {
     }
 
     private void logResponse(String postURLPath, String jsonPayload) {
-        Timber.d("postURLPath: %s", postURLPath);
-        Timber.d("jsonPayLoad: %s", jsonPayload);
+        Timber.d("postURLPath: %s and jsonPayLoad: %s", postURLPath,jsonPayload);
     }
 
     public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
