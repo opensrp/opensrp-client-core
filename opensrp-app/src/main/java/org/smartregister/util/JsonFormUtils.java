@@ -111,6 +111,7 @@ public class JsonFormUtils {
                 .withDateCreated(new Date());
 
         client.setClientApplicationVersion(formTag.appVersion);
+        client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);
 
         client.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
@@ -152,6 +153,7 @@ public class JsonFormUtils {
         event.setTeamId(formTag.teamId);
 
         event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientApplicationVersionName(formTag.appVersionName);
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
         for (int i = 0; i < fields.length(); i++) {
