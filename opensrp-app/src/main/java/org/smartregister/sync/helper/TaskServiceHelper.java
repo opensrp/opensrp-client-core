@@ -90,6 +90,7 @@ public class TaskServiceHelper {
                 for (Task task : tasks) {
                     try {
                         task.setSyncStatus(BaseRepository.TYPE_Synced);
+                        task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
                     } catch (Exception e) {
                         Timber.e(e, "Error saving task " + task.getIdentifier());
