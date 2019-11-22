@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -212,8 +213,8 @@ public class JsonFormUtils {
                 String value = jsonValObject.optString(OPENMRS_ENTITY_ID);
                 String humanReadableValues = jsonValObject.optString(AllConstants.TEXT);
                 String formSubmissionField = jsonObject.optString(KEY);
-                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList(value),
-                        Collections.singletonList(humanReadableValues), "", formSubmissionField));
+                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList((Object) value),
+                        Collections.singletonList((Object)humanReadableValues), "", formSubmissionField));
             }
         } catch (JSONException e) {
             Timber.e(e);
