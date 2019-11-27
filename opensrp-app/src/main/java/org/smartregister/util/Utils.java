@@ -752,6 +752,13 @@ public class Utils {
         return myKey;
     }
 
+    /**
+    * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
+     *
+     * @param dbName name of the database that was created by the app e.g. drishti.db
+     * @param copyDbName name of the database file once copied to Downloads folder e.g. reveal.db
+     * @param context application context when calling the function
+     */
     public static void copyDatabase(String dbName, String copyDbName, Context context){
         try {
             final String inFileName = context.getDatabasePath(dbName).getPath();
