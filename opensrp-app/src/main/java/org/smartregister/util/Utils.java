@@ -752,10 +752,10 @@ public class Utils {
         return myKey;
     }
 
-    public static void copyDatabase(Context context){
+    public static void copyDatabase(String dbName, String copyDbName, Context context){
         try {
-            final String inFileName = context.getDatabasePath("drishti.db").getPath();;
-            final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/drishti.db";
+            final String inFileName = context.getDatabasePath(dbName).getPath();
+            final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
             File dbFile = new File(inFileName);
             FileInputStream fis = new FileInputStream(dbFile);
 
