@@ -13,12 +13,12 @@ import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Toast;
 
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.LangUtils;
 import org.smartregister.util.UrlUtil;
+import org.smartregister.util.Utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -64,7 +64,7 @@ public class SettingsActivity extends PreferenceActivity {
                                     baseUrlEditTextPreference.onClick(null, DialogInterface.BUTTON_POSITIVE);
                                     dialog.dismiss();
                                 } else {
-                                    Toast.makeText(getActivity(), R.string.invalid_url_massage, Toast.LENGTH_SHORT).show();
+                                    Utils.showShortToast(getActivity(), getActivity().getString(R.string.invalid_url_massage));
                                 }
                             }
                         });
@@ -86,15 +86,13 @@ public class SettingsActivity extends PreferenceActivity {
                     public void afterTextChanged(Editable editable) {
                         String text = editable.toString();
                         boolean validUrl = UrlUtil.isValidUrl(text);
-                        if(!validUrl) {
-                            if(text.isEmpty()){
+                        if (!validUrl) {
+                            if (text.isEmpty()) {
                                 baseUrlEditTextPreference.getEditText().setError(getString(R.string.msg_empty_url));
-                            }
-                            else{
+                            } else {
                                 baseUrlEditTextPreference.getEditText().setError(getString(R.string.invalid_url_massage));
                             }
-                        }
-                        else{
+                        } else {
                             baseUrlEditTextPreference.getEditText().setError(null);
                         }
 

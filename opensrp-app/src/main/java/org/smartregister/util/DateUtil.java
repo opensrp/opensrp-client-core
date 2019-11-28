@@ -73,7 +73,7 @@ public class DateUtil {
 
     public static LocalDate getLocalDate(String date) {
         try {
-            SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Locale.getDefault());
+            SimpleDateFormat format = new SimpleDateFormat(DEFAULT_DATE_FORMAT, Utils.getDefaultLocale());
             Date formattedDate = format.parse(date);
             return new LocalDate(formattedDate);
         } catch (Exception e) {
@@ -134,14 +134,23 @@ public class DateUtil {
             today.set(Calendar.MILLISECOND, 0);
 
             long timeDiff = Math.abs(dateCalendar.getTimeInMillis() - today.getTimeInMillis());
-            return getDuration(timeDiff, context.getResources().getConfiguration().locale);
+            return getDuration(timeDiff, getLocale());
         }
         return null;
     }
 
     public static String getDuration(long timeDiff) {
 
-        return getDuration(timeDiff, CoreLibrary.getInstance().context().applicationContext().getResources().getConfiguration().locale);
+        return getDuration(timeDiff, getLocale());
+
+    }
+
+    private static Locale getLocale() {
+
+        Locale locale = CoreLibrary.getInstance().context().applicationContext().getResources().getConfiguration().locale;
+        locale = locale != null && locale.toString().startsWith("ar") ? Locale.ENGLISH : locale;
+
+        return locale;
 
     }
 
@@ -195,7 +204,7 @@ public class DateUtil {
                     duration = String.format(locale, context.getResources().getString(R.string.x_months), months);
                 }
             } else {
-                duration = String.format(locale, context.getResources().getString(R.string.x_years),1);
+                duration = String.format(locale, context.getResources().getString(R.string.x_years), 1);
             }
         } else {
             // Represent in years and months

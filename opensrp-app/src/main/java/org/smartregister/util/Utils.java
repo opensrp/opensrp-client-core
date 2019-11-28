@@ -35,6 +35,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -55,6 +56,7 @@ import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -101,8 +103,8 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
     private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
     private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -520,14 +522,29 @@ public class Utils {
         return pc;
     }
 
-    public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public static boolean getBooleanProperty(String key) {
+
+        return CoreLibrary.getInstance().context().getAppProperties().hasProperty(key) ? CoreLibrary.getInstance().context().getAppProperties().getPropertyBoolean(key) : false;
 
     }
 
-    public static void showShortToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    public static void showToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_LONG);
+    }
 
+    public static void showShortToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_SHORT);
+
+    }
+
+    public static void showToastCore(Context context, String message, int duration) {
+        Toast toast = Toast.makeText(context, message, duration);
+
+        if (getBooleanProperty(AllConstants.PROPERTY.SYSTEM_TOASTER_CENTERED)) {
+            toast.setGravity(Gravity.CENTER, 0, 0);
+        }
+
+        toast.show();
     }
 
     public static void hideKeyboard(Context context, View view) {
@@ -565,12 +582,9 @@ public class Utils {
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
-            simpleDateFormat =
-                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                            .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         }
         return simpleDateFormat;
     }
@@ -753,13 +767,13 @@ public class Utils {
     }
 
     /**
-    * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
+     * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
      *
-     * @param dbName name of the database that was created by the app e.g. drishti.db
+     * @param dbName     name of the database that was created by the app e.g. drishti.db
      * @param copyDbName name of the database file once copied to Downloads folder e.g. reveal.db
-     * @param context application context when calling the function
+     * @param context    application context when calling the function
      */
-    public static void copyDatabase(String dbName, String copyDbName, Context context){
+    public static void copyDatabase(String dbName, String copyDbName, Context context) {
         try {
             final String inFileName = context.getDatabasePath(dbName).getPath();
             final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
@@ -777,8 +791,12 @@ public class Utils {
             output.close();
             fis.close();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Timber.e("copyDatabase: backup error " + e.toString());
         }
+    }
+
+    public static Locale getDefaultLocale() {
+        return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
     }
 }

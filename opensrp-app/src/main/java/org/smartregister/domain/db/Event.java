@@ -180,7 +180,7 @@ public class Event extends BaseDataObject {
                     continue;
                 }
 
-                if (o.getFieldCode().equalsIgnoreCase(f) || o.getFormSubmissionField().equalsIgnoreCase(f)) {
+                if (f.equalsIgnoreCase(o.getFieldCode()) || f.equalsIgnoreCase(o.getFormSubmissionField())) {
                     // obs is found and first  one.. should throw exception if multiple obs found with same names/ids
                     if (nonEmpty && o.getValues().isEmpty()) {
                         continue;
