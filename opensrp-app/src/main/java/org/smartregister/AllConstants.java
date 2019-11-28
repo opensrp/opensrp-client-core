@@ -442,4 +442,9 @@ public class AllConstants {
         public static final String EVENTS = "events";
         public static final String CLIENTS = "clients";
     }
+
+    public static class PROPERTY {
+        public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
+    }
+
 }

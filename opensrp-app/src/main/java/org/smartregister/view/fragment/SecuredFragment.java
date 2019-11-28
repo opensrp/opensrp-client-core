@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -14,6 +13,7 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.event.Listener;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.FormActivity;
 import org.smartregister.view.activity.LoginActivity;
@@ -25,7 +25,6 @@ import org.smartregister.view.controller.NavigationController;
 
 import java.util.Map;
 
-import static android.widget.Toast.LENGTH_SHORT;
 import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
 import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
 import static org.smartregister.AllConstants.FORM_NAME_PARAM;
@@ -94,8 +93,8 @@ public abstract class SecuredFragment extends Fragment {
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(getActivity(), R.string.language_change_prepend_message + " " + newLanguagePreference
-                    + ". " + R.string.language_change_append_message + ".", LENGTH_SHORT).show();
+            Utils.showShortToast(getActivity(), R.string.language_change_prepend_message + " " + newLanguagePreference
+                    + ". " + R.string.language_change_append_message + ".");
 
             return super.onOptionsItemSelected(item);
         } else {

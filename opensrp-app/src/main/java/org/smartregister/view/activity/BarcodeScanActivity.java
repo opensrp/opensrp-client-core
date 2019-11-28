@@ -9,7 +9,6 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -22,6 +21,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.barcode.CameraSourcePreview;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.Utils;
 
 import java.io.IOException;
 
@@ -67,7 +67,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
             boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
 
             if (hasLowStorage) {
-                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
+                Utils.showToast(this, this.getResources().getString(R.string.low_storage_error));
                 Timber.w(getString(R.string.low_storage_error));
             }
         }

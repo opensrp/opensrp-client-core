@@ -35,6 +35,7 @@ import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -55,6 +56,7 @@ import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -520,14 +522,29 @@ public class Utils {
         return pc;
     }
 
-    public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public static boolean getBooleanProperty(String key) {
+
+        return CoreLibrary.getInstance().context().getAppProperties().hasProperty(key) ? CoreLibrary.getInstance().context().getAppProperties().getPropertyBoolean(key) : false;
 
     }
 
-    public static void showShortToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    public static void showToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_LONG);
+    }
 
+    public static void showShortToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_SHORT);
+
+    }
+
+    public static void showToastCore(Context context, String message, int duration) {
+        Toast toast = Toast.makeText(context, message, duration);
+
+        if (getBooleanProperty(AllConstants.PROPERTY.SYSTEM_TOASTER_CENTERED)) {
+            toast.setGravity(Gravity.CENTER, 0, 0);
+        }
+
+        toast.show();
     }
 
     public static void hideKeyboard(Context context, View view) {

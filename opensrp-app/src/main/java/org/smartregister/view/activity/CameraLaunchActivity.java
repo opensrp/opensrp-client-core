@@ -5,12 +5,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
-import android.widget.Toast;
 
 import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.event.CapturedPhotoInformation;
 import org.smartregister.util.Log;
+import org.smartregister.util.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -77,7 +77,7 @@ public class CameraLaunchActivity extends SecuredActivity {
             String imageFilePath = imageFile.getAbsolutePath();
             setPic(imageFilePath);
             updateEntity("file://" + imageFilePath);
-            Toast.makeText(this, R.string.photo_captured, Toast.LENGTH_SHORT).show();
+            Utils.showShortToast(this, this.getString(R.string.photo_captured));
         }
         super.onBackPressed();
     }
