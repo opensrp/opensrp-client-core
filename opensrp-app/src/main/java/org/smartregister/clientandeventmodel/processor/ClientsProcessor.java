@@ -1,7 +1,5 @@
 package org.smartregister.clientandeventmodel.processor;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,11 +9,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Created by raihan on 3/15/16.
  */
 public class ClientsProcessor {
-    public static final String TAG = "ClientsProcessor";
     String baseEntityID;
     Map<String, String> attributesDetailsMap = new HashMap<String, String>();
     Map<String, String> attributesColumnsMap = new HashMap<String, String>();
@@ -48,7 +47,7 @@ public class ClientsProcessor {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -88,7 +87,7 @@ public class ClientsProcessor {
                     i = attributesColumns.length();
                 }
             } catch (JSONException e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
 
         }
@@ -108,7 +107,7 @@ public class ClientsProcessor {
                     i = propertiescolumns.length();
                 }
             } catch (JSONException e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
 
         }

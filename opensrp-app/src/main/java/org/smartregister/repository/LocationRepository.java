@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -16,6 +15,8 @@ import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 11/23/18.
@@ -83,7 +84,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -101,7 +102,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -118,7 +119,7 @@ public class LocationRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -136,7 +137,7 @@ public class LocationRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -156,7 +157,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -175,7 +176,7 @@ public class LocationRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(LocationRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();

@@ -14,7 +14,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.Menu;
 
 import com.google.android.gms.vision.barcode.Barcode;
@@ -35,13 +34,14 @@ import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by keyman on 26/06/2018.
  */
 
 public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {
 
-    public static final String TAG = BaseRegisterActivity.class.getCanonicalName();
     protected OpenSRPViewPager mPager;
 
     protected BaseRegisterContract.Presenter presenter;
@@ -207,11 +207,11 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
         if (requestCode == AllConstants.BARCODE.BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
             if (data != null) {
                 Barcode barcode = data.getParcelableExtra(AllConstants.BARCODE.BARCODE_KEY);
-                Log.d("Scanned QR Code", barcode.displayValue);
+                Timber.d("Scanned QR Code %s", barcode.displayValue);
                 mBaseFragment.onQRCodeSucessfullyScanned(barcode.displayValue);
                 mBaseFragment.setSearchTerm(barcode.displayValue);
             } else
-                Log.i("", "NO RESULT FOR QR CODE");
+                Timber.i("NO RESULT FOR QR CODE");
         } else {
             onActivityResultExtended(requestCode, resultCode, data);
         }
@@ -318,7 +318,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     public void switchToFragment(final int position) {
-        Log.v("we are here", "switchtofragragment");
+        Timber.v("we are here switchtofragragment");
         try {
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 mPager.setCurrentItem(position, false);
@@ -331,7 +331,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 });
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 

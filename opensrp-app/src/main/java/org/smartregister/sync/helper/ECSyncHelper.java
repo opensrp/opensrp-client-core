@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import timber.log.Timber;
+
 
 /**
  * Created by ndegwamartin on 15/03/2018.
@@ -57,7 +59,7 @@ public class ECSyncHelper {
 
             return true;
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
             return false;
         }
     }
@@ -66,7 +68,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return new ArrayList<>();
     }
@@ -97,7 +99,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(lastSyncDate, syncStatus);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return new ArrayList<>();
     }
@@ -106,7 +108,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(formSubmissionIds);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return new ArrayList<>();
     }
@@ -115,7 +117,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.getClientByBaseEntityId(baseEntityId);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return null;
     }
@@ -124,7 +126,7 @@ public class ECSyncHelper {
         try {
             eventClientRepository.addorUpdateClient(baseEntityId, jsonObject);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -132,7 +134,7 @@ public class ECSyncHelper {
         try {
             eventClientRepository.addEvent(baseEntityId, jsonObject);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -140,7 +142,7 @@ public class ECSyncHelper {
         try {
             eventClientRepository.addEvent(baseEntityId, jsonObject, syncStatus);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
     }
 
@@ -148,7 +150,7 @@ public class ECSyncHelper {
         try {
             return eventClientRepository.fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Exception", e);
+            Timber.e(e);
         }
         return new ArrayList<>();
     }

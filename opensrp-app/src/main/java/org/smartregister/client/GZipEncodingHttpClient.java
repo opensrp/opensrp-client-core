@@ -1,7 +1,5 @@
 package org.smartregister.client;
 
-import android.util.Log;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
@@ -14,10 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 
+import timber.log.Timber;
+
 import static org.apache.http.HttpStatus.SC_OK;
 
 public class GZipEncodingHttpClient {
-    private static final String TAG = GZipEncodingHttpClient.class.getCanonicalName();
 
     private DefaultHttpClient httpClient;
 
@@ -67,7 +66,7 @@ public class GZipEncodingHttpClient {
             httpResponse.getEntity().consumeContent();
 
         } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 

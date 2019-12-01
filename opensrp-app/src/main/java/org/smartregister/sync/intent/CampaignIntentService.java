@@ -25,6 +25,8 @@ import org.smartregister.util.Utils;
 import java.util.Arrays;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
 public class CampaignIntentService extends BaseSyncIntentService {
@@ -63,7 +65,7 @@ public class CampaignIntentService extends BaseSyncIntentService {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(  e);
         }
     }
 

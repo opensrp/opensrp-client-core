@@ -9,7 +9,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +41,8 @@ import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
 
 import java.util.List;
+
+import timber.log.Timber;
 
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -496,7 +497,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
 
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         }
 
         return query;
@@ -510,10 +511,10 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
-                Log.i(getClass().getName(), query);
+                Timber.i(query);
 
                 totalcount = commonRepository().countSearchIds(sql);
-                Log.v("total count here", "" + totalcount);
+                Timber.v("total count here %d", totalcount);
 
 
             } else {
@@ -521,18 +522,18 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
                 query = sqb.orderbyCondition(Sortqueries);
                 query = sqb.Endquery(query);
 
-                Log.i(getClass().getName(), query);
+                Timber.i(query);
                 c = commonRepository().rawCustomQueryForAdapter(query);
                 c.moveToFirst();
                 totalcount = c.getInt(0);
-                Log.v("total count here", "" + totalcount);
+                Timber.v("total count here %d", totalcount);
             }
 
             currentlimit = 20;
             currentoffset = 0;
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (c != null) {
                 c.close();

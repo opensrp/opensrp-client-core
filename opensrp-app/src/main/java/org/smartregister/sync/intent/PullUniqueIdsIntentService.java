@@ -4,9 +4,7 @@ package org.smartregister.sync.intent;
  * Created by ndegwamartin on 09/04/2018.
  */
 
-import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -20,10 +18,11 @@ import org.smartregister.service.HTTPAgent;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class PullUniqueIdsIntentService extends BaseSyncIntentService {
     public static final String ID_URL = "/uniqueids/get";
     public static final String IDENTIFIERS = "identifiers";
-    private static final String TAG = PullUniqueIdsIntentService.class.getCanonicalName();
     private UniqueIdRepository uniqueIdRepo;
 
 
@@ -49,7 +48,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
                 parseResponse(ids);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 
@@ -63,7 +62,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
         }
 
         String url = baseUrl + ID_URL + "?source=" + source + "&numberToGenerate=" + numberToGenerate;
-        Log.i(PullUniqueIdsIntentService.class.getName(), "URL: " + url);
+        Timber.i("URL: %s", url);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(ID_URL + " http agent is null");

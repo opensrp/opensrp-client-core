@@ -235,7 +235,7 @@ The sync classes can be found in `org.smartregister.sync`
 
 ## 6. Utitiles
 
-This app provides the following utilties:
+This app provides the following utilities:
 
 Class | Provides
 ----- | --------
@@ -297,3 +297,12 @@ Methods in the ICompression interface are
 
 *__void decompress(String compressedInputFilePath, String decompressedOutputFilePath)__* Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
 
+## Configurability
+
+By placing a file named `app.properties` in your implementation assets folder (See sample app) , one can configure certain aspects of the app
+
+### Configurable Settings
+
+| Configuration                       | Type    | Default | Description                                   |
+| ----------------------------------- | ------- | ------- | ----------------------------------------------|
+| `system.toaster.centered`         | Boolean | false    | Position toaster(s) at the center of the view(s)                        |

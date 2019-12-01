@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -12,6 +11,8 @@ import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by samuelgithengi on 11/26/18.
@@ -66,7 +67,7 @@ public class TaskNotesRepository extends BaseRepository {
                 notes.add(readCursor(cursor));
             }
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();

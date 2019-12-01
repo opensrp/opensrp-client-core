@@ -54,7 +54,7 @@ public class MainActivity extends MultiLanguageActivity {
         List<String> langArray = new ArrayList<>();
         langArray.add("English");
         langArray.add("Français");
-        langArray.add("عربى");
+        langArray.add("العربية");
         final ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, langArray);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -87,7 +87,7 @@ public class MainActivity extends MultiLanguageActivity {
                         case "français":
                             LOCALE = Locale.FRENCH;
                             break;
-                        case "عربى":
+                        case "العربية":
                             LOCALE = new Locale("ar");
                             break;
                         default:
