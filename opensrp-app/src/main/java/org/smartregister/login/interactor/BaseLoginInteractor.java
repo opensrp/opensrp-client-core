@@ -121,13 +121,15 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                     public void onEvent(LoginResponse loginResponse) {
                         getLoginView().enableLoginButton(true);
                         if (loginResponse == LoginResponse.SUCCESS) {
-                            if (getUserService().isUserInPioneerGroup(userName)) {
+                            String username=loginResponse.payload()!=null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                                    ? loginResponse.payload().user.getUsername() : userName;
+                            if (getUserService().isUserInPioneerGroup(username)) {
                                 TimeStatus timeStatus = getUserService().validateDeviceTime(
                                         loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE
                                 );
                                 if (!AllConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
 
-                                    remoteLoginWith(userName, password, loginResponse);
+                                    remoteLoginWith(username, password, loginResponse);
 
                                 } else {
                                     if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {

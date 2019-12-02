@@ -62,6 +62,7 @@ import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.ORGANIZATION_IDS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
@@ -216,16 +217,17 @@ public class UserService {
         // Check if everything OK for local login
         if (keyStore != null && userName != null && password != null && !allSharedPreferences
                 .fetchForceRemoteLogin()) {
+            String username=userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM())?allSharedPreferences.fetchRegisteredANM():userName;
             try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
+                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(username);
                 if (privateKeyEntry != null) {
                     // Compare stored encrypted password with provided password
                     String encryptedPassword = allSharedPreferences.
-                            fetchEncryptedPassword(userName);
+                            fetchEncryptedPassword(username);
                     String decryptedPassword = decryptString(privateKeyEntry, encryptedPassword);
 
                     if (password.equals(decryptedPassword)) {
-                        String groupId = getGroupId(userName, privateKeyEntry);
+                        String groupId = getGroupId(username, privateKeyEntry);
                         if (groupId != null) {
                             return isValidGroupId(groupId);
                         }
@@ -333,7 +335,10 @@ public class UserService {
         } else {
             setupContextForLogin(userName, password);
         }
-        allSettings.registerANM(userName, password);
+        String username = userName;
+        if (allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName))
+            username = allSharedPreferences.fetchRegisteredANM();
+        allSettings.registerANM(username, password);
         return loginSuccessful;
     }
 
@@ -361,21 +366,24 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        boolean loginSuccessful = loginWith(userName, password);
+        String username=userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName;
+        boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
-        saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
-        saveUserLocationId(userName, getUserLocationId(userInfo));
-        saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
-        saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
+        saveDefaultLocationId(username, getUserDefaultLocationId(userInfo));
+        saveUserLocationId(username, getUserLocationId(userInfo));
+        saveDefaultTeam(username, getUserDefaultTeam(userInfo));
+        saveDefaultTeamId(username, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
         saveJurisdictions(userInfo.jurisdictions);
+        saveOrganizations(getUserTeam(userInfo));
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(username))) &&
                 (StringUtils.isBlank(getUserDefaultTeamId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName))) &&
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(username))) &&
                 (getUserLocation(userInfo) != null ||
                         StringUtils.isNotBlank(allSettings.fetchANMLocation())))
             allSharedPreferences.saveForceRemoteLogin(false);
@@ -506,6 +514,14 @@ public class UserService {
             allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
     }
 
+    public void saveOrganizations(TeamMember teamMember) {
+        if (teamMember != null && teamMember.team != null) {
+            List<Long> organizations = teamMember.team.organizationIds;
+            if (organizations != null && !organizations.isEmpty())
+                allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+        }
+    }
+
     public void saveUserInfo(User user) {
         try {
             if (user != null && user.getPreferredName() != null) {
@@ -531,9 +547,11 @@ public class UserService {
      *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
     public void saveUserGroup(String userName, String password, LoginResponseData userInfo) {
-        if (keyStore != null && userName != null) {
+        String username=userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName;
+        if (keyStore != null && username != null) {
             try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
+                KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(username);
 
                 if (password == null) {
                     return;
@@ -550,7 +568,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = userName + "-" + password;
+                        groupId = username + "-" + password;
                     }
                 }
 
@@ -561,15 +579,15 @@ public class UserService {
                 if (privateKeyEntry != null) {
                     // First save the encrypted password
                     String encryptedPassword = encryptString(privateKeyEntry, password);
-                    allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
+                    allSharedPreferences.saveEncryptedPassword(username, encryptedPassword);
 
                     // Then save the encrypted group
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
-                    allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
+                    allSharedPreferences.saveEncryptedGroupId(username, encryptedGroupId);
 
                     // Finally, save the pioneer user
                     if (allSharedPreferences.fetchPioneerUser() == null) {
-                        allSharedPreferences.savePioneerUser(userName);
+                        allSharedPreferences.savePioneerUser(username);
                     }
                 }
             } catch (Exception e) {

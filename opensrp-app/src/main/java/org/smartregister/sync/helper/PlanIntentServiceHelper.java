@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
@@ -22,6 +23,7 @@ import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import timber.log.Timber;
@@ -70,8 +72,8 @@ public class PlanIntentServiceHelper {
             // fetch and save plans
             Long maxServerVersion = 0l;
 
-            List<String> jurisdictions = locationRepository.getAllLocationIds();
-            String plansResponse = fetchPlans(jurisdictions, serverVersion);
+            String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
+            String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
             for (PlanDefinition plan : plans) {
@@ -90,7 +92,7 @@ public class PlanIntentServiceHelper {
         }
     }
 
-    private String fetchPlans(List<String> operationalAreaId, long serverVersion) throws Exception {
+    private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -99,7 +101,9 @@ public class PlanIntentServiceHelper {
         }
 
         JSONObject request = new JSONObject();
-        request.put("operational_area_id", new JSONArray(operationalAreaId));
+        if (!organizationIds.isEmpty()) {
+            request.put("organizations", new JSONArray(organizationIds));
+        }
         request.put("serverVersion", serverVersion);
 
         if (httpAgent == null) {
