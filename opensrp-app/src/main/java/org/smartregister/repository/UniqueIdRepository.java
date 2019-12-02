@@ -131,7 +131,7 @@ public class UniqueIdRepository extends BaseRepository {
      *
      * @param openmrsId
      */
-    public void close(String openmrsId) {
+    public int close(String openmrsId) {
         try {
             String id;
             String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
@@ -143,10 +143,28 @@ public class UniqueIdRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(STATUS_COLUMN, STATUS_USED);
             values.put(USED_BY_COLUMN, userName);
-            getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id});
+
+            return updateOpenMRSIdentifierStatus(id, values);
+
         } catch (Exception e) {
             Timber.e(e);
+            return 0;
         }
+    }
+
+    private int updateOpenMRSIdentifierStatus(String id, ContentValues values) {
+
+        int closed = getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id});
+
+        if (closed == 0 && id.contains("-")) {
+            closed = updateOpenMRSIdentifierStatus(id.replace("-", ""), values);
+        }
+
+        if (closed == 0) {
+            Timber.e("Error processing OpenSRP ID %s. NO SUCH ID FOUND", id);
+        }
+
+        return closed;
     }
 
     /**
@@ -154,7 +172,7 @@ public class UniqueIdRepository extends BaseRepository {
      *
      * @param openmrsId
      */
-    public void open(String openmrsId) {
+    public int open(String openmrsId) {
         try {
 
             String openmrsId_ = !openmrsId.contains("-") ? formatId(openmrsId) : openmrsId;
@@ -162,9 +180,10 @@ public class UniqueIdRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(STATUS_COLUMN, STATUS_NOT_USED);
             values.put(USED_BY_COLUMN, "");
-            getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{openmrsId_});
+            return updateOpenMRSIdentifierStatus(openmrsId_, values);
         } catch (Exception e) {
             Timber.e(e);
+            return 0;
         }
     }
 
