@@ -365,23 +365,24 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        boolean loginSuccessful = loginWith(userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
-                ? userInfo.user.getUsername() : userName, password);
+        String username=userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName;
+        boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
-        saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
-        saveUserLocationId(userName, getUserLocationId(userInfo));
-        saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
-        saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
+        saveDefaultLocationId(username, getUserDefaultLocationId(userInfo));
+        saveUserLocationId(username, getUserLocationId(userInfo));
+        saveDefaultTeam(username, getUserDefaultTeam(userInfo));
+        saveDefaultTeamId(username, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
         saveJurisdictions(userInfo.jurisdictions);
         saveOrganizations(getUserTeam(userInfo));
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(username))) &&
                 (StringUtils.isBlank(getUserDefaultTeamId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName))) &&
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(username))) &&
                 (getUserLocation(userInfo) != null ||
                         StringUtils.isNotBlank(allSettings.fetchANMLocation())))
             allSharedPreferences.saveForceRemoteLogin(false);
