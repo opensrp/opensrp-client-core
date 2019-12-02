@@ -217,16 +217,17 @@ public class UserService {
         // Check if everything OK for local login
         if (keyStore != null && userName != null && password != null && !allSharedPreferences
                 .fetchForceRemoteLogin()) {
+            String username=userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM())?allSharedPreferences.fetchRegisteredANM():userName;
             try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
+                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(username);
                 if (privateKeyEntry != null) {
                     // Compare stored encrypted password with provided password
                     String encryptedPassword = allSharedPreferences.
-                            fetchEncryptedPassword(userName);
+                            fetchEncryptedPassword(username);
                     String decryptedPassword = decryptString(privateKeyEntry, encryptedPassword);
 
                     if (password.equals(decryptedPassword)) {
-                        String groupId = getGroupId(userName, privateKeyEntry);
+                        String groupId = getGroupId(username, privateKeyEntry);
                         if (groupId != null) {
                             return isValidGroupId(groupId);
                         }
