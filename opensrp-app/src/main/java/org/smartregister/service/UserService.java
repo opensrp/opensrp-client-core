@@ -546,9 +546,11 @@ public class UserService {
      *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
     public void saveUserGroup(String userName, String password, LoginResponseData userInfo) {
-        if (keyStore != null && userName != null) {
+        String username=userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName;
+        if (keyStore != null && username != null) {
             try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
+                KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(username);
 
                 if (password == null) {
                     return;
@@ -565,7 +567,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = userName + "-" + password;
+                        groupId = username + "-" + password;
                     }
                 }
 
@@ -576,15 +578,15 @@ public class UserService {
                 if (privateKeyEntry != null) {
                     // First save the encrypted password
                     String encryptedPassword = encryptString(privateKeyEntry, password);
-                    allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
+                    allSharedPreferences.saveEncryptedPassword(username, encryptedPassword);
 
                     // Then save the encrypted group
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
-                    allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
+                    allSharedPreferences.saveEncryptedGroupId(username, encryptedGroupId);
 
                     // Finally, save the pioneer user
                     if (allSharedPreferences.fetchPioneerUser() == null) {
-                        allSharedPreferences.savePioneerUser(userName);
+                        allSharedPreferences.savePioneerUser(username);
                     }
                 }
             } catch (Exception e) {
