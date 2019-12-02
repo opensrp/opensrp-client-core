@@ -43,7 +43,5 @@ public interface BaseRegisterContract {
         void hideProgressDialog();
 
         void updateInitialsText(String initials);
-
-        void refreshNotificationCount();
     }
 }

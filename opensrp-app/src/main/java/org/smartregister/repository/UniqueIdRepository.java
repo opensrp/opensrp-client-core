@@ -127,7 +127,7 @@ public class UniqueIdRepository extends BaseRepository {
     }
 
     /**
-     * mark and openmrsid as used
+     * mark an openmrsid as used
      *
      * @param openmrsId
      */
@@ -168,7 +168,7 @@ public class UniqueIdRepository extends BaseRepository {
     }
 
     /**
-     * mark and openmrsid as NOT used
+     * mark an openmrsid as NOT used
      *
      * @param openmrsId
      */
