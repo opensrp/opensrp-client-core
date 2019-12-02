@@ -334,7 +334,10 @@ public class UserService {
         } else {
             setupContextForLogin(userName, password);
         }
-        allSettings.registerANM(userName, password);
+        String username = userName;
+        if (allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName))
+            username = allSharedPreferences.fetchRegisteredANM();
+        allSettings.registerANM(username, password);
         return loginSuccessful;
     }
 
