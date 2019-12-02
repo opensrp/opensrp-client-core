@@ -62,6 +62,7 @@ import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.ORGANIZATION_IDS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
@@ -371,6 +372,7 @@ public class UserService {
         saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
         saveJurisdictions(userInfo.jurisdictions);
+        saveOrganizations(getUserTeam(userInfo));
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
                         StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
@@ -504,6 +506,14 @@ public class UserService {
     public void saveJurisdictions(List<String> jurisdictions) {
         if (jurisdictions != null && !jurisdictions.isEmpty())
             allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
+    }
+
+    public void saveOrganizations(TeamMember teamMember) {
+        if (teamMember != null && teamMember.team != null) {
+            List<Long> organizations = teamMember.team.organizationIds;
+            if (organizations != null && !organizations.isEmpty())
+                allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+        }
     }
 
     public void saveUserInfo(User user) {
