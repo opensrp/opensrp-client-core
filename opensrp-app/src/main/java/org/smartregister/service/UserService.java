@@ -362,7 +362,8 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        boolean loginSuccessful = loginWith(userName, password);
+        boolean loginSuccessful = loginWith(userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
