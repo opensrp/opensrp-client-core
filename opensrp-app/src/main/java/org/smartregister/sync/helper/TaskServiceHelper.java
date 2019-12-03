@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,6 +25,8 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -39,6 +42,8 @@ public class TaskServiceHelper {
     public static final String UPDATE_STATUS_URL = "/rest/task/update_status";
     public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
+
+    private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
     public static final Gson taskGson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm")).create();
 
@@ -188,7 +193,7 @@ public class TaskServiceHelper {
         if (!tasks.isEmpty()) {
             String jsonPayload = taskGson.toJson(tasks);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            Response<String> response = httpAgent.post(
+            Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             ADD_TASK_URL),
@@ -197,10 +202,17 @@ public class TaskServiceHelper {
                 Timber.e("Failed to create new tasks on server.: %s", response.payload());
                 return;
             }
-
-            for (Task task : tasks) {
-                taskRepository.markTaskAsSynced(task.getIdentifier());
+            Set<String> unprocessedIds = new HashSet<>();
+            if (StringUtils.isNotBlank(response.payload())) {
+                if (response.payload().startsWith(TASKS_NOT_PROCESSED)) {
+                    unprocessedIds.addAll(Arrays.asList(response.payload().substring(TASKS_NOT_PROCESSED.length()).split(",")));
+                }
+                for (Task task : tasks) {
+                    if (!unprocessedIds.contains(task.getIdentifier()))
+                        taskRepository.markTaskAsSynced(task.getIdentifier());
+                }
             }
+
         }
     }
 
