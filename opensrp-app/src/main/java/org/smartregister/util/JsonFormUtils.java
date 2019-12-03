@@ -176,21 +176,18 @@ public class JsonFormUtils {
                 Timber.e(e);
             }
 
-            try {
-                if (AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
-                    continue;
-                }
-
-                if (AllConstants.MULTI_SELECT_LIST.equals(jsonObject.getString(AllConstants.TYPE))) {
-                    addMultiSelectListObservations(event, jsonObject);
-                    continue;
-                }
-
-                addObservation(event, jsonObject);
-
-            } catch (JSONException e) {
-                Timber.e(e);
+            if (AllConstants.EXPANSION_PANEL.equals(jsonObject.optString(AllConstants.TYPE))) {
+                continue;
             }
+
+            if (AllConstants.MULTI_SELECT_LIST.equals(jsonObject.optString(AllConstants.TYPE))) {
+                addMultiSelectListObservations(event, jsonObject);
+                continue;
+            }
+
+            addObservation(event, jsonObject);
+
+
         }
 
         createFormMetadataObs(metadata, event);
