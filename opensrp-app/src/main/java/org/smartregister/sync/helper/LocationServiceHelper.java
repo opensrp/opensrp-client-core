@@ -25,7 +25,9 @@ import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -43,6 +45,7 @@ public class LocationServiceHelper {
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
+    private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -163,7 +166,7 @@ public class LocationServiceHelper {
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            Response<String> response = httpAgent.post(
+            Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             CREATE_STRUCTURE_URL),
@@ -173,8 +176,15 @@ public class LocationServiceHelper {
                 return;
             }
 
-            for (Location location : locations) {
-                structureRepository.markStructuresAsSynced(location.getId());
+            Set<String> unprocessedIds = new HashSet<>();
+            if (StringUtils.isNotBlank(response.payload())) {
+                if (response.payload().startsWith(LOCATIONS_NOT_PROCESSED)) {
+                    unprocessedIds.addAll(Arrays.asList(response.payload().substring(LOCATIONS_NOT_PROCESSED.length()).split(",")));
+                }
+                for (Location location : locations) {
+                    if (!unprocessedIds.contains(location.getId()))
+                        structureRepository.markStructuresAsSynced(location.getId());
+                }
             }
         }
     }
