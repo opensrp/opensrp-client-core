@@ -89,7 +89,7 @@ public class UniqueIdRepository extends BaseRepository {
         Cursor cursor = null;
         try {
             cursor = getWritableDatabase().rawQuery("SELECT COUNT (*) FROM " + UniqueIds_TABLE_NAME + " WHERE " + STATUS_COLUMN + "=?",
-                    new String[]{String.valueOf(STATUS_NOT_USED)});
+                    new String[]{STATUS_NOT_USED});
             if (null != cursor && cursor.getCount() > 0) {
                 cursor.moveToFirst();
                 count = cursor.getInt(0);
@@ -157,7 +157,8 @@ public class UniqueIdRepository extends BaseRepository {
         int closed = getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id});
 
         if (closed == 0 && id.contains("-")) {
-            closed = updateOpenMRSIdentifierStatus(id.replace("-", ""), values);
+
+            closed = getWritableDatabase().update(UniqueIds_TABLE_NAME, values, OPENMRS_ID_COLUMN + " = ?", new String[]{id.replace("-", "")});
         }
 
         if (closed == 0) {
