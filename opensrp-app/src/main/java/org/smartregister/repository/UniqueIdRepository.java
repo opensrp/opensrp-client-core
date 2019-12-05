@@ -143,6 +143,7 @@ public class UniqueIdRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(STATUS_COLUMN, STATUS_USED);
             values.put(USED_BY_COLUMN, userName);
+            values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
 
             return updateOpenMRSIdentifierStatus(id, values);
 
@@ -181,6 +182,7 @@ public class UniqueIdRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(STATUS_COLUMN, STATUS_NOT_USED);
             values.put(USED_BY_COLUMN, "");
+            values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
             return updateOpenMRSIdentifierStatus(openmrsId_, values);
         } catch (Exception e) {
             Timber.e(e);
