@@ -83,7 +83,7 @@ public class PullUniqueIdsIntentService extends BaseSyncIntentService {
             for (int i = 0; i < jsonArray.length(); i++) {
                 ids.add(jsonArray.getString(i));
             }
-            uniqueIdRepo.bulkInserOpenmrsIds(ids);
+            uniqueIdRepo.bulkInsertOpenmrsIds(ids);
         }
     }
 

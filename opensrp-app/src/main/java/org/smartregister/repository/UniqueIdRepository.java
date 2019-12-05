@@ -61,7 +61,7 @@ public class UniqueIdRepository extends BaseRepository {
      *
      * @param ids
      */
-    public void bulkInserOpenmrsIds(List<String> ids) {
+    public void bulkInsertOpenmrsIds(List<String> ids) {
         SQLiteDatabase database = getWritableDatabase();
 
         try {
