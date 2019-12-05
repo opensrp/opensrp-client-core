@@ -50,6 +50,11 @@ public class JsonFormUtils {
     public static final String PERSON_INDENTIFIER = "person_identifier";
     public static final String PERSON_ADDRESS = "person_address";
 
+    public static final String SIMPRINTS_GUID = "simprints_guid";
+    public static final String FINGERPRINT_KEY = "finger_print";
+    public static final String FINGERPRINT_OPTION = "finger_print_option";
+    public static final String FINGERPRINT_OPTION_REGISTER = "register";
+
     public static final String CONCEPT = "concept";
     public static final String VALUE = "value";
     public static final String VALUES = "values";
@@ -561,6 +566,15 @@ public class JsonFormUtils {
             pids.put(entityIdVal, value);
         }
 
+        String key = getString(jsonObject, KEY);
+        String fingerprintOption = getString(jsonObject, FINGERPRINT_OPTION);
+
+        if (key.equals(FINGERPRINT_KEY)
+                && fingerprintOption.equals(FINGERPRINT_OPTION_REGISTER)){
+
+            pids.put(SIMPRINTS_GUID, value);
+
+        }
 
     }
 
