@@ -150,6 +150,18 @@ public class UniqueIdRepository extends BaseRepository {
         return reserveOrClose(uniqueId, STATUS_RESERVED);
     }
 
+    /**
+     * Release reserved ids so that they can be reused
+     * @return the number of opened ids
+     */
+    public int releaseReservedIds() {
+        ContentValues values= new ContentValues();
+        values.put(STATUS_COLUMN, STATUS_NOT_USED);
+        values.put(USED_BY_COLUMN, "");
+        values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
+       return getWritableDatabase().update(UniqueIds_TABLE_NAME, values, STATUS_COLUMN + " = ?", new String[]{STATUS_RESERVED});
+    }
+
     private int reserveOrClose(String openmrsId, String status) {
         try {
             String id;
