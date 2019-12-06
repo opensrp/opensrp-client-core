@@ -313,14 +313,19 @@ public class EventClientRepository extends BaseRepository {
 
 
     public int getMaxRowId(@NonNull Table table) {
-        Cursor cursor = getWritableDatabase().rawQuery("SELECT max(" + ROWID + ") AS max_row_id FROM " + table.name(), null);
+        Cursor cursor = null;
         int rowId = 0;
-        if (cursor != null) {
-            if (cursor.moveToNext()) {
-                rowId = cursor.getInt(cursor.getColumnIndex("max_row_id"));
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT max(" + ROWID + ") AS max_row_id FROM " + table.name(), null);
+            if (cursor != null) {
+                if (cursor.moveToNext()) {
+                    rowId = cursor.getInt(cursor.getColumnIndex("max_row_id"));
+                }
             }
-
-            cursor.close();
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return rowId;
@@ -646,9 +651,10 @@ public class EventClientRepository extends BaseRepository {
                 + ")>2 order by "
                 + event_column.serverVersion
                 + " asc ";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{lastSyncString});
+        Cursor cursor = null;
 
         try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{lastSyncString});
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
                 // String jsonEventStr = new String(json, "UTF-8");
@@ -688,7 +694,9 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Timber.e(e);
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return eventAndAlerts;
@@ -715,9 +723,10 @@ public class EventClientRepository extends BaseRepository {
                 + ")>2 order by "
                 + event_column.serverVersion
                 + " asc ";
-        Cursor cursor = getWritableDatabase().rawQuery(query, new String[]{syncStatus, lastSyncString});
+        Cursor cursor = null;
 
         try {
+            cursor = getWritableDatabase().rawQuery(query, new String[]{syncStatus, lastSyncString});
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
                 // String jsonEventStr = new String(json, "UTF-8");
@@ -757,7 +766,9 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Timber.e(e);
         } finally {
-            cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return eventAndAlerts;
@@ -804,7 +815,7 @@ public class EventClientRepository extends BaseRepository {
                 + limit;
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
 
             while (cursor.moveToNext()) {
                 String jsonEventStr = (cursor.getString(0));
@@ -863,7 +874,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
@@ -903,7 +914,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Synced, BaseRepository.TYPE_Valid});
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 while (!cursor.isAfterLast()) {
                     String id = cursor.getString(0);
@@ -1028,7 +1039,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+            cursor = getReadableDatabase().rawQuery("SELECT json FROM "
                     + Table.event.name()
                     + " WHERE "
                     + event_column.baseEntityId.name()
@@ -1063,7 +1074,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+            cursor = getReadableDatabase().rawQuery("SELECT json FROM "
                     + Table.event.name()
                     + " WHERE "
                     + event_column.eventId.name()
@@ -1093,7 +1104,7 @@ public class EventClientRepository extends BaseRepository {
 
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT json FROM "
+            cursor = getReadableDatabase().rawQuery("SELECT json FROM "
                     + Table.event.name()
                     + " WHERE "
                     + event_column.formSubmissionId.name()
@@ -1118,7 +1129,7 @@ public class EventClientRepository extends BaseRepository {
     public JSONObject getClientByBaseEntityId(String baseEntityId) {
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT "
+            cursor = getReadableDatabase().rawQuery("SELECT "
                     + client_column.json
                     + " FROM "
                     + Table.client.name()
@@ -1168,7 +1179,7 @@ public class EventClientRepository extends BaseRepository {
     public JSONObject getUnSyncedClientByBaseEntityId(String baseEntityId) {
         Cursor cursor = null;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT "
+            cursor = getReadableDatabase().rawQuery("SELECT "
                     + client_column.json
                     + " FROM "
                     + Table.client.name()

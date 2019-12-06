@@ -105,6 +105,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 scheduleJobsImmediately();
 
                 Timber.i("Started DrishtiSyncScheduler " + DateTime.now().toString());
+
+                CoreLibrary.getInstance().context().getUniqueIdRepository().releaseReservedIds();
             }
         }).start();
     }

@@ -35,6 +35,7 @@ public class UniqueIdRepository extends BaseRepository {
 
     private static final String STATUS_USED = "used";
     private static final String STATUS_NOT_USED = "not_used";
+    private static final String STATUS_RESERVED = "reserved";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
 
@@ -61,7 +62,7 @@ public class UniqueIdRepository extends BaseRepository {
      *
      * @param ids
      */
-    public void bulkInserOpenmrsIds(List<String> ids) {
+    public void bulkInsertOpenmrsIds(List<String> ids) {
         SQLiteDatabase database = getWritableDatabase();
 
         try {
@@ -123,6 +124,9 @@ public class UniqueIdRepository extends BaseRepository {
                 cursor.close();
             }
         }
+        if (uniqueId != null) {
+            reserve(uniqueId.getOpenmrsId());
+        }
         return uniqueId;
     }
 
@@ -132,6 +136,33 @@ public class UniqueIdRepository extends BaseRepository {
      * @param openmrsId
      */
     public int close(String openmrsId) {
+        return reserveOrClose(openmrsId, STATUS_USED);
+    }
+
+    /**
+     * reserve a uniqueId so that its not used again
+     *
+     * @param uniqueId
+     *
+     *
+     */
+    public int reserve(String uniqueId) {
+        return reserveOrClose(uniqueId, STATUS_RESERVED);
+    }
+
+    /**
+     * Release reserved ids so that they can be reused
+     * @return the number of opened ids
+     */
+    public int releaseReservedIds() {
+        ContentValues values= new ContentValues();
+        values.put(STATUS_COLUMN, STATUS_NOT_USED);
+        values.put(USED_BY_COLUMN, "");
+        values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
+       return getWritableDatabase().update(UniqueIds_TABLE_NAME, values, STATUS_COLUMN + " = ?", new String[]{STATUS_RESERVED});
+    }
+
+    private int reserveOrClose(String openmrsId, String status) {
         try {
             String id;
             String userName = CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM();
@@ -141,8 +172,9 @@ public class UniqueIdRepository extends BaseRepository {
                 id = openmrsId;
             }
             ContentValues values = new ContentValues();
-            values.put(STATUS_COLUMN, STATUS_USED);
+            values.put(STATUS_COLUMN, status);
             values.put(USED_BY_COLUMN, userName);
+            values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
 
             return updateOpenMRSIdentifierStatus(id, values);
 
@@ -181,6 +213,7 @@ public class UniqueIdRepository extends BaseRepository {
             ContentValues values = new ContentValues();
             values.put(STATUS_COLUMN, STATUS_NOT_USED);
             values.put(USED_BY_COLUMN, "");
+            values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
             return updateOpenMRSIdentifierStatus(openmrsId_, values);
         } catch (Exception e) {
             Timber.e(e);

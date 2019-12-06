@@ -328,7 +328,6 @@ public class TaskRepository extends BaseRepository {
             while (cursor.moveToNext()) {
                 tasks.add(readCursor(cursor));
             }
-            cursor.close();
         } catch (Exception e) {
             Timber.e(e);
         } finally {
