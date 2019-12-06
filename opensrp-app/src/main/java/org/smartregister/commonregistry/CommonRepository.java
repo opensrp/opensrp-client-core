@@ -159,52 +159,87 @@ public class CommonRepository extends DrishtiRepository {
 
     public List<CommonPersonObject> allcommon() {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database
-                .query(TABLE_NAME, common_TABLE_COLUMNS, null, null, null, null, null, null);
-        return readAllcommon(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database
+                    .query(TABLE_NAME, common_TABLE_COLUMNS, null, null, null, null, null, null);
+            return readAllcommon(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public List<CommonPersonObject> findByCaseIDs(String... caseIds) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(
-                String.format("SELECT * FROM %s WHERE %s IN (%s)", TABLE_NAME, ID_COLUMN,
-                        insertPlaceholdersForInClause(caseIds.length)), caseIds);
-        return readAllcommon(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    String.format("SELECT * FROM %s WHERE %s IN (%s)", TABLE_NAME, ID_COLUMN,
+                            insertPlaceholdersForInClause(caseIds.length)), caseIds);
+            return readAllcommon(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public List<CommonPersonObject> findByRelationalIDs(String... caseIds) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(
-                String.format("SELECT * FROM %s WHERE %s COLLATE NOCASE" + " IN (%s)", TABLE_NAME,
-                        Relational_ID, insertPlaceholdersForInClause(caseIds.length)), caseIds);
-        return readAllcommon(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    String.format("SELECT * FROM %s WHERE %s COLLATE NOCASE" + " IN (%s)", TABLE_NAME,
+                            Relational_ID, insertPlaceholdersForInClause(caseIds.length)), caseIds);
+            return readAllcommon(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public List<CommonPersonObject> findByRelational_IDs(String... caseIds) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database.rawQuery(
-                String.format("SELECT * FROM %s WHERE %s COLLATE NOCASE" + " IN (%s)", TABLE_NAME,
-                        Relational_Underscore_ID, insertPlaceholdersForInClause(caseIds.length)),
-                caseIds);
-        return readAllcommon(cursor);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(
+                    String.format("SELECT * FROM %s WHERE %s COLLATE NOCASE" + " IN (%s)", TABLE_NAME,
+                            Relational_Underscore_ID, insertPlaceholdersForInClause(caseIds.length)),
+                    caseIds);
+            return readAllcommon(cursor);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
     }
 
     public CommonPersonObject findByCaseID(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database
-                .query(TABLE_NAME, common_TABLE_COLUMNS, ID_COLUMN + " = ?", new String[]{caseId},
-                        null, null, null, null);
-        List<CommonPersonObject> commons = readAllcommon(cursor);
-        if (commons.isEmpty()) {
-            return null;
+        Cursor cursor = null;
+        try {
+            cursor = database
+                    .query(TABLE_NAME, common_TABLE_COLUMNS, ID_COLUMN + " = ?", new String[]{caseId},
+                            null, null, null, null);
+            List<CommonPersonObject> commons = readAllcommon(cursor);
+            if (commons.isEmpty()) {
+                return null;
+            }
+            return commons.get(0);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return commons.get(0);
     }
 
     public CommonPersonObject findByBaseEntityId(String baseEntityId) {
+        Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
-            Cursor cursor = database.query(TABLE_NAME, common_TABLE_COLUMNS,
+            cursor = masterRepository.getReadableDatabase().query(TABLE_NAME, common_TABLE_COLUMNS,
                     BASE_ENTITY_ID_COLUMN + " = ? " + "COLLATE NOCASE ", new String[]{baseEntityId},
                     null, null, null, null);
             List<CommonPersonObject> commons = readAllcommon(cursor);
@@ -214,20 +249,31 @@ public class CommonRepository extends DrishtiRepository {
             return commons.get(0);
         } catch (Exception e) {
             Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
         return null;
     }
 
     public CommonPersonObject findHHByGOBHHID(String caseId) {
         SQLiteDatabase database = masterRepository.getReadableDatabase();
-        Cursor cursor = database
-                .query(TABLE_NAME, common_TABLE_COLUMNS, "FWGOBHHID" + " = ?", new String[]{caseId},
-                        null, null, null, null);
-        List<CommonPersonObject> commons = readAllcommon(cursor);
-        if (commons.isEmpty()) {
-            return null;
+        Cursor cursor = null;
+        try {
+            cursor = database
+                    .query(TABLE_NAME, common_TABLE_COLUMNS, "FWGOBHHID" + " = ?", new String[]{caseId},
+                            null, null, null, null);
+            List<CommonPersonObject> commons = readAllcommon(cursor);
+            if (commons.isEmpty()) {
+                return null;
+            }
+            return commons.get(0);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
-        return commons.get(0);
     }
 
     public long count() {
@@ -269,7 +315,6 @@ public class CommonRepository extends DrishtiRepository {
             commons.add(common);
             cursor.moveToNext();
         }
-        cursor.close();
         return commons;
     }
 
@@ -278,17 +323,20 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     private List<Map<String, String>> readDetailsList(Cursor cursor) {
-        cursor.moveToFirst();
-        List<Map<String, String>> detailsList = new ArrayList<Map<String, String>>();
-        while (!cursor.isAfterLast()) {
-            String detailsJSON = cursor.getString(0);
-            detailsList.add(new Gson().<Map<String, String>>fromJson(detailsJSON,
-                    new TypeToken<HashMap<String, String>>() {
-                    }.getType()));
-            cursor.moveToNext();
+        try {
+            cursor.moveToFirst();
+            List<Map<String, String>> detailsList = new ArrayList<Map<String, String>>();
+            while (!cursor.isAfterLast()) {
+                String detailsJSON = cursor.getString(0);
+                detailsList.add(new Gson().<Map<String, String>>fromJson(detailsJSON,
+                        new TypeToken<HashMap<String, String>>() {
+                        }.getType()));
+                cursor.moveToNext();
+            }
+            return detailsList;
+        } finally {
+            cursor.close();
         }
-        cursor.close();
-        return detailsList;
     }
 
     public void updateColumn(String tableName, ContentValues contentValues, String caseId) {
