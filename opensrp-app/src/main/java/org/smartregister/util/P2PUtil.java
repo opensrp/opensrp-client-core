@@ -2,7 +2,9 @@ package org.smartregister.util;
 
 import android.database.Cursor;
 import android.support.annotation.NonNull;
+
 import net.sqlcipher.database.SQLiteDatabase;
+
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ROWID;
@@ -12,14 +14,21 @@ public class P2PUtil {
 
 
     public static int getMaxRowId(@NonNull String table, SQLiteDatabase sqLiteDatabase) {
-        Cursor cursor = sqLiteDatabase.rawQuery("SELECT max(" + ROWID + ") AS max_row_id FROM " + table, null);
+        Cursor cursor = null;
         int rowId = 0;
-        if (cursor != null) {
-            if (cursor.moveToNext()) {
-                rowId = cursor.getInt(cursor.getColumnIndex("max_row_id"));
-            }
+        try {
+            cursor = sqLiteDatabase.rawQuery("SELECT max(" + ROWID + ") AS max_row_id FROM " + table, null);
+            if (cursor != null) {
+                if (cursor.moveToNext()) {
+                    rowId = cursor.getInt(cursor.getColumnIndex("max_row_id"));
+                }
 
-            cursor.close();
+                cursor.close();
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return rowId;
