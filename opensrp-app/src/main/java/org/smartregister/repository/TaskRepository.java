@@ -326,7 +326,7 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         List<Task> tasks = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =?", TASK_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Created});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
             while (cursor.moveToNext()) {
                 tasks.add(readCursor(cursor));
             }
@@ -565,7 +565,7 @@ public class TaskRepository extends BaseRepository {
             return;
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS, TaskStatus.CANCELLED.name());
-        contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Created);
+        contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
         getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s =?", FOR, STATUS), new String[]{entityId, taskStatus.name()});
     }
 }
