@@ -1031,10 +1031,11 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
-    public List<JSONObject> getEventsByBaseEntityId(String baseEntityId) {
-        List<JSONObject> list = new ArrayList<>();
+    public JSONObject getEventsByBaseEntityId(String baseEntityId) {
+        JSONObject events = new JSONObject();
+        JSONArray list = new JSONArray();
         if (StringUtils.isBlank(baseEntityId)) {
-            return list;
+            return events;
         }
 
         Cursor cursor = null;
@@ -1051,12 +1052,13 @@ public class EventClientRepository extends BaseRepository {
 
                 JSONObject ev = new JSONObject(jsonEventStr);
 
-                if (ev.has(event_column.baseEntityId.name())) {
-                    JSONObject cl = getClient(getWritableDatabase(), baseEntityId);
-                    ev.put("client", cl);
-                }
-                list.add(ev);
+
+                list.put(ev);
             }
+            JSONObject cl = getClient(getWritableDatabase(), baseEntityId);
+            events.put("client", cl);
+            events.put("events", list);
+
         } catch (Exception e) {
             Timber.e(e);
         } finally {
@@ -1064,7 +1066,8 @@ public class EventClientRepository extends BaseRepository {
                 cursor.close();
             }
         }
-        return list;
+
+        return events;
     }
 
     public JSONObject getEventsByEventId(String eventId) {
@@ -1451,7 +1454,7 @@ public class EventClientRepository extends BaseRepository {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             }
             populateAdditionalColumns(values, event_column.values(), jsonObject);
-            long affected ;
+            long affected;
             //update existing event if eventid present
             if (jsonObject.has(event_column.formSubmissionId.name())
                     && jsonObject.getString(event_column.formSubmissionId.name()) != null) {
