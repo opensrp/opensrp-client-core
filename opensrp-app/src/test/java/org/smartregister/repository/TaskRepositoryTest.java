@@ -36,9 +36,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.smartregister.domain.Task.TaskStatus.CANCELLED;
 import static org.smartregister.domain.Task.TaskStatus.READY;
 import static org.smartregister.repository.TaskRepository.TASK_TABLE;
 
@@ -225,5 +230,22 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
         taskRepository.updateTaskStructureIdFromStructure(locations);
         assertTrue(taskRepository.updateTaskStructureIdFromStructure(locations));
+    }
+
+
+    @Test
+    public void testCancelTasksByEntityAndStatus() {
+        taskRepository.cancelTasksByEntityAndStatus("id1", READY);
+        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status =?"), eq(new String[]{"id1", READY.name()}));
+        assertEquals(BaseRepository.TYPE_Unsynced, contentValuesArgumentCaptor.getValue().getAsString("sync_status"));
+        assertEquals(CANCELLED.name(), contentValuesArgumentCaptor.getValue().getAsString("status"));
+        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
+    }
+
+    @Test
+    public void testCancelTasksByEntityAndStatusWithNullparams() {
+        taskRepository.cancelTasksByEntityAndStatus(null, READY);
+        verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
+        verifyZeroInteractions(sqLiteDatabase);
     }
 }
