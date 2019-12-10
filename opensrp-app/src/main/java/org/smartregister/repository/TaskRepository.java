@@ -555,17 +555,16 @@ public class TaskRepository extends BaseRepository {
     }
 
     /**
-     * Cancels tasks for an entity that have a task status
+     * Cancels tasks for an entity
      *
-     * @param entityId   the entity whose tasks are being cancelled
-     * @param taskStatus the task status to filter with
+     * @param entityId  id of the entity whose tasks are being cancelled
      */
-    public void cancelTasksByEntityAndStatus(@NonNull String entityId, @NonNull TaskStatus taskStatus) {
-        if (StringUtils.isBlank(entityId))
+    public void cancelTasksByEntityAndStatus(@NonNull String entityId) {
+        if (StringUtils .isBlank(entityId))
             return;
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS, TaskStatus.CANCELLED.name());
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
-        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s =?", FOR, STATUS), new String[]{entityId, taskStatus.name()});
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ?", FOR), new String[]{entityId});
     }
 }

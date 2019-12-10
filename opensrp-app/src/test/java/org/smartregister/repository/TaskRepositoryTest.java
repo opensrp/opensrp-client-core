@@ -235,8 +235,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testCancelTasksByEntityAndStatus() {
-        taskRepository.cancelTasksByEntityAndStatus("id1", READY);
-        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status =?"), eq(new String[]{"id1", READY.name()}));
+        taskRepository.cancelTasksByEntityAndStatus("id1");
+        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ?"), eq(new String[]{"id1"}));
         assertEquals(BaseRepository.TYPE_Unsynced, contentValuesArgumentCaptor.getValue().getAsString("sync_status"));
         assertEquals(CANCELLED.name(), contentValuesArgumentCaptor.getValue().getAsString("status"));
         assertEquals(2, contentValuesArgumentCaptor.getValue().size());
@@ -244,7 +244,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testCancelTasksByEntityAndStatusWithNullparams() {
-        taskRepository.cancelTasksByEntityAndStatus(null, READY);
+        taskRepository.cancelTasksByEntityAndStatus(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
         verifyZeroInteractions(sqLiteDatabase);
     }
