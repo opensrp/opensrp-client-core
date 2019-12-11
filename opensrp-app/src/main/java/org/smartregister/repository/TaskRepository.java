@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
@@ -115,7 +116,7 @@ public class TaskRepository extends BaseRepository {
 
         Task existingTask = getTaskByIdentifier(task.getIdentifier());
         if (existingTask != null) {
-            if(existingTask.getLastModified().isAfter(task.getLastModified())) {
+            if (existingTask.getLastModified().isAfter(task.getLastModified())) {
                 return;
             }
             int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
@@ -219,8 +220,9 @@ public class TaskRepository extends BaseRepository {
 
     /**
      * Gets tasks for an entity using plan and task status
-     * @param planId the plan id
-     * @param forEntity the entity id
+     *
+     * @param planId     the plan id
+     * @param forEntity  the entity id
      * @param taskStatus the task status {@link TaskStatus }
      * @return the set of tasks matching the above params
      */
@@ -324,7 +326,7 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         List<Task> tasks = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =?", TASK_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Created});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
             while (cursor.moveToNext()) {
                 tasks.add(readCursor(cursor));
             }
@@ -510,7 +512,7 @@ public class TaskRepository extends BaseRepository {
 
         String query = "SELECT "
                 + ROWID
-                +",* FROM "
+                + ",* FROM "
                 + TASK_TABLE
                 + " WHERE "
                 + ROWID
@@ -550,5 +552,19 @@ public class TaskRepository extends BaseRepository {
             jsonData = new JsonData(jsonArray, maxRowId);
         }
         return jsonData;
+    }
+
+    /**
+     * Cancels tasks for an entity
+     *
+     * @param entityId  id of the entity whose tasks are being cancelled
+     */
+    public void cancelTasksByEntityAndStatus(@NonNull String entityId) {
+        if (StringUtils .isBlank(entityId))
+            return;
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(STATUS, TaskStatus.CANCELLED.name());
+        contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ?", FOR), new String[]{entityId});
     }
 }

@@ -121,16 +121,23 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void getEventsByBaseEntityIdReturnsNotNull() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(baseEntityId));
+        JSONObject events = eventClientRepository.getEventsByBaseEntityId(baseEntityId);
+        Assert.assertNotNull(events);
+        Assert.assertTrue(events.has("events"));
 
     }
 
     @Test
-    public void getEventsByEventIdReturnsNotNull() throws Exception {
+    public void getEventsByBaseEntityIdReturnsNotNullIfIdIsNull() {
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(null));
+        Mockito.verifyNoMoreInteractions(sqliteDatabase);
 
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByEventId("EventId"));
+    }
 
+    @Test
+    public void getEventsByBaseEntityIdReturnsNotNullOnError() {
+        Mockito.doThrow(new RuntimeException()).when(sqliteDatabase).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(null));
     }
 
     @Test
