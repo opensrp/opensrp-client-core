@@ -3,12 +3,14 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,6 +25,8 @@ import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -32,6 +36,7 @@ import java.util.Set;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ROWID;
+import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 import static org.smartregister.domain.Task.TaskStatus;
 
 /**
@@ -160,8 +165,11 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         Map<String, Set<Task>> tasks = new HashMap<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s != ?",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS), new String[]{planId, groupId, TaskStatus.CANCELLED.name()});
+            String[] params = new String[]{planId, groupId};
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s NOT IN (%s)",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
                 Task task = readCursor(cursor);
@@ -203,8 +211,10 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         Set<Task> taskSet = new HashSet<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s != ? AND %s =?  AND %s =? ",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, STATUS, FOR, CODE), new String[]{planId, groupId, TaskStatus.CANCELLED.name(), forEntity, code});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                    , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Task task = readCursor(cursor);
                 taskSet.add(task);
@@ -556,15 +566,32 @@ public class TaskRepository extends BaseRepository {
 
     /**
      * Cancels tasks for an entity
+     * Cancels all tasks that have status ready @{@link TaskStatus}
      *
-     * @param entityId  id of the entity whose tasks are being cancelled
+     * @param entityId id of the entity whose tasks are being cancelled
      */
-    public void cancelTasksByEntityAndStatus(@NonNull String entityId) {
-        if (StringUtils .isBlank(entityId))
+    public void cancelTasksForEntity(@NonNull String entityId) {
+        if (StringUtils.isBlank(entityId))
             return;
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS, TaskStatus.CANCELLED.name());
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
-        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ?", FOR), new String[]{entityId});
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s =?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
+    }
+
+
+    /**
+     * Archive tasks for an entity
+     * Archives all tasks that have status different from ready @{@link TaskStatus}
+     *
+     * @param entityId id of the entity whose tasks are being archived
+     */
+    public void archiveTasksForEntity(@NonNull String entityId) {
+        if (StringUtils.isBlank(entityId))
+            return;
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(STATUS, TaskStatus.ARCHIVED.name());
+        contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s !=?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
     }
 }

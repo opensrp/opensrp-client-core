@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 import org.joda.time.DateTime;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -19,8 +21,11 @@ public class Task implements Serializable {
         CANCELLED, @SerializedName("In Progress")
         IN_PROGRESS, @SerializedName("Completed")
         COMPLETED, @SerializedName("Failed")
-        FAILED
+        FAILED, @SerializedName("Archived")
+        ARCHIVED
     }
+
+    public static final String[] INACTIVE_TASK_STATUS = new String[]{TaskStatus.CANCELLED.name(), TaskStatus.ARCHIVED.name()};
 
     private String identifier;
 
