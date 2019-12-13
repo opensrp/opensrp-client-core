@@ -165,10 +165,11 @@ public class TaskRepository extends BaseRepository {
         Cursor cursor = null;
         Map<String, Set<Task>> tasks = new HashMap<>();
         try {
+            String[] params = new String[]{planId, groupId};
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s NOT IN (%s)",
                     TASK_TABLE, PLAN_ID, GROUP_ID, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.size(), "?"))),
-                    ArrayUtils.addAll(new String[]{planId, groupId}, INACTIVE_TASK_STATUS));
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Set<Task> taskSet;
                 Task task = readCursor(cursor);
@@ -212,7 +213,7 @@ public class TaskRepository extends BaseRepository {
         try {
             cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
                     TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.size(), "?")))
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
                     , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
             while (cursor.moveToNext()) {
                 Task task = readCursor(cursor);

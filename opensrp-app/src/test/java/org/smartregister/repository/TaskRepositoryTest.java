@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -20,6 +21,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.OngoingStubbing;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
@@ -40,6 +42,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -129,17 +132,18 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetTasksByCampaignAndGroup() {
-        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE plan_id=? AND group_id =? AND status != ?",
-                new String[]{"IRS_2018_S1", "2018_IRS-3734", Task.TaskStatus.CANCELLED.name()})).thenReturn(getCursor());
+    public void testGetTasksByPlanAndGroup() {
+        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE plan_id=? AND group_id =? AND status NOT IN (?,?)",
+                new String[]{"IRS_2018_S1", "2018_IRS-3734", CANCELLED.name(), ARCHIVED.name()})).thenReturn(getCursor());
         Map<String, Set<Task>> allTasks = taskRepository.getTasksByPlanAndGroup("IRS_2018_S1", "2018_IRS-3734");
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
-        assertEquals("SELECT * FROM task WHERE plan_id=? AND group_id =? AND status != ?", stringArgumentCaptor.getValue());
+        assertEquals("SELECT * FROM task WHERE plan_id=? AND group_id =? AND status NOT IN (?,?)", stringArgumentCaptor.getValue());
 
         assertEquals("IRS_2018_S1", argsCaptor.getValue()[0]);
         assertEquals("2018_IRS-3734", argsCaptor.getValue()[1]);
         assertEquals(Task.TaskStatus.CANCELLED.name(), argsCaptor.getValue()[2]);
+        assertEquals(ARCHIVED.name(), argsCaptor.getValue()[3]);
 
         assertEquals(1, allTasks.size());
         assertEquals(1, allTasks.get("structure._id.33efadf1-feda-4861-a979-ff4f7cec9ea7").size());
@@ -160,8 +164,9 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
 
-
     }
+
+
 
     @Test
     public void testGetTaskByIdentifier() {
@@ -235,16 +240,16 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
 
     @Test
-    public void testCancelTasksByEntityAndStatus() {
+    public void testCancelTasksForEntity() {
         taskRepository.cancelTasksForEntity("id1");
-        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ?"), eq(new String[]{"id1"}));
+        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status =?"), eq(new String[]{"id1", READY.name()}));
         assertEquals(BaseRepository.TYPE_Unsynced, contentValuesArgumentCaptor.getValue().getAsString("sync_status"));
         assertEquals(CANCELLED.name(), contentValuesArgumentCaptor.getValue().getAsString("status"));
         assertEquals(2, contentValuesArgumentCaptor.getValue().size());
     }
 
     @Test
-    public void testCancelTasksByEntityAndStatusWithNullParams() {
+    public void testCancelTasksForEntityWithNullParams() {
         taskRepository.cancelTasksForEntity(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
         verifyZeroInteractions(sqLiteDatabase);
