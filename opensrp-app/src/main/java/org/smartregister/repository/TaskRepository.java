@@ -565,15 +565,32 @@ public class TaskRepository extends BaseRepository {
 
     /**
      * Cancels tasks for an entity
+     * Cancels all tasks that have status ready @{@link TaskStatus}
      *
      * @param entityId id of the entity whose tasks are being cancelled
      */
-    public void cancelTasksByEntityAndStatus(@NonNull String entityId) {
+    public void cancelTasksForEntity(@NonNull String entityId) {
         if (StringUtils.isBlank(entityId))
             return;
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS, TaskStatus.CANCELLED.name());
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
-        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ?", FOR), new String[]{entityId});
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s =?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
+    }
+
+
+    /**
+     * Archive tasks for an entity
+     * Archives all tasks that have status different from ready @{@link TaskStatus}
+     *
+     * @param entityId id of the entity whose tasks are being archived
+     */
+    public void archiveTasksForEntity(@NonNull String entityId) {
+        if (StringUtils.isBlank(entityId))
+            return;
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(STATUS, TaskStatus.ARCHIVED.name());
+        contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s !=?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
     }
 }
