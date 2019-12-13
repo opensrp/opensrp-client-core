@@ -19,7 +19,8 @@ public class Task implements Serializable {
         CANCELLED, @SerializedName("In Progress")
         IN_PROGRESS, @SerializedName("Completed")
         COMPLETED, @SerializedName("Failed")
-        FAILED
+        FAILED, @SerializedName("Archived")
+        ARCHIVED
     }
 
     private String identifier;
