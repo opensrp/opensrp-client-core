@@ -43,6 +43,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
+import static org.smartregister.domain.Task.TaskStatus.ARCHIVED;
 import static org.smartregister.domain.Task.TaskStatus.CANCELLED;
 import static org.smartregister.domain.Task.TaskStatus.READY;
 import static org.smartregister.repository.TaskRepository.TASK_TABLE;
@@ -243,9 +244,25 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testCancelTasksByEntityAndStatusWithNullparams() {
+    public void testCancelTasksByEntityAndStatusWithNullParams() {
         taskRepository.cancelTasksForEntity(null);
         verify(sqLiteDatabase, never()).update(any(), any(), any(), any());
+        verifyZeroInteractions(sqLiteDatabase);
+    }
+
+
+    @Test
+    public void testArchiveTasksForEntity() {
+        taskRepository.archiveTasksForEntity("id1");
+        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status !=?"), eq(new String[]{"id1", READY.name()}));
+        assertEquals(BaseRepository.TYPE_Unsynced, contentValuesArgumentCaptor.getValue().getAsString("sync_status"));
+        assertEquals(ARCHIVED.name(), contentValuesArgumentCaptor.getValue().getAsString("status"));
+        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
+    }
+
+    @Test
+    public void testArchiveTasksForEntityWithNullParams() {
+        taskRepository.archiveTasksForEntity(null);
         verifyZeroInteractions(sqLiteDatabase);
     }
 }
