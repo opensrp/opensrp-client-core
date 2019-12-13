@@ -142,7 +142,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
         assertEquals("IRS_2018_S1", argsCaptor.getValue()[0]);
         assertEquals("2018_IRS-3734", argsCaptor.getValue()[1]);
-        assertEquals(Task.TaskStatus.CANCELLED.name(), argsCaptor.getValue()[2]);
+        assertEquals(CANCELLED.name(), argsCaptor.getValue()[2]);
         assertEquals(ARCHIVED.name(), argsCaptor.getValue()[3]);
 
         assertEquals(1, allTasks.size());
@@ -166,7 +166,41 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testGetTasksByEntityAndCode() {
+        when(sqLiteDatabase.rawQuery("SELECT * FROM task WHERE plan_id=? AND group_id =? AND for =?  AND code =? AND status  NOT IN (?,?)",
+                new String[]{"IRS_2018_S1", "2018_IRS-3734", "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", "IRS", CANCELLED.name(), ARCHIVED.name()})).thenReturn(getCursor());
+        Set<Task> allTasks = taskRepository.getTasksByEntityAndCode("IRS_2018_S1", "2018_IRS-3734", "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", "IRS");
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
+        assertEquals("SELECT * FROM task WHERE plan_id=? AND group_id =? AND for =?  AND code =? AND status  NOT IN (?,?)", stringArgumentCaptor.getValue());
+
+        assertEquals("IRS_2018_S1", argsCaptor.getValue()[0]);
+        assertEquals("2018_IRS-3734", argsCaptor.getValue()[1]);
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", argsCaptor.getValue()[2]);
+        assertEquals("IRS", argsCaptor.getValue()[3]);
+        assertEquals(CANCELLED.name(), argsCaptor.getValue()[4]);
+        assertEquals(ARCHIVED.name(), argsCaptor.getValue()[5]);
+
+        assertEquals(1, allTasks.size());
+        Task task = allTasks.iterator().next();
+
+        assertEquals("tsk11231jh22", task.getIdentifier());
+        assertEquals("2018_IRS-3734", task.getGroupIdentifier());
+        assertEquals(READY, task.getStatus());
+        assertEquals("Not Visited", task.getBusinessStatus());
+        assertEquals(3, task.getPriority());
+        assertEquals("IRS", task.getCode());
+        assertEquals("Spray House", task.getDescription());
+        assertEquals("IRS Visit", task.getFocus());
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", task.getForEntity());
+        assertEquals("2018-11-10T2200", task.getExecutionStartDate().toString(formatter));
+        assertNull(task.getExecutionEndDate());
+        assertEquals("2018-10-31T0700", task.getAuthoredOn().toString(formatter));
+        assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
+        assertEquals("demouser", task.getOwner());
+
+    }
 
     @Test
     public void testGetTaskByIdentifier() {
