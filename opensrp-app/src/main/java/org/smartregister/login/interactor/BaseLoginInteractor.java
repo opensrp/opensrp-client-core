@@ -145,7 +145,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                             }
                         } else {
                             if (loginResponse == null) {
-                                getLoginView().showErrorDialog("Sorry, your loginWithLocalFlag failed. Please try again");
+                                getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.response_null));
                             } else {
                                 if (loginResponse == NO_INTERNET_CONNECTIVITY) {
                                     getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
@@ -162,11 +162,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 });
             } else {
                 getLoginView().enableLoginButton(true);
-                getLoginView().showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+                getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.url_missing));
             }
         } catch (Exception e) {
             Timber.e(e);
-            getLoginView().showErrorDialog("Error occurred trying to loginWithLocalFlag in. Please try again...");
+            getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.exception_login));
         }
     }
 

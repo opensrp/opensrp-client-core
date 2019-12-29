@@ -120,6 +120,17 @@ public class HTTPAgent {
             return new Response<>(ResponseStatus.failure, null);
         }
     }
+    public Response<String> fetchWithoutAuth(String requestURLPath) {
+        HttpURLConnection urlConnection;
+        try {
+            urlConnection = initializeHttp(requestURLPath, false);
+            return handleResponse(urlConnection);
+
+        } catch (IOException ex) {
+            Timber.e(ex, "EXCEPTION %s", ex.toString());
+            return new Response<>(ResponseStatus.failure, null);
+        }
+    }
 
     public Response<String> post(String postURLPath, String jsonPayload) {
         HttpURLConnection urlConnection;

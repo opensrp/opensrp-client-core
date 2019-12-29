@@ -417,5 +417,8 @@
     <string name="msg_empty_url">URL cannot be empty</string>
     <string name="sync_failed_malformed_url">Sync failed. Check Url Configuration</string>
     <string name="sync_failed_timeout_error">Sync Failed. Could not connect to the server</string>
+    <string name="response_null">Sorry, your loginWithLocalFlag failed. Please try again</string>
+    <string name="url_missing">OpenSRP Base URL is missing. Please add it in Setting and try again</string>
+    <string name="exception_login">Error occurred trying to loginWithLocalFlag in. Please try again...</string>
 
 </resources>

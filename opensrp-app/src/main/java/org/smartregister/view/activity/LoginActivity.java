@@ -180,7 +180,7 @@ public class LoginActivity extends Activity {
     private void showErrorDialog(String message) {
         AlertDialog dialog = new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.login_failed_dialog_title)).setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
