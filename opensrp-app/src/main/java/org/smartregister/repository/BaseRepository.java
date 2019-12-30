@@ -5,6 +5,7 @@ import android.database.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.domain.db.Column;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,26 +35,16 @@ public class BaseRepository {
 
     public static String COLLATE_NOCASE = " COLLATE NOCASE ";
 
-    private Repository repository;
-
-    public BaseRepository(Repository repository) {
-        this.repository = repository;
-    }
-
-    public Repository getRepository() {
-        return repository;
-    }
-
     protected String generateRandomUUIDString() {
         return UUID.randomUUID().toString();
     }
 
     public SQLiteDatabase getWritableDatabase() {
-        return this.repository.getWritableDatabase();
+        return DrishtiApplication.getInstance().getRepository().getWritableDatabase();
     }
 
     public SQLiteDatabase getReadableDatabase() {
-        return this.repository.getReadableDatabase();
+        return DrishtiApplication.getInstance().getRepository().getReadableDatabase();
     }
 
     interface BaseTable {
