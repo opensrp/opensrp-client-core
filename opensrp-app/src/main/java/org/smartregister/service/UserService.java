@@ -21,7 +21,6 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.Repository;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
@@ -73,7 +72,6 @@ public class UserService {
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-    private final Repository repository;
     private final AllSettings allSettings;
     private final AllSharedPreferences allSharedPreferences;
     private HTTPAgent httpAgent;
@@ -84,11 +82,10 @@ public class UserService {
     private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
-    public UserService(Repository repositoryArg, AllSettings allSettingsArg, AllSharedPreferences
+    public UserService(AllSettings allSettingsArg, AllSharedPreferences
             allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
                        DristhiConfiguration configurationArg, SaveANMLocationTask
                                saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg, SaveANMTeamTask saveANMTeamTaskArg) {
-        repository = repositoryArg;
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;
         httpAgent = httpAgentArg;
@@ -209,7 +206,7 @@ public class UserService {
     }
 
     public boolean isValidLocalLogin(String userName, String password) {
-        return allSharedPreferences.fetchRegisteredANM().equals(userName) && repository
+        return allSharedPreferences.fetchRegisteredANM().equals(userName) && DrishtiApplication.getInstance().getRepository()
                 .canUseThisPassword(password) && !allSharedPreferences.fetchForceRemoteLogin();
     }
 
@@ -217,7 +214,7 @@ public class UserService {
         // Check if everything OK for local login
         if (keyStore != null && userName != null && password != null && !allSharedPreferences
                 .fetchForceRemoteLogin()) {
-            String username=userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM())?allSharedPreferences.fetchRegisteredANM():userName;
+            String username = userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM()) ? allSharedPreferences.fetchRegisteredANM() : userName;
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(username);
                 if (privateKeyEntry != null) {
@@ -242,7 +239,7 @@ public class UserService {
     }
 
     private boolean isValidGroupId(String groupId) {
-        return repository.canUseThisPassword(groupId);
+        return DrishtiApplication.getInstance().getRepository().canUseThisPassword(groupId);
     }
 
     public String getGroupId(String userName) {
@@ -366,7 +363,7 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        String username=userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
                 ? userInfo.user.getUsername() : userName;
         boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));
@@ -547,7 +544,7 @@ public class UserService {
      *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
     public void saveUserGroup(String userName, String password, LoginResponseData userInfo) {
-        String username=userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
                 ? userInfo.user.getUsername() : userName;
         if (keyStore != null && username != null) {
             try {
@@ -604,7 +601,7 @@ public class UserService {
         logoutSession();
         allSettings.registerANM("", "");
         allSettings.savePreviousFetchIndex("0");
-        repository.deleteRepository();
+        DrishtiApplication.getInstance().getRepository().deleteRepository();
     }
 
     public void logoutSession() {

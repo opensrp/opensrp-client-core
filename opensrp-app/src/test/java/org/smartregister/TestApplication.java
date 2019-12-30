@@ -31,4 +31,8 @@ public class TestApplication extends DrishtiApplication {
         return repository;
     }
 
+
+    @Override
+    public void onTerminate() {//do nothing
+    }
 }

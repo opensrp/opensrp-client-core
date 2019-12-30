@@ -34,7 +34,6 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
-import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
 import org.smartregister.repository.StructureRepository;
@@ -92,7 +91,6 @@ import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
 import org.smartregister.util.Utils;
-import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.FPClients;
@@ -122,7 +120,6 @@ public class Context {
     private static Context context = new Context();
     protected DristhiConfiguration configuration;
     private android.content.Context applicationContext;
-    private Repository repository;
     private EligibleCoupleRepository eligibleCoupleRepository;
     private AlertRepository alertRepository;
     private SettingsRepository settingsRepository;
@@ -277,7 +274,6 @@ public class Context {
     }
 
     public FormSubmissionService formSubmissionService() {
-        initRepository();
         if (formSubmissionService == null) {
             if (commonFtsObject != null) {
                 formSubmissionService = new FormSubmissionService(ziggyService(),
@@ -299,7 +295,6 @@ public class Context {
     }
 
     public FormSubmissionRouter formSubmissionRouter() {
-        initRepository();
         if (formSubmissionRouter == null) {
             formSubmissionRouter = new FormSubmissionRouter(formDataRepository(),
                     ecRegistrationHandler(), fpComplicationsHandler(), fpChangeHandler(),
@@ -491,7 +486,6 @@ public class Context {
     }
 
     public ZiggyService ziggyService() {
-        initRepository();
         if (ziggyService == null) {
             ziggyService = new ZiggyService(ziggyFileLoader(), formDataRepository(),
                     formSubmissionRouter());
@@ -524,16 +518,6 @@ public class Context {
         return httpAgent;
     }
 
-    public Repository initRepository() {
-        if (configuration().appName().equals(AllConstants.APP_NAME_INDONESIA)) {
-            return null;
-        }
-        if (repository == null) {
-            repository = DrishtiApplication.getInstance().getRepository();
-        }
-        return repository;
-    }
-
     public ArrayList<DrishtiRepository> sharedRepositories() {
         assignbindtypes();
         ArrayList<DrishtiRepository> drishtireposotorylist = new ArrayList<DrishtiRepository>();
@@ -564,7 +548,6 @@ public class Context {
     }
 
     public AllEligibleCouples allEligibleCouples() {
-        initRepository();
         if (allEligibleCouples == null) {
             allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository(),
                     alertRepository(), timelineEventRepository());
@@ -573,7 +556,6 @@ public class Context {
     }
 
     public AllAlerts allAlerts() {
-        initRepository();
         if (allAlerts == null) {
             allAlerts = new AllAlerts(alertRepository());
         }
@@ -581,7 +563,6 @@ public class Context {
     }
 
     public AllSettings allSettings() {
-        initRepository();
         if (allSettings == null) {
             allSettings = new AllSettings(allSharedPreferences(), settingsRepository());
         }
@@ -597,7 +578,6 @@ public class Context {
     }
 
     public AllBeneficiaries allBeneficiaries() {
-        initRepository();
         if (allBeneficiaries == null) {
             allBeneficiaries = new AllBeneficiaries(motherRepository(), childRepository(),
                     alertRepository(), timelineEventRepository());
@@ -606,7 +586,6 @@ public class Context {
     }
 
     public AllTimelineEvents allTimelineEvents() {
-        initRepository();
         if (allTimelineEvents == null) {
             allTimelineEvents = new AllTimelineEvents(timelineEventRepository());
         }
@@ -614,7 +593,6 @@ public class Context {
     }
 
     public AllReports allReports() {
-        initRepository();
         if (allReports == null) {
             allReports = new AllReports(reportRepository());
         }
@@ -622,7 +600,6 @@ public class Context {
     }
 
     public AllServicesProvided allServicesProvided() {
-        initRepository();
         if (allServicesProvided == null) {
             allServicesProvided = new AllServicesProvided(serviceProvidedRepository());
         }
@@ -715,8 +692,7 @@ public class Context {
 
     public UserService userService() {
         if (userService == null) {
-            repository = initRepository();
-            userService = new UserService(repository, allSettings(), allSharedPreferences(),
+            userService = new UserService(allSettings(), allSharedPreferences(),
                     httpAgent(), session(), configuration(), saveANMLocationTask(),
                     saveUserInfoTask(), saveANMTeamTask());
         }
@@ -927,7 +903,6 @@ public class Context {
     }
 
     public AllCommonsRepository allCommonsRepositoryobjects(String tablename) {
-        initRepository();
         allCommonPersonObjectsRepository = new AllCommonsRepository(commonrepository(tablename),
                 alertRepository(), timelineEventRepository());
         return allCommonPersonObjectsRepository;
@@ -989,7 +964,7 @@ public class Context {
                 Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString("name"));
             }
         } catch (Exception e) {
-            Timber.e( e);
+            Timber.e(e);
         }
     }
 
@@ -1028,7 +1003,7 @@ public class Context {
                 Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
-            Timber.e( e);
+            Timber.e(e);
         }
 
     }
@@ -1048,7 +1023,7 @@ public class Context {
                 returnString.append(line);
             }
         } catch (Exception e) {
-          Timber.e(e);
+            Timber.e(e);
         } finally {
             try {
                 if (isr != null) {
@@ -1071,25 +1046,12 @@ public class Context {
         this.applicationContext = applicationContext;
     }
 
-    protected Repository getRepository() {
-        return repository;
-    }
-
-    protected void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
     public HTTPAgent getHttpAgent() {
         return httpAgent();
     }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {
         this.commonFtsObject = commonFtsObject;
-        return this;
-    }
-
-    public Context updateRepository(Repository repository) {
-        this.repository = repository;
         return this;
     }
 
@@ -1154,7 +1116,7 @@ public class Context {
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
             taskNotesRepository = new TaskNotesRepository();
-            taskRepository = new TaskRepository( taskNotesRepository);
+            taskRepository = new TaskRepository(taskNotesRepository);
         }
         return taskRepository;
     }
