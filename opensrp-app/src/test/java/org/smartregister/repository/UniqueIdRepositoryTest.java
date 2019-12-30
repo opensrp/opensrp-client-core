@@ -86,6 +86,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     @Test
     public void testUpdateOpenMRSIdentifierStatusInvokesDatabaseUpdateMethodOnceIfRowUpdated() {
 
+        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
 
         Mockito.doReturn(1).when(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());

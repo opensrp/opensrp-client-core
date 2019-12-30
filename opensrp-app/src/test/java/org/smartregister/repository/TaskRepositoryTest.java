@@ -92,11 +92,12 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+
         taskRepository = new TaskRepository(taskNotesRepository);
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        when(taskRepository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
+        when(repository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
     }
 
     @Test
