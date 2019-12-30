@@ -65,8 +65,8 @@ public class EventClientRepository extends BaseRepository {
                         values.put(column.name(), value.toString());
                     }
                 }
-            } catch (JSONException e) {
-                Timber.e(e, "Error extracting %s", column.name());
+            } catch (Exception e) {
+                Timber.e(e, "Error updating column %s for event %s", column.name(), jsonObject);
             }
         }
 
