@@ -1427,7 +1427,7 @@ public class EventClientRepository extends BaseRepository {
             if (affected < 1)
                 Timber.e("Client %s not saved: %s", baseEntityId, jsonObject);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "Error saving client %s", jsonObject);
         }
     }
 
@@ -1482,7 +1482,7 @@ public class EventClientRepository extends BaseRepository {
                 Timber.e("event for %s not created or updated: %s", baseEntityId, jsonObject);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "Error saving event %s", jsonObject);
         }
     }
 
