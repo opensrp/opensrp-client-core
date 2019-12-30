@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -21,12 +20,13 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.mockito.stubbing.OngoingStubbing;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.Client;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -42,7 +42,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -93,7 +92,8 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        taskRepository = new TaskRepository(repository, taskNotesRepository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        taskRepository = new TaskRepository(taskNotesRepository);
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         when(taskRepository.getWritableDatabase().compileStatement(anyString())).thenReturn(sqLiteStatement);
