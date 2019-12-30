@@ -245,7 +245,12 @@ public class EventClientRepository extends BaseRepository {
         return queryWrapper;
     }
 
+
     public boolean batchInsertClients(JSONArray array) {
+        return batchInsertClients(array, getWritableDatabase());
+    }
+
+    public boolean batchInsertClients(JSONArray array, SQLiteDatabase sqLiteDatabase) {
         if (array == null || array.length() == 0) {
             return false;
         }
@@ -259,9 +264,9 @@ public class EventClientRepository extends BaseRepository {
 
             QueryWrapper updateQueryWrapper = generateUpdateQuery(Table.client);
 
-            insertStatement = getWritableDatabase().compileStatement(insertQueryWrapper.sqlQuery);
+            insertStatement = sqLiteDatabase.compileStatement(insertQueryWrapper.sqlQuery);
 
-            updateStatement = getWritableDatabase().compileStatement(updateQueryWrapper.sqlQuery);
+            updateStatement = sqLiteDatabase.compileStatement(updateQueryWrapper.sqlQuery);
 
             for (int i = 0; i < array.length(); i++) {
                 try {
@@ -291,11 +296,11 @@ public class EventClientRepository extends BaseRepository {
                     Timber.e(e, "JSONException");
                 }
             }
-            getWritableDatabase().setTransactionSuccessful();
-            getWritableDatabase().endTransaction();
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
             return true;
         } catch (Exception e) {
-            getWritableDatabase().endTransaction();
+            sqLiteDatabase.endTransaction();
             Timber.e(e);
             return false;
         } finally {
@@ -326,7 +331,12 @@ public class EventClientRepository extends BaseRepository {
         return rowId;
     }
 
+
     public boolean batchInsertEvents(JSONArray array, long serverVersion) {
+        return batchInsertEvents(array, serverVersion, getWritableDatabase());
+    }
+
+    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase sqLiteDatabase) {
         if (array == null || array.length() == 0) {
             return false;
         }
@@ -336,16 +346,16 @@ public class EventClientRepository extends BaseRepository {
 
         try {
 
-            getWritableDatabase().beginTransaction();
+            sqLiteDatabase.beginTransaction();
             int maxRowId = 0;
 
             QueryWrapper insertQueryWrapper = generateInsertQuery(Table.event);
 
             QueryWrapper updateQueryWrapper = generateUpdateQuery(Table.event);
 
-            insertStatement = getWritableDatabase().compileStatement(insertQueryWrapper.sqlQuery);
+            insertStatement = sqLiteDatabase.compileStatement(insertQueryWrapper.sqlQuery);
 
-            updateStatement = getWritableDatabase().compileStatement(updateQueryWrapper.sqlQuery);
+            updateStatement = sqLiteDatabase.compileStatement(updateQueryWrapper.sqlQuery);
             for (int i = 0; i < array.length(); i++) {
                 JSONObject jsonObject = array.getJSONObject(i);
                 String formSubmissionId = jsonObject.getString(event_column.formSubmissionId.name());
@@ -369,12 +379,12 @@ public class EventClientRepository extends BaseRepository {
                         Timber.w("Unable to update event with formSubmissionId: %s", formSubmissionId);
                 }
             }
-            getWritableDatabase().setTransactionSuccessful();
-            getWritableDatabase().endTransaction();
+            sqLiteDatabase.setTransactionSuccessful();
+            sqLiteDatabase.endTransaction();
             return true;
         } catch (Exception e) {
             Timber.e(e);
-            getWritableDatabase().endTransaction();
+            sqLiteDatabase.endTransaction();
             return false;
         } finally {
             if (insertStatement != null)
