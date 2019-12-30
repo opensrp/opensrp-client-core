@@ -17,10 +17,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Iterator;
 import java.util.List;
@@ -66,7 +68,8 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        structureRepository = new StructureRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        structureRepository = new StructureRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }

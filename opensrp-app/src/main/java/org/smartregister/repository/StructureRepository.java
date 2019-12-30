@@ -56,10 +56,6 @@ public class StructureRepository extends LocationRepository {
 
     private MappingHelper helper;
 
-    public StructureRepository(Repository repository) {
-        super(repository);
-    }
-
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
         database.execSQL(CREATE_LOCATION_PARENT_INDEX);

@@ -14,8 +14,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Collections;
 import java.util.Set;
@@ -66,7 +68,8 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        searchRepository = new PlanDefinitionSearchRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(),"repository",repository);
+        searchRepository = new PlanDefinitionSearchRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }

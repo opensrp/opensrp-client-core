@@ -12,9 +12,11 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.view.activity.DrishtiApplication;
 
 /**
  * Created by ndegwamartin on 2019-12-02.
@@ -55,7 +57,9 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
         CoreLibrary.init(context);
 
-        uniqueIdRepository = new UniqueIdRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+
+        uniqueIdRepository = new UniqueIdRepository();
 
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
@@ -82,6 +86,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     @Test
     public void testUpdateOpenMRSIdentifierStatusInvokesDatabaseUpdateMethodOnceIfRowUpdated() {
 
+        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
 
         Mockito.doReturn(1).when(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());

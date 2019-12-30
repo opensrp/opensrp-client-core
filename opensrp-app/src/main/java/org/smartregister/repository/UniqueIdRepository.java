@@ -38,11 +38,6 @@ public class UniqueIdRepository extends BaseRepository {
     private static final String STATUS_RESERVED = "reserved";
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-
-    public UniqueIdRepository(Repository repository) {
-        super(repository);
-    }
-
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(UniqueIds_SQL);
     }
@@ -143,8 +138,6 @@ public class UniqueIdRepository extends BaseRepository {
      * reserve a uniqueId so that its not used again
      *
      * @param uniqueId
-     *
-     *
      */
     public int reserve(String uniqueId) {
         return reserveOrClose(uniqueId, STATUS_RESERVED);
@@ -152,14 +145,15 @@ public class UniqueIdRepository extends BaseRepository {
 
     /**
      * Release reserved ids so that they can be reused
+     *
      * @return the number of opened ids
      */
     public int releaseReservedIds() {
-        ContentValues values= new ContentValues();
+        ContentValues values = new ContentValues();
         values.put(STATUS_COLUMN, STATUS_NOT_USED);
         values.put(USED_BY_COLUMN, "");
         values.put(UPDATED_AT_COLUMN, dateFormat.format(new Date()));
-       return getWritableDatabase().update(UniqueIds_TABLE_NAME, values, STATUS_COLUMN + " = ?", new String[]{STATUS_RESERVED});
+        return getWritableDatabase().update(UniqueIds_TABLE_NAME, values, STATUS_COLUMN + " = ?", new String[]{STATUS_RESERVED});
     }
 
     private int reserveOrClose(String openmrsId, String status) {

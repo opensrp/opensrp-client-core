@@ -50,11 +50,6 @@ public class EventClientRepository extends BaseRepository {
 
     private static final String EVENT_ID = "id";
 
-    public EventClientRepository(Repository repository) {
-        super(repository);
-    }
-
-
     private void populateAdditionalColumns(ContentValues values, Column[] columns, JSONObject jsonObject) {
         for (Column column : columns) {
             try {
@@ -70,8 +65,8 @@ public class EventClientRepository extends BaseRepository {
                         values.put(column.name(), value.toString());
                     }
                 }
-            } catch (JSONException e) {
-                Timber.e(e, "Error extracting %s", column.name());
+            } catch (Exception e) {
+                Timber.e(e, "Error updating column %s for event %s", column.name(), jsonObject);
             }
         }
 
@@ -1432,7 +1427,7 @@ public class EventClientRepository extends BaseRepository {
             if (affected < 1)
                 Timber.e("Client %s not saved: %s", baseEntityId, jsonObject);
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "Error saving client %s", jsonObject);
         }
     }
 
@@ -1487,7 +1482,7 @@ public class EventClientRepository extends BaseRepository {
                 Timber.e("event for %s not created or updated: %s", baseEntityId, jsonObject);
 
         } catch (Exception e) {
-            Timber.e(e);
+            Timber.e(e, "Error saving event %s", jsonObject);
         }
     }
 

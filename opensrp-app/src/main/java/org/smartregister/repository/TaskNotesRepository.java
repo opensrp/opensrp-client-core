@@ -37,10 +37,6 @@ public class TaskNotesRepository extends BaseRepository {
                     TEXT + " VARCHAR  NOT NULL, " +
                     "PRIMARY KEY(" + TASK_ID + "," + TIME + "))";
 
-    public TaskNotesRepository(Repository repository) {
-        super(repository);
-    }
-
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_TASK_NOTE_TABLE);
     }

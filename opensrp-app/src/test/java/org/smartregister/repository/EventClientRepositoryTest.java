@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Column;
 import org.smartregister.sync.ClientData;
@@ -32,8 +33,6 @@ import java.util.HashMap;
 /**
  * Created by onaio on 29/08/2017.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class})
 public class EventClientRepositoryTest extends BaseUnitTest {
 
     @InjectMocks
@@ -50,14 +49,15 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
+        eventClientRepository = new EventClientRepository();
     }
 
     @Test
     public void instantiatesSuccessfullyOnConstructorCall() {
-        Assert.assertNotNull(new EventClientRepository(repository));
+        Assert.assertNotNull(new EventClientRepository());
     }
 
     @Test
@@ -330,7 +330,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
      */
     @Test
     public void testAddEventDefaultStatus() {
-        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository());
         String baseEntityId = "12345";
         JSONObject jsonObject = Mockito.mock(JSONObject.class);
 

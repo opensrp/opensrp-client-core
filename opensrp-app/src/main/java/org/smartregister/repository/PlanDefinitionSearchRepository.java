@@ -46,12 +46,6 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
     private static final String CREATE_PLAN_DEFINITION_STATUS_INDEX = "CREATE INDEX "
             + PLAN_DEFINITION_SEARCH_TABLE + "_status_ind  ON " + PLAN_DEFINITION_SEARCH_TABLE + "(" + STATUS + ")";
 
-
-    public PlanDefinitionSearchRepository(Repository repository) {
-        super(repository);
-    }
-
-
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_PLAN_DEFINITION_TABLE);
         database.execSQL(CREATE_PLAN_DEFINITION_STATUS_INDEX);
@@ -99,7 +93,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     public PlanDefinitionRepository getPlanDefinitionRepository() {
         if (planDefinitionRepository == null) {
-            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+            planDefinitionRepository = new PlanDefinitionRepository();
         }
         return planDefinitionRepository;
     }

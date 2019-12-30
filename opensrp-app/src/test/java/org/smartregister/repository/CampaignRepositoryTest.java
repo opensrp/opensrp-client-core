@@ -18,10 +18,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Campaign;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Iterator;
 import java.util.List;
@@ -67,9 +69,10 @@ public class CampaignRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        campaignRepository = new CampaignRepository(repository);
+        campaignRepository = new CampaignRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
     }
 
     @Test

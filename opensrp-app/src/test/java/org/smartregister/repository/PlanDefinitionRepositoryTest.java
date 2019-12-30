@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Collections;
 import java.util.Set;
@@ -68,7 +69,8 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        planDefinitionRepository = new PlanDefinitionRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        planDefinitionRepository = new PlanDefinitionRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -86,7 +88,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
         int jurisdictionCount = planDefinition.getJurisdiction().size();
         planDefinitionRepository.addOrUpdate(planDefinition);
-        verify(sqLiteDatabase, Mockito.times( jurisdictionCount + 1)).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+        verify(sqLiteDatabase, Mockito.times(jurisdictionCount + 1)).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
 
         assertEquals((jurisdictionCount + 1) * 2, stringArgumentCaptor.getAllValues().size());
         assertEquals("plan_definition_search", stringArgumentCaptor.getAllValues().get(0));

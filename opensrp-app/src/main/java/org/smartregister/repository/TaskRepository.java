@@ -25,7 +25,6 @@ import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -44,7 +43,6 @@ import static org.smartregister.domain.Task.TaskStatus;
  */
 public class TaskRepository extends BaseRepository {
 
-    private static final String TAG = TaskRepository.class.getCanonicalName();
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
     private static final String GROUP_ID = "group_id";
@@ -103,8 +101,7 @@ public class TaskRepository extends BaseRepository {
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
 
-    public TaskRepository(Repository repository, TaskNotesRepository taskNotesRepository) {
-        super(repository);
+    public TaskRepository(TaskNotesRepository taskNotesRepository) {
         this.taskNotesRepository = taskNotesRepository;
     }
 
