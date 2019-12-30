@@ -51,10 +51,6 @@ public class CampaignRepository extends BaseRepository {
                     SERVER_VERSION + " INTEGER ) ";
 
 
-    public CampaignRepository(Repository repository) {
-        super(repository);
-    }
-
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_CAMPAIGN_TABLE);
     }

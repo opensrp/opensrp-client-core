@@ -1132,50 +1132,50 @@ public class Context {
 
     public EventClientRepository getEventClientRepository() {
         if (eventClientRepository == null) {
-            eventClientRepository = new EventClientRepository(getRepository());
+            eventClientRepository = new EventClientRepository();
         }
         return eventClientRepository;
     }
 
     public UniqueIdRepository getUniqueIdRepository() {
         if (uniqueIdRepository == null) {
-            uniqueIdRepository = new UniqueIdRepository(getRepository());
+            uniqueIdRepository = new UniqueIdRepository();
         }
         return uniqueIdRepository;
     }
 
     public CampaignRepository getCampaignRepository() {
         if (campaignRepository == null) {
-            campaignRepository = new CampaignRepository(getRepository());
+            campaignRepository = new CampaignRepository();
         }
         return campaignRepository;
     }
 
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
-            taskNotesRepository = new TaskNotesRepository(getRepository());
-            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
+            taskNotesRepository = new TaskNotesRepository();
+            taskRepository = new TaskRepository( taskNotesRepository);
         }
         return taskRepository;
     }
 
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
-            locationRepository = new LocationRepository(getRepository());
+            locationRepository = new LocationRepository();
         }
         return locationRepository;
     }
 
     public StructureRepository getStructureRepository() {
         if (structureRepository == null) {
-            structureRepository = new StructureRepository(getRepository());
+            structureRepository = new StructureRepository();
         }
         return structureRepository;
     }
 
     public PlanDefinitionRepository getPlanDefinitionRepository() {
         if (planDefinitionRepository == null) {
-            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+            planDefinitionRepository = new PlanDefinitionRepository();
         }
         return planDefinitionRepository;
     }

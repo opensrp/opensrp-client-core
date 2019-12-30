@@ -50,11 +50,6 @@ public class EventClientRepository extends BaseRepository {
 
     private static final String EVENT_ID = "id";
 
-    public EventClientRepository(Repository repository) {
-        super(repository);
-    }
-
-
     private void populateAdditionalColumns(ContentValues values, Column[] columns, JSONObject jsonObject) {
         for (Column column : columns) {
             try {

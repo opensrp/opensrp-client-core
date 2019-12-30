@@ -47,11 +47,6 @@ public class LocationRepository extends BaseRepository {
     private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
             + LOCATION_TABLE + "_" + NAME + "_ind ON " + LOCATION_TABLE + "(" + NAME + ")";
 
-
-    public LocationRepository(Repository repository) {
-        super(repository);
-    }
-
     protected String getLocationTableName() {
         return LOCATION_TABLE;
     }

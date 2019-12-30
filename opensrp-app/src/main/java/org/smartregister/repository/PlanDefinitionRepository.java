@@ -51,9 +51,8 @@ public class PlanDefinitionRepository extends BaseRepository {
                     STATUS + " VARCHAR NOT NULL)";
 
 
-    public PlanDefinitionRepository(Repository repository) {
-        super(repository);
-        searchRepository = new PlanDefinitionSearchRepository(repository);
+    public PlanDefinitionRepository() {
+        searchRepository = new PlanDefinitionSearchRepository();
         searchRepository.setPlanDefinitionRepository(this);
     }
 

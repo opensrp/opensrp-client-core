@@ -16,11 +16,6 @@ import timber.log.Timber;
 
 public class Hia2ReportRepository extends BaseRepository {
 
-
-    public Hia2ReportRepository(Repository repository) {
-        super(repository);
-    }
-
     public enum report_column implements Column {
         creator(ColumnAttribute.Type.text, false, false),
         dateCreated(ColumnAttribute.Type.date, false, true),
