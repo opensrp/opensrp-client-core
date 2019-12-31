@@ -24,15 +24,13 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.repository.EventClientRepository.event_column.baseEntityId;
-
 /**
  * Created by samuelgithengi on 12/30/19.
  */
 public class RecreateECUtil {
 
 
-    public Pair<List<Event>, List<Client>> createEventAndClients(SQLiteDatabase database, String tablename, String eventType, String entityType, FormTag formTag) {
+    public Pair<List<Event>, List<Client>> createEventAndClients(SQLiteDatabase database, String tablename, String query, String[] params, String eventType, String entityType, FormTag formTag) {
 
         Table table = DrishtiApplication.getInstance().getClientProcessor().getColumnMappings(tablename);
         if (table == null) {
@@ -43,7 +41,7 @@ public class RecreateECUtil {
         List<Map<String, String>> savedEventClients = new ArrayList<>();
         Cursor cursor = null;
         try {
-            cursor = database.rawQuery(String.format("select * from %s where %s not in (select %s from %s)", tablename, "base_entity_id", baseEntityId, EventClientRepository.Table.event.name()), null);
+            cursor = database.rawQuery(query, params);
             int columncount = cursor.getColumnCount();
             while (cursor.moveToNext()) {
                 Map<String, String> details = new HashMap<>();
