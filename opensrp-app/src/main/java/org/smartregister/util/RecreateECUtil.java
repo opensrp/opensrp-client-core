@@ -67,6 +67,8 @@ public class RecreateECUtil {
         for (Map<String, String> details : savedEventClients) {
             Event event = new Event().withEventType(eventType).withEntityType(entityType).withFormSubmissionId(UUID.randomUUID().toString());
             Client client = new Client(details.get("base_entity_id"));
+            boolean eventChanged = false;
+            boolean clientChanged = false;
             for (Column column : table.columns) {
                 String value = details.get(column.column_name);
                 if (StringUtils.isBlank(value)) {
@@ -74,13 +76,19 @@ public class RecreateECUtil {
                 }
                 if (EventClientRepository.Table.event.name().equalsIgnoreCase(column.type)) {
                     populateEvent(column, value, event);
+                    eventChanged = true;
                 } else {
                     populateClient(column, value, client);
+                    clientChanged = true;
                 }
             }
-            tagEvent(event, formTag);
-            events.add(event);
-            clients.add(client);
+            if (eventChanged) {
+                tagEvent(event, formTag);
+                events.add(event);
+            }
+            if (clientChanged) {
+                clients.add(client);
+            }
 
         }
         return new Pair<>(events, clients);
