@@ -72,7 +72,12 @@ public class EventClientRepository extends BaseRepository {
 
     }
 
+
     public Boolean checkIfExists(Table table, String baseEntityId) {
+        return checkIfExists(table, baseEntityId, getWritableDatabase());
+    }
+
+    public Boolean checkIfExists(Table table, String baseEntityId, SQLiteDatabase sqLiteDatabase) {
         Cursor mCursor = null;
         try {
             String query = "SELECT "
@@ -82,7 +87,7 @@ public class EventClientRepository extends BaseRepository {
                     + " WHERE "
                     + event_column.baseEntityId
                     + " = ?";
-            mCursor = getWritableDatabase().rawQuery(query, new String[]{baseEntityId});
+            mCursor = sqLiteDatabase.rawQuery(query, new String[]{baseEntityId});
             if (mCursor != null && mCursor.moveToFirst()) {
 
                 return true;
@@ -98,6 +103,10 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
+        return checkIfExistsByFormSubmissionId(table, formSubmissionId, getWritableDatabase());
+    }
+
+    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId, SQLiteDatabase sqLiteDatabase) {
         Cursor mCursor = null;
         try {
             String query = "SELECT "
@@ -107,7 +116,7 @@ public class EventClientRepository extends BaseRepository {
                     + " WHERE "
                     + event_column.formSubmissionId
                     + " =?";
-            mCursor = getWritableDatabase().rawQuery(query, new String[]{formSubmissionId});
+            mCursor = sqLiteDatabase.rawQuery(query, new String[]{formSubmissionId});
             if (mCursor != null && mCursor.moveToFirst()) {
 
                 return true;
@@ -277,11 +286,11 @@ public class EventClientRepository extends BaseRepository {
                     String baseEntityId = jsonObject.getString(client_column.baseEntityId.name());
 
                     if (maxRowId == 0) {
-                        maxRowId = getMaxRowId(Table.client);
+                        maxRowId = getMaxRowId(Table.client, sqLiteDatabase);
                     }
 
                     maxRowId++;
-                    if (checkIfExists(Table.client, baseEntityId)) {
+                    if (checkIfExists(Table.client, baseEntityId, sqLiteDatabase)) {
                         if (populateStatement(updateStatement, Table.client, jsonObject, updateQueryWrapper.columnOrder)) {
                             updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                             updateStatement.executeUpdateDelete();
@@ -314,12 +323,15 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
-
     public int getMaxRowId(@NonNull Table table) {
+        return getMaxRowId(table, getWritableDatabase());
+    }
+
+    public int getMaxRowId(@NonNull Table table, SQLiteDatabase sqLiteDatabase) {
         Cursor cursor = null;
         int rowId = 0;
         try {
-            cursor = getWritableDatabase().rawQuery("SELECT max(" + ROWID + ") AS max_row_id FROM " + table.name(), null);
+            cursor = sqLiteDatabase.rawQuery("SELECT max(" + ROWID + ") AS max_row_id FROM " + table.name(), null);
             if (cursor != null) {
                 if (cursor.moveToNext()) {
                     rowId = cursor.getInt(cursor.getColumnIndex("max_row_id"));
@@ -367,11 +379,11 @@ public class EventClientRepository extends BaseRepository {
                 String formSubmissionId = jsonObject.getString(event_column.formSubmissionId.name());
 
                 if (maxRowId == 0) {
-                    maxRowId = getMaxRowId(Table.event);
+                    maxRowId = getMaxRowId(Table.event, sqLiteDatabase);
                 }
 
                 maxRowId++;
-                if (checkIfExistsByFormSubmissionId(Table.event, formSubmissionId)) {
+                if (checkIfExistsByFormSubmissionId(Table.event, formSubmissionId, sqLiteDatabase)) {
                     if (populateStatement(updateStatement, Table.event, jsonObject, updateQueryWrapper.columnOrder)) {
                         updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                         updateStatement.executeUpdateDelete();
