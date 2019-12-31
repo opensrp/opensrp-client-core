@@ -6,6 +6,7 @@ import android.support.v4.util.Pair;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
@@ -18,6 +19,7 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -121,7 +123,7 @@ public class RecreateECUtil {
         } else if (field.startsWith("identifiers.")) {
             event.addIdentifier(field.substring(field.indexOf(".")), value);
         } else {
-            setFieldValue(event, column.json_mapping.field, value);
+            setFieldValue(event, field, value);
         }
 
     }
@@ -151,7 +153,14 @@ public class RecreateECUtil {
             if (field != null) {
 
                 field.setAccessible(true);
-                field.set(instance, value);
+                if (field.getType().equals(Date.class)) {
+                    Date date = new DateTime(value).toDate();
+                    field.set(instance, date);
+                } else if (field.getType().equals(Long.class)) {
+                    field.set(instance, Long.valueOf(value));
+                } else {
+                    field.set(instance, value);
+                }
             }
         } catch (IllegalAccessException e) {
             Timber.w(e);
