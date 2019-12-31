@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import timber.log.Timber;
 
@@ -64,7 +65,7 @@ public class RecreateECUtil {
             }
         }
         for (Map<String, String> details : savedEventClients) {
-            Event event = new Event().withEventType(eventType).withEntityType(entityType);
+            Event event = new Event().withEventType(eventType).withEntityType(entityType).withFormSubmissionId(UUID.randomUUID().toString());
             Client client = new Client(details.get("base_entity_id"));
             for (Column column : table.columns) {
                 String value = details.get(column.column_name);
