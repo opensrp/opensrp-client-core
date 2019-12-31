@@ -65,7 +65,11 @@ public class RecreateECUtil {
             }
         }
         for (Map<String, String> details : savedEventClients) {
-            Event event = new Event().withEventType(eventType).withEntityType(entityType).withFormSubmissionId(UUID.randomUUID().toString());
+            Event event = new Event();
+            event.withEventType(eventType)
+                    .withEntityType(entityType)
+                    .withFormSubmissionId(UUID.randomUUID().toString())
+                    .withDateCreated(new Date());
             Client client = new Client(details.get("base_entity_id"));
             boolean eventChanged = false;
             boolean clientChanged = false;
