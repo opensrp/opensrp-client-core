@@ -37,6 +37,9 @@ public class Client extends BaseEntity {
     @JsonProperty
     private String clientType;
 
+    @JsonProperty
+    private String syncStatus;
+
     protected Client() {
 
     }
@@ -288,6 +291,20 @@ public class Client extends BaseEntity {
             }
         }
         return relations;
+    }
+
+
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public Client withSyncStatus(String syncStatus) {
+        setSyncStatus(syncStatus);
+        return this;
     }
 
     @Override

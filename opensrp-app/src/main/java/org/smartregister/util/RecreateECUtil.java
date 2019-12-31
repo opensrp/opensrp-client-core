@@ -15,6 +15,7 @@ import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.domain.tag.FormTag;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -69,8 +70,10 @@ public class RecreateECUtil {
             event.withEventType(eventType)
                     .withEntityType(entityType)
                     .withFormSubmissionId(UUID.randomUUID().toString())
+                    .withSyncStatus(BaseRepository.TYPE_Unsynced)
                     .withDateCreated(new Date());
-            Client client = new Client(details.get("base_entity_id"));
+
+            Client client = new Client(details.get("base_entity_id")).withSyncStatus(BaseRepository.TYPE_Unsynced);
             boolean eventChanged = false;
             boolean clientChanged = false;
             for (Column column : table.columns) {

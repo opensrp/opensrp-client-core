@@ -63,6 +63,9 @@ public class Event extends BaseDataObject {
     @JsonProperty
     private String teamId;
 
+    @JsonProperty
+    private String syncStatus;
+
     public Event() {
         this.version = System.currentTimeMillis();
     }
@@ -299,6 +302,20 @@ public class Event extends BaseDataObject {
         this.teamId = teamId;
         return this;
     }
+
+    public String getSyncStatus() {
+        return syncStatus;
+    }
+
+    public void setSyncStatus(String syncStatus) {
+        this.syncStatus = syncStatus;
+    }
+
+    public Event withSyncStatus(String syncStatus) {
+        setSyncStatus(syncStatus);
+        return this;
+    }
+
 
     /**
      * WARNING: Overrides all existing obs
