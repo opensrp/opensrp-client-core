@@ -257,7 +257,7 @@ public class EventClientRepository extends BaseRepository {
         SQLiteStatement insertStatement = null;
         SQLiteStatement updateStatement = null;
         try {
-            getWritableDatabase().beginTransaction();
+            sqLiteDatabase.beginTransaction();
 
             int maxRowId = 0;
             QueryWrapper insertQueryWrapper = generateInsertQuery(Table.client);
@@ -270,6 +270,9 @@ public class EventClientRepository extends BaseRepository {
 
             for (int i = 0; i < array.length(); i++) {
                 try {
+                    if (array.isNull(i)) {
+                        continue;
+                    }
                     JSONObject jsonObject = array.getJSONObject(i);
                     String baseEntityId = jsonObject.getString(client_column.baseEntityId.name());
 
@@ -357,6 +360,9 @@ public class EventClientRepository extends BaseRepository {
 
             updateStatement = sqLiteDatabase.compileStatement(updateQueryWrapper.sqlQuery);
             for (int i = 0; i < array.length(); i++) {
+                if (array.isNull(i)) {
+                    continue;
+                }
                 JSONObject jsonObject = array.getJSONObject(i);
                 String formSubmissionId = jsonObject.getString(event_column.formSubmissionId.name());
 
