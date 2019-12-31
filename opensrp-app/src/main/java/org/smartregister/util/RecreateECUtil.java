@@ -8,6 +8,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import timber.log.Timber;
+
+import static org.smartregister.util.JsonFormUtils.gson;
 
 /**
  * Created by samuelgithengi on 12/30/19.
@@ -99,12 +102,26 @@ public class RecreateECUtil {
         }
         EventClientRepository eventClientRepository = new EventClientRepository();
         if (eventClients.first != null) {
-            Timber.d("saving %d events ", eventClients.first.size());
-            eventClientRepository.batchInsertEvents(new JSONArray(eventClients.first), 0, sqLiteDatabase);
+            JSONArray events;
+            try {
+                events = new JSONArray(gson.toJson(eventClients.first));
+                Timber.d("saving %d events, %s ", eventClients.first.size(), events);
+                eventClientRepository.batchInsertEvents(events, 0, sqLiteDatabase);
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+
         }
         if (eventClients.second != null) {
-            Timber.d("saving %d clients", eventClients.second.size());
-            eventClientRepository.batchInsertClients(new JSONArray(eventClients.second), sqLiteDatabase);
+            JSONArray clients;
+            try {
+                clients = new JSONArray(gson.toJson(eventClients.second));
+                Timber.d("saving %d clients, %s", eventClients.second.size(), clients);
+                eventClientRepository.batchInsertClients(clients, sqLiteDatabase);
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+
         }
 
     }
