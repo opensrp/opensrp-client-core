@@ -247,6 +247,14 @@ public class Event extends BaseDataObject {
         return this;
     }
 
+    public Event addIdentifier(String key, String value) {
+        if (identifiers == null) {
+            identifiers = new HashMap<>();
+        }
+        identifiers.put(key, value);
+        return this;
+    }
+
     public Event withLocationId(String locationId) {
         this.locationId = locationId;
         return this;

@@ -7,11 +7,12 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
-import org.smartregister.domain.db.Client;
-import org.smartregister.domain.db.Event;
-import org.smartregister.domain.db.Obs;
+import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.Table;
+import org.smartregister.domain.tag.FormTag;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -31,7 +32,7 @@ import static org.smartregister.repository.EventClientRepository.event_column.ba
 public class RecreateECUtil {
 
 
-    public Pair<List<Event>, List<Client>> createEventAndClients(SQLiteDatabase database, String tablename) {
+    public Pair<List<Event>, List<Client>> createEventAndClients(SQLiteDatabase database, String tablename, String eventType, String entityType, FormTag formTag) {
 
         Table table = DrishtiApplication.getInstance().getClientProcessor().getColumnMappings(tablename);
         if (table == null) {
@@ -60,7 +61,7 @@ public class RecreateECUtil {
             }
         }
         for (Map<String, String> details : savedEventClients) {
-            Event event = new Event();
+            Event event = new Event().withEventType(eventType).withEntityType(entityType);
             Client client = new Client(details.get("base_entity_id"));
             for (Column column : table.columns) {
                 String value = details.get(column.column_name);
@@ -73,11 +74,23 @@ public class RecreateECUtil {
                     populateClient(column, value, client);
                 }
             }
+            tagEvent(event, formTag);
             events.add(event);
             clients.add(client);
 
         }
         return new Pair<>(events, clients);
+    }
+
+    private void tagEvent(Event event, FormTag formTag) {
+        event.setProviderId(formTag.providerId);
+        event.setLocationId(formTag.locationId);
+        event.setChildLocationId(formTag.locationId);
+        event.setTeam(formTag.team);
+        event.setTeamId(formTag.teamId);
+        event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientApplicationVersionName(formTag.appVersionName);
+        event.setClientDatabaseVersion(formTag.databaseVersion);
     }
 
     public void saveEventAndClients(Pair<List<Event>, List<Client>> eventClients, SQLiteDatabase sqLiteDatabase) {
@@ -107,6 +120,8 @@ public class RecreateECUtil {
 
         } else if (field.startsWith("details.")) {
             event.addDetails(field.substring(field.indexOf(".")), value);
+        } else if (field.startsWith("identifiers.")) {
+            event.addIdentifier(field.substring(field.indexOf(".")), value);
         } else {
             setFieldValue(event, column.json_mapping.field, value);
         }
