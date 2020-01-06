@@ -17,6 +17,7 @@ import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.domain.tag.FormTag;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
+import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.lang.reflect.Field;
@@ -36,10 +37,13 @@ import static org.smartregister.util.JsonFormUtils.gson;
  */
 public class RecreateECUtil {
 
+    private EventClientRepository eventClientRepository = new EventClientRepository();
+
+    private ClientProcessorForJava clientProcessor = DrishtiApplication.getInstance().getClientProcessor();
 
     public Pair<List<Event>, List<Client>> createEventAndClients(SQLiteDatabase database, String tablename, String query, String[] params, String eventType, String entityType, FormTag formTag) {
 
-        Table table = DrishtiApplication.getInstance().getClientProcessor().getColumnMappings(tablename);
+        Table table = clientProcessor.getColumnMappings(tablename);
         if (table == null) {
             return null;
         }
@@ -116,7 +120,6 @@ public class RecreateECUtil {
         if (eventClients == null) {
             return;
         }
-        EventClientRepository eventClientRepository = new EventClientRepository();
         if (eventClients.first != null) {
             JSONArray events;
             try {
