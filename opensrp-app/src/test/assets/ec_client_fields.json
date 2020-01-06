@@ -1,0 +1,100 @@
+{
+  "name": "ec_family_member",
+  "columns": [
+    {
+      "column_name": "base_entity_id",
+      "type": "Client",
+      "json_mapping": {
+        "field": "baseEntityId"
+      }
+    },
+    {
+      "column_name": "unique_id",
+      "type": "Client",
+      "json_mapping": {
+        "field": "identifiers.opensrp_id"
+      }
+    },
+    {
+      "column_name": "national_id",
+      "type": "Event",
+      "json_mapping": {
+        "field": "obs.fieldCode",
+        "concept": "163084AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+      }
+    },
+    {
+      "column_name": "relational_id",
+      "type": "Client",
+      "json_mapping": {
+        "field": "relationships.family"
+      }
+    },
+    {
+      "column_name": "structure_id",
+      "type": "Client",
+      "json_mapping": {
+        "field": "attributes.residence"
+      }
+    },
+    {
+      "column_name": "first_name",
+      "type": "Client",
+      "json_mapping": {
+        "field": "firstName"
+      }
+    },
+    {
+      "column_name": "last_name",
+      "type": "Client",
+      "json_mapping": {
+        "field": "lastName"
+      }
+    },
+    {
+      "column_name": "occupation",
+      "type": "Event",
+      "json_mapping": {
+        "field": "obs.fieldCode",
+        "concept": "occupation"
+      }
+    },
+    {
+      "column_name": "citizenship",
+      "type": "Event",
+      "json_mapping": {
+        "field": "obs.fieldCode",
+        "concept": "citizenship"
+      }
+    },
+    {
+      "column_name": "sleeps_outdoors",
+      "type": "Event",
+      "json_mapping": {
+        "field": "obs.fieldCode",
+        "concept": "sleeps_outdoors"
+      }
+    },
+    {
+      "column_name": "entity_type",
+      "type": "Event",
+      "json_mapping": {
+        "field": "entityType"
+      }
+    },
+    {
+      "column_name": "registration_date",
+      "type": "Event",
+      "json_mapping": {
+        "field": "eventDate"
+      }
+    },
+    {
+      "column_name": "last_service",
+      "type": "Event",
+      "json_mapping": {
+        "field": "eventType"
+      }
+    }
+  ]
+}
