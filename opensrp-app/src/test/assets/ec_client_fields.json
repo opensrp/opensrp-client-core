@@ -52,22 +52,6 @@
       }
     },
     {
-      "column_name": "occupation",
-      "type": "Event",
-      "json_mapping": {
-        "field": "obs.fieldCode",
-        "concept": "occupation"
-      }
-    },
-    {
-      "column_name": "citizenship",
-      "type": "Event",
-      "json_mapping": {
-        "field": "obs.fieldCode",
-        "concept": "citizenship"
-      }
-    },
-    {
       "column_name": "sleeps_outdoors",
       "type": "Event",
       "json_mapping": {
@@ -94,6 +78,20 @@
       "type": "Event",
       "json_mapping": {
         "field": "eventType"
+      }
+    },
+    {
+      "column_name": "dob",
+      "type": "Client",
+      "json_mapping": {
+        "field": "birthdate"
+      }
+    },
+    {
+      "column_name": "task_identifier",
+      "type": "Event",
+      "json_mapping": {
+        "field": "details.task_identifier"
       }
     }
   ]

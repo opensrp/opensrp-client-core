@@ -70,14 +70,16 @@ public class RecreateECUtil {
             }
         }
         for (Map<String, String> details : savedEventClients) {
+            String entityId = details.get("base_entity_id");
             Event event = new Event();
-            event.withEventType(eventType)
+            event.withBaseEntityId(entityId)
+                    .withEventType(eventType)
                     .withEntityType(entityType)
                     .withFormSubmissionId(UUID.randomUUID().toString())
                     .withSyncStatus(BaseRepository.TYPE_Unsynced)
                     .withDateCreated(new Date());
 
-            Client client = new Client(details.get("base_entity_id")).withSyncStatus(BaseRepository.TYPE_Unsynced);
+            Client client = new Client(entityId).withSyncStatus(BaseRepository.TYPE_Unsynced);
             boolean eventChanged = false;
             boolean clientChanged = false;
             for (Column column : table.columns) {
@@ -170,7 +172,6 @@ public class RecreateECUtil {
             client.addAttribute(field.substring(field.indexOf(".")), value);
         } else if (field.startsWith("identifiers.")) {
             client.addIdentifier(field.substring(field.indexOf(".")), value);
-
         } else if (field.startsWith("relationships.")) {
             client.addRelationship(field.substring(field.indexOf(".")), value);
         } else {
