@@ -36,8 +36,6 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -92,11 +90,11 @@ public class RecreateECUtilTest extends BaseUnitTest {
         Client client1 = eventsAndClients.second.get(0);
 
         assertEquals("person12", client1.getBaseEntityId());
-        assertEquals("12", client1.getIdentifiers().get(".opensrp_id"));
-        assertEquals("family10", client1.getRelationships().get(".family").get(0));
+        assertEquals("12", client1.getIdentifiers().get("opensrp_id"));
+        assertEquals("family10", client1.getRelationships().get("family").get(0));
         assertEquals("Jane", client1.getFirstName());
         assertEquals("Doe", client1.getLastName());
-        assertEquals("23", client1.getAttribute(".residence"));
+        assertEquals("23", client1.getAttribute("residence"));
         assertEquals(0, new DateTime("1993-10-21T07:00:00.000+07:00").toDate().compareTo(client1.getBirthdate()));
 
         assertEquals("person12", event1.getBaseEntityId());
@@ -107,6 +105,7 @@ public class RecreateECUtilTest extends BaseUnitTest {
         assertEquals("1230", event1.getObs().get(0).getValue());
         assertEquals("sleeps_outdoors", event1.getObs().get(1).getFieldCode());
         assertEquals("no", event1.getObs().get(1).getValue());
+        assertEquals("12383", event1.getDetails().get("task_identifier"));
         assertEquals(formTag.locationId, event1.getLocationId());
     }
 
@@ -138,9 +137,9 @@ public class RecreateECUtilTest extends BaseUnitTest {
         recreateECUtil.saveEventAndClients(eventsAndClients, database);
         verify(eventClientRepository).batchInsertClients(jsonArrayArgumentCaptor.capture(), eq(database));
         verify(eventClientRepository).batchInsertEvents(jsonArrayArgumentCaptor.capture(), eq(0l), eq(database));
-        Gson gson=JsonFormUtils.gson;
-        assertEquals(gson.toJson(eventsAndClients.second),jsonArrayArgumentCaptor.getAllValues().get(0).toString());
-        assertEquals(gson.toJson(eventsAndClients.first),jsonArrayArgumentCaptor.getAllValues().get(1).toString());
+        Gson gson = JsonFormUtils.gson;
+        assertEquals(gson.toJson(eventsAndClients.second), jsonArrayArgumentCaptor.getAllValues().get(0).toString());
+        assertEquals(gson.toJson(eventsAndClients.first), jsonArrayArgumentCaptor.getAllValues().get(1).toString());
 
     }
 

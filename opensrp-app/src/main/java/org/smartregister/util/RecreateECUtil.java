@@ -157,9 +157,9 @@ public class RecreateECUtil {
                     .withValue(value));
 
         } else if (field.startsWith("details.")) {
-            event.addDetails(field.substring(field.indexOf(".")), value);
+            event.addDetails(field.substring(field.indexOf(".") + 1), value);
         } else if (field.startsWith("identifiers.")) {
-            event.addIdentifier(field.substring(field.indexOf(".")), value);
+            event.addIdentifier(field.substring(field.indexOf(".") + 1), value);
         } else {
             setFieldValue(event, field, value);
         }
@@ -169,11 +169,11 @@ public class RecreateECUtil {
     private void populateClient(Column column, String value, Client client) {
         String field = column.json_mapping.field;
         if (field.startsWith("attributes.")) {
-            client.addAttribute(field.substring(field.indexOf(".")), value);
+            client.addAttribute(field.substring(field.indexOf(".") + 1), value);
         } else if (field.startsWith("identifiers.")) {
-            client.addIdentifier(field.substring(field.indexOf(".")), value);
+            client.addIdentifier(field.substring(field.indexOf(".") + 1), value);
         } else if (field.startsWith("relationships.")) {
-            client.addRelationship(field.substring(field.indexOf(".")), value);
+            client.addRelationship(field.substring(field.indexOf(".") + 1), value);
         } else {
             setFieldValue(client, column.json_mapping.field, value);
         }
