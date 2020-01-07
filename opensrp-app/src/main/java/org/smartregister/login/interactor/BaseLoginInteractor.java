@@ -22,6 +22,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.util.NetworkUtils;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
@@ -184,7 +185,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private void remoteLoginWith(String userName, String password, LoginResponse loginResponse) {
         getUserService().remoteLogin(userName, password, loginResponse.payload());
-
         processServerSettings(loginResponse);
 
         scheduleJobsPeriodically();

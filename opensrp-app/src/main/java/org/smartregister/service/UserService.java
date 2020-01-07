@@ -21,6 +21,7 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
@@ -335,6 +336,7 @@ public class UserService {
         String username = userName;
         if (allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName))
             username = allSharedPreferences.fetchRegisteredANM();
+        DrishtiApplication.getInstance().getRepository().getReadableDatabase();
         allSettings.registerANM(username, password);
         return loginSuccessful;
     }
@@ -617,6 +619,7 @@ public class UserService {
         session().start(session().lengthInMilliseconds());
         configuration.getDrishtiApplication().setPassword(password);
         session().setPassword(password);
+        allSharedPreferences.updateANMUserName(userName);
     }
 
     protected Session session() {
