@@ -336,6 +336,7 @@ public class UserService {
         String username = userName;
         if (allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName))
             username = allSharedPreferences.fetchRegisteredANM();
+        allSharedPreferences.updateANMUserName(username);
         DrishtiApplication.getInstance().getRepository().getReadableDatabase();
         allSettings.registerANM(username, password);
         return loginSuccessful;
@@ -619,7 +620,6 @@ public class UserService {
         session().start(session().lengthInMilliseconds());
         configuration.getDrishtiApplication().setPassword(password);
         session().setPassword(password);
-        allSharedPreferences.updateANMUserName(userName);
     }
 
     protected Session session() {
