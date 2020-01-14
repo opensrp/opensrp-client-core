@@ -28,12 +28,12 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
 
     protected BaseProfileContract.Presenter presenter;
     protected ImageRenderHelper imageRenderHelper;
+    protected TabLayout tabLayout;
+    protected ViewPager viewPager;
 
     @Override
     protected void onCreation() {
-
         setContentView(R.layout.activity_base_profile);
-
         findViewById(R.id.btn_profile_registration_info).setOnClickListener(this);
 
         Toolbar toolbar = findViewById(R.id.collapsing_toolbar);
@@ -45,16 +45,12 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         }
 
         appBarLayout = findViewById(R.id.collapsing_toolbar_appbarlayout);
-
         // Set collapsing tool bar title.
         collapsingToolbarLayout = appBarLayout.findViewById(R.id.collapsing_toolbar_layout);
-
         appBarLayout.addOnOffsetChangedListener(this);
-
         imageRenderHelper = new ImageRenderHelper(this);
 
         initializePresenter();
-
         setupViews();
     }
 
@@ -71,8 +67,8 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
     protected abstract void initializePresenter();
 
     protected void setupViews() {
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.viewpager);
         tabLayout.setupWithViewPager(setupViewPager(viewPager));
     }
 
@@ -129,4 +125,11 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         Utils.showShortToast(this, this.getString(stringID));
     }
 
+    public TabLayout getTabLayout() {
+        return tabLayout;
+    }
+
+    public ViewPager getViewPager() {
+        return viewPager;
+    }
 }
