@@ -18,18 +18,16 @@ import org.smartregister.view.contract.BaseProfileContract;
  * Created by ndegwamartin on 16/07/2018.
  */
 public abstract class BaseProfileActivity extends SecuredActivity implements BaseProfileContract.View, AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
-    private CollapsingToolbarLayout collapsingToolbarLayout;
-    private boolean appBarTitleIsShown = true;
-    private int appBarLayoutScrollRange = -1;
-
     protected String patientName;
     protected AppBarLayout appBarLayout;
     protected ProgressDialog progressDialog;
-
     protected BaseProfileContract.Presenter presenter;
     protected ImageRenderHelper imageRenderHelper;
     protected TabLayout tabLayout;
     protected ViewPager viewPager;
+    private CollapsingToolbarLayout collapsingToolbarLayout;
+    private boolean appBarTitleIsShown = true;
+    private int appBarLayoutScrollRange = -1;
 
     @Override
     protected void onCreation() {
@@ -59,11 +57,6 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         //TODO Implement this
     }
 
-    @Override
-    public void onClick(View view) {
-        fetchProfileData();
-    }
-
     protected abstract void initializePresenter();
 
     protected void setupViews() {
@@ -73,6 +66,11 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
     }
 
     protected abstract ViewPager setupViewPager(ViewPager viewPager);
+
+    @Override
+    public void onClick(View view) {
+        fetchProfileData();
+    }
 
     protected abstract void fetchProfileData();
 
@@ -115,14 +113,14 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
     }
 
     @Override
-    public String getIntentString(String intentKey) {
-
-        return this.getIntent().getStringExtra(intentKey);
+    public void displayToast(int stringID) {
+        Utils.showShortToast(this, this.getString(stringID));
     }
 
     @Override
-    public void displayToast(int stringID) {
-        Utils.showShortToast(this, this.getString(stringID));
+    public String getIntentString(String intentKey) {
+
+        return this.getIntent().getStringExtra(intentKey);
     }
 
     public TabLayout getTabLayout() {
