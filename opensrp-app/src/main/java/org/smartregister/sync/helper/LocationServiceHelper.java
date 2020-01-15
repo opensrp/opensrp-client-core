@@ -35,33 +35,31 @@ import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class LocationServiceHelper {
 
-    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-
-    protected final Context context;
-    private LocationRepository locationRepository;
-    private StructureRepository structureRepository;
-
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
+    public static final String DISTRICT_LOCATIONS_URL = "/location/facilities/";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
-
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
+    protected final Context context;
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private LocationRepository locationRepository;
+    private StructureRepository structureRepository;
+
+    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
+        this.context = CoreLibrary.getInstance().context().applicationContext();
+        this.locationRepository = locationRepository;
+        this.structureRepository = structureRepository;
+    }
 
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
             instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
         }
         return instance;
-    }
-
-    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
-        this.context = CoreLibrary.getInstance().context().applicationContext();
-        this.locationRepository = locationRepository;
-        this.structureRepository = structureRepository;
     }
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
@@ -158,6 +156,46 @@ public class LocationServiceHelper {
         List<Location> locations = syncLocationsStructures(false);
         syncCreatedStructureToServer();
         return locations;
+    }
+
+    public void fetchDistrictLocations() throws Exception {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(DISTRICT_LOCATIONS_URL + " http agent is null");
+        }
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+
+        Response resp = httpAgent.fetch(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        LOCATION_STRUCTURE_URL,
+                        allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM())));
+
+        if (resp.isFailure()) {
+            throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+        }
+
+        List<org.smartregister.domain.jsonmapping.Location> districtLocations =
+                new Gson().fromJson(resp.payload().toString(),
+                        new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {}.getType());
+
+        for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
+            Location location = new Location();
+            location.setId(districtLocation.getLocationId());
+
+            LocationProperty property = new LocationProperty();
+            property.setUid(districtLocation.getLocationId());
+            property.setParentId(districtLocation.getParentLocation().getLocationId());
+            property.setName(districtLocation.getName());
+            location.setProperties(property);
+
+            locationRepository.addOrUpdate(location);
+        }
     }
 
     public void syncCreatedStructureToServer() {
