@@ -171,9 +171,9 @@ public class LocationServiceHelper {
         }
 
         Response resp = httpAgent.fetch(
-                MessageFormat.format("{0}{1}",
+                MessageFormat.format("{0}{1}{2}",
                         baseUrl,
-                        LOCATION_STRUCTURE_URL,
+                        DISTRICT_LOCATIONS_URL,
                         allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM())));
 
         if (resp.isFailure()) {
@@ -182,7 +182,8 @@ public class LocationServiceHelper {
 
         List<org.smartregister.domain.jsonmapping.Location> districtLocations =
                 new Gson().fromJson(resp.payload().toString(),
-                        new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {}.getType());
+                        new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {
+                        }.getType());
 
         for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
             Location location = new Location();
