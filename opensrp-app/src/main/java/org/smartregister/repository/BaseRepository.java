@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import timber.log.Timber;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
+
 
 /**
  * Created by keyman on 09/03/2017.
@@ -80,6 +82,10 @@ public class BaseRepository {
             }
         }
         return null;
+    }
+
+    public String insertPlaceholdersForInClause(int length) {
+        return repeat("?", ",", length);
     }
 
 }

@@ -179,6 +179,52 @@ public class LocationRepository extends BaseRepository {
         return null;
     }
 
+    /**
+     * Get a List of locations that match the list of ids provided
+     *
+     * @param ids list of location ids
+     * @return the list of locations that match the params provided
+     */
+    public List<Location> getLocationsByIds(List<String> ids) {
+        return getLocationsByIds(ids, true);
+    }
+
+    /**
+     * Get a List of locations that either match or don't match the list of ids provided
+     * depending on value of the inclusive flag
+     *
+     * @param ids list of location ids
+     * @param inclusive flag that determines whether the list of locations returned
+     *                  should include the locations whose ids match the params provided
+     *                  or exclude them
+     * @return
+     */
+    public List<Location> getLocationsByIds(List<String> ids, Boolean inclusive) {
+        Cursor cursor = null;
+        List<Location> locations = new ArrayList<>();
+        int idCount = ids != null ? ids.size() : 0;
+        String[] idsArray = ids != null ? ids.toArray(new String[0]) : null;
+
+        String operator = inclusive != null && inclusive ? "IN" : "NOT IN";
+
+        String selectSql = String.format("SELECT * FROM " + getLocationTableName() +
+                " WHERE " + ID + " " + operator + " (%s)", insertPlaceholdersForInClause(idCount));
+
+        try {
+            cursor = getReadableDatabase().rawQuery(selectSql, idsArray);
+            while (cursor.moveToNext()) {
+                locations.add(readCursor(cursor));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locations;
+
+    }
+
     protected Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
