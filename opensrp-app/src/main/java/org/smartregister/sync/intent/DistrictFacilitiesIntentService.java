@@ -14,7 +14,7 @@ import org.smartregister.util.PropertiesConverter;
 import timber.log.Timber;
 
 public class DistrictFacilitiesIntentService extends BaseSyncIntentService {
-    private static final String TAG = "LocationIntentService";
+    private static final String TAG = "DistrictFacilitiesIntentService";
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
