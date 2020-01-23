@@ -19,7 +19,6 @@ public class SyncableJSONObject extends JSONObject {
 
         put(SyncFilter.PROVIDER.value(), providerId);
         put(SyncFilter.LOCATION.value(), allSharedPreferences.fetchDefaultLocalityId(providerId));
-        put(SyncFilter.LOCATION_ID.value(), allSharedPreferences.fetchDefaultLocalityId(providerId));
         put(SyncFilter.TEAM.value(), allSharedPreferences.fetchDefaultTeam(providerId));
         put(SyncFilter.TEAM_ID.value(), allSharedPreferences.fetchDefaultTeamId(providerId));
 
