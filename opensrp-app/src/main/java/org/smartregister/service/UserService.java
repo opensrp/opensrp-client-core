@@ -565,7 +565,7 @@ public class UserService {
                     SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
                     if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
                         groupId = getUserDefaultTeamId(userInfo);
-                    } else if (SyncFilter.LOCATION.equals(syncFilter)) {
+                    } else if (SyncFilter.LOCATION.equals(syncFilter) || SyncFilter.LOCATION_ID.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
                         groupId = username + "-" + password;
