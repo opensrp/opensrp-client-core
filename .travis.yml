@@ -19,6 +19,8 @@ env:
     # wait up to 10 minutes for adb to connect to emulator
     - ADB_INSTALL_TIMEOUT=10
     - MALLOC_ARENA_MAX=2
+    # git hub token
+    - secure: zlcwxv20f3o5dYhbXqKYtA60R96Qz6H+SClZGm8SdlGopFKGktrn17G0d2KSlkx0kw0tHEwV0TfjyNKZrh9rPqwByPZ9WOkp3qKCJyQ0uclLERPtruNY9KWXYF4k0r0RWZP/DMNMCzPNrRqwqxTSISX2apznfKof3iIczH4HTQ3vUt+yVKHtP3IW1fjDlhhqdO6d/4fecLb9NEi7uVOyB/ZAdNrp7jAmKpEGPSVD31NgHxIVqfCpNW6xNFR7sVWsz/rnJbk5V0oAl++hq+/EkMuR46w+wO6L4a3BnDs8iJbF1lVS/C1orKsAP4K/4agEFpTbq7uZQKEOelq0s08qTt2zQzfFIFWf7Cdxr+Y6S8IAg472CV+h8r4VTER9b3svyXlVjPkofwnB5txKmDupB7pHFmjswP1GTD5SSP4MLoImUZTS8XjrEAsOxh5FWwz6R7hYlw2PssIem7YMGNR0srhycVrKiQTtLRodLlNe2Qc0jPuM2nmgUziyBOdJznIetfOC+JmA9pPNSSeFzOxtDRkKTTZjAEZRKGLjbZvcyM2mcP8RVrIP0951DMzHyfIGaR1gjN2G/ygV0T4wXVET6oHs4jtMHLG5Gfx7v3fKtwIaA+a42wM8L4fo97O3hD/n85tt2UhVGB9pZfjC7oZUctR71E40ZLe7yWCeMTArRpo=
 
 android:
   components:
