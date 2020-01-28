@@ -57,4 +57,4 @@ deploy:
   github_token: $GITHUB_TOKEN
   local_dir: opensrp-app/build/docs/javadoc/
   on:
-    branch: 419-deploy-java-docs
+    branch: master
