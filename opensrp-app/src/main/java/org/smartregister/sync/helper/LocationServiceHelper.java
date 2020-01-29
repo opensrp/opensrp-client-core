@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
@@ -40,7 +41,7 @@ public class LocationServiceHelper {
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
-    public static final String DISTRICT_LOCATIONS_URL = "/location/facilities/";
+    public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/facilities/";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
@@ -165,7 +166,7 @@ public class LocationServiceHelper {
     public void fetchDistrictLocations() throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
-            throw new IllegalArgumentException(DISTRICT_LOCATIONS_URL + " http agent is null");
+            throw new IllegalArgumentException(COMMON_LOCATIONS_SERVICE_URL + " http agent is null");
         }
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -174,14 +175,22 @@ public class LocationServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        Response resp = httpAgent.fetch(
-                MessageFormat.format("{0}{1}{2}",
+        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+
+        JSONObject requestPayload = new JSONObject();
+        requestPayload.put("locationUUID",allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
+        requestPayload.put("locationTopLevel",configs.getTopAllowedLocationLevel());
+        requestPayload.put("locationHierarchy",new Gson().toJson(configs.getLocationHierarchyTags()));
+        requestPayload.put("locationTagsQueried",new Gson().toJson(configs.getAllowedLocationLevels()));
+
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
                         baseUrl,
-                        DISTRICT_LOCATIONS_URL,
-                        allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM())));
+                        COMMON_LOCATIONS_SERVICE_URL),
+                requestPayload.toString());
 
         if (resp.isFailure()) {
-            throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+            throw new NoHttpResponseException(COMMON_LOCATIONS_SERVICE_URL + " not returned data");
         }
 
         List<org.smartregister.domain.jsonmapping.Location> districtLocations =
