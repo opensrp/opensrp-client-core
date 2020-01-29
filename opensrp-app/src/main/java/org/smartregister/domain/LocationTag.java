@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
 /**
- * Created by samuelgithengi on 11/22/18.
+ * Created by ilakozejumanne on 01/29/20.
  */
 public class LocationTag {
 
