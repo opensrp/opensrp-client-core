@@ -14,7 +14,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
-import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
@@ -178,10 +177,10 @@ public class LocationServiceHelper {
         SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
 
         JSONObject requestPayload = new JSONObject();
-        requestPayload.put("locationUUID",allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
-        requestPayload.put("locationTopLevel",configs.getTopAllowedLocationLevel());
-        requestPayload.put("locationHierarchy",new Gson().toJson(configs.getLocationHierarchyTags()));
-        requestPayload.put("locationTagsQueried",new Gson().toJson(configs.getAllowedLocationLevels()));
+        requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
+        requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
+        requestPayload.put("locationHierarchy", new Gson().toJson(configs.getLocationHierarchyTags()));
+        requestPayload.put("locationTagsQueried", new Gson().toJson(configs.getAllowedLocationLevels()));
 
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
@@ -204,7 +203,7 @@ public class LocationServiceHelper {
 
             try {
                 location.setLocationTag(locationTagRepository.getLocationTagByName(Objects.requireNonNull(districtLocation.getTags().toArray())[0].toString()));
-            }catch (NullPointerException e){
+            } catch (NullPointerException e) {
                 e.printStackTrace();
             }
 
