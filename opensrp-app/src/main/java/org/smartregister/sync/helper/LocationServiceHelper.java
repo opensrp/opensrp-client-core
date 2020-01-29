@@ -13,11 +13,13 @@ import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
@@ -27,6 +29,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -47,6 +50,7 @@ public class LocationServiceHelper {
     protected final Context context;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private LocationRepository locationRepository;
+    private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
 
     public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
@@ -188,6 +192,12 @@ public class LocationServiceHelper {
         for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
             Location location = new Location();
             location.setId(districtLocation.getLocationId());
+
+            try {
+                location.setLocationTag(locationTagRepository.getLocationTagByName(Objects.requireNonNull(districtLocation.getTags().toArray())[0].toString()));
+            }catch (NullPointerException e){
+                e.printStackTrace();
+            }
 
             LocationProperty property = new LocationProperty();
             property.setUid(districtLocation.getLocationId());
