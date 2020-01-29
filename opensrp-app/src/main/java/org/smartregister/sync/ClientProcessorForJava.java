@@ -2,6 +2,7 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -31,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -49,6 +51,9 @@ public class ClientProcessorForJava {
 
     protected static ClientProcessorForJava instance;
     private Context mContext;
+
+    protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
+    protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -73,8 +78,20 @@ public class ClientProcessorForJava {
         if (!eventClientList.isEmpty()) {
             for (EventClient eventClient : eventClientList) {
                 // Iterate through the events
-                if (eventClient.getClient() != null) {
-                    processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassification);
+                Client client = eventClient.getClient();
+                if (client != null) {
+                    Event event = eventClient.getEvent();
+                    String eventType = event.getEventType();
+
+                    if (processorMap.containsKey(eventType)) {
+                        try {
+                            processEventUsingMiniProcessor(clientClassification, eventClient, eventType);
+                        } catch (Exception ex) {
+                            Timber.e(ex);
+                        }
+                    } else {
+                        processEvent(event, client, clientClassification);
+                    }
                 }
             }
         }
@@ -890,4 +907,30 @@ public class ClientProcessorForJava {
     protected String[] getOpenmrsGenIds() {
         return openmrsGenIds;
     }
+
+    protected void addMiniProcessors(MiniClientProcessorForJava... miniClientProcessorsForJava) {
+        for (MiniClientProcessorForJava miniClientProcessorForJava : miniClientProcessorsForJava) {
+            unsyncEventsPerProcessor.put(miniClientProcessorForJava, new ArrayList<Event>());
+
+            HashSet<String> eventTypes = miniClientProcessorForJava.getEventTypes();
+
+            for (String eventType : eventTypes) {
+                processorMap.put(eventType, miniClientProcessorForJava);
+            }
+        }
+    }
+
+    protected void processEventUsingMiniProcessor(@NonNull ClientClassification clientClassification, @NonNull EventClient eventClient, @NonNull String eventType) throws Exception {
+        MiniClientProcessorForJava miniClientProcessorForJava = processorMap.get(eventType);
+        if (miniClientProcessorForJava != null) {
+            List<Event> processorUnsyncEvents = unsyncEventsPerProcessor.get(miniClientProcessorForJava);
+            if (processorUnsyncEvents == null) {
+                processorUnsyncEvents = new ArrayList<>();
+                unsyncEventsPerProcessor.put(miniClientProcessorForJava, processorUnsyncEvents);
+            }
+
+            miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
+        }
+    }
+
 }
