@@ -589,6 +589,6 @@ public class TaskRepository extends BaseRepository {
         ContentValues contentValues = new ContentValues();
         contentValues.put(STATUS, TaskStatus.ARCHIVED.name());
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
-        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s !=?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
+        getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s NOT IN (?,?)", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name(),TaskStatus.CANCELLED.name()});
     }
 }
