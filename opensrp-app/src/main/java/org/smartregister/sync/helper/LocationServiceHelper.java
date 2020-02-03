@@ -29,9 +29,7 @@ import org.smartregister.util.Utils;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -181,7 +179,7 @@ public class LocationServiceHelper {
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
         requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
-        requestPayload.put("locationTagsQueried", new Gson().toJson(configs.getAllowedLocationLevels()));
+        requestPayload.put("locationTagsQueried", new Gson().toJson(configs.getSynchronizedLocationTags()));
 
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
