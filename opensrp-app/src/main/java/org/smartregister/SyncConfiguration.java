@@ -113,8 +113,6 @@ public abstract class SyncConfiguration {
         return getSyncFilterValue();
     }
 
-    public abstract List<String> getLocationHierarchyTags();
-
     public abstract List<String> getAllowedLocationLevels();
 
     public abstract String getTopAllowedLocationLevel();

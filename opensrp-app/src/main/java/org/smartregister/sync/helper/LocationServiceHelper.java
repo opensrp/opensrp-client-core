@@ -181,7 +181,6 @@ public class LocationServiceHelper {
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
         requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
-        requestPayload.put("locationHierarchy", new Gson().toJson(configs.getLocationHierarchyTags()));
         requestPayload.put("locationTagsQueried", new Gson().toJson(configs.getAllowedLocationLevels()));
 
         Response resp = httpAgent.post(
@@ -194,26 +193,26 @@ public class LocationServiceHelper {
             throw new NoHttpResponseException(COMMON_LOCATIONS_SERVICE_URL + " not returned data");
         }
 
-        List<org.smartregister.domain.jsonmapping.Location> districtLocations =
+        List<org.smartregister.domain.jsonmapping.Location> receivedOpenMrsLocations =
                 new Gson().fromJson(resp.payload().toString(),
                         new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {
                         }.getType());
 
-        for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
+        for (org.smartregister.domain.jsonmapping.Location openMrsLocation : receivedOpenMrsLocations) {
             Location location = new Location();
-            location.setId(districtLocation.getLocationId());
+            location.setId(openMrsLocation.getLocationId());
             LocationProperty property = new LocationProperty();
-            property.setUid(districtLocation.getLocationId());
-            property.setParentId(districtLocation.getParentLocation().getLocationId());
-            property.setName(districtLocation.getName());
+            property.setUid(openMrsLocation.getLocationId());
+            property.setParentId(openMrsLocation.getParentLocation().getLocationId());
+            property.setName(openMrsLocation.getName());
             location.setProperties(property);
 
             locationRepository.addOrUpdate(location);
 
 
-            for (String tagName : districtLocation.getTags()) {
+            for (String tagName : openMrsLocation.getTags()) {
                 LocationTag locationTag = new LocationTag();
-                locationTag.setLocationId(districtLocation.getLocationId());
+                locationTag.setLocationId(openMrsLocation.getLocationId());
                 locationTag.setName(tagName);
 
                 locationTagRepository.addOrUpdate(locationTag);
