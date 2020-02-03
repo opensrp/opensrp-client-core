@@ -4,18 +4,9 @@ package org.smartregister.domain;
  * Created by ilakozejumanne on 01/29/20.
  */
 public class LocationTag {
-
-    private int id;
-
     private String name;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
+    private String locationId;
 
     public String getName() {
         return name;
@@ -23,5 +14,13 @@ public class LocationTag {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
     }
 }

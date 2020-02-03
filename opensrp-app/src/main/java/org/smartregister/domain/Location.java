@@ -17,8 +17,6 @@ public class Location {
 
     private Long serverVersion;
 
-    private LocationTag locationTag;
-
     private transient boolean isJurisdiction;
 
     private Long rowid;
@@ -85,13 +83,5 @@ public class Location {
 
     public void setRowid(Long rowid) {
         this.rowid = rowid;
-    }
-
-    public LocationTag getLocationTag() {
-        return locationTag;
-    }
-
-    public void setLocationTag(LocationTag locationTag) {
-        this.locationTag = locationTag;
     }
 }

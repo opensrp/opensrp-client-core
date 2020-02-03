@@ -22,14 +22,15 @@ import timber.log.Timber;
  */
 public class LocationTagRepository extends BaseRepository {
 
-    protected static final String ID = "_id";
     protected static final String NAME = "name";
+    protected static final String LOCATION_ID = "location_id";
     protected static final String LOCATION_TAG_TABLE = "location_tag";
-    protected static final String[] COLUMNS = new String[]{ID, NAME};
+    protected static final String[] COLUMNS = new String[]{NAME,LOCATION_ID};
     private static final String CREATE_LOCATION_TAG_TABLE =
             "CREATE TABLE " + LOCATION_TAG_TABLE + " (" +
-                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    NAME + " VARCHAR NOT NULL ) ";
+                    NAME + " VARCHAR NOT NULL, " +
+                    LOCATION_ID + " VARCHAR NOT NULL, " +
+                    "PRIMARY KEY ("+NAME+", "+LOCATION_ID+")) ";
     private static final String CREATE_LOCATION_TAG_NAME_INDEX = "CREATE INDEX "
             + LOCATION_TAG_TABLE + "_" + NAME + "_ind ON " + LOCATION_TAG_TABLE + "(" + NAME + ")";
     protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
@@ -45,11 +46,9 @@ public class LocationTagRepository extends BaseRepository {
     }
 
     public void addOrUpdate(LocationTag locationTag) {
-        if (locationTag.getId() == 0)
-            throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, locationTag.getId());
         contentValues.put(NAME, locationTag.getName());
+        contentValues.put(LOCATION_ID, locationTag.getLocationId());
         getWritableDatabase().replace(getLocationTagTableName(), null, contentValues);
 
     }
@@ -72,42 +71,18 @@ public class LocationTagRepository extends BaseRepository {
         return locationsTags;
     }
 
-    public List<String> getAllLocationTagIds() {
-        List<String> locationTagIds = new ArrayList<>();
-        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT " + ID + " FROM " + getLocationTagTableName(), null)) {
+    public List<LocationTag> getLocationTagByLocationId(String id) {
+        List<LocationTag> locationsTags = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTagTableName() +
+                " WHERE " + LOCATION_ID + " =?", new String[]{id})) {
             while (cursor.moveToNext()) {
-                locationTagIds.add(cursor.getString(0));
-            }
-            cursor.close();
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return locationTagIds;
-    }
-
-    public LocationTag getLocationTagById(String id) {
-        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTagTableName() +
-                " WHERE " + ID + " =?", new String[]{id})) {
-            if (cursor.moveToFirst()) {
-                return readCursor(cursor);
+                locationsTags.add(readCursor(cursor));
             }
         } catch (Exception e) {
             Timber.e(e);
         }
-        return null;
+        return locationsTags;
 
-    }
-
-    public LocationTag getLocationTagByName(String name) {
-        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTagTableName() +
-                " WHERE " + NAME + " =?", new String[]{name})) {
-            if (cursor.moveToFirst()) {
-                return readCursor(cursor);
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return null;
     }
 
     /**
@@ -116,8 +91,8 @@ public class LocationTagRepository extends BaseRepository {
      * @param ids list of location ids
      * @return the list of locations that match the params provided
      */
-    public List<LocationTag> getLocationTagsByIds(List<String> ids) {
-        return getLocationTagsByIds(ids, true);
+    public List<LocationTag> getLocationTagsByLocationIds(List<String> ids) {
+        return getLocationTagsByLocationIds(ids, true);
     }
 
     /**
@@ -130,7 +105,7 @@ public class LocationTagRepository extends BaseRepository {
      *                  or exclude them
      * @return
      */
-    public List<LocationTag> getLocationTagsByIds(List<String> ids, Boolean inclusive) {
+    public List<LocationTag> getLocationTagsByLocationIds(List<String> ids, Boolean inclusive) {
         Cursor cursor = null;
         List<LocationTag> locationTags = new ArrayList<>();
         int idCount = ids != null ? ids.size() : 0;
@@ -139,7 +114,7 @@ public class LocationTagRepository extends BaseRepository {
         String operator = inclusive != null && inclusive ? "IN" : "NOT IN";
 
         String selectSql = String.format("SELECT * FROM " + getLocationTagTableName() +
-                " WHERE " + ID + " " + operator + " (%s)", insertPlaceholdersForInClause(idCount));
+                " WHERE " + LOCATION_ID + " " + operator + " (%s)", insertPlaceholdersForInClause(idCount));
 
         try {
             cursor = getReadableDatabase().rawQuery(selectSql, idsArray);
@@ -158,8 +133,8 @@ public class LocationTagRepository extends BaseRepository {
 
     protected LocationTag readCursor(Cursor cursor) {
         LocationTag locationTag = new LocationTag();
-        locationTag.setId(cursor.getInt(cursor.getColumnIndex(ID)));
         locationTag.setName(cursor.getString(cursor.getColumnIndex(NAME)));
+        locationTag.setLocationId(cursor.getString(cursor.getColumnIndex(LOCATION_ID)));
         return locationTag;
     }
 

@@ -14,6 +14,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
@@ -28,6 +29,7 @@ import org.smartregister.util.Utils;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -200,13 +202,6 @@ public class LocationServiceHelper {
         for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
             Location location = new Location();
             location.setId(districtLocation.getLocationId());
-
-            try {
-                location.setLocationTag(locationTagRepository.getLocationTagByName(Objects.requireNonNull(districtLocation.getTags().toArray())[0].toString()));
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-
             LocationProperty property = new LocationProperty();
             property.setUid(districtLocation.getLocationId());
             property.setParentId(districtLocation.getParentLocation().getLocationId());
@@ -214,6 +209,15 @@ public class LocationServiceHelper {
             location.setProperties(property);
 
             locationRepository.addOrUpdate(location);
+
+
+            for (String tagName : districtLocation.getTags()) {
+                LocationTag locationTag = new LocationTag();
+                locationTag.setLocationId(districtLocation.getLocationId());
+                locationTag.setName(tagName);
+
+                locationTagRepository.addOrUpdate(locationTag);
+            }
         }
     }
 

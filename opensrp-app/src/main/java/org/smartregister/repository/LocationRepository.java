@@ -31,11 +31,10 @@ public class LocationRepository extends BaseRepository {
     protected static final String PARENT_ID = "parent_id";
     protected static final String NAME = "name";
     protected static final String GEOJSON = "geojson";
-    protected static final String TAG_ID = "tag_id";
 
     protected static final String LOCATION_TABLE = "location";
 
-    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME, TAG_ID,GEOJSON};
+    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME,GEOJSON};
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
@@ -43,7 +42,6 @@ public class LocationRepository extends BaseRepository {
                     UUID + " VARCHAR , " +
                     PARENT_ID + " VARCHAR , " +
                     NAME + " VARCHAR , " +
-                    TAG_ID + " VARCHAR NOT NULL , " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
@@ -66,7 +64,6 @@ public class LocationRepository extends BaseRepository {
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(NAME, location.getProperties().getName());
-        contentValues.put(TAG_ID, location.getLocationTag().getId());
         contentValues.put(GEOJSON, gson.toJson(location));
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
 
