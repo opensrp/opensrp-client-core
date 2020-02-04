@@ -86,6 +86,27 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         return getPlanDefinitionRepository().findPlanDefinitionByIds(planIds);
     }
 
+    public boolean planExists(String planId, String jurisdictionId) {
+
+        Cursor cursor = null;
+        try {
+            String query = String.format("SELECT %s FROM %s " +
+                            "WHERE %s=? AND %s=? AND %s=?  AND %s  >=? ", PLAN_ID,
+                    PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, JURISDICTION_ID, STATUS, END);
+            cursor = getReadableDatabase().rawQuery(query, new String[]{planId, jurisdictionId, ACTIVE,
+                    String.valueOf(LocalDate.now().toDate().getTime())});
+            if (cursor.moveToFirst()) {
+                return true;
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return false;
+    }
+
     public void setPlanDefinitionRepository(PlanDefinitionRepository planDefinitionRepository) {
         this.planDefinitionRepository = planDefinitionRepository;
 
