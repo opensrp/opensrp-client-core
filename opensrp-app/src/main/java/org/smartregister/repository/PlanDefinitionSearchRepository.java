@@ -95,9 +95,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
                     PLAN_DEFINITION_SEARCH_TABLE, PLAN_ID, JURISDICTION_ID, STATUS, END);
             cursor = getReadableDatabase().rawQuery(query, new String[]{planId, jurisdictionId, ACTIVE,
                     String.valueOf(LocalDate.now().toDate().getTime())});
-            if (cursor.moveToFirst()) {
-                return true;
-            }
+            return cursor.moveToFirst();
         } catch (Exception e) {
             Timber.e(e);
         } finally {
