@@ -306,3 +306,4 @@ By placing a file named `app.properties` in your implementation assets folder (S
 | Configuration                       | Type    | Default | Description                                   |
 | ----------------------------------- | ------- | ------- | ----------------------------------------------|
 | `system.toaster.centered`         | Boolean | false    | Position toaster(s) at the center of the view(s)                        |
+| `disable.location.picker.view`    | Boolean | false    | Disables LocationPicker View                                            |
