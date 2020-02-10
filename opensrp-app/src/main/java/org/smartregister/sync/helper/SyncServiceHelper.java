@@ -372,10 +372,9 @@ public class SyncServiceHelper {
                 JSONObject syncParams = new JSONObject();
                 syncParams.put("baseEntityId", baseEntityIdsSb.toString());
                 syncParams.put("serverVersion", 0);
-                syncParams.put("limit", getEventPullLimit());
                 resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
             } else {
-                url += "?baseEntityId=" + baseEntityIdsSb.toString() + "&serverVersion=0&limit=" + getEventPullLimit();
+                url += "?baseEntityId=" + baseEntityIdsSb.toString() + "&serverVersion=0";
                 Timber.i("URL: %s", url);
                 resp = httpAgent.fetch(url);
             }
