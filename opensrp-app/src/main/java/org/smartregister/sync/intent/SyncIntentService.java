@@ -1,6 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
@@ -16,6 +15,7 @@ import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
@@ -26,6 +26,7 @@ import org.smartregister.util.SyncUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -318,5 +319,117 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     public int getEventPullLimit() {
         return EVENT_PULL_LIMIT;
+    }
+
+    private synchronized void fetchMissingEventsRetry(final int count, List<Task> tasksWithMissingClientsEvents) {
+        try {
+            final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
+            if (httpAgent == null) {
+                complete(FetchStatus.fetchedFailed);
+            }
+
+            String baseUrl = CoreLibrary.getInstance().context().
+                    configuration().dristhiBaseURL();
+            if (baseUrl.endsWith("/")) {
+                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+            }
+
+            if (tasksWithMissingClientsEvents.isEmpty()) {
+                return;
+            }
+
+            List<String> missingEventIdsInTasks = new ArrayList<>();
+            StringBuilder baseEntityIdsSb = new StringBuilder();
+            for (int i = 0; i < tasksWithMissingClientsEvents.size(); i++) {
+                Task task = tasksWithMissingClientsEvents.get(i);
+                baseEntityIdsSb.append(task.getForEntity());
+                missingEventIdsInTasks.add(task.getReasonReference());
+                // if not the last item
+                if (i != tasksWithMissingClientsEvents.size() - 1) {
+                    baseEntityIdsSb.append(",");
+                }
+
+            }
+
+            SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+            String url = baseUrl + SYNC_URL;
+            Response resp;
+            if (configs.isSyncUsingPost()) {
+                JSONObject syncParams = new JSONObject();
+                syncParams.put("baseEntityId", baseEntityIdsSb.toString());
+                syncParams.put("serverVersion", 0);
+                syncParams.put("limit", EVENT_PULL_LIMIT);
+                resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
+            } else {
+                url += "?baseEntityId=" + baseEntityIdsSb.toString() + "&serverVersion=0&limit=" + EVENT_PULL_LIMIT;
+                Timber.i("URL: %s", url);
+                resp = httpAgent.fetch(url);
+            }
+
+            if (resp.isUrlError()) {
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+                return;
+            }
+
+            if (resp.isTimeoutError()) {
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+            }
+
+            if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
+                fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
+            }
+
+            int eCount;
+            JSONObject jsonObject = new JSONObject();
+            if (resp.payload() == null) {
+                eCount = 0;
+            } else {
+                jsonObject = new JSONObject((String) resp.payload());
+                eCount = fetchNumberOfEvents(jsonObject);
+                Timber.i("Parse Network Event Count: %s", eCount);
+            }
+
+            if (eCount < 0) {
+                fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
+            } else {
+                final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
+                filterEventsForOnlyMissingEventsInTasks(jsonObject, missingEventIdsInTasks);
+                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+                if (isSaved) {
+                    processClient(serverVersionPair);
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
+            fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
+        }
+    }
+
+    public void filterEventsForOnlyMissingEventsInTasks(JSONObject jsonObject, List<String> missingEventIdsInTasks) {
+        JSONArray missingEvents = new JSONArray();
+        try {
+            JSONArray receivedeEvents = jsonObject.getJSONArray("events");
+            for (int i = 0; i < receivedeEvents.length(); i++) {
+                JSONObject event = receivedeEvents.getJSONObject(i);
+                if (missingEventIdsInTasks.contains(event.getString("id"))) {
+                    missingEvents.put(event);
+                }
+            }
+            jsonObject.put("no_of_events", missingEvents.length());
+            jsonObject.put("events", missingEvents);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
+    public void fetchMissingEventsFailed(int count, List<Task> tasksWithMissingClientsEvents) {
+        if (count < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries()) {
+            int newCount = count + 1;
+            fetchMissingEventsRetry(newCount, tasksWithMissingClientsEvents);
+        } else {
+            complete(FetchStatus.fetchedFailed);
+        }
     }
 }
