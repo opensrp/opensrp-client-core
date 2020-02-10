@@ -5,6 +5,7 @@ import android.content.Intent;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Task;
 import org.smartregister.repository.TaskRepository;
+import org.smartregister.sync.helper.SyncServiceHelper;
 import org.smartregister.sync.helper.TaskServiceHelper;
 
 import java.util.ArrayList;
@@ -16,11 +17,8 @@ import java.util.List;
  * @author cozej4 https://github.com/cozej4
  */
 public class SyncClientEventsPerTaskIntentService extends BaseSyncIntentService {
-    private static final String TAG = "SyncTaskIntentService";
-    private TaskServiceHelper taskServiceHelper;
+    private static final String TAG = SyncClientEventsPerTaskIntentService.class.getSimpleName();
     private TaskRepository taskRepository;
-    private List<Task> tasksWithMissingClientsEvents;
-    private List<String> missingEventIdsInTasks = new ArrayList<>();
 
     public SyncClientEventsPerTaskIntentService() {
         super(TAG);
@@ -31,7 +29,8 @@ public class SyncClientEventsPerTaskIntentService extends BaseSyncIntentService 
     @Override
     protected void onHandleIntent(Intent intent) {
         super.onHandleIntent(intent);
-        tasksWithMissingClientsEvents = taskRepository.getTasksWithMissingClientsAndEvents();
+        SyncServiceHelper syncServiceHelper = SyncServiceHelper.getInstance();
+        syncServiceHelper.fetchMissingEventsRetry(0,taskRepository.getTasksWithMissingClientsAndEvents());
     }
 
 
