@@ -13,7 +13,7 @@ import org.smartregister.sync.intent.SyncClientEventsPerTaskIntentService;
  */
 public class SyncMissingTaskClientsAndEventsServiceJob extends BaseJob {
 
-    public static final String TAG = SyncMissingTaskClientsAndEventsServiceJob.class.getSimpleName();
+    public static final String TAG = "SyncMissingTaskClientsAndEventsServiceJob";
 
     private Class<? extends SyncClientEventsPerTaskIntentService> serviceClass;
 
