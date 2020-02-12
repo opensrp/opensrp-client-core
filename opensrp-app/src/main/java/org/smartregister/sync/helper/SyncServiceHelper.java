@@ -337,6 +337,7 @@ public class SyncServiceHelper {
 
     public synchronized void fetchMissingEventsRetry(final int count, List<Task> tasksWithMissingClientsEvents) {
         try {
+            Timber.i("Tasks with missing clients and/or events = %s", new Gson().toJson(tasksWithMissingClientsEvents));
             final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
@@ -432,6 +433,7 @@ public class SyncServiceHelper {
             }
             jsonObject.put("no_of_events", missingEvents.length());
             jsonObject.put("events", missingEvents);
+            Timber.i("Missing clients and events = %s", jsonObject.toString());
         } catch (Exception e) {
             Timber.e(e);
         }
