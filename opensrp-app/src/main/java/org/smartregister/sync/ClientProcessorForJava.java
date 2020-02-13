@@ -432,6 +432,7 @@ public class ClientProcessorForJava {
                                 if (values instanceof List) {
                                     List<String> li = getValues((List) values);
                                     if (!li.isEmpty()) {
+                                        // save obs as json array string e.g ["val1","val2"] if specified by the developer
                                         if ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray()) {
                                             JSONArray jsonArray = new JSONArray();
                                             for (String value : li) {
