@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
@@ -45,6 +46,7 @@ public class ClientProcessorForJava {
 
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
+    private static final String SAVE_OBS_AS_ARRAY = "save_obs_as_array";
 
     private String[] openmrsGenIds = {};
     private Map<String, Object> jsonMap = new HashMap<>();
@@ -430,7 +432,15 @@ public class ClientProcessorForJava {
                                 if (values instanceof List) {
                                     List<String> li = getValues((List) values);
                                     if (!li.isEmpty()) {
-                                        columnValue = li.get(0);
+                                        if ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray()) {
+                                            JSONArray jsonArray = new JSONArray();
+                                            for (String value : li) {
+                                                jsonArray.put(value);
+                                            }
+                                            columnValue = jsonArray.toString();
+                                        } else {
+                                            columnValue = li.get(0);
+                                        }
                                     }
                                 }
                             }
