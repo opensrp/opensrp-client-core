@@ -72,6 +72,8 @@ public class JsonFormUtils {
 
     private static final String SAVE_OBS_AS_ARRAY = "save_obs_as_array";
 
+    private static final String SAVE_ALL_CHECKBOX_OBS_AS_ARRAY = "save_all_checkbox_obs_as_arrayy";
+
 
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
@@ -193,15 +195,31 @@ public class JsonFormUtils {
                 continue;
             }
 
+            setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
-
-
         }
-
         createFormMetadataObs(metadata, event);
 
         return event;
 
+    }
+
+    /**
+     *  Global setting for all checkboxes in a form,
+     *  allowing saving of checkbox values as a json array string
+     *
+     * @param metadata
+     * @param jsonObject
+     */
+    private static void setGlobalCheckBoxProperty(JSONObject metadata, JSONObject jsonObject) {
+        try {
+            String type = getString(jsonObject, AllConstants.TYPE);
+            if (AllConstants.CHECK_BOX.equals(type) && metadata.optBoolean(SAVE_ALL_CHECKBOX_OBS_AS_ARRAY)) {
+                jsonObject.put(SAVE_OBS_AS_ARRAY, true);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
     }
 
     private static void addMultiSelectListObservations(@NonNull Event event, @NonNull JSONObject jsonObject) {
