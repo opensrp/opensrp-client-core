@@ -3,6 +3,7 @@ package org.smartregister.sync;
 import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -46,7 +47,6 @@ public class ClientProcessorForJava {
 
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
-    private static final String SAVE_OBS_AS_ARRAY = "save_obs_as_array";
 
     private String[] openmrsGenIds = {};
     private Map<String, Object> jsonMap = new HashMap<>();
@@ -56,6 +56,8 @@ public class ClientProcessorForJava {
 
     protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
     protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
+
+    private static final String JSON_ARRAY = "json_array";
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -430,7 +432,7 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    columnValue = getValuesStr(segment, getValues((List) values));
+                                    columnValue = getValuesStr(segment, getValues((List) values), column.saveFormat);
                                 }
                             }
                         }
@@ -484,25 +486,28 @@ public class ClientProcessorForJava {
      * @param values
      * @return @return A formatted values String
      */
-    private String getValuesStr(Object segment, List<String> values) {
-
+    private String getValuesStr(Object segment, List<String> values, String saveFormat) {
         String columnValue = null;
         if (values.isEmpty()) {
             return columnValue;
         }
 
         // save obs as json array string e.g ["val1","val2"] if specified by the developer
-        if ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray()) {
-            JSONArray jsonArray = new JSONArray();
-            for (String value : values) {
-                jsonArray.put(value);
-            }
-            columnValue = jsonArray.toString();
+        if (JSON_ARRAY.equals(saveFormat) || ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray())) {
+            columnValue = getValuesAsArray(values);
         } else {
             columnValue = values.get(0);
         }
 
         return columnValue;
+    }
+
+    private String getValuesAsArray(List<String> values) {
+        JSONArray jsonArray = new JSONArray();
+        for (String value : values) {
+            jsonArray.put(value);
+        }
+        return jsonArray.toString();
     }
 
     /**
@@ -959,5 +964,4 @@ public class ClientProcessorForJava {
             miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
         }
     }
-
 }
