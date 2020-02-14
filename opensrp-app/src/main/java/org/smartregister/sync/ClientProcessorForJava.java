@@ -430,19 +430,7 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    List<String> li = getValues((List) values);
-                                    if (!li.isEmpty()) {
-                                        // save obs as json array string e.g ["val1","val2"] if specified by the developer
-                                        if ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray()) {
-                                            JSONArray jsonArray = new JSONArray();
-                                            for (String value : li) {
-                                                jsonArray.put(value);
-                                            }
-                                            columnValue = jsonArray.toString();
-                                        } else {
-                                            columnValue = li.get(0);
-                                        }
-                                    }
+                                    columnValue = getValuesStr(segment, getValues((List) values));
                                 }
                             }
                         }
@@ -487,6 +475,34 @@ public class ClientProcessorForJava {
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    /**
+     * Formats values from {@param values} into a string based on {@param segment} properties
+     *
+     * @param segment
+     * @param values
+     * @return @return A formatted values String
+     */
+    private String getValuesStr(Object segment, List<String> values) {
+
+        String columnValue = null;
+        if (values.isEmpty()) {
+            return columnValue;
+        }
+
+        // save obs as json array string e.g ["val1","val2"] if specified by the developer
+        if ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray()) {
+            JSONArray jsonArray = new JSONArray();
+            for (String value : values) {
+                jsonArray.put(value);
+            }
+            columnValue = jsonArray.toString();
+        } else {
+            columnValue = values.get(0);
+        }
+
+        return columnValue;
     }
 
     /**
