@@ -57,7 +57,7 @@ public class ClientProcessorForJava {
     protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
     protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
 
-    private static final String JSON_ARRAY = "json_array";
+    public static final String JSON_ARRAY = "json_array";
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -493,7 +493,8 @@ public class ClientProcessorForJava {
         }
 
         // save obs as json array string e.g ["val1","val2"] if specified by the developer
-        if (JSON_ARRAY.equals(saveFormat) || ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray())) {
+        if ((saveFormat != null && JSON_ARRAY.equals(saveFormat))
+                || ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray())) {
             columnValue = getValuesAsArray(values);
         } else {
             columnValue = values.get(0);
