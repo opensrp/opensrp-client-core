@@ -10,10 +10,16 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Event;
+import org.smartregister.domain.db.Obs;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.smartregister.sync.ClientProcessorForJava.JSON_ARRAY;
 
 
 public class ClientProcessorForJavaTest extends BaseUnitTest {
@@ -62,5 +68,28 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         clientProcessorForJava.processEvent(mockEvent, null, null);
 
         Mockito.verify(clientProcessorForJava).completeProcessing(mockEvent);
+    }
+
+    @Test
+    public void testGetValuesStrShouldGetCorrectlyFormattedString() throws Exception {
+        ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
+        List<String> values = new ArrayList<>();
+        Obs obs = new Obs();
+        obs.withsaveObsAsArray(true);
+        String valStr = Whitebox.invokeMethod(clientProcessor, "getValuesStr", obs, values, JSON_ARRAY);
+        assertNull(valStr);
+
+        values.add("val1");
+        values.add("val2");
+        values.add("val3");
+        valStr = Whitebox.invokeMethod(clientProcessor, "getValuesStr", obs, values, null);
+        assertEquals("[\"val1\",\"val2\",\"val3\"]", valStr);
+
+        obs.setSaveObsAsArray(false);
+        valStr = Whitebox.invokeMethod(clientProcessor, "getValuesStr", obs, values, JSON_ARRAY);
+        assertEquals("[\"val1\",\"val2\",\"val3\"]", valStr);
+
+        valStr = Whitebox.invokeMethod(clientProcessor, "getValuesStr", obs, values, null);
+        assertEquals("val1", valStr);
     }
 }
