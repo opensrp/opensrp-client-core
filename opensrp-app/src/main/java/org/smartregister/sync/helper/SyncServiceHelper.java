@@ -336,89 +336,96 @@ public class SyncServiceHelper {
     }
 
     public synchronized void fetchMissingEventsRetry(final int count, List<Task> tasksWithMissingClientsEvents) {
-        try {
-            Timber.i("Tasks with missing clients and/or events = %s", new Gson().toJson(tasksWithMissingClientsEvents));
-            final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-            if (httpAgent == null) {
-                complete(FetchStatus.fetchedFailed);
-            }
+        Timber.i("Tasks with missing clients and/or events = %s", new Gson().toJson(tasksWithMissingClientsEvents));
 
-            String baseUrl = CoreLibrary.getInstance().context().
-                    configuration().dristhiBaseURL();
-            if (baseUrl.endsWith("/")) {
-                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
-            }
+        for(Task task:tasksWithMissingClientsEvents){
+            try {
+                final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
+                if (httpAgent == null) {
+                    complete(FetchStatus.fetchedFailed);
+                }
 
-            if (tasksWithMissingClientsEvents.isEmpty()) {
-                return;
-            }
+                String baseUrl = CoreLibrary.getInstance().context().
+                        configuration().dristhiBaseURL();
+                if (baseUrl.endsWith("/")) {
+                    baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+                }
 
-            List<String> missingEventIdsInTasks = new ArrayList<>();
-            StringBuilder baseEntityIdsSb = new StringBuilder();
-            for (int i = 0; i < tasksWithMissingClientsEvents.size(); i++) {
-                Task task = tasksWithMissingClientsEvents.get(i);
-                baseEntityIdsSb.append(task.getForEntity());
+                if (tasksWithMissingClientsEvents.isEmpty()) {
+                    return;
+                }
+
+                List<String> missingEventIdsInTasks = new ArrayList<>();
                 missingEventIdsInTasks.add(task.getReasonReference());
-                // if not the last item
-                if (i != tasksWithMissingClientsEvents.size() - 1) {
-                    baseEntityIdsSb.append(",");
+
+                //TODO implement a way to query multiple baseEntityIds at once
+//                StringBuilder baseEntityIdsSb = new StringBuilder();
+//                for (int i = 0; i < tasksWithMissingClientsEvents.size(); i++) {
+//                    Task task = tasksWithMissingClientsEvents.get(i);
+//                    baseEntityIdsSb.append(task.getForEntity());
+//                    missingEventIdsInTasks.add(task.getReasonReference());
+//                    // if not the last item
+//                    if (i != tasksWithMissingClientsEvents.size() - 1) {
+//                        baseEntityIdsSb.append(",");
+//                    }
+//
+//                }
+
+                SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+                String url = baseUrl + SYNC_URL;
+                Response resp;
+                if (configs.isSyncUsingPost()) {
+                    JSONObject syncParams = new JSONObject();
+                    syncParams.put("baseEntityId", task.getForEntity());
+                    syncParams.put("serverVersion", 0);
+                    resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
+                } else {
+                    url += "?baseEntityId=" + task.getForEntity() + "&serverVersion=0";
+                    Timber.i("URL: %s", url);
+                    resp = httpAgent.fetch(url);
                 }
 
-            }
-
-            SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-            String url = baseUrl + SYNC_URL;
-            Response resp;
-            if (configs.isSyncUsingPost()) {
-                JSONObject syncParams = new JSONObject();
-                syncParams.put("baseEntityId", baseEntityIdsSb.toString());
-                syncParams.put("serverVersion", 0);
-                resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
-            } else {
-                url += "?baseEntityId=" + baseEntityIdsSb.toString() + "&serverVersion=0";
-                Timber.i("URL: %s", url);
-                resp = httpAgent.fetch(url);
-            }
-
-            if (resp.isUrlError()) {
-                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
-                complete(FetchStatus.fetchedFailed);
-                return;
-            }
-
-            if (resp.isTimeoutError()) {
-                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
-                complete(FetchStatus.fetchedFailed);
-            }
-
-            if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
-                fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
-            }
-
-            int eCount;
-            JSONObject jsonObject = new JSONObject();
-            if (resp.payload() == null) {
-                eCount = 0;
-            } else {
-                jsonObject = new JSONObject((String) resp.payload());
-                eCount = fetchNumberOfEvents(jsonObject);
-                Timber.i("Parse Network Event Count: %s", eCount);
-            }
-
-            if (eCount < 0) {
-                fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
-            } else {
-                final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
-                filterEventsForOnlyMissingEventsInTasks(jsonObject, missingEventIdsInTasks);
-                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                if (isSaved) {
-                    processClient(serverVersionPair);
+                if (resp.isUrlError()) {
+                    FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                    complete(FetchStatus.fetchedFailed);
+                    return;
                 }
+
+                if (resp.isTimeoutError()) {
+                    FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                    complete(FetchStatus.fetchedFailed);
+                }
+
+                if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
+                    fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
+                }
+
+                int eCount;
+                JSONObject jsonObject = new JSONObject();
+                if (resp.payload() == null) {
+                    eCount = 0;
+                } else {
+                    jsonObject = new JSONObject((String) resp.payload());
+                    eCount = fetchNumberOfEvents(jsonObject);
+                    Timber.i("Parse Network Event Count: %s", eCount);
+                }
+
+                if (eCount < 0) {
+                    fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
+                } else {
+                    final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
+                    filterEventsForOnlyMissingEventsInTasks(jsonObject, missingEventIdsInTasks);
+                    boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+                    if (isSaved) {
+                        processClient(serverVersionPair);
+                    }
+                }
+            } catch (Exception e) {
+                Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
+                fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
             }
-        } catch (Exception e) {
-            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
-            fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
         }
+
     }
 
     public void filterEventsForOnlyMissingEventsInTasks(JSONObject jsonObject, List<String> missingEventIdsInTasks) {
@@ -427,7 +434,7 @@ public class SyncServiceHelper {
             JSONArray receivedeEvents = jsonObject.getJSONArray("events");
             for (int i = 0; i < receivedeEvents.length(); i++) {
                 JSONObject event = receivedeEvents.getJSONObject(i);
-                if (missingEventIdsInTasks.contains(event.getString("id"))) {
+                if (missingEventIdsInTasks.contains(event.getString("formSubmissionId"))) {
                     missingEvents.put(event);
                 }
             }
