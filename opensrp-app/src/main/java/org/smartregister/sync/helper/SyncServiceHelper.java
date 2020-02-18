@@ -209,6 +209,7 @@ public class SyncServiceHelper {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
+            Timber.e("Processed Client : %s", new Gson().toJson(events));
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Timber.e(e, "Process Client Exception: %s", e.getMessage());
@@ -338,6 +339,7 @@ public class SyncServiceHelper {
     public synchronized void fetchMissingEventsRetry(final int count, List<Task> tasksWithMissingClientsEvents) {
         Timber.i("Tasks with missing clients and/or events = %s", new Gson().toJson(tasksWithMissingClientsEvents));
 
+        //TODO implement an additional endpoint to query client events using multiple baseEntityIds at once and remove the use of a loop
         for(Task task:tasksWithMissingClientsEvents){
             try {
                 final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
@@ -355,20 +357,19 @@ public class SyncServiceHelper {
                     return;
                 }
 
-                List<String> missingEventIdsInTasks = new ArrayList<>();
-                missingEventIdsInTasks.add(task.getReasonReference());
+                List<String> missingFormSubmissionIdsInTasks = new ArrayList<>();
+                //TODO implement obtain a list of all formSubmissionIDs in missing events after implementing an endpoint to query client events using multiple baseEntityIds at once
+                missingFormSubmissionIdsInTasks.add(task.getReasonReference());
 
-                //TODO implement a way to query multiple baseEntityIds at once
 //                StringBuilder baseEntityIdsSb = new StringBuilder();
 //                for (int i = 0; i < tasksWithMissingClientsEvents.size(); i++) {
 //                    Task task = tasksWithMissingClientsEvents.get(i);
 //                    baseEntityIdsSb.append(task.getForEntity());
-//                    missingEventIdsInTasks.add(task.getReasonReference());
+//                    missingFormSubmissionIdsInTasks.add(task.getReasonReference());
 //                    // if not the last item
 //                    if (i != tasksWithMissingClientsEvents.size() - 1) {
 //                        baseEntityIdsSb.append(",");
 //                    }
-//
 //                }
 
                 SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
@@ -414,7 +415,7 @@ public class SyncServiceHelper {
                     fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
                 } else {
                     final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
-                    filterEventsForOnlyMissingEventsInTasks(jsonObject, missingEventIdsInTasks);
+                    filterEventsForOnlyMissingEventsInTasks(jsonObject, missingFormSubmissionIdsInTasks);
                     boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
                     if (isSaved) {
                         processClient(serverVersionPair);
@@ -428,13 +429,21 @@ public class SyncServiceHelper {
 
     }
 
+    /**
+     * This method filters the received clientEventJson to obtain only the family member registration event, Update Family Member Relations and the event tied up to the task
+     * @param jsonObject this is the received clientEventJson that is to be filtered
+     * @param missingEventIdsInTasks  this is a list of formSubmissionIds of events to be filtered, obtained from tasks
+     */
     public void filterEventsForOnlyMissingEventsInTasks(JSONObject jsonObject, List<String> missingEventIdsInTasks) {
         JSONArray missingEvents = new JSONArray();
         try {
             JSONArray receivedeEvents = jsonObject.getJSONArray("events");
             for (int i = 0; i < receivedeEvents.length(); i++) {
                 JSONObject event = receivedeEvents.getJSONObject(i);
-                if (missingEventIdsInTasks.contains(event.getString("formSubmissionId"))) {
+                if (missingEventIdsInTasks.contains(event.getString("formSubmissionId")) ||
+                        event.getString("eventType").equals("Family Member Registration") ||
+                        event.getString("eventType").equals("Update Family Member Relations")
+                ) {
                     missingEvents.put(event);
                 }
             }
