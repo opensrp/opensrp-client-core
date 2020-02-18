@@ -4,14 +4,18 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
+import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.Obs;
@@ -19,21 +23,31 @@ import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.smartregister.sync.ClientProcessorForJava.JSON_ARRAY;
 
 
 public class ClientProcessorForJavaTest extends BaseUnitTest {
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
+    @Mock
+    private CoreLibrary coreLibrary;
+
+    @Mock
+    private org.smartregister.Context opensrpContext;
+
     @Mock
     private Context context;
+
+    @Captor
+    private ArgumentCaptor<String> closeCaseArgumentCaptor;
 
     @Test
     public void testGetFormattedValueDate() throws Exception {
@@ -132,5 +146,24 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Whitebox.setInternalState(clientProcessor, "openmrsGenIds", new String[]{"zeir_id"});
         Whitebox.invokeMethod(clientProcessor, "updateIdenitifier", contentValues);
         assertEquals("2323", contentValues.get("zeir_id"));
+    }
+
+    @Test
+    public void testCloseCaseShouldReturnFalseIfCloseCaseIsEmpty() {
+        ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
+        assertFalse(clientProcessor.closeCase(new Client("1233-2"), new ArrayList<>()));
+    }
+
+    @Test
+    public void testCloseCaseShouldPassCorrectValuesToCloseCase() {
+        ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
+        CommonRepository commonRepository = Mockito.mock(CommonRepository.class);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        PowerMockito.when(coreLibrary.context()).thenReturn(opensrpContext);
+        PowerMockito.when(opensrpContext.commonrepository("child")).thenReturn(commonRepository);
+        assertTrue(clientProcessor.closeCase(new Client("1233-2"), Arrays.asList("child")));
+        Mockito.verify(commonRepository).closeCase(closeCaseArgumentCaptor.capture(), closeCaseArgumentCaptor.capture());
+        assertEquals("1233-2", closeCaseArgumentCaptor.getAllValues().get(0));
+        assertEquals("child", closeCaseArgumentCaptor.getAllValues().get(1));
     }
 }
