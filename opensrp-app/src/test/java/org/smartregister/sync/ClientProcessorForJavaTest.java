@@ -165,5 +165,6 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Mockito.verify(commonRepository).closeCase(closeCaseArgumentCaptor.capture(), closeCaseArgumentCaptor.capture());
         assertEquals("1233-2", closeCaseArgumentCaptor.getAllValues().get(0));
         assertEquals("child", closeCaseArgumentCaptor.getAllValues().get(1));
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
