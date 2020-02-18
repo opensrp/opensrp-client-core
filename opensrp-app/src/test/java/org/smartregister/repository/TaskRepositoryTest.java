@@ -24,6 +24,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.domain.db.Client;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -304,5 +305,24 @@ public class TaskRepositoryTest extends BaseUnitTest {
     public void testArchiveTasksForEntityWithNullParams() {
         taskRepository.archiveTasksForEntity(null);
         verifyZeroInteractions(sqLiteDatabase);
+    }
+
+    @Test
+    public void testReadUpdateCursor() {
+        MatrixCursor cursor = getCursor();
+        cursor.moveToNext();
+        String expectedIdentifier = cursor.getString(cursor.getColumnIndex("_id"));
+        String expectedStatus = cursor.getString(cursor.getColumnIndex("status"));
+        String expectedBusinessStatus = cursor.getString(cursor.getColumnIndex("business_status"));
+        String expectedServerVersion = cursor.getString(cursor.getColumnIndex("server_version"));
+
+        TaskUpdate returnedTaskUpdate = taskRepository.readUpdateCursor(cursor);
+
+        assertNotNull(returnedTaskUpdate);
+        assertEquals(expectedIdentifier, returnedTaskUpdate.getIdentifier());
+        assertEquals(expectedStatus, returnedTaskUpdate.getStatus());
+        assertEquals(expectedBusinessStatus, returnedTaskUpdate.getBusinessStatus());
+        assertEquals(expectedServerVersion, returnedTaskUpdate.getServerVersion());
+
     }
 }
