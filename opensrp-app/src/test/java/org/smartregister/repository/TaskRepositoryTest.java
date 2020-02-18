@@ -82,6 +82,9 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Mock
     private SQLiteStatement sqLiteStatement;
 
+    @Captor
+    private ArgumentCaptor<String[]> stringArrayArgumentCaptor;
+
     private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0,\"structureId\":\"structure._id.33efadf1-feda-4861-a979-ff4f7cec9ea7\",\"reasonReference\":\"fad051d9-0ff6-424a-8a44-4b90883e2841\"}";
     private String structureJson = "{\"id\": \"170230\", \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [32.59610261651737, -14.171511296715634]}, \"properties\": {\"status\": \"Active\", \"version\": 0, \"parentId\": \"3429\", \"geographicLevel\": 4}, \"serverVersion\": 1542970626353}";
     private String clientJson = "{\"firstName\":\"Khumpai\",\"lastName\":\"Family\",\"birthdate\":\"1970-01-01T05:00:00.000+03:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"gender\":\"Male\",\"relationships\":{\"family_head\":[\"7d97182f-d623-4553-8651-5a29d2fe3f0b\"],\"primary_caregiver\":[\"7d97182f-d623-4553-8651-5a29d2fe3f0b\"]},\"baseEntityId\":\"71ad460c-bf76-414e-9be1-0d1b2cb1bce8\",\"identifiers\":{\"opensrp_id\":\"11096120_family\"},\"addresses\":[{\"addressType\":\"\",\"cityVillage\":\"Tha Luang\"}],\"attributes\":{\"residence\":\"da765947-5e4d-49f7-9eb8-2d2d00681f65\"},\"dateCreated\":\"2019-05-12T17:22:31.023+03:00\",\"serverVersion\":1557670950986,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":2,\"type\":\"Client\",\"id\":\"9b67a82d-dac7-40c0-85aa-e5976339a6b6\",\"revision\":\"v1\"}";
@@ -323,6 +326,29 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals(expectedStatus, returnedTaskUpdate.getStatus());
         assertEquals(expectedBusinessStatus, returnedTaskUpdate.getBusinessStatus());
         assertEquals(expectedServerVersion, returnedTaskUpdate.getServerVersion());
+
+    }
+
+    @Test
+    public void testMarkTaskAsSynced() {
+
+        String expectedTaskIdentifier = "id1";
+        taskRepository.markTaskAsSynced(expectedTaskIdentifier);
+
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), stringArrayArgumentCaptor.capture());
+
+        Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
+        assertEquals(TaskRepository.TASK_TABLE, iterator.next());
+        assertEquals("_id = ?", iterator.next());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(3, contentValues.size());
+        assertEquals(expectedTaskIdentifier, contentValues.getAsString("_id"));
+        assertEquals( BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
+        assertEquals(0, contentValues.getAsInteger("server_version").intValue());
+
+        String actualTaskIdentifier = stringArrayArgumentCaptor.getAllValues().get(0)[0];
+        assertEquals(expectedTaskIdentifier, actualTaskIdentifier);
 
     }
 }
