@@ -2,12 +2,9 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import android.util.Pair;
 
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -19,37 +16,22 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
-import org.smartregister.repository.LocationRepository;
-import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.NetworkUtils;
-import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.SyncUtils;
-import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class SyncServiceHelper {
     private static final String ADD_URL = "/rest/event/add";
@@ -342,49 +324,15 @@ public class SyncServiceHelper {
         //TODO implement an additional endpoint to query client events using multiple baseEntityIds at once and remove the use of a loop
         for(Task task:tasksWithMissingClientsEvents){
             try {
-                final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
                 if (httpAgent == null) {
                     complete(FetchStatus.fetchedFailed);
-                }
-
-                String baseUrl = CoreLibrary.getInstance().context().
-                        configuration().dristhiBaseURL();
-                if (baseUrl.endsWith("/")) {
-                    baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
                 }
 
                 if (tasksWithMissingClientsEvents.isEmpty()) {
                     return;
                 }
 
-                List<String> missingFormSubmissionIdsInTasks = new ArrayList<>();
-                //TODO implement obtain a list of all formSubmissionIDs in missing events after implementing an endpoint to query client events using multiple baseEntityIds at once
-                missingFormSubmissionIdsInTasks.add(task.getReasonReference());
-
-//                StringBuilder baseEntityIdsSb = new StringBuilder();
-//                for (int i = 0; i < tasksWithMissingClientsEvents.size(); i++) {
-//                    Task task = tasksWithMissingClientsEvents.get(i);
-//                    baseEntityIdsSb.append(task.getForEntity());
-//                    missingFormSubmissionIdsInTasks.add(task.getReasonReference());
-//                    // if not the last item
-//                    if (i != tasksWithMissingClientsEvents.size() - 1) {
-//                        baseEntityIdsSb.append(",");
-//                    }
-//                }
-
-                SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
-                String url = baseUrl + SYNC_URL;
-                Response resp;
-                if (configs.isSyncUsingPost()) {
-                    JSONObject syncParams = new JSONObject();
-                    syncParams.put("baseEntityId", task.getForEntity());
-                    syncParams.put("serverVersion", 0);
-                    resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
-                } else {
-                    url += "?baseEntityId=" + task.getForEntity() + "&serverVersion=0";
-                    resp = httpAgent.fetch(url);
-                }
-
+                Response resp = fetchClientEventsByBaseEntityId(task.getForEntity());
                 if (resp.isTimeoutError()) {
                     FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                     complete(FetchStatus.fetchedFailed);
@@ -413,12 +361,26 @@ public class SyncServiceHelper {
                 if (eCount < 0) {
                     fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
                 } else {
-                    final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
-                    filterEventsForOnlyMissingEventsInTasks(jsonObject, missingFormSubmissionIdsInTasks);
-                    boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                    if (isSaved) {
-                        processClient(serverVersionPair);
+
+                    //fetch clients family registration event
+                    JSONArray clients = jsonObject.has("clients") ? jsonObject.getJSONArray("clients") : new JSONArray();
+
+                    if(clients.length()==1){
+                        JSONArray familyObject = clients.getJSONObject(0).getJSONObject("relationships").has("family")?clients.getJSONObject(0).getJSONObject("relationships").getJSONArray("family"):new JSONArray();
+
+                        for(int i=0;i<familyObject.length();i++){
+                            Response familyResponse = fetchClientEventsByBaseEntityId(familyObject.getString(i));
+                            if (familyResponse.isFailure() && !familyResponse.isUrlError() && !familyResponse.isTimeoutError()) {
+                                fetchMissingEventsFailed(count, tasksWithMissingClientsEvents);
+                            }else{
+                                processClientEvent(new JSONObject((String) familyResponse.payload())); //process the family events
+                            }
+
+                        }
                     }
+
+                    processClientEvent(jsonObject);//Process the client and his/her events
+
                 }
             } catch (Exception e) {
                 Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
@@ -428,29 +390,33 @@ public class SyncServiceHelper {
 
     }
 
-    /**
-     * This method filters the received clientEventJson to obtain only the family member registration event, Update Family Member Relations and the event tied up to the task
-     * @param jsonObject this is the received clientEventJson that is to be filtered
-     * @param missingEventIdsInTasks  this is a list of formSubmissionIds of events to be filtered, obtained from tasks
-     */
-    public void filterEventsForOnlyMissingEventsInTasks(JSONObject jsonObject, List<String> missingEventIdsInTasks) {
-        JSONArray missingEvents = new JSONArray();
-        try {
-            JSONArray receivedeEvents = jsonObject.getJSONArray("events");
-            for (int i = 0; i < receivedeEvents.length(); i++) {
-                JSONObject event = receivedeEvents.getJSONObject(i);
-                if (missingEventIdsInTasks.contains(event.getString("formSubmissionId")) ||
-                        event.getString("eventType").equals("Family Member Registration") ||
-                        event.getString("eventType").equals("Update Family Member Relations")
-                ) {
-                    missingEvents.put(event);
-                }
-            }
-            jsonObject.put("no_of_events", missingEvents.length());
-            jsonObject.put("events", missingEvents);
-            Timber.i("Missing clients and events = %s", jsonObject.toString());
-        } catch (Exception e) {
-            Timber.e(e);
+    public Response fetchClientEventsByBaseEntityId(String baseEntityId) throws Exception {
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+        }
+        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+        String url = baseUrl + SYNC_URL;
+        Response resp;
+        if (configs.isSyncUsingPost()) {
+            JSONObject syncParams = new JSONObject();
+            syncParams.put("baseEntityId", baseEntityId);
+            syncParams.put("serverVersion", 0);
+            resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
+        } else {
+            url += "?baseEntityId=" + baseEntityId + "&serverVersion=0";
+            resp = httpAgent.fetch(url);
+        }
+        return resp;
+    }
+
+    private void processClientEvent(JSONObject jsonObject) {
+        final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
+        final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
+        boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+        if (isSaved) {
+            processClient(serverVersionPair);
         }
     }
 
