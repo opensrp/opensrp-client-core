@@ -209,7 +209,7 @@ public class SyncServiceHelper {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
-            Timber.e("Processed Client : %s", new Gson().toJson(events));
+            Timber.i("Processed Client : %s", new Gson().toJson(events));
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
             Timber.e(e, "Process Client Exception: %s", e.getMessage());
