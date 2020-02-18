@@ -351,4 +351,32 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals(expectedTaskIdentifier, actualTaskIdentifier);
 
     }
+
+    @Test
+    public void testGetAllUnSyncedCreatedTasks() {
+
+        when(sqLiteDatabase.rawQuery("SELECT *  FROM task WHERE sync_status =? OR server_version IS NULL", new String[]{BaseRepository.TYPE_Created})).thenReturn(getCursor());
+
+        List<Task> unsyncedCreatedTasks = taskRepository.getAllUnsynchedCreatedTasks();
+        assertEquals(1, unsyncedCreatedTasks.size());
+
+        Task actualTask = unsyncedCreatedTasks.get(0);
+
+        assertEquals("tsk11231jh22", actualTask.getIdentifier());
+        assertEquals("2018_IRS-3734", actualTask.getGroupIdentifier());
+        assertEquals(READY, actualTask.getStatus());
+        assertEquals("Not Visited", actualTask.getBusinessStatus());
+        assertEquals(3, actualTask.getPriority());
+        assertEquals("IRS", actualTask.getCode());
+        assertEquals("Spray House", actualTask.getDescription());
+        assertEquals("IRS Visit", actualTask.getFocus());
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", actualTask.getForEntity());
+        assertEquals("2018-11-10T2200", actualTask.getExecutionStartDate().toString(formatter));
+        assertNull(actualTask.getExecutionEndDate());
+        assertEquals("2018-10-31T0700", actualTask.getAuthoredOn().toString(formatter));
+        assertEquals("2018-10-31T0700", actualTask.getLastModified().toString(formatter));
+        assertEquals("demouser", actualTask.getOwner());
+        
+
+    }
 }
