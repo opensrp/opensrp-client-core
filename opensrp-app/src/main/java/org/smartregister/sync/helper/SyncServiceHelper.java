@@ -382,19 +382,18 @@ public class SyncServiceHelper {
                     resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
                 } else {
                     url += "?baseEntityId=" + task.getForEntity() + "&serverVersion=0";
-                    Timber.i("URL: %s", url);
                     resp = httpAgent.fetch(url);
+                }
+
+                if (resp.isTimeoutError()) {
+                    FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                    complete(FetchStatus.fetchedFailed);
                 }
 
                 if (resp.isUrlError()) {
                     FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                     complete(FetchStatus.fetchedFailed);
                     return;
-                }
-
-                if (resp.isTimeoutError()) {
-                    FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
-                    complete(FetchStatus.fetchedFailed);
                 }
 
                 if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
