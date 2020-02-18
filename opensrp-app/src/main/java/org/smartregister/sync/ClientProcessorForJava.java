@@ -3,7 +3,6 @@ package org.smartregister.sync;
 import android.content.ContentValues;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -45,19 +44,15 @@ import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
 
+    public static final String JSON_ARRAY = "json_array";
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
-
-    private String[] openmrsGenIds = {};
-    private Map<String, Object> jsonMap = new HashMap<>();
-
     protected static ClientProcessorForJava instance;
-    private Context mContext;
-
     protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
     protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
-
-    public static final String JSON_ARRAY = "json_array";
+    private String[] openmrsGenIds = {};
+    private Map<String, Object> jsonMap = new HashMap<>();
+    private Context mContext;
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -648,7 +643,7 @@ public class ClientProcessorForJava {
                     attributes.put(key, value.toString());
                 }
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             Timber.e(e);
         }
 
@@ -663,7 +658,7 @@ public class ClientProcessorForJava {
             if (StringUtils.isNotBlank(gender)) {
                 map.put(GENDER, gender);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             Timber.e(e);
         }
 
