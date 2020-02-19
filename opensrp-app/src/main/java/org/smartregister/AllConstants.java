@@ -98,6 +98,7 @@ public class AllConstants {
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
+    public static final String ORGANIZATION_IDS = "ORGANIZATION_IDS";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
     public static final String OPTIONS = "options";
@@ -106,7 +107,7 @@ public class AllConstants {
     public static final String DATE = "date";
     public static final String TEXT = "text";
     public static final String NATIVE_RADIO = "native_radio";
-    public static final String ANC_RADIO_BUTTON = "anc_radio_button";
+    public static final String EXTENDED_RADIO_BUTTON = "extended_radio_button";
     public static final String PARENT_ENTITY_ID = "parent_entity_id";
     public static final String COUNT = "count";
     public static final String STEP = "step";
@@ -118,6 +119,7 @@ public class AllConstants {
     public static final String EXPANSION_PANEL = "expansion_panel";
     public static final String SPINNER = "spinner";
     public static final String ROWID = "rowid";
+    public static final String MULTI_SELECT_LIST = "multi_select_list";
 
 
     public static class Immunizations {
@@ -441,4 +443,11 @@ public class AllConstants {
         public static final String EVENTS = "events";
         public static final String CLIENTS = "clients";
     }
+
+    public static class PROPERTY {
+        public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
+        public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
+
+    }
+
 }

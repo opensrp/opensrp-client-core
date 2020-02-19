@@ -3,7 +3,6 @@ package org.smartregister.sync;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.cloudant.sync.datastore.ConflictException;
 import com.cloudant.sync.datastore.Datastore;
@@ -34,13 +33,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import timber.log.Timber;
+
 /**
  * Handles Cloudant data access methods
  * Created by onamacuser on 11/03/2016.
  */
 
 public class CloudantDataHandler {
-    private static final String TAG = CloudantDataHandler.class.getCanonicalName();
     private static final String baseEntityIdJSONKey = "baseEntityId";
     private static final String DATASTORE_MANGER_DIR = "data";
     private static final String DATASTORE_NAME = "opensrp_clients_events";
@@ -67,7 +67,7 @@ public class CloudantDataHandler {
         this.mIndexManager.ensureIndexed(indexFields, "eventdocindex");
         this.mDatabase = loadDatabase();
 
-        Log.d(TAG, "Set up database at " + path.getAbsolutePath());
+        Timber.d("Set up database at %s", path.getAbsolutePath());
 
         instance = this;
 
@@ -89,7 +89,7 @@ public class CloudantDataHandler {
                 String query = "select json from revs r inner join docs d on r.doc_id=d.doc_id "
                         + "where  d.docid=? and length(json)>2 order by "
                         + "updated_at desc";
-                Log.i(getClass().getName(), query);
+                Timber.i(query);
                 Cursor cursor = db.rawQuery(query, new String[]{documentId});
                 if (cursor != null && cursor.moveToFirst()) {
                     byte[] json = (cursor.getBlob(0));
@@ -102,7 +102,7 @@ public class CloudantDataHandler {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return null;
@@ -158,7 +158,7 @@ public class CloudantDataHandler {
         SQLiteDatabase db = loadDatabase();
         String query = "select json, updated_at from revs where updated_at > ?" +
                 "  and length(json)>2 order by updated_at asc ";
-        Log.i(getClass().getName(), query);
+        Timber.i(query);
         Cursor cursor = db.rawQuery(query, new String[]{lastSyncString});
 
         try {
@@ -188,7 +188,7 @@ public class CloudantDataHandler {
                     lastSyncDate
                             .setTime(DateUtil.yyyyMMddHHmmss.parse(cursor.getString(1)).getTime());
                 } catch (ParseException e) {
-                    Log.e(TAG, e.toString(), e);
+                    Timber.e(e);
                 }
             }
         } finally {
@@ -253,7 +253,7 @@ public class CloudantDataHandler {
             // ((HelloCloudantApplication) this.getApplication()).setCloudantDB(db);
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e.getMessage());
         }
         return db;
     }
@@ -311,7 +311,7 @@ public class CloudantDataHandler {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return null;
@@ -326,7 +326,7 @@ public class CloudantDataHandler {
             return Client.fromRevision(created);
 
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return null;
@@ -375,7 +375,7 @@ public class CloudantDataHandler {
             try {
                 client = Client.fromRevision(rev);
             } catch (ParseException e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             if (client != null) {
                 clients.add(client);

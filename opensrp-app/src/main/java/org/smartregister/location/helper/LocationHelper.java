@@ -1,6 +1,5 @@
 package org.smartregister.location.helper;
 
-import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +22,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.CAMPAIGNS;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
@@ -32,7 +33,6 @@ import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
  */
 
 public class LocationHelper {
-    private static final String TAG = LocationHelper.class.getCanonicalName();
 
     private static LocationHelper instance;
     private String childLocationId;
@@ -108,7 +108,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(Utils.class.getCanonicalName(), Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return locations;
     }
@@ -143,14 +143,14 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return response;
     }
 
     public String getOpenMrsLocationName(String locationId) {
         if (StringUtils.isBlank(locationId)) {
-            Log.e(TAG, "Location id is null");
+            Timber.e("Location id is null");
             return null;
         }
 
@@ -166,10 +166,10 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Log.e(TAG, "locationData doesn't have locationHierarchy");
+                Timber.e("locationData doesn't have locationHierarchy");
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         return response;
@@ -184,7 +184,7 @@ public class LocationHelper {
      */
     public List<String> getOpenMrsLocationHierarchy(String locationId, boolean onlyAllowedLevels) {
         if (StringUtils.isBlank(locationId)) {
-            Log.e(TAG, "Location id is null");
+            Timber.e("Location id is null");
             return new ArrayList<>();
         }
         List<String> response = null;
@@ -200,10 +200,10 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Log.e(TAG, "locationData doesn't have locationHierarchy");
+                Timber.e("locationData doesn't have locationHierarchy");
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return response;
     }
@@ -227,7 +227,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
@@ -252,7 +252,7 @@ public class LocationHelper {
 
             formLocationList = sortTreeViewQuestionOptions(formLocationList);
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         if (withOtherOption) {
@@ -285,7 +285,7 @@ public class LocationHelper {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return readableName;
     }
@@ -337,7 +337,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         return locationList;
@@ -368,7 +368,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
@@ -384,7 +384,7 @@ public class LocationHelper {
                 return null;
             }
             String id = node.getLocationId();
-            Log.d(TAG, "Current location id is " + id);
+            Timber.d("Current location id is %s", id);
             if (locationId.equals(id)) {
                 return node.getName();
             }
@@ -398,11 +398,11 @@ public class LocationHelper {
                     }
                 }
             } else {
-                Log.d(TAG, id + " does not have children");
+                Timber.d(id + " does not have children");
             }
 
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
@@ -443,7 +443,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
         return null;
     }
@@ -502,7 +502,7 @@ public class LocationHelper {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         return allLocationData;
@@ -631,7 +631,7 @@ public class LocationHelper {
         }
 
         String id = node.getLocationId();
-        Log.d(TAG, "Current location id is " + id);
+        Timber.d("Current location id is %s", id);
         if (locationId.equals(id)) {
             return hierarchy;
         }
@@ -645,7 +645,7 @@ public class LocationHelper {
                 }
             }
         } else {
-            Log.d(TAG, id + " does not have children");
+            Timber.d(id + " does not have children");
         }
 
         return null;

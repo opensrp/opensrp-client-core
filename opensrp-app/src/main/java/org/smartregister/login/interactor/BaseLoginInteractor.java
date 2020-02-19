@@ -1,7 +1,6 @@
 package org.smartregister.login.interactor;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -23,11 +22,13 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.util.NetworkUtils;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 import static org.smartregister.domain.LoginResponse.NO_INTERNET_CONNECTIVITY;
 import static org.smartregister.domain.LoginResponse.UNAUTHORIZED;
@@ -43,8 +44,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private static final int MINIMUM_JOB_FLEX_VALUE = 5;
 
     private RemoteLoginTask remoteLoginTask;
-
-    private static final String TAG = BaseLoginInteractor.class.getCanonicalName();
 
     public BaseLoginInteractor(BaseLoginContract.Presenter loginPresenter) {
         this.mLoginPresenter = loginPresenter;
@@ -73,7 +72,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
             remoteLogin(userName, password);
         }
 
-        Log.i(getClass().getName(), "Login result finished " + DateTime.now().toString());
+        Timber.i("Login result finished " + DateTime.now().toString());
     }
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, String password) {
@@ -102,11 +101,13 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.i(getClass().getName(), "Starting DrishtiSyncScheduler " + DateTime.now().toString());
+                Timber.i("Starting DrishtiSyncScheduler " + DateTime.now().toString());
 
                 scheduleJobsImmediately();
 
-                Log.i(getClass().getName(), "Started DrishtiSyncScheduler " + DateTime.now().toString());
+                Timber.i("Started DrishtiSyncScheduler " + DateTime.now().toString());
+
+                CoreLibrary.getInstance().context().getUniqueIdRepository().releaseReservedIds();
             }
         }).start();
     }
@@ -123,13 +124,15 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                     public void onEvent(LoginResponse loginResponse) {
                         getLoginView().enableLoginButton(true);
                         if (loginResponse == LoginResponse.SUCCESS) {
-                            if (getUserService().isUserInPioneerGroup(userName)) {
+                            String username=loginResponse.payload()!=null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                                    ? loginResponse.payload().user.getUsername() : userName;
+                            if (getUserService().isUserInPioneerGroup(username)) {
                                 TimeStatus timeStatus = getUserService().validateDeviceTime(
                                         loginResponse.payload(), AllConstants.MAX_SERVER_TIME_DIFFERENCE
                                 );
                                 if (!AllConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
 
-                                    remoteLoginWith(userName, password, loginResponse);
+                                    remoteLoginWith(username, password, loginResponse);
 
                                 } else {
                                     if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
@@ -167,8 +170,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 getLoginView().showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
-
+            Timber.e(e);
             getLoginView().showErrorDialog("Error occurred trying to loginWithLocalFlag in. Please try again...");
         }
     }
@@ -183,7 +185,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private void remoteLoginWith(String userName, String password, LoginResponse loginResponse) {
         getUserService().remoteLogin(userName, password, loginResponse.payload());
-
         processServerSettings(loginResponse);
 
         scheduleJobsPeriodically();
@@ -257,7 +258,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 }
 
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
 
             }
         }

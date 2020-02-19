@@ -2,10 +2,12 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.util.Log;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
@@ -32,6 +34,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -41,7 +44,6 @@ import timber.log.Timber;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
-    protected static final String TAG = ClientProcessorForJava.class.getName();
 
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
@@ -51,6 +53,11 @@ public class ClientProcessorForJava {
 
     protected static ClientProcessorForJava instance;
     private Context mContext;
+
+    protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
+    protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
+
+    public static final String JSON_ARRAY = "json_array";
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -75,8 +82,20 @@ public class ClientProcessorForJava {
         if (!eventClientList.isEmpty()) {
             for (EventClient eventClient : eventClientList) {
                 // Iterate through the events
-                if (eventClient.getClient() != null) {
-                    processEvent(eventClient.getEvent(), eventClient.getClient(), clientClassification);
+                Client client = eventClient.getClient();
+                if (client != null) {
+                    Event event = eventClient.getEvent();
+                    String eventType = event.getEventType();
+
+                    if (processorMap.containsKey(eventType)) {
+                        try {
+                            processEventUsingMiniProcessor(clientClassification, eventClient, eventType);
+                        } catch (Exception ex) {
+                            Timber.e(ex);
+                        }
+                    } else {
+                        processEvent(event, client, clientClassification);
+                    }
                 }
             }
         }
@@ -85,12 +104,16 @@ public class ClientProcessorForJava {
     /**
      * Call this method to flag the event as processed in the local repository.
      * All events valid or otherwise must be flagged to avoid re-processing
+     *
      * @param event
      */
     public void completeProcessing(Event event) {
         if (event == null)
             return;
 
+        if (event.getServerVersion() != 0) {
+            CoreLibrary.getInstance().context().allSharedPreferences().updateLastClientProcessedTimeStamp(event.getServerVersion());
+        }
         CoreLibrary.getInstance().context()
                 .getEventClientRepository().markEventAsProcessed(event.getFormSubmissionId());
     }
@@ -101,7 +124,7 @@ public class ClientProcessorForJava {
             completeProcessing(event);
 
             if (event.getCreator() != null) {
-                Log.i(TAG, "EVENT from openmrs");
+                Timber.i("EVENT from openmrs");
             }
             // For data integrity check if a client exists, if not pull one from cloudant and
             // insert in drishti sqlite db
@@ -133,7 +156,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -160,7 +183,7 @@ public class ClientProcessorForJava {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -250,7 +273,7 @@ public class ClientProcessorForJava {
             }
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -270,7 +293,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             return null;
         }
     }
@@ -309,7 +332,7 @@ public class ClientProcessorForJava {
 
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
 
             return null;
         }
@@ -409,10 +432,7 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    List<String> li = getValues((List) values);
-                                    if (!li.isEmpty()) {
-                                        columnValue = li.get(0);
-                                    }
+                                    columnValue = getValuesStr(segment, getValues((List) values), column.saveFormat);
                                 }
                             }
                         }
@@ -460,8 +480,41 @@ public class ClientProcessorForJava {
     }
 
     /**
+     * Formats values from {@param values} into a string based on {@param segment} properties
+     *
+     * @param segment
+     * @param values
+     * @return @return A formatted values String
+     */
+    private String getValuesStr(Object segment, List<String> values, String saveFormat) {
+        String columnValue = null;
+        if (values.isEmpty()) {
+            return columnValue;
+        }
+
+        // save obs as json array string e.g ["val1","val2"] if specified by the developer
+        if ((saveFormat != null && JSON_ARRAY.equals(saveFormat))
+                || ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray())) {
+            columnValue = getValuesAsArray(values);
+        } else {
+            columnValue = values.get(0);
+        }
+
+        return columnValue;
+    }
+
+    private String getValuesAsArray(List<String> values) {
+        JSONArray jsonArray = new JSONArray();
+        for (String value : values) {
+            jsonArray.put(value);
+        }
+        return jsonArray.toString();
+    }
+
+    /**
      * Reformat the data to be persisted in the database.
      * This function will reformat dates with supplied types for storage in the DB
+     *
      * @param column
      * @param columnValue
      * @return
@@ -474,8 +527,8 @@ public class ClientProcessorForJava {
             case ColumnType.Date:
                 if (StringUtils.isNotBlank(column.saveFormat) && StringUtils.isNotBlank(column.sourceFormat)) {
                     try {
-                        Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.getDefault()).parse(columnValue);
-                        return new SimpleDateFormat(column.saveFormat, Locale.getDefault()).format(sourceDate);
+                        Date sourceDate = new SimpleDateFormat(column.sourceFormat, Locale.ENGLISH).parse(columnValue);
+                        return new SimpleDateFormat(column.saveFormat, Locale.ENGLISH).format(sourceDate);
                     } catch (Exception e) {
                         Timber.e(e);
                     }
@@ -499,6 +552,9 @@ public class ClientProcessorForJava {
      * @param eventDate
      */
     protected void addContentValuesToDetailsTable(ContentValues values, Long eventDate) {
+        if (!CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable())
+            return;
+
         try {
             String baseEntityId = values.getAsString("base_entity_id");
 
@@ -507,7 +563,7 @@ public class ClientProcessorForJava {
                 saveClientDetails(baseEntityId, key, value, eventDate);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -522,7 +578,7 @@ public class ClientProcessorForJava {
      */
     public void updateClientDetailsTable(Event event, Client client) {
         try {
-            Log.d(TAG, "Started updateClientDetailsTable");
+            Timber.d("Started updateClientDetailsTable");
 
             if (CoreLibrary.getInstance().getSyncConfiguration().updateClientDetailsTable()) {
                 String baseEntityId = client.getBaseEntityId();
@@ -543,10 +599,10 @@ public class ClientProcessorForJava {
 
             event.addDetails(detailsUpdated, Boolean.TRUE.toString());
 
-            Log.d(TAG, "Finished updateClientDetailsTable");
+            Timber.d("Finished updateClientDetailsTable");
             // save the other misc, client info date of birth...
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -575,7 +631,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return obsMap;
     }
@@ -593,7 +649,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return attributes;
@@ -608,7 +664,7 @@ public class ClientProcessorForJava {
                 map.put(GENDER, gender);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
         return map;
@@ -672,7 +728,7 @@ public class ClientProcessorForJava {
             return humanReadableValues.size() == 1 ? humanReadableValues.get(0).toString()
                     : humanReadableValues.toString();
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return value;
     }
@@ -707,7 +763,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return addressMap;
     }
@@ -743,7 +799,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
         return null;
     }
@@ -839,7 +895,7 @@ public class ClientProcessorForJava {
 
 
     public void updateFTSsearch(String tableName, String entityId, ContentValues contentValues) {
-        Log.d(TAG, "Starting updateFTSsearch table: " + tableName);
+        Timber.d("Starting updateFTSsearch table: " + tableName);
         AllCommonsRepository allCommonsRepository = org.smartregister.CoreLibrary.getInstance().context().
                 allCommonsRepositoryobjects(tableName);
 
@@ -848,7 +904,7 @@ public class ClientProcessorForJava {
             updateRegisterCount(entityId);
         }
 
-        Log.d(TAG, "Finished updateFTSsearch table: " + tableName);
+        Timber.d("Finished updateFTSsearch table: " + tableName);
     }
 
     protected void updateRegisterCount(String entityId) {
@@ -873,7 +929,7 @@ public class ClientProcessorForJava {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -883,5 +939,30 @@ public class ClientProcessorForJava {
 
     protected String[] getOpenmrsGenIds() {
         return openmrsGenIds;
+    }
+
+    protected void addMiniProcessors(MiniClientProcessorForJava... miniClientProcessorsForJava) {
+        for (MiniClientProcessorForJava miniClientProcessorForJava : miniClientProcessorsForJava) {
+            unsyncEventsPerProcessor.put(miniClientProcessorForJava, new ArrayList<Event>());
+
+            HashSet<String> eventTypes = miniClientProcessorForJava.getEventTypes();
+
+            for (String eventType : eventTypes) {
+                processorMap.put(eventType, miniClientProcessorForJava);
+            }
+        }
+    }
+
+    protected void processEventUsingMiniProcessor(@NonNull ClientClassification clientClassification, @NonNull EventClient eventClient, @NonNull String eventType) throws Exception {
+        MiniClientProcessorForJava miniClientProcessorForJava = processorMap.get(eventType);
+        if (miniClientProcessorForJava != null) {
+            List<Event> processorUnsyncEvents = unsyncEventsPerProcessor.get(miniClientProcessorForJava);
+            if (processorUnsyncEvents == null) {
+                processorUnsyncEvents = new ArrayList<>();
+                unsyncEventsPerProcessor.put(miniClientProcessorForJava, processorUnsyncEvents);
+            }
+
+            miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
+        }
     }
 }

@@ -18,7 +18,7 @@ public class FakeUserService extends UserService {
     private Session session;
 
     public FakeUserService() {
-        super(null, null, null, null, null, null, null, null, null);
+        super(null, null, null, null, null, null, null, null);
     }
 
     @Override

@@ -1,19 +1,18 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.job.ValidateSyncDataServiceJob;
 import org.smartregister.service.ActionService;
 import org.smartregister.util.NetworkUtils;
 
+import timber.log.Timber;
 
-public class ExtendedSyncIntentService extends IntentService {
+
+public class ExtendedSyncIntentService extends BaseSyncIntentService {
 
     private ActionService actionService;
-    private static final String TAG = ExtendedSyncIntentService.class.getCanonicalName();
 
     public ExtendedSyncIntentService() {
         super("ExtendedSyncIntentService");
@@ -28,15 +27,16 @@ public class ExtendedSyncIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent workIntent) {
         try {
-
+            super.onHandleIntent(workIntent);
             if (NetworkUtils.isNetworkAvailable()) {
-                actionService.fetchNewActions();
-
+                if (!CoreLibrary.getInstance().getSyncConfiguration().disableActionService()) {
+                    actionService.fetchNewActions();
+                }
                 startSyncValidation();
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e);
         }
     }
 

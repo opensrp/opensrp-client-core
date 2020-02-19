@@ -2,9 +2,10 @@ package org.smartregister.repository;
 
 import android.content.SharedPreferences;
 
-import junit.framework.Assert;
 import junit.framework.TestCase;
 
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,8 +39,12 @@ public class AllSharedPreferencesTest extends TestCase {
         Mockito.when(preferences.getString(HOST, "")).thenReturn("");
         Mockito.when(preferences.getString(PORT, "80")).thenReturn("8080");
         Mockito.when(preferences.getString(AllConstants.DRISHTI_BASE_URL, "")).thenReturn("http://www.google.com");
-        Mockito.when(preferences.getBoolean(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(true);
         Mockito.when(preferences.edit()).thenReturn(MockEditor.getEditor());
+    }
+
+    @After
+    public void tearDown() {
+        allSharedPreferences = null;
     }
 
     @Test
@@ -50,6 +55,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void assertFetchForceRemoteLogin() {
+        Mockito.when(preferences.getBoolean(AllConstants.FORCE_REMOTE_LOGIN, true)).thenReturn(true);
         Assert.assertEquals(allSharedPreferences.fetchForceRemoteLogin(), true);
     }
 
@@ -235,7 +241,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void shouldSaveCampaignsOperationalArea() {
-        allSharedPreferences.savePreference(CAMPAIGNS,"Miti Rural Health Centre");
+        allSharedPreferences.savePreference(CAMPAIGNS, "Miti Rural Health Centre");
         Mockito.verify(preferences, Mockito.times(1)).edit();
     }
 

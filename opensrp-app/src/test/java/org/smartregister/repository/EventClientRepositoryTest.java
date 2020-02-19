@@ -17,6 +17,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Column;
 import org.smartregister.sync.ClientData;
@@ -32,8 +33,6 @@ import java.util.HashMap;
 /**
  * Created by onaio on 29/08/2017.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class})
 public class EventClientRepositoryTest extends BaseUnitTest {
 
     @InjectMocks
@@ -50,14 +49,15 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        eventClientRepository = new EventClientRepository(repository);
+        eventClientRepository = new EventClientRepository();
     }
 
     @Test
     public void instantiatesSuccessfullyOnConstructorCall() {
-        Assert.assertNotNull(new EventClientRepository(repository));
+        Assert.assertNotNull(new EventClientRepository());
     }
 
     @Test
@@ -121,16 +121,23 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void getEventsByBaseEntityIdReturnsNotNull() throws Exception {
         Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(baseEntityId));
+        JSONObject events = eventClientRepository.getEventsByBaseEntityId(baseEntityId);
+        Assert.assertNotNull(events);
+        Assert.assertTrue(events.has("events"));
 
     }
 
     @Test
-    public void getEventsByEventIdReturnsNotNull() throws Exception {
+    public void getEventsByBaseEntityIdReturnsNotNullIfIdIsNull() {
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(null));
+        Mockito.verifyNoMoreInteractions(sqliteDatabase);
 
-        Mockito.when(sqliteDatabase.rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class))).thenReturn(getEventCursor());
-        Assert.assertNotNull(eventClientRepository.getEventsByEventId("EventId"));
+    }
 
+    @Test
+    public void getEventsByBaseEntityIdReturnsNotNullOnError() {
+        Mockito.doThrow(new RuntimeException()).when(sqliteDatabase).rawQuery(org.mockito.ArgumentMatchers.anyString(), org.mockito.ArgumentMatchers.any(String[].class));
+        Assert.assertNotNull(eventClientRepository.getEventsByBaseEntityId(null));
     }
 
     @Test
@@ -323,7 +330,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
      */
     @Test
     public void testAddEventDefaultStatus() {
-        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository(repository));
+        EventClientRepository eventClientRepository = Mockito.spy(new EventClientRepository());
         String baseEntityId = "12345";
         JSONObject jsonObject = Mockito.mock(JSONObject.class);
 

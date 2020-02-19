@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -46,9 +47,10 @@ public class Hia2ReportRepositoryTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(),"repository",repository);
         when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        hia2ReportRepository = new Hia2ReportRepository(repository);
+        hia2ReportRepository = new Hia2ReportRepository();
     }
 
     @Test

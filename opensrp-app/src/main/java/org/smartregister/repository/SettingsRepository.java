@@ -2,7 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.util.Log;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -11,6 +10,8 @@ import org.smartregister.domain.SyncStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 public class SettingsRepository extends DrishtiRepository {
     public static final String SETTINGS_TABLE_NAME = "settings";
@@ -77,7 +78,7 @@ public class SettingsRepository extends DrishtiRepository {
                 value = cursor.getString(0);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -97,7 +98,7 @@ public class SettingsRepository extends DrishtiRepository {
                 value = cursor.getBlob(0);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -125,7 +126,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -149,7 +150,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -171,7 +172,7 @@ public class SettingsRepository extends DrishtiRepository {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.toString(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null) {
                 cursor.close();

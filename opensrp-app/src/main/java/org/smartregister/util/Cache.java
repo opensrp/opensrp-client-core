@@ -7,13 +7,14 @@ import org.smartregister.event.Listener;
 import java.util.HashMap;
 import java.util.Map;
 
+import timber.log.Timber;
+
 import static java.text.MessageFormat.format;
 import static org.smartregister.domain.FetchStatus.fetched;
 import static org.smartregister.event.Event.ACTION_HANDLED;
 import static org.smartregister.event.Event.FORM_SUBMITTED;
 import static org.smartregister.event.Event.ON_DATA_FETCHED;
 import static org.smartregister.event.Event.ON_PHOTO_CAPTURED;
-import static org.smartregister.util.Log.logWarn;
 
 public class Cache<T> {
     private final Listener<String> formSubmittedListener;
@@ -27,7 +28,7 @@ public class Cache<T> {
             @Override
             public void onEvent(FetchStatus data) {
                 if (fetched.equals(data)) {
-                    logWarn("List cache invalidated as new data was fetched from server.");
+                    Timber.i("List cache invalidated as new data was fetched from server.");
                     value.clear();
                 }
             }
@@ -35,7 +36,7 @@ public class Cache<T> {
         formSubmittedListener = new Listener<String>() {
             @Override
             public void onEvent(String reason) {
-                logWarn(format("List cache invalidated: {0}.", reason));
+                Timber.i(format("List cache invalidated: {0}.", reason));
                 value.clear();
             }
         };
@@ -48,7 +49,7 @@ public class Cache<T> {
         actionHandledListener = new Listener<String>() {
             @Override
             public void onEvent(String data) {
-                logWarn(format("List cache invalidated as Action handled: {0}", data));
+                Timber.i(format("List cache invalidated as Action handled: {0}", data));
                 value.clear();
             }
         };

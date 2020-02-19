@@ -1,7 +1,6 @@
 package org.smartregister.util;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -20,17 +19,20 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+
+import timber.log.Timber;
 
 /**
  * Created by keyman on 08/02/2017.
@@ -48,6 +50,11 @@ public class JsonFormUtils {
     public static final String PERSON_INDENTIFIER = "person_identifier";
     public static final String PERSON_ADDRESS = "person_address";
 
+    public static final String SIMPRINTS_GUID = "simprints_guid";
+    public static final String FINGERPRINT_KEY = "finger_print";
+    public static final String FINGERPRINT_OPTION = "finger_print_option";
+    public static final String FINGERPRINT_OPTION_REGISTER = "register";
+
     public static final String CONCEPT = "concept";
     public static final String VALUE = "value";
     public static final String VALUES = "values";
@@ -61,7 +68,12 @@ public class JsonFormUtils {
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
-    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy");
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
+
+    public static final String SAVE_OBS_AS_ARRAY = "save_obs_as_array";
+    public static final String SAVE_ALL_CHECKBOX_OBS_AS_ARRAY = "save_all_checkbox_obs_as_array";
+
+    public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -83,7 +95,7 @@ public class JsonFormUtils {
             try {
                 birthDateEstimated = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             birthdateApprox = birthDateEstimated > 0;
         }
@@ -94,7 +106,7 @@ public class JsonFormUtils {
             try {
                 deathDateEstimated = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             deathdateApprox = deathDateEstimated > 0;
         }
@@ -107,6 +119,7 @@ public class JsonFormUtils {
                 .withDateCreated(new Date());
 
         client.setClientApplicationVersion(formTag.appVersion);
+        client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);
 
         client.withRelationships(new HashMap<String, List<String>>()).withAddresses(addresses)
@@ -130,7 +143,7 @@ public class JsonFormUtils {
         try {
             encounterLocation = metadata.getString(ENCOUNTER_LOCATION);
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
         if (StringUtils.isBlank(encounterLocation)) {
@@ -148,6 +161,7 @@ public class JsonFormUtils {
         event.setTeamId(formTag.teamId);
 
         event.setClientApplicationVersion(formTag.appVersion);
+        event.setClientApplicationVersionName(formTag.appVersionName);
         event.setClientDatabaseVersion(formTag.databaseVersion);
 
         for (int i = 0; i < fields.length(); i++) {
@@ -155,7 +169,7 @@ public class JsonFormUtils {
             try {
                 if (jsonObject.has(AllConstants.TYPE) &&
                         (AllConstants.NATIVE_RADIO.equals(jsonObject.getString(AllConstants.TYPE)) ||
-                                AllConstants.ANC_RADIO_BUTTON.equals(jsonObject.getString(AllConstants.TYPE))) &&
+                                AllConstants.EXTENDED_RADIO_BUTTON.equals(jsonObject.getString(AllConstants.TYPE))) &&
                         jsonObject.has(AllConstants.EXTRA_REL) && jsonObject.getBoolean(AllConstants.EXTRA_REL) &&
                         jsonObject.has(AllConstants.HAS_EXTRA_REL)) {
                     String extraFieldsKey = jsonObject.getString(AllConstants.HAS_EXTRA_REL);
@@ -167,22 +181,63 @@ public class JsonFormUtils {
                     createObsFromPopUpValues(event, jsonObject, false);
                 }
             } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+                Timber.e(e);
             }
 
-            try {
-                if (!AllConstants.EXPANSION_PANEL.equals(jsonObject.getString(AllConstants.TYPE))) {
-                    addObservation(event, jsonObject);
-                }
-            } catch (JSONException e) {
-                Log.e(TAG, e.getMessage());
+            if (AllConstants.EXPANSION_PANEL.equals(jsonObject.optString(AllConstants.TYPE))) {
+                continue;
             }
+
+            if (AllConstants.MULTI_SELECT_LIST.equals(jsonObject.optString(AllConstants.TYPE))) {
+                addMultiSelectListObservations(event, jsonObject);
+                continue;
+            }
+
+            setGlobalCheckBoxProperty(metadata, jsonObject);
+            addObservation(event, jsonObject);
         }
-
         createFormMetadataObs(metadata, event);
 
         return event;
 
+    }
+
+    /**
+     *  Global setting for all checkboxes in a form,
+     *  allowing saving of checkbox values as a json array string
+     *
+     * @param metadata
+     * @param jsonObject
+     */
+    private static void setGlobalCheckBoxProperty(JSONObject metadata, JSONObject jsonObject) {
+        try {
+            String type = getString(jsonObject, AllConstants.TYPE);
+            if (AllConstants.CHECK_BOX.equals(type) && metadata.optBoolean(SAVE_ALL_CHECKBOX_OBS_AS_ARRAY)) {
+                jsonObject.put(SAVE_OBS_AS_ARRAY, true);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+    }
+
+    private static void addMultiSelectListObservations(@NonNull Event event, @NonNull JSONObject jsonObject) {
+        JSONArray valuesJsonArray;
+        try {
+            valuesJsonArray = new JSONArray(jsonObject.optString(VALUE));
+            for (int i = 0; i < valuesJsonArray.length(); i++) {
+                JSONObject jsonValObject = valuesJsonArray.optJSONObject(i);
+                String fieldType = jsonValObject.optString(OPENMRS_ENTITY);
+                String fieldCode = jsonObject.optString(OPENMRS_ENTITY_ID);
+                String parentCode = jsonObject.optString(OPENMRS_ENTITY_PARENT);
+                String value = jsonValObject.optString(OPENMRS_ENTITY_ID);
+                String humanReadableValues = jsonValObject.optString(AllConstants.TEXT);
+                String formSubmissionField = jsonObject.optString(KEY);
+                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList((Object) value),
+                        Collections.singletonList((Object) humanReadableValues), "", formSubmissionField));
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
     }
 
     private static void initiateOptionsObsCreation(Event event, String extraFieldsKey, JSONArray options) throws JSONException {
@@ -271,7 +326,7 @@ public class JsonFormUtils {
                                     popupJson.put(AllConstants.TYPE, secondaryValueType);
 
                                     if (AllConstants.NATIVE_RADIO.equals(secondaryValueType) ||
-                                            AllConstants.ANC_RADIO_BUTTON.equals(secondaryValueType)) {
+                                            AllConstants.EXTENDED_RADIO_BUTTON.equals(secondaryValueType)) {
                                         popupJson.put(OPENMRS_ENTITY_PARENT, "");
                                     } else if (AllConstants.SPINNER.equals(secondaryValueType)) {
                                         popupJson.put(OPENMRS_ENTITY_PARENT,
@@ -310,7 +365,7 @@ public class JsonFormUtils {
                 }
             }
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
     }
 
@@ -354,24 +409,33 @@ public class JsonFormUtils {
         String value = getString(jsonObject, VALUE);
         String type = getString(jsonObject, AllConstants.TYPE);
         String entity = CONCEPT;
+        boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
         if (StringUtils.isNotBlank(value)) {
             if (AllConstants.CHECK_BOX.equals(type)) {
                 try {
+                    List<Object> vall = new ArrayList<>();
                     if (jsonObject.has(AllConstants.OPTIONS)) {
                         JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
                         for (int i = 0; i < conceptsOptions.length(); i++) {
                             JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.getBoolean(VALUE);
+                            boolean optionValue = option.optBoolean(VALUE);
                             if (optionValue) {
                                 option.put(AllConstants.TYPE, type);
                                 option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                                 option.put(KEY, jsonObject.getString(KEY));
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                if (combineCheckboxOptionValues) {
+                                    vall.add(option.optString(AllConstants.TEXT));
+                                } else { // For options with concepts create an observation for each
+                                    createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                }
                             }
+                        }
+                        if (combineCheckboxOptionValues) { // For options without concepts combine the values into one observation
+                            createObservation(e, jsonObject, vall);
                         }
                     }
                 } catch (JSONException e1) {
-                    Log.e(TAG, e1.getMessage());
+                    Timber.e(e1);
                 }
             } else {
                 createObservation(e, jsonObject, value, entity);
@@ -414,7 +478,7 @@ public class JsonFormUtils {
                 if (jsonObject.has(AllConstants.TEXT)) {
                     humanReadableValues.add(getString(jsonObject, AllConstants.TEXT));
                 }
-            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.ANC_RADIO_BUTTON.equals(widgetType)) &&
+            } else if ((AllConstants.NATIVE_RADIO.equals(widgetType) || AllConstants.EXTENDED_RADIO_BUTTON.equals(widgetType)) &&
                     jsonObject.has(AllConstants.OPTIONS)) {
                 try {
                     JSONArray options = getJSONArray(jsonObject, AllConstants.OPTIONS);
@@ -424,10 +488,13 @@ public class JsonFormUtils {
                             entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
                             entityParentVal = "";
                             vall.add(option.getString(OPENMRS_ENTITY_ID));
+                            if (option.has(KEY)) {
+                                humanReadableValues.add(option.getString(KEY));
+                            }
                         }
                     }
                 } catch (JSONException e1) {
-                    Log.e(TAG, e1.getMessage());
+                    Timber.e(e1);
                 }
             } else {
                 if (values != null && values.length() > 0) {
@@ -447,6 +514,25 @@ public class JsonFormUtils {
             e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
                     formSubmissionField));
         }
+    }
+
+    /**
+     * This method creates an observation with single or multiple values combined
+     *
+     * @param e          The event that the observation is added to
+     * @param jsonObject The JSONObject representing the checkbox values
+     * @param vall       A list of option values to be added to the observation
+     */
+    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
+        String formSubmissionField = jsonObject.optString(KEY);
+        String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
+        if (StringUtils.isBlank(dataType)) {
+            dataType = AllConstants.TEXT;
+        }
+
+        e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
+                "", vall, new ArrayList<>(), null, formSubmissionField,
+                jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)));
     }
 
 
@@ -499,6 +585,15 @@ public class JsonFormUtils {
             pids.put(entityIdVal, value);
         }
 
+        String key = getString(jsonObject, KEY);
+        String fingerprintOption = getString(jsonObject, FINGERPRINT_OPTION);
+
+        if (key.equals(FINGERPRINT_KEY)
+                && fingerprintOption.equals(FINGERPRINT_OPTION_REGISTER)){
+
+            pids.put(SIMPRINTS_GUID, value);
+
+        }
 
     }
 
@@ -595,7 +690,7 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
     }
 
@@ -767,13 +862,19 @@ public class JsonFormUtils {
                 addresses.put(addressType, ad);
             }
         } catch (ParseException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
     }
 
     // Helper functions
 
-    public static JSONArray fields(JSONObject jsonForm) {
+    /**
+     * Returns a JSONArray of all the forms fields in a single step form.
+     *
+     * @param jsonForm {@link JSONObject}
+     * @return fields {@link JSONArray}
+     */
+    public static JSONArray getSingleStepFormfields(JSONObject jsonForm) {
         try {
 
             JSONObject step1 = jsonForm.has(STEP1) ? jsonForm.getJSONObject(STEP1) : null;
@@ -784,9 +885,23 @@ public class JsonFormUtils {
             return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
 
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
         return null;
+    }
+
+
+    /**
+     * Refactored for backward compatibility invokes getMultiStepFormFields which provides the same result
+     * Returns a JSONArray of all the forms fields in a single or multi step form.
+     *
+     * @param jsonForm {@link JSONObject}
+     * @return fields {@link JSONArray}
+     */
+    public static JSONArray fields(JSONObject jsonForm) {
+
+        return getMultiStepFormFields(jsonForm);
+
     }
 
     /**
@@ -796,11 +911,17 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      * @author dubdabasoduba
      */
-    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) throws JsonFormMissingStepCountException {
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
         JSONArray fields = new JSONArray();
         try {
-            if (jsonForm.has(AllConstants.COUNT)) {
-                int stepCount = Integer.parseInt(jsonForm.getString(AllConstants.COUNT));
+            int stepCount = Integer.parseInt(jsonForm.optString(AllConstants.COUNT, "1"));
+
+            if (stepCount == 1) {
+
+                return getSingleStepFormfields(jsonForm);
+
+            } else {
+
                 for (int i = 0; i < stepCount; i++) {
                     String stepName = AllConstants.STEP + (i + 1);
                     JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
@@ -812,12 +933,10 @@ public class JsonFormUtils {
                         }
                     }
                 }
-            } else {
-                throw new JsonFormMissingStepCountException("The form step count is needed for the fields to be fetched");
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
         return fields;
     }
@@ -859,7 +978,7 @@ public class JsonFormUtils {
             return result;
 
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
             return null;
         }
 
@@ -869,7 +988,7 @@ public class JsonFormUtils {
         try {
             return new JSONObject(jsonString);
         } catch (JSONException e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
             return null;
         }
     }
@@ -1038,12 +1157,12 @@ public class JsonFormUtils {
 
             if (dateString.matches("\\d{2}-\\d{2}-\\d{4}")) {
                 return dd_MM_yyyy.parse(dateString);
-            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            } else if (dateString.matches("\\d{4}-\\d{2}-\\d{2}") || dateString.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}")) {
                 return DateUtil.parseDate(dateString);
             }
 
         } catch (ParseException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
 
         return null;
@@ -1061,13 +1180,13 @@ public class JsonFormUtils {
 
             jsonObject.put(key, value);
         } catch (JSONException e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
     }
 
     public static String formatDate(String date) throws ParseException {
         Date inputDate = dd_MM_yyyy.parse(date);
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'");
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.sss'Z'", Locale.ENGLISH);
         return fmt.format(inputDate);
     }
 
@@ -1080,7 +1199,7 @@ public class JsonFormUtils {
             }
 
         } catch (JSONException e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
         return mergedJSON;
     }
@@ -1111,7 +1230,7 @@ public class JsonFormUtils {
                 return DateUtil.yyyyMMdd.format(date);
             }
         } catch (Exception e) {
-            Log.e(TAG, "", e);
+            Timber.e(e);
         }
         return null;
     }

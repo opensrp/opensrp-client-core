@@ -23,16 +23,19 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
+import android.os.Environment;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TableRow;
@@ -53,6 +56,7 @@ import org.apache.http.HttpStatus;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
@@ -66,9 +70,13 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -95,11 +103,11 @@ import static org.smartregister.util.Log.logError;
  */
 public class Utils {
     private static final String TAG = "Utils";
-    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy");
-    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+    private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
+    private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
-    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+    private static final SimpleDateFormat DB_DTF = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static String KG_FORMAT = "%s kg";
     private static String CM_FORMAT = "%s cm";
     public static final String APP_PROPERTIES_FILE = "app.properties";
@@ -381,7 +389,7 @@ public class Utils {
             is.close();
             fileContents = new String(buffer, "UTF-8");
         } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
+            Timber.e(ex);
         }
 
         return fileContents;
@@ -393,7 +401,7 @@ public class Utils {
             is = context.getAssets().open(path);
 
         } catch (IOException ex) {
-            Log.e(TAG, Log.getStackTraceString(ex));
+            Timber.e(ex);
         }
 
         return is;
@@ -457,19 +465,19 @@ public class Utils {
                     result.add(csvValues);
                 }
             } catch (IOException e) {
-                Log.e(TAG, "populateTableFromCSV: error reading csv file " + e.getMessage());
+                Timber.e(e, "populateTableFromCSV: error reading csv file ");
 
             } finally {
                 try {
                     is.close();
                     reader.close();
                 } catch (Exception e) {
-                    Log.e(TAG, "populateTableFromCSV: unable to close inputstream/bufferedreader " + e.getMessage());
+                    Timber.e(e, "populateTableFromCSV: unable to close inputstream/bufferedreader ");
                 }
             }
 
         } catch (Exception e) {
-            Log.e(TAG, "populateTableFromCSV " + e.getMessage());
+            Timber.e(e, "populateTableFromCSV ");
         }
         return result;
     }
@@ -514,14 +522,29 @@ public class Utils {
         return pc;
     }
 
-    public static void showToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    public static boolean getBooleanProperty(String key) {
+
+        return CoreLibrary.getInstance().context().getAppProperties().hasProperty(key) ? CoreLibrary.getInstance().context().getAppProperties().getPropertyBoolean(key) : false;
 
     }
 
-    public static void showShortToast(Context context, String message) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+    public static void showToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_LONG);
+    }
 
+    public static void showShortToast(Context context, String message) {
+        showToastCore(context, message, Toast.LENGTH_SHORT);
+
+    }
+
+    public static void showToastCore(Context context, String message, int duration) {
+        Toast toast = Toast.makeText(context, message, duration);
+
+        if (getBooleanProperty(AllConstants.PROPERTY.SYSTEM_TOASTER_CENTERED)) {
+            toast.setGravity(Gravity.CENTER, 0, 0);
+        }
+
+        toast.show();
     }
 
     public static void hideKeyboard(Context context, View view) {
@@ -559,12 +582,9 @@ public class Utils {
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
-            simpleDateFormat =
-                    new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-                            .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         } else {
-            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault())
-                    .format(new Date(CoreLibrary.getBuildTimeStamp()));
+            simpleDateFormat = new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(new Date(CoreLibrary.getBuildTimeStamp()));
         }
         return simpleDateFormat;
     }
@@ -620,7 +640,7 @@ public class Utils {
                 duration = new DateTime(date);
                 return DateUtil.getDuration(duration);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
         }
         return "";
@@ -726,5 +746,57 @@ public class Utils {
         }
         return properties;
 
+    }
+
+    /**
+     * This util does a look up from the strings file without specifying an android resource id , rather the identifier(key) of the resource
+     *
+     * @param key a string identifier that corresponds to a key in the strings.xml file e.g. for R.string.key key is the identifier
+     * @return String value from resource file
+     */
+    public static String getTranslatedIdentifier(String key) {
+
+        String myKey;
+        try {
+            myKey = CoreLibrary.getInstance().context().applicationContext().getString(CoreLibrary.getInstance().context().applicationContext().getResources().getIdentifier(key.toLowerCase(), "string", CoreLibrary.getInstance().context().applicationContext().getPackageName()));
+
+        } catch (Resources.NotFoundException resourceNotFoundException) {
+            myKey = key;
+        }
+        return myKey;
+    }
+
+    /**
+     * copyDatabase function moves database file created by the app is the apps private folder to Downloads folder. From Downloads folder, it's easy to share
+     *
+     * @param dbName     name of the database that was created by the app e.g. drishti.db
+     * @param copyDbName name of the database file once copied to Downloads folder e.g. reveal.db
+     * @param context    application context when calling the function
+     */
+    public static void copyDatabase(String dbName, String copyDbName, Context context) {
+        try {
+            final String inFileName = context.getDatabasePath(dbName).getPath();
+            final String outFileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + copyDbName;
+            File dbFile = new File(inFileName);
+            FileInputStream fis = new FileInputStream(dbFile);
+
+            OutputStream output = new FileOutputStream(outFileName);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                output.write(buffer, 0, length);
+            }
+
+            output.flush();
+            output.close();
+            fis.close();
+
+        } catch (Exception e) {
+            Timber.e("copyDatabase: backup error " + e.toString());
+        }
+    }
+
+    public static Locale getDefaultLocale() {
+        return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
     }
 }

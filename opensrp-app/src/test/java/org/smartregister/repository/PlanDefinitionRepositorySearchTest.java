@@ -14,8 +14,10 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Collections;
 import java.util.Set;
@@ -23,9 +25,12 @@ import java.util.UUID;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.PlanDefinitionTest.gson;
@@ -65,7 +70,8 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        searchRepository = new PlanDefinitionSearchRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        searchRepository = new PlanDefinitionSearchRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -73,7 +79,7 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
     @Test
     public void testCreateTable() {
         PlanDefinitionSearchRepository.createTable(sqLiteDatabase);
-        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        verify(sqLiteDatabase, times(2)).execSQL(stringArgumentCaptor.capture());
     }
 
     @Test
@@ -110,7 +116,7 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT plan_id FROM plan_definition_search WHERE jurisdiction_id=? AND status=?  AND end  <=",
+        verify(sqLiteDatabase).rawQuery("SELECT plan_id FROM plan_definition_search WHERE jurisdiction_id=? AND status=?  AND end  >=? ",
                 new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02", "active", String.valueOf(LocalDate.now().toDate().getTime())});
     }
 
@@ -118,6 +124,22 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
     public void testSetPlanDefinitionRepository() {
         searchRepository.setPlanDefinitionRepository(planDefinitionRepository);
         assertEquals(planDefinitionRepository, searchRepository.getPlanDefinitionRepository());
+    }
+
+
+    @Test
+    public void testPlanExists() {
+        String jurisdictionId = UUID.randomUUID().toString();
+        String planId = "4708ca0a-d0d6-4199-bb1b-8701803c2d02";
+        assertFalse(searchRepository.planExists(planId, jurisdictionId));
+
+        searchRepository.setPlanDefinitionRepository(planDefinitionRepository);
+        when(sqLiteDatabase.rawQuery(anyString(), any(String[].class)))
+                .thenReturn(getPlanExistsCursor(planId));
+        assertTrue(searchRepository.planExists(planId, jurisdictionId));
+
+        verify(sqLiteDatabase, times(2)).rawQuery("SELECT plan_id FROM plan_definition_search WHERE plan_id=? AND jurisdiction_id=? AND status=?  AND end  >=? ",
+                new String[]{planId, jurisdictionId, "active", String.valueOf(LocalDate.now().toDate().getTime())});
     }
 
 
@@ -129,6 +151,12 @@ public class PlanDefinitionRepositorySearchTest extends BaseUnitTest {
                 planDefinition.getEffectivePeriod().getStart().toDate().getTime(),
                 planDefinition.getEffectivePeriod().getEnd().toDate().getTime()
         });
+        return cursor;
+    }
+
+    private MatrixCursor getPlanExistsCursor(String planId) {
+        MatrixCursor cursor = new MatrixCursor(new String[1]);
+        cursor.addRow(new Object[]{planId});
         return cursor;
     }
 

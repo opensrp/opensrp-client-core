@@ -25,9 +25,11 @@ import org.smartregister.util.Utils;
 import java.util.Arrays;
 import java.util.List;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
-public class CampaignIntentService extends IntentService {
+public class CampaignIntentService extends BaseSyncIntentService {
     public static final String CAMPAIGN_URL = "/rest/campaign/";
     private static final String TAG = "CampaignIntentService";
     private CampaignRepository campaignRepository;
@@ -41,6 +43,7 @@ public class CampaignIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        super.onHandleIntent(intent);
         syncCampaigns();
     }
 
@@ -62,7 +65,7 @@ public class CampaignIntentService extends IntentService {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(  e);
         }
     }
 

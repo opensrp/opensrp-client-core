@@ -18,22 +18,20 @@ import org.smartregister.view.contract.BaseProfileContract;
  * Created by ndegwamartin on 16/07/2018.
  */
 public abstract class BaseProfileActivity extends SecuredActivity implements BaseProfileContract.View, AppBarLayout.OnOffsetChangedListener, View.OnClickListener {
+    protected String patientName;
+    protected AppBarLayout appBarLayout;
+    protected ProgressDialog progressDialog;
+    protected BaseProfileContract.Presenter presenter;
+    protected ImageRenderHelper imageRenderHelper;
+    protected TabLayout tabLayout;
+    protected ViewPager viewPager;
     private CollapsingToolbarLayout collapsingToolbarLayout;
     private boolean appBarTitleIsShown = true;
     private int appBarLayoutScrollRange = -1;
 
-    protected String patientName;
-    protected AppBarLayout appBarLayout;
-    protected ProgressDialog progressDialog;
-
-    protected BaseProfileContract.Presenter presenter;
-    protected ImageRenderHelper imageRenderHelper;
-
     @Override
     protected void onCreation() {
-
         setContentView(R.layout.activity_base_profile);
-
         findViewById(R.id.btn_profile_registration_info).setOnClickListener(this);
 
         Toolbar toolbar = findViewById(R.id.collapsing_toolbar);
@@ -45,16 +43,12 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         }
 
         appBarLayout = findViewById(R.id.collapsing_toolbar_appbarlayout);
-
         // Set collapsing tool bar title.
         collapsingToolbarLayout = appBarLayout.findViewById(R.id.collapsing_toolbar_layout);
-
         appBarLayout.addOnOffsetChangedListener(this);
-
         imageRenderHelper = new ImageRenderHelper(this);
 
         initializePresenter();
-
         setupViews();
     }
 
@@ -63,20 +57,20 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         //TODO Implement this
     }
 
-    @Override
-    public void onClick(View view) {
-        fetchProfileData();
-    }
-
     protected abstract void initializePresenter();
 
     protected void setupViews() {
-        TabLayout tabLayout = findViewById(R.id.tabs);
-        ViewPager viewPager = findViewById(R.id.viewpager);
+        tabLayout = findViewById(R.id.tabs);
+        viewPager = findViewById(R.id.viewpager);
         tabLayout.setupWithViewPager(setupViewPager(viewPager));
     }
 
     protected abstract ViewPager setupViewPager(ViewPager viewPager);
+
+    @Override
+    public void onClick(View view) {
+        fetchProfileData();
+    }
 
     protected abstract void fetchProfileData();
 
@@ -119,14 +113,21 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
     }
 
     @Override
+    public void displayToast(int stringID) {
+        Utils.showShortToast(this, this.getString(stringID));
+    }
+
+    @Override
     public String getIntentString(String intentKey) {
 
         return this.getIntent().getStringExtra(intentKey);
     }
 
-    @Override
-    public void displayToast(int stringID) {
-        Utils.showShortToast(this, this.getString(stringID));
+    public TabLayout getTabLayout() {
+        return tabLayout;
     }
 
+    public ViewPager getViewPager() {
+        return viewPager;
+    }
 }

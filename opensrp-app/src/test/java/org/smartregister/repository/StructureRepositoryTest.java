@@ -17,10 +17,12 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Iterator;
 import java.util.List;
@@ -60,13 +62,14 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     private String locationJson = LocationTest.structureJson;
 
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
 
     @Before
     public void setUp() {
-        structureRepository = new StructureRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        structureRepository = new StructureRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -150,7 +153,7 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
-        Location location = gson.fromJson(locationJson, Location.class);
+        Location location = LocationTest.gson.fromJson(locationJson, Location.class);
         cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
                 location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
         return cursor;

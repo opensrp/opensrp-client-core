@@ -205,16 +205,19 @@ public class DatabaseMigrationUtils {
 
     public static boolean performCipherMigrationToV4(@NonNull SQLiteDatabase database) {
         if (!CoreLibrary.getInstance().context().allSharedPreferences().isMigratedToSqlite4()) {
-            Cursor cursor = database.rawQuery("PRAGMA cipher_migrate", new Object[]{});
+            Cursor cursor = null;
+            try {
+                cursor = database.rawQuery("PRAGMA cipher_migrate", new Object[]{});
 
-            if (cursor != null && cursor.moveToFirst()) {
-                String value = cursor.getString(0);
+                if (cursor != null && cursor.moveToFirst()) {
+                    String value = cursor.getString(0);
 
+                    return (!TextUtils.isEmpty(value) && "0".equals(value));
+                }
+            } finally {
                 if (cursor != null) {
                     cursor.close();
                 }
-
-                return (!TextUtils.isEmpty(value) && "0".equals(value));
             }
 
             return false;

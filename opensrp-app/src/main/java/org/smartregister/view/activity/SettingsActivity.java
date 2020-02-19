@@ -10,21 +10,23 @@ import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Toast;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.UrlUtil;
+import org.smartregister.util.Utils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import static org.smartregister.util.Log.logError;
-import static org.smartregister.util.Log.logInfo;
+import timber.log.Timber;
 
 public class SettingsActivity extends PreferenceActivity {
+
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -58,16 +60,42 @@ public class SettingsActivity extends PreferenceActivity {
                             @Override
                             public void onClick(View v) {
                                 String newValue = baseUrlEditTextPreference.getEditText().getText().toString();
-                                UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
-                                if (newValue != null && urlValidator.isValid(newValue)) {
+                                if (newValue != null && UrlUtil.isValidUrl(newValue)) {
                                     baseUrlEditTextPreference.onClick(null, DialogInterface.BUTTON_POSITIVE);
                                     dialog.dismiss();
                                 } else {
-                                    Toast.makeText(getActivity(), R.string.invalid_url_massage, Toast.LENGTH_SHORT).show();
+                                    Utils.showShortToast(getActivity(), getActivity().getString(R.string.invalid_url_massage));
                                 }
                             }
                         });
                         return false;
+                    }
+                });
+                baseUrlEditTextPreference.getEditText().addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        Timber.i("baseUrl before text change");
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        Timber.i("baseUrl on text change");
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable editable) {
+                        String text = editable.toString();
+                        boolean validUrl = UrlUtil.isValidUrl(text);
+                        if (!validUrl) {
+                            if (text.isEmpty()) {
+                                baseUrlEditTextPreference.getEditText().setError(getString(R.string.msg_empty_url));
+                            } else {
+                                baseUrlEditTextPreference.getEditText().setError(getString(R.string.invalid_url_massage));
+                            }
+                        } else {
+                            baseUrlEditTextPreference.getEditText().setError(null);
+                        }
+
                     }
                 });
 
@@ -93,16 +121,16 @@ public class SettingsActivity extends PreferenceActivity {
                 String base = url.getProtocol() + "://" + url.getHost();
                 int port = url.getPort();
 
-                logInfo("Base URL: " + base);
-                logInfo("Port: " + port);
+                Timber.i("Base URL: %s", base);
+                Timber.i("Port: %s", port);
 
                 allSharedPreferences.saveHost(base);
                 allSharedPreferences.savePort(port);
 
-                logInfo("Saved URL: " + allSharedPreferences.fetchHost(""));
-                logInfo("Port: " + allSharedPreferences.fetchPort(0));
+                Timber.i("Saved URL: %s", allSharedPreferences.fetchHost(""));
+                Timber.i("Port: %s", allSharedPreferences.fetchPort(0));
             } catch (MalformedURLException e) {
-                logError("Malformed Url: " + baseUrl);
+                Timber.e("Malformed Url: %s", baseUrl);
             }
         }
     }

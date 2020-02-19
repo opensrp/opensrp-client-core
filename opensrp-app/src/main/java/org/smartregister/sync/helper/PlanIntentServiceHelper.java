@@ -1,14 +1,15 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
-import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.joda.time.LocalDate;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
@@ -21,7 +22,11 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Created by Vincent Karuri on 08/05/2019
@@ -32,7 +37,6 @@ public class PlanIntentServiceHelper {
     private LocationRepository locationRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
-    private final String TAG = PlanIntentServiceHelper.class.getName();
 
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
@@ -60,33 +64,35 @@ public class PlanIntentServiceHelper {
             try {
                 serverVersion = Long.parseLong(allSharedPreferences.getPreference(PLAN_LAST_SYNC_DATE));
             } catch (NumberFormatException e) {
-                Log.e(TAG, e.getMessage(), e);
+                Timber.e(e, "EXCEPTION %s", e.toString());
             }
             if (serverVersion > 0) {
                 serverVersion += 1;
             }
             // fetch and save plans
-            String jurisdictions = TextUtils.join(",", locationRepository.getAllLocationIds());
-            String plansResponse = fetchPlans(jurisdictions, serverVersion);
+            Long maxServerVersion = 0l;
+
+            String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
+            String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
-                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, getPlanDefinitionMaxServerVersion(plans));
+                allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
     }
 
-    private String fetchPlans(String operationalAreaId, long serverVersion) throws Exception {
+    private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -94,13 +100,23 @@ public class PlanIntentServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        String url = baseUrl + SYNC_PLANS_URL + "?operational_area_id=" + operationalAreaId + "&serverVersion=" + serverVersion;
+        JSONObject request = new JSONObject();
+        if (!organizationIds.isEmpty()) {
+            request.put("organizations", new JSONArray(organizationIds));
+        }
+        request.put("serverVersion", serverVersion);
+
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
             throw new IllegalArgumentException(SYNC_PLANS_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.fetch(url);
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        SYNC_PLANS_URL),
+                request.toString());
+
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
@@ -108,14 +124,13 @@ public class PlanIntentServiceHelper {
         return resp.payload().toString();
     }
 
-    private String getPlanDefinitionMaxServerVersion(List<PlanDefinition> planDefinitions) {
-        long maxServerVersion = 0;
+    private long getPlanDefinitionMaxServerVersion(List<PlanDefinition> planDefinitions, long maxServerVersion) {
         for (PlanDefinition planDefinition : planDefinitions) {
             long serverVersion = planDefinition.getServerVersion();
             if (serverVersion > maxServerVersion) {
                 maxServerVersion = serverVersion;
             }
         }
-        return String.valueOf(maxServerVersion);
+        return maxServerVersion;
     }
 }

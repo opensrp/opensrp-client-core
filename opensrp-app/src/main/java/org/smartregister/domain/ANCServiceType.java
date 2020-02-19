@@ -3,9 +3,8 @@ package org.smartregister.domain;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.ANCClient;
-
-import java.util.Locale;
 
 import static org.smartregister.util.Log.logWarn;
 
@@ -359,7 +358,7 @@ public enum ANCServiceType {
                 return ANCServiceType.valueOf("KB_Injection_Depoprovera");
             } else {
                 return StringUtils.isBlank(type) || type.equalsIgnoreCase("REMINDER") ? defaultType
-                        : ANCServiceType.valueOf(type.toUpperCase(Locale.getDefault()));
+                        : ANCServiceType.valueOf(type.toUpperCase(Utils.getDefaultLocale()));
             }
         } catch (IllegalArgumentException e) {
             logWarn("Unknown current Service Type : " + type + " Exception : " + e);

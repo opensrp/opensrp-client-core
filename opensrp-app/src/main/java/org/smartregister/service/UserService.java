@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 import android.util.Base64;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
@@ -22,7 +21,7 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.Repository;
+import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
@@ -45,6 +44,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import javax.crypto.Cipher;
@@ -52,24 +53,26 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.security.auth.x500.X500Principal;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
 import static org.smartregister.AllConstants.OPENSRP_LOCATION_URL_PATH;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.ORGANIZATION_IDS;
 import static org.smartregister.event.Event.ON_LOGOUT;
 
 public class UserService {
-    private static final String TAG = UserService.class.getCanonicalName();
     private static final String KEYSTORE = "AndroidKeyStore";
     private static final String CIPHER = "RSA/ECB/PKCS1Padding";
     private static final String CIPHER_PROVIDER = "AndroidOpenSSL";
     private static final String CIPHER_TEXT_CHARACTER_CODE = "UTF-8";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
-    private final Repository repository;
     private final AllSettings allSettings;
     private final AllSharedPreferences allSharedPreferences;
     private HTTPAgent httpAgent;
@@ -80,11 +83,10 @@ public class UserService {
     private SaveUserInfoTask saveUserInfoTask;
     private KeyStore keyStore;
 
-    public UserService(Repository repositoryArg, AllSettings allSettingsArg, AllSharedPreferences
+    public UserService(AllSettings allSettingsArg, AllSharedPreferences
             allSharedPreferencesArg, HTTPAgent httpAgentArg, Session sessionArg,
                        DristhiConfiguration configurationArg, SaveANMLocationTask
                                saveANMLocationTaskArg, SaveUserInfoTask saveUserInfoTaskArg, SaveANMTeamTask saveANMTeamTaskArg) {
-        repository = repositoryArg;
         allSettings = allSettingsArg;
         allSharedPreferences = allSharedPreferencesArg;
         httpAgent = httpAgentArg;
@@ -114,7 +116,7 @@ public class UserService {
                     return timeZone;
                 }
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
 
@@ -129,7 +131,7 @@ public class UserService {
                     return DATE_FORMAT.parse(time.getTime());
                 }
             } catch (Exception e) {
-                Log.e(TAG, Log.getStackTraceString(e));
+                Timber.e(e);
             }
         }
 
@@ -142,7 +144,7 @@ public class UserService {
             this.keyStore.load(null);
         } catch (KeyStoreException | IOException | NoSuchAlgorithmException |
                 CertificateException e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
     }
 
@@ -161,7 +163,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, Log.getStackTraceString(e));
+            Timber.e(e);
         }
 
         if (!result.equals(TimeStatus.OK)) {
@@ -205,7 +207,7 @@ public class UserService {
     }
 
     public boolean isValidLocalLogin(String userName, String password) {
-        return allSharedPreferences.fetchRegisteredANM().equals(userName) && repository
+        return allSharedPreferences.fetchRegisteredANM().equals(userName) && DrishtiApplication.getInstance().getRepository()
                 .canUseThisPassword(password) && !allSharedPreferences.fetchForceRemoteLogin();
     }
 
@@ -213,23 +215,24 @@ public class UserService {
         // Check if everything OK for local login
         if (keyStore != null && userName != null && password != null && !allSharedPreferences
                 .fetchForceRemoteLogin()) {
+            String username = userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM()) ? allSharedPreferences.fetchRegisteredANM() : userName;
             try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
+                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(username);
                 if (privateKeyEntry != null) {
                     // Compare stored encrypted password with provided password
                     String encryptedPassword = allSharedPreferences.
-                            fetchEncryptedPassword(userName);
+                            fetchEncryptedPassword(username);
                     String decryptedPassword = decryptString(privateKeyEntry, encryptedPassword);
 
                     if (password.equals(decryptedPassword)) {
-                        String groupId = getGroupId(userName, privateKeyEntry);
+                        String groupId = getGroupId(username, privateKeyEntry);
                         if (groupId != null) {
                             return isValidGroupId(groupId);
                         }
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
 
@@ -237,7 +240,7 @@ public class UserService {
     }
 
     private boolean isValidGroupId(String groupId) {
-        return repository.canUseThisPassword(groupId);
+        return DrishtiApplication.getInstance().getRepository().canUseThisPassword(groupId);
     }
 
     public String getGroupId(String userName) {
@@ -246,7 +249,7 @@ public class UserService {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 return getGroupId(userName, privateKeyEntry);
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
         return null;
@@ -259,7 +262,7 @@ public class UserService {
                 try {
                     return decryptString(privateKeyEntry, encryptedGroupId);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e);
                 }
             }
         }
@@ -297,7 +300,7 @@ public class UserService {
         LoginResponse loginResponse = httpAgent
                 .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
 
-        if (loginResponse.equals(LoginResponse.SUCCESS)) {
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
         }
 
@@ -324,13 +327,18 @@ public class UserService {
                     setupContextForLogin(userName, groupId);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
                 loginSuccessful = false;
             }
         } else {
             setupContextForLogin(userName, password);
         }
-        allSettings.registerANM(userName, password);
+        String username = userName;
+        if (allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName))
+            username = allSharedPreferences.fetchRegisteredANM();
+        allSharedPreferences.updateANMUserName(username);
+        DrishtiApplication.getInstance().getRepository().getReadableDatabase();
+        allSettings.registerANM(username, password);
         return loginSuccessful;
     }
 
@@ -348,7 +356,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e);
         }
         return false;
     }
@@ -358,20 +366,24 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        boolean loginSuccessful = loginWith(userName, password);
+        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName;
+        boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));
-        saveDefaultLocationId(userName, getUserDefaultLocationId(userInfo));
-        saveUserLocationId(userName, getUserLocationId(userInfo));
-        saveDefaultTeam(userName, getUserDefaultTeam(userInfo));
-        saveDefaultTeamId(userName, getUserDefaultTeamId(userInfo));
+        saveDefaultLocationId(username, getUserDefaultLocationId(userInfo));
+        saveUserLocationId(username, getUserLocationId(userInfo));
+        saveDefaultTeam(username, getUserDefaultTeam(userInfo));
+        saveDefaultTeamId(username, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
+        saveJurisdictions(userInfo.jurisdictions);
+        saveOrganizations(getUserTeam(userInfo));
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(userName))) &&
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultLocalityId(username))) &&
                 (StringUtils.isBlank(getUserDefaultTeamId(userInfo)) ||
-                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(userName))) &&
+                        StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(username))) &&
                 (getUserLocation(userInfo) != null ||
                         StringUtils.isNotBlank(allSettings.fetchANMLocation())))
             allSharedPreferences.saveForceRemoteLogin(false);
@@ -387,7 +399,7 @@ public class UserService {
                 return userInfo.user;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -398,7 +410,7 @@ public class UserService {
                 return userInfo.locations;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -409,7 +421,7 @@ public class UserService {
                 return userInfo.team;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -426,7 +438,7 @@ public class UserService {
                 return userInfo.team.team.teamName;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -443,7 +455,7 @@ public class UserService {
                 return userInfo.team.team.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
 
         return null;
@@ -461,7 +473,7 @@ public class UserService {
                 return userInfo.team.team.location.uuid;
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -476,7 +488,7 @@ public class UserService {
                 }
             }
         } catch (Exception e) {
-            Log.e("Error : ", e.getMessage());
+            Timber.e(e);
         }
         return null;
     }
@@ -497,6 +509,19 @@ public class UserService {
         saveANMTeamTask.save(anmTeamString);
     }
 
+    public void saveJurisdictions(List<String> jurisdictions) {
+        if (jurisdictions != null && !jurisdictions.isEmpty())
+            allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
+    }
+
+    public void saveOrganizations(TeamMember teamMember) {
+        if (teamMember != null && teamMember.team != null) {
+            List<Long> organizations = teamMember.team.organizationIds;
+            if (organizations != null && !organizations.isEmpty())
+                allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+        }
+    }
+
     public void saveUserInfo(User user) {
         try {
             if (user != null && user.getPreferredName() != null) {
@@ -505,7 +530,7 @@ public class UserService {
                 allSharedPreferences.updateANMPreferredName(userName, preferredName);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
         String userInfoString = AssetHandler.javaToJsonString(user);
@@ -522,9 +547,11 @@ public class UserService {
      *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
     public void saveUserGroup(String userName, String password, LoginResponseData userInfo) {
-        if (keyStore != null && userName != null) {
+        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+                ? userInfo.user.getUsername() : userName;
+        if (keyStore != null && username != null) {
             try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(userName);
+                KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(username);
 
                 if (password == null) {
                     return;
@@ -538,10 +565,10 @@ public class UserService {
                     SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
                     if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
                         groupId = getUserDefaultTeamId(userInfo);
-                    } else if (SyncFilter.LOCATION.equals(syncFilter)) {
+                    } else if (SyncFilter.LOCATION.equals(syncFilter) || SyncFilter.LOCATION_ID.equals(syncFilter)) {
                         groupId = getUserLocationId(userInfo);
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = password;
+                        groupId = username + "-" + password;
                     }
                 }
 
@@ -552,19 +579,19 @@ public class UserService {
                 if (privateKeyEntry != null) {
                     // First save the encrypted password
                     String encryptedPassword = encryptString(privateKeyEntry, password);
-                    allSharedPreferences.saveEncryptedPassword(userName, encryptedPassword);
+                    allSharedPreferences.saveEncryptedPassword(username, encryptedPassword);
 
                     // Then save the encrypted group
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
-                    allSharedPreferences.saveEncryptedGroupId(userName, encryptedGroupId);
+                    allSharedPreferences.saveEncryptedGroupId(username, encryptedGroupId);
 
                     // Finally, save the pioneer user
                     if (allSharedPreferences.fetchPioneerUser() == null) {
-                        allSharedPreferences.savePioneerUser(userName);
+                        allSharedPreferences.savePioneerUser(username);
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Timber.e(e);
             }
         }
     }
@@ -577,7 +604,7 @@ public class UserService {
         logoutSession();
         allSettings.registerANM("", "");
         allSettings.savePreviousFetchIndex("0");
-        repository.deleteRepository();
+        DrishtiApplication.getInstance().getRepository().deleteRepository();
     }
 
     public void logoutSession() {

@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Collections;
 import java.util.Set;
@@ -31,8 +32,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.PlanDefinitionTest.gson;
 import static org.smartregister.domain.PlanDefinitionTest.planDefinitionJSON;
+import static org.smartregister.repository.PlanDefinitionRepository.ACTIVE;
 import static org.smartregister.repository.PlanDefinitionRepository.ID;
 import static org.smartregister.repository.PlanDefinitionRepository.JSON;
+import static org.smartregister.repository.PlanDefinitionRepository.NAME;
+import static org.smartregister.repository.PlanDefinitionSearchRepository.PLAN_ID;
+import static org.smartregister.repository.PlanDefinitionSearchRepository.STATUS;
 
 /**
  * Created by samuelgithengi on 5/8/19.
@@ -64,7 +69,8 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        planDefinitionRepository = new PlanDefinitionRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        planDefinitionRepository = new PlanDefinitionRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -73,22 +79,24 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
     public void testCreateTable() {
         PlanDefinitionRepository.createTable(sqLiteDatabase);
         verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
-        assertEquals("CREATE TABLE plan_definition (_id VARCHAR NOT NULL PRIMARY KEY,json VARCHAR NOT NULL)",
+        assertEquals("CREATE TABLE plan_definition (_id VARCHAR NOT NULL PRIMARY KEY,json VARCHAR NOT NULL,status VARCHAR NOT NULL)",
                 stringArgumentCaptor.getValue());
     }
 
     @Test
     public void testAddOrUpdate() {
         PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
+        int jurisdictionCount = planDefinition.getJurisdiction().size();
         planDefinitionRepository.addOrUpdate(planDefinition);
-        verify(sqLiteDatabase, Mockito.times(planDefinition.getJurisdiction().size() + 1)).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+        verify(sqLiteDatabase, Mockito.times(jurisdictionCount + 1)).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
 
-        assertEquals(((planDefinition.getJurisdiction().size()) + 1) * 2, stringArgumentCaptor.getAllValues().size());
-        assertEquals("plan_definition", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals((jurisdictionCount + 1) * 2, stringArgumentCaptor.getAllValues().size());
+        assertEquals("plan_definition_search", stringArgumentCaptor.getAllValues().get(0));
         assertNull(stringArgumentCaptor.getAllValues().get(1));
-        assertEquals(planDefinition.getJurisdiction().size() + 1, contentValuesArgumentCaptor.getAllValues().size());
-        assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getAllValues().get(0).get(ID));
-        assertEquals(planDefinitionJSON, contentValuesArgumentCaptor.getAllValues().get(0).get(JSON));
+        assertEquals(jurisdictionCount + 1, contentValuesArgumentCaptor.getAllValues().size());
+        assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getAllValues().get(0).get(PLAN_ID));
+        assertEquals(planDefinition.getName(), contentValuesArgumentCaptor.getAllValues().get(0).get(NAME));
+        assertEquals(planDefinition.getStatus(), contentValuesArgumentCaptor.getAllValues().get(0).get(STATUS));
     }
 
 
@@ -105,7 +113,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         assertEquals(2, stringArgumentCaptor.getAllValues().size());
         assertEquals("plan_definition", stringArgumentCaptor.getAllValues().get(0));
         assertNull(stringArgumentCaptor.getAllValues().get(1));
-        assertEquals(2, contentValuesArgumentCaptor.getValue().size());
+        assertEquals(3, contentValuesArgumentCaptor.getValue().size());
         assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getValue().get(ID));
 
         verify(searchRepository).addOrUpdate(planDefinition, jurisdictionId);
@@ -142,7 +150,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition", null);
+        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
     }
 
 
@@ -155,7 +163,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         assertEquals(1, planDefinitions.size());
         String planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition);
-        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition", null);
+        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
     }
 
     private MatrixCursor getCursor() {

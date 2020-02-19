@@ -8,11 +8,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
+import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.exception.JsonFormMissingStepCountException;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -22,7 +24,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
+import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
+import static org.smartregister.util.JsonFormUtils.SAVE_OBS_AS_ARRAY;
 import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 
 /**
@@ -30,16 +38,6 @@ import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
  */
 public class JsonFormUtilsTest {
 
-    private JsonFormUtils formUtils;
-    private String FORMNAME = "birthnotificationpregnancystatusfollowup";
-    private String formDefinition = "www/form/" + FORMNAME + "/form_definition.json";
-    private String model = "www/form/" + FORMNAME + "/model.xml";
-    private String formJSON = "www/form/" + FORMNAME + "/form.json";
-    private String formMultiJSON = "www/form/" + FORMNAME + "/form_multi.json";
-    private String DEFAULT_BIND_PATH = "/model/instance/Child_Vaccination_Enrollment/";
-    private String formSubmissionXML = "www/form/form_submission/form_submission_xml.xml";
-    private String formSubmissionJSON = "www/form/form_submission/form_submission_json.json";
-    private String entityRelationShip = "www/form/entity_relationship.json";
     private String formresultJson =
             "{\"count\":\"1\",\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\"," +
                     "\"relational_id\":\"\",\"step1\":{\"title\":\"Birth Registration\"," +
@@ -188,6 +186,65 @@ public class JsonFormUtilsTest {
                     "            \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
                     "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true\n" + "        }\n" +
                     "      }\n" + "    ]\n" + "  }\n" + "}";
+    private String jsonFormNoStepCount =
+            "{\n" +
+                    "  \"step1\": {\n" +
+                    "    \"title\": \"Demographic Info\",\n" +
+                    "    \"next\": \"step2\",\n" +
+                    "    \"fields\": [\n" +
+                    "      {\n" +
+                    "        \"key\": \"educ_level\",\n" +
+                    "        \"openmrs_entity_parent\": \"\",\n" +
+                    "        \"openmrs_entity\": \"concept\",\n" +
+                    "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "        \"type\": \"native_radio\",\n" +
+                    "        \"label\": \"Highest level of school\",\n" +
+                    "        \"label_text_style\": \"bold\",\n" +
+                    "        \"options\": [\n" +
+                    "          {\n" +
+                    "            \"key\": \"none\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+                    "            \"text\": \"None\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"dont_know\",\n" +
+                    "            \"text\": \"Don't know\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"primary\",\n" +
+                    "            \"text\": \"Primary\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"secondary\",\n" +
+                    "            \"text\": \"Secondary\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          },\n" +
+                    "          {\n" +
+                    "            \"key\": \"higher\",\n" +
+                    "            \"text\": \"Higher\",\n" +
+                    "            \"openmrs_entity_parent\": \"\",\n" +
+                    "            \"openmrs_entity\": \"concept\",\n" +
+                    "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+                    "          }\n" +
+                    "        ],\n" +
+                    "        \"v_required\": {\n" +
+                    "          \"value\": true,\n" +
+                    "          \"err\": \"Please specify your education level\"\n" +
+                    "        }\n" +
+                    "      }\n" +
+                    "    ]\n" +
+                    "  }\n" +
+                    "}";
 
     private String eventFormFields = "[{\"key\":\"contact_reason\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160288AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"," +
@@ -291,7 +348,7 @@ public class JsonFormUtilsTest {
             "        \"value\":\"+3u465632453\"\n" + "    },\n" + "    \"encounter_location\": \"\",\n" +
             "    \"look_up\": {\n" + "      \"entity_id\": \"\",\n" + "      \"value\": \"\"\n" + "    }\n" + "  }";
 
-    private String clientFormFields ="[{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\"," +
+    private String clientFormFields = "[{\"key\":\"first_name\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"first_name\",\"type\":\"edit_text\",\"hint\":\"First " +
             "name\",\"edit_type\":\"name\",\"value\":\"John\"},{\"key\":\"last_name\",\"openmrs_entity_parent\":\"\"," +
             "\"openmrs_entity\":\"person\",\"openmrs_entity_id\":\"last_name\",\"type\":\"edit_text\",\"hint\":\"Last " +
@@ -411,7 +468,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartDateString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime() -
                 org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
@@ -424,7 +481,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"date\",\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithEndDateString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime() -
                 org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
@@ -437,7 +494,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithLongitudeString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getLongitude(), "34.044494");
     }
 
@@ -449,7 +506,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartlatitudeString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getLatitude(), "34.044494");
     }
 
@@ -462,7 +519,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithGeopointString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getGeopoint(),
                 "34.044494 -84.695704 4 76 = lat lon alt prec");
     }
@@ -475,7 +532,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"postal_code\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStartPostal_code), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getPostalCode(), "4021");
     }
 
@@ -487,7 +544,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithSub_townString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getSubTown(), "Kotwali");
     }
 
@@ -499,7 +556,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithTownString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getTown(), "Chittagong");
     }
 
@@ -511,7 +568,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"sub_district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithsub_districtString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getSubDistrict(), "Chittagong");
     }
 
@@ -523,7 +580,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithDistrictString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getCountyDistrict(), "Chittagong");
     }
 
@@ -535,7 +592,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCityVillageString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getCityVillage(), "Chittagong");
     }
 
@@ -547,7 +604,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"state\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithStateString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getStateProvince(), "Chittagong");
     }
 
@@ -559,7 +616,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"country\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillAddressFields(new JSONObject(addressJsonWithCountryString), addressHashMap);
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getCountry(), "Bangladesh");
     }
 
@@ -572,7 +629,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"address_start_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartDateString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getStartDate().getTime() -
                 org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
@@ -586,7 +643,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"address_end_date\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithEndDateString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getEndDate().getTime() -
                 org.smartregister.clientandeventmodel.DateUtil.parseDate("2017-05-22").getTime(), 0);
     }
@@ -600,7 +657,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"address_longitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithLongitudeString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getLongitude(), "34.044494");
     }
 
@@ -613,7 +670,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"address_latitude\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartlatitudeString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getLatitude(), "34.044494");
     }
 
@@ -626,7 +683,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"address_geopoint\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithGeopointString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getGeopoint(),
                 "34.044494 -84.695704 4 76 = lat lon alt prec");
     }
@@ -640,7 +697,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"postal_code\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStartPostal_code), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getPostalCode(), "4021");
     }
 
@@ -653,7 +710,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"sub_town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithSub_townString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getSubTown(), "Kotwali");
     }
 
@@ -666,7 +723,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"town\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithTownString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getTown(), "Chittagong");
     }
 
@@ -679,7 +736,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"sub_district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithsub_districtString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getSubDistrict(), "Chittagong");
     }
 
@@ -692,7 +749,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"district\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithDistrictString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getCountyDistrict(), "Chittagong");
     }
 
@@ -705,7 +762,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"cityVillage\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCityVillageString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getCityVillage(), "Chittagong");
     }
 
@@ -718,7 +775,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"state\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithStateString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getStateProvince(), "Chittagong");
     }
 
@@ -731,7 +788,7 @@ public class JsonFormUtilsTest {
                         "\"type\":\"edit_text\",\"key\":\"country\"}";
         HashMap<String, Address> addressHashMap = new HashMap<String, Address>();
         JsonFormUtils.fillSubFormAddressFields(new JSONObject(addressJsonWithCountryString), addressHashMap, "mother");
-        Assert.assertTrue(addressHashMap.size() > 0);
+        assertTrue(addressHashMap.size() > 0);
         Assert.assertEquals(addressHashMap.get("usual_residence").getCountry(), "Bangladesh");
     }
 
@@ -751,12 +808,12 @@ public class JsonFormUtilsTest {
         JSONObject toMerge = new JSONObject();
         toMerge.put("entity_id", "mother");
         JSONObject updated = JsonFormUtils.merge(original, toMerge);
-        Assert.assertTrue(areEqual(updated, updatedExpected));
+        assertTrue(areEqual(updated, updatedExpected));
 
     }
 
     @Test
-    public void testGetMultiStepFormFields() throws JSONException, JsonFormMissingStepCountException {
+    public void testGetMultiStepFormFields() throws JSONException {
         Assert.assertNotNull(miltiStepForm);
 
         JSONObject jsonForm = new JSONObject(miltiStepForm);
@@ -766,28 +823,14 @@ public class JsonFormUtilsTest {
         Assert.assertNotNull(formFields);
     }
 
-    @Test(expected = JsonFormMissingStepCountException.class)
-    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException, JsonFormMissingStepCountException {
-        String json = " {\n" + "    \"key\": \"lmp_known\",\n" + "    \"openmrs_entity_parent\": \"\",\n" +
-                "    \"openmrs_entity\": \"concept\",\n" +
-                "    \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "    \"type\": \"native_radio\",\n" + "    \"label\": \"LMP known?\",\n" +
-                "    \"label_text_style\": \"bold\",\n" + "    \"max_date\": \"today\",\n" + "    \"options\": [\n" +
-                "      {\n" + "        \"key\": \"yes\",\n" + "        \"text\": \"Yes\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                "        \"specify_info\": \"specify date\",\n" + "        \"specify_widget\": \"date_picker\",\n" +
-                "        \"max_date\": \"today\",\n" + "        \"min_date\": \"today-280d\"\n" + "      },\n" +
-                "      {\n" + "        \"key\": \"no\",\n" + "        \"text\": \"No\",\n" +
-                "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
-                "        \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "      }\n" + "    ],\n" +
-                "    \"v_required\": {\n" + "      \"value\": true\n" + "    }\n" + "  }";
-        JSONObject jsonForm = new JSONObject(json);
+    @Test
+    public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException {
+        JSONObject jsonForm = new JSONObject(jsonFormNoStepCount);
         Assert.assertNotNull(jsonForm);
 
         JSONArray formFields = JsonFormUtils.getMultiStepFormFields(jsonForm);
         Assert.assertNotNull(formFields);
-        Assert.assertEquals(formFields.length(), 0);
+        Assert.assertEquals(1, formFields.length());
     }
 
     @Test
@@ -823,27 +866,66 @@ public class JsonFormUtilsTest {
         formTag.databaseVersion = 20;
 
         Assert.assertNotNull(formTag);
-        Client client = JsonFormUtils.createBaseClient(fields,formTag,"97dc48f681ddcf188b2758fba89635fe");
-        Assert.assertEquals(client.getGender(), "F" );
+        Client client = JsonFormUtils.createBaseClient(fields, formTag, "97dc48f681ddcf188b2758fba89635fe");
+        Assert.assertEquals(client.getGender(), "F");
         Assert.assertEquals(client.getFirstName(), "John");
     }
 
     @Test
-    public void testConvertToOpenMRSDate(){
+    public void testConvertToOpenMRSDate() {
         String date = "12-12-2019";
         String openmrsDate = JsonFormUtils.convertToOpenMRSDate(date);
-        Assert.assertEquals(openmrsDate,"2019-12-12");
+        Assert.assertEquals(openmrsDate, "2019-12-12");
     }
 
     @Test
-    public void testGetFieldJsonObject() throws  JSONException{
+    public void testGetFieldJsonObject() throws JSONException {
         JSONArray fields = new JSONArray(clientFormFields);
         Assert.assertNotNull(fields);
 
-        JSONObject field = JsonFormUtils.getFieldJSONObject(fields,"first_name");
+        JSONObject field = JsonFormUtils.getFieldJSONObject(fields, "first_name");
         Assert.assertNotNull(field);
-        Assert.assertTrue(field.has("value"));
+        assertTrue(field.has("value"));
         Assert.assertEquals(field.get("value"), "John");
+    }
+
+    @Test
+    public void testAddMultiSelectListObservations() throws Exception {
+        Event event = new Event();
+        JSONObject jsonObject = new JSONObject();
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put(OPENMRS_ENTITY_ID, "entityId");
+        jsonObject1.put(OPENMRS_ENTITY, "concept");
+        jsonObject1.put(AllConstants.TEXT,"text");
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put(OPENMRS_ENTITY_ID, "entityId2");
+        jsonObject2.put(OPENMRS_ENTITY, "concept");
+        jsonObject2.put(AllConstants.TEXT,"text2");
+
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.put(jsonObject1);
+        jsonArray.put(jsonObject2);
+        jsonObject.put(JsonFormUtils.KEY, "key");
+        jsonObject.put(JsonFormUtils.OPENMRS_ENTITY_PARENT, "parentCode");
+
+        jsonObject.put(JsonFormUtils.VALUE, jsonArray);
+        Whitebox.invokeMethod(JsonFormUtils.class, "addMultiSelectListObservations", event, jsonObject);
+
+        Assert.assertEquals(2, event.getObs().size());
+        Obs obs = event.getObs().get(0);
+        Assert.assertEquals("key", obs.getFormSubmissionField());
+        Assert.assertEquals("entityId", obs.getValue());
+        Assert.assertEquals("text", obs.getHumanReadableValues().get(0));
+        Assert.assertEquals("concept", obs.getFieldType());
+        Assert.assertEquals("parentCode", obs.getParentCode());
+
+        Obs obs2 = event.getObs().get(1);
+        Assert.assertEquals("key", obs2.getFormSubmissionField());
+        Assert.assertEquals("entityId2", obs2.getValue());
+        Assert.assertEquals("concept", obs2.getFieldType());
+        Assert.assertEquals("parentCode", obs2.getParentCode());
+        Assert.assertEquals("text2", obs2.getHumanReadableValues().get(0));
     }
 
     public static boolean areEqual(Object ob1, Object ob2) throws JSONException {
@@ -874,4 +956,25 @@ public class JsonFormUtilsTest {
         }
     }
 
+    @Test
+    public void testSetGlobalCheckBoxPropertyShouldSetCorrectProperty() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        JSONObject metadata = new JSONObject();
+        metadata.put(SAVE_ALL_CHECKBOX_OBS_AS_ARRAY, true);
+        jsonObject.put(AllConstants.TYPE, AllConstants.CHECK_BOX);
+
+        Whitebox.invokeMethod(JsonFormUtils.class, "setGlobalCheckBoxProperty", metadata, jsonObject);
+        assertTrue(jsonObject.optBoolean(SAVE_OBS_AS_ARRAY));
+
+        jsonObject.remove(SAVE_OBS_AS_ARRAY);
+        metadata.put(SAVE_ALL_CHECKBOX_OBS_AS_ARRAY, false);
+        Whitebox.invokeMethod(JsonFormUtils.class, "setGlobalCheckBoxProperty", metadata, jsonObject);
+        assertFalse(jsonObject.optBoolean(SAVE_OBS_AS_ARRAY));
+
+        jsonObject.remove(SAVE_OBS_AS_ARRAY);
+        metadata.put(SAVE_ALL_CHECKBOX_OBS_AS_ARRAY, true);
+        jsonObject.put(AllConstants.TYPE, AllConstants.TEXT);
+        Whitebox.invokeMethod(JsonFormUtils.class, "setGlobalCheckBoxProperty", metadata, jsonObject);
+        assertFalse(jsonObject.optBoolean(SAVE_OBS_AS_ARRAY));
+    }
 }

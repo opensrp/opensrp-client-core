@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -13,6 +12,8 @@ import org.smartregister.util.DateUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -49,10 +50,6 @@ public class CampaignRepository extends BaseRepository {
                     OWNER + " VARCHAR , " +
                     SERVER_VERSION + " INTEGER ) ";
 
-
-    public CampaignRepository(Repository repository) {
-        super(repository);
-    }
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_CAMPAIGN_TABLE);
@@ -93,7 +90,7 @@ public class CampaignRepository extends BaseRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(CampaignRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -111,7 +108,7 @@ public class CampaignRepository extends BaseRepository {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
-            Log.e(CampaignRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e);
         } finally {
             if (cursor != null)
                 cursor.close();

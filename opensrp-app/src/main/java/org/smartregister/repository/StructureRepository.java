@@ -1,23 +1,38 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.util.Log;
+import android.support.annotation.Nullable;
+
+import com.google.gson.Gson;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.smartregister.domain.Geometry;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.db.Client;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.repository.helper.MappingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.smartregister.AllConstants.ROWID;
+
+import org.smartregister.sync.helper.LocationServiceHelper;
+import org.smartregister.util.P2PUtil;
+
+import timber.log.Timber;
+
 /**
  * Created by samuelgithengi on 11/23/18.
  */
 public class StructureRepository extends LocationRepository {
+
+    private static final String TAG = StructureRepository.class.getCanonicalName();
 
     protected static String STRUCTURE_TABLE = "structure";
     private static final String SYNC_STATUS = "sync_status";
@@ -40,10 +55,6 @@ public class StructureRepository extends LocationRepository {
             + STRUCTURE_TABLE + "_" + PARENT_ID + "_ind ON " + STRUCTURE_TABLE + "(" + PARENT_ID + ")";
 
     private MappingHelper helper;
-
-    public StructureRepository(Repository repository) {
-        super(repository);
-    }
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
@@ -70,7 +81,7 @@ public class StructureRepository extends LocationRepository {
             }
             cursor.close();
         } catch (Exception e) {
-            Log.e(TaskRepository.class.getCanonicalName(), e.getMessage(), e);
+            Timber.e(e, "EXCEPTION %s", e.toString());
         } finally {
             if (cursor != null)
                 cursor.close();
@@ -94,6 +105,12 @@ public class StructureRepository extends LocationRepository {
         if (StringUtils.isBlank(location.getId()))
             throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
+
+        if (P2PUtil.checkIfExistsById(STRUCTURE_TABLE, location.getId(), getWritableDatabase())) {
+            int maxRowId = P2PUtil.getMaxRowId(STRUCTURE_TABLE, getWritableDatabase());
+            contentValues.put(ROWID, ++maxRowId);
+        }
+
         contentValues.put(ID, location.getId());
         contentValues.put(UUID, location.getProperties().getUid());
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
@@ -114,5 +131,85 @@ public class StructureRepository extends LocationRepository {
 
     public void setHelper(MappingHelper helper) {
         this.helper = helper;
+    }
+
+    public boolean batchInsertStructures(JSONArray array) {
+        if (array == null || array.length() == 0) {
+            return false;
+        }
+
+        try {
+            getWritableDatabase().beginTransaction();
+
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.getJSONObject(i);
+                Location structure = LocationServiceHelper.locationGson.fromJson(jsonObject.toString(), Location.class);
+                addOrUpdate(structure);
+            }
+
+            getWritableDatabase().setTransactionSuccessful();
+            getWritableDatabase().endTransaction();
+            return true;
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+            getWritableDatabase().endTransaction();
+            return false;
+        }
+    }
+
+    /**
+     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     *
+     * @param lastRowId
+     * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
+     */
+    @Nullable
+    public JsonData getStructures(long lastRowId, int limit) {
+        JsonData jsonData = null;
+        long maxRowId = 0;
+
+        String query = "SELECT "
+                + ROWID
+                +",* FROM "
+                + STRUCTURE_TABLE
+                + " WHERE "
+                + ROWID
+                + " > ? "
+                + " ORDER BY " + ROWID + " ASC LIMIT ?";
+
+        Cursor cursor = null;
+        JSONArray jsonArray = new JSONArray();
+
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(0);
+
+                Location location = readCursor(cursor);
+                location.setRowid(cursor.getLong(0));
+
+                JSONObject structureObject = new JSONObject(LocationServiceHelper.locationGson.toJson(location));
+                jsonArray.put(structureObject);
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        if (jsonArray.length() > 0) {
+            jsonData = new JsonData(jsonArray, maxRowId);
+        }
+        return jsonData;
     }
 }

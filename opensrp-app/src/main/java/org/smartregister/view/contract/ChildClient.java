@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -581,7 +582,7 @@ public class ChildClient implements ChildSmartRegisterClient {
         @Override
         public int compare(ServiceProvidedDTO serviceProvidedDTO1, ServiceProvidedDTO
                 serviceProvidedDTO2) {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
             Date date1;
             Date date2;
             try {

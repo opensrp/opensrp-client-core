@@ -1,7 +1,5 @@
 package org.smartregister.sync.helper;
 
-import android.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,13 +15,12 @@ import org.smartregister.sync.intent.SettingsSyncIntentService;
 import java.text.MessageFormat;
 import java.util.List;
 
-import static org.smartregister.util.Log.logError;
+import timber.log.Timber;
 
 /**
  * Created by ndegwamartin on 14/09/2018.
  */
 public class SyncSettingsServiceHelper {
-    private static final String TAG = SyncSettingsServiceHelper.class.getCanonicalName();
 
     private HTTPAgent httpAgent;
     private String baseUrl;
@@ -54,10 +51,10 @@ public class SyncSettingsServiceHelper {
             }
 
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Timber.e(e);
         }
 
-        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterValue());
+        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterValue());
 
         if (settings != null && settings.length() > 0) {
             settings = ServerSettingsHelper.saveSetting(settings);
@@ -77,21 +74,21 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam().value() + "=" +
+                CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterParam().value() + "=" +
                 syncFilterValue + "&serverVersion=" +
                 sharedPreferences.fetchLastSettingsSyncTimeStamp();
 
-        Log.i(TAG, "URL: " + url);
+        Timber.i("URL: %s", url);
 
         if (httpAgent == null) {
-            logError(url + " http agent is null");
+            Timber.e("%s http agent is null", url);
             return null;
         }
 
         Response resp = httpAgent.fetchWithCredentials(url, getUsername(), getPassword());
 
         if (resp.isFailure()) {
-            logError(url + " not returned data");
+            Timber.e(" %s  not returned data ", url);
             return null;
         }
         return new JSONArray((String) resp.payload());
@@ -105,10 +102,10 @@ public class SyncSettingsServiceHelper {
         }
 
         String url = MessageFormat.format("{0}/{1}", baseUrl, SettingsSyncIntentService.SETTINGS_URL);
-        Log.i(TAG, "URL: " + url);
+        Timber.i("URL: %s", url);
 
         if (httpAgent == null) {
-            logError(url + " http agent is null");
+            Timber.e("%s http agent is null", url);
             return null;
         }
 

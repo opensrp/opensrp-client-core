@@ -2,14 +2,14 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
@@ -20,33 +20,40 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
-import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import timber.log.Timber;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class LocationServiceHelper {
 
-    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-
+    public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
+    public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
+    public static final String DISTRICT_LOCATIONS_URL = "/location/facilities/";
+    public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
+    public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
+    private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
+    public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
+            .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
+    protected static LocationServiceHelper instance;
     protected final Context context;
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
 
-    public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
-    public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
-    public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
-    public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
-
-    private static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
-            .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
-    protected static LocationServiceHelper instance;
+    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
+        this.context = CoreLibrary.getInstance().context().applicationContext();
+        this.locationRepository = locationRepository;
+        this.structureRepository = structureRepository;
+    }
 
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
@@ -55,19 +62,13 @@ public class LocationServiceHelper {
         return instance;
     }
 
-    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
-        this.context = CoreLibrary.getInstance().context().applicationContext();
-        this.locationRepository = locationRepository;
-        this.structureRepository = structureRepository;
-    }
-
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
             serverVersion = (StringUtils.isEmpty(currentServerVersion) ? 0 : Long.parseLong(currentServerVersion));
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
@@ -85,7 +86,7 @@ public class LocationServiceHelper {
                         structureRepository.addOrUpdate(location);
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Timber.e(e, "EXCEPTION %s", e.toString());
                 }
             }
             if (!Utils.isEmptyCollection(locations)) {
@@ -96,39 +97,42 @@ public class LocationServiceHelper {
             return locations;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Timber.e(e, "EXCEPTION %s", e.toString());
         }
         return null;
     }
 
-    private String makeURL(boolean isJurisdiction, long serverVersion, String parentId) {
+    private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue) throws Exception {
+
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
+        }
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
+
+        Response resp;
+
+        JSONObject request = new JSONObject();
+        request.put("is_jurisdiction", isJurisdiction);
         if (isJurisdiction) {
-            String preferenceLocationNames = null;
-            try {
-                preferenceLocationNames = URLEncoder.encode(allSharedPreferences.getPreference(OPERATIONAL_AREAS), "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                Log.e(getClass().getName(), e.getMessage(), e);
-            }
-            return baseUrl + LOCATION_STRUCTURE_URL + "?is_jurisdiction=" + isJurisdiction + "&location_names=" + preferenceLocationNames + "&serverVersion=" + serverVersion;
+            String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
+            request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
+        } else {
+            request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
-        return baseUrl + LOCATION_STRUCTURE_URL + "?parent_id=" + parentId + "&isJurisdiction=" + isJurisdiction + "&serverVersion=" + serverVersion;
+        request.put("serverVersion", serverVersion);
 
-    }
+        resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        LOCATION_STRUCTURE_URL),
+                request.toString());
 
-    private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String parentId) throws Exception {
-
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
-        if (httpAgent == null) {
-            throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
-        }
-
-        Response resp = httpAgent.fetch(makeURL(isJurisdiction, serverVersion, parentId));
         if (resp.isFailure()) {
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
@@ -154,24 +158,72 @@ public class LocationServiceHelper {
         return locations;
     }
 
+    public void fetchDistrictLocations() throws Exception {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(DISTRICT_LOCATIONS_URL + " http agent is null");
+        }
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+
+        Response resp = httpAgent.fetch(
+                MessageFormat.format("{0}{1}{2}",
+                        baseUrl,
+                        DISTRICT_LOCATIONS_URL,
+                        allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM())));
+
+        if (resp.isFailure()) {
+            throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+        }
+
+        List<org.smartregister.domain.jsonmapping.Location> districtLocations =
+                new Gson().fromJson(resp.payload().toString(),
+                        new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {
+                        }.getType());
+
+        for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
+            Location location = new Location();
+            location.setId(districtLocation.getLocationId());
+
+            LocationProperty property = new LocationProperty();
+            property.setUid(districtLocation.getLocationId());
+            property.setParentId(districtLocation.getParentLocation().getLocationId());
+            property.setName(districtLocation.getName());
+            location.setProperties(property);
+
+            locationRepository.addOrUpdate(location);
+        }
+    }
+
     public void syncCreatedStructureToServer() {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Location> locations = structureRepository.getAllUnsynchedCreatedStructures();
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            Response<String> response = httpAgent.post(
+            Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             CREATE_STRUCTURE_URL),
                     jsonPayload);
             if (response.isFailure()) {
-                Log.e(getClass().getName(), "Failed to create new locations on server.");
+                Timber.e("Failed to create new locations on server: %s", response.payload());
                 return;
             }
 
-            for (Location location : locations) {
-                structureRepository.markStructuresAsSynced(location.getId());
+            Set<String> unprocessedIds = new HashSet<>();
+            if (StringUtils.isNotBlank(response.payload())) {
+                if (response.payload().startsWith(LOCATIONS_NOT_PROCESSED)) {
+                    unprocessedIds.addAll(Arrays.asList(response.payload().substring(LOCATIONS_NOT_PROCESSED.length()).split(",")));
+                }
+                for (Location location : locations) {
+                    if (!unprocessedIds.contains(location.getId()))
+                        structureRepository.markStructuresAsSynced(location.getId());
+                }
             }
         }
     }

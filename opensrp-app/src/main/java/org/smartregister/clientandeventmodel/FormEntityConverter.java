@@ -1,7 +1,6 @@
 package org.smartregister.clientandeventmodel;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
@@ -30,10 +29,11 @@ import java.util.UUID;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathExpressionException;
 
+import timber.log.Timber;
+
 import static org.smartregister.clientandeventmodel.FormEntityConstants.FORM_DATE;
 
 public class FormEntityConverter {
-    private static final String TAG = "FormEntityConverter";
     private FormAttributeParser formAttributeParser;
     private Context mContext;
 
@@ -68,11 +68,11 @@ public class FormEntityConverter {
 
     private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
                               FormSubmissionMap fs) throws ParseException {
-        return createEvent(entityId,eventType,fields,fs,fs.bindType(),fs.instanceId());
+        return createEvent(entityId, eventType, fields, fs, fs.bindType(), fs.instanceId());
     }
 
     private Event createEvent(String entityId, String eventType, List<FormFieldMap> fields,
-                              FormSubmissionMap fs,String bindType,String formSubmissionId) throws ParseException {
+                              FormSubmissionMap fs, String bindType, String formSubmissionId) throws ParseException {
         String encounterDateField = getFieldName(Encounter.encounter_date, fs);
         String encounterLocation = getFieldName(Encounter.location_id, fs);
         String team = getFieldName(Encounter.team, fs);
@@ -153,10 +153,10 @@ public class FormEntityConverter {
      */
     private Event getEventForSubform(FormSubmissionMap fs, SubformMap
             subformInstance) throws ParseException {
-        String formSubmissionId= UUID.randomUUID().toString();
+        String formSubmissionId = UUID.randomUUID().toString();
         return createEvent(subformInstance.entityId(),
                 subformInstance.formAttributes().get("openmrs_entity_id"), subformInstance.fields(),
-                fs,subformInstance.bindType(),formSubmissionId);
+                fs, subformInstance.bindType(), formSubmissionId);
     }
 
     /**
@@ -393,7 +393,7 @@ public class FormEntityConverter {
             try {
                 bde = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             birthdateApprox = bde > 0;
         }
@@ -404,7 +404,7 @@ public class FormEntityConverter {
             try {
                 dde = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             deathdateApprox = dde > 0;
         }
@@ -454,7 +454,7 @@ public class FormEntityConverter {
             try {
                 bde = Integer.parseInt(aproxbd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             birthdateApprox = bde > 0;
         }
@@ -465,7 +465,7 @@ public class FormEntityConverter {
             try {
                 dde = Integer.parseInt(aproxdd);
             } catch (Exception e) {
-                Log.e(TAG, e.toString(), e);
+                Timber.e(e);
             }
             deathdateApprox = dde > 0;
         }
@@ -508,7 +508,7 @@ public class FormEntityConverter {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -556,7 +556,7 @@ public class FormEntityConverter {
             return map;
         } catch (JsonIOException | JsonSyntaxException | XPathExpressionException |
                 ParserConfigurationException | SAXException | IOException | ParseException e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
             throw new IllegalStateException(e);
         }
     }

@@ -1,8 +1,8 @@
 package org.smartregister;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -34,7 +34,6 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
-import org.smartregister.repository.Repository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
 import org.smartregister.repository.StructureRepository;
@@ -92,7 +91,6 @@ import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
 import org.smartregister.util.Utils;
-import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.FPClients;
@@ -108,18 +106,20 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+
+import timber.log.Timber;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class Context {
-    private static final String TAG = "Context";
+
     ///////////////////common bindtypes///////////////
     public static ArrayList<CommonRepositoryInformationHolder> bindtypes;
     private static Context context = new Context();
     protected DristhiConfiguration configuration;
     private android.content.Context applicationContext;
-    private Repository repository;
     private EligibleCoupleRepository eligibleCoupleRepository;
     private AlertRepository alertRepository;
     private SettingsRepository settingsRepository;
@@ -233,7 +233,17 @@ public class Context {
     }
 
     public android.content.Context applicationContext() {
-        return applicationContext;
+        if (applicationContext != null) {//Fix to enable Multi language support for this context
+            try {
+                Configuration configuration = applicationContext.getResources().getConfiguration();
+                configuration.setLocale(configuration.locale);
+                return applicationContext.createConfigurationContext(configuration);
+            } catch (Exception e) {
+                return applicationContext;
+            }
+        } else {
+            return null;
+        }
     }
 
     public BeneficiaryService beneficiaryService() {
@@ -264,7 +274,6 @@ public class Context {
     }
 
     public FormSubmissionService formSubmissionService() {
-        initRepository();
         if (formSubmissionService == null) {
             if (commonFtsObject != null) {
                 formSubmissionService = new FormSubmissionService(ziggyService(),
@@ -286,7 +295,6 @@ public class Context {
     }
 
     public FormSubmissionRouter formSubmissionRouter() {
-        initRepository();
         if (formSubmissionRouter == null) {
             formSubmissionRouter = new FormSubmissionRouter(formDataRepository(),
                     ecRegistrationHandler(), fpComplicationsHandler(), fpChangeHandler(),
@@ -478,7 +486,6 @@ public class Context {
     }
 
     public ZiggyService ziggyService() {
-        initRepository();
         if (ziggyService == null) {
             ziggyService = new ZiggyService(ziggyFileLoader(), formDataRepository(),
                     formSubmissionRouter());
@@ -503,22 +510,12 @@ public class Context {
         return formSubmissionSyncService;
     }
 
-    protected HTTPAgent httpAgent() {
+    public HTTPAgent httpAgent() {
         if (httpAgent == null) {
             httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
                     configuration());
         }
         return httpAgent;
-    }
-
-    public Repository initRepository() {
-        if (configuration().appName().equals(AllConstants.APP_NAME_INDONESIA)) {
-            return null;
-        }
-        if (repository == null) {
-            repository = DrishtiApplication.getInstance().getRepository();
-        }
-        return repository;
     }
 
     public ArrayList<DrishtiRepository> sharedRepositories() {
@@ -551,7 +548,6 @@ public class Context {
     }
 
     public AllEligibleCouples allEligibleCouples() {
-        initRepository();
         if (allEligibleCouples == null) {
             allEligibleCouples = new AllEligibleCouples(eligibleCoupleRepository(),
                     alertRepository(), timelineEventRepository());
@@ -560,7 +556,6 @@ public class Context {
     }
 
     public AllAlerts allAlerts() {
-        initRepository();
         if (allAlerts == null) {
             allAlerts = new AllAlerts(alertRepository());
         }
@@ -568,7 +563,6 @@ public class Context {
     }
 
     public AllSettings allSettings() {
-        initRepository();
         if (allSettings == null) {
             allSettings = new AllSettings(allSharedPreferences(), settingsRepository());
         }
@@ -584,7 +578,6 @@ public class Context {
     }
 
     public AllBeneficiaries allBeneficiaries() {
-        initRepository();
         if (allBeneficiaries == null) {
             allBeneficiaries = new AllBeneficiaries(motherRepository(), childRepository(),
                     alertRepository(), timelineEventRepository());
@@ -593,7 +586,6 @@ public class Context {
     }
 
     public AllTimelineEvents allTimelineEvents() {
-        initRepository();
         if (allTimelineEvents == null) {
             allTimelineEvents = new AllTimelineEvents(timelineEventRepository());
         }
@@ -601,7 +593,6 @@ public class Context {
     }
 
     public AllReports allReports() {
-        initRepository();
         if (allReports == null) {
             allReports = new AllReports(reportRepository());
         }
@@ -609,7 +600,6 @@ public class Context {
     }
 
     public AllServicesProvided allServicesProvided() {
-        initRepository();
         if (allServicesProvided == null) {
             allServicesProvided = new AllServicesProvided(serviceProvidedRepository());
         }
@@ -702,8 +692,7 @@ public class Context {
 
     public UserService userService() {
         if (userService == null) {
-            repository = initRepository();
-            userService = new UserService(repository, allSettings(), allSharedPreferences(),
+            userService = new UserService(allSettings(), allSharedPreferences(),
                     httpAgent(), session(), configuration(), saveANMLocationTask(),
                     saveUserInfoTask(), saveANMTeamTask());
         }
@@ -914,7 +903,6 @@ public class Context {
     }
 
     public AllCommonsRepository allCommonsRepositoryobjects(String tablename) {
-        initRepository();
         allCommonPersonObjectsRepository = new AllCommonsRepository(commonrepository(tablename),
                 alertRepository(), timelineEventRepository());
         return allCommonPersonObjectsRepository;
@@ -973,10 +961,10 @@ public class Context {
                             .getJSONObject(j).getString("name");
                 }
                 bindtypes.add(new CommonRepositoryInformationHolder(bindname, columNames));
-                Log.v("bind type logs", bindtypeObjects.getJSONObject(i).getString("name"));
+                Timber.v("bind type logs %s", bindtypeObjects.getJSONObject(i).getString("name"));
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
     }
 
@@ -996,16 +984,26 @@ public class Context {
                 JSONObject columnDefinitionObject = bindtypeObjects.getJSONObject(i);
                 String bindname = columnDefinitionObject.getString("name");
                 JSONArray columnsJsonArray = columnDefinitionObject.getJSONArray("columns");
-                String[] columnNames = new String[columnsJsonArray.length()];
-                for (int j = 0; j < columnNames.length; j++) {
+                ArrayList<String> columnNames = new ArrayList<>();
+
+                // This adds the ability to have multiple mappings for one column and at the same time
+                // Prevents the app from crashing when creating the common repository
+                HashSet<String> uniqueColumnNames = new HashSet<>();
+
+                for (int j = 0; j < columnsJsonArray.length(); j++) {
                     JSONObject columnObject = columnsJsonArray.getJSONObject(j);
-                    columnNames[j] = columnObject.getString("column_name");
+                    String colName = columnObject.getString("column_name");
+
+                    if (!uniqueColumnNames.contains(colName)) {
+                        uniqueColumnNames.add(colName);
+                        columnNames.add(colName);
+                    }
                 }
-                bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames));
-                Log.v("bind type logs", bindname);
+                bindtypes.add(new CommonRepositoryInformationHolder(bindname, columnNames.toArray(new String[0])));
+                Timber.v("bind type logs %s", bindname);
             }
         } catch (Exception e) {
-            Log.e(TAG, e.toString(), e);
+            Timber.e(e);
         }
 
     }
@@ -1025,7 +1023,7 @@ public class Context {
                 returnString.append(line);
             }
         } catch (Exception e) {
-            e.getMessage();
+            Timber.e(e);
         } finally {
             try {
                 if (isr != null) {
@@ -1038,7 +1036,7 @@ public class Context {
                     input.close();
                 }
             } catch (Exception e2) {
-                e2.getMessage();
+                Timber.e(e2);
             }
         }
         return returnString.toString();
@@ -1048,25 +1046,12 @@ public class Context {
         this.applicationContext = applicationContext;
     }
 
-    protected Repository getRepository() {
-        return repository;
-    }
-
-    protected void setRepository(Repository repository) {
-        this.repository = repository;
-    }
-
     public HTTPAgent getHttpAgent() {
-        return httpAgent;
+        return httpAgent();
     }
 
     public Context updateCommonFtsObject(CommonFtsObject commonFtsObject) {
         this.commonFtsObject = commonFtsObject;
-        return this;
-    }
-
-    public Context updateRepository(Repository repository) {
-        this.repository = repository;
         return this;
     }
 
@@ -1109,50 +1094,50 @@ public class Context {
 
     public EventClientRepository getEventClientRepository() {
         if (eventClientRepository == null) {
-            eventClientRepository = new EventClientRepository(getRepository());
+            eventClientRepository = new EventClientRepository();
         }
         return eventClientRepository;
     }
 
     public UniqueIdRepository getUniqueIdRepository() {
         if (uniqueIdRepository == null) {
-            uniqueIdRepository = new UniqueIdRepository(getRepository());
+            uniqueIdRepository = new UniqueIdRepository();
         }
         return uniqueIdRepository;
     }
 
     public CampaignRepository getCampaignRepository() {
         if (campaignRepository == null) {
-            campaignRepository = new CampaignRepository(getRepository());
+            campaignRepository = new CampaignRepository();
         }
         return campaignRepository;
     }
 
     public TaskRepository getTaskRepository() {
         if (taskRepository == null) {
-            taskNotesRepository = new TaskNotesRepository(getRepository());
-            taskRepository = new TaskRepository(getRepository(), taskNotesRepository);
+            taskNotesRepository = new TaskNotesRepository();
+            taskRepository = new TaskRepository(taskNotesRepository);
         }
         return taskRepository;
     }
 
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
-            locationRepository = new LocationRepository(getRepository());
+            locationRepository = new LocationRepository();
         }
         return locationRepository;
     }
 
     public StructureRepository getStructureRepository() {
         if (structureRepository == null) {
-            structureRepository = new StructureRepository(getRepository());
+            structureRepository = new StructureRepository();
         }
         return structureRepository;
     }
 
     public PlanDefinitionRepository getPlanDefinitionRepository() {
         if (planDefinitionRepository == null) {
-            planDefinitionRepository = new PlanDefinitionRepository(getRepository());
+            planDefinitionRepository = new PlanDefinitionRepository();
         }
         return planDefinitionRepository;
     }

@@ -21,6 +21,8 @@ public class Obs {
 
     private List<Object> humanReadableValues;
 
+    private boolean saveObsAsArray;
+
     public Obs() {
     }
 
@@ -35,6 +37,13 @@ public class Obs {
         this.formSubmissionField = formSubmissionField;
         this.humanReadableValues = humanReadableValues;
     }
+
+    public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode,
+               List<Object> values, String comments, String formSubmissionField, List<Object> humanReadableValues, boolean saveObsAsArray) {
+        this(fieldType, fieldDataType, fieldCode, parentCode, values, comments, formSubmissionField, humanReadableValues);
+        this.saveObsAsArray = saveObsAsArray;
+    }
+
 
     public String getFieldType() {
         return fieldType;
@@ -106,6 +115,14 @@ public class Obs {
 
     public void setFormSubmissionField(String formSubmissionField) {
         this.formSubmissionField = formSubmissionField;
+    }
+
+    public boolean isSaveObsAsArray() {
+        return saveObsAsArray;
+    }
+
+    public void setSaveObsAsArray(boolean saveObsAsArray) {
+        this.saveObsAsArray = saveObsAsArray;
     }
 
     public Object getHumanReadableValue() {
@@ -192,6 +209,11 @@ public class Obs {
 
     public Obs withHumanReadableValues(List<Object> humanReadableValues) {
         this.humanReadableValues = humanReadableValues;
+        return this;
+    }
+
+    public Obs withsaveObsAsArray(boolean saveObsAsArray) {
+        setSaveObsAsArray(saveObsAsArray);
         return this;
     }
 }

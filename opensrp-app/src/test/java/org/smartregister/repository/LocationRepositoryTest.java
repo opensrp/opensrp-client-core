@@ -17,15 +17,19 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -60,12 +64,13 @@ public class LocationRepositoryTest extends BaseUnitTest {
 
     private String locationJson = LocationTest.parentJson;
 
-    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    private static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
     @Before
     public void setUp() {
-        locationRepository = new LocationRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(),"repository",repository);
+        locationRepository = new LocationRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
@@ -192,6 +197,36 @@ public class LocationRepositoryTest extends BaseUnitTest {
 
         assertEquals(locationJson, stripTimezone(gson.toJson(location)));
 
+    }
+
+    @Test
+    public void tesGetLocationsByIds() {
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location WHERE _id IN (?)",
+                new String[]{"3734"})).thenReturn(getCursor());
+        List<Location> locations = locationRepository.getLocationsByIds(Collections.singletonList("3734"));
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT * FROM location WHERE _id IN (?)", stringArgumentCaptor.getValue());
+        assertEquals(1, argsCaptor.getValue().length);
+        assertEquals("3734", argsCaptor.getValue()[0]);
+
+        assertNotNull(locations);
+        assertEquals(locationJson, stripTimezone(gson.toJson(locations.get(0))));
+
+    }
+
+    @Test
+    public void tesGetLocationsByIdsExclusive() {
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location WHERE _id NOT IN (?)",
+                new Object[]{"3734"})).thenReturn(getCursor());
+        List<Location> locations = locationRepository.getLocationsByIds(Collections.singletonList("3734"), false);
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT * FROM location WHERE _id NOT IN (?)", stringArgumentCaptor.getValue());
+        assertEquals(1, argsCaptor.getValue().length);
+        assertEquals("3734", argsCaptor.getValue()[0]);
+
+        assertEquals(0, locations.size());
     }
 
 

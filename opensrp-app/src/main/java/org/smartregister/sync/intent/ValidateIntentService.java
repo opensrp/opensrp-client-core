@@ -1,9 +1,7 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -19,10 +17,12 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by keyman on 11/10/2017.
  */
-public class ValidateIntentService extends IntentService {
+public class ValidateIntentService extends BaseSyncIntentService {
 
     private Context context;
     private HTTPAgent httpAgent;
@@ -45,7 +45,7 @@ public class ValidateIntentService extends IntentService {
     protected void onHandleIntent(Intent intent) {
 
         try {
-
+            super.onHandleIntent(intent);
             int fetchLimit = FETCH_LIMIT;
             EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
 
@@ -76,7 +76,7 @@ public class ValidateIntentService extends IntentService {
                             VALIDATE_SYNC_PATH),
                     jsonPayload);
             if (response.isFailure() || StringUtils.isBlank(response.payload())) {
-                Log.e(getClass().getName(), "Validation sync failed.");
+                Timber.e("Validation sync failed.");
                 return;
             }
 
@@ -110,7 +110,7 @@ public class ValidateIntentService extends IntentService {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e);
         }
     }
 
@@ -142,7 +142,7 @@ public class ValidateIntentService extends IntentService {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), "", e);
+            Timber.e(e);
         }
         return null;
     }

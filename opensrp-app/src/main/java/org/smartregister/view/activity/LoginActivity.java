@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -33,7 +34,6 @@ import org.smartregister.view.ProgressIndicator;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -42,11 +42,12 @@ import static org.smartregister.domain.LoginResponse.SUCCESS;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logVerbose;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements View.OnClickListener {
     private Context context;
     private EditText userNameEditText;
     private EditText passwordEditText;
     private ProgressDialog progressDialog;
+    private Button loginButton;
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -119,8 +120,10 @@ public class LoginActivity extends Activity {
     }
 
     private void initializeLoginFields() {
-        userNameEditText = ((EditText) findViewById(R.id.login_userNameText));
-        passwordEditText = ((EditText) findViewById(R.id.login_passwordText));
+        userNameEditText = findViewById(R.id.login_userNameText);
+        passwordEditText = findViewById(R.id.login_passwordText);
+        loginButton = findViewById(R.id.login_loginButton);
+        loginButton.setOnClickListener(this);
     }
 
     private void setDoneActionHandlerOnPasswordField() {
@@ -128,7 +131,7 @@ public class LoginActivity extends Activity {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    login(findViewById(R.id.login_loginButton));
+                    login(loginButton);
                 }
                 return false;
             }
@@ -253,8 +256,12 @@ public class LoginActivity extends Activity {
                 .getApplicationInfo(getPackageName(), 0);
         ZipFile zf = new ZipFile(applicationInfo.sourceDir);
         ZipEntry ze = zf.getEntry("classes.dex");
-        return new SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+        return new SimpleDateFormat("dd MMM yyyy", Utils.getDefaultLocale())
                 .format(new java.util.Date(ze.getTime()));
     }
 
+    @Override
+    public void onClick(View view) {
+        login(view);
+    }
 }

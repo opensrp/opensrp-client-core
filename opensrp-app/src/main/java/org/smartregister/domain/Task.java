@@ -4,12 +4,15 @@ import com.google.gson.annotations.SerializedName;
 
 import org.joda.time.DateTime;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by samuelgithengi on 11/22/18.
  */
-public class Task {
+public class Task implements Serializable {
 
     public enum TaskStatus {
         @SerializedName("Draft")
@@ -18,8 +21,11 @@ public class Task {
         CANCELLED, @SerializedName("In Progress")
         IN_PROGRESS, @SerializedName("Completed")
         COMPLETED, @SerializedName("Failed")
-        FAILED
+        FAILED, @SerializedName("Archived")
+        ARCHIVED
     }
+
+    public static final String[] INACTIVE_TASK_STATUS = new String[]{TaskStatus.CANCELLED.name(), TaskStatus.ARCHIVED.name()};
 
     private String identifier;
 
@@ -60,8 +66,14 @@ public class Task {
     private Long serverVersion;
 
     private String structureId;
-  
+
     private String reasonReference;
+
+    private String location;
+
+    private String requester;
+
+    private Long rowid;
 
     public String getIdentifier() {
         return identifier;
@@ -207,12 +219,43 @@ public class Task {
         this.syncStatus = syncStatus;
     }
 
-    public String getStructureId() { return structureId; }
+    public String getStructureId() {
+        return structureId;
+    }
 
-    public void setStructureId(String structureId) { this.structureId = structureId; }
+    public void setStructureId(String structureId) {
+        this.structureId = structureId;
+    }
 
-    public String getReasonReference() { return reasonReference; }
+    public String getReasonReference() {
+        return reasonReference;
+    }
 
-    public void setReasonReference(String reasonReference) { this.reasonReference = reasonReference; }
+    public void setReasonReference(String reasonReference) {
+        this.reasonReference = reasonReference;
+    }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getRequester() {
+        return requester;
+    }
+
+    public void setRequester(String requester) {
+        this.requester = requester;
+    }
+
+    public Long getRowid() {
+        return rowid;
+    }
+
+    public void setRowid(Long rowid) {
+        this.rowid = rowid;
+    }
 }

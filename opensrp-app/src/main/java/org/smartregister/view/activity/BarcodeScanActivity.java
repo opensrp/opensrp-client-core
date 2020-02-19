@@ -8,9 +8,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.util.Log;
 import android.util.SparseArray;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -23,14 +21,16 @@ import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.barcode.CameraSourcePreview;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.Utils;
 
 import java.io.IOException;
+
+import timber.log.Timber;
 
 public class BarcodeScanActivity extends Activity implements Detector.Processor<Barcode> {
     private CameraSource cameraSource;
     private CameraSourcePreview cameraSourcePreview;
 
-    private String TAG = BarcodeScanActivity.class.getSimpleName();
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -55,20 +55,20 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
      * Suppressing InlinedApi since there is a check that the minimum version is met before using
      * the constant.
      */
-    @SuppressLint ("InlinedApi")
+    @SuppressLint("InlinedApi")
     private void createCameraSource() {
         Context context = getApplicationContext();
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(context).build();
         barcodeDetector.setProcessor(this);
 
         if (!barcodeDetector.isOperational()) {
-            Log.w(TAG, "Detector dependencies are not yet available.");
+            Timber.w("Detector dependencies are not yet available.");
             IntentFilter lowStorageFilter = new IntentFilter(Intent.ACTION_DEVICE_STORAGE_LOW);
             boolean hasLowStorage = registerReceiver(null, lowStorageFilter) != null;
 
             if (hasLowStorage) {
-                Toast.makeText(this, R.string.low_storage_error, Toast.LENGTH_LONG).show();
-                Log.w(TAG, getString(R.string.low_storage_error));
+                Utils.showToast(this, this.getResources().getString(R.string.low_storage_error));
+                Timber.w(getString(R.string.low_storage_error));
             }
         }
         CameraSource.Builder builder = new CameraSource.Builder(getApplicationContext(), barcodeDetector)
@@ -125,7 +125,7 @@ public class BarcodeScanActivity extends Activity implements Detector.Processor<
             try {
                 cameraSourcePreview.start(cameraSource);
             } catch (IOException e) {
-                Log.e(TAG, "Unable to start camera source.", e);
+                Timber.e(e, "Unable to start camera source.");
                 cameraSource.release();
                 cameraSource = null;
             }

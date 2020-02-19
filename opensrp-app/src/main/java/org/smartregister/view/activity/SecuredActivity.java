@@ -7,14 +7,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +25,7 @@ import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.event.Listener;
 import org.smartregister.receiver.P2pProcessingStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
+import org.smartregister.util.Utils;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.FormController;
 import org.smartregister.view.controller.NavigationController;
@@ -34,7 +33,8 @@ import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.util.Map;
 
-import static android.widget.Toast.LENGTH_SHORT;
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ALERT_NAME_PARAM;
 import static org.smartregister.AllConstants.CloudantSync;
 import static org.smartregister.AllConstants.ENTITY_ID;
@@ -121,8 +121,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Toast.makeText(this, R.string.language_change_prepend_message + " " + newLanguagePreference + ". "
-                    + R.string.language_change_prepend_message + ".", LENGTH_SHORT).show();
+            Utils.showShortToast(this, R.string.language_change_prepend_message + " " + newLanguagePreference + ". " + R.string.language_change_prepend_message + ".");
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
@@ -155,8 +154,6 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(openSRPClientBroadCastReceiver);
-
     }
 
     protected abstract void onCreation();
@@ -232,7 +229,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
      * TasksModel takes care of calling this on the main thread.
      */
     public void replicationError() {
-        Log.e(LOG_TAG, "error()");
+        Timber.e(LOG_TAG, "error()");
         //Toast.makeText(getApplicationContext(), "Replication Error", Toast.LENGTH_LONG).show();
     }
 
@@ -251,8 +248,8 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         registerReceiver(openSRPClientBroadCastReceiver, opensrpClientIntentFilter);
     }
 
-    public void showToast(String msg) {
-        Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
+    public void showToast(String message) {
+        Utils.showToast(this, message);
     }
 
     protected Context context() {
@@ -311,7 +308,17 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
     @Override
     protected void onPause() {
+
         super.onPause();
+
+        if (openSRPClientBroadCastReceiver != null) {
+            try {
+                unregisterReceiver(openSRPClientBroadCastReceiver);
+                openSRPClientBroadCastReceiver = null;
+            } catch (IllegalArgumentException e) {
+                Timber.e(e, "EXCEPTION %s", e.toString());
+            }
+        }
 
         if (p2pProcessingStatusBroadcastReceiver != null) {
             LocalBroadcastManager.getInstance(this)

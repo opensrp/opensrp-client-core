@@ -9,6 +9,7 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 import org.smartregister.domain.ANCServiceType;
 import org.smartregister.util.IntegerUtil;
+import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -191,7 +192,7 @@ public class ANCClient implements ANCSmartRegisterClient {
 
     @Override
     public boolean satisfiesFilter(String filterCriterion) {
-        return name.toLowerCase(Locale.getDefault()).startsWith(filterCriterion.toLowerCase())
+        return name.toLowerCase(Utils.getDefaultLocale()).startsWith(filterCriterion.toLowerCase())
                 || String.valueOf(ec_number).startsWith(filterCriterion) || String.valueOf(thayi)
                 .startsWith(filterCriterion);
     }

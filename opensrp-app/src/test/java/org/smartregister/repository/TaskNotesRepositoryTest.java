@@ -9,15 +9,15 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
-import org.robolectric.RobolectricTestRunner;
+import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Note;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Iterator;
 import java.util.List;
@@ -53,7 +53,8 @@ public class TaskNotesRepositoryTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        taskNotesRepository = new TaskNotesRepository(repository);
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        taskNotesRepository = new TaskNotesRepository();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }

@@ -41,10 +41,8 @@ script:
   # Enable the line below once we get all the test passing, currently most of the tests are failing 
   # so we'll just if the project compiles
   #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport coveralls --stacktrace
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+  - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
+  - ./gradlew coveralls --stacktrace
 
 after_failure:
   - pandoc opensrp-app/build/reports/tests/index.html -t plain
@@ -52,3 +50,13 @@ after_failure:
 notifications:
   slack:
     secure: fAiZ4yA7DM6nUKh7nqsCTqZBb03VEAvi5NcRu5mNh5coNn/50XNeZl+qpv7Dw70Ef85Y/k68uc6KwTGVqPXEmVq9Hk3e7lqpBNN8rufvgCYDDGPmywBmU5BhSeykKo0Ee7llM3mRR/EipjIWw1+YvMcS3hCoygf/UlMDDhG0Jo0=
+
+before_deploy:
+  - echo "sonatypeUsername=$SONATYPE_USER" > ~/.gradle/gradle.properties
+  - echo "sonatypePassword=$SONATYPE_PASS" >> ~/.gradle/gradle.properties
+
+deploy:
+  provider: script
+  script: ./gradlew :opensrp-app:uploadArchives -PmavenLocal=false
+  on:
+    tags: true

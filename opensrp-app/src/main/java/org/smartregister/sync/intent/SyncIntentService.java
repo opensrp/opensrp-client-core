@@ -3,7 +3,6 @@ package org.smartregister.sync.intent;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +30,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-public class SyncIntentService extends IntentService {
+import timber.log.Timber;
+
+public class SyncIntentService extends BaseSyncIntentService {
     private static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
 
@@ -56,7 +57,7 @@ public class SyncIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-
+        super.onHandleIntent(intent);
         handleSync();
     }
 
@@ -84,7 +85,7 @@ public class SyncIntentService extends IntentService {
             }
 
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
             complete(FetchStatus.fetchedFailed);
         }
     }
@@ -110,45 +111,71 @@ public class SyncIntentService extends IntentService {
             }
 
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
-            Log.i(SyncIntentService.class.getName(), "LAST SYNC DT :" + new DateTime(lastSyncDatetime));
-
-            String url = baseUrl + SYNC_URL + "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + SyncIntentService.EVENT_PULL_LIMIT;
-            Log.i(SyncIntentService.class.getName(), "URL: " + url);
+            Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
 
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
             }
 
-            Response resp = httpAgent.fetch(url);
-            if (resp.isFailure()) {
-                fetchFailed(count);
+            String url = baseUrl + SYNC_URL;
+            Response resp;
+            if (configs.isSyncUsingPost()) {
+                JSONObject syncParams = new JSONObject();
+                syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
+                syncParams.put("serverVersion", lastSyncDatetime);
+                syncParams.put("limit", getEventPullLimit());
+                resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
+            } else {
+                url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
+                Timber.i("URL: %s", url);
+                resp = httpAgent.fetch(url);
             }
 
-            JSONObject jsonObject = new JSONObject((String) resp.payload());
+            if (resp.isUrlError()) {
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+                return;
+            }
 
-            int eCount = fetchNumberOfEvents(jsonObject);
-            Log.i(getClass().getName(), "Parse Network Event Count: " + eCount);
+            if (resp.isTimeoutError()) {
+                FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
+                complete(FetchStatus.fetchedFailed);
+            }
+
+            if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
+                fetchFailed(count);
+            }
+            int eCount;
+            JSONObject jsonObject = new JSONObject();
+            if (resp.payload() == null) {
+                eCount = 0;
+            } else {
+                jsonObject = new JSONObject((String) resp.payload());
+                eCount = fetchNumberOfEvents(jsonObject);
+                Timber.i("Parse Network Event Count: %s", eCount);
+            }
 
             if (eCount == 0) {
                 complete(FetchStatus.nothingFetched);
             } else if (eCount < 0) {
                 fetchFailed(count);
-            } else if (eCount > 0) {
+            } else {
                 final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
                 long lastServerVersion = serverVersionPair.second - 1;
-                if (eCount < EVENT_PULL_LIMIT) {
+                if (eCount < getEventPullLimit()) {
                     lastServerVersion = serverVersionPair.second;
                 }
 
-                ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
-
-                processClient(serverVersionPair);
-
+                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+                //update sync time if all event client is save.
+                if (isSaved) {
+                    processClient(serverVersionPair);
+                    ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+                }
                 fetchRetry(0);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Fetch Retry Exception: " + e.getMessage(), e.getCause());
+            Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
         }
     }
@@ -169,7 +196,7 @@ public class SyncIntentService extends IntentService {
             DrishtiApplication.getInstance().getClientProcessor().processClient(events);
             sendSyncStatusBroadcastMessage(FetchStatus.fetched);
         } catch (Exception e) {
-            Log.e(getClass().getName(), "Process Client Exception: " + e.getMessage(), e.getCause());
+            Timber.e(e, "Process Client Exception: %s", e.getMessage());
         }
     }
 
@@ -183,40 +210,40 @@ public class SyncIntentService extends IntentService {
         boolean keepSyncing = true;
 
         while (keepSyncing) {
+            Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
+
+            if (pendingEvents.isEmpty()) {
+                return;
+            }
+
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
+                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
+            }
+            // create request body
+            JSONObject request = new JSONObject();
             try {
-                Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
-
-                if (pendingEvents.isEmpty()) {
-                    return;
-                }
-
-                String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-                if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
-                    baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
-                }
-                // create request body
-                JSONObject request = new JSONObject();
                 if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
                     request.put(AllConstants.KEY.CLIENTS, pendingEvents.get(AllConstants.KEY.CLIENTS));
                 }
                 if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
                 }
-                String jsonPayload = request.toString();
-                Response<String> response = httpAgent.post(
-                        MessageFormat.format("{0}/{1}",
-                                baseUrl,
-                                ADD_URL),
-                        jsonPayload);
-                if (response.isFailure()) {
-                    Log.e(getClass().getName(), "Events sync failed.");
-                    return;
-                }
-                db.markEventsAsSynced(pendingEvents);
-                Log.i(getClass().getName(), "Events synced successfully.");
-            } catch (Exception e) {
-                Log.e(getClass().getName(), e.getMessage(), e);
+            } catch (JSONException e) {
+                Timber.e(e);
             }
+            String jsonPayload = request.toString();
+            Response<String> response = httpAgent.post(
+                    MessageFormat.format("{0}/{1}",
+                            baseUrl,
+                            ADD_URL),
+                    jsonPayload);
+            if (response.isFailure()) {
+                Timber.e("Events sync failed.");
+                return;
+            }
+            db.markEventsAsSynced(pendingEvents);
+            Timber.i("Events synced successfully.");
         }
     }
 
@@ -234,9 +261,12 @@ public class SyncIntentService extends IntentService {
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_COMPLETE_STATUS, true);
 
         sendBroadcast(intent);
+        //sync time not update if sync is fail
+        if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
+            ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
+            ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
+        }
 
-        ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-        ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
     }
 
     private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
@@ -268,7 +298,7 @@ public class SyncIntentService extends IntentService {
                 return Pair.create(minServerVersion, maxServerVersion);
             }
         } catch (Exception e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
         }
         return Pair.create(0L, 0L);
     }
@@ -281,9 +311,12 @@ public class SyncIntentService extends IntentService {
                 count = jsonObject.getInt(NO_OF_EVENTS);
             }
         } catch (JSONException e) {
-            Log.e(getClass().getName(), e.getMessage(), e);
+            Timber.e(e);
         }
         return count;
     }
 
+    public int getEventPullLimit() {
+        return EVENT_PULL_LIMIT;
+    }
 }

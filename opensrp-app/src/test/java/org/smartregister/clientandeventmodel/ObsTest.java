@@ -10,6 +10,10 @@ import org.smartregister.clientandeventmodel.mock.ObsMock;
 import java.util.ArrayList;
 import java.util.List;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 /**
  * Created by kaderchowdhury on 21/11/17.
  */
@@ -186,4 +190,26 @@ public class ObsTest extends BaseUnitTest {
         Assert.assertNotNull(ob.withHumanReadableValues(humanReadableValues));
     }
 
+    @Test
+    public void testConstructor() {
+        List<Object> values = new ArrayList<>();
+        List<Object> humanReadableValues = new ArrayList<>();
+
+        Obs obs = new Obs("fieldType", "fieldDataType", "fieldCode", "parentCode", values,
+                humanReadableValues,"comments", "formSubmissionField", true);
+
+        assertEquals(obs.getFieldType(), "fieldType");
+        assertEquals(obs.getFieldDataType(), "fieldDataType");
+        assertEquals(obs.getFieldCode(), "fieldCode");
+        assertEquals(obs.getParentCode(), "parentCode");
+        assertEquals(obs.getValues(), values);
+        assertEquals(obs.getComments(), "comments");
+        assertEquals(obs.getFormSubmissionField(), "formSubmissionField");
+        assertEquals(obs.getHumanReadableValues(), humanReadableValues);
+        assertTrue(obs.isSaveObsAsArray());
+
+        obs = new Obs();
+        obs.withsaveObsAsArray(false);
+        assertFalse(obs.isSaveObsAsArray());
+    }
 }
