@@ -6,6 +6,7 @@ import android.content.Context;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -18,13 +19,16 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Event;
+import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.db.Obs;
+import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -113,6 +117,26 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
         valStr = Whitebox.invokeMethod(clientProcessor, "getValuesStr", obs, values, null);
         assertEquals("val1", valStr);
+    }
+
+    @Test
+    public void testProcessEventUsingMiniProcessorShouldCallMiniProcessorProcessEventClient() throws Exception {
+        MiniClientProcessorForJava miniClientProcessorForJava = Mockito.mock(MiniClientProcessorForJava.class);
+        String eventType = "Custom Test Event";
+        HashSet<String> supportedEventTypes = new HashSet<>();
+        supportedEventTypes.add(eventType);
+        Mockito.doReturn(supportedEventTypes).when(miniClientProcessorForJava).getEventTypes();
+
+        String baseEntityId = "bei";
+        EventClient eventClient = new EventClient(new Event(), new Client(baseEntityId));
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(new ClientProcessorForJava(context));
+        clientProcessorForJava.addMiniProcessors(miniClientProcessorForJava);
+
+        ClientClassification clientClassification = new ClientClassification();
+        clientProcessorForJava.processEventUsingMiniProcessor(clientClassification, eventClient, eventType);
+
+        Mockito.verify(miniClientProcessorForJava, Mockito.times(1)).processEventClient(Mockito.eq(eventClient), ArgumentMatchers.<List<Event>>any(), Mockito.eq(clientClassification));
     }
 
     @Test
