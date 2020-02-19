@@ -25,6 +25,9 @@ import java.util.Collection;
 @Config(application = TestApplication.class, shadows = {FontTextViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
 @PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
 public abstract class BaseUnitTest {
+    protected static final int INITIALS_RESOURCE_ID = R.drawable.bottom_bar_initials_background;
+    protected static final String INITIALS_TEXT = "TR";
+
     public void resetWindowManager() {
 
         try {

@@ -8,8 +8,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import junit.framework.Assert;
-
+import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
@@ -38,7 +39,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.when;
 
 /**
  * Created by kaderchowdhury on 11/11/17.
@@ -71,9 +71,6 @@ public class LoginActivityTest extends BaseUnitTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private CoreLibrary coreLibrary;
-
     @Before
     public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
@@ -86,19 +83,21 @@ public class LoginActivityTest extends BaseUnitTest {
 
 //        Context context = CoreLibrary.getInstance().context().updateApplicationContext(activity.getApplicationContext());
 //        this.context_ = context;
-        when(context_.applicationContext()).thenReturn(applicationContext);
-        when(context_.updateApplicationContext(any(android.content.Context.class))).thenReturn(context_);
-        when(context_.userService()).thenReturn(userService);
-        when(applicationContext.getSystemService(android.content.Context.ALARM_SERVICE)).thenReturn(alarmManager);
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn("admin");
-        when(inputManager.hideSoftInputFromWindow(isNull(IBinder.class), anyInt())).thenReturn(true);
+        Mockito.doReturn(applicationContext).when(context_).applicationContext();
+        Mockito.doReturn(context_).when(context_).updateApplicationContext(any(android.content.Context.class));
+        Mockito.doReturn(userService).when(context_).userService();
+        Mockito.doReturn(alarmManager).when(applicationContext).getSystemService(android.content.Context.ALARM_SERVICE);
+        Mockito.doReturn("admin").when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(true).when(inputManager).hideSoftInputFromWindow(isNull(IBinder.class), anyInt());
         Intent intent = new Intent(RuntimeEnvironment.application, LoginActivityMock.class);
         controller = Robolectric.buildActivity(LoginActivityMock.class, intent);
         controller.create()
                 .start()
-                .resume()
-                .visible();
+                .visible()
+                .resume();
         activity = controller.get();
+
+        Whitebox.setInternalState(activity, "context", context_);
     }
 
 
@@ -109,21 +108,25 @@ public class LoginActivityTest extends BaseUnitTest {
 
     @Test
     public void localLoginTest() {
-        when(userService.hasARegisteredUser()).thenReturn(true);
-        when(userService.isValidLocalLogin(anyString(), anyString())).thenReturn(true);
-        when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
-        EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
-        EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
+        Mockito.doReturn(true).when(userService).hasARegisteredUser();
+        Mockito.doReturn(true).when(userService).isValidLocalLogin(anyString(), anyString());
+        Mockito.doReturn(allSharedPreferences).when(context_).allSharedPreferences();
+
+        EditText username = activity.findViewById(R.id.login_userNameText);
+        EditText password = activity.findViewById(R.id.login_passwordText);
+
         username.setText("admin");
         password.setText("password");
-        Button login_button = (Button) activity.findViewById(R.id.login_loginButton);
+
+        Button login_button = activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
+
         Mockito.verify(userService, Mockito.atLeastOnce()).localLogin(anyString(), anyString());
-        destroyController();
 
     }
 
-    private void destroyController() {
+    @After
+    public void destroyController() {
         try {
             activity.finish();
             controller.pause().stop().destroy(); //destroy controller if we can

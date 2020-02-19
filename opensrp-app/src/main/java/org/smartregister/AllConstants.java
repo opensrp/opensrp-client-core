@@ -446,6 +446,8 @@ public class AllConstants {
 
     public static class PROPERTY {
         public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
+        public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
+
     }
 
 }

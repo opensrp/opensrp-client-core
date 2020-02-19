@@ -70,6 +70,9 @@ public class JsonFormUtils {
 
     public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
+    public static final String SAVE_OBS_AS_ARRAY = "save_obs_as_array";
+    public static final String SAVE_ALL_CHECKBOX_OBS_AS_ARRAY = "save_all_checkbox_obs_as_array";
+
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
     //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
     //2007-03-31T04:00:00.000Z
@@ -190,15 +193,31 @@ public class JsonFormUtils {
                 continue;
             }
 
+            setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
-
-
         }
-
         createFormMetadataObs(metadata, event);
 
         return event;
 
+    }
+
+    /**
+     *  Global setting for all checkboxes in a form,
+     *  allowing saving of checkbox values as a json array string
+     *
+     * @param metadata
+     * @param jsonObject
+     */
+    private static void setGlobalCheckBoxProperty(JSONObject metadata, JSONObject jsonObject) {
+        try {
+            String type = getString(jsonObject, AllConstants.TYPE);
+            if (AllConstants.CHECK_BOX.equals(type) && metadata.optBoolean(SAVE_ALL_CHECKBOX_OBS_AS_ARRAY)) {
+                jsonObject.put(SAVE_OBS_AS_ARRAY, true);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
     }
 
     private static void addMultiSelectListObservations(@NonNull Event event, @NonNull JSONObject jsonObject) {
@@ -505,15 +524,15 @@ public class JsonFormUtils {
      * @param vall       A list of option values to be added to the observation
      */
     private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
-
         String formSubmissionField = jsonObject.optString(KEY);
         String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {
             dataType = AllConstants.TEXT;
         }
 
-        e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField, "", vall, new ArrayList<>(), null,
-                formSubmissionField));
+        e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
+                "", vall, new ArrayList<>(), null, formSubmissionField,
+                jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)));
     }
 
 

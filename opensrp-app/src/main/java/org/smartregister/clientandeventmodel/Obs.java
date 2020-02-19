@@ -18,13 +18,14 @@ public class Obs {
     private String parentCode;
     @JsonProperty
     private List<Object> values;
-
     @JsonProperty
     private List<Object> humanReadableValues;
     @JsonProperty
     private String comments;
     @JsonProperty
     private String formSubmissionField;
+    @JsonProperty
+    private boolean saveObsAsArray;
 
     public Obs() {
     }
@@ -40,6 +41,11 @@ public class Obs {
         this.humanReadableValues = humanReadableValues;
         this.comments = comments;
         this.formSubmissionField = formSubmissionField;
+    }
+
+    public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode, List<Object> values, List<Object> humanReadableValues, String comments, String formSubmissionField, boolean saveObsAsArray) {
+        this(fieldType, fieldDataType, fieldCode, parentCode, values, humanReadableValues, comments, formSubmissionField);
+        this.saveObsAsArray = saveObsAsArray;
     }
 
     public String getFieldType() {
@@ -72,6 +78,14 @@ public class Obs {
 
     public void setParentCode(String parentCode) {
         this.parentCode = parentCode;
+    }
+
+    public boolean isSaveObsAsArray() {
+        return saveObsAsArray;
+    }
+
+    public void setSaveObsAsArray(boolean saveObsAsArray) {
+        this.saveObsAsArray = saveObsAsArray;
     }
 
     @JsonIgnore
@@ -174,6 +188,11 @@ public class Obs {
 
     public Obs withHumanReadableValues(List<Object> humanReadableValues) {
         this.humanReadableValues = humanReadableValues;
+        return this;
+    }
+
+    public Obs withsaveObsAsArray(boolean saveObsAsArray) {
+        setSaveObsAsArray(saveObsAsArray);
         return this;
     }
 }

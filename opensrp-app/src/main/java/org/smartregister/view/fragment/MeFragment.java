@@ -21,7 +21,6 @@ import org.smartregister.view.contract.MeContract;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public abstract class MeFragment extends Fragment implements MeContract.View {
     protected MeFragmentActionHandler meFragmentActionHandler = new MeFragmentActionHandler();
@@ -77,7 +76,7 @@ public abstract class MeFragment extends Fragment implements MeContract.View {
         logout_section = view.findViewById(R.id.logout_section);
         facilitySelection = view.findViewById(R.id.facility_selection);
 
-        if (me_location_section != null) {
+        if (me_location_section != null && !Utils.getBooleanProperty(AllConstants.PROPERTY.DISABLE_LOCATION_PICKER_VIEW)) {
             facilitySelection.init();
             facilitySelection.setTextColor(getResources().getColor(R.color.text_black));
         }

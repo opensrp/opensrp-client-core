@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
@@ -43,17 +44,15 @@ import static org.smartregister.event.Event.FORM_SUBMITTED;
 
 public class ClientProcessorForJava {
 
+    public static final String JSON_ARRAY = "json_array";
     protected static final String VALUES_KEY = "values";
     protected static final String detailsUpdated = "detailsUpdated";
-
-    private String[] openmrsGenIds = {};
-    private Map<String, Object> jsonMap = new HashMap<>();
-
     protected static ClientProcessorForJava instance;
-    private Context mContext;
-
     protected HashMap<String, MiniClientProcessorForJava> processorMap = new HashMap<>();
     protected HashMap<MiniClientProcessorForJava, List<Event>> unsyncEventsPerProcessor = new HashMap<>();
+    private String[] openmrsGenIds = {};
+    private Map<String, Object> jsonMap = new HashMap<>();
+    private Context mContext;
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -428,10 +427,7 @@ public class ClientProcessorForJava {
                             if (columnValue == null) {
                                 Object values = getValue(segment, responseKey);
                                 if (values instanceof List) {
-                                    List<String> li = getValues((List) values);
-                                    if (!li.isEmpty()) {
-                                        columnValue = li.get(0);
-                                    }
+                                    columnValue = getValuesStr(segment, getValues((List) values), column.saveFormat);
                                 }
                             }
                         }
@@ -476,6 +472,38 @@ public class ClientProcessorForJava {
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    /**
+     * Formats values from {@param values} into a string based on {@param segment} properties
+     *
+     * @param segment
+     * @param values
+     * @return @return A formatted values String
+     */
+    private String getValuesStr(Object segment, List<String> values, String saveFormat) {
+        String columnValue = null;
+        if (values.isEmpty()) {
+            return columnValue;
+        }
+
+        // save obs as json array string e.g ["val1","val2"] if specified by the developer
+        if ((saveFormat != null && JSON_ARRAY.equals(saveFormat))
+                || ((segment instanceof Obs) && ((Obs) segment).isSaveObsAsArray())) {
+            columnValue = getValuesAsArray(values);
+        } else {
+            columnValue = values.get(0);
+        }
+
+        return columnValue;
+    }
+
+    private String getValuesAsArray(List<String> values) {
+        JSONArray jsonArray = new JSONArray();
+        for (String value : values) {
+            jsonArray.put(value);
+        }
+        return jsonArray.toString();
     }
 
     /**
@@ -615,7 +643,7 @@ public class ClientProcessorForJava {
                     attributes.put(key, value.toString());
                 }
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             Timber.e(e);
         }
 
@@ -630,7 +658,7 @@ public class ClientProcessorForJava {
             if (StringUtils.isNotBlank(gender)) {
                 map.put(GENDER, gender);
             }
-        } catch (Exception e) {
+        } catch (NullPointerException e) {
             Timber.e(e);
         }
 
@@ -932,5 +960,4 @@ public class ClientProcessorForJava {
             miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
         }
     }
-
 }
