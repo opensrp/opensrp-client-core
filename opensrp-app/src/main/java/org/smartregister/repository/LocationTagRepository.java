@@ -31,14 +31,12 @@ public class LocationTagRepository extends BaseRepository {
                     NAME + " VARCHAR NOT NULL, " +
                     LOCATION_ID + " VARCHAR NOT NULL, " +
                     "PRIMARY KEY ("+NAME+", "+LOCATION_ID+")) ";
-    private static final String CREATE_LOCATION_TAG_NAME_INDEX = "CREATE INDEX "
-            + LOCATION_TAG_TABLE + "_" + NAME + "_ind ON " + LOCATION_TAG_TABLE + "(" + NAME + ")";
+
     protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TAG_TABLE);
-        database.execSQL(CREATE_LOCATION_TAG_NAME_INDEX);
     }
 
     protected String getLocationTagTableName() {
