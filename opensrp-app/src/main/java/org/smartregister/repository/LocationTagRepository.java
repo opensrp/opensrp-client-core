@@ -45,6 +45,10 @@ public class LocationTagRepository extends BaseRepository {
         return LOCATION_TAG_TABLE;
     }
 
+    /**
+     * this method is used to save/update locationTags
+     * @param locationTag to be saved or updated if it already exists.
+     */
     public void addOrUpdate(LocationTag locationTag) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, locationTag.getName());
@@ -114,14 +118,20 @@ public class LocationTagRepository extends BaseRepository {
      *                  or exclude them
      * @return
      */
-    public List<LocationTag> getLocationTagsByLocationIds(List<String> ids, Boolean inclusive) {
+    public List<LocationTag> getLocationTagsByLocationIds(List<String> ids, boolean inclusive) {
         Cursor cursor = null;
         List<LocationTag> locationTags = new ArrayList<>();
         int idCount = ids != null ? ids.size() : 0;
-        String[] idsArray = ids != null ? ids.toArray(new String[0]) : null;
 
-        String operator = inclusive != null && inclusive ? "IN" : "NOT IN";
+        String[] idsArray = null;
 
+        if(ids==null){
+            return new ArrayList<>();
+        }else{
+            ids.toArray(new String[ids.size()]);
+        }
+
+        String operator = inclusive ? "IN" : "NOT IN";
         String selectSql = String.format("SELECT * FROM " + getLocationTagTableName() +
                 " WHERE " + LOCATION_ID + " " + operator + " (%s)", insertPlaceholdersForInClause(idCount));
 
