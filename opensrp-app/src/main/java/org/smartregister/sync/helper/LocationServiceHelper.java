@@ -53,15 +53,16 @@ public class LocationServiceHelper {
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
 
-    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
+    public LocationServiceHelper(LocationRepository locationRepository,LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
+        this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
     }
 
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
-            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(),CoreLibrary.getInstance().context().getLocationTagRepository(), CoreLibrary.getInstance().context().getStructureRepository());
         }
         return instance;
     }

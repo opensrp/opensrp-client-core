@@ -31,6 +31,7 @@ import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
 import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
@@ -212,6 +213,7 @@ public class Context {
     private StructureRepository structureRepository;
     private PlanDefinitionRepository planDefinitionRepository;
     private AppProperties appProperties;
+    private LocationTagRepository locationTagRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1126,6 +1128,13 @@ public class Context {
             locationRepository = new LocationRepository();
         }
         return locationRepository;
+    }
+
+    public LocationTagRepository getLocationTagRepository() {
+        if (locationTagRepository == null) {
+            locationTagRepository = new LocationTagRepository();
+        }
+        return locationTagRepository;
     }
 
     public StructureRepository getStructureRepository() {
