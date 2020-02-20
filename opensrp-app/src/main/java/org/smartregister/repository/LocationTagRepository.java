@@ -109,7 +109,7 @@ public class LocationTagRepository extends BaseRepository {
         Cursor cursor = null;
         List<LocationTag> locationTags = new ArrayList<>();
         int idCount = ids != null ? ids.size() : 0;
-        String[] idsArray = ids != null ? ids.toArray(new String[0]) : null;
+        String[] idsArray = ids != null ? ids.toArray(new String[ids.size()]) : null;
 
         String operator = inclusive != null && inclusive ? "IN" : "NOT IN";
 
