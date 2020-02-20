@@ -40,7 +40,7 @@ public class LocationServiceHelper {
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
-    public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/getLocationsByTags";
+    public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
