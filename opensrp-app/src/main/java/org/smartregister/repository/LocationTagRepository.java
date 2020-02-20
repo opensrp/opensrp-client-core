@@ -53,6 +53,10 @@ public class LocationTagRepository extends BaseRepository {
 
     }
 
+    /**
+     *  this method returns a list of all location tags stored
+     * @return a list of all location tags stored
+     */
     public List<LocationTag> getAllLocationTags() {
         Cursor cursor = null;
         List<LocationTag> locationsTags = new ArrayList<>();
@@ -71,6 +75,11 @@ public class LocationTagRepository extends BaseRepository {
         return locationsTags;
     }
 
+    /**
+     * Get a list of location tags for the passed locationId
+     * @param id of a location to obtain it's tags
+     * @return a list of tags for the passed location
+     */
     public List<LocationTag> getLocationTagByLocationId(String id) {
         List<LocationTag> locationsTags = new ArrayList<>();
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTagTableName() +
