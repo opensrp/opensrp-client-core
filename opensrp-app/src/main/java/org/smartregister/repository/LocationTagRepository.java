@@ -125,7 +125,7 @@ public class LocationTagRepository extends BaseRepository {
 
         String[] idsArray = null;
 
-        if(ids==null){
+        if(ids==null || ids.isEmpty()){
             return new ArrayList<>();
         }else{
             ids.toArray(new String[ids.size()]);
