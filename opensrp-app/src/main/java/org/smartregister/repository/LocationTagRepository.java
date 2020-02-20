@@ -121,15 +121,15 @@ public class LocationTagRepository extends BaseRepository {
     public List<LocationTag> getLocationTagsByLocationIds(List<String> ids, boolean inclusive) {
         Cursor cursor = null;
         List<LocationTag> locationTags = new ArrayList<>();
-        int idCount = ids != null ? ids.size() : 0;
 
         String[] idsArray = null;
-
         if(ids==null || ids.isEmpty()){
             return new ArrayList<>();
         }else{
-            ids.toArray(new String[ids.size()]);
+            ids.toArray(new String[0]);
         }
+
+        int idCount = ids.size();
 
         String operator = inclusive ? "IN" : "NOT IN";
         String selectSql = String.format("SELECT * FROM " + getLocationTagTableName() +
