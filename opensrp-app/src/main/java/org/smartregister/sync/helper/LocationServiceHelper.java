@@ -163,7 +163,7 @@ public class LocationServiceHelper {
         return locations;
     }
 
-    public void fetchDistrictLocations() throws Exception {
+    public void fetchLocationsByLevelAndTags() throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(COMMON_LOCATIONS_SERVICE_URL + " http agent is null");
