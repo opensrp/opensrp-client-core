@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
 import org.smartregister.util.PropertiesConverter;
@@ -48,6 +49,8 @@ public class LocationTagRepository extends BaseRepository {
      * @param locationTag to be saved or updated if it already exists.
      */
     public void addOrUpdate(LocationTag locationTag) {
+        if (StringUtils.isBlank(locationTag.getLocationId()))
+            throw new IllegalArgumentException("location id not provided");
         ContentValues contentValues = new ContentValues();
         contentValues.put(NAME, locationTag.getName());
         contentValues.put(LOCATION_ID, locationTag.getLocationId());
@@ -93,58 +96,6 @@ public class LocationTagRepository extends BaseRepository {
             Timber.e(e);
         }
         return locationsTags;
-
-    }
-
-    /**
-     * Get a List of location tags that match the list of ids provided
-     *
-     * @param ids list of location ids
-     * @return the list of locations that match the params provided
-     */
-    public List<LocationTag> getLocationTagsByLocationIds(List<String> ids) {
-        return getLocationTagsByLocationIds(ids, true);
-    }
-
-    /**
-     * Get a List of location tags that either match or don't match the list of ids provided
-     * depending on value of the inclusive flag
-     *
-     * @param ids       list of location tag ids
-     * @param inclusive flag that determines whether the list of locations returned
-     *                  should include the locations whose ids match the params provided
-     *                  or exclude them
-     * @return
-     */
-    public List<LocationTag> getLocationTagsByLocationIds(List<String> ids, boolean inclusive) {
-        Cursor cursor = null;
-        List<LocationTag> locationTags = new ArrayList<>();
-
-        String[] idsArray = null;
-        if(ids==null || ids.isEmpty()){
-            return new ArrayList<>();
-        }else{
-            ids.toArray(new String[0]);
-        }
-
-        int idCount = ids.size();
-
-        String operator = inclusive ? "IN" : "NOT IN";
-        String selectSql = String.format("SELECT * FROM " + getLocationTagTableName() +
-                " WHERE " + LOCATION_ID + " " + operator + " (%s)", insertPlaceholdersForInClause(idCount));
-
-        try {
-            cursor = getReadableDatabase().rawQuery(selectSql, idsArray);
-            while (cursor.moveToNext()) {
-                locationTags.add(readCursor(cursor));
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return locationTags;
 
     }
 
