@@ -53,7 +53,7 @@ public class LocationServiceHelper {
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
 
-    public LocationServiceHelper(LocationRepository locationRepository,LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
+    public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
         this.locationTagRepository = locationTagRepository;
@@ -62,7 +62,7 @@ public class LocationServiceHelper {
 
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
-            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(),CoreLibrary.getInstance().context().getLocationTagRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getLocationTagRepository(), CoreLibrary.getInstance().context().getStructureRepository());
         }
         return instance;
     }
@@ -180,7 +180,7 @@ public class LocationServiceHelper {
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
         requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
-        requestPayload.put("locationTagsQueried", new Gson().toJson(configs.getSynchronizedLocationTags()));
+        requestPayload.put("locationTagsQueried", new JSONArray(new Gson().toJson(configs.getSynchronizedLocationTags())));
 
         Response resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
