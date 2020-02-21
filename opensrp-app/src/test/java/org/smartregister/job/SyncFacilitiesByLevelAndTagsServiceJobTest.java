@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 
-public class DistrictFacilitiesServiceJobTest extends BaseUnitTest {
+public class SyncFacilitiesByLevelAndTagsServiceJobTest extends BaseUnitTest {
 
     @Mock
     private Context context;
@@ -32,19 +32,19 @@ public class DistrictFacilitiesServiceJobTest extends BaseUnitTest {
     @Test
     public void testOnRunJobStartsCorrectService() {
 
-        DistrictFacilitiesServiceJob districtFacilitiesServiceJob = new DistrictFacilitiesServiceJob();
-        DistrictFacilitiesServiceJob districtFacilitiesServiceJobSpy = Mockito.spy(districtFacilitiesServiceJob);
+        SyncLocationsByLevelAndTagsServiceJob syncLocationsByLevelAndTagsServiceJob = new SyncLocationsByLevelAndTagsServiceJob();
+        SyncLocationsByLevelAndTagsServiceJob syncLocationsByLevelAndTagsServiceJobSpy = Mockito.spy(syncLocationsByLevelAndTagsServiceJob);
 
         ArgumentCaptor<Intent> intent = ArgumentCaptor.forClass(Intent.class);
 
-        Mockito.doReturn(context).when(districtFacilitiesServiceJobSpy).getApplicationContext();
+        Mockito.doReturn(context).when(syncLocationsByLevelAndTagsServiceJobSpy).getApplicationContext();
         Mockito.doReturn(componentName).when(context).startService(ArgumentMatchers.any(Intent.class));
 
-        districtFacilitiesServiceJobSpy.onRunJob(null);
+        syncLocationsByLevelAndTagsServiceJobSpy.onRunJob(null);
 
         Mockito.verify(context).startService(intent.capture());
 
-        Assert.assertEquals("org.smartregister.sync.intent.DistrictFacilitiesIntentService", intent.getValue().getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.sync.intent.SyncLocationsByLevelAndTagsIntentService", intent.getValue().getComponent().getClassName());
 
     }
 }

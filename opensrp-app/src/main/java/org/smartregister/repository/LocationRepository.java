@@ -34,7 +34,7 @@ public class LocationRepository extends BaseRepository {
 
     protected static final String LOCATION_TABLE = "location";
 
-    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME, GEOJSON};
+    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME,GEOJSON};
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
