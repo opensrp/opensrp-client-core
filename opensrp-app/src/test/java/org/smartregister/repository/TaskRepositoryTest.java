@@ -407,4 +407,35 @@ public class TaskRepositoryTest extends BaseUnitTest {
         verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
         assertEquals(expectedSql, stringArgumentCaptor.getValue());
     }
+
+    @Test
+    public void testUpdateTaskStructureIdsfromExistingClients() {
+
+        String expectedSql = "UPDATE task SET structure_id =(SELECT structure_id FROM ec_family_member WHERE base_entity_id = for) WHERE structure_id IS NULL";
+        String clientTable = "ec_family_member";
+        boolean updated = taskRepository.updateTaskStructureIdsFromExistingClients(clientTable);
+
+        assertTrue(updated);
+        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        assertEquals(expectedSql, stringArgumentCaptor.getValue());
+
+    }
+
+    @Test
+    public void testUpdateTaskStructureIdsfromExistingClientsFailure() {
+
+        String expectedSql = "UPDATE task SET structure_id =(SELECT structure_id FROM ec_family_member WHERE base_entity_id = for) WHERE structure_id IS NULL";
+        String clientTable = "ec_family_member";
+
+        doThrow(new SQLiteException()).when(sqLiteDatabase).execSQL(anyString());
+
+        boolean updated = taskRepository.updateTaskStructureIdsFromExistingClients(clientTable);
+
+        assertFalse(updated);
+        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        assertEquals(expectedSql, stringArgumentCaptor.getValue());
+
+    }
+
+
 }
