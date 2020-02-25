@@ -1,13 +1,8 @@
 package org.smartregister.view.fragment.mock;
 
-import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 
-import org.smartregister.R;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.SmartRegisterClient;
@@ -16,35 +11,16 @@ import org.smartregister.view.dialog.DialogOption;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
+import org.smartregister.view.fragment.SecuredNativeSmartRegisterFragment;
 import org.smartregister.view.viewholder.OnClickFormLauncher;
 
 /**
- * Created by kaderchowdhury on 14/11/17.
+ * Created by ndegwamartin on 2020-02-25.
  */
-
-public class SecuredNativeSmartRegisterFragmentActivityMock extends SecuredNativeSmartRegisterActivity {
-
-
-    private LinearLayout linearLayout;
-
+public class SecuredNativeSmartRegisterFragmentMock extends SecuredNativeSmartRegisterFragment {
     @Override
-    public void onCreate(Bundle bundle) {
-        setTheme(R.style.AppTheme); //we need this here
-        super.onCreate(bundle);
-        startFragment();
-    }
-
-    public void startFragment() {
-        SecuredNativeSmartRegisterFragmentMock fragment = new SecuredNativeSmartRegisterFragmentMock();
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(fragment, "");
-        fragmentTransaction.commit();
-    }
-
-    @Override
-    protected DefaultOptionsProvider getDefaultOptionsProvider() {
-        return new DefaultOptionsProvider() {
+    protected SecuredNativeSmartRegisterActivity.DefaultOptionsProvider getDefaultOptionsProvider() {
+        return new SecuredNativeSmartRegisterActivity.DefaultOptionsProvider() {
             @Override
             public ServiceModeOption serviceMode() {
 
@@ -77,8 +53,8 @@ public class SecuredNativeSmartRegisterFragmentActivityMock extends SecuredNativ
 
                 return new ServiceModeOption(provider) {
                     @Override
-                    public ClientsHeaderProvider getHeaderProvider() {
-                        return new ClientsHeaderProvider() {
+                    public SecuredNativeSmartRegisterActivity.ClientsHeaderProvider getHeaderProvider() {
+                        return new SecuredNativeSmartRegisterActivity.ClientsHeaderProvider() {
                             @Override
                             public int count() {
                                 return 0;
@@ -146,9 +122,9 @@ public class SecuredNativeSmartRegisterFragmentActivityMock extends SecuredNativ
     }
 
     @Override
-    protected NavBarOptionsProvider getNavBarOptionsProvider() {
+    protected SecuredNativeSmartRegisterActivity.NavBarOptionsProvider getNavBarOptionsProvider() {
 
-        return new NavBarOptionsProvider() {
+        return new SecuredNativeSmartRegisterActivity.NavBarOptionsProvider() {
             @Override
             public DialogOption[] filterOptions() {
                 return new DialogOption[0];
@@ -174,7 +150,32 @@ public class SecuredNativeSmartRegisterFragmentActivityMock extends SecuredNativ
 
     @Override
     protected SmartRegisterClientsProvider clientsProvider() {
-        return null;
+        return new SmartRegisterClientsProvider() {
+            @Override
+            public View getView(SmartRegisterClient client, View parentView, ViewGroup viewGroup) {
+                return null;
+            }
+
+            @Override
+            public SmartRegisterClients getClients() {
+                return null;
+            }
+
+            @Override
+            public SmartRegisterClients updateClients(FilterOption villageFilter, ServiceModeOption serviceModeOption, FilterOption searchFilter, SortOption sortOption) {
+                return null;
+            }
+
+            @Override
+            public void onServiceModeSelected(ServiceModeOption serviceModeOption) {
+
+            }
+
+            @Override
+            public OnClickFormLauncher newFormLauncher(String formName, String entityId, String metaData) {
+                return null;
+            }
+        };
     }
 
     @Override
@@ -183,7 +184,12 @@ public class SecuredNativeSmartRegisterFragmentActivityMock extends SecuredNativ
     }
 
     @Override
-    public void startRegistration() {
+    protected void startRegistration() {
+
+    }
+
+    @Override
+    protected void onCreation() {
 
     }
 }

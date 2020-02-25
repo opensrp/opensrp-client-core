@@ -185,8 +185,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void setupStatusBarViews() {
-        appliedSortView = (TextView) findViewById(R.id.sorted_by);
-        appliedVillageFilterView = (TextView) findViewById(R.id.village);
+        appliedSortView = findViewById(R.id.sorted_by);
+        appliedVillageFilterView = findViewById(R.id.village);
     }
 
     private void setupNavBarViews() {
@@ -200,7 +200,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         View sortView = findViewById(R.id.sort_selection);
         sortView.setOnClickListener(navBarActionsHandler);
 
-        serviceModeView = (TextView) findViewById(R.id.service_mode_selection);
+        serviceModeView = findViewById(R.id.service_mode_selection);
         serviceModeView.setOnClickListener(navBarActionsHandler);
 
         findViewById(R.id.register_client).setOnClickListener(navBarActionsHandler);
@@ -213,17 +213,17 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void setupTitleView() {
-        ViewGroup titleLayout = (ViewGroup) findViewById(R.id.title_layout);
+        ViewGroup titleLayout = findViewById(R.id.title_layout);
         titleLayout.setOnClickListener(navBarActionsHandler);
 
-        titleLabelView = (TextView) findViewById(R.id.txt_title_label);
+        titleLabelView = findViewById(R.id.txt_title_label);
 
-        TextView reportMonthStartView = (TextView) findViewById(R.id.btn_report_month);
+        TextView reportMonthStartView = findViewById(R.id.btn_report_month);
         setReportDates(reportMonthStartView);
     }
 
     private void setupSearchView() {
-        searchView = (EditText) findViewById(R.id.edt_search);
+        searchView = findViewById(R.id.edt_search);
         searchView.setHint(navBarOptionsProvider.searchHint());
         searchView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -268,7 +268,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void populateClientListHeaderView(ClientsHeaderProvider headerProvider) {
-        LinearLayout clientsHeaderLayout = (LinearLayout) findViewById(R.id.clients_header_layout);
+        LinearLayout clientsHeaderLayout =  findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
         int[] weights = headerProvider.weights();
@@ -565,9 +565,9 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
 
         private void addPagination(ListView clientsView) {
             ViewGroup footerView = getPaginationView();
-            nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
-            previousPageView = (Button) footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = (TextView) footerView.findViewById(R.id.txt_page_info);
+            nextPageView = footerView.findViewById(R.id.btn_next_page);
+            previousPageView = footerView.findViewById(R.id.btn_previous_page);
+            pageInfoView = footerView.findViewById(R.id.txt_page_info);
 
             nextPageView.setOnClickListener(this);
             previousPageView.setOnClickListener(this);
