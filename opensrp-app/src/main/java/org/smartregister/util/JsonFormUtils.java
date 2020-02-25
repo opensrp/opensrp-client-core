@@ -976,12 +976,13 @@ public class JsonFormUtils {
     }
 
     public static JSONObject toJSONObject(String jsonString) {
+        JSONObject jsonObject = null;
         try {
-            return jsonString == null ? null : new JSONObject(jsonString);
+            jsonObject = jsonString == null ? null : new JSONObject(jsonString);
         } catch (JSONException e) {
             Timber.e(e);
-            return null;
         }
+        return jsonObject;
     }
 
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Person person) {
