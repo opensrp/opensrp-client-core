@@ -13,6 +13,8 @@ import net.sqlcipher.database.SQLiteStatement;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,6 +48,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -87,6 +90,9 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<String[]> stringArrayArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Task> taskArgumentCaptor;
 
     private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0,\"structureId\":\"structure._id.33efadf1-feda-4861-a979-ff4f7cec9ea7\",\"reasonReference\":\"fad051d9-0ff6-424a-8a44-4b90883e2841\"}";
     private String structureJson = "{\"id\": \"170230\", \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [32.59610261651737, -14.171511296715634]}, \"properties\": {\"status\": \"Active\", \"version\": 0, \"parentId\": \"3429\", \"geographicLevel\": 4}, \"serverVersion\": 1542970626353}";
@@ -437,5 +443,58 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testBatchInsertTasks() throws Exception {
+
+        Task expectedTask = gson.fromJson(taskJson, Task.class);
+        JSONArray taskArray = new JSONArray().put(new JSONObject(taskJson));
+
+        taskRepository = spy(taskRepository);
+        boolean inserted = taskRepository.batchInsertTasks(taskArray);
+
+        verify(sqLiteDatabase).beginTransaction();
+        verify(sqLiteDatabase).setTransactionSuccessful();
+        verify(sqLiteDatabase).endTransaction();
+        assertTrue(inserted);
+
+        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
+        assertEquals(expectedTask.getIdentifier(), taskArgumentCaptor.getValue().getIdentifier());
+        assertEquals(expectedTask.getStatus(), taskArgumentCaptor.getValue().getStatus());
+        assertEquals(expectedTask.getBusinessStatus(), taskArgumentCaptor.getValue().getBusinessStatus());
+        assertEquals(expectedTask.getCode(), taskArgumentCaptor.getValue().getCode());
+        assertEquals(expectedTask.getForEntity(), taskArgumentCaptor.getValue().getForEntity());
+
+    }
+
+    @Test
+    public void testBatchInsertTasksWithNullParam() {
+
+        taskRepository = spy(taskRepository);
+        boolean inserted = taskRepository.batchInsertTasks(null);
+
+        assertFalse(inserted);
+        verify(sqLiteDatabase, never()).beginTransaction();
+        verify(sqLiteDatabase, never()).setTransactionSuccessful();
+        verify(sqLiteDatabase, never()).endTransaction();
+        verify(taskRepository, never()).addOrUpdate(taskArgumentCaptor.capture());
+
+    }
+
+    @Test
+    public void testBatchInsertTasksWithExceptionThrown() throws Exception {
+
+        taskRepository = spy(taskRepository);
+        JSONArray taskArray = new JSONArray().put(new JSONObject(taskJson));
+        doThrow(new SQLiteException()).when(taskRepository).addOrUpdate(any());
+
+        boolean inserted = taskRepository.batchInsertTasks(taskArray);
+
+        assertFalse(inserted);
+        verify(sqLiteDatabase).beginTransaction();
+        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
+        verify(sqLiteDatabase, never()).setTransactionSuccessful();
+        verify(sqLiteDatabase).endTransaction();
+
+    }
 
 }
