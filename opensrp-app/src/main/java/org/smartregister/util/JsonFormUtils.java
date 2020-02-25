@@ -875,21 +875,12 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      */
     public static JSONArray getSingleStepFormfields(JSONObject jsonForm) {
-        try {
-
-            JSONObject step1 = jsonForm.has(STEP1) ? jsonForm.getJSONObject(STEP1) : null;
-            if (step1 == null) {
-                return null;
-            }
-
-            return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
-
-        } catch (JSONException e) {
-            Timber.e(e);
+        JSONObject step1 = jsonForm.optJSONObject(STEP1);
+        if (step1 == null) {
+            return null;
         }
-        return null;
+        return step1.optJSONArray(FIELDS);
     }
-
 
     /**
      * Refactored for backward compatibility invokes getMultiStepFormFields which provides the same result

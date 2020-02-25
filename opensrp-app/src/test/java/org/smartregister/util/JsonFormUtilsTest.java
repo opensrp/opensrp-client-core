@@ -24,7 +24,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
@@ -142,33 +144,36 @@ public class JsonFormUtilsTest {
                     "\"openmrs_data_type\":\"deviceid\"}}}";
     private JSONObject formjson;
     private String bindtype = "ec_child";
-    private String miltiStepForm =
+
+    private final String step1Fields =  "[\n" + "      {\n" +
+            "        \"key\": \"educ_level\",\n" + "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"type\": \"native_radio\",\n" + "        \"label\": \"Highest level of school\",\n" +
+            "        \"label_text_style\": \"bold\",\n" + "        \"options\": [\n" + "          {\n" +
+            "            \"key\": \"none\",\n" + "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "            \"text\": \"None\"\n" + "          },\n" + "          {\n" +
+            "            \"key\": \"dont_know\",\n" + "            \"text\": \"Don't know\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
+            "          {\n" + "            \"key\": \"primary\",\n" + "            \"text\": \"Primary\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
+            "          {\n" + "            \"key\": \"secondary\",\n" + "            \"text\": \"Secondary\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
+            "          {\n" + "            \"key\": \"higher\",\n" + "            \"text\": \"Higher\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
+            "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
+            "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true,\n" +
+            "          \"err\": \"Please specify your education level\"\n" + "        }\n" + "      }\n" +
+            "    ]\n";
+
+    private String multiStepForm =
             "{\n" + "  \"count\": \"2\",\n" + "  \"step1\": {\n" + "    \"title\": \"Demographic Info\",\n" +
-                    "    \"next\": \"step2\",\n" + "    \"fields\": [\n" + "      {\n" +
-                    "        \"key\": \"educ_level\",\n" + "        \"openmrs_entity_parent\": \"\",\n" +
-                    "        \"openmrs_entity\": \"concept\",\n" +
-                    "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                    "        \"type\": \"native_radio\",\n" + "        \"label\": \"Highest level of school\",\n" +
-                    "        \"label_text_style\": \"bold\",\n" + "        \"options\": [\n" + "          {\n" +
-                    "            \"key\": \"none\",\n" + "            \"openmrs_entity_parent\": \"\",\n" +
-                    "            \"openmrs_entity\": \"concept\",\n" +
-                    "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-                    "            \"text\": \"None\"\n" + "          },\n" + "          {\n" +
-                    "            \"key\": \"dont_know\",\n" + "            \"text\": \"Don't know\",\n" +
-                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-                    "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
-                    "          {\n" + "            \"key\": \"primary\",\n" + "            \"text\": \"Primary\",\n" +
-                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-                    "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
-                    "          {\n" + "            \"key\": \"secondary\",\n" + "            \"text\": \"Secondary\",\n" +
-                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-                    "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
-                    "          {\n" + "            \"key\": \"higher\",\n" + "            \"text\": \"Higher\",\n" +
-                    "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-                    "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
-                    "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true,\n" +
-                    "          \"err\": \"Please specify your education level\"\n" + "        }\n" + "      }\n" +
-                    "    ]\n" + "  },\n" + "  \"step2\": {\n" + "    \"title\": \"Current Pregnancy\",\n" +
+                    "    \"next\": \"step2\",\n" + "    \"fields\":" + step1Fields + "},\n" + "  \"step2\": {\n" + "    \"title\": \"Current Pregnancy\",\n" +
                     "    \"fields\": [\n" + "      {\n" + "        \"key\": \"lmp_known\",\n" +
                     "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
                     "        \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
@@ -375,37 +380,37 @@ public class JsonFormUtilsTest {
 
     @Test
     public void assertFillAttributesReturnNotNull() throws Exception {
-        Assert.assertNotNull(JsonFormUtils.extractAttributes(JsonFormUtils.fields(formjson)));
+        assertNotNull(JsonFormUtils.extractAttributes(JsonFormUtils.fields(formjson)));
     }
 
     @Test
     public void assertFillAttributesWithBindTypeNotReturnNullReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractAttributes(JsonFormUtils.fields(formjson), bindtype));
+        assertNotNull(JsonFormUtils.extractAttributes(JsonFormUtils.fields(formjson), bindtype));
     }
 
     @Test
     public void assertExtracIdentifiersReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson)));
+        assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson)));
     }
 
     @Test
     public void assertExtracIdentifiersWithBindTypeReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson), bindtype));
+        assertNotNull(JsonFormUtils.extractIdentifiers(JsonFormUtils.fields(formjson), bindtype));
     }
 
     @Test
     public void assertExtracAddressesReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson)));
+        assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson)));
     }
 
     @Test
     public void assertExtracAddressesWithBindTypeReturnNotNull() throws Exception {
         JSONObject formjson = new JSONObject(formresultJson);
-        Assert.assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson), bindtype));
+        assertNotNull(JsonFormUtils.extractAddresses(JsonFormUtils.fields(formjson), bindtype));
     }
 
     @Test
@@ -814,43 +819,43 @@ public class JsonFormUtilsTest {
 
     @Test
     public void testGetMultiStepFormFields() throws JSONException {
-        Assert.assertNotNull(miltiStepForm);
+        assertNotNull(multiStepForm);
 
-        JSONObject jsonForm = new JSONObject(miltiStepForm);
-        Assert.assertNotNull(jsonForm);
+        JSONObject jsonForm = new JSONObject(multiStepForm);
+        assertNotNull(jsonForm);
 
         JSONArray formFields = JsonFormUtils.getMultiStepFormFields(jsonForm);
-        Assert.assertNotNull(formFields);
+        assertNotNull(formFields);
     }
 
     @Test
     public void testGetMultiStepFormFieldsWithoutFormCount() throws JSONException {
         JSONObject jsonForm = new JSONObject(jsonFormNoStepCount);
-        Assert.assertNotNull(jsonForm);
+        assertNotNull(jsonForm);
 
         JSONArray formFields = JsonFormUtils.getMultiStepFormFields(jsonForm);
-        Assert.assertNotNull(formFields);
+        assertNotNull(formFields);
         Assert.assertEquals(1, formFields.length());
     }
 
     @Test
     public void testEventCreationForForm() throws JSONException {
         JSONArray fields = new JSONArray(eventFormFields);
-        Assert.assertNotNull(fields);
+        assertNotNull(fields);
 
         JSONObject metadata = new JSONObject(formMetaData);
-        Assert.assertNotNull(metadata);
+        assertNotNull(metadata);
 
         FormTag formTag = new FormTag();
         formTag.providerId = "52c9534da60e66bfc6d1641b3359894c";
         formTag.appVersion = 1;
         formTag.databaseVersion = 20;
 
-        Assert.assertNotNull(formTag);
+        assertNotNull(formTag);
 
         org.smartregister.clientandeventmodel.Event event =
                 JsonFormUtils.createEvent(fields, metadata, formTag, "97dc48f681ddcf188b2758fba89635fe", "Quick Check", "");
-        Assert.assertNotNull(event.getEventType());
+        assertNotNull(event.getEventType());
         Assert.assertEquals(event.getObs().size(), 20);
         Assert.assertEquals(event.getProviderId(), "52c9534da60e66bfc6d1641b3359894c");
     }
@@ -858,14 +863,14 @@ public class JsonFormUtilsTest {
     @Test
     public void testClientCreation() throws JSONException {
         JSONArray fields = new JSONArray(clientFormFields);
-        Assert.assertNotNull(fields);
+        assertNotNull(fields);
 
         FormTag formTag = new FormTag();
         formTag.providerId = "52c9534da60e66bfc6d1641b3359894c";
         formTag.appVersion = 1;
         formTag.databaseVersion = 20;
 
-        Assert.assertNotNull(formTag);
+        assertNotNull(formTag);
         Client client = JsonFormUtils.createBaseClient(fields, formTag, "97dc48f681ddcf188b2758fba89635fe");
         Assert.assertEquals(client.getGender(), "F");
         Assert.assertEquals(client.getFirstName(), "John");
@@ -881,10 +886,10 @@ public class JsonFormUtilsTest {
     @Test
     public void testGetFieldJsonObject() throws JSONException {
         JSONArray fields = new JSONArray(clientFormFields);
-        Assert.assertNotNull(fields);
+        assertNotNull(fields);
 
         JSONObject field = JsonFormUtils.getFieldJSONObject(fields, "first_name");
-        Assert.assertNotNull(field);
+        assertNotNull(field);
         assertTrue(field.has("value"));
         Assert.assertEquals(field.get("value"), "John");
     }
@@ -976,5 +981,13 @@ public class JsonFormUtilsTest {
         jsonObject.put(AllConstants.TYPE, AllConstants.TEXT);
         Whitebox.invokeMethod(JsonFormUtils.class, "setGlobalCheckBoxProperty", metadata, jsonObject);
         assertFalse(jsonObject.optBoolean(SAVE_OBS_AS_ARRAY));
+    }
+
+    @Test
+    public void testGetSingleStepFormFields() throws JSONException {
+        JSONArray actualFieldsJsonArr = JsonFormUtils.getSingleStepFormfields(new JSONObject(multiStepForm));
+        assertNotNull(actualFieldsJsonArr);
+        String expectedFieldsJsonArr = new JSONArray(step1Fields).toString();
+        assertEquals(actualFieldsJsonArr.toString(), expectedFieldsJsonArr);
     }
 }
