@@ -24,6 +24,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.domain.db.Client;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -80,6 +81,9 @@ public class TaskRepositoryTest extends BaseUnitTest {
 
     @Mock
     private SQLiteStatement sqLiteStatement;
+
+    @Captor
+    private ArgumentCaptor<String[]> stringArrayArgumentCaptor;
 
     private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0,\"structureId\":\"structure._id.33efadf1-feda-4861-a979-ff4f7cec9ea7\",\"reasonReference\":\"fad051d9-0ff6-424a-8a44-4b90883e2841\"}";
     private String structureJson = "{\"id\": \"170230\", \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [32.59610261651737, -14.171511296715634]}, \"properties\": {\"status\": \"Active\", \"version\": 0, \"parentId\": \"3429\", \"geographicLevel\": 4}, \"serverVersion\": 1542970626353}";
@@ -294,7 +298,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Test
     public void testArchiveTasksForEntity() {
         taskRepository.archiveTasksForEntity("id1");
-        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status !=?"), eq(new String[]{"id1", READY.name()}));
+        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status NOT IN (?,?)"), eq(new String[]{"id1", READY.name(), CANCELLED.name()}));
         assertEquals(BaseRepository.TYPE_Unsynced, contentValuesArgumentCaptor.getValue().getAsString("sync_status"));
         assertEquals(ARCHIVED.name(), contentValuesArgumentCaptor.getValue().getAsString("status"));
         assertEquals(2, contentValuesArgumentCaptor.getValue().size());
@@ -304,5 +308,75 @@ public class TaskRepositoryTest extends BaseUnitTest {
     public void testArchiveTasksForEntityWithNullParams() {
         taskRepository.archiveTasksForEntity(null);
         verifyZeroInteractions(sqLiteDatabase);
+    }
+
+    @Test
+    public void testReadUpdateCursor() {
+        MatrixCursor cursor = getCursor();
+        cursor.moveToNext();
+        String expectedIdentifier = cursor.getString(cursor.getColumnIndex("_id"));
+        String expectedStatus = cursor.getString(cursor.getColumnIndex("status"));
+        String expectedBusinessStatus = cursor.getString(cursor.getColumnIndex("business_status"));
+        String expectedServerVersion = cursor.getString(cursor.getColumnIndex("server_version"));
+
+        TaskUpdate returnedTaskUpdate = taskRepository.readUpdateCursor(cursor);
+
+        assertNotNull(returnedTaskUpdate);
+        assertEquals(expectedIdentifier, returnedTaskUpdate.getIdentifier());
+        assertEquals(expectedStatus, returnedTaskUpdate.getStatus());
+        assertEquals(expectedBusinessStatus, returnedTaskUpdate.getBusinessStatus());
+        assertEquals(expectedServerVersion, returnedTaskUpdate.getServerVersion());
+
+    }
+
+    @Test
+    public void testMarkTaskAsSynced() {
+
+        String expectedTaskIdentifier = "id1";
+        taskRepository.markTaskAsSynced(expectedTaskIdentifier);
+
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), stringArrayArgumentCaptor.capture());
+
+        Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
+        assertEquals(TaskRepository.TASK_TABLE, iterator.next());
+        assertEquals("_id = ?", iterator.next());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(3, contentValues.size());
+        assertEquals(expectedTaskIdentifier, contentValues.getAsString("_id"));
+        assertEquals(BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
+        assertEquals(0, contentValues.getAsInteger("server_version").intValue());
+
+        String actualTaskIdentifier = stringArrayArgumentCaptor.getAllValues().get(0)[0];
+        assertEquals(expectedTaskIdentifier, actualTaskIdentifier);
+
+    }
+
+    @Test
+    public void testGetAllUnSyncedCreatedTasks() {
+
+        when(sqLiteDatabase.rawQuery("SELECT *  FROM task WHERE sync_status =? OR server_version IS NULL", new String[]{BaseRepository.TYPE_Created})).thenReturn(getCursor());
+
+        List<Task> unsyncedCreatedTasks = taskRepository.getAllUnsynchedCreatedTasks();
+        assertEquals(1, unsyncedCreatedTasks.size());
+
+        Task actualTask = unsyncedCreatedTasks.get(0);
+
+        assertEquals("tsk11231jh22", actualTask.getIdentifier());
+        assertEquals("2018_IRS-3734", actualTask.getGroupIdentifier());
+        assertEquals(READY, actualTask.getStatus());
+        assertEquals("Not Visited", actualTask.getBusinessStatus());
+        assertEquals(3, actualTask.getPriority());
+        assertEquals("IRS", actualTask.getCode());
+        assertEquals("Spray House", actualTask.getDescription());
+        assertEquals("IRS Visit", actualTask.getFocus());
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", actualTask.getForEntity());
+        assertEquals("2018-11-10T2200", actualTask.getExecutionStartDate().toString(formatter));
+        assertNull(actualTask.getExecutionEndDate());
+        assertEquals("2018-10-31T0700", actualTask.getAuthoredOn().toString(formatter));
+        assertEquals("2018-10-31T0700", actualTask.getLastModified().toString(formatter));
+        assertEquals("demouser", actualTask.getOwner());
+
+
     }
 }

@@ -11,13 +11,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
+import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
@@ -37,7 +40,7 @@ public class LocationServiceHelper {
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
-    public static final String DISTRICT_LOCATIONS_URL = "/location/facilities/";
+    public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
@@ -47,17 +50,19 @@ public class LocationServiceHelper {
     protected final Context context;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private LocationRepository locationRepository;
+    private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
 
-    public LocationServiceHelper(LocationRepository locationRepository, StructureRepository structureRepository) {
+    public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
+        this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
     }
 
     public static LocationServiceHelper getInstance() {
         if (instance == null) {
-            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getStructureRepository());
+            instance = new LocationServiceHelper(CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getLocationTagRepository(), CoreLibrary.getInstance().context().getStructureRepository());
         }
         return instance;
     }
@@ -158,10 +163,10 @@ public class LocationServiceHelper {
         return locations;
     }
 
-    public void fetchDistrictLocations() throws Exception {
+    public void fetchLocationsByLevelAndTags() throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
-            throw new IllegalArgumentException(DISTRICT_LOCATIONS_URL + " http agent is null");
+            throw new IllegalArgumentException(COMMON_LOCATIONS_SERVICE_URL + " http agent is null");
         }
         String baseUrl = CoreLibrary.getInstance().context().
                 configuration().dristhiBaseURL();
@@ -170,32 +175,47 @@ public class LocationServiceHelper {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        Response resp = httpAgent.fetch(
-                MessageFormat.format("{0}{1}{2}",
+        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+
+        JSONObject requestPayload = new JSONObject();
+        requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
+        requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
+        requestPayload.put("locationTagsQueried", new JSONArray(new Gson().toJson(configs.getSynchronizedLocationTags())));
+
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}{1}",
                         baseUrl,
-                        DISTRICT_LOCATIONS_URL,
-                        allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM())));
+                        COMMON_LOCATIONS_SERVICE_URL),
+                requestPayload.toString());
 
         if (resp.isFailure()) {
-            throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+            throw new NoHttpResponseException(COMMON_LOCATIONS_SERVICE_URL + " not returned data");
         }
 
-        List<org.smartregister.domain.jsonmapping.Location> districtLocations =
+        List<org.smartregister.domain.jsonmapping.Location> receivedOpenMrsLocations =
                 new Gson().fromJson(resp.payload().toString(),
                         new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {
                         }.getType());
 
-        for (org.smartregister.domain.jsonmapping.Location districtLocation : districtLocations) {
+        for (org.smartregister.domain.jsonmapping.Location openMrsLocation : receivedOpenMrsLocations) {
             Location location = new Location();
-            location.setId(districtLocation.getLocationId());
-
+            location.setId(openMrsLocation.getLocationId());
             LocationProperty property = new LocationProperty();
-            property.setUid(districtLocation.getLocationId());
-            property.setParentId(districtLocation.getParentLocation().getLocationId());
-            property.setName(districtLocation.getName());
+            property.setUid(openMrsLocation.getLocationId());
+            property.setParentId(openMrsLocation.getParentLocation().getLocationId());
+            property.setName(openMrsLocation.getName());
             location.setProperties(property);
 
             locationRepository.addOrUpdate(location);
+
+
+            for (String tagName : openMrsLocation.getTags()) {
+                LocationTag locationTag = new LocationTag();
+                locationTag.setLocationId(openMrsLocation.getLocationId());
+                locationTag.setName(tagName);
+
+                locationTagRepository.addOrUpdate(locationTag);
+            }
         }
     }
 
