@@ -723,7 +723,7 @@ public class JsonFormUtils {
     }
 
     public static String getSubFormFieldValue(JSONArray jsonArray, FormEntityConstants.Person person, String bindType) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -985,7 +985,7 @@ public class JsonFormUtils {
     }
 
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Person person) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -997,7 +997,7 @@ public class JsonFormUtils {
     }
 
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Encounter encounter) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1024,18 +1024,21 @@ public class JsonFormUtils {
     }
 
     public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
-        if (jsonArray == null || jsonArray.length() == 0) {
-            return null;
+        JSONObject jsonObject = null;
+        if (isBlankJsonArray(jsonArray)) {
+            return jsonObject;
         }
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = getJSONObject(jsonArray, i);
-            String keyVal = getString(jsonObject, KEY);
+            JSONObject currJsonObject = getJSONObject(jsonArray, i);
+            String keyVal = getString(currJsonObject, KEY);
             if (keyVal != null && keyVal.equals(key)) {
-                return jsonObject;
+                jsonObject = currJsonObject;
+                break;
             }
         }
-        return null;
+
+        return jsonObject;
     }
 
     public static String value(JSONArray jsonArray, String entity, String entityId) {
@@ -1056,7 +1059,7 @@ public class JsonFormUtils {
     }
 
     public static String getFieldValue(JSONArray jsonArray, String key) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1071,7 +1074,7 @@ public class JsonFormUtils {
     }
 
     public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1226,4 +1229,7 @@ public class JsonFormUtils {
         return null;
     }
 
+    private static boolean isBlankJsonArray(JSONArray jsonArray) {
+        return jsonArray == null || jsonArray.length() == 0;
+    }
 }

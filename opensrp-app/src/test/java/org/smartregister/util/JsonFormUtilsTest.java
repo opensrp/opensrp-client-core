@@ -995,8 +995,19 @@ public class JsonFormUtilsTest {
     @Test
     public void testToJSONObjectShouldReturnCorrectJsonObject() throws JSONException {
         assertNull(JsonFormUtils.toJSONObject(null));
+
         JSONObject actualJsonObj = JsonFormUtils.toJSONObject(multiStepForm);
         assertNotNull(actualJsonObj);
         assertEquals(actualJsonObj.toString(), new JSONObject(multiStepForm).toString());
+    }
+
+    @Test
+    public void testIsBlankJsonArrayShouldReturnCorrectJsonArrayType() throws Exception {
+        JSONArray jsonArray = new JSONArray();
+        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", null));
+        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", jsonArray));
+        jsonArray.put(1);
+        jsonArray.put(2);
+        assertFalse(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", jsonArray));
     }
 }
