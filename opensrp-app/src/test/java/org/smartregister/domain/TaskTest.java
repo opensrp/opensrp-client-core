@@ -1,8 +1,7 @@
 package org.smartregister.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.smartregister.domain.Task.TaskStatus.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -10,8 +9,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 import org.smartregister.util.DateTimeTypeConverter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.smartregister.domain.Task.TaskStatus.READY;
 
 /**
  * Created by samuelgithengi on 11/22/18.

@@ -597,26 +597,21 @@ public class TaskRepository extends BaseRepository {
 
 
 
-    public List<Task> getTasksWithMissingClientsAndEvents(){
-        Cursor cursor = null;
+    public List<Task> getTasksWithClientsAndEvents(){
         List<Task> tasks = new ArrayList<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(String.format(
-                    "SELECT * FROM %s " +
-                    " WHERE %s NOT IN " +
+        try (Cursor cursor = getReadableDatabase().rawQuery(String.format(
+                "SELECT * FROM %s " +
+                        " WHERE %s NOT IN " +
                         " (SELECT %s FROM %s " +
                         " INNER JOIN %s ON %s.%s = %s.%s " +
                         " INNER JOIN %s ON %s.%s = %s.%s " +
                         " WHERE %s =? OR %s IS NULL) AND %s IS NOT NULL "
-                    ,TASK_TABLE,ID,ID, TASK_TABLE,"ec_family_member","ec_family_member",BASE_ENTITY_ID_COLUMN,TASK_TABLE,FOR, EventClientRepository.Table.event.name(),EventClientRepository.Table.event.name(), Event.form_submission_id_key,TASK_TABLE,REASON_REFERENCE,SYNC_STATUS, SERVER_VERSION,REASON_REFERENCE), new String[]{BaseRepository.TYPE_Created});
+                , TASK_TABLE, ID, ID, TASK_TABLE, "ec_family_member", "ec_family_member", BASE_ENTITY_ID_COLUMN, TASK_TABLE, FOR, EventClientRepository.Table.event.name(), EventClientRepository.Table.event.name(), Event.form_submission_id_key, TASK_TABLE, REASON_REFERENCE, SYNC_STATUS, SERVER_VERSION, REASON_REFERENCE), new String[]{BaseRepository.TYPE_Created})) {
             while (cursor.moveToNext()) {
                 tasks.add(readCursor(cursor));
             }
         } catch (Exception e) {
             Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
         return tasks;
     }

@@ -45,8 +45,8 @@ public class SyncServiceHelper {
     protected static final int EVENT_PUSH_LIMIT = 50;
     protected static SyncServiceHelper instance;
 
-    public SyncServiceHelper() {
-        this.context = CoreLibrary.getInstance().context().applicationContext();
+    private SyncServiceHelper() {
+        context = CoreLibrary.getInstance().context().applicationContext();
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(context);
     }

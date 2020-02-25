@@ -13,7 +13,7 @@ import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.shadows.ShadowAppDatabase;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-05-31
