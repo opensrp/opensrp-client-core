@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
@@ -75,9 +76,6 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private CoreLibrary coreLibrary;
-
     @Before
     public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
@@ -103,6 +101,8 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
                 .resume()
                 .visible();
         activity = controller.get();
+
+        Whitebox.setInternalState(activity, "context", context_);
     }
 
 
@@ -130,11 +130,11 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
         when(userService.isValidRemoteLogin(anyString(), anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(new LoginResponseData()));
         when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchBaseURL(anyString())).thenReturn("base url");
-        EditText username = (EditText) activity.findViewById(R.id.login_userNameText);
-        EditText password = (EditText) activity.findViewById(R.id.login_passwordText);
+        EditText username = activity.findViewById(R.id.login_userNameText);
+        EditText password = activity.findViewById(R.id.login_passwordText);
         username.setText("admin");
         password.setText("password");
-        Button login_button = (Button) activity.findViewById(R.id.login_loginButton);
+        Button login_button = activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
         Mockito.verify(userService, Mockito.atLeastOnce()).remoteLogin(anyString(), anyString(), any(LoginResponseData.class));
         destroyController();

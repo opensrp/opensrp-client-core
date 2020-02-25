@@ -298,7 +298,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Test
     public void testArchiveTasksForEntity() {
         taskRepository.archiveTasksForEntity("id1");
-        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status !=?"), eq(new String[]{"id1", READY.name()}));
+        verify(sqLiteDatabase).update(eq(TASK_TABLE), contentValuesArgumentCaptor.capture(), eq("for = ? AND status NOT IN (?,?)"), eq(new String[]{"id1", READY.name(), CANCELLED.name()}));
         assertEquals(BaseRepository.TYPE_Unsynced, contentValuesArgumentCaptor.getValue().getAsString("sync_status"));
         assertEquals(ARCHIVED.name(), contentValuesArgumentCaptor.getValue().getAsString("status"));
         assertEquals(2, contentValuesArgumentCaptor.getValue().size());
@@ -344,7 +344,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
         assertEquals(3, contentValues.size());
         assertEquals(expectedTaskIdentifier, contentValues.getAsString("_id"));
-        assertEquals( BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
+        assertEquals(BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
         assertEquals(0, contentValues.getAsInteger("server_version").intValue());
 
         String actualTaskIdentifier = stringArrayArgumentCaptor.getAllValues().get(0)[0];
@@ -376,7 +376,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", actualTask.getAuthoredOn().toString(formatter));
         assertEquals("2018-10-31T0700", actualTask.getLastModified().toString(formatter));
         assertEquals("demouser", actualTask.getOwner());
-        
+
 
     }
 }
