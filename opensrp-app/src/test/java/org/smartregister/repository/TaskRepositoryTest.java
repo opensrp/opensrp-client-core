@@ -7,6 +7,7 @@ import com.google.gson.GsonBuilder;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteException;
 import net.sqlcipher.database.SQLiteStatement;
 
 import org.joda.time.DateTime;
@@ -36,12 +37,14 @@ import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -377,6 +380,31 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", actualTask.getLastModified().toString(formatter));
         assertEquals("demouser", actualTask.getOwner());
 
+    }
 
+    @Test
+    public void testUpdateTaskStructureIdsFromExistingStructures() {
+
+        String expectedSql = "UPDATE task SET structure_id =(SELECT _id FROM structure WHERE _id = for) WHERE structure_id IS NULL";
+        boolean updated = taskRepository.updateTaskStructureIdsFromExistingStructures();
+
+        assertTrue(updated);
+        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        assertEquals(expectedSql, stringArgumentCaptor.getValue());
+
+    }
+
+    @Test
+    public void testUpdateTaskStructureIdsFromExistingStructuresFailure() {
+
+        String expectedSql = "UPDATE task SET structure_id =(SELECT _id FROM structure WHERE _id = for) WHERE structure_id IS NULL";
+
+        doThrow(new SQLiteException()).when(sqLiteDatabase).execSQL(anyString());
+
+        boolean updated = taskRepository.updateTaskStructureIdsFromExistingStructures();
+
+        assertFalse(updated);
+        verify(sqLiteDatabase).execSQL(stringArgumentCaptor.capture());
+        assertEquals(expectedSql, stringArgumentCaptor.getValue());
     }
 }
