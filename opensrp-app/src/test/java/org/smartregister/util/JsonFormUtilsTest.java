@@ -27,6 +27,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
@@ -984,10 +985,18 @@ public class JsonFormUtilsTest {
     }
 
     @Test
-    public void testGetSingleStepFormFields() throws JSONException {
+    public void testGetSingleStepFormFieldsShouldGetStep1Fields() throws JSONException {
         JSONArray actualFieldsJsonArr = JsonFormUtils.getSingleStepFormfields(new JSONObject(multiStepForm));
         assertNotNull(actualFieldsJsonArr);
         String expectedFieldsJsonArr = new JSONArray(step1Fields).toString();
         assertEquals(actualFieldsJsonArr.toString(), expectedFieldsJsonArr);
+    }
+
+    @Test
+    public void testToJSONObjectShouldReturnCorrectJsonObject() throws JSONException {
+        assertNull(JsonFormUtils.toJSONObject(null));
+        JSONObject actualJsonObj = JsonFormUtils.toJSONObject(multiStepForm);
+        assertNotNull(actualJsonObj);
+        assertEquals(actualJsonObj.toString(), new JSONObject(multiStepForm).toString());
     }
 }

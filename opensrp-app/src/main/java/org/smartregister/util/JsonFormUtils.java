@@ -977,7 +977,7 @@ public class JsonFormUtils {
 
     public static JSONObject toJSONObject(String jsonString) {
         try {
-            return new JSONObject(jsonString);
+            return jsonString == null ? null : new JSONObject(jsonString);
         } catch (JSONException e) {
             Timber.e(e);
             return null;
