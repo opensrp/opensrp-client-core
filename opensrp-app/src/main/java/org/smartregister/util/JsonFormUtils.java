@@ -723,7 +723,7 @@ public class JsonFormUtils {
     }
 
     public static String getSubFormFieldValue(JSONArray jsonArray, FormEntityConstants.Person person, String bindType) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -875,21 +875,12 @@ public class JsonFormUtils {
      * @return fields {@link JSONArray}
      */
     public static JSONArray getSingleStepFormfields(JSONObject jsonForm) {
-        try {
-
-            JSONObject step1 = jsonForm.has(STEP1) ? jsonForm.getJSONObject(STEP1) : null;
-            if (step1 == null) {
-                return null;
-            }
-
-            return step1.has(FIELDS) ? step1.getJSONArray(FIELDS) : null;
-
-        } catch (JSONException e) {
-            Timber.e(e);
+        JSONObject step1 = jsonForm.optJSONObject(STEP1);
+        if (step1 == null) {
+            return null;
         }
-        return null;
+        return step1.optJSONArray(FIELDS);
     }
-
 
     /**
      * Refactored for backward compatibility invokes getMultiStepFormFields which provides the same result
@@ -985,16 +976,17 @@ public class JsonFormUtils {
     }
 
     public static JSONObject toJSONObject(String jsonString) {
+        JSONObject jsonObject = null;
         try {
-            return new JSONObject(jsonString);
+            jsonObject = jsonString == null ? null : new JSONObject(jsonString);
         } catch (JSONException e) {
             Timber.e(e);
-            return null;
         }
+        return jsonObject;
     }
 
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Person person) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1006,7 +998,7 @@ public class JsonFormUtils {
     }
 
     public static String getFieldValue(JSONArray jsonArray, FormEntityConstants.Encounter encounter) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1033,18 +1025,21 @@ public class JsonFormUtils {
     }
 
     public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
-        if (jsonArray == null || jsonArray.length() == 0) {
-            return null;
+        JSONObject jsonObject = null;
+        if (isBlankJsonArray(jsonArray)) {
+            return jsonObject;
         }
 
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = getJSONObject(jsonArray, i);
-            String keyVal = getString(jsonObject, KEY);
+            JSONObject currJsonObject = getJSONObject(jsonArray, i);
+            String keyVal = getString(currJsonObject, KEY);
             if (keyVal != null && keyVal.equals(key)) {
-                return jsonObject;
+                jsonObject = currJsonObject;
+                break;
             }
         }
-        return null;
+
+        return jsonObject;
     }
 
     public static String value(JSONArray jsonArray, String entity, String entityId) {
@@ -1065,7 +1060,7 @@ public class JsonFormUtils {
     }
 
     public static String getFieldValue(JSONArray jsonArray, String key) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1080,7 +1075,7 @@ public class JsonFormUtils {
     }
 
     public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
-        if (jsonArray == null || jsonArray.length() == 0) {
+        if (isBlankJsonArray(jsonArray)) {
             return null;
         }
 
@@ -1235,4 +1230,7 @@ public class JsonFormUtils {
         return null;
     }
 
+    private static boolean isBlankJsonArray(JSONArray jsonArray) {
+        return jsonArray == null || jsonArray.length() == 0;
+    }
 }

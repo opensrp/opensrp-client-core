@@ -130,6 +130,7 @@ public class HTTPAgent {
         try {
             urlConnection = initializeHttp(postURLPath, true);
 
+            urlConnection.setDoOutput(true);
             urlConnection.setRequestMethod("POST");
             urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
             urlConnection.setRequestProperty("Content-Encoding", "gzip");
