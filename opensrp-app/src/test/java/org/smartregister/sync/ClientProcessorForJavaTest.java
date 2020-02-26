@@ -214,7 +214,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Mockito.when(opensrpContext.detailsRepository()).thenReturn(detailsRepository);
         Mockito.when(syncConfiguration.updateClientDetailsTable()).thenReturn(false);
         clientProcessor.addContentValuesToDetailsTable(new ContentValues(), new Date().getTime());
-        Mockito.verify(detailsRepository, Mockito.times(0)).add(anyString(), anyString(), anyString(), anyLong());
+        Mockito.verify(detailsRepository, Mockito.never()).add(anyString(), anyString(), anyString(), anyLong());
     }
 
     @Test
