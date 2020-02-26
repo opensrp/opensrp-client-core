@@ -13,13 +13,13 @@ import org.smartregister.util.PropertiesConverter;
 
 import timber.log.Timber;
 
-public class DistrictFacilitiesIntentService extends BaseSyncIntentService {
-    private static final String TAG = "DistrictFacilitiesIntentService";
+public class SyncLocationsByLevelAndTagsIntentService extends BaseSyncIntentService {
+    private static final String TAG = "SyncLocationsByLevelAndTagsIntentService";
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter())
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
 
-    public DistrictFacilitiesIntentService() {
+    public SyncLocationsByLevelAndTagsIntentService() {
         super(TAG);
     }
 
@@ -29,7 +29,7 @@ public class DistrictFacilitiesIntentService extends BaseSyncIntentService {
         LocationServiceHelper locationServiceHelper = LocationServiceHelper.getInstance();
 
         try {
-            locationServiceHelper.fetchDistrictLocations();
+            locationServiceHelper.fetchLocationsByLevelAndTags();
         }catch (Exception e){
             Timber.e(e);
         }

@@ -1,5 +1,7 @@
 package org.smartregister;
 
+import java.util.List;
+
 /**
  * Created by samuelgithengi on 10/19/18.
  */
@@ -110,4 +112,8 @@ public abstract class SyncConfiguration {
     public  String getSettingsSyncFilterValue(){
         return getSyncFilterValue();
     }
+
+    public abstract List<String> getSynchronizedLocationTags();
+
+    public abstract String getTopAllowedLocationLevel();
 }
