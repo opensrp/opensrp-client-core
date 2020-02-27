@@ -44,6 +44,10 @@ public class SyncIntentService extends BaseSyncIntentService {
         super("SyncIntentService");
     }
 
+    public SyncIntentService(String name){
+        super(name);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = getBaseContext();
@@ -186,7 +190,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-    public void processClient(Pair<Long, Long> serverVersionPair) {
+    protected void processClient(Pair<Long, Long> serverVersionPair) {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
@@ -250,7 +254,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         sendBroadcast(intent);
     }
 
-    public void complete(FetchStatus fetchStatus) {
+    protected void complete(FetchStatus fetchStatus) {
         Intent intent = new Intent();
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
@@ -265,7 +269,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     }
 
-    public Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
+    protected Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
         final String EVENTS = "events";
         final String SERVER_VERSION = "serverVersion";
         try {
@@ -299,7 +303,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         return Pair.create(0L, 0L);
     }
 
-    public int fetchNumberOfEvents(JSONObject jsonObject) {
+    protected int fetchNumberOfEvents(JSONObject jsonObject) {
         int count = -1;
         final String NO_OF_EVENTS = "no_of_events";
         try {
