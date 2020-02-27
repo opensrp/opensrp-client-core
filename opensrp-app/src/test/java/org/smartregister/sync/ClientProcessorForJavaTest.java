@@ -3,6 +3,7 @@ package org.smartregister.sync;
 import android.content.ContentValues;
 import android.content.Context;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -16,6 +17,7 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Event;
@@ -24,9 +26,11 @@ import org.smartregister.domain.db.Obs;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
+import org.smartregister.repository.DetailsRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +40,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.smartregister.sync.ClientProcessorForJava.JSON_ARRAY;
 
 
@@ -53,10 +59,21 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
     @Captor
     private ArgumentCaptor<String> closeCaseArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor detailsRepositoryAddArgumentCaptor;
+
+    private ClientProcessorForJava clientProcessor;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        clientProcessor = new ClientProcessorForJava(context);
+
+    }
+
+
     @Test
     public void testGetFormattedValueDate() throws Exception {
-        ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
-
         Column column = new Column();
         column.dataType = ColumnType.Date;
         column.saveFormat = "yyyy-MM-dd";
@@ -70,7 +87,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
     @Test
     public void testGetFormattedValueString() throws Exception {
-        ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
+        clientProcessor = new ClientProcessorForJava(context);
 
         Column column = new Column();
         column.dataType = ColumnType.String;
@@ -82,10 +99,6 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         assertEquals(res, "Sheila is smart");
     }
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-    }
 
     @Test
     public void testProcessEventMarksItSaved() throws Exception {
@@ -189,6 +202,50 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Mockito.verify(commonRepository).closeCase(closeCaseArgumentCaptor.capture(), closeCaseArgumentCaptor.capture());
         assertEquals("1233-2", closeCaseArgumentCaptor.getAllValues().get(0));
         assertEquals("child", closeCaseArgumentCaptor.getAllValues().get(1));
+    }
+
+    @Test
+    public void testAddContentValuesToDetailsTableShouldNotPopulateIfUpdateClientDetailsIsFalse() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Mockito.when(coreLibrary.context()).thenReturn(opensrpContext);
+        Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
+        DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
+        Mockito.when(opensrpContext.detailsRepository()).thenReturn(detailsRepository);
+        Mockito.when(syncConfiguration.updateClientDetailsTable()).thenReturn(false);
+        clientProcessor.addContentValuesToDetailsTable(new ContentValues(), new Date().getTime());
+        Mockito.verify(detailsRepository, Mockito.never()).add(anyString(), anyString(), anyString(), anyLong());
+    }
+
+    @Test
+    public void testAddContentValuesToDetailsTableShouldPopulateIfUpdateClientDetailsIsTrue() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
+        Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
+        Mockito.when(coreLibrary.context()).thenReturn(opensrpContext);
+        Mockito.when(opensrpContext.detailsRepository()).thenReturn(detailsRepository);
+        Mockito.when(syncConfiguration.updateClientDetailsTable()).thenReturn(true);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("base_entity_id", "2342-234");
+
+        Long timestamp = new Date().getTime();
+        clientProcessor.addContentValuesToDetailsTable(contentValues, timestamp);
+        Mockito.verify(detailsRepository).add((String) detailsRepositoryAddArgumentCaptor.capture(), (String) detailsRepositoryAddArgumentCaptor.capture(),
+                (String) detailsRepositoryAddArgumentCaptor.capture(), (Long) detailsRepositoryAddArgumentCaptor.capture());
+
+        assertEquals("2342-234", detailsRepositoryAddArgumentCaptor.getAllValues().get(0));
+
+        assertEquals("base_entity_id", detailsRepositoryAddArgumentCaptor.getAllValues().get(1));
+
+        assertEquals(contentValues.getAsString("base_entity_id"), detailsRepositoryAddArgumentCaptor.getAllValues().get(2));
+
+        assertEquals(timestamp, detailsRepositoryAddArgumentCaptor.getAllValues().get(3));
+
+    }
+
+    @After
+    public void tearDown() {
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
