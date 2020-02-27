@@ -4,6 +4,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -12,11 +14,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.sync.intent.SyncClientEventsPerTaskIntentService;
 
-import static org.junit.Assert.assertEquals;
+public class SyncLocationsByLevelAndTagsServiceJobTest extends BaseUnitTest {
 
-public class SyncTaskWithClientEventsServiceJobTest extends BaseUnitTest {
     @Mock
     private Context context;
 
@@ -25,23 +25,26 @@ public class SyncTaskWithClientEventsServiceJobTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
+
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void testOnRunJobStartsCorrectService() {
 
-        SyncTaskWithClientEventsServiceJob syncTaskWithClientEventsServiceJob = new SyncTaskWithClientEventsServiceJob(SyncClientEventsPerTaskIntentService.class);
-        SyncTaskWithClientEventsServiceJob syncTaskWithClientEventsServiceSpy = Mockito.spy(syncTaskWithClientEventsServiceJob);
+        SyncLocationsByLevelAndTagsServiceJob syncLocationsByLevelAndTagsServiceJob = new SyncLocationsByLevelAndTagsServiceJob();
+        SyncLocationsByLevelAndTagsServiceJob syncLocationsByLevelAndTagsServiceJobSpy = Mockito.spy(syncLocationsByLevelAndTagsServiceJob);
 
         ArgumentCaptor<Intent> intent = ArgumentCaptor.forClass(Intent.class);
 
-        Mockito.doReturn(context).when(syncTaskWithClientEventsServiceSpy).getApplicationContext();
+        Mockito.doReturn(context).when(syncLocationsByLevelAndTagsServiceJobSpy).getApplicationContext();
         Mockito.doReturn(componentName).when(context).startService(ArgumentMatchers.any(Intent.class));
-        syncTaskWithClientEventsServiceSpy.onRunJob(null);
+
+        syncLocationsByLevelAndTagsServiceJobSpy.onRunJob(null);
 
         Mockito.verify(context).startService(intent.capture());
 
-        assertEquals("org.smartregister.sync.intent.SyncClientEventsPerTaskIntentService", intent.getValue().getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.sync.intent.SyncLocationsByLevelAndTagsIntentService", intent.getValue().getComponent().getClassName());
+
     }
 }
