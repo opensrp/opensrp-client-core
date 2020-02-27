@@ -14,7 +14,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
@@ -36,7 +35,6 @@ import java.util.Set;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ROWID;
-import static org.smartregister.commonregistry.CommonRepository.BASE_ENTITY_ID_COLUMN;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 import static org.smartregister.domain.Task.TaskStatus;
 
@@ -190,18 +188,13 @@ public class TaskRepository extends BaseRepository {
 
 
     public Task getTaskByIdentifier(String identifier) {
-        Cursor cursor = null;
-        try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
-                    " WHERE " + ID + " =?", new String[]{identifier});
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
+                " WHERE " + ID + " =?", new String[]{identifier})) {
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
             Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
         return null;
     }
@@ -593,26 +586,5 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(STATUS, TaskStatus.ARCHIVED.name());
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
         getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s NOT IN (?,?)", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name(), TaskStatus.CANCELLED.name()});
-    }
-
-
-
-    public List<Task> getTasksWithClientsAndEvents(){
-        List<Task> tasks = new ArrayList<>();
-        try (Cursor cursor = getReadableDatabase().rawQuery(String.format(
-                "SELECT * FROM %s " +
-                        " WHERE %s NOT IN " +
-                        " (SELECT %s FROM %s " +
-                        " INNER JOIN %s ON %s.%s = %s.%s " +
-                        " INNER JOIN %s ON %s.%s = %s.%s " +
-                        " WHERE %s =? OR %s IS NULL) AND %s IS NOT NULL "
-                , TASK_TABLE, ID, ID, TASK_TABLE, "ec_family_member", "ec_family_member", BASE_ENTITY_ID_COLUMN, TASK_TABLE, FOR, EventClientRepository.Table.event.name(), EventClientRepository.Table.event.name(), Event.form_submission_id_key, TASK_TABLE, REASON_REFERENCE, SYNC_STATUS, SERVER_VERSION, REASON_REFERENCE), new String[]{BaseRepository.TYPE_Created})) {
-            while (cursor.moveToNext()) {
-                tasks.add(readCursor(cursor));
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return tasks;
     }
 }

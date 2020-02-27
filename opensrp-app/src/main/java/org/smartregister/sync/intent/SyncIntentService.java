@@ -32,15 +32,13 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class SyncIntentService extends BaseSyncIntentService {
-    private static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
-
+    protected static final int EVENT_PULL_LIMIT = 250;
+    protected static final int EVENT_PUSH_LIMIT = 50;
+    private static final String ADD_URL = "/rest/event/add";
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
-
-    protected static final int EVENT_PULL_LIMIT = 250;
-    protected static final int EVENT_PUSH_LIMIT = 50;
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -206,9 +204,8 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     private void pushECToServer() {
         EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
-        boolean keepSyncing = true;
 
-        while (keepSyncing) {
+        while (true) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
 
             if (pendingEvents.isEmpty()) {
