@@ -188,18 +188,13 @@ public class TaskRepository extends BaseRepository {
 
 
     public Task getTaskByIdentifier(String identifier) {
-        Cursor cursor = null;
-        try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
-                    " WHERE " + ID + " =?", new String[]{identifier});
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
+                " WHERE " + ID + " =?", new String[]{identifier})) {
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
             }
         } catch (Exception e) {
             Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
         return null;
     }

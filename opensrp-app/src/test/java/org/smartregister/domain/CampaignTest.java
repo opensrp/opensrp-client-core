@@ -1,7 +1,7 @@
 package org.smartregister.domain;
 
-import static org.junit.Assert.assertEquals;
-import static org.smartregister.domain.Task.TaskStatus.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
@@ -11,8 +11,8 @@ import org.junit.Test;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import static org.junit.Assert.assertEquals;
+import static org.smartregister.domain.Task.TaskStatus.IN_PROGRESS;
 
 /**
  * Created by samuelgithengi on 11/22/18.

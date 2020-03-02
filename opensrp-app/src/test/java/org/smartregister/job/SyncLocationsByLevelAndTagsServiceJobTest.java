@@ -15,7 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 
-public class SyncFacilitiesByLevelAndTagsServiceJobTest extends BaseUnitTest {
+public class SyncLocationsByLevelAndTagsServiceJobTest extends BaseUnitTest {
 
     @Mock
     private Context context;

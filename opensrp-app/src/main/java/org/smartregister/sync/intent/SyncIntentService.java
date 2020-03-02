@@ -1,6 +1,5 @@
 package org.smartregister.sync.intent;
 
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Pair;
@@ -33,18 +32,20 @@ import java.util.Map;
 import timber.log.Timber;
 
 public class SyncIntentService extends BaseSyncIntentService {
-    private static final String ADD_URL = "/rest/event/add";
     public static final String SYNC_URL = "/rest/event/sync";
-
+    protected static final int EVENT_PULL_LIMIT = 250;
+    protected static final int EVENT_PUSH_LIMIT = 50;
+    private static final String ADD_URL = "/rest/event/add";
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
 
-    protected static final int EVENT_PULL_LIMIT = 250;
-    protected static final int EVENT_PUSH_LIMIT = 50;
-
     public SyncIntentService() {
         super("SyncIntentService");
+    }
+
+    public SyncIntentService(String name){
+        super(name);
     }
 
     @Override
@@ -189,7 +190,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-    private void processClient(Pair<Long, Long> serverVersionPair) {
+    protected void processClient(Pair<Long, Long> serverVersionPair) {
         try {
             ECSyncHelper ecUpdater = ECSyncHelper.getInstance(context);
             List<EventClient> events = ecUpdater.allEventClients(serverVersionPair.first - 1, serverVersionPair.second);
@@ -207,9 +208,8 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     private void pushECToServer() {
         EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
-        boolean keepSyncing = true;
 
-        while (keepSyncing) {
+        while (true) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
 
             if (pendingEvents.isEmpty()) {
@@ -254,7 +254,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         sendBroadcast(intent);
     }
 
-    private void complete(FetchStatus fetchStatus) {
+    protected void complete(FetchStatus fetchStatus) {
         Intent intent = new Intent();
         intent.setAction(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS);
         intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, fetchStatus);
@@ -269,7 +269,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     }
 
-    private Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
+    protected Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
         final String EVENTS = "events";
         final String SERVER_VERSION = "serverVersion";
         try {
@@ -303,7 +303,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         return Pair.create(0L, 0L);
     }
 
-    private int fetchNumberOfEvents(JSONObject jsonObject) {
+    protected int fetchNumberOfEvents(JSONObject jsonObject) {
         int count = -1;
         final String NO_OF_EVENTS = "no_of_events";
         try {
@@ -319,4 +319,13 @@ public class SyncIntentService extends BaseSyncIntentService {
     public int getEventPullLimit() {
         return EVENT_PULL_LIMIT;
     }
+
+    public HTTPAgent getHttpAgent() {
+        return httpAgent;
+    }
+
+    public Context getContext() {
+        return this.context;
+    }
+
 }
