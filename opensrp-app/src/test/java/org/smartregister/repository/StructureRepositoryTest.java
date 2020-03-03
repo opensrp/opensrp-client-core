@@ -24,6 +24,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -70,6 +71,10 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
+
+    @Captor
+    private ArgumentCaptor<Object[]> objectArgsCaptor;
+
 
     @Captor
     private ArgumentCaptor<Location> structureArgumentCapture;
@@ -223,6 +228,28 @@ public class StructureRepositoryTest extends BaseUnitTest {
         assertEquals(sql, stringArgumentCaptor.getValue());
         assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
 
+    }
+
+    @Test
+    public void testGetStructures() throws Exception {
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        String sql = "SELECT rowid,* FROM structure WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?";
+        long lastRowId = 1l;
+        int limit = 10;
+        when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenReturn(getCursor());
+
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit);
+
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(lastRowId, objectArgsCaptor.getValue()[0]);
+        assertEquals(limit, objectArgsCaptor.getValue()[1]);
+
+        JSONObject structureJsonObject = actualStructureData.getJsonArray().getJSONObject(0);
+        Location structure = gson.fromJson(String.valueOf(structureJsonObject), Location.class);
+
+        assertEquals(expectedStructure.getId(), structure.getId());
+        assertEquals(expectedStructure.getType(), structure.getType());
     }
 
     public MatrixCursor getCursor() {
