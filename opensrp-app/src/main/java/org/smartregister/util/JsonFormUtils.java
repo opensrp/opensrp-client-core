@@ -1,6 +1,7 @@
 package org.smartregister.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1024,6 +1025,7 @@ public class JsonFormUtils {
 
     }
 
+    @Nullable
     public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
         JSONObject jsonObject = null;
         if (isBlankJsonArray(jsonArray)) {
@@ -1042,6 +1044,7 @@ public class JsonFormUtils {
         return jsonObject;
     }
 
+    @Nullable
     public static String value(JSONArray jsonArray, String entity, String entityId) {
 
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -1059,6 +1062,7 @@ public class JsonFormUtils {
         return null;
     }
 
+    @Nullable
     public static String getFieldValue(JSONArray jsonArray, String key) {
         if (isBlankJsonArray(jsonArray)) {
             return null;
@@ -1074,43 +1078,18 @@ public class JsonFormUtils {
         return null;
     }
 
+    @Nullable
     public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
-        if (isBlankJsonArray(jsonArray)) {
-            return null;
-        }
-
-        try {
-            return jsonArray.getJSONObject(index);
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return isBlankJsonArray(jsonArray) ? null : jsonArray.optJSONObject(index);
     }
 
+    @Nullable
     public static JSONArray getJSONArray(JSONObject jsonObject, String field) {
-        if (jsonObject == null || jsonObject.length() == 0) {
-            return null;
-        }
-
-        try {
-            return jsonObject.getJSONArray(field);
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return isBlankJsonObject(jsonObject) ? null : jsonObject.optJSONArray(field);
     }
 
     public static JSONObject getJSONObject(JSONObject jsonObject, String field) {
-        if (jsonObject == null || jsonObject.length() == 0) {
-            return null;
-        }
-
-        try {
-            return jsonObject.getJSONObject(field);
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return isBlankJsonObject(jsonObject) ? null : jsonObject.optJSONObject(field);
     }
 
     public static String getString(JSONObject jsonObject, String field) {
@@ -1232,5 +1211,9 @@ public class JsonFormUtils {
 
     private static boolean isBlankJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
+    }
+
+    private static boolean isBlankJsonObject(JSONObject jsonObject) {
+        return jsonObject == null || jsonObject.length() == 0;
     }
 }
