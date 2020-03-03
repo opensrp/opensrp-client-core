@@ -146,7 +146,7 @@ public class JsonFormUtilsTest {
     private JSONObject formjson;
     private String bindtype = "ec_child";
 
-    private final String step1Fields =  "[\n" +
+    private final String STEP_1_FIELDS =  "[\n" +
             "  {\n" +
             "    \"openmrs_entity\": \"entity\",\n" +
             "    \"openmrs_entity_id\": \"entity_id\",\n" +
@@ -255,7 +255,7 @@ public class JsonFormUtilsTest {
 
     private String multiStepForm =
             "{\n" + "  \"count\": \"2\",\n" + "  \"step1\": {\n" + "    \"title\": \"Demographic Info\",\n" +
-                    "    \"next\": \"step2\",\n" + "    \"fields\":" + step1Fields + "},\n" + "  \"step2\": {\n" + "    \"title\": \"Current Pregnancy\",\n" +
+                    "    \"next\": \"step2\",\n" + "    \"fields\":" + STEP_1_FIELDS + "},\n" + "  \"step2\": {\n" + "    \"title\": \"Current Pregnancy\",\n" +
                     "    \"fields\": [\n" + "      {\n" + "        \"key\": \"lmp_known\",\n" +
                     "        \"openmrs_entity_parent\": \"\",\n" + "        \"openmrs_entity\": \"concept\",\n" +
                     "        \"openmrs_entity_id\": \"165258AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
@@ -273,6 +273,12 @@ public class JsonFormUtilsTest {
                     "            \"openmrs_entity_id\": \"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
                     "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true\n" + "        }\n" +
                     "      }\n" + "    ]\n" + "  }\n" + "}";
+
+
+    private final String JSON_ARRAY = "{\n" +
+            "  \"json_array\":" + STEP_1_FIELDS + "\n" +
+            "}";
+
     private String jsonFormNoStepCount =
             "{\n" +
                     "  \"step1\": {\n" +
@@ -1069,7 +1075,7 @@ public class JsonFormUtilsTest {
     public void testGetSingleStepFormFieldsShouldGetStep1Fields() throws JSONException {
         JSONArray actualFieldsJsonArr = JsonFormUtils.getSingleStepFormfields(new JSONObject(multiStepForm));
         assertNotNull(actualFieldsJsonArr);
-        String expectedFieldsJsonArr = new JSONArray(step1Fields).toString();
+        String expectedFieldsJsonArr = new JSONArray(STEP_1_FIELDS).toString();
         assertEquals(actualFieldsJsonArr.toString(), expectedFieldsJsonArr);
     }
 
@@ -1094,22 +1100,29 @@ public class JsonFormUtilsTest {
 
     @Test
     public void testValueShouldGetCorrectValue() throws JSONException {
-        String value = JsonFormUtils.value(new JSONArray(step1Fields), "entity", "entity_id");
+        String value = JsonFormUtils.value(new JSONArray(STEP_1_FIELDS), "entity", "entity_id");
         assertEquals("Secondary", value);
-        assertNull(JsonFormUtils.value(new JSONArray(step1Fields), "entity1", "entity_id1"));
+        assertNull(JsonFormUtils.value(new JSONArray(STEP_1_FIELDS), "entity1", "entity_id1"));
     }
 
     @Test
     public void testGetFieldValueShouldGetCorrectValue() throws JSONException {
-        String value = JsonFormUtils.getFieldValue(new JSONArray(step1Fields), "educ_level");
+        String value = JsonFormUtils.getFieldValue(new JSONArray(STEP_1_FIELDS), "educ_level");
         assertEquals("Secondary", value);
-        assertNull(JsonFormUtils.getFieldValue(new JSONArray(step1Fields), "school_level"));
+        assertNull(JsonFormUtils.getFieldValue(new JSONArray(STEP_1_FIELDS), "school_level"));
     }
 
     @Test
     public void testGetJSONObjectShouldGetCorrectObject() throws JSONException {
-        JSONArray jsonArray = new JSONArray(step1Fields);
+        JSONArray jsonArray = new JSONArray(STEP_1_FIELDS);
         JSONObject actualJsonObj = JsonFormUtils.getJSONObject(jsonArray, 1);
         assertEquals(jsonArray.get(1), actualJsonObj);
+    }
+
+    @Test
+    public void testGetJSONArrayShouldGetCorrectJSONArray() throws JSONException {
+        JSONObject jsonObject = new JSONObject(JSON_ARRAY);
+        assertEquals(jsonObject.getJSONArray("json_array"), JsonFormUtils.getJSONArray(jsonObject, "json_array"));
+        assertNull( JsonFormUtils.getJSONArray(jsonObject, "json_array_1"));
     }
 }

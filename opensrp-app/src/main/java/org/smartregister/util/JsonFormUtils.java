@@ -1083,25 +1083,15 @@ public class JsonFormUtils {
         JSONObject jsonObject = null;
         if (isBlankJsonArray(jsonArray)) { return jsonObject; }
 
-        try {
-            jsonObject = jsonArray.getJSONObject(index);
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-        return jsonObject;
+        return jsonArray.optJSONObject(index);
     }
 
+    @Nullable
     public static JSONArray getJSONArray(JSONObject jsonObject, String field) {
-        if (jsonObject == null || jsonObject.length() == 0) {
-            return null;
-        }
+        JSONArray jsonArray = null;
+        if (jsonObject == null || jsonObject.length() == 0) { return jsonArray; }
 
-        try {
-            return jsonObject.getJSONArray(field);
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return jsonObject.optJSONArray(field);
     }
 
     public static JSONObject getJSONObject(JSONObject jsonObject, String field) {
