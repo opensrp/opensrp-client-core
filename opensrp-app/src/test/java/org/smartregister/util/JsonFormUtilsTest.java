@@ -279,6 +279,27 @@ public class JsonFormUtilsTest {
             "  \"json_array\":" + STEP_1_FIELDS + "\n" +
             "}";
 
+    private final String JSON_OBJ = "{\n" +
+            "  \"dont_know\": {\n" +
+            "    \"openmrs_entity\": \"concept\",\n" +
+            "    \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "    \"openmrs_entity_parent\": \"\",\n" +
+            "    \"text\": \"Don't know\"\n" +
+            "  },\n" +
+            "  \"primary\": {\n" +
+            "    \"openmrs_entity\": \"concept\",\n" +
+            "    \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "    \"openmrs_entity_parent\": \"\",\n" +
+            "    \"text\": \"Primary\"\n" +
+            "  },\n" +
+            "  \"secondary\": {\n" +
+            "    \"openmrs_entity\": \"concept\",\n" +
+            "    \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "    \"openmrs_entity_parent\": \"\",\n" +
+            "    \"text\": \"Secondary\"\n" +
+            "  }\n" +
+            "}";
+
     private String jsonFormNoStepCount =
             "{\n" +
                     "  \"step1\": {\n" +
@@ -1117,6 +1138,7 @@ public class JsonFormUtilsTest {
         JSONArray jsonArray = new JSONArray(STEP_1_FIELDS);
         JSONObject actualJsonObj = JsonFormUtils.getJSONObject(jsonArray, 1);
         assertEquals(jsonArray.get(1), actualJsonObj);
+        assertNull(JsonFormUtils.getJSONObject(jsonArray, 100));
     }
 
     @Test
@@ -1124,5 +1146,13 @@ public class JsonFormUtilsTest {
         JSONObject jsonObject = new JSONObject(JSON_ARRAY);
         assertEquals(jsonObject.getJSONArray("json_array"), JsonFormUtils.getJSONArray(jsonObject, "json_array"));
         assertNull( JsonFormUtils.getJSONArray(jsonObject, "json_array_1"));
+    }
+
+    @Test
+    public void testGetJSONObjectByFieldShouldGetCorrectObject() throws JSONException {
+        JSONObject jsonObject = new JSONObject(JSON_OBJ);
+        JSONObject actualJsonObj = JsonFormUtils.getJSONObject(jsonObject, "secondary");
+        assertEquals(jsonObject.optJSONObject("secondary"), actualJsonObj);
+        assertNull(JsonFormUtils.getJSONObject(jsonObject, "non_existent_key"));
     }
 }

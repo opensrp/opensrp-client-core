@@ -1080,31 +1080,16 @@ public class JsonFormUtils {
 
     @Nullable
     public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
-        JSONObject jsonObject = null;
-        if (isBlankJsonArray(jsonArray)) { return jsonObject; }
-
-        return jsonArray.optJSONObject(index);
+        return isBlankJsonArray(jsonArray) ? null : jsonArray.optJSONObject(index);
     }
 
     @Nullable
     public static JSONArray getJSONArray(JSONObject jsonObject, String field) {
-        JSONArray jsonArray = null;
-        if (jsonObject == null || jsonObject.length() == 0) { return jsonArray; }
-
-        return jsonObject.optJSONArray(field);
+        return isBlankJsonObject(jsonObject) ? null : jsonObject.optJSONArray(field);
     }
 
     public static JSONObject getJSONObject(JSONObject jsonObject, String field) {
-        if (jsonObject == null || jsonObject.length() == 0) {
-            return null;
-        }
-
-        try {
-            return jsonObject.getJSONObject(field);
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return isBlankJsonObject(jsonObject) ? null : jsonObject.optJSONObject(field);
     }
 
     public static String getString(JSONObject jsonObject, String field) {
@@ -1226,5 +1211,9 @@ public class JsonFormUtils {
 
     private static boolean isBlankJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
+    }
+
+    private static boolean isBlankJsonObject(JSONObject jsonObject) {
+        return jsonObject == null || jsonObject.length() == 0;
     }
 }
