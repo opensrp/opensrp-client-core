@@ -1,5 +1,6 @@
 package org.smartregister.repository;
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -22,14 +23,20 @@ import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
+import org.smartregister.customshadows.ShadowOpenSRPImageLoader;
+import org.smartregister.domain.ProfileImage;
 import org.smartregister.p2p.model.DataType;
+import org.smartregister.view.activity.DrishtiApplication;
+
+import java.io.File;
+import java.util.HashMap;
 
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 03-03-2020.
  */
 @RunWith(RobolectricTestRunner.class)
-@Config(sdk = 27)
+@Config(sdk = 27, shadows = {ShadowOpenSRPImageLoader.class})
 public class P2PReceiverTransferDaoTest {
 
     @Rule
@@ -43,6 +50,8 @@ public class P2PReceiverTransferDaoTest {
     private StructureRepository structureRepository;
     @Mock
     private TaskRepository taskRepository;
+    @Mock
+    private ImageRepository imageRepository;
 
     @Mock
     private CoreLibrary coreLibrary;
@@ -58,6 +67,7 @@ public class P2PReceiverTransferDaoTest {
         Mockito.doReturn(eventClientRepository).when(context).getEventClientRepository();
         Mockito.doReturn(structureRepository).when(context).getStructureRepository();
         Mockito.doReturn(taskRepository).when(context).getTaskRepository();
+        Mockito.doReturn(imageRepository).when(context).imageRepository();
         Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();
 
         CoreLibrary.init(context, Mockito.mock(SyncConfiguration.class));
@@ -144,5 +154,51 @@ public class P2PReceiverTransferDaoTest {
         for (int i = 0; i < jsonArray.length(); i++) {
             Assert.assertFalse(jsonArray.getJSONObject(i).has(AllConstants.ROWID));
         }
+    }
+
+    @Test
+    public void receiveMultimediaShouldCallImageRepository() {
+        long fileRecordId = 78873L;
+
+        ArgumentCaptor<ProfileImage> profileImageArgumentCaptor = ArgumentCaptor.forClass(ProfileImage.class);
+
+        DataType dataType = new DataType(p2PReceiverTransferDao.profilePic.getName(), DataType.Type.MEDIA, 1);
+
+        DrishtiApplication drishtiApplication = Mockito.mock(DrishtiApplication.class);
+        ReflectionHelpers.setStaticField(DrishtiApplication.class, "mInstance", drishtiApplication);
+        Mockito.doReturn(RuntimeEnvironment.application).when(drishtiApplication).getApplicationContext();
+
+        HashMap<String, Object> multimediaDetails = new HashMap<>();
+        multimediaDetails.put(ImageRepository.syncStatus_COLUMN, BaseRepository.TYPE_Unsynced);
+        String entityId = "isod-sdfsd-32432";
+        multimediaDetails.put(ImageRepository.entityID_COLUMN, entityId);
+        File file = Mockito.mock(File.class);
+        Mockito.doReturn(true).when(file).exists();
+
+        Assert.assertEquals(fileRecordId, p2PReceiverTransferDao.receiveMultimedia(dataType, file, multimediaDetails, fileRecordId));
+        Mockito.verify(imageRepository).add(profileImageArgumentCaptor.capture());
+
+        ProfileImage profileImage = profileImageArgumentCaptor.getValue();
+        Assert.assertEquals("profilepic", profileImage.getFilecategory());
+        Assert.assertEquals(entityId, profileImage.getEntityID());
+    }
+
+
+    @Test
+    public void receiveMultimediaShouldReturnNegative1() {
+        long fileRecordId = 78873L;
+
+        ArgumentCaptor<ProfileImage> profileImageArgumentCaptor = ArgumentCaptor.forClass(ProfileImage.class);
+
+        DataType dataType = new DataType(p2PReceiverTransferDao.profilePic.getName(), DataType.Type.MEDIA, 1);
+        HashMap<String, Object> multimediaDetails = new HashMap<>();
+        multimediaDetails.put(ImageRepository.syncStatus_COLUMN, BaseRepository.TYPE_Unsynced);
+        multimediaDetails.put(ImageRepository.entityID_COLUMN, "isod-sdfsd-32432");
+        File file = Mockito.mock(File.class);
+        //Mockito.doReturn(true).when(file.exists());
+
+        Assert.assertEquals(-1, p2PReceiverTransferDao.receiveMultimedia(dataType, file, multimediaDetails, fileRecordId));
+
+
     }
 }
