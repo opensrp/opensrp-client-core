@@ -2,7 +2,9 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.AssetManager;
 
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +28,11 @@ import org.smartregister.domain.db.Obs;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
+import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.repository.DetailsRepository;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -38,6 +43,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -46,12 +52,12 @@ import static org.smartregister.sync.ClientProcessorForJava.JSON_ARRAY;
 
 
 public class ClientProcessorForJavaTest extends BaseUnitTest {
-
     @Mock
     private CoreLibrary coreLibrary;
 
     @Mock
     private org.smartregister.Context opensrpContext;
+
 
     @Mock
     private Context context;
@@ -68,7 +74,6 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         clientProcessor = new ClientProcessorForJava(context);
-
     }
 
 
@@ -244,8 +249,82 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
     }
 
+
+    @Test
+    public void testGetColumnMappingsShouldReturnTheCorrectTable() throws IOException {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        Mockito.when(coreLibrary.getEcClientFieldsFile()).thenReturn("ec_client_fields.json");
+        AssetManager assetManager = Mockito.mock(AssetManager.class);
+        Mockito.when(context.getAssets()).thenReturn(assetManager);
+        Mockito.when(assetManager.open("ec_client_fields.json")).thenReturn(new ByteArrayInputStream(ClientData.ec_client_fields_json.getBytes()));
+        Table ecHousehold = clientProcessor.getColumnMappings("ec_household");
+        assertNotNull(ecHousehold);
+        assertEquals(ecHousehold.name, "ec_household");
+    }
+
+    @Test
+    public void testGetColumnMappingsShouldReturnNullIfFileIsNotRead() throws IOException {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        Mockito.when(coreLibrary.getEcClientFieldsFile()).thenReturn("ec_client_fields.json");
+        AssetManager assetManager = Mockito.mock(AssetManager.class);
+        Mockito.when(context.getAssets()).thenReturn(assetManager);
+        Mockito.when(assetManager.open("ec_client_fields.json")).thenReturn(null);
+        Table ecHousehold = clientProcessor.getColumnMappings("ec_household");
+        assertNull(ecHousehold);
+    }
+
+    @Test
+    public void testUpdateClientDetailsTableShouldNotSaveClientDetailsIdConfigIsFalse() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
+        Mockito.when(syncConfiguration.updateClientDetailsTable()).thenReturn(false);
+        Mockito.when(coreLibrary.context()).thenReturn(opensrpContext);
+        Mockito.when(opensrpContext.detailsRepository()).thenReturn(detailsRepository);
+        Event event = new Event();
+        clientProcessor.updateClientDetailsTable(event, new Client("2323-2"));
+        assertTrue(Boolean.valueOf(event.getDetails().get(ClientProcessorForJava.detailsUpdated)));
+        Mockito.verify(detailsRepository, Mockito.never()).add(anyString(), anyString(), anyString(), anyLong());
+    }
+
+    @Test
+    public void testUpdateClientDetailsTableShouldSaveClientDetailsIdConfigIsTrue() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        DetailsRepository detailsRepository = Mockito.mock(DetailsRepository.class);
+
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
+        Mockito.when(syncConfiguration.updateClientDetailsTable()).thenReturn(true);
+
+        Mockito.when(coreLibrary.context()).thenReturn(opensrpContext);
+        Mockito.when(opensrpContext.detailsRepository()).thenReturn(detailsRepository);
+
+        DateTime dateTime = new DateTime();
+        Event event = new Event();
+        event.setEventDate(dateTime);
+        Obs obs = new Obs();
+        obs.setFieldCode("12212AAAAA");
+        obs.setFormSubmissionField("reminders");
+        Object value = (Object) "no";
+        obs.setValues(Arrays.asList(value));
+        obs.setHumanReadableValue(new ArrayList<>());
+        obs.setFieldDataType("text");
+        event.addObs(obs);
+        Client client = new Client("234-13");
+        client.setGender("Female");
+        Map<String, Object> attribsMap = new HashMap<>();
+        attribsMap.put("national_id", "423");
+        attribsMap.put("phone_number", "0707070");
+        client.setAttributes(attribsMap);
+        clientProcessor.updateClientDetailsTable(event, client);
+        assertTrue(Boolean.valueOf(event.getDetails().get(ClientProcessorForJava.detailsUpdated)));
+        Mockito.verify(detailsRepository, Mockito.atLeast(4)).add(anyString(), anyString(), anyString(), anyLong());
+    }
+
     @After
     public void tearDown() {
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        clientProcessor = null;
     }
 }
