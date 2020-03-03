@@ -7,8 +7,11 @@ import com.google.gson.GsonBuilder;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteException;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,6 +24,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTest;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -28,8 +32,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
 import static org.smartregister.repository.StructureRepository.STRUCTURE_TABLE;
@@ -59,6 +71,13 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
+
+    @Captor
+    private ArgumentCaptor<Object[]> objectArgsCaptor;
+
+
+    @Captor
+    private ArgumentCaptor<Location> structureArgumentCapture;
 
     private String locationJson = LocationTest.structureJson;
 
@@ -150,6 +169,88 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+     public void testBatchInsertStructures() throws Exception {
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        JSONArray structureArray = new JSONArray().put(new JSONObject(locationJson));
+
+        structureRepository = spy(structureRepository);
+        boolean inserted = structureRepository.batchInsertStructures(structureArray);
+        assertTrue(inserted);
+
+        verify(sqLiteDatabase).beginTransaction();
+        verify(sqLiteDatabase).setTransactionSuccessful();
+        verify(sqLiteDatabase).endTransaction();
+
+        verify(structureRepository).addOrUpdate(structureArgumentCapture.capture());
+        assertEquals(expectedStructure.getId(), structureArgumentCapture.getValue().getId());
+        assertEquals(expectedStructure.getType(), structureArgumentCapture.getValue().getType());
+    }
+
+    @Test
+    public void testBatchInsertStructuresWithNullParam() {
+
+        structureRepository = spy(structureRepository);
+        boolean inserted = structureRepository.batchInsertStructures(null);
+        assertFalse(inserted);
+
+        verifyZeroInteractions(sqLiteDatabase);
+        verify(structureRepository, never()).addOrUpdate(any());
+    }
+
+    @Test
+    public void testBatchInsertStructuresWithExceptionThrown() throws Exception {
+
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        structureRepository = spy(structureRepository);
+        JSONArray structureArray = new JSONArray().put(new JSONObject(locationJson));
+        doThrow(new SQLiteException()).when(structureRepository).addOrUpdate(any());
+
+        boolean inserted = structureRepository.batchInsertStructures(structureArray);
+
+        assertFalse(inserted);
+        verify(sqLiteDatabase).beginTransaction();
+        verify(sqLiteDatabase, never()).setTransactionSuccessful();
+        verify(sqLiteDatabase).endTransaction();
+
+        verify(structureRepository).addOrUpdate(structureArgumentCapture.capture());
+        assertEquals(expectedStructure.getId(), structureArgumentCapture.getValue().getId());
+        assertEquals(expectedStructure.getType(), structureArgumentCapture.getValue().getType());
+    }
+
+    @Test
+    public void testGetAllUnsynchedCreatedStructures() {
+        String sql = "SELECT *  FROM structure WHERE sync_status =?";
+        when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor());
+
+        List<Location> actualStructures = structureRepository.getAllUnsynchedCreatedStructures();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+
+    }
+
+    @Test
+    public void testGetStructures() throws Exception {
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        String sql = "SELECT rowid,* FROM structure WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?";
+        long lastRowId = 1l;
+        int limit = 10;
+        when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenReturn(getCursor());
+
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit);
+
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(lastRowId, objectArgsCaptor.getValue()[0]);
+        assertEquals(limit, objectArgsCaptor.getValue()[1]);
+
+        JSONObject structureJsonObject = actualStructureData.getJsonArray().getJSONObject(0);
+        Location structure = gson.fromJson(String.valueOf(structureJsonObject), Location.class);
+
+        assertEquals(expectedStructure.getId(), structure.getId());
+        assertEquals(expectedStructure.getType(), structure.getType());
+    }
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
