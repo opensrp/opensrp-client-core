@@ -35,6 +35,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
@@ -210,6 +211,18 @@ public class StructureRepositoryTest extends BaseUnitTest {
         verify(structureRepository).addOrUpdate(structureArgumentCapture.capture());
         assertEquals(expectedStructure.getId(), structureArgumentCapture.getValue().getId());
         assertEquals(expectedStructure.getType(), structureArgumentCapture.getValue().getType());
+    }
+
+    @Test
+    public void testGetAllUnsynchedCreatedStructures() {
+        String sql = "SELECT *  FROM structure WHERE sync_status =?";
+        when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor());
+
+        List<Location> actualStructures = structureRepository.getAllUnsynchedCreatedStructures();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+
     }
 
     public MatrixCursor getCursor() {
