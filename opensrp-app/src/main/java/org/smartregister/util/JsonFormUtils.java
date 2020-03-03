@@ -1078,17 +1078,17 @@ public class JsonFormUtils {
         return null;
     }
 
+    @Nullable
     public static JSONObject getJSONObject(JSONArray jsonArray, int index) {
-        if (isBlankJsonArray(jsonArray)) {
-            return null;
-        }
+        JSONObject jsonObject = null;
+        if (isBlankJsonArray(jsonArray)) { return jsonObject; }
 
         try {
-            return jsonArray.getJSONObject(index);
+            jsonObject = jsonArray.getJSONObject(index);
         } catch (JSONException e) {
-            return null;
-
+            Timber.e(e);
         }
+        return jsonObject;
     }
 
     public static JSONArray getJSONArray(JSONObject jsonObject, String field) {

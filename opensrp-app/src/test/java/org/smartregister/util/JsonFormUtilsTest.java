@@ -198,6 +198,58 @@ public class JsonFormUtilsTest {
             "    \"type\": \"native_radio\",\n" +
             "    \"key\": \"educ_level\",\n" +
             "    \"label_text_style\": \"bold\"\n" +
+            "  },\n" +
+            "   {\n" +
+            "    \"openmrs_entity\": \"other_entity\",\n" +
+            "    \"openmrs_entity_id\": \"other_entity_id\",\n" +
+            "    \"options\": [\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"entity\",\n" +
+            "        \"openmrs_entity_id\": \"entity_id\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"None\",\n" +
+            "        \"value\": \"value\",\n" +
+            "        \"key\": \"none\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Don't know\",\n" +
+            "        \"key\": \"dont_know\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Primary\",\n" +
+            "        \"key\": \"primary\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Secondary\",\n" +
+            "        \"key\": \"secondary\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Higher\",\n" +
+            "        \"key\": \"higher\"\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"v_required\": {\n" +
+            "      \"err\": \"Please specify your education level\",\n" +
+            "      \"value\": true\n" +
+            "    },\n" +
+            "    \"value\":\"Secondary\",\n" +
+            "    \"openmrs_entity_parent\": \"\",\n" +
+            "    \"label\": \"Highest level of school\",\n" +
+            "    \"type\": \"native_radio\",\n" +
+            "    \"key\": \"educ_level\",\n" +
+            "    \"label_text_style\": \"bold\"\n" +
             "  }\n" +
             "]";
 
@@ -1052,5 +1104,12 @@ public class JsonFormUtilsTest {
         String value = JsonFormUtils.getFieldValue(new JSONArray(step1Fields), "educ_level");
         assertEquals("Secondary", value);
         assertNull(JsonFormUtils.getFieldValue(new JSONArray(step1Fields), "school_level"));
+    }
+
+    @Test
+    public void testGetJSONObjectShouldGetCorrectObject() throws JSONException {
+        JSONArray jsonArray = new JSONArray(step1Fields);
+        JSONObject actualJsonObj = JsonFormUtils.getJSONObject(jsonArray, 1);
+        assertEquals(jsonArray.get(1), actualJsonObj);
     }
 }
