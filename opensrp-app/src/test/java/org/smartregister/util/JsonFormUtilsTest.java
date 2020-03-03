@@ -1155,4 +1155,14 @@ public class JsonFormUtilsTest {
         assertEquals(jsonObject.optJSONObject("secondary"), actualJsonObj);
         assertNull(JsonFormUtils.getJSONObject(jsonObject, "non_existent_key"));
     }
+
+    @Test
+    public void testisBlankJsonObjectShouldReturnCorrectJsonObjectType() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", null));
+        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", jsonObject));
+        jsonObject.put("fields", new JSONArray(STEP_1_FIELDS));
+        jsonObject.put("json_obj", new JSONObject(JSON_OBJ));
+        assertFalse(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", jsonObject));
+    }
 }
