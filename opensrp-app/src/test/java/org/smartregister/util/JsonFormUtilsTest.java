@@ -1044,5 +1044,13 @@ public class JsonFormUtilsTest {
     public void testValueShouldGetCorrectValue() throws JSONException {
         String value = JsonFormUtils.value(new JSONArray(step1Fields), "entity", "entity_id");
         assertEquals("Secondary", value);
+        assertNull(JsonFormUtils.value(new JSONArray(step1Fields), "entity1", "entity_id1"));
+    }
+
+    @Test
+    public void testGetFieldValueShouldGetCorrectValue() throws JSONException {
+        String value = JsonFormUtils.getFieldValue(new JSONArray(step1Fields), "educ_level");
+        assertEquals("Secondary", value);
+        assertNull(JsonFormUtils.getFieldValue(new JSONArray(step1Fields), "school_level"));
     }
 }

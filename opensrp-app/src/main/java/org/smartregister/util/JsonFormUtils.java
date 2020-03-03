@@ -1,6 +1,7 @@
 package org.smartregister.util;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -1024,6 +1025,7 @@ public class JsonFormUtils {
 
     }
 
+    @Nullable
     public static JSONObject getFieldJSONObject(JSONArray jsonArray, String key) {
         JSONObject jsonObject = null;
         if (isBlankJsonArray(jsonArray)) {
@@ -1042,6 +1044,7 @@ public class JsonFormUtils {
         return jsonObject;
     }
 
+    @Nullable
     public static String value(JSONArray jsonArray, String entity, String entityId) {
 
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -1059,6 +1062,7 @@ public class JsonFormUtils {
         return null;
     }
 
+    @Nullable
     public static String getFieldValue(JSONArray jsonArray, String key) {
         if (isBlankJsonArray(jsonArray)) {
             return null;
