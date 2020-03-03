@@ -175,8 +175,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         setupNavBarViews();
         populateClientListHeaderView(defaultOptionProvider.serviceMode().getHeaderProvider());
 
-        clientsProgressView = (ProgressBar) findViewById(R.id.client_list_progress);
-        clientsView = (ListView) findViewById(R.id.list);
+        clientsProgressView =  findViewById(R.id.client_list_progress);
+        clientsView =  findViewById(R.id.list);
 
         setupStatusBarViews();
         paginationViewHandler.addPagination(clientsView);

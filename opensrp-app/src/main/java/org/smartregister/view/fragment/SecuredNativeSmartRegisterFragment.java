@@ -421,8 +421,8 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
 
         private void addPagination(ListView clientsView) {
             ViewGroup footerView = getPaginationView();
-            nextPageView = (Button) footerView.findViewById(R.id.btn_next_page);
-            previousPageView = (Button) footerView.findViewById(R.id.btn_previous_page);
+            nextPageView = footerView.findViewById(R.id.btn_next_page);
+            previousPageView =  footerView.findViewById(R.id.btn_previous_page);
             pageInfoView = footerView.findViewById(R.id.txt_page_info);
 
             nextPageView.setOnClickListener(this);
