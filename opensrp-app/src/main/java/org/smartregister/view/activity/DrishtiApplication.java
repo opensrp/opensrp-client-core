@@ -100,7 +100,7 @@ public abstract class DrishtiApplication extends Application {
         MultiDex.install(this);
     }
 
-    public Repository getRepository() {
+    public synchronized Repository getRepository() {
         ArrayList<DrishtiRepository> drishtireposotorylist = CoreLibrary.getInstance().context()
                 .sharedRepositories();
         DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
