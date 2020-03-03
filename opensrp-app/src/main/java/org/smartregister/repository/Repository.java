@@ -68,6 +68,7 @@ public class Repository extends SQLiteOpenHelper {
         SQLiteDatabase.loadLibs(context);
         for (DrishtiRepository repository : repositories) {
             repository.updateMasterRepository(this);
+            Timber.i("Initialized repository: " + repository.getClass().getName());
         }
     }
 
