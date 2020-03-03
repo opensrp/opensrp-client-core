@@ -7,8 +7,11 @@ import com.google.gson.GsonBuilder;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteException;
 
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,8 +31,15 @@ import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
 import static org.smartregister.repository.StructureRepository.STRUCTURE_TABLE;
@@ -59,6 +69,9 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
+
+    @Captor
+    private ArgumentCaptor<Location> structureArgumentCapture;
 
     private String locationJson = LocationTest.structureJson;
 
@@ -150,6 +163,54 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+     public void testBatchInsertStructures() throws Exception {
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        JSONArray structureArray = new JSONArray().put(new JSONObject(locationJson));
+
+        structureRepository = spy(structureRepository);
+        boolean inserted = structureRepository.batchInsertStructures(structureArray);
+        assertTrue(inserted);
+
+        verify(sqLiteDatabase).beginTransaction();
+        verify(sqLiteDatabase).setTransactionSuccessful();
+        verify(sqLiteDatabase).endTransaction();
+
+        verify(structureRepository).addOrUpdate(structureArgumentCapture.capture());
+        assertEquals(expectedStructure.getId(), structureArgumentCapture.getValue().getId());
+        assertEquals(expectedStructure.getType(), structureArgumentCapture.getValue().getType());
+    }
+
+    @Test
+    public void testBatchInsertStructuresWithNullParam() {
+
+        structureRepository = spy(structureRepository);
+        boolean inserted = structureRepository.batchInsertStructures(null);
+        assertFalse(inserted);
+
+        verifyZeroInteractions(sqLiteDatabase);
+        verify(structureRepository, never()).addOrUpdate(any());
+    }
+
+    @Test
+    public void testBatchInsertStructuresWithExceptionThrown() throws Exception {
+
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        structureRepository = spy(structureRepository);
+        JSONArray structureArray = new JSONArray().put(new JSONObject(locationJson));
+        doThrow(new SQLiteException()).when(structureRepository).addOrUpdate(any());
+
+        boolean inserted = structureRepository.batchInsertStructures(structureArray);
+
+        assertFalse(inserted);
+        verify(sqLiteDatabase).beginTransaction();
+        verify(sqLiteDatabase, never()).setTransactionSuccessful();
+        verify(sqLiteDatabase).endTransaction();
+
+        verify(structureRepository).addOrUpdate(structureArgumentCapture.capture());
+        assertEquals(expectedStructure.getId(), structureArgumentCapture.getValue().getId());
+        assertEquals(expectedStructure.getType(), structureArgumentCapture.getValue().getType());
+    }
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
