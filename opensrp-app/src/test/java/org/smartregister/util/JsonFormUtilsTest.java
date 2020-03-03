@@ -146,31 +146,60 @@ public class JsonFormUtilsTest {
     private JSONObject formjson;
     private String bindtype = "ec_child";
 
-    private final String step1Fields =  "[\n" + "      {\n" +
-            "        \"key\": \"educ_level\",\n" + "        \"openmrs_entity_parent\": \"\",\n" +
+    private final String step1Fields =  "[\n" +
+            "  {\n" +
+            "    \"openmrs_entity\": \"entity\",\n" +
+            "    \"openmrs_entity_id\": \"entity_id\",\n" +
+            "    \"options\": [\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"entity\",\n" +
+            "        \"openmrs_entity_id\": \"entity_id\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"None\",\n" +
+            "        \"value\": \"value\",\n" +
+            "        \"key\": \"none\"\n" +
+            "      },\n" +
+            "      {\n" +
             "        \"openmrs_entity\": \"concept\",\n" +
-            "        \"openmrs_entity_id\": \"1712AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "        \"type\": \"native_radio\",\n" + "        \"label\": \"Highest level of school\",\n" +
-            "        \"label_text_style\": \"bold\",\n" + "        \"options\": [\n" + "          {\n" +
-            "            \"key\": \"none\",\n" + "            \"openmrs_entity_parent\": \"\",\n" +
-            "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
-            "            \"text\": \"None\"\n" + "          },\n" + "          {\n" +
-            "            \"key\": \"dont_know\",\n" + "            \"text\": \"Don't know\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
-            "          {\n" + "            \"key\": \"primary\",\n" + "            \"text\": \"Primary\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
-            "          {\n" + "            \"key\": \"secondary\",\n" + "            \"text\": \"Secondary\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          },\n" +
-            "          {\n" + "            \"key\": \"higher\",\n" + "            \"text\": \"Higher\",\n" +
-            "            \"openmrs_entity_parent\": \"\",\n" + "            \"openmrs_entity\": \"concept\",\n" +
-            "            \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" + "          }\n" +
-            "        ],\n" + "        \"v_required\": {\n" + "          \"value\": true,\n" +
-            "          \"err\": \"Please specify your education level\"\n" + "        }\n" + "      }\n" +
-            "    ]\n";
+            "        \"openmrs_entity_id\": \"1067AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Don't know\",\n" +
+            "        \"key\": \"dont_know\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Primary\",\n" +
+            "        \"key\": \"primary\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"1714AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Secondary\",\n" +
+            "        \"key\": \"secondary\"\n" +
+            "      },\n" +
+            "      {\n" +
+            "        \"openmrs_entity\": \"concept\",\n" +
+            "        \"openmrs_entity_id\": \"160292AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\n" +
+            "        \"openmrs_entity_parent\": \"\",\n" +
+            "        \"text\": \"Higher\",\n" +
+            "        \"key\": \"higher\"\n" +
+            "      }\n" +
+            "    ],\n" +
+            "    \"v_required\": {\n" +
+            "      \"err\": \"Please specify your education level\",\n" +
+            "      \"value\": true\n" +
+            "    },\n" +
+            "    \"value\":\"Secondary\",\n" +
+            "    \"openmrs_entity_parent\": \"\",\n" +
+            "    \"label\": \"Highest level of school\",\n" +
+            "    \"type\": \"native_radio\",\n" +
+            "    \"key\": \"educ_level\",\n" +
+            "    \"label_text_style\": \"bold\"\n" +
+            "  }\n" +
+            "]";
 
     private String multiStepForm =
             "{\n" + "  \"count\": \"2\",\n" + "  \"step1\": {\n" + "    \"title\": \"Demographic Info\",\n" +
@@ -1009,5 +1038,11 @@ public class JsonFormUtilsTest {
         jsonArray.put(1);
         jsonArray.put(2);
         assertFalse(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", jsonArray));
+    }
+
+    @Test
+    public void testValueShouldGetCorrectValue() throws JSONException {
+        String value = JsonFormUtils.value(new JSONArray(step1Fields), "entity", "entity_id");
+        assertEquals("Secondary", value);
     }
 }
