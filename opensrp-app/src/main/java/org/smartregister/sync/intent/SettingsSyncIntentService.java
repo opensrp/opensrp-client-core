@@ -6,6 +6,7 @@ import android.util.Log;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.job.SyncServiceJob;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 
 import static org.smartregister.util.Log.logError;
@@ -41,6 +42,8 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
                 logError(TAG + " Error fetching client settings");
             }
         }
+        // run ec-sync after syncing settings
+        SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
     }
 
     @Override
