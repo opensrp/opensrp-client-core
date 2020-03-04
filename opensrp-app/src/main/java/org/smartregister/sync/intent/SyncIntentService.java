@@ -31,6 +31,8 @@ import java.util.Map;
 
 import timber.log.Timber;
 
+import static org.smartregister.repository.SettingsRepository.MIN_ALLOWED_APP_VERSION;
+
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
@@ -79,12 +81,12 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
                 pushToServer();
             }
-            if (hasValidAuthorization) {
-                pullECFromServer();
-            } else {
-                syncUtils.logoutUser();
-            }
 
+            if (!hasValidAuthorization || !syncUtils.isAppVersionAllowed()) {
+                syncUtils.logoutUser();
+            } else if (hasValidAuthorization) {
+                pullECFromServer();
+            }
         } catch (Exception e) {
             Timber.e(e);
             complete(FetchStatus.fetchedFailed);
@@ -327,5 +329,4 @@ public class SyncIntentService extends BaseSyncIntentService {
     public Context getContext() {
         return this.context;
     }
-
 }
