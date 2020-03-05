@@ -17,6 +17,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
@@ -31,7 +32,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.repository.SettingsRepository.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_RESTRICTED_APP;
 
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
@@ -82,9 +83,13 @@ public class SyncIntentService extends BaseSyncIntentService {
                 pushToServer();
             }
 
-            if (!hasValidAuthorization || !syncUtils.isAppVersionAllowed()) {
+            if (!syncUtils.isAppVersionAllowed()) {
+                AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
+                settingsRepository.put(IS_RESTRICTED_APP, "true");
                 syncUtils.logoutUser();
-            } else if (hasValidAuthorization) {
+            } else if (!hasValidAuthorization) {
+                syncUtils.logoutUser();
+            } else {
                 pullECFromServer();
             }
         } catch (Exception e) {

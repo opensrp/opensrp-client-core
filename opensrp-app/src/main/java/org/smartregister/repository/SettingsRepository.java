@@ -20,7 +20,6 @@ public class SettingsRepository extends DrishtiRepository {
     public static final String SETTINGS_VERSION_COLUMN = "version";
     public static final String SETTINGS_TYPE_COLUMN = "type";
     public static final String SETTINGS_SYNC_STATUS_COLUMN = "sync_status";
-    public static final String MIN_ALLOWED_APP_VERSION = "min_allowed_app_version";
 
     public static final String SETTINGS_SQL = "CREATE TABLE " + SETTINGS_TABLE_NAME + "(key VARCHAR PRIMARY KEY, value BLOB)";
 

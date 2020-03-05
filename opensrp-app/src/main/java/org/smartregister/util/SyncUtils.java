@@ -7,14 +7,13 @@ import android.util.Base64;
 
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
-import org.smartregister.repository.SettingsRepository;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -24,7 +23,7 @@ import java.util.List;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
-import static org.smartregister.repository.SettingsRepository.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
 
 /**
  * Created by samuelgithengi on 1/28/19.
@@ -100,6 +99,7 @@ public class SyncUtils {
         if (minAllowedAppVersionSetting == null) {
             return true;
         }
+
         int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
         if (BuildConfig.VERSION_CODE >= minAllowedAppVersion) {
             isAppVersionAllowed = true;
@@ -120,6 +120,8 @@ public class SyncUtils {
             }
         } catch (NumberFormatException e) {
             Timber.e(e, "Please ensure that the min app version is an integer");
+        } catch (JSONException e) {
+            Timber.e(e);
         }
         return minAllowedAppVersion;
     }
