@@ -113,9 +113,10 @@ public class SyncUtils {
         try {
             JSONArray settings = new JSONObject(setting).optJSONArray("settings");
             for (int i = 0; i < settings.length(); i++) {
-                String currKey = settings.optJSONObject(i).optString("key");
+                JSONObject currSettingObj = settings.optJSONObject(i);
+                String currKey = currSettingObj.optString("key");
                 if (MIN_ALLOWED_APP_VERSION.equals(currKey)) {
-                    minAllowedAppVersion = Integer.parseInt(currKey);
+                    minAllowedAppVersion = currSettingObj.optInt("value", minAllowedAppVersion);
                 }
             }
         } catch (NumberFormatException e) {
