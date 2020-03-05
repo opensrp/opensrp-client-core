@@ -29,6 +29,11 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        processSettings(intent);
+        SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+    }
+
+    protected void processSettings(Intent intent) {
         Log.d("ssssssss", "In Settings Sync Intent Service...");
         if (intent != null) {
             try {
@@ -42,8 +47,6 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
                 logError(TAG + " Error fetching client settings");
             }
         }
-        // run ec-sync after syncing settings
-        SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
     }
 
     @Override

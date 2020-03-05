@@ -6,9 +6,13 @@ import android.content.pm.ResolveInfo;
 import android.util.Base64;
 
 import org.apache.http.HttpStatus;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.SettingsRepository;
 
@@ -90,16 +94,33 @@ public class SyncUtils {
 
     public boolean isAppVersionAllowed() {
         boolean isAppVersionAllowed = false;
+
+        AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
+        Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
+        if (minAllowedAppVersionSetting == null) {
+            return true;
+        }
+        int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
+        if (BuildConfig.VERSION_CODE >= minAllowedAppVersion) {
+            isAppVersionAllowed = true;
+        }
+
+        return isAppVersionAllowed;
+    }
+
+    private int extractMinAllowedAppVersion(String setting) {
+        int minAllowedAppVersion = 0;
         try {
-            AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
-            String minAllowedAppVersionStr = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION).getValue();
-            int minAllowedAppVersion = Integer.valueOf(minAllowedAppVersionStr);
-            if (BuildConfig.VERSION_CODE >= minAllowedAppVersion) {
-                isAppVersionAllowed = true;
+            JSONArray settings = new JSONObject(setting).optJSONArray("settings");
+            for (int i = 0; i < settings.length(); i++) {
+                String currKey = settings.optJSONObject(i).optString("key");
+                if (MIN_ALLOWED_APP_VERSION.equals(currKey)) {
+                    minAllowedAppVersion = Integer.parseInt(currKey);
+                }
             }
         } catch (NumberFormatException e) {
             Timber.e(e, "Please ensure that the min app version is an integer");
         }
-        return isAppVersionAllowed;
+        return minAllowedAppVersion;
     }
 }
