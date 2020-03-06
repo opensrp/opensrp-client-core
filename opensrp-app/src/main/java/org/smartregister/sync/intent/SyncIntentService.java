@@ -32,7 +32,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_RESTRICTED_APP;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_APP_VERSION_ALLOWED;
 
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
@@ -85,7 +85,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (!syncUtils.isAppVersionAllowed()) {
                 AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
-                settingsRepository.put(IS_RESTRICTED_APP, "true");
+                settingsRepository.put(IS_APP_VERSION_ALLOWED, "false");
                 syncUtils.logoutUser();
             } else if (!hasValidAuthorization) {
                 syncUtils.logoutUser();

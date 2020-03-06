@@ -452,6 +452,6 @@ public class AllConstants {
 
     public interface FORCED_LOGOUT {
         String MIN_ALLOWED_APP_VERSION = "min_allowed_app_version";
-        String IS_RESTRICTED_APP = "is_restricted_app";
+        String IS_APP_VERSION_ALLOWED = "is_app_version_allowed";
     }
 }

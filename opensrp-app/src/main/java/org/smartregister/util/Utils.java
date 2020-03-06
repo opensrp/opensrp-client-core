@@ -94,7 +94,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_RESTRICTED_APP;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_APP_VERSION_ALLOWED;
 import static org.smartregister.util.Log.logError;
 
 
@@ -802,6 +802,6 @@ public class Utils {
     }
 
     public static boolean isAppVersionAllowed() {
-        return Boolean.valueOf(org.smartregister.Context.getInstance().allSettings().get(IS_RESTRICTED_APP, "false"));
+        return Boolean.valueOf(org.smartregister.Context.getInstance().allSettings().get(IS_APP_VERSION_ALLOWED, "true"));
     }
 }

@@ -38,7 +38,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_RESTRICTED_APP;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logVerbose;
