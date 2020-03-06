@@ -2,6 +2,7 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Base64;
 
@@ -24,6 +25,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.util.Utils.getVersionCode;
 
 /**
  * Created by samuelgithengi on 1/28/19.
@@ -91,7 +93,7 @@ public class SyncUtils {
         opensrpContent.userService().logoutSession();
     }
 
-    public boolean isAppVersionAllowed() {
+    public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
         boolean isAppVersionAllowed = false;
 
         AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
@@ -101,7 +103,7 @@ public class SyncUtils {
         }
 
         int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
-        if (BuildConfig.VERSION_CODE >= minAllowedAppVersion) {
+        if (getVersionCode(context) >= minAllowedAppVersion) {
             isAppVersionAllowed = true;
         }
 

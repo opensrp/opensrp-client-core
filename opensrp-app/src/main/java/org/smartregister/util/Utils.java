@@ -580,6 +580,11 @@ public class Utils {
         return packageInfo.versionName;
     }
 
+    public static long getVersionCode(Context context) throws PackageManager.NameNotFoundException {
+        PackageInfo packageInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        return packageInfo.versionCode;
+    }
+
     public static String getBuildDate(Boolean isShortMonth) {
         String simpleDateFormat;
         if (isShortMonth) {
