@@ -413,4 +413,6 @@
     <string name="sync_failed_malformed_url">Sync Failed. Please check the URL configuration.</string>
     <string name="sync_failed_timeout_error">Sync Failed. Could not connect to the server.</string>
 
+    <string name="outdate_app">This is an outdated app. Please update to the latest version to continue.</string>
+
 </resources>

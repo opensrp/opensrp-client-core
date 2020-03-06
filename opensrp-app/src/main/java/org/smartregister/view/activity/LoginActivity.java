@@ -38,6 +38,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_RESTRICTED_APP;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logVerbose;
@@ -146,6 +147,9 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     }
 
     private void localLogin(View view, String userName, String password) {
+
+        if (!isAppVersionAllowed()) { return; }
+
         if (context.userService().isValidLocalLogin(userName, password)) {
             localLoginWith(userName, password);
         } else {
@@ -154,7 +158,11 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         }
     }
 
+
+
     private void remoteLogin(final View view, final String userName, final String password) {
+
+        if (!isAppVersionAllowed()) { return; }
 
         if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
 
@@ -178,6 +186,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             showErrorDialog("OpenSRP Base URL is missing, Please add it in Settings and try again");
 
         }
+    }
+
+    private boolean isAppVersionAllowed() {
+        boolean isAppVersionAllowed = Boolean.valueOf(Context.getInstance().allSettings().get(IS_RESTRICTED_APP, "false"));
+        if (!isAppVersionAllowed) {
+            Utils.showToast(this, getResources().getString(R.string.outdate_app));
+        }
+        return isAppVersionAllowed;
     }
 
     private void showErrorDialog(String message) {
