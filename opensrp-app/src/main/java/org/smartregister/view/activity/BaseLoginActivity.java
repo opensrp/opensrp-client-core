@@ -254,6 +254,6 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public boolean isAppVersionAllowed() {
-        return Utils.isAppVersionAllowed(this);
+        return Utils.isAppVersionAllowed();
     }
 }

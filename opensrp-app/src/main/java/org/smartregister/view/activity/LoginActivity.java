@@ -149,7 +149,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private void localLogin(View view, String userName, String password) {
 
-        if (!isAppVersionAllowed(this)) { return; }
+        if (!isAppVersionAllowed()) {
+            showErrorDialog(getString(R.string.outdated_app));
+            return;
+        }
 
         if (context.userService().isValidLocalLogin(userName, password)) {
             localLoginWith(userName, password);
@@ -163,7 +166,10 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private void remoteLogin(final View view, final String userName, final String password) {
 
-        if (!isAppVersionAllowed(this)) { return; }
+        if (!isAppVersionAllowed()) {
+            showErrorDialog(getString(R.string.outdated_app));
+            return;
+        }
 
         if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
 

@@ -58,7 +58,6 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
-import org.smartregister.R;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -802,11 +801,7 @@ public class Utils {
         return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
     }
 
-    public static boolean isAppVersionAllowed(Context context) {
-        boolean isAppVersionAllowed = Boolean.valueOf(org.smartregister.Context.getInstance().allSettings().get(IS_RESTRICTED_APP, "false"));
-        if (!isAppVersionAllowed) {
-            Utils.showToast(context, context.getResources().getString(R.string.outdate_app));
-        }
-        return isAppVersionAllowed;
+    public static boolean isAppVersionAllowed() {
+        return Boolean.valueOf(org.smartregister.Context.getInstance().allSettings().get(IS_RESTRICTED_APP, "false"));
     }
 }
