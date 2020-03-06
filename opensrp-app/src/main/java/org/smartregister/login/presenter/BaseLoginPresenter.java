@@ -43,6 +43,12 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
     @Override
     public void attemptLogin(String username, String password) {
+        if (!mLoginView.get().isAppVersionAllowed()) {
+            getLoginView().showErrorDialog(getLoginView()
+                    .getActivityContext().getResources().getString(R.string.outdate_app));
+            return;
+        }
+
         // Reset errors.
         getLoginView().resetUsernameError();
         getLoginView().resetPaswordError();

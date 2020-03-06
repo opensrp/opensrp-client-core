@@ -58,6 +58,7 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -94,6 +95,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_RESTRICTED_APP;
 import static org.smartregister.util.Log.logError;
 
 
@@ -798,5 +800,13 @@ public class Utils {
 
     public static Locale getDefaultLocale() {
         return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
+    }
+
+    public static boolean isAppVersionAllowed(Context context) {
+        boolean isAppVersionAllowed = Boolean.valueOf(org.smartregister.Context.getInstance().allSettings().get(IS_RESTRICTED_APP, "false"));
+        if (!isAppVersionAllowed) {
+            Utils.showToast(context, context.getResources().getString(R.string.outdate_app));
+        }
+        return isAppVersionAllowed;
     }
 }
