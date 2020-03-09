@@ -454,4 +454,10 @@ public class AllConstants {
         String MIN_ALLOWED_APP_VERSION = "min_allowed_app_version";
         String IS_APP_VERSION_ALLOWED = "is_app_version_allowed";
     }
+
+    public interface JSON {
+        String KEY = "key";
+        String VALUE = "value";
+        String SETTINGS = "settings";
+    }
 }

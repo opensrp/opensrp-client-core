@@ -25,6 +25,9 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.JSON.KEY;
+import static org.smartregister.AllConstants.JSON.VALUE;
+import static org.smartregister.AllConstants.SETTINGS;
 import static org.smartregister.util.Utils.getVersionCode;
 
 /**
@@ -94,17 +97,17 @@ public class SyncUtils {
     }
 
     public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
-        boolean isAppVersionAllowed = false;
+        boolean isAppVersionAllowed = true;
 
         AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
         Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
         if (minAllowedAppVersionSetting == null) {
-            return true;
+            return isAppVersionAllowed;
         }
 
         int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
-        if (getVersionCode(context) >= minAllowedAppVersion) {
-            isAppVersionAllowed = true;
+        if (getVersionCode(context) < minAllowedAppVersion) {
+            isAppVersionAllowed = false;
         }
 
         return isAppVersionAllowed;
@@ -113,12 +116,12 @@ public class SyncUtils {
     private int extractMinAllowedAppVersion(String setting) {
         int minAllowedAppVersion = 0;
         try {
-            JSONArray settings = new JSONObject(setting).optJSONArray("settings");
+            JSONArray settings = new JSONObject(setting).optJSONArray(SETTINGS);
             for (int i = 0; i < settings.length(); i++) {
                 JSONObject currSettingObj = settings.optJSONObject(i);
-                String currKey = currSettingObj.optString("key");
+                String currKey = currSettingObj.optString(KEY);
                 if (MIN_ALLOWED_APP_VERSION.equals(currKey)) {
-                    minAllowedAppVersion = currSettingObj.optInt("value", minAllowedAppVersion);
+                    minAllowedAppVersion = currSettingObj.optInt(VALUE, minAllowedAppVersion);
                 }
             }
         } catch (NumberFormatException e) {
