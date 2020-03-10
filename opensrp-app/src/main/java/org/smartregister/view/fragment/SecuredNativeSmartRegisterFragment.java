@@ -278,8 +278,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
     }
 
     private View getColumnHeaderView(int i, int[] weights, int[] headerTxtResIds) {
-        CustomFontTextView header = new CustomFontTextView(getActivity(), null,
-                R.style.CustomFontTextViewStyle_Header_Black);
+        CustomFontTextView header = getCustomFontTextViewHeader();
         header.setFontVariant(FontVariant.BLACK);
         header.setTextSize(16);
         header.setTextColor(getResources().getColor(R.color.client_list_header_text_color));
@@ -289,6 +288,10 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         header.setLayoutParams(lp);
         header.setText(headerTxtResIds[i]);
         return header;
+    }
+
+    protected CustomFontTextView getCustomFontTextViewHeader() {
+        return new CustomFontTextView(getActivity(), null, R.style.CustomFontTextViewStyle_Header_Black);
     }
 
     private void setupAdapter() {

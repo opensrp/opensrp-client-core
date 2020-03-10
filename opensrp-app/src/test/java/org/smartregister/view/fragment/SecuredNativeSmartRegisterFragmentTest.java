@@ -1,10 +1,12 @@
 package org.smartregister.view.fragment;
 
 import android.graphics.drawable.Drawable;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import org.junit.After;
@@ -28,7 +30,9 @@ import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
+import org.smartregister.view.customcontrols.CustomFontTextView;
 import org.smartregister.view.dialog.ECSearchOption;
+import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
 import org.smartregister.view.dialog.SortOption;
 import org.smartregister.view.dialog.VillageFilter;
@@ -63,6 +67,36 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     @Mock
     private SecuredNativeSmartRegisterFragment.SearchCancelHandler searchCancelHandler;
 
+    @Mock
+    private ServiceModeOption serviceModeOption;
+
+    @Mock
+    private SortOption sortOption;
+
+    @Mock
+    private FilterOption filterOption;
+
+    @Mock
+    private View view;
+
+    @Mock
+    private LinearLayout linearLayout;
+
+    @Mock
+    private SecuredNativeSmartRegisterActivity.ClientsHeaderProvider headerProvider;
+
+    @Mock
+    private FragmentActivity activity;
+
+    @Mock
+    private CustomFontTextView customFontTextView;
+
+    @Mock
+    public TextView appliedVillageFilterView;
+
+    @Mock
+    public TextView appliedSortView;
+
     @Captor
     private ArgumentCaptor<ECSearchOption> ecSearchOptionArgumentCaptor;
 
@@ -73,13 +107,15 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     private ArgumentCaptor<ServiceModeOption> serviceModeOptionArgumentCaptor;
 
     @Captor
-    private ArgumentCaptor<SortOption> sortOption;
+    private ArgumentCaptor<SortOption> sortOptionArgumentCaptor;
 
     private Drawable drawable = null;
 
     public static final String TEST_SEARCH_HINT = "Test Search Hint";
 
     public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
+
+    private static final String GENERIC_TEXT_PHRASE = "Move the Earth";
 
 
     @Before
@@ -90,6 +126,9 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         Mockito.doReturn(navBarOptionsProvider).when(securedNativeSmartRegisterFragment).getNavBarOptionsProvider();
         Mockito.doReturn(TEST_SEARCH_HINT).when(navBarOptionsProvider).searchHint();
+
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(activity).getResources();
+
 
     }
 
@@ -154,7 +193,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
         securedNativeSmartRegisterFragment.setupSearchView(parentSpy);
         securedNativeSmartRegisterFragment.getSearchView().setText(MY_TEST_SEARCH_TEXT);
 
-        Mockito.verify(clientsAdapter).refreshList(villageFilterArgumentCaptor.capture(), serviceModeOptionArgumentCaptor.capture(), ecSearchOptionArgumentCaptor.capture(), sortOption.capture());
+        Mockito.verify(clientsAdapter).refreshList(villageFilterArgumentCaptor.capture(), serviceModeOptionArgumentCaptor.capture(), ecSearchOptionArgumentCaptor.capture(), sortOptionArgumentCaptor.capture());
 
         Assert.assertNotNull(ecSearchOptionArgumentCaptor.getValue());
         Assert.assertEquals(1, ecSearchOptionArgumentCaptor.getAllValues().size());
@@ -209,6 +248,115 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
         securedNativeSmartRegisterFragment.goBackToPreviousPage();
         Mockito.verify(clientsAdapter).previousPage();
         Mockito.verify(clientsAdapter).notifyDataSetChanged();
+
+    }
+
+    @Test
+    public void testOnServiceModeSelectionUpdatesServiceModeViewWithCorrectValue() {
+
+        ServiceModeOption serviceModeOptionLocal = securedNativeSmartRegisterFragment.getCurrentServiceModeOption();
+        Assert.assertNull(serviceModeOptionLocal);
+
+        Mockito.doReturn(headerProvider).when(serviceModeOption).getHeaderProvider();
+        Mockito.doReturn(3).when(headerProvider).count();
+        Mockito.doReturn(new int[]{3, 6, 7}).when(headerProvider).weights();
+        Mockito.doReturn(new int[]{121982, 193726, 191917}).when(headerProvider).headerTextResourceIds();
+
+        Mockito.doReturn(GENERIC_TEXT_PHRASE).when(serviceModeOption).name();
+        Mockito.doReturn(linearLayout).when(view).findViewById(R.id.clients_header_layout);
+
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "serviceModeView", serviceModeView);
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "clientsAdapter", clientsAdapter);
+
+        SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
+        Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+
+        securedNativeSmartRegisterFragmentSpy.onServiceModeSelection(serviceModeOption, view);
+        Assert.assertNotNull(serviceModeOption);
+
+        Mockito.verify(serviceModeView).setText(GENERIC_TEXT_PHRASE);
+
+    }
+
+    @Test
+    public void testOnServiceModeSelectionRefreshesClientsAdapterWithCorrectServiceModeOptionValue() {
+
+        Mockito.doReturn(GENERIC_TEXT_PHRASE).when(serviceModeOption).name();
+        Mockito.doReturn(linearLayout).when(view).findViewById(R.id.clients_header_layout);
+
+        Mockito.doReturn(headerProvider).when(serviceModeOption).getHeaderProvider();
+        Mockito.doReturn(3).when(headerProvider).count();
+        Mockito.doReturn(new int[]{3, 6, 7}).when(headerProvider).weights();
+        Mockito.doReturn(new int[]{121982, 193726, 191917}).when(headerProvider).headerTextResourceIds();
+
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "serviceModeView", serviceModeView);
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "clientsAdapter", clientsAdapter);
+
+
+        SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
+        Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+
+        securedNativeSmartRegisterFragmentSpy.onServiceModeSelection(serviceModeOption, view);
+
+        Mockito.verify(clientsAdapter).refreshList(villageFilterArgumentCaptor.capture(), serviceModeOptionArgumentCaptor.capture(), ecSearchOptionArgumentCaptor.capture(), sortOptionArgumentCaptor.capture());
+
+        ServiceModeOption serviceModeName = serviceModeOptionArgumentCaptor.getValue();
+
+        Assert.assertEquals(GENERIC_TEXT_PHRASE, serviceModeName.name());
+
+    }
+
+    @Test
+    public void testOnSortSelectionRefreshesClientsAdapterWithCorrectSortOptionValue() {
+
+
+        Mockito.doReturn(GENERIC_TEXT_PHRASE).when(sortOption).name();
+        Mockito.doReturn(linearLayout).when(view).findViewById(R.id.clients_header_layout);
+
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "clientsAdapter", clientsAdapter);
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "currentSortOption", sortOption);
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "appliedSortView", appliedSortView);
+
+        SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
+        Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+
+        securedNativeSmartRegisterFragmentSpy.onSortSelection(sortOption);
+
+        Mockito.verify(clientsAdapter).refreshList(villageFilterArgumentCaptor.capture(), serviceModeOptionArgumentCaptor.capture(), ecSearchOptionArgumentCaptor.capture(), sortOptionArgumentCaptor.capture());
+
+        SortOption sortName = sortOptionArgumentCaptor.getValue();
+
+        Assert.assertEquals(GENERIC_TEXT_PHRASE, sortName.name());
+
+
+    }
+
+    @Test
+    public void testOnFilterSelectionRefreshesClientsAdapterWithCorrectFilterOptionValue() {
+
+        Mockito.doReturn(GENERIC_TEXT_PHRASE).when(filterOption).name();
+        Mockito.doReturn(linearLayout).when(view).findViewById(R.id.clients_header_layout);
+
+
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "clientsAdapter", clientsAdapter);
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "currentVillageFilter", filterOption);
+        Whitebox.setInternalState(securedNativeSmartRegisterFragment, "appliedVillageFilterView", appliedVillageFilterView);
+
+        SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
+        Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragmentSpy).getCustomFontTextViewHeader();
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragmentSpy).getResources();
+
+        securedNativeSmartRegisterFragmentSpy.onFilterSelection(filterOption);
+
+        Mockito.verify(clientsAdapter).refreshList(villageFilterArgumentCaptor.capture(), serviceModeOptionArgumentCaptor.capture(), ecSearchOptionArgumentCaptor.capture(), sortOptionArgumentCaptor.capture());
+
+        FilterOption filterOption = villageFilterArgumentCaptor.getValue();
+
+        Assert.assertEquals(GENERIC_TEXT_PHRASE, filterOption.name());
+
 
     }
 
