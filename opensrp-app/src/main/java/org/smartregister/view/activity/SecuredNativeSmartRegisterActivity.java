@@ -12,7 +12,6 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -33,6 +32,9 @@ import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.domain.ReportMonth;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.PaginationHolder;
+import org.smartregister.util.Utils;
+import org.smartregister.util.ViewHelper;
 import org.smartregister.view.contract.SmartRegisterClient;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 import org.smartregister.view.customcontrols.FontVariant;
@@ -175,8 +177,8 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         setupNavBarViews();
         populateClientListHeaderView(defaultOptionProvider.serviceMode().getHeaderProvider());
 
-        clientsProgressView =  findViewById(R.id.client_list_progress);
-        clientsView =  findViewById(R.id.list);
+        clientsProgressView = findViewById(R.id.client_list_progress);
+        clientsView = findViewById(R.id.list);
 
         setupStatusBarViews();
         paginationViewHandler.addPagination(clientsView);
@@ -268,7 +270,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
     }
 
     private void populateClientListHeaderView(ClientsHeaderProvider headerProvider) {
-        LinearLayout clientsHeaderLayout =  findViewById(R.id.clients_header_layout);
+        LinearLayout clientsHeaderLayout = findViewById(R.id.clients_header_layout);
         clientsHeaderLayout.removeAllViewsInLayout();
         int columnCount = headerProvider.count();
         int[] weights = headerProvider.weights();
@@ -564,24 +566,11 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         private TextView pageInfoView;
 
         private void addPagination(ListView clientsView) {
-            ViewGroup footerView = getPaginationView();
-            nextPageView = footerView.findViewById(R.id.btn_next_page);
-            previousPageView = footerView.findViewById(R.id.btn_previous_page);
-            pageInfoView = footerView.findViewById(R.id.txt_page_info);
 
-            nextPageView.setOnClickListener(this);
-            previousPageView.setOnClickListener(this);
-
-            footerView.setLayoutParams(
-                    new AbsListView.LayoutParams(AbsListView.LayoutParams.MATCH_PARENT,
-                            (int) getResources().getDimension(R.dimen.pagination_bar_height)));
-
-            clientsView.addFooterView(footerView);
-        }
-
-        private ViewGroup getPaginationView() {
-            return (ViewGroup) getLayoutInflater()
-                    .inflate(R.layout.smart_register_pagination, null);
+            PaginationHolder paginationHolder = ViewHelper.addPaginationCore(this, clientsView);
+            nextPageView = paginationHolder.getNextPageView();
+            previousPageView = paginationHolder.getPreviousPageView();
+            pageInfoView = paginationHolder.getPageInfoView();
         }
 
         private int getCurrentPageCount() {

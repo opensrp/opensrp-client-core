@@ -17,16 +17,13 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.adapter.SmartRegisterPaginatedAdapter;
 import org.smartregister.customshadows.FontTextViewShadow;
@@ -40,19 +37,11 @@ import org.smartregister.view.dialog.VillageFilter;
  * Created by kaderchowdhury on 14/11/17.
  */
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
-@PrepareForTest({CoreLibrary.class})
 @Config(shadows = {FontTextViewShadow.class})
 public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
     @Rule
     public PowerMockRule rule = new PowerMockRule();
-
-
-    @Mock
-    private CoreLibrary coreLibrary;
-
-    @Mock
-    private org.smartregister.Context context_;
 
     @Mock
     private View searchCancelButton;
@@ -64,15 +53,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     private SmartRegisterPaginatedAdapter clientsAdapter;
 
     @Mock
-    private View clientsProgressView;
-
-    @Mock
-    private View clientsView;
-
-    @Mock
     private TextView serviceModeView;
-
-    private Drawable drawable;
 
     private SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragment;
 
@@ -87,28 +68,23 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<VillageFilter> villageFilterArgumentCaptor;
+
     @Captor
     private ArgumentCaptor<ServiceModeOption> serviceModeOptionArgumentCaptor;
+
     @Captor
     private ArgumentCaptor<SortOption> sortOption;
 
+    private Drawable drawable = null;
 
     public static final String TEST_SEARCH_HINT = "Test Search Hint";
+
     public static final String MY_TEST_SEARCH_TEXT = "My Testing Search Text";
 
 
     @Before
     public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
-
-
-        CoreLibrary.init(context_);
-
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
-        PowerMockito.when(coreLibrary.context()).thenReturn(context_);
-        PowerMockito.when(context_.updateApplicationContext(Mockito.any(android.content.Context.class))).thenReturn(context_);
-        Mockito.when(context_.IsUserLoggedOut()).thenReturn(false);
 
         securedNativeSmartRegisterFragment = Mockito.mock(SecuredNativeSmartRegisterFragment.class, Mockito.CALLS_REAL_METHODS);
 
@@ -164,7 +140,6 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         Mockito.verify(serviceModeView).setCompoundDrawables(null, null, drawable, null);
 
-
     }
 
     @Test
@@ -205,7 +180,6 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
         securedNativeSmartRegisterFragment.getSearchView().setText("");
 
         Mockito.verify(searchCancelButton).setVisibility(View.INVISIBLE);
-
 
     }
 
