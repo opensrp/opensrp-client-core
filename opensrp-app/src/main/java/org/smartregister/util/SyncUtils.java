@@ -99,7 +99,7 @@ public class SyncUtils {
     public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
         boolean isAppVersionAllowed = true;
 
-        AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
+        AllSettings settingsRepository = opensrpContent.allSettings();
         Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
         if (minAllowedAppVersionSetting == null) {
             return isAppVersionAllowed;
