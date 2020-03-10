@@ -2,7 +2,7 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -13,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Setting;
 
 /**
  * Created by kaderchowdhury on 21/11/17.
@@ -85,5 +86,27 @@ public class SettingsRepositoryTest extends BaseUnitTest {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN});
         matrixCursor.addRow(new Object[]{new byte[]{}, new byte[]{}});
         return matrixCursor;
+    }
+
+    @Test
+    public void testUpdateSetting() {
+        Setting s = new Setting();
+        s.setKey("test"); s.setValue("testValue"); s.setVersion("test"); s.setType("test"); s.setSyncStatus("test");
+        settingsRepository.updateSetting(s);
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).replace(Mockito.anyString(), Mockito.isNull(String.class), Mockito.any(ContentValues.class));
+    }
+
+    @Test
+    public void testQuerySetting() {
+        settingsRepository.querySetting("");
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query("settings", new String[]{"key", "value", "type", "version", "sync_status"},
+                "key = ?", new String[]{""}, null, null, null, "1");
+    }
+
+    @Test
+    public void testQuerySettingsByType() {
+        settingsRepository.querySettingsByType("");
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query("settings", new String[]{"key", "value", "type", "version", "sync_status"},
+                "type = ?", new String[]{""}, null, null, null, null);
     }
 }
