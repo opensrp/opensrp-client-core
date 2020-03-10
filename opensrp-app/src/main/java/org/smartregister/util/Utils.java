@@ -68,6 +68,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -807,6 +808,7 @@ public class Utils {
     }
 
     public static boolean isAppVersionAllowed() {
-        return Boolean.valueOf(org.smartregister.Context.getInstance().allSettings().get(IS_APP_VERSION_ALLOWED, "true"));
+        return Boolean.valueOf(DrishtiApplication.getInstance().getContext().allSettings()
+                .get(IS_APP_VERSION_ALLOWED, "true"));
     }
 }
