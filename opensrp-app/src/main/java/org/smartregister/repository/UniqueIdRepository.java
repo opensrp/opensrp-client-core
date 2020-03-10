@@ -58,6 +58,10 @@ public class UniqueIdRepository extends BaseRepository {
      * @param ids
      */
     public void bulkInsertOpenmrsIds(List<String> ids) {
+
+        if (ids == null || ids.isEmpty()){
+            return;
+        }
         SQLiteDatabase database = getWritableDatabase();
 
         try {
