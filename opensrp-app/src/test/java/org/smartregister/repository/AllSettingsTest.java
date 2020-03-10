@@ -11,6 +11,12 @@ import org.smartregister.BaseUnitTest;
 
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+
 public class AllSettingsTest extends BaseUnitTest {
 
     @Mock
@@ -129,4 +135,15 @@ public class AllSettingsTest extends BaseUnitTest {
         Assert.assertEquals("password", auth.get("password"));
     }
 
+    @Test
+    public void testGetWithDefaultShouldReturnCorrectValue() {
+        SettingsRepository settingsRepository = spy(new SettingsRepository());
+        allSettings = new AllSettings(allSharedPreferences, settingsRepository);
+        String value = allSettings.get("non_existent_key", "default_value");
+        assertEquals("default_value", value);
+
+        doReturn("value").when(settingsRepository).querySetting(eq("my_key"), any());
+        value = allSettings.get("my_key");
+        assertEquals("value", value);
+    }
 }
