@@ -1,11 +1,13 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.util.Pair;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,8 +17,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Column;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -335,4 +339,34 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Mockito.verify(eventClientRepository).addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
     }
+
+    @Test
+    public void getMinMaxServerVersionsShouldReturnMaxAndMinServerVersionFromEvents() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("events", jsonArray);
+
+        for (int i = 0; i < 5; i++) {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("serverVersion", (i +1) * 1000L);
+
+            jsonArray.put(jsonObject1);
+        }
+
+        Pair<Long, Long> minMaxServerVersions = eventClientRepository.getMinMaxServerVersions(jsonObject);
+        Assert.assertEquals(5000L, minMaxServerVersions.second, 0L);
+        Assert.assertEquals(1000L, minMaxServerVersions.first, 0L);
+    }
+
+    @Test
+    public void getMinMaxServerVersionsShouldReturnDefaultMinMaxWhenEventsArrayIsEmpty() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("events", jsonArray);
+
+        Pair<Long, Long> minMaxServerVersions = eventClientRepository.getMinMaxServerVersions(jsonObject);
+        Assert.assertEquals(Long.MIN_VALUE, minMaxServerVersions.second, 0L);
+        Assert.assertEquals(Long.MAX_VALUE, minMaxServerVersions.first, 0L);
+    }
+
 }
