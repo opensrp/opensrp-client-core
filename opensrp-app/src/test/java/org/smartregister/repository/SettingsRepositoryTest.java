@@ -15,6 +15,12 @@ import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Setting;
 
+import static org.smartregister.repository.SettingsRepository.SETTINGS_KEY_COLUMN;
+import static org.smartregister.repository.SettingsRepository.SETTINGS_SYNC_STATUS_COLUMN;
+import static org.smartregister.repository.SettingsRepository.SETTINGS_TYPE_COLUMN;
+import static org.smartregister.repository.SettingsRepository.SETTINGS_VALUE_COLUMN;
+import static org.smartregister.repository.SettingsRepository.SETTINGS_VERSION_COLUMN;
+
 /**
  * Created by kaderchowdhury on 21/11/17.
  */
@@ -22,8 +28,6 @@ import org.smartregister.domain.Setting;
 public class SettingsRepositoryTest extends BaseUnitTest {
 
     SettingsRepository settingsRepository;
-    public static final String SETTINGS_KEY_COLUMN = "key";
-    public static final String SETTINGS_VALUE_COLUMN = "value";
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
@@ -108,5 +112,21 @@ public class SettingsRepositoryTest extends BaseUnitTest {
         settingsRepository.querySettingsByType("");
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).query("settings", new String[]{"key", "value", "type", "version", "sync_status"},
                 "type = ?", new String[]{""}, null, null, null, null);
+    }
+
+    @Test
+    public void testQueryUnsyncedSettings(){
+        settingsRepository.queryUnsyncedSettings();
+        Mockito.verify(sqLiteDatabase, Mockito.times(1)).query("settings", new String[]{"key", "value", "type", "version", "sync_status"},
+                "sync_status = ?", new String[]{"PENDING"}, null, null, null, null);
+    }
+
+    @Test
+    public void testQueryCore() {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{SETTINGS_KEY_COLUMN, SETTINGS_VALUE_COLUMN, SETTINGS_TYPE_COLUMN, SETTINGS_VERSION_COLUMN, SETTINGS_SYNC_STATUS_COLUMN});
+        matrixCursor.addRow(new String[]{"KEY", "VALUE", "TYPE", "COL", "STATE"});
+        matrixCursor.moveToFirst();
+        Setting s = settingsRepository.queryCore(matrixCursor);
+        Assert.assertEquals(s.getKey(), "KEY");
     }
 }
