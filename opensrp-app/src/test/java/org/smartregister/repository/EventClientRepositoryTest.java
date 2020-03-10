@@ -386,4 +386,21 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
     }
 
+    @Test
+    public void getClientShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"gender\": \"male\"}", BaseRepository.TYPE_Synced, (i + 1L)});
+        }
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getClients(0, 20);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
 }
