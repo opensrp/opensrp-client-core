@@ -3,6 +3,7 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.database.SQLException;
 
+import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Assert;
@@ -25,6 +26,7 @@ import edu.emory.mathcs.backport.java.util.Collections;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -176,6 +178,21 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
         assertEquals("not_used", values.getAsString("status"));
         assertEquals(testUsername, values.getAsString("synced_by"));
         assertNotNull(values.getAsString("created_at"));
+    }
+
+    @Test
+    public void testCountUnusedIds() {
+        when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCountCursor());
+        long actualCount = uniqueIdRepository.countUnUsedIds();
+
+        assertEquals(12, actualCount);
+        verify(sqLiteDatabase).rawQuery("SELECT COUNT (*) FROM unique_ids WHERE status=?", new String[]{"not_used"});
+    }
+
+    public MatrixCursor getCountCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"count(*)"});
+        cursor.addRow(new Object[]{"12"});
+        return cursor;
     }
 
 }
