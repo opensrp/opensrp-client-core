@@ -17,6 +17,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.List;
@@ -182,6 +183,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testCountUnusedIds() {
+
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCountCursor());
         long actualCount = uniqueIdRepository.countUnUsedIds();
 
@@ -189,9 +191,28 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
         verify(sqLiteDatabase).rawQuery("SELECT COUNT (*) FROM unique_ids WHERE status=?", new String[]{"not_used"});
     }
 
+    @Test
+    public void testGetNextUniqueId() {
+
+        when(sqLiteDatabase.query(any(), any(), any(), any(), any(), any(), anyString(), anyString())).thenReturn(getUniqueIdCursor());
+        UniqueId actualUniqueId = uniqueIdRepository.getNextUniqueId();
+
+        assertEquals("12", actualUniqueId.getId());
+        assertEquals("openrs-id1", actualUniqueId.getOpenmrsId());
+        assertEquals("test-owner", actualUniqueId.getUsedBy());
+        assertEquals("Mon Jan 19 10:57:10 EAT 1970", actualUniqueId.getCreatedAt().toString());
+
+    }
+
     public MatrixCursor getCountCursor() {
         MatrixCursor cursor = new MatrixCursor(new String[]{"count(*)"});
         cursor.addRow(new Object[]{"12"});
+        return cursor;
+    }
+
+    public MatrixCursor getUniqueIdCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{"id", "openmrs_id", "status", "used_by", "date_created"});
+        cursor.addRow(new Object[]{"12", "openrs-id1", "not-used", "test-owner", 1583830167});
         return cursor;
     }
 
