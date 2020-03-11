@@ -107,6 +107,7 @@ public class CoreLibrary {
                         , p2POptions.getSenderTransferDao());
                 options.setBatchSize(p2POptions.getBatchSize());
                 options.setSyncFinishedCallback(p2POptions.getSyncFinishedCallback());
+                options.setRecalledIdentifier(p2POptions.getRecalledIdentifier());
 
                 P2PLibrary.init(options);
             }
