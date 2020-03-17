@@ -16,6 +16,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -32,6 +33,7 @@ import org.smartregister.domain.jsonmapping.ColumnType;
 import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.shadows.ShadowAssetHandler;
+import org.smartregister.util.AssetHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -361,6 +363,21 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         clientProcessorForJava.addMiniProcessors(mockMiniProcessor);
         clientProcessorForJava.processClient(eventClients);
         Mockito.verify(clientProcessorForJava).processEventUsingMiniProcessor(Mockito.any(ClientClassification.class), Mockito.eq(eventClient), Mockito.eq(birthRegEventType));
+    }
+
+
+
+    @Config(shadows = {ShadowAssetHandler.class})
+    @Test
+    public void processEventShouldCallCompleteProcessingEventAndReturnFalse() throws Exception {
+        String baseEntityId = "998098s0kldsckljsd";
+        String birthRegEventType = "Birth Reg";
+        Event event = new Event(baseEntityId, "eventId", birthRegEventType, new DateTime(), "client", "anm", "location-id", "form-submission-id");
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+
+        assertFalse(clientProcessorForJava.processEvent(event, null, AssetHandler.assetJsonToJava(new HashMap<>(), RuntimeEnvironment.systemContext, "ec_client_classification.json", ClientClassification.class)));
+        Mockito.verify(clientProcessorForJava).completeProcessing(Mockito.eq(event));
     }
 
     @After
