@@ -1206,4 +1206,29 @@ public class JsonFormUtilsTest {
             assertTrue(jsonObject.has(keys[i]));
         }
     }
+
+    @Test
+    public void testMergeShouldCorrectlyUpdateValues() throws JSONException {
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("key1", "value1");
+        jsonObject1.put("key2", "value2");
+        jsonObject1.put("key3", "value3");
+        jsonObject1.put("key4", "value4");
+        jsonObject1.put("key5", "value5");
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("key1", "value6");
+        jsonObject2.put("key3", "value7");
+        jsonObject2.put("key5", "value8");
+
+        JSONObject mergedJsonObj = JsonFormUtils.merge(jsonObject1, jsonObject2);
+        for (int i = 1; i <= jsonObject1.length(); i++) {
+            String key = "key" + i;
+            if (i % 2 == 0) {
+                assertEquals(jsonObject1.get(key), mergedJsonObj.get(key));
+            } else {
+                assertEquals(jsonObject2.get(key), mergedJsonObj.get(key));
+            }
+        }
+    }
 }
