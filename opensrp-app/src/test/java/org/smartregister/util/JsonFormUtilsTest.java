@@ -1165,4 +1165,17 @@ public class JsonFormUtilsTest {
         jsonObject.put("json_obj", new JSONObject(JSON_OBJ));
         assertFalse(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", jsonObject));
     }
+
+    @Test
+    public void testGetStringShouldGetCorrectString() throws JSONException {
+        String text = JsonFormUtils.getString(new JSONObject(JSON_OBJ).optJSONObject("primary").toString(), AllConstants.TEXT);
+        assertEquals("Primary", text);
+        assertNull(JsonFormUtils.getString("", AllConstants.TEXT));
+    }
+
+//    @Test
+//    public void testGetLongShouldGetCorrectLong() throws JSONException {
+//        String text = JsonFormUtils.getString();
+//        assertEquals("Primary", text);
+//    }
 }
