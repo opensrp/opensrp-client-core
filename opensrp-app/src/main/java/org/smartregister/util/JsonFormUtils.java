@@ -1101,7 +1101,11 @@ public class JsonFormUtils {
     }
 
     public static Long getLong(JSONObject jsonObject, String field) {
-        return isBlankJsonObject(jsonObject) ? null : jsonObject.optLong(field, (Long) null);
+        Long result = null;
+        if (isBlankJsonObject(jsonObject)) {
+            return result;
+        }
+        return jsonObject.has(field) ? jsonObject.optLong(field) : result;
     }
 
     public static Date formatDate(String dateString, boolean startOfToday) {

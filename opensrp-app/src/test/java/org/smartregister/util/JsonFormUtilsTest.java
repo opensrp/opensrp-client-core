@@ -1173,9 +1173,14 @@ public class JsonFormUtilsTest {
         assertNull(JsonFormUtils.getString("", AllConstants.TEXT));
     }
 
-//    @Test
-//    public void testGetLongShouldGetCorrectLong() throws JSONException {
-//        String text = JsonFormUtils.getString();
-//        assertEquals("Primary", text);
-//    }
+    @Test
+    public void testGetLongShouldGetCorrectLong() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("long_key", 900);
+        long longVal = JsonFormUtils.getLong(jsonObject, "long_key");
+        assertEquals(900, longVal);
+
+        jsonObject = new JSONObject();
+        assertNull(JsonFormUtils.getLong(jsonObject, "long_key"));
+    }
 }
