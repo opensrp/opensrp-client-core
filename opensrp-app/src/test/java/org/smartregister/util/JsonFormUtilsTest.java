@@ -16,11 +16,13 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
@@ -1230,5 +1233,19 @@ public class JsonFormUtilsTest {
                 assertEquals(jsonObject2.get(key), mergedJsonObj.get(key));
             }
         }
+    }
+
+    @Test
+    public void testFormatDateShouldCorrectlyFormatDateStr() throws ParseException {
+        String formattedDate = JsonFormUtils.formatDate("02-44-2970");
+        assertEquals("2973-08-02T00:00:00.000Z", formattedDate);
+    }
+
+    @Test
+    public void testFormatDateShouldCorrectlyFormatDate() throws ParseException {
+        Date formattedDate = JsonFormUtils.formatDate("02-12-2970", false);
+        assertEquals(dd_MM_yyyy.parse("02-12-2970"), formattedDate);
+        formattedDate = JsonFormUtils.formatDate("02-12-2970", false);
+        assertEquals(yyyyMMdd.parse("2970-12-02").toString(), formattedDate.toString());
     }
 }
