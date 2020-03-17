@@ -1183,4 +1183,11 @@ public class JsonFormUtilsTest {
         jsonObject = new JSONObject();
         assertNull(JsonFormUtils.getLong(jsonObject, "long_key"));
     }
+
+    @Test
+    public void testAddToJSONObjectShouldAddFieldToJsonObject() {
+        JSONObject jsonObject = new JSONObject();
+        JsonFormUtils.addToJSONObject(jsonObject, "key", "value");
+        assertEquals("value", jsonObject.optString("key"));
+    }
 }
