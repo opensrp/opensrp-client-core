@@ -1190,4 +1190,20 @@ public class JsonFormUtilsTest {
         JsonFormUtils.addToJSONObject(jsonObject, "key", "value");
         assertEquals("value", jsonObject.optString("key"));
     }
+
+    @Test
+    public void testGetNamesShouldGetAllKeysInJsonObject() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key1", "value1");
+        jsonObject.put("key2", "value2");
+        jsonObject.put("key3", "value3");
+        jsonObject.put("key4", "value4");
+        jsonObject.put("key5", "value5");
+
+        String[] keys = JsonFormUtils.getNames(jsonObject);
+        assertEquals(keys.length, jsonObject.length());
+        for (int i = 0; i < keys.length; i++) {
+            assertTrue(jsonObject.has(keys[i]));
+        }
+    }
 }
