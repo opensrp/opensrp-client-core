@@ -353,7 +353,6 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         eventClients.add(eventClient);
 
         ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
-        Mockito.doNothing().when(clientProcessorForJava).processEventUsingMiniProcessor(Mockito.any(ClientClassification.class), Mockito.eq(eventClient), Mockito.eq(birthRegEventType));
         HashSet<String> eventTypes = new HashSet<String>();
         eventTypes.add(birthRegEventType);
 
