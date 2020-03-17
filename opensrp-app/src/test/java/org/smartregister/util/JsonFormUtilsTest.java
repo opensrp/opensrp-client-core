@@ -33,6 +33,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
+import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
@@ -1245,7 +1246,11 @@ public class JsonFormUtilsTest {
     public void testFormatDateShouldCorrectlyFormatDate() throws ParseException {
         Date formattedDate = JsonFormUtils.formatDate("02-12-2970", false);
         assertEquals(dd_MM_yyyy.parse("02-12-2970"), formattedDate);
+
         formattedDate = JsonFormUtils.formatDate("02-12-2970", false);
         assertEquals(yyyyMMdd.parse("2970-12-02").toString(), formattedDate.toString());
+
+        formattedDate = JsonFormUtils.formatDate("2970-12-02 01:12:34", false);
+        assertEquals(yyyyMMddHHmmss.parse("2970-12-02 01:12:34").toString(), formattedDate.toString());
     }
 }
