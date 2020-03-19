@@ -20,6 +20,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Date;
 import java.util.List;
 
 import edu.emory.mathcs.backport.java.util.Collections;
@@ -202,6 +203,21 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
         assertEquals("test-owner", actualUniqueId.getUsedBy());
         assertEquals("Mon Jan 19 10:57:10 EAT 1970", actualUniqueId.getCreatedAt().toString());
 
+    }
+
+    @Test
+    public void testCreateValuesFor() {
+        UniqueId expectedUniqueId = new UniqueId("12", "openrs-id1", "not_used", "test-owner", new Date());
+        uniqueIdRepository.add(expectedUniqueId);
+
+        verify(sqLiteDatabase).insert(stringArgumentCaptor.capture(), eq(null), contentValuesArgumentCaptor.capture());
+        assertEquals("unique_ids", stringArgumentCaptor.getValue());
+        ContentValues values = contentValuesArgumentCaptor.getValue();
+        assertEquals("12", values.getAsString("_id"));
+        assertEquals("openrs-id1", values.getAsString("openmrs_id"));
+        assertEquals("not_used", values.getAsString("status"));
+        assertEquals("test-owner", values.getAsString("used_by"));
+        assertNotNull(values.getAsString("created_at"));
     }
 
     public MatrixCursor getCountCursor() {

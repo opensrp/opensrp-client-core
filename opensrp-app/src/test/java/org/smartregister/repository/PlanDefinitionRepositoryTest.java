@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,17 +20,25 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.smartregister.domain.PlanDefinitionTest.fiPlanDefinitionJSON;
 import static org.smartregister.domain.PlanDefinitionTest.gson;
 import static org.smartregister.domain.PlanDefinitionTest.planDefinitionJSON;
 import static org.smartregister.repository.PlanDefinitionRepository.ACTIVE;
@@ -142,6 +151,15 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
     }
 
     @Test
+    public void testFindPlanDefinitionByIdWithException() {
+        doThrow(new SQLiteException()).when(sqLiteDatabase).rawQuery(anyString(), any(String[].class));
+        PlanDefinition planDefinition = planDefinitionRepository.findPlanDefinitionById("4708ca0a-d0d6-4199-bb1b-8701803c2d02");
+        assertNull(planDefinition);
+        verify(sqLiteDatabase).rawQuery("SELECT  json FROM plan_definition WHERE _id =?",
+                new String[]{"4708ca0a-d0d6-4199-bb1b-8701803c2d02"});
+    }
+
+    @Test
     public void testFindAllPlanDefinitions() {
         when(sqLiteDatabase.rawQuery(anyString(), argsCaptor.capture()))
                 .thenReturn(getCursor());
@@ -150,6 +168,14 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
+        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
+    }
+
+    @Test
+    public void testFindAllPlanDefinitionsWithExceptions() {
+        doThrow(new SQLiteException()).when(sqLiteDatabase).rawQuery(anyString(), argsCaptor.capture());
+        Set<PlanDefinition> planDefinitions = planDefinitionRepository.findAllPlanDefinitions();
+        assertTrue(planDefinitions.isEmpty());
         verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
     }
 
@@ -166,9 +192,69 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
     }
 
+    @Test
+    public void testFindAllPlanDefinitionIdsWithException() {
+        doThrow(new SQLiteException()).when(sqLiteDatabase).rawQuery(anyString(), any());
+        Set<String> planDefinitions = planDefinitionRepository.findAllPlanDefinitionIds();
+        assertTrue(planDefinitions.isEmpty());
+        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
+    }
+
+    @Test
+    public void testFindPlanDefinitionByIds() {
+        when(sqLiteDatabase.rawQuery(anyString(), any(String[].class)))
+                .thenReturn(getMultiplePlanCursor());
+        Set<String> expectedIdentifiers = new HashSet<>();
+        expectedIdentifiers.add("4708ca0a-d0d6-4199-bb1b-8701803c2d02");
+        expectedIdentifiers.add("10f9e9fa-ce34-4b27-a961-72fab5206ab6");
+
+        Set<PlanDefinition> expectedPlanDefinitions = new HashSet<>();
+        expectedPlanDefinitions.add(gson.fromJson(planDefinitionJSON, PlanDefinition.class));
+        expectedPlanDefinitions.add(gson.fromJson(fiPlanDefinitionJSON, PlanDefinition.class));
+
+        Set<PlanDefinition> planDefinitionsSet = planDefinitionRepository.findPlanDefinitionByIds(expectedIdentifiers);
+        assertNotNull(planDefinitionsSet);
+        assertFalse(planDefinitionsSet.isEmpty());
+        assertEquals(2, planDefinitionsSet.size());
+        Iterator<PlanDefinition> iterator = planDefinitionsSet.iterator();
+        while (iterator.hasNext()){
+            PlanDefinition planDefinition = iterator.next();
+            expectedIdentifiers.contains(planDefinition.getIdentifier());
+            expectedPlanDefinitions.contains(planDefinition);
+        }
+
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        List<String> planIds = Arrays.asList(argsCaptor.getAllValues().get(0));
+        assertTrue(planIds.contains("4708ca0a-d0d6-4199-bb1b-8701803c2d02"));
+        assertTrue(planIds.contains("10f9e9fa-ce34-4b27-a961-72fab5206ab6"));
+        assertEquals("SELECT json  FROM plan_definition  WHERE _id IN (?,?)", stringArgumentCaptor.getValue());
+    }
+
+    @Test
+    public void testFindPlanDefinitionByIdsWithExceptionThrown() {
+        doThrow(new SQLiteException()).when(sqLiteDatabase).rawQuery(anyString(), any(String[].class));
+        Set<String> expectedIdentifiers = new HashSet<>();
+        expectedIdentifiers.add("4708ca0a-d0d6-4199-bb1b-8701803c2d02");
+        expectedIdentifiers.add("10f9e9fa-ce34-4b27-a961-72fab5206ab6");
+        Set<PlanDefinition> planDefinitionsSet = planDefinitionRepository.findPlanDefinitionByIds(expectedIdentifiers);
+        assertTrue(planDefinitionsSet.isEmpty());
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        List<String> planIds = Arrays.asList(argsCaptor.getAllValues().get(0));
+        assertTrue(planIds.contains("4708ca0a-d0d6-4199-bb1b-8701803c2d02"));
+        assertTrue(planIds.contains("10f9e9fa-ce34-4b27-a961-72fab5206ab6"));
+        assertEquals("SELECT json  FROM plan_definition  WHERE _id IN (?,?)", stringArgumentCaptor.getValue());
+    }
+
     private MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(new String[]{JSON});
         cursor.addRow(new Object[]{planDefinitionJSON});
+        return cursor;
+    }
+
+    private MatrixCursor getMultiplePlanCursor() {
+        MatrixCursor cursor = new MatrixCursor(new String[]{JSON});
+        cursor.addRow(new Object[]{planDefinitionJSON});
+        cursor.addRow(new Object[]{fiPlanDefinitionJSON});
         return cursor;
     }
 
