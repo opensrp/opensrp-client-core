@@ -6,7 +6,7 @@ jdk: oraclejdk8
 dist: trusty
 
 before_install:
-  sudo sed -i 's/security.provider.9/#security.provider.9/g' $JAVA_HOME/jre/lib/security/java.security
+  sudo /var/lib/dpkg/info/ca-certificates-java.postinst configure
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
