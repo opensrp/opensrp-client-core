@@ -53,7 +53,7 @@ public class TaskServiceHelper {
     private boolean syncByGroupIdentifier = true;
 
     /**
-     * If set to false tasks will be synced by owner otherwise default to syncing
+     * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
      * @param syncByGroupIdentifier flag for determining if tasks should be synced by group identifier
      *                              or owner (username)
      */
