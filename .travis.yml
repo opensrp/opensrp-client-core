@@ -5,6 +5,9 @@ sudo: required
 jdk: oraclejdk8
 dist: precise
 
+before_install:
+  sudo sed -i 's/security.provider.9/#security.provider.9/g' $JAVA_HOME/jre/lib/security/java.security
+
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
@@ -40,9 +43,10 @@ script:
   - ls -la
   # Enable the line below once we get all the test passing, currently most of the tests are failing 
   # so we'll just if the project compiles
-  #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
-  - ./gradlew coveralls --stacktrace
+  - travis_wait ./gradlew clean
+  # Run All Unit Tests
+  - travis_wait ./gradlew :opensrp-app:jacocoTestReport --stacktrace
+  - travis_wait ./gradlew :opensrp-app:coveralls --stacktrace
 
 after_failure:
   - pandoc opensrp-app/build/reports/tests/index.html -t plain
