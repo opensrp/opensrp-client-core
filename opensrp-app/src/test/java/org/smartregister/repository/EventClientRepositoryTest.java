@@ -1,11 +1,13 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.util.Pair;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -15,8 +17,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.db.Column;
+import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.ClientData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -334,5 +338,69 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         eventClientRepository.addEvent(baseEntityId, jsonObject);
 
         Mockito.verify(eventClientRepository).addEvent(baseEntityId, jsonObject, BaseRepository.TYPE_Unprocessed);
+    }
+
+    @Test
+    public void getMinMaxServerVersionsShouldReturnMaxAndMinServerVersionFromEvents() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("events", jsonArray);
+
+        for (int i = 0; i < 5; i++) {
+            JSONObject jsonObject1 = new JSONObject();
+            jsonObject1.put("serverVersion", (i +1) * 1000L);
+
+            jsonArray.put(jsonObject1);
+        }
+
+        Pair<Long, Long> minMaxServerVersions = eventClientRepository.getMinMaxServerVersions(jsonObject);
+        Assert.assertEquals(5000L, minMaxServerVersions.second, 0L);
+        Assert.assertEquals(1000L, minMaxServerVersions.first, 0L);
+    }
+
+    @Test
+    public void getMinMaxServerVersionsShouldReturnDefaultMinMaxWhenEventsArrayIsEmpty() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        JSONArray jsonArray = new JSONArray();
+        jsonObject.put("events", jsonArray);
+
+        Pair<Long, Long> minMaxServerVersions = eventClientRepository.getMinMaxServerVersions(jsonObject);
+        Assert.assertEquals(Long.MIN_VALUE, minMaxServerVersions.second, 0L);
+        Assert.assertEquals(Long.MAX_VALUE, minMaxServerVersions.first, 0L);
+    }
+
+    @Test
+    public void getEventsShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"eventId\": \"d89sd\"}", BaseRepository.TYPE_Synced, (i + 1L)});
+        }
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM event WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getEvents(0, 20);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
+
+    @Test
+    public void getClientShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"gender\": \"male\"}", BaseRepository.TYPE_Synced, (i + 1L)});
+        }
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getClients(0, 20);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
     }
 }
