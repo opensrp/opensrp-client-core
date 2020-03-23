@@ -40,10 +40,9 @@ script:
   - ls -la
   # Enable the line below once we get all the test passing, currently most of the tests are failing 
   # so we'll just if the project compiles
-  - travis_wait ./gradlew clean
-  # Run All Unit Tests
-  - travis_wait ./gradlew :opensrp-app:jacocoTestReport --stacktrace
-  - travis_wait ./gradlew :opensrp-app:coveralls --stacktrace
+  #Run All tests Unit and Instrumentation
+  - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
+  - ./gradlew coveralls --stacktrace
 
 after_failure:
   - pandoc opensrp-app/build/reports/tests/index.html -t plain
