@@ -17,6 +17,10 @@ import org.robolectric.annotation.Config;
 import org.smartregister.AllConstants;
 import org.smartregister.sync.mock.MockEditor;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.smartregister.AllConstants.CAMPAIGNS;
 
 @RunWith(RobolectricTestRunner.class)
@@ -255,4 +259,215 @@ public class AllSharedPreferencesTest extends TestCase {
         Assert.assertFalse(allSharedPreferences.fetchIsSyncInitial());
     }
 
+    @Test
+    public void testSaveUserLocalityId() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putString(any(), any())).thenReturn(editor);
+
+        allSharedPreferences.saveUserLocalityId("uname", "Id");
+
+        Mockito.verify(editor).putString(any(), any());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testFetchUserLocalityId() {
+        Mockito.when(preferences.getString(any(), any())).thenReturn("local-id");
+
+        assertEquals("local-id", allSharedPreferences.fetchUserLocalityId("uname"));
+        assertNull(allSharedPreferences.fetchUserLocalityId(null));
+    }
+
+    @Test
+    public void testSaveDefaultTeam() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putString(any(), any())).thenReturn(editor);
+
+        allSharedPreferences.saveDefaultTeam("uname", "team");
+
+        Mockito.verify(editor).putString(any(), any());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testFetchDefaultTeam() {
+        Mockito.when(preferences.getString(any(), any())).thenReturn("team");
+
+        assertEquals("team", allSharedPreferences.fetchDefaultTeam("uname"));
+        assertNull(allSharedPreferences.fetchDefaultTeam(null));
+    }
+
+    @Test
+    public void testFetchDefaultTeamId() {
+        Mockito.when(preferences.getString(any(), any())).thenReturn("team-id");
+
+        assertEquals("team-id", allSharedPreferences.fetchDefaultTeamId("uname"));
+        assertNull(allSharedPreferences.fetchDefaultTeamId(null));
+    }
+
+    @Test
+    public void testFetchLastSyncDate() {
+        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+
+        assertEquals((Long) 2000L, allSharedPreferences.fetchLastSyncDate(1000L));
+    }
+
+    @Test
+    public void testSaveLastSyncDate() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putLong(any(), anyLong())).thenReturn(editor);
+
+        allSharedPreferences.saveLastSyncDate(2000L);
+
+        Mockito.verify(editor).putLong(any(), anyLong());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testSaveIsSyncInitial() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putBoolean(any(), anyBoolean())).thenReturn(editor);
+
+        allSharedPreferences.saveIsSyncInitial(true);
+
+        Mockito.verify(editor).putBoolean(any(), anyBoolean());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testFetchLastCheckTimeStamp() {
+        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+
+        assertEquals(2000L, allSharedPreferences.fetchLastCheckTimeStamp());
+    }
+
+    @Test
+    public void testUpdateLastCheckTimeStamp() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putLong(any(), anyLong())).thenReturn(editor);
+
+        allSharedPreferences.updateLastCheckTimeStamp(1000L);
+
+        Mockito.verify(editor).putLong(any(), anyLong());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testUpdateLastSettingsSyncTimeStamp() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putLong(any(), anyLong())).thenReturn(editor);
+
+        allSharedPreferences.updateLastSettingsSyncTimeStamp(1000L);
+
+        Mockito.verify(editor).putLong(any(), anyLong());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testFetchLastSettingsSyncTimeStamp() {
+        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+
+        assertEquals(2000L, allSharedPreferences.fetchLastSettingsSyncTimeStamp());
+    }
+
+    @Test
+    public void testIsMigratedToSqlite4() {
+        Mockito.when(preferences.getBoolean(any(),  anyBoolean())).thenReturn(true);
+
+        assertTrue(allSharedPreferences.isMigratedToSqlite4());
+    }
+
+    @Test
+    public void testSetMigratedToSqlite4() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putBoolean(any(), anyBoolean())).thenReturn(editor);
+
+        allSharedPreferences.setMigratedToSqlite4();
+
+        Mockito.verify(editor).putBoolean(any(), anyBoolean());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testGetLastPeerToPeerSyncProcessedEvent() {
+        Mockito.when(preferences.getInt(any(),  anyInt())).thenReturn(10);
+
+        assertEquals(10, allSharedPreferences.getLastPeerToPeerSyncProcessedEvent());
+    }
+
+    @Test
+    public void testSetLastPeerToPeerSyncProcessedEvent() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putInt(any(), anyInt())).thenReturn(editor);
+
+        allSharedPreferences.setLastPeerToPeerSyncProcessedEvent(10);
+
+        Mockito.verify(editor).putInt(any(), anyInt());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void isPeerToPeerUnprocessedEvents() {
+        Mockito.when(preferences.getBoolean(any(),  anyBoolean())).thenReturn(true);
+
+        assertTrue(allSharedPreferences.isPeerToPeerUnprocessedEvents());
+    }
+
+    @Test
+    public void resetLastPeerToPeerSyncProcessedEvent() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putInt(any(), anyInt())).thenReturn(editor);
+
+        allSharedPreferences.resetLastPeerToPeerSyncProcessedEvent();
+
+        Mockito.verify(editor).putInt(any(), anyInt());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testUpdateLastClientProcessedTimeStamp() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putLong(any(), anyLong())).thenReturn(editor);
+
+        allSharedPreferences.updateLastClientProcessedTimeStamp(1000L);
+
+        Mockito.verify(editor).putLong(any(), anyLong());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testFetchLastClientProcessedTimeStamp() {
+        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+
+        assertEquals(2000L, allSharedPreferences.fetchLastClientProcessedTimeStamp());
+    }
+
+    @Test
+    public void testUpdateTransactionsKilledFlag() {
+        SharedPreferences.Editor editor = Mockito.mock(SharedPreferences.Editor.class);
+        Mockito.when(preferences.edit()).thenReturn(editor);
+        Mockito.when(editor.putBoolean(any(), anyBoolean())).thenReturn(editor);
+
+        allSharedPreferences.updateTransactionsKilledFlag(true);
+
+        Mockito.verify(editor).putBoolean(any(), anyBoolean());
+        Mockito.verify(editor).commit();
+    }
+
+    @Test
+    public void testFetchTransactionsKilledFlag() {
+        Mockito.when(preferences.getBoolean(any(),  anyBoolean())).thenReturn(true);
+
+        assertTrue(allSharedPreferences.fetchTransactionsKilledFlag());
+    }
 }
