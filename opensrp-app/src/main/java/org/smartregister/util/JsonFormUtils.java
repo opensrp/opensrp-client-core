@@ -1093,16 +1093,7 @@ public class JsonFormUtils {
     }
 
     public static String getString(JSONObject jsonObject, String field) {
-        if (jsonObject == null) {
-            return null;
-        }
-
-        try {
-            return jsonObject.has(field) ? jsonObject.getString(field) : null;
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return isBlankJsonObject(jsonObject) ? null : jsonObject.optString(field, null);
     }
 
     public static String getString(String jsonString, String field) {
@@ -1110,16 +1101,11 @@ public class JsonFormUtils {
     }
 
     public static Long getLong(JSONObject jsonObject, String field) {
-        if (jsonObject == null) {
-            return null;
+        Long result = null;
+        if (isBlankJsonObject(jsonObject)) {
+            return result;
         }
-
-        try {
-            return jsonObject.has(field) ? jsonObject.getLong(field) : null;
-        } catch (JSONException e) {
-            return null;
-
-        }
+        return jsonObject.has(field) ? jsonObject.optLong(field) : result;
     }
 
     public static Date formatDate(String dateString, boolean startOfToday) {
