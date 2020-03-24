@@ -17,6 +17,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
@@ -192,12 +194,12 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
     }
 
     @Test
-    public void testUpdateIdenitifierShouldRemoveHyphenFromOpenmrsId() throws Exception {
+    public void testUpdateIdentifierShouldRemoveHyphenFromOpenmrsId() throws Exception {
         ClientProcessorForJava clientProcessor = new ClientProcessorForJava(context);
         ContentValues contentValues = new ContentValues();
         contentValues.put("zeir_id", "23-23");
         Whitebox.setInternalState(clientProcessor, "openmrsGenIds", new String[]{"zeir_id"});
-        Whitebox.invokeMethod(clientProcessor, "updateIdenitifier", contentValues);
+        Whitebox.invokeMethod(clientProcessor, "updateIdentifier", contentValues);
         assertEquals("2323", contentValues.get("zeir_id"));
     }
 
@@ -409,6 +411,57 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         assertTrue(clientProcessorForJava.processField(field, newWomanRegistration, womanClient));
         Mockito.verify(clientProcessorForJava).processCaseModel(newWomanRegistration, womanClient, createsCase);
         Mockito.verify(clientProcessorForJava).closeCase(womanClient, field.closes_case);
+    }
+
+    @Test
+    public void processCaseModelShouldReturnFalseWhenCreatesCaseParamIsNull() {
+        assertFalse(clientProcessor.processCaseModel(null, null, null));
+    }
+
+    @Test
+    public void processCaseModelShouldReturnTrueAndPerformDbCalls() {
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+
+        Event newWomanRegistrationEvent = gson.fromJson("{\"identifiers\":{},\"baseEntityId\":\"aa4d1c8c-b27c-49e4-8c8e-c4201ec033b4\",\"locationId\":\"a0b023eb-fde6-4bc5-921f-463e2fe5e0a7\",\"eventDate\":\"2020-02-14T00:00:00.000Z\",\"eventType\":\"New Woman Registration\",\"formSubmissionId\":\"79bdbe60-4397-4f70-bb86-5f749bf70f3d\",\"providerId\":\"amani\",\"duration\":0,\"obs\":[{\"fieldType\":\"concept\",\"fieldDataType\":\"text\",\"fieldCode\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"parentCode\":\"\",\"values\":[\"0781980123\"],\"set\":[],\"formSubmissionField\":\"mother_guardian_number\",\"humanReadableValues\":[]},{\"fieldType\":\"concept\",\"fieldDataType\":\"text\",\"fieldCode\":\"164826AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"parentCode\":\"\",\"values\":[\"1065AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"],\"set\":[],\"formSubmissionField\":\"protected_at_birth\",\"humanReadableValues\":[\"Yes\"]},{\"fieldType\":\"concept\",\"fieldDataType\":\"text\",\"fieldCode\":\"1396AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"parentCode\":\"\",\"values\":[\"664AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"],\"set\":[],\"formSubmissionField\":\"mother_hiv_status\",\"humanReadableValues\":[\"Negative\"]},{\"fieldType\":\"concept\",\"fieldDataType\":\"start\",\"fieldCode\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"parentCode\":\"\",\"values\":[\"2020-02-14 15:03:21\"],\"set\":[],\"formSubmissionField\":\"start\",\"humanReadableValues\":[]},{\"fieldType\":\"concept\",\"fieldDataType\":\"end\",\"fieldCode\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"parentCode\":\"\",\"values\":[\"2020-02-14 15:16:48\"],\"set\":[],\"formSubmissionField\":\"end\",\"humanReadableValues\":[]},{\"fieldType\":\"concept\",\"fieldDataType\":\"deviceid\",\"fieldCode\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"parentCode\":\"\",\"values\":[\"355215060433484\"],\"set\":[],\"formSubmissionField\":\"deviceid\",\"humanReadableValues\":[]}],\"entityType\":\"mother\",\"version\":1581682608930,\"teamId\":\"99eec47f-47e1-4c7c-96ca-39fda38ec5be\",\"team\":\"Kibera\",\"dateCreated\":\"2020-02-14T12:22:36.570Z\",\"serverVersion\":1581682956566,\"clientApplicationVersion\":12,\"clientDatabaseVersion\":9,\"type\":\"Event\",\"id\":\"54ba5fac-3a02-4511-8b61-ca7fd4739f7d\",\"revision\":\"v1\"}", Event.class);
+        Client womanClient = gson.fromJson("{\"firstName\":\"Ninah\",\"lastName\":\"Mwaura\",\"birthdate\":\"1986-04-13T00:00:00.000Z\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"gender\":\"Female\",\"baseEntityId\":\"aa4d1c8c-b27c-49e4-8c8e-c4201ec033b4\",\"identifiers\":{\"M_ZEIR_ID\":\"102852\",\"OPENMRS_UUID\":\"5f471993-0271-4b0a-94da-f9857e049ae0\"},\"addresses\":[{\"addressType\":\"\",\"addressFields\":{\"address1\":\"Ayani\"}}],\"attributes\":{\"nrc_number\":\"7828282\",\"second_phone_number\":\"0758901234\"},\"dateCreated\":\"2020-02-14T12:22:36.561Z\",\"dateEdited\":\"2020-02-14T12:24:49.860Z\",\"serverVersion\":1581682956549,\"type\":\"Client\",\"id\":\"af47a972-7349-45b7-b8af-096104a18891\",\"revision\":\"v2\"}", Client.class);
+
+        List<String> createsCase = new ArrayList<>();
+        createsCase.add("ec_client");
+        createsCase.add("ec_mother_details");
+
+        Mockito.doNothing().when(clientProcessorForJava).processCaseModel(Mockito.eq(newWomanRegistrationEvent), Mockito.eq(womanClient), Mockito.any(Column.class), Mockito.any(ContentValues.class));
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                return null;
+            }
+        }).when(clientProcessorForJava).addContentValuesToDetailsTable(Mockito.any(ContentValues.class), Mockito.anyLong());
+        Mockito.doReturn(1L).when(clientProcessorForJava).executeInsertStatement(Mockito.any(ContentValues.class), Mockito.anyString());
+        Mockito.doNothing().when(clientProcessorForJava).updateClientDetailsTable(Mockito.eq(newWomanRegistrationEvent), Mockito.eq(womanClient));
+        Mockito.doNothing().when(clientProcessorForJava).updateFTSsearch(Mockito.anyString(), Mockito.any(), Mockito.any(ContentValues.class));
+
+        List<Column> columns = new ArrayList<>();
+        Column column = new Column();
+        column.column_name = "base_entity_id";
+        column.dataType = "";
+
+        columns.add(column);
+
+        Table table = new Table();
+        table.name = "ec_client";
+        table.columns = columns;
+
+        Table tableMother = new Table();
+        tableMother.name = "ec_mother_details";
+        tableMother.columns = columns;
+
+        Mockito.doReturn(table).when(clientProcessorForJava).getColumnMappings("ec_client");
+        Mockito.doReturn(tableMother).when(clientProcessorForJava).getColumnMappings("ec_mother_details");
+
+        assertTrue(clientProcessorForJava.processCaseModel(newWomanRegistrationEvent, womanClient, createsCase));
+        Mockito.verify(clientProcessorForJava).executeInsertStatement(Mockito.any(ContentValues.class), Mockito.eq("ec_client"));
+        Mockito.verify(clientProcessorForJava).executeInsertStatement(Mockito.any(ContentValues.class), Mockito.eq("ec_mother_details"));
+        Mockito.verify(clientProcessorForJava, Mockito.times(2)).updateClientDetailsTable(newWomanRegistrationEvent, womanClient);
     }
 
     @After
