@@ -48,7 +48,7 @@ import static org.smartregister.AllConstants.ROWID;
  */
 public class EventClientRepository extends BaseRepository {
 
-    private static final String EVENT_ID = "id";
+    private static final String EVENT_ID = "_id";
 
     private void populateAdditionalColumns(ContentValues values, Column[] columns, JSONObject jsonObject) {
         for (Column column : columns) {
