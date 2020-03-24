@@ -48,7 +48,9 @@ import static org.smartregister.AllConstants.ROWID;
  */
 public class EventClientRepository extends BaseRepository {
 
-    private static final String EVENT_ID = "_id";
+    private static final String EVENT_ID = "id";
+
+    private static final String _ID = "_id";
 
     private void populateAdditionalColumns(ContentValues values, Column[] columns, JSONObject jsonObject) {
         for (Column column : columns) {
@@ -157,6 +159,8 @@ public class EventClientRepository extends BaseRepository {
                 statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
                 if (jsonObject.has(EVENT_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
+                else if(jsonObject.has(_ID))
+                    statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
             } else {
                 return false;
             }
@@ -1475,6 +1479,8 @@ public class EventClientRepository extends BaseRepository {
 
             if (jsonObject.has(EVENT_ID)) {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
+            } else if (jsonObject.has(_ID)) {
+                values.put(event_column.eventId.name(), jsonObject.getString(_ID));
             }
             populateAdditionalColumns(values, event_column.values(), jsonObject);
             long affected;
