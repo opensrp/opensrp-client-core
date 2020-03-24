@@ -92,7 +92,6 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
         uniqueIdRepository.close(openMrsId);
         verify(sqLiteDatabase, times(2)).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
-
     }
 
     @Test
@@ -101,7 +100,6 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
         uniqueIdRepository.close(openMrsId);
         verify(sqLiteDatabase, times(2)).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
-
     }
 
     @Test
@@ -194,15 +192,13 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testGetNextUniqueId() {
-
         when(sqLiteDatabase.query(any(), any(), any(), any(), any(), any(), anyString(), anyString())).thenReturn(getUniqueIdCursor());
         UniqueId actualUniqueId = uniqueIdRepository.getNextUniqueId();
 
         assertEquals("12", actualUniqueId.getId());
         assertEquals("openrs-id1", actualUniqueId.getOpenmrsId());
         assertEquals("test-owner", actualUniqueId.getUsedBy());
-        assertEquals("Mon Jan 19 10:57:10 EAT 1970", actualUniqueId.getCreatedAt().toString());
-
+        assertEquals(new Date(1583830167).toString(), actualUniqueId.getCreatedAt().toString());
     }
 
     @Test
