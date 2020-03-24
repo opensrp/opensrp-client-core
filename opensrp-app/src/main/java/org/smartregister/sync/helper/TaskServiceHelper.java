@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
@@ -49,6 +50,21 @@ public class TaskServiceHelper {
 
     protected static TaskServiceHelper instance;
 
+    private boolean syncByGroupIdentifier = true;
+
+    /**
+     * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
+     * @param syncByGroupIdentifier flag for determining if tasks should be synced by group identifier
+     *                              or owner (username)
+     */
+    public void setSyncByGroupIdentifier(boolean syncByGroupIdentifier) {
+        this.syncByGroupIdentifier = syncByGroupIdentifier;
+    }
+
+    public boolean isSyncByGroupIdentifier() {
+        return syncByGroupIdentifier;
+    }
+
     public static TaskServiceHelper getInstance() {
         if (instance == null) {
             instance = new TaskServiceHelper(CoreLibrary.getInstance().context().getTaskRepository());
@@ -87,7 +103,7 @@ public class TaskServiceHelper {
         }
         if (serverVersion > 0) serverVersion += 1;
         try {
-            Long maxServerVersion = 0l;
+            long maxServerVersion = 0L;
             String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
@@ -98,7 +114,7 @@ public class TaskServiceHelper {
                         task.setLastModified(new DateTime());
                         taskRepository.addOrUpdate(task);
                     } catch (Exception e) {
-                        Timber.e(e, "Error saving task " + task.getIdentifier());
+                        Timber.e(e, "Error saving task %s", task.getIdentifier());
                     }
                 }
             }
@@ -114,32 +130,50 @@ public class TaskServiceHelper {
 
     private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
+        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
+
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
 
-        JSONObject request = new JSONObject();
-        request.put("plan", new JSONArray(plan));
-        request.put("group", new JSONArray(group));
-        request.put("serverVersion", serverVersion);
+        JSONObject request = isSyncByGroupIdentifier() ? getSyncTaskRequest(plan, group, serverVersion) :
+                getSyncTaskRequest(plan, getOwner(), serverVersion);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
-        Response resp = httpAgent.post(
-                MessageFormat.format("{0}{1}",
-                        baseUrl,
-                        SYNC_TASK_URL),
+        Response resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, SYNC_TASK_URL),
                 request.toString());
+
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
 
         return resp.payload().toString();
+    }
+
+    protected String getOwner() {
+        return allSharedPreferences.fetchRegisteredANM();
+    }
+
+    @NonNull
+    private JSONObject getSyncTaskRequest(Set<String> plan, List<String> group, Long serverVersion) throws JSONException {
+        JSONObject request = new JSONObject();
+        request.put("plan", new JSONArray(plan));
+        request.put("group", new JSONArray(group));
+        request.put("serverVersion", serverVersion);
+        return request;
+    }
+
+    @NonNull
+    private JSONObject getSyncTaskRequest(Set<String> plan, String owner, Long serverVersion) throws JSONException {
+        JSONObject request = new JSONObject();
+        request.put("plan", new JSONArray(plan));
+        request.put("owner", owner);
+        request.put("serverVersion", serverVersion);
+        return request;
     }
 
     private long getTaskMaxServerVersion(List<Task> tasks, long maxServerVersion) {
@@ -215,7 +249,5 @@ public class TaskServiceHelper {
 
         }
     }
-
-
 }
 
