@@ -32,6 +32,7 @@ android:
 addons:
   apt_packages:
     - pandoc
+    - oracle-java8-installer
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
