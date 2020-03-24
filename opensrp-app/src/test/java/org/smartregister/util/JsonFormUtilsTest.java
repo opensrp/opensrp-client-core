@@ -1116,7 +1116,7 @@ public class JsonFormUtilsTest {
     @Test
     public void testIsBlankJsonArrayShouldReturnCorrectJsonArrayType() throws Exception {
         JSONArray jsonArray = new JSONArray();
-        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", null));
+        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", (JSONArray) null));
         assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonArray", jsonArray));
         jsonArray.put(1);
         jsonArray.put(2);
@@ -1163,7 +1163,7 @@ public class JsonFormUtilsTest {
     @Test
     public void testisBlankJsonObjectShouldReturnCorrectJsonObjectType() throws Exception {
         JSONObject jsonObject = new JSONObject();
-        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", null));
+        assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", (JSONObject) null));
         assertTrue(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", jsonObject));
         jsonObject.put("fields", new JSONArray(STEP_1_FIELDS));
         jsonObject.put("json_obj", new JSONObject(JSON_OBJ));
