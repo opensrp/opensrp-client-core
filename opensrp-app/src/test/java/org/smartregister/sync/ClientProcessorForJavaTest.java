@@ -16,6 +16,8 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
@@ -30,6 +32,8 @@ import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
 import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.repository.DetailsRepository;
+import org.smartregister.shadows.ShadowAssetHandler;
+import org.smartregister.util.AssetHandler;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -320,6 +324,60 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         clientProcessor.updateClientDetailsTable(event, client);
         assertTrue(Boolean.valueOf(event.getDetails().get(ClientProcessorForJava.detailsUpdated)));
         Mockito.verify(detailsRepository, Mockito.atLeast(4)).add(anyString(), anyString(), anyString(), anyLong());
+    }
+
+    @Config(shadows = {ShadowAssetHandler.class})
+    @Test
+    public void processClientShouldCallProcessEvent() throws Exception {
+        String baseEntityId = "998098s0kldsckljsd";
+        Client client = new Client(baseEntityId);
+        Event event = new Event(baseEntityId, "eventId", "Birth Reg", new DateTime(), "client", "anm", "location-id", "form-submission-id");
+        List<EventClient> eventClients = new ArrayList<>();
+        eventClients.add(new EventClient(event, client));
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        Mockito.doReturn(true).when(clientProcessorForJava).processEvent(Mockito.eq(event), Mockito.eq(client), Mockito.any(ClientClassification.class));
+
+        clientProcessorForJava.processClient(eventClients);
+        Mockito.verify(clientProcessorForJava).processEvent(Mockito.eq(event), Mockito.eq(client), Mockito.any(ClientClassification.class));
+    }
+
+
+    @Config(shadows = {ShadowAssetHandler.class})
+    @Test
+    public void processClientShouldCallProcessEventsUsingMiniProcessor() throws Exception {
+        String baseEntityId = "998098s0kldsckljsd";
+        Client client = new Client(baseEntityId);
+        String birthRegEventType = "Birth Reg";
+        Event event = new Event(baseEntityId, "eventId", birthRegEventType, new DateTime(), "client", "anm", "location-id", "form-submission-id");
+        List<EventClient> eventClients = new ArrayList<>();
+        EventClient eventClient = new EventClient(event, client);
+        eventClients.add(eventClient);
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        HashSet<String> eventTypes = new HashSet<String>();
+        eventTypes.add(birthRegEventType);
+
+        MiniClientProcessorForJava mockMiniProcessor = Mockito.mock(MiniClientProcessorForJava.class);
+        Mockito.doReturn(eventTypes).when(mockMiniProcessor).getEventTypes();
+        clientProcessorForJava.addMiniProcessors(mockMiniProcessor);
+        clientProcessorForJava.processClient(eventClients);
+        Mockito.verify(clientProcessorForJava).processEventUsingMiniProcessor(Mockito.any(ClientClassification.class), Mockito.eq(eventClient), Mockito.eq(birthRegEventType));
+    }
+
+
+
+    @Config(shadows = {ShadowAssetHandler.class})
+    @Test
+    public void processEventShouldCallCompleteProcessingEventAndReturnFalse() throws Exception {
+        String baseEntityId = "998098s0kldsckljsd";
+        String birthRegEventType = "Birth Reg";
+        Event event = new Event(baseEntityId, "eventId", birthRegEventType, new DateTime(), "client", "anm", "location-id", "form-submission-id");
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+
+        assertFalse(clientProcessorForJava.processEvent(event, null, AssetHandler.assetJsonToJava(new HashMap<>(), RuntimeEnvironment.systemContext, "ec_client_classification.json", ClientClassification.class)));
+        Mockito.verify(clientProcessorForJava).completeProcessing(Mockito.eq(event));
     }
 
     @After
