@@ -116,6 +116,8 @@ public class SettingsActivity extends PreferenceActivity {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
                 AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
 
+                if(baseUrl.endsWith("/"))
+                    baseUrl=baseUrl.substring(0,baseUrl.length()-1);
                 URL url = new URL(baseUrl);
 
                 String base = url.getProtocol() + "://" + url.getHost();
