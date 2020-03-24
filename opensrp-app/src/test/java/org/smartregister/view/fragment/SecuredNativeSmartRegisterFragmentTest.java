@@ -21,6 +21,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.powermock.reflect.Whitebox;
@@ -112,8 +113,8 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     @Mock
     private SecuredNativeSmartRegisterFragment.PaginationViewHandler paginationViewHandler;
 
-    @Mock
-    public ListView clientsView;
+    @Spy
+    private ListView clientsView;
 
     @Captor
     private ArgumentCaptor<ECSearchOption> ecSearchOptionArgumentCaptor;
@@ -148,7 +149,12 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         Mockito.doReturn(navBarOptionsProvider).when(securedNativeSmartRegisterFragment).getNavBarOptionsProvider();
         Mockito.doReturn(defaultOptionsProvider).when(securedNativeSmartRegisterFragment).getDefaultOptionsProvider();
+
         Mockito.doReturn(serviceModeOption).when(defaultOptionsProvider).serviceMode();
+        Mockito.doReturn(filterOption).when(defaultOptionsProvider).villageFilter();
+        Mockito.doReturn(sortOption).when(defaultOptionsProvider).sortOption();
+
+        Mockito.doReturn(GENERIC_TEXT_PHRASE).when(defaultOptionsProvider).nameInShortFormForTitle();
 
         Mockito.doReturn(headerProvider).when(serviceModeOption).getHeaderProvider();
         Mockito.doReturn(3).when(headerProvider).count();
@@ -163,7 +169,7 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
         Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(activity).getResources();
         Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(securedNativeSmartRegisterFragment).getResources();
 
-
+        Mockito.doNothing().when(clientsView).addFooterView(ArgumentMatchers.any(View.class));
     }
 
     @Test
@@ -398,12 +404,16 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
     @Test
     public void testSetupNavBarViewsInitsViewCorrectly() {
 
-        View parent = LayoutInflater.from(RuntimeEnvironment.application).inflate(R.layout.smart_register_activity, null, false);
+        View parent = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.smart_register_activity, null, false);
 
         View parentSpy = Mockito.spy(parent);
 
         Mockito.doReturn(buttonBackHome).when(parentSpy).findViewById(R.id.btn_back_to_home);
         Mockito.doReturn(customFontTextView).when(securedNativeSmartRegisterFragment).getCustomFontTextViewHeader();
+
+        Mockito.doReturn(LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext())).when(activity).getLayoutInflater();
+        Mockito.doReturn(activity).when(clientsView).getContext();
+        Mockito.doReturn(clientsView).when(parentSpy).findViewById(R.id.list);
 
         SecuredNativeSmartRegisterFragment securedNativeSmartRegisterFragmentSpy = Mockito.spy(securedNativeSmartRegisterFragment);
         Mockito.doReturn(defaultOptionsProvider).when(securedNativeSmartRegisterFragmentSpy).getDefaultOptionsProvider();
@@ -413,8 +423,16 @@ public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
 
         securedNativeSmartRegisterFragment.setupViews(parentSpy);
 
-        Mockito.verify(view).findViewById(R.id.btn_back_to_home);
-        Mockito.verify(buttonBackHome).setOnClickListener(navBarActionsHandler);
+
+        Mockito.verify(filterOption).name();
+        Mockito.verify(sortOption).name();
+        Mockito.verify(serviceModeOption).name();
+        Mockito.verify(defaultOptionsProvider).nameInShortFormForTitle();
+
+        TextView textView = Whitebox.getInternalState(securedNativeSmartRegisterFragment, "titleLabelView");
+        Assert.assertNotNull(textView);
+
+        Assert.assertEquals(GENERIC_TEXT_PHRASE, textView.getText());
     }
 
 }
