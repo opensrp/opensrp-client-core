@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
@@ -21,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
 
 /**
  * Created by Vincent Karuri on 10/03/2020
@@ -61,19 +60,19 @@ public class SyncUtilsTest {
         when(Utils.getVersionCode(any())).thenReturn(1l);
 
         Setting setting = new Setting();
-        setting.setIdentifier(MIN_ALLOWED_APP_VERSION);
+        setting.setIdentifier(MIN_ALLOWED_APP_VERSION_SETTING);
         setting.setValue(getMinAppVersionSetting(2));
-        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION);
+        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
         assertFalse(syncUtils.isAppVersionAllowed());
 
         // same version app
         when(Utils.getVersionCode(any())).thenReturn(3l);
-        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION);
+        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
         assertTrue(syncUtils.isAppVersionAllowed());
 
         // newer version app
         when(Utils.getVersionCode(any())).thenReturn(3l);
-        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION);
+        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
         assertTrue(syncUtils.isAppVersionAllowed());
     }
 

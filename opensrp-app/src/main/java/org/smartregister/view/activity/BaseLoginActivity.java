@@ -28,6 +28,8 @@ import org.smartregister.R;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
+import timber.log.Timber;
+
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
 /**
@@ -254,6 +256,12 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public boolean isAppVersionAllowed() {
-        return Utils.isAppVersionAllowed();
+        boolean isAppVersionAllowed = true;
+        try {
+            isAppVersionAllowed = Utils.isAppVersionAllowed(this);
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
+        }
+        return  isAppVersionAllowed;
     }
 }

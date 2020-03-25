@@ -95,7 +95,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_APP_VERSION_ALLOWED;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
 import static org.smartregister.util.Log.logError;
 
 
@@ -807,8 +807,10 @@ public class Utils {
         return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
     }
 
-    public static boolean isAppVersionAllowed() {
-        return Boolean.valueOf(DrishtiApplication.getInstance().getContext().allSettings()
-                .get(IS_APP_VERSION_ALLOWED, "true"));
+    public static boolean isAppVersionAllowed(Context context) throws PackageManager.NameNotFoundException {
+        int minAllowedAppVersion = Integer.valueOf(DrishtiApplication.getInstance().getContext().allSettings()
+                .get(MIN_ALLOWED_APP_VERSION, String.valueOf(Integer.MIN_VALUE)));
+
+        return SyncUtils.isOutdatedVersion(minAllowedAppVersion, context);
     }
 }

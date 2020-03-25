@@ -10,7 +10,6 @@ import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Setting;
@@ -25,6 +24,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
 import static org.smartregister.AllConstants.JSON.KEY;
 import static org.smartregister.AllConstants.JSON.VALUE;
 import static org.smartregister.AllConstants.SETTINGS;
@@ -100,17 +100,22 @@ public class SyncUtils {
         boolean isAppVersionAllowed = true;
 
         AllSettings settingsRepository = opensrpContent.allSettings();
-        Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
+        Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
         if (minAllowedAppVersionSetting == null) {
             return isAppVersionAllowed;
         }
 
         int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
-        if (getVersionCode(context) < minAllowedAppVersion) {
+        if (isOutdatedVersion(minAllowedAppVersion, context)) {
             isAppVersionAllowed = false;
         }
+        settingsRepository.put(MIN_ALLOWED_APP_VERSION , String.valueOf(minAllowedAppVersion));
 
         return isAppVersionAllowed;
+    }
+
+    public static boolean isOutdatedVersion(int minAllowedAppVersion, Context context) throws PackageManager.NameNotFoundException {
+        return getVersionCode(context) < minAllowedAppVersion;
     }
 
     private int extractMinAllowedAppVersion(String setting) {
@@ -120,7 +125,7 @@ public class SyncUtils {
             for (int i = 0; i < settings.length(); i++) {
                 JSONObject currSettingObj = settings.optJSONObject(i);
                 String currKey = currSettingObj.optString(KEY);
-                if (MIN_ALLOWED_APP_VERSION.equals(currKey)) {
+                if (MIN_ALLOWED_APP_VERSION_SETTING.equals(currKey)) {
                     minAllowedAppVersion = currSettingObj.optInt(VALUE, minAllowedAppVersion);
                     break;
                 }

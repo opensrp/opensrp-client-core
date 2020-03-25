@@ -37,6 +37,8 @@ import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import timber.log.Timber;
+
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
 import static org.smartregister.util.Log.logError;
@@ -147,17 +149,20 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     }
 
     private void localLogin(View view, String userName, String password) {
+        try {
+            if (!isAppVersionAllowed(this)) {
+                showErrorDialog(getString(R.string.outdated_app));
+                return;
+            }
 
-        if (!isAppVersionAllowed()) {
-            showErrorDialog(getString(R.string.outdated_app));
-            return;
-        }
-
-        if (context.userService().isValidLocalLogin(userName, password)) {
-            localLoginWith(userName, password);
-        } else {
-            showErrorDialog(getString(R.string.login_failed_dialog_message));
-            view.setClickable(true);
+            if (context.userService().isValidLocalLogin(userName, password)) {
+                localLoginWith(userName, password);
+            } else {
+                showErrorDialog(getString(R.string.login_failed_dialog_message));
+                view.setClickable(true);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
         }
     }
 
@@ -165,32 +170,35 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private void remoteLogin(final View view, final String userName, final String password) {
 
-        if (!isAppVersionAllowed()) {
-            showErrorDialog(getString(R.string.outdated_app));
-            return;
-        }
+        try {
+            if (!isAppVersionAllowed(this)) {
+                showErrorDialog(getString(R.string.outdated_app));
+                return;
+            }
 
-        if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
+            if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
 
-            tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
-                public void onEvent(LoginResponse loginResponse) {
-                    if (loginResponse == SUCCESS) {
-                        remoteLoginWith(userName, password, loginResponse.payload());
-                    } else {
-                        if (loginResponse == null) {
-                            showErrorDialog("Login failed. Unknown reason. Try Again");
+                tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+                    public void onEvent(LoginResponse loginResponse) {
+                        if (loginResponse == SUCCESS) {
+                            remoteLoginWith(userName, password, loginResponse.payload());
                         } else {
-                            showErrorDialog(loginResponse.message());
+                            if (loginResponse == null) {
+                                showErrorDialog("Login failed. Unknown reason. Try Again");
+                            } else {
+                                showErrorDialog(loginResponse.message());
+                            }
+                            view.setClickable(true);
                         }
-                        view.setClickable(true);
                     }
-                }
-            });
+                });
 
-        } else {
-            view.setClickable(true);
-            showErrorDialog("OpenSRP Base URL is missing, Please add it in Settings and try again");
-
+            } else {
+                view.setClickable(true);
+                showErrorDialog("OpenSRP Base URL is missing, Please add it in Settings and try again");
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
         }
     }
 
