@@ -83,11 +83,11 @@ public class SyncIntentService extends BaseSyncIntentService {
                 pushToServer();
             }
 
-            if (!syncUtils.isAppVersionAllowed()) {
+            if (!hasValidAuthorization) {
+                syncUtils.logoutUser();
+            } else if (!syncUtils.isAppVersionAllowed()) {
                 AllSettings settingsRepository = org.smartregister.Context.getInstance().allSettings();
                 settingsRepository.put(IS_APP_VERSION_ALLOWED, "false");
-                syncUtils.logoutUser();
-            } else if (!hasValidAuthorization) {
                 syncUtils.logoutUser();
             } else {
                 pullECFromServer();

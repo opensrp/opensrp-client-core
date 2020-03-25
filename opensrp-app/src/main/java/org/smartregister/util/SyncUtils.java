@@ -122,6 +122,7 @@ public class SyncUtils {
                 String currKey = currSettingObj.optString(KEY);
                 if (MIN_ALLOWED_APP_VERSION.equals(currKey)) {
                     minAllowedAppVersion = currSettingObj.optInt(VALUE, minAllowedAppVersion);
+                    break;
                 }
             }
         } catch (NumberFormatException e) {
