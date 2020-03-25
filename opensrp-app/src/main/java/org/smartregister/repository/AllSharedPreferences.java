@@ -2,6 +2,8 @@ package org.smartregister.repository;
 
 import android.content.SharedPreferences;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -183,7 +185,9 @@ public class AllSharedPreferences {
 
     public String fetchBaseURL(String baseurl) {
 
-        return preferences.getString(DRISHTI_BASE_URL, baseurl);
+        String url = preferences.getString(DRISHTI_BASE_URL, baseurl);
+        return StringUtils.isNotBlank(url) && url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+
     }
 
     public String fetchHost(String host) {
