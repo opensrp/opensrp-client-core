@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Base64;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,14 +100,21 @@ public class SyncUtils {
     public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
         boolean isAppVersionAllowed = true;
 
+        // if min version is already extracted
         AllSettings settingsRepository = opensrpContent.allSettings();
+        String minAllowedAppVersionStr = settingsRepository.get(MIN_ALLOWED_APP_VERSION);
+        if (StringUtils.isNotBlank(minAllowedAppVersionStr)) {
+            return !isOutdatedVersion(Integer.valueOf(minAllowedAppVersionStr));
+        }
+
+        // else, attempt to extract it
         Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
         if (minAllowedAppVersionSetting == null) {
             return isAppVersionAllowed;
         }
 
         int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
-        if (isOutdatedVersion(minAllowedAppVersion, context)) {
+        if (isOutdatedVersion(minAllowedAppVersion)) {
             isAppVersionAllowed = false;
         }
         settingsRepository.put(MIN_ALLOWED_APP_VERSION , String.valueOf(minAllowedAppVersion));
@@ -114,7 +122,8 @@ public class SyncUtils {
         return isAppVersionAllowed;
     }
 
-    public static boolean isOutdatedVersion(int minAllowedAppVersion, Context context) throws PackageManager.NameNotFoundException {
+
+    private boolean isOutdatedVersion(int minAllowedAppVersion) throws PackageManager.NameNotFoundException {
         return getVersionCode(context) < minAllowedAppVersion;
     }
 

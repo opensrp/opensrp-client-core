@@ -27,6 +27,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
@@ -43,7 +44,6 @@ import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logVerbose;
-import static org.smartregister.util.Utils.isAppVersionAllowed;
 
 public class LoginActivity extends Activity implements View.OnClickListener {
     private Context context;
@@ -51,6 +51,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText passwordEditText;
     private ProgressDialog progressDialog;
     private Button loginButton;
+    private SyncUtils syncUtils;
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -66,6 +67,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.login);
 
         context = CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
+        syncUtils = new SyncUtils(this);
         initializeLoginFields();
         initializeBuildDetails();
         setDoneActionHandlerOnPasswordField();
@@ -150,7 +152,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
 
     private void localLogin(View view, String userName, String password) {
         try {
-            if (!isAppVersionAllowed(this)) {
+            if (!syncUtils.isAppVersionAllowed()) {
                 showErrorDialog(getString(R.string.outdated_app));
                 return;
             }
@@ -171,7 +173,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private void remoteLogin(final View view, final String userName, final String password) {
 
         try {
-            if (!isAppVersionAllowed(this)) {
+            if (!syncUtils.isAppVersionAllowed()) {
                 showErrorDialog(getString(R.string.outdated_app));
                 return;
             }

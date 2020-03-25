@@ -806,11 +806,4 @@ public class Utils {
     public static Locale getDefaultLocale() {
         return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
     }
-
-    public static boolean isAppVersionAllowed(Context context) throws PackageManager.NameNotFoundException {
-        int minAllowedAppVersion = Integer.valueOf(DrishtiApplication.getInstance().getContext().allSettings()
-                .get(MIN_ALLOWED_APP_VERSION, String.valueOf(Integer.MIN_VALUE)));
-
-        return SyncUtils.isOutdatedVersion(minAllowedAppVersion, context);
-    }
 }

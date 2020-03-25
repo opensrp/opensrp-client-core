@@ -17,9 +17,11 @@ import org.smartregister.repository.AllSettings;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
+import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
 import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION_SETTING;
 
 /**
@@ -57,25 +59,39 @@ public class SyncUtilsTest {
         assertTrue(syncUtils.isAppVersionAllowed());
 
         // outdated app
-        when(Utils.getVersionCode(any())).thenReturn(1l);
-
         Setting setting = new Setting();
         setting.setIdentifier(MIN_ALLOWED_APP_VERSION_SETTING);
         setting.setValue(getMinAppVersionSetting(2));
-        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
+        when(Utils.getVersionCode(any(Context.class))).thenReturn(1l);
         assertFalse(syncUtils.isAppVersionAllowed());
 
         // same version app
-        when(Utils.getVersionCode(any())).thenReturn(3l);
-        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+        when(Utils.getVersionCode(any())).thenReturn(2l);
+        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
         assertTrue(syncUtils.isAppVersionAllowed());
 
         // newer version app
         when(Utils.getVersionCode(any())).thenReturn(3l);
-        doReturn(setting).when(settingsRepository).getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
+        assertTrue(syncUtils.isAppVersionAllowed());
+
+        // when the min version value is already set:
+        doReturn(null).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
+
+        // 1. outdated app
+        doReturn("2").when(settingsRepository).get(eq(MIN_ALLOWED_APP_VERSION));
+        when(Utils.getVersionCode(any())).thenReturn(1l);
+        assertFalse(syncUtils.isAppVersionAllowed());
+
+        // 2. same version app
+        when(Utils.getVersionCode(any())).thenReturn(2l);
+        assertTrue(syncUtils.isAppVersionAllowed());
+
+        // 3. newer version app
+        when(Utils.getVersionCode(any())).thenReturn(3l);
         assertTrue(syncUtils.isAppVersionAllowed());
     }
-
 
     private String getMinAppVersionSetting(int minVersion) {
         String setting = "{\n" +
@@ -85,7 +101,7 @@ public class SyncUtilsTest {
                 "      \"description\": \"Defines the minimum allowed version of the client app allowed to sync to this server\",\n" +
                 "      \"label\": \"Minimum allowed application version\",\n" +
                 "      \"value\": \"" + minVersion + "\",\n" +
-                "      \"key\": \"min_allowed_app_version\"\n" +
+                "      \"key\": \"min_allowed_app_version_setting\"\n" +
                 "    }\n" +
                 "  ],\n" +
                 "  \"serverVersion\": 1583417991264,\n" +

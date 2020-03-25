@@ -2,7 +2,6 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.widget.TableRow;
 
@@ -11,14 +10,11 @@ import com.google.common.collect.ImmutableMap;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.TestApplication;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.repository.AllSettings;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,17 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.IS_APP_VERSION_ALLOWED;
+import static org.smartregister.TestUtils.getContext;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -284,29 +270,7 @@ public class UtilsTest extends BaseUnitTest {
 
     @Test
     public void testGetVersionCodeShouldGetCorrectVersionCode() throws PackageManager.NameNotFoundException {
-        Context context = mock(Context.class);
-        PackageManager packageManager = mock(PackageManager.class);
-        PackageInfo packageInfo = new PackageInfo();
-        packageInfo.versionCode = 40;
-        doReturn(packageManager).when(context).getPackageManager();
-        doReturn(packageInfo).when(packageManager).getPackageInfo(anyString(), anyInt());
-        doReturn("").when(context).getPackageName();
-
+        Context context = getContext(40);
         assertEquals(Utils.getVersionCode(context), 40);
-    }
-
-    @Test
-    public void testIsAppVersionAllowedShouldReturnCorrectStatus() {
-        TestApplication testApplication = (TestApplication) TestApplication.getInstance();
-        org.smartregister.Context context = mock(org.smartregister.Context.class);
-        testApplication.setContext(context);
-        AllSettings settings = mock(AllSettings.class);
-        doReturn(settings).when(context).allSettings();
-
-        doReturn("false").when(settings).get(IS_APP_VERSION_ALLOWED, "true");
-        assertFalse(Utils.isAppVersionAllowed());
-
-        doReturn("true").when(settings).get(IS_APP_VERSION_ALLOWED, "true");;
-        assertTrue(Utils.isAppVersionAllowed());
     }
 }
