@@ -16,11 +16,13 @@ import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,6 +32,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
+import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
@@ -1164,5 +1168,89 @@ public class JsonFormUtilsTest {
         jsonObject.put("fields", new JSONArray(STEP_1_FIELDS));
         jsonObject.put("json_obj", new JSONObject(JSON_OBJ));
         assertFalse(Whitebox.invokeMethod(JsonFormUtils.class, "isBlankJsonObject", jsonObject));
+    }
+
+    @Test
+    public void testGetStringShouldGetCorrectString() throws JSONException {
+        String text = JsonFormUtils.getString(new JSONObject(JSON_OBJ).optJSONObject("primary").toString(), AllConstants.TEXT);
+        assertEquals("Primary", text);
+        assertNull(JsonFormUtils.getString("", AllConstants.TEXT));
+    }
+
+    @Test
+    public void testGetLongShouldGetCorrectLong() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("long_key", 900);
+        long longVal = JsonFormUtils.getLong(jsonObject, "long_key");
+        assertEquals(900, longVal);
+
+        jsonObject = new JSONObject();
+        assertNull(JsonFormUtils.getLong(jsonObject, "long_key"));
+    }
+
+    @Test
+    public void testAddToJSONObjectShouldAddFieldToJsonObject() {
+        JSONObject jsonObject = new JSONObject();
+        JsonFormUtils.addToJSONObject(jsonObject, "key", "value");
+        assertEquals("value", jsonObject.optString("key"));
+    }
+
+    @Test
+    public void testGetNamesShouldGetAllKeysInJsonObject() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("key1", "value1");
+        jsonObject.put("key2", "value2");
+        jsonObject.put("key3", "value3");
+        jsonObject.put("key4", "value4");
+        jsonObject.put("key5", "value5");
+
+        String[] keys = JsonFormUtils.getNames(jsonObject);
+        assertEquals(keys.length, jsonObject.length());
+        for (int i = 0; i < keys.length; i++) {
+            assertTrue(jsonObject.has(keys[i]));
+        }
+    }
+
+    @Test
+    public void testMergeShouldCorrectlyUpdateValues() throws JSONException {
+        JSONObject jsonObject1 = new JSONObject();
+        jsonObject1.put("key1", "value1");
+        jsonObject1.put("key2", "value2");
+        jsonObject1.put("key3", "value3");
+        jsonObject1.put("key4", "value4");
+        jsonObject1.put("key5", "value5");
+
+        JSONObject jsonObject2 = new JSONObject();
+        jsonObject2.put("key1", "value6");
+        jsonObject2.put("key3", "value7");
+        jsonObject2.put("key5", "value8");
+
+        JSONObject mergedJsonObj = JsonFormUtils.merge(jsonObject1, jsonObject2);
+        for (int i = 1; i <= jsonObject1.length(); i++) {
+            String key = "key" + i;
+            if (i % 2 == 0) {
+                assertEquals(jsonObject1.get(key), mergedJsonObj.get(key));
+            } else {
+                assertEquals(jsonObject2.get(key), mergedJsonObj.get(key));
+            }
+        }
+    }
+
+    @Test
+    public void testFormatDateShouldCorrectlyFormatDateStr() throws ParseException {
+        String formattedDate = JsonFormUtils.formatDate("02-44-2970");
+        assertEquals("2973-08-02T00:00:00.000Z", formattedDate);
+    }
+
+    @Test
+    public void testFormatDateShouldCorrectlyFormatDate() throws ParseException {
+        Date formattedDate = JsonFormUtils.formatDate("02-12-2970", false);
+        assertEquals(dd_MM_yyyy.parse("02-12-2970"), formattedDate);
+
+        formattedDate = JsonFormUtils.formatDate("02-12-2970", false);
+        assertEquals(yyyyMMdd.parse("2970-12-02").toString(), formattedDate.toString());
+
+        formattedDate = JsonFormUtils.formatDate("2970-12-02 01:12:34", false);
+        assertEquals(yyyyMMddHHmmss.parse("2970-12-02 01:12:34").toString(), formattedDate.toString());
     }
 }
