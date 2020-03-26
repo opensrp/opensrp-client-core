@@ -87,7 +87,7 @@ public class FormUtils {
         if (instance == null)
             instance = new FormUtils(ctx);
 
-        if (instance.mContext != ctx)
+        if (ctx != null && instance.mContext != ctx)
             instance.mContext = ctx;
 
         return instance;
