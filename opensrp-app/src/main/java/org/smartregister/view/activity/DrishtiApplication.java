@@ -150,4 +150,8 @@ public abstract class DrishtiApplication extends Application {
             context.allSharedPreferences().updateTransactionsKilledFlag(true);
         }
     }
+
+    public Context getContext() {
+        return context;
+    }
 }
