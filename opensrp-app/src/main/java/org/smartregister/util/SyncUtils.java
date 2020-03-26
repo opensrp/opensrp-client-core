@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Base64;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -126,7 +127,7 @@ public class SyncUtils {
         extractedMinAllowedAppVersionSetting.setKey(MIN_ALLOWED_APP_VERSION);
         extractedMinAllowedAppVersionSetting.setSyncStatus(BaseRepository.TYPE_Synced);
         extractedMinAllowedAppVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
-        extractedMinAllowedAppVersionSetting.setVersion(String.valueOf(System.currentTimeMillis()));
+        extractedMinAllowedAppVersionSetting.setVersion(getIncrementedServerVersion(rawMinAllowedAppVersionSetting));
         settingsRepository.putSetting(extractedMinAllowedAppVersionSetting);
 
         return isAppVersionAllowed;
@@ -142,6 +143,11 @@ public class SyncUtils {
      */
     private boolean isNewerSetting(Setting setting1, Setting setting2) {
         return Long.valueOf(setting1.getVersion()) > Long.valueOf(setting2.getVersion());
+    }
+
+    private synchronized String getIncrementedServerVersion(Setting setting) {
+        if (setting == null || StringUtils.isBlank(setting.getVersion())) { return null; }
+        return String.valueOf(Long.valueOf(setting.getVersion()) + 1);
     }
 
     private boolean isOutdatedVersion(long minAllowedAppVersion) throws PackageManager.NameNotFoundException {
