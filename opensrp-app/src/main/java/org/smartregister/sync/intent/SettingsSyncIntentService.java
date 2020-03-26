@@ -3,6 +3,7 @@ package org.smartregister.sync.intent;
 import android.content.Intent;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -37,7 +38,7 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
 
     protected boolean processSettings(Intent intent) {
         Log.d("ssssssss", "In Settings Sync Intent Service...");
-        boolean isSuccessfulSync = false;
+        boolean isSuccessfulSync = true;
         if (intent != null) {
             try {
                 super.onHandleIntent(intent);
@@ -45,8 +46,8 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
                 if (count > 0) {
                     intent.putExtra(AllConstants.INTENT_KEY.SYNC_TOTAL_RECORDS, count);
                 }
-                isSuccessfulSync = true;
-            } catch (Exception e) {
+            } catch (JSONException e) {
+                isSuccessfulSync = false;
                 logError(TAG + " Error fetching client settings");
             }
         }

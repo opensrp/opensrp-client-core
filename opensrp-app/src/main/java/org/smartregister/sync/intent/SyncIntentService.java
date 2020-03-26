@@ -76,11 +76,14 @@ public class SyncIntentService extends BaseSyncIntentService {
 
         try {
             boolean hasValidAuthorization = syncUtils.verifyAuthorization();
+            boolean isSuccessfulPushSync = false;
             if (hasValidAuthorization || !CoreLibrary.getInstance().getSyncConfiguration().disableSyncToServerIfUserIsDisabled()) {
-                pushToServer();
+                isSuccessfulPushSync = pushToServer();
             }
 
-            if (!hasValidAuthorization || !syncUtils.isAppVersionAllowed()) {
+            if (!hasValidAuthorization) {
+                syncUtils.logoutUser();
+            } else if (!syncUtils.isAppVersionAllowed() && isSuccessfulPushSync) {
                 syncUtils.logoutUser();
             } else {
                 pullECFromServer();
@@ -202,18 +205,20 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     // PUSH TO SERVER
-    private void pushToServer() {
-        pushECToServer();
+    private boolean pushToServer() {
+        return pushECToServer();
     }
 
-    private void pushECToServer() {
+    private boolean pushECToServer() {
+        boolean isSuccessfulPushSync = true;
+
         EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
 
         while (true) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
 
             if (pendingEvents.isEmpty()) {
-                return;
+                break;
             }
 
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
@@ -240,11 +245,13 @@ public class SyncIntentService extends BaseSyncIntentService {
                     jsonPayload);
             if (response.isFailure()) {
                 Timber.e("Events sync failed.");
-                return;
+                isSuccessfulPushSync = false;
             }
             db.markEventsAsSynced(pendingEvents);
             Timber.i("Events synced successfully.");
         }
+
+        return isSuccessfulPushSync;
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
