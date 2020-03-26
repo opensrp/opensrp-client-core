@@ -86,9 +86,15 @@ public class FormUtils {
     public static FormUtils getInstance(Context ctx) throws Exception {
         if (instance == null) {
             instance = new FormUtils(ctx);
+        } else {
+            instance.updateContext(ctx);
         }
 
         return instance;
+    }
+
+    private void updateContext(Context context) {
+        mContext = context;
     }
 
     /* Checks if the provided node has Child elements
