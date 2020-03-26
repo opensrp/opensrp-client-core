@@ -38,8 +38,8 @@ public abstract class DrishtiApplication extends Application {
     private String password;
     private String username;
 
-    public static synchronized DrishtiApplication getInstance() {
-        return mInstance;
+    public static synchronized <X extends DrishtiApplication> X getInstance() {
+        return (X) mInstance;
     }
 
     public static BitmapImageCache getMemoryCacheInstance() {
