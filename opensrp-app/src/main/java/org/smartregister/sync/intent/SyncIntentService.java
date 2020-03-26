@@ -83,8 +83,12 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (!hasValidAuthorization) {
                 syncUtils.logoutUser();
-            } else if (!syncUtils.isAppVersionAllowed() && isSuccessfulPushSync) {
-                syncUtils.logoutUser();
+            } else if (!syncUtils.isAppVersionAllowed()) {
+                if (isSuccessfulPushSync) {
+                    syncUtils.logoutUser();
+                } else {
+                    return;
+                }
             } else {
                 pullECFromServer();
             }
