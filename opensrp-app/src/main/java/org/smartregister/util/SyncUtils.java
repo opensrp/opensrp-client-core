@@ -104,7 +104,7 @@ public class SyncUtils {
         AllSettings settingsRepository = opensrpContent.allSettings();
         String minAllowedAppVersionStr = settingsRepository.get(MIN_ALLOWED_APP_VERSION);
         if (StringUtils.isNotBlank(minAllowedAppVersionStr)) {
-            return !isOutdatedVersion(Integer.valueOf(minAllowedAppVersionStr));
+            return !isOutdatedVersion(Long.valueOf(minAllowedAppVersionStr));
         }
 
         // else, attempt to extract it
@@ -123,7 +123,7 @@ public class SyncUtils {
     }
 
 
-    private boolean isOutdatedVersion(int minAllowedAppVersion) throws PackageManager.NameNotFoundException {
+    private boolean isOutdatedVersion(long minAllowedAppVersion) throws PackageManager.NameNotFoundException {
         return getVersionCode(context) < minAllowedAppVersion;
     }
 
