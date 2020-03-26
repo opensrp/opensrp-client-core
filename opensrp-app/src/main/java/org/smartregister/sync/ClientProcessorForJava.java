@@ -957,6 +957,7 @@ public class ClientProcessorForJava {
                 unsyncEventsPerProcessor.put(miniClientProcessorForJava, processorUnsyncEvents);
             }
 
+            completeProcessing(eventClient.getEvent());
             miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
         }
     }
