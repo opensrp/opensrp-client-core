@@ -49,6 +49,8 @@ public interface BaseLoginContract {
         void goToHome(boolean isRemote);
 
         Activity getActivityContext();
+
+        boolean isAppVersionAllowed();
     }
 
     interface Interactor {

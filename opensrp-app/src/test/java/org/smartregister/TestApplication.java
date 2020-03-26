@@ -35,4 +35,8 @@ public class TestApplication extends DrishtiApplication {
     @Override
     public void onTerminate() {//do nothing
     }
+
+    public void setContext(Context context) {
+        this.context = context;
+    }
 }

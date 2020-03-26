@@ -36,7 +36,7 @@ public class SyncSettingsServiceHelper {
     }
 
 
-    public int processIntent() throws Exception {
+    public int processIntent() throws JSONException {
 
         try {
             JSONObject response = pushSettingsToServer();
@@ -50,7 +50,7 @@ public class SyncSettingsServiceHelper {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             Timber.e(e);
         }
 

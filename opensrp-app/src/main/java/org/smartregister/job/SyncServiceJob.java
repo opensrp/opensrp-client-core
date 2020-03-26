@@ -26,6 +26,4 @@ public class SyncServiceJob extends BaseJob {
         getApplicationContext().startService(intent);
         return params != null && params.getExtras().getBoolean(AllConstants.INTENT_KEY.TO_RESCHEDULE, false) ? Result.RESCHEDULE : Result.SUCCESS;
     }
-
-
 }
