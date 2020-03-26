@@ -29,12 +29,15 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        processSettings(intent);
-        SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+        boolean isSuccessfulSync = processSettings(intent);
+        if (isSuccessfulSync) {
+            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+        }
     }
 
-    protected void processSettings(Intent intent) {
+    protected boolean processSettings(Intent intent) {
         Log.d("ssssssss", "In Settings Sync Intent Service...");
+        boolean isSuccessfulSync = false;
         if (intent != null) {
             try {
                 super.onHandleIntent(intent);
@@ -42,11 +45,12 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
                 if (count > 0) {
                     intent.putExtra(AllConstants.INTENT_KEY.SYNC_TOTAL_RECORDS, count);
                 }
-
+                isSuccessfulSync = true;
             } catch (Exception e) {
                 logError(TAG + " Error fetching client settings");
             }
         }
+        return isSuccessfulSync;
     }
 
     @Override
