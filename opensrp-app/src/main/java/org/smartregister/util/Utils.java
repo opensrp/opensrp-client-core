@@ -68,7 +68,6 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -95,7 +94,6 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSION;
 import static org.smartregister.util.Log.logError;
 
 
