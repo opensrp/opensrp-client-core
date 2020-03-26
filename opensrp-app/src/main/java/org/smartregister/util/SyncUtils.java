@@ -6,7 +6,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.util.Base64;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,6 +14,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.BaseRepository;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -100,28 +100,49 @@ public class SyncUtils {
     public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
         boolean isAppVersionAllowed = true;
 
-        // if min version is already extracted
+        // see if setting was synced
         AllSettings settingsRepository = opensrpContent.allSettings();
-        String minAllowedAppVersionStr = settingsRepository.get(MIN_ALLOWED_APP_VERSION);
-        if (StringUtils.isNotBlank(minAllowedAppVersionStr)) {
-            return !isOutdatedVersion(Long.valueOf(minAllowedAppVersionStr));
-        }
-
-        // else, attempt to extract it
-        Setting minAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
-        if (minAllowedAppVersionSetting == null) {
+        Setting rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+        if (rawMinAllowedAppVersionSetting == null) {
             return isAppVersionAllowed;
         }
 
-        int minAllowedAppVersion = extractMinAllowedAppVersion(minAllowedAppVersionSetting.getValue());
+        // if min version is already extracted
+        Setting extractedMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
+        if (extractedMinAllowedAppVersionSetting != null
+                && isNewerSetting(extractedMinAllowedAppVersionSetting, rawMinAllowedAppVersionSetting)) {
+            return !isOutdatedVersion(Long.valueOf(extractedMinAllowedAppVersionSetting.getValue()));
+        }
+
+        // else, attempt to extract it
+        int minAllowedAppVersion = extractMinAllowedAppVersion(rawMinAllowedAppVersionSetting.getValue());
         if (isOutdatedVersion(minAllowedAppVersion)) {
             isAppVersionAllowed = false;
         }
-        settingsRepository.put(MIN_ALLOWED_APP_VERSION , String.valueOf(minAllowedAppVersion));
+
+        // update settings repository with the extracted version of the min allowed setting
+        extractedMinAllowedAppVersionSetting = new Setting();
+        extractedMinAllowedAppVersionSetting.setValue(String.valueOf(minAllowedAppVersion));
+        extractedMinAllowedAppVersionSetting.setKey(MIN_ALLOWED_APP_VERSION);
+        extractedMinAllowedAppVersionSetting.setSyncStatus(BaseRepository.TYPE_Synced);
+        extractedMinAllowedAppVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
+        extractedMinAllowedAppVersionSetting.setVersion(String.valueOf(System.currentTimeMillis()));
+        settingsRepository.putSetting(extractedMinAllowedAppVersionSetting);
 
         return isAppVersionAllowed;
     }
 
+    /**
+     * Returns true if {@param setting1} was updated more recently when compared to {@param setting2},
+     * and false otherwise
+     *
+     * @param setting1
+     * @param setting2
+     * @return
+     */
+    private boolean isNewerSetting(Setting setting1, Setting setting2) {
+        return Long.valueOf(setting1.getVersion()) > Long.valueOf(setting2.getVersion());
+    }
 
     private boolean isOutdatedVersion(long minAllowedAppVersion) throws PackageManager.NameNotFoundException {
         return getVersionCode(context) < minAllowedAppVersion;
