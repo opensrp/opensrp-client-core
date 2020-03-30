@@ -3,21 +3,21 @@ language: android
 # Setting sudo to required prevents Travis from testing the project in a Docker container.
 sudo: required
 jdk: oraclejdk8
-dist: precise
+dist: trusty
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
 before_install:
-  - java -version
-  - wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
-  - tar -zxvf jdk-7u79-linux-x64.tar.gz
-  - rm jdk-7u79-linux-x64.tar.gz
-  - mv jdk1.7.0_79 $HOME/.jdk
-  - export PATH=$PATH:$HOME/.jdk/jdk1.7.0_79/bin
-  - export JAVA_HOME=$HOME/.jdk/jdk1.7.0_79
-  - java -version
+  - java -Xmx32m -version
+  - wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz
+  - tar -zxvf jdk-8u111-linux-x64.tar.gz
+  - rm jdk-8u111-linux-x64.tar.gz
+  - mv 1.8.0_111 $HOME/.jdk
+  - export PATH=$PATH:$HOME/.jdk/1.8.0_111/bin
+  - export JAVA_HOME=$HOME/.jdk/1.8.0_111
+  - java -Xmx32m -version
 
 cache:
   directories:
