@@ -17,6 +17,7 @@ import org.smartregister.event.Listener;
 import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncServiceJob;
+import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
@@ -229,7 +230,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         if (NetworkUtils.isNetworkAvailable()) {
             PullUniqueIdsServiceJob.scheduleJobImmediately(PullUniqueIdsServiceJob.TAG);
-            SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
+            SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
         }
     }
 

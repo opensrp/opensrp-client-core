@@ -217,7 +217,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
             syncButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SyncServiceJob.scheduleJobImmediately(SyncServiceJob.TAG);
                     SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
                 }
             });

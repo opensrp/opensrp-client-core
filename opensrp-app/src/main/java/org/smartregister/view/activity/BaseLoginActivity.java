@@ -25,8 +25,11 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.smartregister.R;
+import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
+
+import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
@@ -43,6 +46,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     private CheckBox showPasswordCheckBox;
     private Button loginButton;
     private Boolean showPasswordChecked = false;
+    private SyncUtils syncUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         initializePresenter();
         mLoginPresenter.setLanguage();
         setupViews(mLoginPresenter);
+        syncUtils = new SyncUtils(this);
     }
 
     @Override
@@ -250,5 +255,16 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    public boolean isAppVersionAllowed() {
+        boolean isAppVersionAllowed = true;
+        try {
+            isAppVersionAllowed = syncUtils.isAppVersionAllowed();
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
+        }
+        return  isAppVersionAllowed;
     }
 }

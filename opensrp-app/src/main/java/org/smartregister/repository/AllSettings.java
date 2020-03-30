@@ -89,7 +89,11 @@ public class AllSettings {
     }
 
     public String get(String key) {
-        return settingsRepository.querySetting(key, null);
+        return get(key, null);
+    }
+
+    public String get(String key, String defaultValue) {
+        return settingsRepository.querySetting(key, defaultValue);
     }
 
     public Setting getSetting(String key) {

@@ -38,8 +38,8 @@ public abstract class DrishtiApplication extends Application {
     private String password;
     private String username;
 
-    public static synchronized DrishtiApplication getInstance() {
-        return mInstance;
+    public static synchronized <X extends DrishtiApplication> X getInstance() {
+        return (X) mInstance;
     }
 
     public static BitmapImageCache getMemoryCacheInstance() {
@@ -149,5 +149,9 @@ public abstract class DrishtiApplication extends Application {
             repository.getWritableDatabase().endTransaction();
             context.allSharedPreferences().updateTransactionsKilledFlag(true);
         }
+    }
+
+    public Context getContext() {
+        return context;
     }
 }
