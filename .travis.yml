@@ -11,12 +11,12 @@ before_cache:
 
 before_install:
   - java -Xmx32m -version
-  - 'wget -c --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz'
+  - 'wget -c --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" https://bitbucket.org/vincent-karuri/test-upload/downloads/jdk-8u111-linux-x64.tar.gz'
   - tar -zxvf jdk-8u111-linux-x64.tar.gz
   - rm jdk-8u111-linux-x64.tar.gz
-  - mv 1.8.0_111 $HOME/.jdk
-  - export PATH=$PATH:$HOME/.jdk/1.8.0_111/bin
-  - export JAVA_HOME=$HOME/.jdk/1.8.0_111
+  - mv jdk1.8.0_111 $HOME/.jdk
+  - export PATH=$PATH:$HOME/.jdk/jdk1.8.0_111/bin
+  - export JAVA_HOME=$HOME/.jdk/jdk1.8.0_111
   - java -Xmx32m -version
 
 cache:
@@ -43,7 +43,6 @@ android:
 addons:
   apt_packages:
     - pandoc
-    - oracle-java8-installer
 
 script:
   - echo "Travis branch is $TRAVIS_BRANCH"
