@@ -84,9 +84,11 @@ public class FormUtils {
     }
 
     public static FormUtils getInstance(Context ctx) throws Exception {
-        if (instance == null) {
+        if (instance == null)
             instance = new FormUtils(ctx);
-        }
+
+        if (ctx != null && instance.mContext != ctx)
+            instance.mContext = ctx;
 
         return instance;
     }

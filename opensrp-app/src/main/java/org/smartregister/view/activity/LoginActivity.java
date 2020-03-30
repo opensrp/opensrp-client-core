@@ -27,6 +27,7 @@ import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
+import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.BackgroundAction;
 import org.smartregister.view.LockingBackgroundTask;
@@ -36,6 +37,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import timber.log.Timber;
 
 import static android.view.inputmethod.InputMethodManager.HIDE_NOT_ALWAYS;
 import static org.smartregister.domain.LoginResponse.SUCCESS;
@@ -48,6 +51,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     private EditText passwordEditText;
     private ProgressDialog progressDialog;
     private Button loginButton;
+    private SyncUtils syncUtils;
 
     @Override
     protected void attachBaseContext(android.content.Context base) {
@@ -63,6 +67,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.login);
 
         context = CoreLibrary.getInstance().context().updateApplicationContext(this.getApplicationContext());
+        syncUtils = new SyncUtils(this);
         initializeLoginFields();
         initializeBuildDetails();
         setDoneActionHandlerOnPasswordField();
@@ -146,37 +151,56 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     }
 
     private void localLogin(View view, String userName, String password) {
-        if (context.userService().isValidLocalLogin(userName, password)) {
-            localLoginWith(userName, password);
-        } else {
-            showErrorDialog(getString(R.string.login_failed_dialog_message));
-            view.setClickable(true);
+        try {
+            if (!syncUtils.isAppVersionAllowed()) {
+                showErrorDialog(getString(R.string.outdated_app));
+                return;
+            }
+
+            if (context.userService().isValidLocalLogin(userName, password)) {
+                localLoginWith(userName, password);
+            } else {
+                showErrorDialog(getString(R.string.login_failed_dialog_message));
+                view.setClickable(true);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
         }
     }
 
+
+
     private void remoteLogin(final View view, final String userName, final String password) {
 
-        if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
+        try {
+            if (!syncUtils.isAppVersionAllowed()) {
+                showErrorDialog(getString(R.string.outdated_app));
+                return;
+            }
 
-            tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
-                public void onEvent(LoginResponse loginResponse) {
-                    if (loginResponse == SUCCESS) {
-                        remoteLoginWith(userName, password, loginResponse.payload());
-                    } else {
-                        if (loginResponse == null) {
-                            showErrorDialog("Login failed. Unknown reason. Try Again");
+            if (!context.allSharedPreferences().fetchBaseURL("").isEmpty()) {
+
+                tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+                    public void onEvent(LoginResponse loginResponse) {
+                        if (loginResponse == SUCCESS) {
+                            remoteLoginWith(userName, password, loginResponse.payload());
                         } else {
-                            showErrorDialog(loginResponse.message());
+                            if (loginResponse == null) {
+                                showErrorDialog("Login failed. Unknown reason. Try Again");
+                            } else {
+                                showErrorDialog(loginResponse.message());
+                            }
+                            view.setClickable(true);
                         }
-                        view.setClickable(true);
                     }
-                }
-            });
+                });
 
-        } else {
-            view.setClickable(true);
-            showErrorDialog("OpenSRP Base URL is missing, Please add it in Settings and try again");
-
+            } else {
+                view.setClickable(true);
+                showErrorDialog("OpenSRP Base URL is missing, Please add it in Settings and try again");
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
         }
     }
 
