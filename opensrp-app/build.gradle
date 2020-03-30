@@ -214,13 +214,14 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.9.5'
     testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
-    testImplementation('org.robolectric:robolectric:3.8') {
+    testImplementation('org.robolectric:robolectric:3.7.1') {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
-    testImplementation('org.robolectric:shadows-multidex:3.8') {
+
+    testImplementation('org.robolectric:shadows-multidex:3.7.1') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
