@@ -11,7 +11,7 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.1"
+        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.4"
         classpath 'io.fabric.tools:gradle:1.30.0'
     }
 }
@@ -162,7 +162,6 @@ dependencies {
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
-    implementation "org.apache.httpcomponents:httpmime:4.2.3"
     implementation group: 'commons-codec', name: 'commons-codec', version: '1.10'
     implementation group: 'com.google.guava', name: 'guava', version: '20.0'
     implementation group: 'commons-io', name: 'commons-io', version: '2.4'
