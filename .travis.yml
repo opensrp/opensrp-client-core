@@ -9,6 +9,16 @@ before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
   - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 
+before_install:
+  - java -version
+  - wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u79-b15/jdk-7u79-linux-x64.tar.gz
+  - tar -zxvf jdk-7u79-linux-x64.tar.gz
+  - rm jdk-7u79-linux-x64.tar.gz
+  - mv jdk1.7.0_79 $HOME/.jdk
+  - export PATH=$PATH:$HOME/.jdk/jdk1.7.0_79/bin
+  - export JAVA_HOME=$HOME/.jdk/jdk1.7.0_79
+  - java -version
+
 cache:
   directories:
     - $HOME/.gradle/caches/
@@ -43,7 +53,7 @@ script:
   # so we'll just if the project compiles
   #Run All tests Unit and Instrumentation
   - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
-  - ./gradlew coveralls --stacktrace
+  - ./gradlew coveralls --stacktrace --info
 
 after_failure:
   - pandoc opensrp-app/build/reports/tests/index.html -t plain
