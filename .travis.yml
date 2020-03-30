@@ -11,7 +11,7 @@ before_cache:
 
 before_install:
   - java -Xmx32m -version
-  - wget --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz
+  - 'wget -c --no-check-certificate --no-cookies --header "Cookie: oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz'
   - tar -zxvf jdk-8u111-linux-x64.tar.gz
   - rm jdk-8u111-linux-x64.tar.gz
   - mv 1.8.0_111 $HOME/.jdk
@@ -23,6 +23,7 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+    - $HOME/.jdk
 
 env:
   global:
