@@ -281,6 +281,11 @@ public class StructureRepositoryTest extends BaseUnitTest {
         assertEquals(BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
     }
 
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetAllLocations() {
+        structureRepository.getAllLocations();
+    }
+
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
         Location location = LocationTest.gson.fromJson(locationJson, Location.class);
