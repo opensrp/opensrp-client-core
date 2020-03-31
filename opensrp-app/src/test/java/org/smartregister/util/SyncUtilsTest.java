@@ -62,25 +62,26 @@ public class SyncUtilsTest {
         Setting setting = new Setting();
         setting.setIdentifier(MIN_ALLOWED_APP_VERSION_SETTING);
         setting.setValue(getMinAppVersionSetting(2));
+        setting.setVersion("100");
         doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
         when(Utils.getVersionCode(any(Context.class))).thenReturn(1l);
         assertFalse(syncUtils.isAppVersionAllowed());
 
         // same version app
         when(Utils.getVersionCode(any())).thenReturn(2l);
-        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
         assertTrue(syncUtils.isAppVersionAllowed());
 
         // newer version app
         when(Utils.getVersionCode(any())).thenReturn(3l);
-        doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
         assertTrue(syncUtils.isAppVersionAllowed());
 
         // when the min version value is already set:
-        doReturn(null).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
-
         // 1. outdated app
-        doReturn("2").when(settingsRepository).get(eq(MIN_ALLOWED_APP_VERSION));
+        Setting minAllowedVersionSetting = new Setting();
+        minAllowedVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
+        minAllowedVersionSetting.setValue("2");
+        minAllowedVersionSetting.setVersion("200");
+        doReturn(minAllowedVersionSetting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION));
         when(Utils.getVersionCode(any())).thenReturn(1l);
         assertFalse(syncUtils.isAppVersionAllowed());
 
