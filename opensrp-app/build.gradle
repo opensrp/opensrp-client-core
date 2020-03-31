@@ -9,13 +9,9 @@ buildscript {
     }
 
     dependencies {
-        classpath ("com.android.tools.build:gradle:$androidToolsBuildGradle") {
-            transitive = true
-            exclude group: 'org.apache.httpcomponents', module: 'httpmime'
-        }
-        classpath 'org.apache.httpcomponents:httpmime:4.3'
+        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.1"
+        classpath "gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.0"
         classpath 'io.fabric.tools:gradle:1.30.0'
     }
 }
