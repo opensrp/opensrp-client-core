@@ -9,14 +9,7 @@ import com.google.common.collect.ImmutableMap;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -34,12 +27,7 @@ import static org.smartregister.TestUtils.getContext;
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Utils.class)
 public class UtilsTest extends BaseUnitTest {
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Test
     public void assertConvertDateFormatTestReturnsDate() throws Exception {
@@ -283,22 +271,5 @@ public class UtilsTest extends BaseUnitTest {
         Context context = getContext(40);
         assertEquals(Utils.getVersionCode(context), 40);
     }
-
-    @Test
-    public void testGetUserInitialsReturnsUserInitialsGivenValidPreferredName() {
-        PowerMockito.mockStatic(Utils.class);
-        Mockito.when(Utils.getPrefferedName()).thenReturn("Brian Mwasi");
-        Mockito.when(Utils.getUserInitials()).thenCallRealMethod();
-        String initials = Utils.getUserInitials();
-        Assert.assertEquals("BM", initials);
-    }
-
-    @Test
-    public void testGetUserInitialsReturnsDefaultWhenPreferredNameIsNull() {
-        PowerMockito.mockStatic(Utils.class);
-        Mockito.when(Utils.getPrefferedName()).thenReturn(null);
-        Mockito.when(Utils.getUserInitials()).thenCallRealMethod();
-        String initials = Utils.getUserInitials();
-        Assert.assertEquals("Me", initials);
-    }
 }
+
