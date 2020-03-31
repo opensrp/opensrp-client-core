@@ -17,7 +17,7 @@ import java.util.Map;
  * Created by kaderchowdhury on 20/11/17.
  */
 
-public class ClientTest extends BaseUnitTest {
+public class ClientTest  {
 
     private ClientMock client;
     private String baseEntityId = "baseEntityId";

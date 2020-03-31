@@ -17,7 +17,7 @@ import java.util.List;
  * Created by kaderchowdhury on 28/11/17.
  */
 
-public class FormSubmissionTest extends BaseUnitTest {
+public class FormSubmissionTest  {
 
     private FormSubmissionMock formSubmission;
     @Mock

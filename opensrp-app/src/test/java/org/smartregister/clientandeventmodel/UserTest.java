@@ -15,7 +15,7 @@ import java.util.List;
  * Created by kaderchowdhury on 27/11/17.
  */
 
-public class UserTest extends BaseUnitTest {
+public class UserTest {
 
     private UserMock user;
     private List<String> list = new ArrayList<>();

@@ -13,7 +13,7 @@ import java.util.Date;
  * Created by kaderchowdhury on 12/11/17.
  */
 
-public class DateUtilTest extends BaseUnitTest {
+public class DateUtilTest {
 
     private final long default_time = 1447487308000l;
     private LocalDate start = new LocalDate(default_time);

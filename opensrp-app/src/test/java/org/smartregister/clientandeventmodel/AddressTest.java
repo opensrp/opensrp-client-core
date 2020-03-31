@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by kaderchowdhury on 20/11/17.
  */
 
-public class AddressTest extends BaseUnitTest {
+public class AddressTest {
 
     private AddressMock address;
     private final String regex = "field";

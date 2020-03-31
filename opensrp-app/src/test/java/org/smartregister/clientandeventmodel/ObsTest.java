@@ -18,7 +18,7 @@ import static org.junit.Assert.assertFalse;
  * Created by kaderchowdhury on 21/11/17.
  */
 
-public class ObsTest extends BaseUnitTest {
+public class ObsTest {
 
     private List<Object> humanReadableValues = new ArrayList<>();
     private String fieldType = "filedType";

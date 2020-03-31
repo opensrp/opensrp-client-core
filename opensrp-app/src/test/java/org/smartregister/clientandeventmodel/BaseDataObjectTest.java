@@ -13,7 +13,7 @@ import java.util.Date;
  * Created by kaderchowdhury on 22/11/17.
  */
 
-public class BaseDataObjectTest extends BaseUnitTest {
+public class BaseDataObjectTest {
 
     private BaseDataObjectMock baseDataObject;
     private User user = new User();

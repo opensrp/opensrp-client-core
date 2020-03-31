@@ -17,7 +17,7 @@ import java.util.Map;
  * Created by kaderchowdhury on 20/11/17.
  */
 
-public class EventTest extends BaseUnitTest {
+public class EventTest  {
 
     private EventMock event;
 
