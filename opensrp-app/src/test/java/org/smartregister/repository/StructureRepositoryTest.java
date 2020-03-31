@@ -40,6 +40,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -284,6 +285,16 @@ public class StructureRepositoryTest extends BaseUnitTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testGetAllLocations() {
         structureRepository.getAllLocations();
+    }
+
+    @Test
+    public void testCreateTable() {
+        StructureRepository.createTable(sqLiteDatabase);
+        verify(sqLiteDatabase, times(2)).execSQL(stringArgumentCaptor.capture());
+        assertEquals("CREATE TABLE structure (_id VARCHAR NOT NULL PRIMARY KEY,uuid VARCHAR , " +
+                "parent_id VARCHAR , name VARCHAR , sync_status VARCHAR DEFAULT Synced, latitude FLOAT , " +
+                "longitude FLOAT , geojson VARCHAR NOT NULL ) ", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals("CREATE INDEX structure_parent_id_ind ON structure(parent_id)", stringArgumentCaptor.getAllValues().get(1));
     }
 
     public MatrixCursor getCursor() {
