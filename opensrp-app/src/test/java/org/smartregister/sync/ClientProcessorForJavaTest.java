@@ -515,6 +515,43 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Mockito.verify(clientProcessorForJava).updateClientDetailsTable(Mockito.eq(event), Mockito.eq(client));
     }
 
+    @Test
+    public void processClientClassShouldReturnTrueAndProcessEachFieldInTheMappingDefinition() {
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        Event event = new Event();
+
+        Client client = new Client("bei");
+        ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
+
+        Mockito.doReturn(true).when(clientProcessorForJava).processField(Mockito.any(Field.class), Mockito.eq(event), Mockito.eq(client));
+
+        Assert.assertTrue(clientProcessorForJava.processClientClass(classificationRule, event, client));
+        Mockito.verify(clientProcessorForJava, Mockito.times(8)).processField(Mockito.any(Field.class), Mockito.eq(event), Mockito.eq(client));
+    }
+
+    @Test
+    public void processClientClassShouldFalseWhenClassificationRuleIsNull() {
+        Event event = new Event();
+        Client client = new Client("bei");
+        Assert.assertFalse(clientProcessor.processClientClass(null, event, client));
+    }
+
+    @Test
+    public void processClientClassShouldFalseWhenEventIsNull() {
+        Client client = new Client("bei");
+
+        ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
+        Assert.assertFalse(clientProcessor.processClientClass(classificationRule, null, client));
+    }
+
+    @Test
+    public void processClientClassShouldFalseWhenClientIsNull() {
+        Event event = new Event();
+
+        ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
+        Assert.assertFalse(clientProcessor.processClientClass(classificationRule, event, null));
+    }
+
     @After
     public void tearDown() {
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
