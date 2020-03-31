@@ -314,7 +314,7 @@ public class ClientProcessorForJava {
                 }
 
                 // Modify openmrs generated identifier, Remove hyphen if it exists
-                updateIdenitifier(contentValues);
+                updateIdentifier(contentValues);
 
                 // save the values to db
                 executeInsertStatement(contentValues, clientType);
@@ -911,7 +911,7 @@ public class ClientProcessorForJava {
      *
      * @param values
      */
-    private void updateIdenitifier(ContentValues values) {
+    private void updateIdentifier(ContentValues values) {
         try {
             for (String identifier : getOpenmrsGenIds()) {
                 Object value = values.get(identifier); //TODO
@@ -957,6 +957,7 @@ public class ClientProcessorForJava {
                 unsyncEventsPerProcessor.put(miniClientProcessorForJava, processorUnsyncEvents);
             }
 
+            completeProcessing(eventClient.getEvent());
             miniClientProcessorForJava.processEventClient(eventClient, processorUnsyncEvents, clientClassification);
         }
     }
