@@ -23,7 +23,7 @@ import java.util.Map;
 /*
  by Raihan Ahmed
  */
-public class CommonPersonObjectControllerTest extends BaseUnitTest {
+public class CommonPersonObjectControllerTest {
 
     @Mock
     private AllCommonsRepository allCommonsRepository;

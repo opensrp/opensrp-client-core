@@ -18,7 +18,7 @@ import java.util.Map;
 /*
  by Raihan Ahmed
  */
-public class CommonPersonObjectDateSortTest extends BaseUnitTest {
+public class CommonPersonObjectDateSortTest {
     @Mock
     private AllCommonsRepository allCommonsRepository;
     @Mock

@@ -198,7 +198,7 @@ public class CommonPersonObjectController {
                 } else if (filterkey == null) {
 
                     for (CommonPersonObject personinlist : p) {
-                        Log.v("is filtermap ", "wrong place");
+//                        Log.v("is filtermap ", "wrong place");
                         if (!isnull(personinlist)) {
                             CommonPersonObjectClient pClient = new CommonPersonObjectClient(
                                     personinlist.getCaseId(), personinlist.getDetails(),

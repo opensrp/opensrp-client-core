@@ -17,7 +17,7 @@ import java.util.List;
 /*
  by Raihan Ahmed
  */
-public class AllCommonsRepositoryTest extends BaseUnitTest {
+public class AllCommonsRepositoryTest {
 
     @Mock
     private CommonRepository personRepository;

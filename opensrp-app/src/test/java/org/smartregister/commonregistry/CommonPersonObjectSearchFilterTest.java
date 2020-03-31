@@ -17,7 +17,7 @@ import java.util.Map;
 /*
  by Raihan Ahmed
  */
-public class CommonPersonObjectSearchFilterTest extends BaseUnitTest {
+public class CommonPersonObjectSearchFilterTest {
     @Mock
     private AllCommonsRepository allCommonsRepository;
     @Mock
