@@ -252,6 +252,35 @@ public class StructureRepositoryTest extends BaseUnitTest {
         assertEquals(expectedStructure.getType(), structure.getType());
     }
 
+    @Test
+    public void testMarkStructureAsSynced() {
+        String expectedStructureId = "41587456-b7c8-4c4e-b433-23a786f742fc";
+        structureRepository.markStructuresAsSynced(expectedStructureId);
+        verifyMarkStructureAsSyncedTests(expectedStructureId);
+    }
+
+    @Test
+    public void testMarkStructureAsSyncedShouldThrowException() {
+        doThrow(new SQLiteException()).when(sqLiteDatabase).update(anyString(), any(), anyString(), any());
+        String expectedStructureId = "41587456-b7c8-4c4e-b433-23a786f742fc";
+        structureRepository.markStructuresAsSynced(expectedStructureId);
+        verifyMarkStructureAsSyncedTests(expectedStructureId);
+    }
+
+    private void verifyMarkStructureAsSyncedTests(String expectedStructureId) {
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(),
+                stringArgumentCaptor.capture(), argsCaptor.capture());
+        List<String> capturedStringValues = stringArgumentCaptor.getAllValues();
+        assertEquals("structure", capturedStringValues.get(0));
+        assertEquals("_id = ?",  capturedStringValues.get(1));
+        assertEquals(expectedStructureId, argsCaptor.getValue()[0]);
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(2, contentValues.size());
+        assertEquals(expectedStructureId, contentValues.getAsString("_id"));
+        assertEquals(BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
+    }
+
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(LocationRepository.COLUMNS);
         Location location = LocationTest.gson.fromJson(locationJson, Location.class);
