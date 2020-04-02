@@ -23,7 +23,19 @@ import java.util.Collection;
 @RunWith(PowerMockRunner.class)
 @PowerMockRunnerDelegate(RobolectricTestRunner.class)
 @Config(application = TestApplication.class, shadows = {FontTextViewShadow.class, ShadowDrawableResourcesImpl.class}, sdk = Build.VERSION_CODES.O_MR1)
-@PowerMockIgnore({"org.mockito.*", "org.robolectric.*", "android.*"})
+@PowerMockIgnore({"org.mockito.*",
+        "org.robolectric.*",
+        "android.*",
+        "javax.xml.*",
+        "org.xml.sax.*",
+        "org.w3c.dom.*",
+        "javax.management.*",
+        "com.sun.org.apache.xerces.*",
+        "org.xml.*",
+        "com.sun.org.apache.xalan.*",
+        "javax.activation.*",
+        "org.springframework.context.*",
+        "org.apache.log4j.*"})
 public abstract class BaseUnitTest {
     protected static final int INITIALS_RESOURCE_ID = R.drawable.bottom_bar_initials_background;
     protected static final String INITIALS_TEXT = "TR";
