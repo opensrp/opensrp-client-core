@@ -5,6 +5,7 @@ import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -418,7 +419,8 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         }
     }
 
-    private class PaginationViewHandler implements View.OnClickListener {
+    @VisibleForTesting
+    protected class PaginationViewHandler implements View.OnClickListener {
         private Button nextPageView;
         private Button previousPageView;
         private TextView pageInfoView;
