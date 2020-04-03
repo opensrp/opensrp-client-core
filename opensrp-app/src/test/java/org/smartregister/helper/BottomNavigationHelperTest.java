@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,6 +46,7 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         bottomNavigationHelper = new BottomNavigationHelper();
     }
 
+    @Ignore
     @Test
     @PrepareForTest({BitmapFactory.class})
     public void testConvertDrawableToBitmap() {
@@ -65,6 +67,7 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         Assert.assertNotNull(bitmap);
     }
 
+    @Ignore
     @Test
     @PrepareForTest({BitmapFactory.class, Bitmap.class})
     public void testConvertGradientDrawableToBitmap() {
@@ -101,6 +104,7 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
         Assert.assertNotNull(bitmap);
     }
 
+    @Ignore
     @Test
     public void convertDrawableResToBitmap() {
         BottomNavigationHelper spyBottomNavigationHelper = Mockito.spy(bottomNavigationHelper);

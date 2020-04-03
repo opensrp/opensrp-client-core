@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -185,6 +186,7 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     }
 
+    @Ignore
     @Test
     public void updateClientDetailsTableCallsSaveClientDetails() throws Exception {
         clientProcessor = new ClientProcessor(context.applicationContext());
@@ -204,6 +206,7 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     }
 
+    @Ignore
     @Test
     public void processCaseModelReturnsNotNUll() throws Exception {
         clientProcessor = new ClientProcessor(context.applicationContext());
