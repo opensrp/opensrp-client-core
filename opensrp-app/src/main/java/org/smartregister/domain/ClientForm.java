@@ -18,7 +18,7 @@ public class ClientForm {
 
     private String json;
 
-    private String jurisdication;
+    private String jurisdiction;
 
     private String label;
 
@@ -69,12 +69,12 @@ public class ClientForm {
         this.json = json;
     }
 
-    public String getJurisdication() {
-        return jurisdication;
+    public String getJurisdiction() {
+        return jurisdiction;
     }
 
-    public void setJurisdication(String jurisdication) {
-        this.jurisdication = jurisdication;
+    public void setJurisdiction(String jurisdiction) {
+        this.jurisdiction = jurisdiction;
     }
 
     public String getLabel() {
