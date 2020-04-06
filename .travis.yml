@@ -1,4 +1,5 @@
 language: android
+jdk: openjdk8
 # sudo set to required because of an issue with how TravisCI handles builds in Docker containers https://github.com/travis-ci/travis-ci/issues/3695.
 # Setting sudo to required prevents Travis from testing the project in a Docker container.
 sudo: required
