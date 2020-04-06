@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
@@ -36,7 +37,6 @@ public class FormActivityTest extends BaseUnitTest {
     @InjectMocks
     private FormActivityMock activity;
 
-    @Mock
     private org.smartregister.Context context_;
 
     @Mock
@@ -54,6 +54,11 @@ public class FormActivityTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
+
+        org.smartregister.Context context = org.smartregister.Context.getInstance();
+        context.sharedRepositories();
+        context_ = Mockito.spy(context);
+
         CoreLibrary.init(context_);
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
