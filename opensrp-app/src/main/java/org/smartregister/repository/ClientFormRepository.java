@@ -7,7 +7,6 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.ClientForm;
-import org.smartregister.domain.LocationTag;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -101,13 +100,14 @@ public class ClientFormRepository extends BaseRepository {
 
     /**
      * Get a list of ClientForms for the passed identifier
+     *
      * @param identifier of a the client form
      * @return a list of ClientForms for the passed identifier
      */
     public List<ClientForm> getClientFormByIdentifier(String identifier) {
         List<ClientForm> clientForms = new ArrayList<>();
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
-                " WHERE " + IDENTIFIER + " =? ORDER BY "+CREATED_AT+" DESC", new String[]{identifier})) {
+                " WHERE " + IDENTIFIER + " =? ORDER BY " + CREATED_AT + " DESC", new String[]{identifier})) {
             while (cursor.moveToNext()) {
                 clientForms.add(readCursor(cursor));
             }

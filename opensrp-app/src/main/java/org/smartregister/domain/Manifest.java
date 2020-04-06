@@ -1,5 +1,9 @@
 package org.smartregister.domain;
 
+import org.json.JSONArray;
+
+import java.util.List;
+
 /**
  * Created by cozej4 on 2020-04-06.
  *
@@ -13,6 +17,8 @@ public class Manifest {
     private String formVersion;
 
     private String modelVersion;
+
+    private List<String> identifiers;
 
     private boolean isNew;
 
@@ -48,6 +54,14 @@ public class Manifest {
 
     public void setModelVersion(String modelVersion) {
         this.modelVersion = modelVersion;
+    }
+
+    public List<String> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(List<String> identifiers) {
+        this.identifiers = identifiers;
     }
 
     public boolean isNew() {
