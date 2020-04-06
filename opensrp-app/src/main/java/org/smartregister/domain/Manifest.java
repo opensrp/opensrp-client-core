@@ -8,13 +8,13 @@ package org.smartregister.domain;
 public class Manifest {
     private String id;
 
-    private String app_version;
+    private String appVersion;
 
-    private String form_version;
+    private String formVersion;
 
-    private String model_version;
+    private String modelVersion;
 
-    private boolean is_new;
+    private boolean isNew;
 
     private boolean active;
 
@@ -26,36 +26,36 @@ public class Manifest {
         this.id = id;
     }
 
-    public String getApp_version() {
-        return app_version;
+    public String getAppVersion() {
+        return appVersion;
     }
 
-    public void setApp_version(String app_version) {
-        this.app_version = app_version;
+    public void setAppVersion(String appVersion) {
+        this.appVersion = appVersion;
     }
 
-    public String getForm_version() {
-        return form_version;
+    public String getFormVersion() {
+        return formVersion;
     }
 
-    public void setForm_version(String form_version) {
-        this.form_version = form_version;
+    public void setFormVersion(String formVersion) {
+        this.formVersion = formVersion;
     }
 
-    public String getModel_version() {
-        return model_version;
+    public String getModelVersion() {
+        return modelVersion;
     }
 
-    public void setModel_version(String model_version) {
-        this.model_version = model_version;
+    public void setModelVersion(String modelVersion) {
+        this.modelVersion = modelVersion;
     }
 
-    public boolean isIs_new() {
-        return is_new;
+    public boolean isNew() {
+        return isNew;
     }
 
-    public void setIs_new(boolean is_new) {
-        this.is_new = is_new;
+    public void setNew(boolean aNew) {
+        isNew = aNew;
     }
 
     public boolean isActive() {
