@@ -69,14 +69,11 @@ public class JsonFormUtils {
     public static final String ENCOUNTER = "encounter";
     public static final String ENCOUNTER_LOCATION = "encounter_location";
 
-    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
-
     public static final String SAVE_OBS_AS_ARRAY = "save_obs_as_array";
     public static final String SAVE_ALL_CHECKBOX_OBS_AS_ARRAY = "save_all_checkbox_obs_as_array";
 
     public static final SimpleDateFormat dd_MM_yyyy = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-    //public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
-    //2007-03-31T04:00:00.000Z
+
     public static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
             .registerTypeAdapter(DateTime.class, new DateTimeTypeConverter()).create();
 
@@ -233,8 +230,8 @@ public class JsonFormUtils {
                 String value = jsonValObject.optString(OPENMRS_ENTITY_ID);
                 String humanReadableValues = jsonValObject.optString(AllConstants.TEXT);
                 String formSubmissionField = jsonObject.optString(KEY);
-                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList((Object) value),
-                        Collections.singletonList((Object) humanReadableValues), "", formSubmissionField));
+                event.addObs(new Obs(fieldType, AllConstants.TEXT, fieldCode, parentCode, Collections.singletonList(value),
+                        Collections.singletonList(humanReadableValues), "", formSubmissionField));
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -252,26 +249,25 @@ public class JsonFormUtils {
     }
 
     private static void createFormMetadataObs(JSONObject metadata, Event event) {
-        if (metadata != null) {
-            Iterator<?> keys = metadata.keys();
+        if (metadata == null) { return; }
 
-            while (keys.hasNext()) {
-                String key = (String) keys.next();
-                JSONObject jsonObject = getJSONObject(metadata, key);
-                String value = getString(jsonObject, VALUE);
-                if (StringUtils.isNotBlank(value)) {
-                    String entityVal = getString(jsonObject, OPENMRS_ENTITY);
-                    if (entityVal != null) {
-                        if (entityVal.equals(CONCEPT)) {
-                            addToJSONObject(jsonObject, KEY, key);
-                            addObservation(event, jsonObject);
-                        } else if (entityVal.equals(ENCOUNTER)) {
-                            String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
-                            if (entityIdVal.equals(FormEntityConstants.Encounter.encounter_date.name())) {
-                                Date eDate = formatDate(value, false);
-                                if (eDate != null) {
-                                    event.setEventDate(eDate);
-                                }
+        Iterator<?> keys = metadata.keys();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            JSONObject jsonObject = getJSONObject(metadata, key);
+            String value = getString(jsonObject, VALUE);
+            if (StringUtils.isNotBlank(value)) {
+                String entityVal = getString(jsonObject, OPENMRS_ENTITY);
+                if (entityVal != null) {
+                    if (entityVal.equals(CONCEPT)) {
+                        addToJSONObject(jsonObject, KEY, key);
+                        addObservation(event, jsonObject);
+                    } else if (entityVal.equals(ENCOUNTER)) {
+                        String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
+                        if (entityIdVal.equals(FormEntityConstants.Encounter.encounter_date.name())) {
+                            Date eDate = formatDate(value, false);
+                            if (eDate != null) {
+                                event.setEventDate(eDate);
                             }
                         }
                     }
@@ -408,39 +404,40 @@ public class JsonFormUtils {
 
     public static void addObservation(Event e, JSONObject jsonObject) {
         String value = getString(jsonObject, VALUE);
+        if (StringUtils.isBlank(value)) { return; }
+
         String type = getString(jsonObject, AllConstants.TYPE);
-        String entity = CONCEPT;
-        boolean combineCheckboxOptionValues = jsonObject.optBoolean(COMBINE_CHECKBOX_OPTION_VALUES);
-        if (StringUtils.isNotBlank(value)) {
-            if (AllConstants.CHECK_BOX.equals(type)) {
-                try {
-                    List<Object> vall = new ArrayList<>();
-                    if (jsonObject.has(AllConstants.OPTIONS)) {
-                        JSONArray conceptsOptions = jsonObject.getJSONArray(AllConstants.OPTIONS);
-                        for (int i = 0; i < conceptsOptions.length(); i++) {
-                            JSONObject option = conceptsOptions.getJSONObject(i);
-                            boolean optionValue = option.optBoolean(VALUE);
-                            if (optionValue) {
-                                option.put(AllConstants.TYPE, type);
-                                option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
-                                option.put(KEY, jsonObject.getString(KEY));
-                                if (combineCheckboxOptionValues) {
-                                    vall.add(option.optString(AllConstants.TEXT));
-                                } else { // For options with concepts create an observation for each
-                                    createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
-                                }
+        String entity =  getString(jsonObject, OPENMRS_ENTITY);;
+        if (AllConstants.CHECK_BOX.equals(type)) {
+            try {
+                List<Object> optionValues = new ArrayList<>();
+                if (jsonObject.has(AllConstants.OPTIONS)) {
+                    JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    for (int i = 0; i < options.length(); i++) {
+                        JSONObject option = options.getJSONObject(i);
+                        boolean optionValue = option.optBoolean(VALUE);
+                        if (optionValue) {
+                            option.put(AllConstants.TYPE, type);
+                            option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
+                            option.put(KEY, jsonObject.getString(KEY));
+                            if (CONCEPT.equals(entity)) {
+                                // For options with concepts create an observation for each
+                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                            } else {
+                                optionValues.add(option.optString(AllConstants.TEXT));
                             }
                         }
-                        if (combineCheckboxOptionValues) { // For options without concepts combine the values into one observation
-                            createObservation(e, jsonObject, vall);
-                        }
                     }
-                } catch (JSONException e1) {
-                    Timber.e(e1);
+                    if (!optionValues.isEmpty()) {
+                        // For options without concepts combine the values into one observation
+                        createObservation(e, jsonObject, optionValues);
+                    }
                 }
-            } else {
-                createObservation(e, jsonObject, value, entity);
+            } catch (JSONException e1) {
+                Timber.e(e1);
             }
+        } else {
+            createObservation(e, jsonObject, value, entity);
         }
     }
 
