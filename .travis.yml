@@ -9,6 +9,10 @@ env:
     # for updates check developer.android.com/studio#downloads (current 26.1.1)
     - ANDROID_SDK_TOOLS=sdk-tools-linux-4333796.zip
 
+addons:
+  apt_packages:
+    - pandoc
+
 before_install:
   # set JAVA_HOME path
   - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
@@ -26,6 +30,9 @@ install:
   - yes | sdkmanager --licenses >/dev/null
   - yes | sdkmanager "platforms;android-28"
 before_script:
+  - echo "Travis branch is $TRAVIS_BRANCH"
+  - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
+  - ls -la
   - java -version
   - sudo apt-get install openjdk-8-jdk
   - java -version
@@ -34,3 +41,24 @@ before_script:
 
 script:
   - ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
+
+after_success:
+  - ./gradlew coveralls --stacktrace
+
+
+after_failure:
+  - pandoc opensrp-app/build/reports/tests/index.html -t plain
+
+notifications:
+  slack:
+    secure: fAiZ4yA7DM6nUKh7nqsCTqZBb03VEAvi5NcRu5mNh5coNn/50XNeZl+qpv7Dw70Ef85Y/k68uc6KwTGVqPXEmVq9Hk3e7lqpBNN8rufvgCYDDGPmywBmU5BhSeykKo0Ee7llM3mRR/EipjIWw1+YvMcS3hCoygf/UlMDDhG0Jo0=
+
+before_deploy:
+  - echo "sonatypeUsername=$SONATYPE_USER" > ~/.gradle/gradle.properties
+  - echo "sonatypePassword=$SONATYPE_PASS" >> ~/.gradle/gradle.properties
+
+deploy:
+  provider: script
+  script: ./gradlew :opensrp-app:uploadArchives -PmavenLocal=false
+  on:
+    tags: true
