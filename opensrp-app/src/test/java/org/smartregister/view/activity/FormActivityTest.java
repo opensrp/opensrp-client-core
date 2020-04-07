@@ -6,6 +6,7 @@ import android.content.Intent;
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -29,6 +30,7 @@ import static org.smartregister.view.activity.NativeECSmartRegisterActivityTest.
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
+@Ignore
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 public class FormActivityTest extends BaseUnitTest {
 

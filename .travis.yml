@@ -26,15 +26,11 @@ install:
   - yes | sdkmanager --licenses >/dev/null
   - yes | sdkmanager "platforms;android-28"
 before_script:
+  - java -version
   - sudo apt-get install openjdk-8-jdk
+  - java -version
   # set executable flag for gradle wrapper
-  - chmod +x "${PROJ_DIR}/gradlew"
-  # create dir for gradle settings
-  - mkdir -p "${PROJ_DIR}/.gradle"
-  # disable gradle daemon for current user
-  - echo "org.gradle.daemon=false" >> "${PROJ_DIR}/.gradle/gradle.properties"
-  # set gradle log format to plain
-  - echo "org.gradle.console=plain" >> "${PROJ_DIR}/.gradle/gradle.properties"
+  - chmod +x gradlew
 
 script:
   - ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
