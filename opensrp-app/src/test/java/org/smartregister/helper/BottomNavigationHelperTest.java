@@ -9,6 +9,7 @@ import android.graphics.drawable.GradientDrawable;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,6 +23,7 @@ import org.smartregister.R;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 public class BottomNavigationHelperTest extends BaseUnitTest {
 

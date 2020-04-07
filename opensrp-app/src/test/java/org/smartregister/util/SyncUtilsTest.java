@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -27,7 +28,7 @@ import static org.smartregister.AllConstants.FORCED_LOGOUT.MIN_ALLOWED_APP_VERSI
 /**
  * Created by Vincent Karuri on 10/03/2020
  */
-
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Utils.class})
 public class SyncUtilsTest {

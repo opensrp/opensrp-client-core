@@ -9,6 +9,7 @@ import junit.framework.Assert;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +40,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 /**
  * Created by raihan on 11/6/17.
  */
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({DrishtiApplication.class, AssetHandler.class, CloudantDataHandler.class, PreferenceManager.class, CoreLibrary.class})
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
