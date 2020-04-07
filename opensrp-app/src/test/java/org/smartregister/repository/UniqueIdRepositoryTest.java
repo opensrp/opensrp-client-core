@@ -8,6 +8,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by ndegwamartin on 2019-12-02.
  */
+@Ignore
 public class UniqueIdRepositoryTest extends BaseUnitTest {
     @Mock
     private Repository repository;
