@@ -22,7 +22,7 @@ public class LibraryFragmentTest {
     private LayoutInflater inflater;
 
     @Mock
-    ViewGroup container;
+    private ViewGroup container;
 
     @Before
     public void setUp() {
