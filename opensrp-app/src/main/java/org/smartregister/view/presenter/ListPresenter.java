@@ -38,6 +38,15 @@ public class ListPresenter<T extends ListContract.Identifiable> implements ListC
     }
 
     @Override
+    public void onFetchRequestError(Exception e) {
+        ListContract.View<T> currentView = getView();
+        if (currentView == null) return;
+
+        currentView.setLoadingState(false);
+        currentView.onFetchError(e);
+    }
+
+    @Override
     public void onItemsFetched(List<T> identifiables) {
         ListContract.View<T> currentView = getView();
         if (currentView == null) return;

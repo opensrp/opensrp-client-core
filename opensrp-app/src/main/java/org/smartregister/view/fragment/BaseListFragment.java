@@ -6,6 +6,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -27,12 +28,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class BaseListFragment<T extends ListContract.Identifiable> extends Fragment implements ListContract.View<T> {
 
-    private View view;
-    private ListableAdapter<T, ListableViewHolder<T>> mAdapter;
-    private ProgressBar progressBar;
-    private ListContract.Presenter<T> presenter;
-    private List<T> list;
-    private AtomicInteger incompleteRequests = new AtomicInteger(0);
+    protected View view;
+    protected ListableAdapter<T, ListableViewHolder<T>> mAdapter;
+    protected ProgressBar progressBar;
+    protected ListContract.Presenter<T> presenter;
+    protected List<T> list;
+    protected AtomicInteger incompleteRequests = new AtomicInteger(0);
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -73,12 +74,19 @@ public abstract class BaseListFragment<T extends ListContract.Identifiable> exte
 
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
+        if (hasDivider())
+            recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
         progressBar = view.findViewById(getProgressBarID());
         progressBar.setVisibility(View.GONE);
 
         mAdapter = adapter();
         recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public boolean hasDivider() {
+        return true;
     }
 
     @Override

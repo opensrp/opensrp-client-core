@@ -33,16 +33,29 @@ public interface ListContract {
 
         void onListItemClicked(T t, @IdRes int layoutID);
 
+        /***
+         * check fetch execution error and handle gracefully
+         *
+         * You can force close the view, retry a couple of times or display a new view
+         *
+         * @param ex
+         */
+        void onFetchError(Exception ex);
+
         @NonNull
         ListableAdapter<T, ListableViewHolder<T>> adapter();
 
         @NonNull
         Presenter<T> loadPresenter();
+
+        boolean hasDivider();
     }
 
     interface Presenter<T extends ListContract.Identifiable> {
 
         void fetchList(@NonNull Callable<List<T>> callable);
+
+        void onFetchRequestError(Exception e);
 
         void onItemsFetched(List<T> identifiables);
 
@@ -85,6 +98,7 @@ public interface ListContract {
     }
 
     interface Identifiable {
+        @NonNull
         String getID();
     }
 

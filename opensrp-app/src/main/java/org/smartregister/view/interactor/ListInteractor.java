@@ -30,6 +30,7 @@ public class ListInteractor<T extends ListContract.Identifiable> implements List
                 appExecutors.mainThread().execute(() -> presenter.onItemsFetched(tList));
             } catch (Exception e) {
                 Timber.e(e);
+                appExecutors.mainThread().execute(() -> presenter.onFetchRequestError(e));
             }
         };
         appExecutors.diskIO().execute(runnable);
