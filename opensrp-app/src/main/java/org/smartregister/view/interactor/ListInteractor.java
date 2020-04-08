@@ -1,5 +1,6 @@
 package org.smartregister.view.interactor;
 
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
 
@@ -22,7 +23,7 @@ public class ListInteractor<T extends ListContract.Identifiable> implements List
     }
 
     @Override
-    public void runRequest(Callable<List<T>> callable, ListContract.Presenter<T> presenter) {
+    public void runRequest(@NotNull Callable<List<T>> callable, @NotNull AppExecutors.Request request, @NotNull ListContract.Presenter<T> presenter) {
 
         Runnable runnable = () -> {
             try {
@@ -33,6 +34,6 @@ public class ListInteractor<T extends ListContract.Identifiable> implements List
                 appExecutors.mainThread().execute(() -> presenter.onFetchRequestError(e));
             }
         };
-        appExecutors.diskIO().execute(runnable);
+        appExecutors.execute(runnable, request);
     }
 }

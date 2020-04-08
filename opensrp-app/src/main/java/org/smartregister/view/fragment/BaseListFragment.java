@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
 import org.smartregister.view.adapter.ListableAdapter;
 import org.smartregister.view.presenter.ListPresenter;
@@ -41,8 +42,12 @@ public abstract class BaseListFragment<T extends ListContract.Identifiable> exte
         view = inflater.inflate(getRootLayout(), container, false);
         bindLayout();
         loadPresenter();
-        presenter.fetchList(onStartCallable(getArguments()));
+        presenter.fetchList(onStartCallable(getArguments()), fetchRequestType());
         return view;
+    }
+
+    protected AppExecutors.Request fetchRequestType(){
+        return AppExecutors.Request.DISK_THREAD;
     }
 
     /***

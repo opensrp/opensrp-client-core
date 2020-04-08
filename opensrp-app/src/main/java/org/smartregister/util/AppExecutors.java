@@ -51,6 +51,28 @@ public class AppExecutors {
         return mainThread;
     }
 
+    /**
+     * Auto assign the executor by request type
+     *
+     * @param runnable
+     * @param request
+     */
+    public void execute(@NonNull Runnable runnable, @NonNull Request request) {
+        switch (request) {
+            case DISK_THREAD:
+                diskIO().execute(runnable);
+                break;
+            case NETWORK_THREAD:
+                networkIO().execute(runnable);
+                break;
+            case MAIN_THREAD:
+                mainThread().execute(runnable);
+                break;
+            default:
+                throw new IllegalArgumentException("Unknown request");
+        }
+    }
+
     private static class MainThreadExecutor implements Executor {
         private Handler mainThreadHandler = new Handler(Looper.getMainLooper());
 
@@ -75,6 +97,10 @@ public class AppExecutors {
         public void execute(@NonNull Runnable command) {
             mDiskIO.execute(command);
         }
+    }
+
+    public enum Request {
+        MAIN_THREAD, NETWORK_THREAD, DISK_THREAD
     }
 }
 

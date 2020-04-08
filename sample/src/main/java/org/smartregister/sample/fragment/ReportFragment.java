@@ -9,6 +9,7 @@ import org.smartregister.sample.R;
 import org.smartregister.sample.adapter.ReportsFragmentAdapter;
 import org.smartregister.sample.callable.LoadReports;
 import org.smartregister.sample.domain.Report;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.view.adapter.ListableAdapter;
 import org.smartregister.view.fragment.BaseListFragment;
 import org.smartregister.view.viewholder.ListableViewHolder;
@@ -28,6 +29,11 @@ public class ReportFragment extends BaseListFragment<Report> {
     @Override
     protected Callable<List<Report>> onStartCallable(@Nullable Bundle bundle) {
         return new LoadReports();
+    }
+
+    @Override
+    protected AppExecutors.Request fetchRequestType() {
+        return AppExecutors.Request.NETWORK_THREAD;
     }
 
     @Override

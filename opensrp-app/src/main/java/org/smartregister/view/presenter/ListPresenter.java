@@ -1,8 +1,10 @@
 package org.smartregister.view.presenter;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
 import org.smartregister.view.interactor.ListInteractor;
 
@@ -27,13 +29,13 @@ public class ListPresenter<T extends ListContract.Identifiable> implements ListC
      * @param callable
      */
     @Override
-    public void fetchList(@NotNull Callable<List<T>> callable) {
+    public void fetchList(@NotNull Callable<List<T>> callable, @NonNull AppExecutors.Request request) {
         ListContract.View<T> currentView = getView();
         if (currentView != null)
             currentView.setLoadingState(true);
 
         if (interactor != null) {
-            interactor.runRequest(callable, this);
+            interactor.runRequest(callable, request, this);
         }
     }
 
