@@ -6,7 +6,6 @@ import android.content.Intent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
@@ -85,23 +84,18 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
 
         Manifest receivedManifest = convertManifestDTOToManifest(receivedManifestDTO);
 
+        //Note active manifest is null for the first time synchronization of the application
         Manifest activeManifest = manifestRepository.getActiveManifest();
 
-        if(!activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())){
+        if(activeManifest == null){
+            saveReceivedManifest(receivedManifest);
+        }else if(!activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())){
             //Untaging the active manifest and saving the received manifest and tagging it as active
             activeManifest.setActive(false);
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
 
-            receivedManifest.setNew(true);
-            receivedManifest.setActive(true);
-            manifestRepository.addOrUpdate(receivedManifest);
-
-            //deleting the third oldest manifest from the repository
-            List<Manifest> manifestsList = manifestRepository.getAllManifestsManifest();
-            if(manifestsList.size()>2){
-                manifestRepository.delete(manifestsList.get(2).getId());
-            }
+            saveReceivedManifest(receivedManifest);
         }
 
 
@@ -143,5 +137,17 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
             manifest.setIdentifiers(identifiers);
         }
         return manifest;
+    }
+
+    private void saveReceivedManifest(Manifest receivedManifest){
+        receivedManifest.setNew(true);
+        receivedManifest.setActive(true);
+        manifestRepository.addOrUpdate(receivedManifest);
+
+        //deleting the third oldest manifest from the repository
+        List<Manifest> manifestsList = manifestRepository.getAllManifestsManifest();
+        if(manifestsList.size()>2){
+            manifestRepository.delete(manifestsList.get(2).getId());
+        }
     }
 }
