@@ -1,7 +1,5 @@
 package org.smartregister.domain;
 
-import org.json.JSONArray;
-
 import java.util.List;
 
 /**
