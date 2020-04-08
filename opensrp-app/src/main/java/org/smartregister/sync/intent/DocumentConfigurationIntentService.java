@@ -97,6 +97,11 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
             receivedManifest.setActive(true);
             manifestRepository.addOrUpdate(receivedManifest);
 
+            //deleting the third oldest manifest from the repository
+            List<Manifest> manifestsList = manifestRepository.getAllManifestsManifest();
+            if(manifestsList.size()>2){
+                manifestRepository.delete(manifestsList.get(2).getId());
+            }
         }
 
 
@@ -115,6 +120,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         Manifest manifest = new Manifest();
         manifest.setId(manifestDTO.getId().toString());
         manifest.setAppVersion(manifestDTO.getAppVersion());
+        manifest.setCreatedAt(manifestDTO.getCreatedAt());
 
         JSONObject json = manifestDTO.getJson();
         if(json.has("forms_version")){

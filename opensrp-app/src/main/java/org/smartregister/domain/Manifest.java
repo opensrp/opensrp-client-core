@@ -1,5 +1,6 @@
 package org.smartregister.domain;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -14,13 +15,13 @@ public class Manifest {
 
     private String formVersion;
 
-    private String modelVersion;
-
     private List<String> identifiers;
 
     private boolean isNew;
 
     private boolean active;
+
+    private Date createdAt;
 
     public String getId() {
         return id;
@@ -46,14 +47,6 @@ public class Manifest {
         this.formVersion = formVersion;
     }
 
-    public String getModelVersion() {
-        return modelVersion;
-    }
-
-    public void setModelVersion(String modelVersion) {
-        this.modelVersion = modelVersion;
-    }
-
     public List<String> getIdentifiers() {
         return identifiers;
     }
@@ -76,5 +69,13 @@ public class Manifest {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }

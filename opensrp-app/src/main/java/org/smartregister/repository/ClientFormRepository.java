@@ -32,7 +32,7 @@ public class ClientFormRepository extends BaseRepository {
     protected static final String LABEL = "label";
     protected static final String IS_NEW = "is_new";
     protected static final String ACTIVE = "active";
-    protected static final String CREATED_AT = "createdAt";
+    protected static final String CREATED_AT = "created_at";
     protected static final String CLIENT_FORM_TABLE = "client_form";
     protected static final String[] COLUMNS = new String[]{ID, VERSION, IDENTIFIER, MODULE, JSON, JURISDICTION, LABEL, IS_NEW, ACTIVE, CREATED_AT};
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);

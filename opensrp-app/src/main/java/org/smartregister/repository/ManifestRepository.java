@@ -11,8 +11,11 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Manifest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -26,24 +29,26 @@ public class ManifestRepository extends BaseRepository {
     protected static final String ID = "id";
     protected static final String APP_VERSION = "app_version";
     protected static final String FORM_VERSION = "form_version";
-    protected static final String MODEL_VERSION = "model_version";
     protected static final String IDENTIFIERS = "identifiers";
     protected static final String IS_NEW = "is_new";
     protected static final String ACTIVE = "active";
+    protected static final String CREATED_AT = "created_at";
 
 
     protected static final String MANIFEST_TABLE = "Manifest";
 
-    protected static final String[] COLUMNS = new String[]{ID, APP_VERSION, FORM_VERSION, MODEL_VERSION, IDENTIFIERS, IS_NEW, ACTIVE};
+    protected static final String[] COLUMNS = new String[]{ID, APP_VERSION, FORM_VERSION, IDENTIFIERS, IS_NEW, ACTIVE, CREATED_AT};
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
+
     private static final String CREATE_MANIFEST_TABLE =
             "CREATE TABLE " + MANIFEST_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
                     APP_VERSION + " VARCHAR , " +
                     FORM_VERSION + " VARCHAR , " +
-                    MODEL_VERSION + " VARCHAR , " +
                     IDENTIFIERS + " VARCHAR , " +
                     IS_NEW + " VARCHAR , " +
-                    ACTIVE + " VARCHAR NOT NULL ) ";
+                    ACTIVE + " VARCHAR , " +
+                    CREATED_AT + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
             + MANIFEST_TABLE + "_" + APP_VERSION + "_ind ON " + MANIFEST_TABLE + "(" + APP_VERSION + ")";
@@ -64,10 +69,10 @@ public class ManifestRepository extends BaseRepository {
         contentValues.put(ID, manifest.getId());
         contentValues.put(APP_VERSION, manifest.getAppVersion());
         contentValues.put(FORM_VERSION, manifest.getFormVersion());
-        contentValues.put(MODEL_VERSION, manifest.getModelVersion());
         contentValues.put(IDENTIFIERS, new Gson().toJson(manifest.getIdentifiers()));
         contentValues.put(IS_NEW, manifest.isNew());
         contentValues.put(ACTIVE, manifest.isActive());
+        contentValues.put(CREATED_AT, DATE_FORMAT.format(manifest.getCreatedAt()));
         getWritableDatabase().replace(getManifestTableName(), null, contentValues);
     }
 
@@ -76,13 +81,38 @@ public class ManifestRepository extends BaseRepository {
         manifest.setId(cursor.getString(cursor.getColumnIndex(ID)));
         manifest.setAppVersion(cursor.getString(cursor.getColumnIndex(APP_VERSION)));
         manifest.setFormVersion(cursor.getString(cursor.getColumnIndex(FORM_VERSION)));
-        manifest.setModelVersion(cursor.getString(cursor.getColumnIndex(MODEL_VERSION)));
         manifest.setNew(cursor.getInt(cursor.getColumnIndex(IS_NEW)) == 1);
         manifest.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)) == 1);
-        manifest.setIdentifiers(new Gson().fromJson(cursor.getString(cursor.getColumnIndex(IDENTIFIERS)), new TypeToken<List<String>>() {
-        }.getType()));
+        manifest.setIdentifiers(new Gson().fromJson(
+                cursor.getString(cursor.getColumnIndex(IDENTIFIERS)),
+                new TypeToken<List<String>>() {
+                }.getType()));
+        try {
+            manifest.setCreatedAt(DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(CREATED_AT))));
+        } catch (ParseException e) {
+            Timber.e(e);
+        }
 
         return manifest;
+    }
+
+    /**
+     * Get a list of  of all Manifests in the repository
+     *
+     * @return a list of all Manifests in the repository
+     */
+    public List<Manifest> getAllManifestsManifest() {
+        List<Manifest> manifests = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
+                " ORDER BY " + CREATED_AT + " DESC ", new String[]{""})) {
+            while (cursor.moveToNext()) {
+                manifests.add(readCursor(cursor));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return manifests;
+
     }
 
     /**
@@ -115,7 +145,7 @@ public class ManifestRepository extends BaseRepository {
         Manifest manifest = null;
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
                 " WHERE " + ACTIVE + " =?", new Boolean[]{true})) {
-            if (cursor.moveToFirst()){
+            if (cursor.moveToFirst()) {
                 manifest = readCursor(cursor);
             }
         } catch (Exception e) {
@@ -123,5 +153,10 @@ public class ManifestRepository extends BaseRepository {
         }
         return manifest;
 
+    }
+
+    public void delete(String manifestId) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.delete(MANIFEST_TABLE, ID + "= ?", new String[]{manifestId});
     }
 }
