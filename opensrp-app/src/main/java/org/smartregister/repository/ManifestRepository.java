@@ -104,4 +104,24 @@ public class ManifestRepository extends BaseRepository {
         return manifests;
 
     }
+
+
+    /**
+     * Get the active of Manifest
+     *
+     * @return the manifest tagged as active
+     */
+    public Manifest getActiveManifest() {
+        Manifest manifest = null;
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
+                " WHERE " + ACTIVE + " =?", new Boolean[]{true})) {
+            if (cursor.moveToFirst()){
+                manifest = readCursor(cursor);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return manifest;
+
+    }
 }

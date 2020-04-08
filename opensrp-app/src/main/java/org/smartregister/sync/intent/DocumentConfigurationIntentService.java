@@ -6,13 +6,15 @@ import android.content.Intent;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
-import org.smartregister.domain.LocationProperty;
-import org.smartregister.domain.LocationTag;
+import org.smartregister.domain.Manifest;
 import org.smartregister.domain.Response;
-import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.dto.ManifestDTO;
 import org.smartregister.exception.NoHttpResponseException;
+import org.smartregister.repository.ManifestRepository;
 import org.smartregister.service.HTTPAgent;
 
 import java.text.MessageFormat;
@@ -30,6 +32,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
     public static final String CLIENT_FORM_SYNC_URL = "rest/clientForm";
     private Context context;
     private HTTPAgent httpAgent;
+    private ManifestRepository manifestRepository;
 
     public DocumentConfigurationIntentService() {
         super("DocumentConfigurationIntentService");
@@ -43,6 +46,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = getBaseContext();
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        manifestRepository = CoreLibrary.getInstance().context().getManifestRepository();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -79,6 +83,22 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         ManifestDTO receivedManifestDTO =
                 new Gson().fromJson(resp.payload().toString(), ManifestDTO.class);
 
+        Manifest receivedManifest = convertManifestDTOToManifest(receivedManifestDTO);
+
+        Manifest activeManifest = manifestRepository.getActiveManifest();
+
+        if(!activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())){
+            //Untaging the active manifest and saving the received manifest and tagging it as active
+            activeManifest.setActive(false);
+            activeManifest.setNew(false);
+            manifestRepository.addOrUpdate(activeManifest);
+
+            receivedManifest.setNew(true);
+            receivedManifest.setActive(true);
+            manifestRepository.addOrUpdate(receivedManifest);
+
+        }
+
 
     }
 
@@ -88,5 +108,34 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
 
     public Context getContext() {
         return this.context;
+    }
+
+
+    private Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO){
+        Manifest manifest = new Manifest();
+        manifest.setId(manifestDTO.getId().toString());
+        manifest.setAppVersion(manifestDTO.getAppVersion());
+
+        JSONObject json = manifestDTO.getJson();
+        if(json.has("forms_version")){
+            try {
+                manifest.setFormVersion(json.getString("forms_version"));
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
+
+        if(json.has("identifiers")){
+            List<String> identifiers = null;
+            try {
+                identifiers = new Gson().fromJson(json.getString("identifiers"), new TypeToken<List<String>>() {
+                }.getType());
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+
+            manifest.setIdentifiers(identifiers);
+        }
+        return manifest;
     }
 }
