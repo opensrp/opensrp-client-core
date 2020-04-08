@@ -4,7 +4,5 @@
 
     <string name="sample">Night gathers, and now my watch begins</string>
     <string name="language_label">Select Language</string>
-
-    <string name="action_profile_sample">Sample Profile</string>
     <string name="action_report_sample">Sample Reports</string>
 </resources>

@@ -1,13 +1,22 @@
 package org.smartregister.sample.domain;
 
+import com.google.gson.annotations.SerializedName;
+
 import org.jetbrains.annotations.NotNull;
 import org.smartregister.view.ListContract;
 
+/**
+ * @author rkodev
+ */
 public class Report implements ListContract.Identifiable {
 
+    @SerializedName("id")
     private String ID;
+    @SerializedName("employee_name")
     private String name;
+    @SerializedName("employee_salary")
     private String salary;
+    @SerializedName("employee_age")
     private String age;
 
     @NotNull

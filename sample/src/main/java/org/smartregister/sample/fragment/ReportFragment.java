@@ -3,7 +3,11 @@ package org.smartregister.sample.fragment;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.widget.Toast;
 
+import org.smartregister.sample.R;
+import org.smartregister.sample.adapter.ReportsFragmentAdapter;
+import org.smartregister.sample.callable.LoadReports;
 import org.smartregister.sample.domain.Report;
 import org.smartregister.view.adapter.ListableAdapter;
 import org.smartregister.view.fragment.BaseListFragment;
@@ -12,38 +16,49 @@ import org.smartregister.view.viewholder.ListableViewHolder;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import timber.log.Timber;
+
+/**
+ * @author rkodev
+ */
 public class ReportFragment extends BaseListFragment<Report> {
     public static final String TAG = "ReportFragment";
 
     @NonNull
     @Override
     protected Callable<List<Report>> onStartCallable(@Nullable Bundle bundle) {
-        return null;
+        return new LoadReports();
     }
 
     @Override
     protected int getRootLayout() {
-        return 0;
+        return R.layout.fragment_report;
     }
 
     @Override
     protected int getRecyclerViewID() {
-        return 0;
+        return R.id.recyclerView;
     }
 
     @Override
     protected int getProgressBarID() {
-        return 0;
+        return R.id.progress_bar;
     }
 
     @Override
     public void onListItemClicked(Report report, int layoutID) {
+        Toast.makeText(getContext(), "You clicked on " + report.getName(), Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void onFetchError(Exception ex) {
+        Toast.makeText(getContext(), "An error occurred, handle it bro", Toast.LENGTH_SHORT).show();
+        Timber.e(ex);
     }
 
     @NonNull
     @Override
     public ListableAdapter<Report, ListableViewHolder<Report>> adapter() {
-        return null;
+        return new ReportsFragmentAdapter(list, this);
     }
 }

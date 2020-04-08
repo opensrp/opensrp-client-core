@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
-import org.smartregister.sample.fragment.ProfileFragment;
 import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.view.activity.MultiLanguageActivity;
 
@@ -47,9 +46,6 @@ public class BasicActivity extends MultiLanguageActivity {
             return null;
 
         switch (destinationFragment) {
-            case ProfileFragment
-                    .TAG:
-                return new ProfileFragment();
             case ReportFragment
                     .TAG:
                 return new ReportFragment();
