@@ -155,6 +155,10 @@ public class ManifestRepository extends BaseRepository {
 
     }
 
+    /**
+     * Delete manifest by id
+     * @param manifestId
+     */
     public void delete(String manifestId) {
         SQLiteDatabase database = getWritableDatabase();
         database.delete(MANIFEST_TABLE, ID + "= ?", new String[]{manifestId});
