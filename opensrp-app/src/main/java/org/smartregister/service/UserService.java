@@ -746,4 +746,8 @@ public class UserService {
 
         return Base64.encodeToString(vals, Base64.DEFAULT);
     }
+
+    public KeyStore getKeyStore() {
+        return keyStore;
+    }
 }

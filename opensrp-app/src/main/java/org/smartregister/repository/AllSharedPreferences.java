@@ -1,6 +1,8 @@
 package org.smartregister.repository;
 
 import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -327,6 +329,11 @@ public class AllSharedPreferences {
 
     public boolean fetchTransactionsKilledFlag() {
         return preferences.getBoolean(TRANSACTIONS_KILLED_FLAG, false);
+    }
+
+    @Nullable
+    public SharedPreferences getPreferences() {
+        return preferences;
     }
 }
 
