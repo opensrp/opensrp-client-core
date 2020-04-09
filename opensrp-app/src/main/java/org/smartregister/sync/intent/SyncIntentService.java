@@ -2,6 +2,7 @@ package org.smartregister.sync.intent;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.IntRange;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -98,8 +99,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
     }
 
-
-    private void pullECFromServer() {
+    protected void pullECFromServer() {
         fetchRetry(0);
     }
 
@@ -217,6 +217,8 @@ public class SyncIntentService extends BaseSyncIntentService {
         boolean isSuccessfulPushSync = true;
 
         EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
+        int totalEventCount = db.getUnSyncedEventsCount();
+        int eventsUploadedCount = 0;
 
         while (true) {
             Map<String, Object> pendingEvents = db.getUnSyncedEvents(EVENT_PUSH_LIMIT);
@@ -233,7 +235,12 @@ public class SyncIntentService extends BaseSyncIntentService {
             JSONObject request = new JSONObject();
             try {
                 if (pendingEvents.containsKey(AllConstants.KEY.CLIENTS)) {
-                    request.put(AllConstants.KEY.CLIENTS, pendingEvents.get(AllConstants.KEY.CLIENTS));
+                    Object value = pendingEvents.get(AllConstants.KEY.CLIENTS);
+                    request.put(AllConstants.KEY.CLIENTS, value);
+
+                    if (value instanceof List) {
+                        eventsUploadedCount += ((List) value).size();
+                    }
                 }
                 if (pendingEvents.containsKey(AllConstants.KEY.EVENTS)) {
                     request.put(AllConstants.KEY.EVENTS, pendingEvents.get(AllConstants.KEY.EVENTS));
@@ -253,6 +260,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             }
             db.markEventsAsSynced(pendingEvents);
             Timber.i("Events synced successfully.");
+            updateProgress(eventsUploadedCount, totalEventCount);
         }
 
         return isSuccessfulPushSync;
@@ -278,6 +286,12 @@ public class SyncIntentService extends BaseSyncIntentService {
             ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
         }
 
+    }
+
+    protected void updateProgress(@IntRange(from=0) int progress, @IntRange(from=1) int total) {
+        FetchStatus uploadProgressStatus = FetchStatus.fetchProgress;
+        uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress *100)/total));
+        sendSyncStatusBroadcastMessage(uploadProgressStatus);
     }
 
     protected Pair<Long, Long> getMinMaxServerVersions(JSONObject jsonObject) {
