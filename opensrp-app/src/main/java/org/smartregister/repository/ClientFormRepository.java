@@ -45,8 +45,8 @@ public class ClientFormRepository extends BaseRepository {
                     JSON + " VARCHAR , " +
                     JURISDICTION + " VARCHAR , " +
                     LABEL + " VARCHAR , " +
-                    IS_NEW + " VARCHAR , " +
-                    ACTIVE + " VARCHAR  NOT NULL, " +
+                    IS_NEW + " INTEGER , " +
+                    ACTIVE + " INTEGER  NOT NULL, " +
                     CREATED_AT + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_CLIENT_FORM_IDENTIFIER_INDEX = "CREATE INDEX "

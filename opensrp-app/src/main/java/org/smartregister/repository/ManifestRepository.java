@@ -35,7 +35,7 @@ public class ManifestRepository extends BaseRepository {
     protected static final String CREATED_AT = "created_at";
 
 
-    protected static final String MANIFEST_TABLE = "Manifest";
+    protected static final String MANIFEST_TABLE = "manifest";
 
     protected static final String[] COLUMNS = new String[]{ID, APP_VERSION, FORM_VERSION, IDENTIFIERS, IS_NEW, ACTIVE, CREATED_AT};
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -46,8 +46,8 @@ public class ManifestRepository extends BaseRepository {
                     APP_VERSION + " VARCHAR , " +
                     FORM_VERSION + " VARCHAR , " +
                     IDENTIFIERS + " VARCHAR , " +
-                    IS_NEW + " VARCHAR , " +
-                    ACTIVE + " VARCHAR , " +
+                    IS_NEW + " INTEGER , " +
+                    ACTIVE + " INTEGER , " +
                     CREATED_AT + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
@@ -104,7 +104,7 @@ public class ManifestRepository extends BaseRepository {
     public List<Manifest> getAllManifestsManifest() {
         List<Manifest> manifests = new ArrayList<>();
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
-                " ORDER BY " + CREATED_AT + " DESC ", new String[]{""})) {
+                " ORDER BY " + CREATED_AT + " DESC ", null)) {
             while (cursor.moveToNext()) {
                 manifests.add(readCursor(cursor));
             }
@@ -142,16 +142,16 @@ public class ManifestRepository extends BaseRepository {
      * @return the manifest tagged as active
      */
     public Manifest getActiveManifest() {
-        Manifest manifest = null;
+        Manifest manifests = null;
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
-                " WHERE " + ACTIVE + " =?", new Boolean[]{true})) {
+                " WHERE " + ACTIVE + " =?", new String[]{"1"})) {
             if (cursor.moveToFirst()) {
-                manifest = readCursor(cursor);
+                manifests= readCursor(cursor);
             }
         } catch (Exception e) {
             Timber.e(e);
         }
-        return manifest;
+        return manifests;
 
     }
 
