@@ -34,8 +34,6 @@ public class ClientFormRepository extends BaseRepository {
     protected static final String ACTIVE = "active";
     protected static final String CREATED_AT = "created_at";
     protected static final String CLIENT_FORM_TABLE = "client_form";
-    protected static final String[] COLUMNS = new String[]{ID, VERSION, IDENTIFIER, MODULE, JSON, JURISDICTION, LABEL, IS_NEW, ACTIVE, CREATED_AT};
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     public static final String CREATE_CLIENT_FORM_TABLE =
             "CREATE TABLE " + CLIENT_FORM_TABLE + " (" +
                     ID + " VARCHAR NOT NULL PRIMARY KEY," +
@@ -48,7 +46,8 @@ public class ClientFormRepository extends BaseRepository {
                     IS_NEW + " INTEGER , " +
                     ACTIVE + " INTEGER  NOT NULL, " +
                     CREATED_AT + " VARCHAR NOT NULL ) ";
-
+    protected static final String[] COLUMNS = new String[]{ID, VERSION, IDENTIFIER, MODULE, JSON, JURISDICTION, LABEL, IS_NEW, ACTIVE, CREATED_AT};
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static final String CREATE_CLIENT_FORM_IDENTIFIER_INDEX = "CREATE INDEX "
             + CLIENT_FORM_TABLE + "_" + IDENTIFIER + "_ind ON " + CLIENT_FORM_TABLE + "(" + IDENTIFIER + ")";
 
@@ -141,6 +140,7 @@ public class ClientFormRepository extends BaseRepository {
 
     /**
      * Delete client form by id
+     *
      * @param clientFormId
      */
     public void delete(String clientFormId) {

@@ -145,9 +145,6 @@ public class ManifestRepositoryTest extends BaseUnitTest {
 
         assertEquals(true, manifest.isActive());
 
-
-
-
     }
 
 
