@@ -93,27 +93,26 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         //Note active manifest is null for the first time synchronization of the application
         Manifest activeManifest = manifestRepository.getActiveManifest();
 
-        if (activeManifest == null) {
-            saveReceivedManifest(receivedManifest);
-        } else if (!activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())) {
+        if (activeManifest!=null && !activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())) {
             //Untaging the active manifest and saving the received manifest and tagging it as active
             activeManifest.setActive(false);
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
-
-            saveReceivedManifest(receivedManifest);
-
-            //Fetching Client Forms for identifiers in the manifest
-            for (String identifier : receivedManifest.getIdentifiers()) {
-                try {
-                    fetchClientForm(identifier, receivedManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
-                } catch (Exception e) {
-                    Timber.e(e);
-                }
-            }
         }
 
+        saveReceivedManifest(receivedManifest);
+        syncClientForms(receivedManifest);
+    }
 
+    protected void syncClientForms(Manifest activeManifest) {
+        //Fetching Client Forms for identifiers in the manifest
+        for (String identifier : activeManifest.getIdentifiers()) {
+            try {
+                fetchClientForm(identifier, activeManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
     }
 
     protected void fetchClientForm(String identifier, String formVersion, ClientForm activeClientForm) throws Exception {
@@ -129,8 +128,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         }
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}{2}",
-                        baseUrl,
-                        CLIENT_FORM_SYNC_URL,
+                        baseUrl, CLIENT_FORM_SYNC_URL,
                         URLEncoder.encode("?form_identifier=" + identifier +
                                 "&form_version=" + formVersion +
                                 (activeClientForm == null ? "" : "&current_form_version=" + activeClientForm.getVersion()))));
@@ -164,7 +162,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
     }
 
 
-    private Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO) {
+    private Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO) throws JSONException {
         Manifest manifest = new Manifest();
         manifest.setId(manifestDTO.getId().toString());
         manifest.setAppVersion(manifestDTO.getAppVersion());
@@ -172,25 +170,17 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
 
         JSONObject json = manifestDTO.getJson();
         if (json.has("forms_version")) {
-            try {
-                manifest.setFormVersion(json.getString("forms_version"));
-            } catch (JSONException e) {
-                Timber.e(e);
-            }
+            manifest.setFormVersion(json.getString("forms_version"));
         }
 
         if (json.has("identifiers")) {
-            List<String> identifiers = null;
-            try {
-                identifiers = new Gson().fromJson(json.getString("identifiers"), new TypeToken<List<String>>() {
-                }.getType());
-            } catch (JSONException e) {
-                Timber.e(e);
-            }
-
+            List<String> identifiers = new Gson().fromJson(json.getString("identifiers"),
+                    new TypeToken<List<String>>() {
+                    }.getType());
             manifest.setIdentifiers(identifiers);
         }
         return manifest;
+
     }
 
     private ClientForm convertClientFormResponseToClientForm(ClientFormResponse clientFormResponse) {
