@@ -12,8 +12,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.Manifest;
 import org.smartregister.domain.Response;
-import org.smartregister.domain.db.Client;
-import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.dto.ClientFormResponse;
 import org.smartregister.dto.ManifestDTO;
 import org.smartregister.exception.NoHttpResponseException;
@@ -106,10 +104,10 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
             saveReceivedManifest(receivedManifest);
 
             //Fetching Client Forms for identifiers in the manifest
-            for(String identifier : receivedManifest.getIdentifiers()){
+            for (String identifier : receivedManifest.getIdentifiers()) {
                 try {
                     fetchClientForm(identifier, receivedManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
-                }catch (Exception e){
+                } catch (Exception e) {
                     Timber.e(e);
                 }
             }
@@ -135,7 +133,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
                         CLIENT_FORM_SYNC_URL,
                         URLEncoder.encode("?form_identifier=" + identifier +
                                 "&form_version=" + formVersion +
-                                (activeClientForm==null ? "" : "&current_form_version=" + activeClientForm.getVersion()))));
+                                (activeClientForm == null ? "" : "&current_form_version=" + activeClientForm.getVersion()))));
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(CLIENT_FORM_SYNC_URL + " not returned data");
@@ -145,9 +143,9 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         ClientFormResponse clientFormResponse =
                 new Gson().fromJson(resp.payload().toString(), ClientFormResponse.class);
 
-        if(activeClientForm==null || !clientFormResponse.getClientFormMetadata().getVersion().equals(activeClientForm.getVersion())){
+        if (activeClientForm == null || !clientFormResponse.getClientFormMetadata().getVersion().equals(activeClientForm.getVersion())) {
             //if the previously active client form is not null it should be untagged from being new nor active
-            if(activeClientForm!=null){
+            if (activeClientForm != null) {
                 activeClientForm.setActive(false);
                 activeClientForm.setNew(false);
                 clientFormRepository.addOrUpdate(activeClientForm);
