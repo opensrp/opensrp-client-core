@@ -118,4 +118,34 @@ public class ClientFormRepository extends BaseRepository {
 
     }
 
+    /**
+     * Get the active ClientForms for the passed identifier
+     *
+     * @param identifier of a the client form
+     * @return active ClientForm for the passed identifier
+     */
+    public ClientForm getActiveClientFormByIdentifier(String identifier) {
+        ClientForm clientForm = null;
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
+                " WHERE " + IDENTIFIER + " =? AND " + ACTIVE + " = 1", new String[]{identifier})) {
+            if (cursor.moveToFirst()) {
+                clientForm = readCursor(cursor);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return clientForm;
+
+    }
+
+
+    /**
+     * Delete client form by id
+     * @param clientFormId
+     */
+    public void delete(String clientFormId) {
+        SQLiteDatabase database = getWritableDatabase();
+        database.delete(CLIENT_FORM_TABLE, ID + "= ?", new String[]{clientFormId});
+    }
+
 }
