@@ -1,24 +1,22 @@
 package org.smartregister.dto;
 
-import org.json.JSONObject;
+public class ClientFormResponse {
+    private ClientFormDTO clientForm;
+    private ClientFormMetadataDTO clientFormMetadata;
 
-public class ClientFormDTO {
-    private Long id;
-    private JSONObject json;
-
-    public Long getId() {
-        return id;
+    public ClientFormDTO getClientForm() {
+        return clientForm;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setClientForm(ClientFormDTO clientForm) {
+        this.clientForm = clientForm;
     }
 
-    public JSONObject getJson() {
-        return json;
+    public ClientFormMetadataDTO getClientFormMetadata() {
+        return clientFormMetadata;
     }
 
-    public void setJson(JSONObject json) {
-        this.json = json;
+    public void setClientFormMetadata(ClientFormMetadataDTO clientFormMetadata) {
+        this.clientFormMetadata = clientFormMetadata;
     }
 }

@@ -1,16 +1,15 @@
 package org.smartregister.dto;
 
-import org.json.JSONObject;
-
 import java.util.Date;
 
-public class ClientFormDTO {
+public class ClientFormMetadataDTO {
     private Long id;
-    private JSONObject json;
-    private String appVersion;
-    private String appId;
+    private String identifier;
+    private String version;
+    private String label;
+    private String jurisdiction;
+    private String module;
     private Date createdAt;
-    private Date updatedAt;
 
     public Long getId() {
         return id;
@@ -20,28 +19,44 @@ public class ClientFormDTO {
         this.id = id;
     }
 
-    public JSONObject getJson() {
-        return json;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setJson(JSONObject json) {
-        this.json = json;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
-    public String getAppVersion() {
-        return appVersion;
+    public String getVersion() {
+        return version;
     }
 
-    public void setAppVersion(String appVersion) {
-        this.appVersion = appVersion;
+    public void setVersion(String version) {
+        this.version = version;
     }
 
-    public String getAppId() {
-        return appId;
+    public String getLabel() {
+        return label;
     }
 
-    public void setAppId(String appId) {
-        this.appId = appId;
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public String getJurisdiction() {
+        return jurisdiction;
+    }
+
+    public void setJurisdiction(String jurisdiction) {
+        this.jurisdiction = jurisdiction;
+    }
+
+    public String getModule() {
+        return module;
+    }
+
+    public void setModule(String module) {
+        this.module = module;
     }
 
     public Date getCreatedAt() {
@@ -50,13 +65,5 @@ public class ClientFormDTO {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
     }
 }
