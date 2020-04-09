@@ -3,6 +3,7 @@ package org.smartregister.sync.intent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntRange;
+import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,11 +50,15 @@ public class SyncIntentService extends BaseSyncIntentService {
         super(name);
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        context = getBaseContext();
+    protected void init(@NonNull Context context) {
+        this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        init(getBaseContext());
         return super.onStartCommand(intent, flags, startId);
     }
 
