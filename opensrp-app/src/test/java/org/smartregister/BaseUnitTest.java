@@ -39,6 +39,8 @@ import java.util.Collection;
 public abstract class BaseUnitTest {
     protected static final int INITIALS_RESOURCE_ID = R.drawable.bottom_bar_initials_background;
     protected static final String INITIALS_TEXT = "TR";
+    protected static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
+    protected static final String TEST_FORM_NAME = "child_enrollment.json";
 
     public void resetWindowManager() {
 
