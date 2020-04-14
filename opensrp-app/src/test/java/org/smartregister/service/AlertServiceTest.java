@@ -122,4 +122,24 @@ public class AlertServiceTest extends BaseUnitTest {
         Mockito.verify(alertRepository.findByEntityIdAndAlertNames("Entity 1", "AncAlert"));
     }
 
+    @Test
+    public void testByEntityIdAndOffline() {
+        service.findByEntityIdAndOffline("Entity 1", "PncAlert");
+        Mockito.verify(alertRepository.findOfflineByEntityIdAndName("Entity 1", "AncAlert"));
+    }
+
+    @Test
+    public void testFindByEntityIdAndScheduleName() {
+        service.findByEntityIdAndScheduleName("Entity 1", "Schedule 1");
+        Mockito.verify(alertRepository.findByEntityIdAndScheduleName("Entity 1", "Schedule 1"));
+    }
+
+    @Test
+    public  void testChangeAlertStatusToInProcess() {
+        service = Mockito.spy(service);
+        service.changeAlertStatusToInProcess("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository).changeAlertStatusToInProcess("Entity 1", "AncAlert");
+        Mockito.verify(service).updateFtsSearchAfterStatusChange("Entity 1", "AncAlert");
+    }
+
 }
