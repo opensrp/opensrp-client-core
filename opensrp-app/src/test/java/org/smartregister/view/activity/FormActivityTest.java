@@ -3,15 +3,12 @@ package org.smartregister.view.activity;
 import android.content.Context;
 import android.content.Intent;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
@@ -31,12 +28,10 @@ import static org.smartregister.view.activity.NativeECSmartRegisterActivityTest.
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 public class FormActivityTest extends BaseUnitTest {
 
     private ActivityController<FormActivityMock> controller;
 
-    @InjectMocks
     private FormActivityMock activity;
 
     private org.smartregister.Context context_;
@@ -46,9 +41,6 @@ public class FormActivityTest extends BaseUnitTest {
 
     @Mock
     private ANMLocationController anmLocationController;
-
-    @Mock
-    CoreLibrary coreLibrary;
 
     @Mock
     private ZiggyService ziggyService;
