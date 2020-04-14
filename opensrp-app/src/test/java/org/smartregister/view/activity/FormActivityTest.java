@@ -6,7 +6,7 @@ import android.content.Intent;
 import junit.framework.Assert;
 
 import org.junit.Before;
-import org.junit.Ignore;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -15,6 +15,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.service.ZiggyService;
@@ -30,7 +31,6 @@ import static org.smartregister.view.activity.NativeECSmartRegisterActivityTest.
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-@Ignore
 @PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
 public class FormActivityTest extends BaseUnitTest {
 
@@ -53,14 +53,18 @@ public class FormActivityTest extends BaseUnitTest {
     @Mock
     private ZiggyService ziggyService;
 
+    @BeforeClass
+    public static void resetCoreLibrarySingleton() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+    }
+
     @Before
     public void setUp() throws Exception {
         org.mockito.MockitoAnnotations.initMocks(this);
-
         org.smartregister.Context context = org.smartregister.Context.getInstance();
+
         context.sharedRepositories();
         context_ = Mockito.spy(context);
-
         CoreLibrary.init(context_);
         when(context_.applicationContext()).thenReturn(applicationContext);
         when(context_.anmLocationController()).thenReturn(anmLocationController);
