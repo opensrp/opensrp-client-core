@@ -57,6 +57,10 @@ public class LocationHelper {
         this.DEFAULT_LOCATION_LEVEL = defaultLocationLevel;
     }
 
+    public LocationHelper(LocationHelper locationHelper) {
+        instance = locationHelper;
+    }
+
     public static void init(ArrayList<String> allowedLevels, String defaultLocationLevel) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
             instance = new LocationHelper(allowedLevels, defaultLocationLevel);
