@@ -15,6 +15,8 @@ import org.smartregister.util.ActionBuilder;
 
 import java.util.HashMap;
 
+import static org.mockito.Mockito.spy;
+
 public class AlertServiceTest extends BaseUnitTest {
     @Mock
     private AlertRepository alertRepository;
@@ -136,10 +138,36 @@ public class AlertServiceTest extends BaseUnitTest {
 
     @Test
     public  void testChangeAlertStatusToInProcess() {
-        service = Mockito.spy(service);
+        service = spy(service);
         service.changeAlertStatusToInProcess("Entity 1", "AncAlert");
         Mockito.verify(alertRepository).changeAlertStatusToInProcess("Entity 1", "AncAlert");
         Mockito.verify(service).updateFtsSearchAfterStatusChange("Entity 1", "AncAlert");
+    }
+
+    @Test
+    public void testChangeAlertStatusToComplete() {
+        service = spy(service);
+        service.changeAlertStatusToComplete("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository).changeAlertStatusToComplete("Entity 1", "AncAlert");
+        Mockito.verify(service).updateFtsSearchAfterStatusChange("Entity 1", "AncAlert");
+    }
+
+    @Test
+    public void testDeleteAlert() {
+        service.deleteAlert("Entity 1", "Visit 1");
+        Mockito.verify(alertRepository).deleteVaccineAlertForEntity("Entity 1", "Visit 1");
+    }
+
+    @Test
+    public void testDeleteOfflineAlerts() {
+        service.deleteOfflineAlerts("Entity 1");
+        Mockito.verify(alertRepository).deleteOfflineAlertsForEntity("Entity 1");
+    }
+
+    @Test
+    public void testDeleteOfflineAlertsWithNames() {
+        service.deleteOfflineAlerts("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository).deleteOfflineAlertsForEntity("Entity 1", "AncAlert");
     }
 
 }
