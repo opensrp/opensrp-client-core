@@ -101,4 +101,25 @@ public class AlertServiceTest extends BaseUnitTest {
         Mockito.verify(alertRepository).deleteAllAlertsForEntity("Case Y");
         Mockito.verifyNoMoreInteractions(alertRepository);
     }
+
+    @Test
+    public void testConstructorWithAlertParam() {
+        Alert alert = new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22");
+
+        service.create(alert);
+        Mockito.verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22"));
+    }
+
+    @Test
+    public void testFindEntityById() {
+        service.findByEntityId("entity-id");
+        Mockito.verify(alertRepository.findByEntityId("entity-id"));
+    }
+
+    @Test
+    public void testFindByEntityIdAndAlertNames() {
+        service.findByEntityIdAndAlertNames("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository.findByEntityIdAndAlertNames("Entity 1", "AncAlert"));
+    }
+
 }
