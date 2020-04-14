@@ -43,6 +43,7 @@ public class PlanIntentServiceHelper {
 
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
+    public static final String PLAN_IDENTIFIERS_URL = "/rest/plans/getCurrentUserPlanIdentifiers";
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -90,6 +91,31 @@ public class PlanIntentServiceHelper {
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
+    }
+
+    private String fetchPlanIdentifiersForCurrentUser() throws NoHttpResponseException {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+
+        if (httpAgent == null) {
+            context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
+            throw new IllegalArgumentException(PLAN_IDENTIFIERS_URL + " http agent is null");
+        }
+
+        Response resp = httpAgent.fetch(
+                MessageFormat.format("{0}{1}",
+                        baseUrl,
+                        PLAN_IDENTIFIERS_URL));
+
+        if (resp.isFailure()) {
+            context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
+            throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
+        }
+        return resp.payload().toString();
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
