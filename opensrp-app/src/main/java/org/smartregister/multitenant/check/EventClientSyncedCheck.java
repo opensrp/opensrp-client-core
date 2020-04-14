@@ -67,7 +67,7 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
     @Override
     public void onSyncInProgress(FetchStatus fetchStatus) {
-        if (fetcatus == FetchStatus.fetchProgress) {
+        if (fetchStatus == FetchStatus.fetchProgress) {
 
         }
     }

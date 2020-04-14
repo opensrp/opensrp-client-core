@@ -31,6 +31,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -803,5 +804,32 @@ public class Utils {
 
     public static Locale getDefaultLocale() {
         return Locale.getDefault().toString().startsWith("ar") ? Locale.ENGLISH : Locale.getDefault();
+    }
+
+    public static boolean deleteRoomDb(@NonNull Context context, @NonNull String databaseName) {
+        File databases = new File(context.getApplicationInfo().dataDir + "/databases");
+        File db = new File(databases, databaseName);
+        if (!db.exists()) {
+            Timber.i("Room database %s does not exist", databaseName);
+        }
+
+        if (db.delete()) {
+            Timber.i("Room database %s deleted", databaseName);
+        } else {
+            Timber.i("Failed to delete database %s", databaseName);
+            return false;
+        }
+
+        File journal = new File(databases, databaseName + "-journal");
+        if (journal.exists()) {
+            if (journal.delete()) {
+                Timber.i("Database %s journal deleted", databaseName);
+            } else {
+                Timber.e("Failed to delete database %s journal", databaseName);
+                return false;
+            }
+        }
+
+        return true;
     }
 }

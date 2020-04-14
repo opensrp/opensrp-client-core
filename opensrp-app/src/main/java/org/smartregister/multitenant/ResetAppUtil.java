@@ -5,10 +5,15 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.smartregister.CoreLibrary;
+import org.smartregister.P2POptions;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.multitenant.check.EventClientSyncedCheck;
 import org.smartregister.multitenant.exception.PreResetAppOperationException;
 import org.smartregister.multitenant.executor.CoreLibraryExecutors;
+import org.smartregister.p2p.P2PLibrary;
+import org.smartregister.p2p.model.AppDatabase;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.security.KeyStore;
@@ -51,16 +56,14 @@ public class ResetAppUtil {
                             }
                         }
 
+                        performResetOperations();
+
                         coreLibraryExecutors.mainThread()
                                 .execute(() -> {
-                                    try {
-                                        performResetOperations();
-                                    } catch (AppResetException e) {
-                                        Timber.e(e);
-                                    }
+                                    // Done here, what should we do
                                 });
 
-                    } catch (PreResetAppOperationException e) {
+                    } catch (PreResetAppOperationException | AppResetException e) {
                         Timber.e(e);
                     }
                 });
@@ -68,8 +71,18 @@ public class ResetAppUtil {
 
     public void performResetOperations() throws AppResetException {
         clearSqCipherDb();
+        clearP2PDb();
         clearAllPrivateKeyEntries();
         clearSharedPreferences();
+    }
+
+    protected void clearP2PDb() {
+        P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
+        if (p2POptions != null && p2POptions.isEnableP2PLibrary()) {
+            AppDatabase roomP2PDb = P2PLibrary.getInstance().getDb();
+            roomP2PDb.clearAllTables();
+            Utils.deleteRoomDb(application.getApplicationContext(), roomP2PDb.getOpenHelper().getDatabaseName());
+        }
     }
 
     public void performPreResetOperations(@NonNull PreResetAppCheck preResetAppCheck) throws PreResetAppOperationException {
