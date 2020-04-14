@@ -30,11 +30,11 @@ public class CommonFtsObject {
 
     public CommonFtsObject(String[] tables) {
         this.tables = tables;
-        this.searchMap = new HashMap<String, String[]>();
-        this.sortMap = new HashMap<String, String[]>();
-        this.mainConditionMap = new HashMap<String, String[]>();
-        this.customRelationalIdMap = new HashMap<String, String>();
-        this.alertsScheduleMap = new HashMap<String, Pair<String, Boolean>>();
+        this.searchMap = new HashMap<>();
+        this.sortMap = new HashMap<>();
+        this.mainConditionMap = new HashMap<>();
+        this.customRelationalIdMap = new HashMap<>();
+        this.alertsScheduleMap = new HashMap<>();
     }
 
     public static String searchTableName(String table) {
@@ -106,12 +106,9 @@ public class CommonFtsObject {
                 schedule = key;
             }
         }
-        Pair<String, Boolean> pair = alertsScheduleMap.get(schedule);
-        if (pair == null) {
-            return null;
-        }
 
-        return pair.first;
+        Pair<String, Boolean> pair = alertsScheduleMap.get(schedule);
+        return pair == null ? null : pair.first;
     }
 
     public Boolean alertUpdateVisitCode(String schedule) {
@@ -119,11 +116,7 @@ public class CommonFtsObject {
             return null;
         }
         Pair<String, Boolean> pair = alertsScheduleMap.get(schedule);
-        if (pair == null) {
-            return null;
-        }
-
-        return pair.second;
+        return pair == null ? null : pair.second;
     }
 
     public String getAlertScheduleName(String vaccineName) {
