@@ -109,7 +109,7 @@ public class AlertServiceTest extends BaseUnitTest {
         Alert alert = new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22");
 
         service.create(alert);
-        Mockito.verify(alertRepository).createAlert(new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22"));
+        Mockito.verify(alertRepository).createAlert(alert);
     }
 
     @Test
