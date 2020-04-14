@@ -40,6 +40,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -250,6 +251,50 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
         assertEquals(expectedStructure.getId(), structure.getId());
         assertEquals(expectedStructure.getType(), structure.getType());
+    }
+
+    @Test
+    public void testMarkStructureAsSynced() {
+        String expectedStructureId = "41587456-b7c8-4c4e-b433-23a786f742fc";
+        structureRepository.markStructuresAsSynced(expectedStructureId);
+        verifyMarkStructureAsSyncedTests(expectedStructureId);
+    }
+
+    @Test
+    public void testMarkStructureAsSyncedShouldThrowException() {
+        doThrow(new SQLiteException()).when(sqLiteDatabase).update(anyString(), any(), anyString(), any());
+        String expectedStructureId = "41587456-b7c8-4c4e-b433-23a786f742fc";
+        structureRepository.markStructuresAsSynced(expectedStructureId);
+        verifyMarkStructureAsSyncedTests(expectedStructureId);
+    }
+
+    private void verifyMarkStructureAsSyncedTests(String expectedStructureId) {
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(),
+                stringArgumentCaptor.capture(), argsCaptor.capture());
+        List<String> capturedStringValues = stringArgumentCaptor.getAllValues();
+        assertEquals("structure", capturedStringValues.get(0));
+        assertEquals("_id = ?",  capturedStringValues.get(1));
+        assertEquals(expectedStructureId, argsCaptor.getValue()[0]);
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(2, contentValues.size());
+        assertEquals(expectedStructureId, contentValues.getAsString("_id"));
+        assertEquals(BaseRepository.TYPE_Synced, contentValues.getAsString("sync_status"));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetAllLocations() {
+        structureRepository.getAllLocations();
+    }
+
+    @Test
+    public void testCreateTable() {
+        StructureRepository.createTable(sqLiteDatabase);
+        verify(sqLiteDatabase, times(2)).execSQL(stringArgumentCaptor.capture());
+        assertEquals("CREATE TABLE structure (_id VARCHAR NOT NULL PRIMARY KEY,uuid VARCHAR , " +
+                "parent_id VARCHAR , name VARCHAR , sync_status VARCHAR DEFAULT Synced, latitude FLOAT , " +
+                "longitude FLOAT , geojson VARCHAR NOT NULL ) ", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals("CREATE INDEX structure_parent_id_ind ON structure(parent_id)", stringArgumentCaptor.getAllValues().get(1));
     }
 
     public MatrixCursor getCursor() {
