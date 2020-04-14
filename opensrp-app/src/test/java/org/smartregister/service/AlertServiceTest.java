@@ -115,25 +115,25 @@ public class AlertServiceTest extends BaseUnitTest {
     @Test
     public void testFindEntityById() {
         service.findByEntityId("entity-id");
-        Mockito.verify(alertRepository.findByEntityId("entity-id"));
+        Mockito.verify(alertRepository).findByEntityId("entity-id");
     }
 
     @Test
     public void testFindByEntityIdAndAlertNames() {
         service.findByEntityIdAndAlertNames("Entity 1", "AncAlert");
-        Mockito.verify(alertRepository.findByEntityIdAndAlertNames("Entity 1", "AncAlert"));
+        Mockito.verify(alertRepository).findByEntityIdAndAlertNames("Entity 1", "AncAlert");
     }
 
     @Test
     public void testByEntityIdAndOffline() {
         service.findByEntityIdAndOffline("Entity 1", "PncAlert");
-        Mockito.verify(alertRepository.findOfflineByEntityIdAndName("Entity 1", "AncAlert"));
+        Mockito.verify(alertRepository).findOfflineByEntityIdAndName("Entity 1", "PncAlert");
     }
 
     @Test
     public void testFindByEntityIdAndScheduleName() {
         service.findByEntityIdAndScheduleName("Entity 1", "Schedule 1");
-        Mockito.verify(alertRepository.findByEntityIdAndScheduleName("Entity 1", "Schedule 1"));
+        Mockito.verify(alertRepository).findByEntityIdAndScheduleName("Entity 1", "Schedule 1");
     }
 
     @Test
