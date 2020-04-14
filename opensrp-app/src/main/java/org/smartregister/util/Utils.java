@@ -811,6 +811,7 @@ public class Utils {
         File db = new File(databases, databaseName);
         if (!db.exists()) {
             Timber.i("Room database %s does not exist", databaseName);
+            return false;
         }
 
         if (db.delete()) {

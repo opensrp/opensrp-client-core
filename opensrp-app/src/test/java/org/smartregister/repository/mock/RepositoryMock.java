@@ -54,11 +54,6 @@ public class RepositoryMock extends Repository {
         return super.canUseThisPassword(password);
     }
 
-    @Override
-    public void deleteRepository() {
-        super.deleteRepository();
-    }
-
     public Repository getInstance1() {
         try {
             //Libraryname without .so!!
