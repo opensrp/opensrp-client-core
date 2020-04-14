@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.R;
@@ -30,6 +31,9 @@ import org.smartregister.view.controller.NavigationController;
  * Created by ndegwamartin on 2020-04-07.
  */
 public class SecuredFragmentTest extends BaseUnitTest {
+
+    private static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
+    private static final String TEST_FORM_NAME = "child_enrollment.json";
 
     private SecuredFragment securedFragment;
 
@@ -58,6 +62,9 @@ public class SecuredFragmentTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<Intent> intentArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Integer> integerArgumentCaptor;
 
     @Before
     public void setUp() {
@@ -190,5 +197,62 @@ public class SecuredFragmentTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void assertStartFormActivityInvokesNavigationToFormActivity() {
 
+        Mockito.doNothing().when(securedFragment).startActivityForResult(ArgumentMatchers.any(Intent.class), ArgumentMatchers.anyInt());
+
+        securedFragment.startFormActivity(TEST_FORM_NAME, TEST_BASE_ENTITY_ID, null);
+
+        Mockito.verify(securedFragment).startActivityForResult(intentArgumentCaptor.capture(), integerArgumentCaptor.capture());
+
+        Intent capturedIntent = intentArgumentCaptor.getValue();
+        Assert.assertNotNull(capturedIntent);
+        Assert.assertEquals("org.smartregister.view.activity.FormActivity", capturedIntent.getComponent().getClassName());
+
+        Integer capturedInteger = integerArgumentCaptor.getValue();
+
+        Assert.assertNotNull(capturedInteger);
+        Assert.assertEquals(AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE, capturedInteger.intValue());
+
+    }
+
+
+    @Test
+    public void assertStartMicroFormActivityInvokesNavigationToMicroFormActivity() {
+
+        Mockito.doNothing().when(securedFragment).startActivityForResult(ArgumentMatchers.any(Intent.class), ArgumentMatchers.anyInt());
+
+        securedFragment.startMicroFormActivity(TEST_FORM_NAME, TEST_BASE_ENTITY_ID, null);
+
+        Mockito.verify(securedFragment).startActivityForResult(intentArgumentCaptor.capture(), integerArgumentCaptor.capture());
+
+        Intent capturedIntent = intentArgumentCaptor.getValue();
+        Assert.assertNotNull(capturedIntent);
+        Assert.assertEquals("org.smartregister.view.activity.MicroFormActivity", capturedIntent.getComponent().getClassName());
+
+        Integer capturedInteger = integerArgumentCaptor.getValue();
+
+        Assert.assertNotNull(capturedInteger);
+        Assert.assertEquals(AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE, capturedInteger.intValue());
+
+    }
+
+    @Test
+    public void testAddFieldOverridesIfExistAddsFieldOverrideParamsToRequestIntent() {
+
+        String testMetadata = "{\"fieldOverrides\": \"metadata-override-values\"}";
+
+        Mockito.doNothing().when(securedFragment).startActivityForResult(ArgumentMatchers.any(Intent.class), ArgumentMatchers.anyInt());
+
+        securedFragment.startFormActivity(TEST_FORM_NAME, TEST_BASE_ENTITY_ID, testMetadata);
+
+        Mockito.verify(securedFragment).startActivityForResult(intentArgumentCaptor.capture(), integerArgumentCaptor.capture());
+
+        Intent capturedIntent = intentArgumentCaptor.getValue();
+        Assert.assertNotNull(capturedIntent);
+        Assert.assertEquals("metadata-override-values", capturedIntent.getStringExtra(AllConstants.FIELD_OVERRIDES_PARAM));
+
+
+    }
 }
