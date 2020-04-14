@@ -4,18 +4,14 @@ import android.content.res.AssetManager;
 
 import com.google.gson.JsonParser;
 
-import junit.framework.Assert;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.clientandeventmodel.mock.NodeListMock;
 
@@ -35,12 +31,8 @@ import javax.xml.xpath.XPathFactory;
 /**
  * Created by kaderchowdhury on 22/11/17.
  */
-@Ignore
-@PrepareForTest({XPathFactory.class})
 public class FormAttributeParserTest extends BaseUnitTest {
 
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
     @Mock
     private XPathFactory xPathFactory;
     @Mock
@@ -133,6 +125,8 @@ public class FormAttributeParserTest extends BaseUnitTest {
         Assert.assertNotNull(parser.createFormSubmissionMap(fs));
     }
 
+    // Fix this test due to PowerMock
+    @Ignore
     @Test
     public void assertGetFieldname() throws Exception {
         Map<String, String> attributes = new HashMap<>();
@@ -196,6 +190,8 @@ public class FormAttributeParserTest extends BaseUnitTest {
         return fileContents;
     }
 
+    // Finish fixing some mocked items in this tests
+    @Ignore
     @Test
     public void assertGetFieldnameSubForm() throws Exception {
         Map<String, String> attributes = new HashMap<>();
