@@ -9,6 +9,7 @@ import com.google.gson.GsonBuilder;
 
 import org.joda.time.DateTime;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -32,6 +33,7 @@ import org.smartregister.domain.db.Client;
 import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.db.Obs;
+import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.Column;
 import org.smartregister.domain.jsonmapping.ColumnType;
@@ -462,6 +464,92 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Mockito.verify(clientProcessorForJava).executeInsertStatement(Mockito.any(ContentValues.class), Mockito.eq("ec_client"));
         Mockito.verify(clientProcessorForJava).executeInsertStatement(Mockito.any(ContentValues.class), Mockito.eq("ec_mother_details"));
         Mockito.verify(clientProcessorForJava, Mockito.times(2)).updateClientDetailsTable(newWomanRegistrationEvent, womanClient);
+    }
+
+    @Test
+    public void processEventShouldReturnFalseWhenCaseClassificationRulesAreNull() throws Exception {
+        Event event = new Event();
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        Mockito.doNothing().when(clientProcessorForJava).completeProcessing(Mockito.eq(event));
+
+        Assert.assertFalse(clientProcessorForJava.processEvent(event, new Client("bei"), new ClientClassification()));
+    }
+
+
+    @Test
+    public void processEventShouldReturnFalseWhenClientDeathDateIsNotNull() throws Exception {
+        Event event = new Event();
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        Mockito.doNothing().when(clientProcessorForJava).completeProcessing(Mockito.eq(event));
+
+        Client client = new Client("bei");
+        client.setDeathdate(new DateTime());
+        ClientClassification clientClassification = new ClientClassification();
+        List<ClassificationRule> classificationRules = new ArrayList<>();
+        classificationRules.add(new ClassificationRule());
+        clientClassification.case_classification_rules = classificationRules;
+
+        Assert.assertFalse(clientProcessorForJava.processEvent(event, client, clientClassification));
+    }
+
+
+    @Test
+    public void processEventShouldReturnTrueWhenParamsAreValidAndEventProcessed() throws Exception {
+        Event event = new Event();
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        Mockito.doNothing().when(clientProcessorForJava).completeProcessing(Mockito.eq(event));
+
+        Client client = new Client("bei");
+        ClientClassification clientClassification = new ClientClassification();
+        List<ClassificationRule> classificationRules = new ArrayList<>();
+        classificationRules.add(new ClassificationRule());
+        clientClassification.case_classification_rules = classificationRules;
+
+
+        Mockito.doReturn(false).when(clientProcessorForJava).processClientClass(Mockito.any(ClassificationRule.class), Mockito.eq(event), Mockito.eq(client));
+        Mockito.doNothing().when(clientProcessorForJava).updateClientDetailsTable(Mockito.eq(event), Mockito.eq(client));
+
+        Assert.assertTrue(clientProcessorForJava.processEvent(event, client, clientClassification));
+
+        Mockito.verify(clientProcessorForJava).processClientClass(Mockito.any(ClassificationRule.class), Mockito.eq(event), Mockito.eq(client));
+        Mockito.verify(clientProcessorForJava).updateClientDetailsTable(Mockito.eq(event), Mockito.eq(client));
+    }
+
+    @Test
+    public void processClientClassShouldReturnTrueAndProcessEachFieldInTheMappingDefinition() {
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+        Event event = new Event();
+
+        Client client = new Client("bei");
+        ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
+
+        Mockito.doReturn(true).when(clientProcessorForJava).processField(Mockito.any(Field.class), Mockito.eq(event), Mockito.eq(client));
+
+        Assert.assertTrue(clientProcessorForJava.processClientClass(classificationRule, event, client));
+        Mockito.verify(clientProcessorForJava, Mockito.times(8)).processField(Mockito.any(Field.class), Mockito.eq(event), Mockito.eq(client));
+    }
+
+    @Test
+    public void processClientClassShouldFalseWhenClassificationRuleIsNull() {
+        Event event = new Event();
+        Client client = new Client("bei");
+        Assert.assertFalse(clientProcessor.processClientClass(null, event, client));
+    }
+
+    @Test
+    public void processClientClassShouldFalseWhenEventIsNull() {
+        Client client = new Client("bei");
+
+        ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
+        Assert.assertFalse(clientProcessor.processClientClass(classificationRule, null, client));
+    }
+
+    @Test
+    public void processClientClassShouldFalseWhenClientIsNull() {
+        Event event = new Event();
+
+        ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
+        Assert.assertFalse(clientProcessor.processClientClass(classificationRule, event, null));
     }
 
     @After
