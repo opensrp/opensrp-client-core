@@ -2,6 +2,7 @@ package org.smartregister.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
@@ -91,10 +92,11 @@ public abstract class SecuredFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
+
         if (i == R.id.switchLanguageMenuItem) {
+
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Utils.showShortToast(getActivity(), R.string.language_change_prepend_message + " " + newLanguagePreference
-                    + ". " + R.string.language_change_append_message + ".");
+            showToastNotification(R.string.language_change_prepend_message + " " + newLanguagePreference + ". " + R.string.language_change_append_message + ".");
 
             return super.onOptionsItemSelected(item);
         } else {
@@ -155,5 +157,10 @@ public abstract class SecuredFragment extends Fragment {
 
     public boolean isPaused() {
         return isPaused;
+    }
+
+    @VisibleForTesting
+    protected void showToastNotification(String message) {
+        Utils.showShortToast(getActivity(), message);
     }
 }
