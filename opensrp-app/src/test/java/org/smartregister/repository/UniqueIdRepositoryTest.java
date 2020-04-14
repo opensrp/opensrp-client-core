@@ -216,6 +216,38 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
         assertNotNull(values.getAsString("created_at"));
     }
 
+    @Test
+    public void testReleaseReserveIds() {
+        uniqueIdRepository.releaseReservedIds();
+
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(),argsCaptor.capture());
+
+        Assert.assertNotNull(stringArgumentCaptor.getValue());
+        assertEquals("unique_ids", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals("status = ?", stringArgumentCaptor.getAllValues().get(1));
+        assertEquals("reserved", argsCaptor.getValue()[0]);
+
+        ContentValues values = contentValuesArgumentCaptor.getValue();
+        assertEquals("not_used", values.getAsString("status"));
+        assertEquals("", values.getAsString("used_by"));
+    }
+
+    @Test
+    public void testOpen() {
+        String openMrsId = "3298938-2";
+
+        uniqueIdRepository.open(openMrsId);
+
+        verify(sqLiteDatabase, times(2)).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
+        Assert.assertNotNull(stringArgumentCaptor.getValue());
+        assertEquals("unique_ids", stringArgumentCaptor.getAllValues().get(0));
+        assertEquals("openmrs_id = ?", stringArgumentCaptor.getAllValues().get(1));
+        assertEquals("32989382", argsCaptor.getValue()[0]);
+        ContentValues values = contentValuesArgumentCaptor.getValue();
+        assertEquals("not_used", values.getAsString("status"));
+        assertEquals("", values.getAsString("used_by"));
+    }
+
     public MatrixCursor getCountCursor() {
         MatrixCursor cursor = new MatrixCursor(new String[]{"count(*)"});
         cursor.addRow(new Object[]{"12"});

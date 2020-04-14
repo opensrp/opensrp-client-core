@@ -9,13 +9,12 @@ import java.util.List;
 
 public class Event<CallbackType> {
     public static final Event<FetchStatus> ON_DATA_FETCHED = new Event<FetchStatus>();
-    public static final Event<CapturedPhotoInformation> ON_PHOTO_CAPTURED = new
-            Event<CapturedPhotoInformation>();
-    public static final Event<Boolean> ON_LOGOUT = new Event<Boolean>();
-    public static final Event<Boolean> SYNC_STARTED = new Event<Boolean>();
-    public static final Event<Boolean> SYNC_COMPLETED = new Event<Boolean>();
-    public static final Event<String> FORM_SUBMITTED = new Event<String>();
-    public static final Event<String> ACTION_HANDLED = new Event<String>();
+    public static final Event<CapturedPhotoInformation> ON_PHOTO_CAPTURED = new Event<>();
+    public static final Event<Boolean> ON_LOGOUT = new Event<>();
+    public static final Event<Boolean> SYNC_STARTED = new Event<>();
+    public static final Event<Boolean> SYNC_COMPLETED = new Event<>();
+    public static final Event<String> FORM_SUBMITTED = new Event<>();
+    public static final Event<String> ACTION_HANDLED = new Event<>();
 
     List<WeakReference<Listener<CallbackType>>> listeners;
 

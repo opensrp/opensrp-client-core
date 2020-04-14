@@ -2,8 +2,6 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
-
 import net.sqlcipher.MatrixCursor;
 
 import org.junit.Before;
@@ -27,6 +25,10 @@ import org.smartregister.repository.mock.SQLiteDatabaseMock;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -82,23 +84,23 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertqueryUniqueResult() {
-        Assert.assertNotNull(formDataRepository.queryUniqueResult("sql",new String[0]));
+        assertNotNull(formDataRepository.queryUniqueResult("sql",new String[0]));
     }
 
     @Test
     public void assertqueryList() {
-        Assert.assertNotNull(formDataRepository.queryList("sql",new String[0]));
+        assertNotNull(formDataRepository.queryList("sql",new String[0]));
     }
 
     @Test
     public void assertqueryListWithdetails() {
         Mockito.when(sqLiteDatabase.rawQuery(Mockito.anyString(), Mockito.any(String[].class))).thenReturn(getCursor2());
-        Assert.assertNotNull(formDataRepository.queryList("sql", new String[0]));
+        assertNotNull(formDataRepository.queryList("sql", new String[0]));
     }
 
     @Test
     public void assertsaveFormSubmission() {
-        Assert.assertEquals(formDataRepository.saveFormSubmission(getJsonObject(), "data", "1.0"), "1");
+        assertEquals(formDataRepository.saveFormSubmission(getJsonObject(), "data", "1.0"), "1");
     }
 
     @Test
@@ -109,12 +111,12 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertfetchFromSubmission() {
-        Assert.assertNotNull(formDataRepository.fetchFromSubmission(""));
+        assertNotNull(formDataRepository.fetchFromSubmission(""));
     }
 
     @Test
     public void assertgetPendingFormSubmissions() {
-        Assert.assertNotNull(formDataRepository.getPendingFormSubmissions());
+        assertNotNull(formDataRepository.getPendingFormSubmissions());
     }
 
     @Test
@@ -127,18 +129,18 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertsubmissionExists() {
-        Assert.assertEquals(formDataRepository.submissionExists("1"), true);
+        assertEquals(formDataRepository.submissionExists("1"), true);
     }
 
     @Test
     public void assertsaveEntity() {
 
-        Assert.assertEquals(formDataRepository.saveEntity(EligibleCoupleRepository.EC_TABLE_NAME, "{\"id\":\"1\"}"), "1");
+        assertEquals(formDataRepository.saveEntity(EligibleCoupleRepository.EC_TABLE_NAME, "{\"id\":\"1\"}"), "1");
     }
 
     @Test
     public void assertgetMapFromSQLQuery() {
-        Assert.assertNotNull(formDataRepository.getMapFromSQLQuery("",null));
+        assertNotNull(formDataRepository.getMapFromSQLQuery("",null));
     }
 
     @Test
@@ -151,6 +153,20 @@ public class FormDataRepositoryTest extends BaseUnitTest {
     public void assertOnCreateCallsDatabaseExec() {
         formDataRepository.onCreate(sqLiteDatabase);
         Mockito.verify(sqLiteDatabase, Mockito.times(1)).execSQL(Mockito.anyString());
+    }
+
+    @Test
+    public void testSqliteRowToMap() {
+        Map<String, String> rowObject = formDataRepository.sqliteRowToMap(getCursor());
+
+        assertEquals("1", rowObject.get(INSTANCE_ID_COLUMN));
+        assertEquals("2", rowObject.get(ENTITY_ID_COLUMN));
+        assertEquals("FORM", rowObject.get(FORM_NAME_COLUMN));
+        assertEquals(getJsonObject(), rowObject.get(INSTANCE_COLUMN));
+        assertEquals("1.0", rowObject.get(VERSION_COLUMN));
+        assertEquals("1.1", rowObject.get(SERVER_VERSION_COLUMN));
+        assertEquals("0.1", rowObject.get(FORM_DATA_DEFINITION_VERSION_COLUMN));
+        assertEquals(SyncStatus.PENDING.value(), rowObject.get(SYNC_STATUS_COLUMN));
     }
 
     public String getJsonObject() {
@@ -182,6 +198,6 @@ public class FormDataRepositoryTest extends BaseUnitTest {
 
     @Test
     public void assertFormDataRepositoryInitiaization() throws Exception {
-        org.junit.Assert.assertNotNull(formDataRepository);
+        assertNotNull(formDataRepository);
     }
 }
