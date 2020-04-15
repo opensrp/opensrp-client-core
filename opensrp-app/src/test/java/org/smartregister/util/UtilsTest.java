@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.smartregister.TestUtils.getContext;
 
 /**
@@ -270,6 +272,24 @@ public class UtilsTest extends BaseUnitTest {
     public void testGetVersionCodeShouldGetCorrectVersionCode() throws PackageManager.NameNotFoundException {
         Context context = getContext(40);
         assertEquals(Utils.getVersionCode(context), 40);
+    }
+
+    @Test
+    public void testIs2xxSuccessfulShouldReturnCorrectStatus() {
+        assertTrue(Utils.is2xxSuccessful(200));
+        assertTrue(Utils.is2xxSuccessful(203));
+        assertTrue(Utils.is2xxSuccessful(207));
+        assertFalse(Utils.is2xxSuccessful(300));
+    }
+
+    @Test
+    public void testDobStringToDateTimeShouldReturnCorrectDateTime() {
+        assertEquals(Utils.dobStringToDateTime("2000-12-30").toString(), new DateTime("2000-12-30").toString());
+    }
+
+    @Test
+    public void testDobStringToDateShouldReturnCorrectDate() {
+        assertEquals(Utils.dobStringToDate("2000-12-30").toString(), Utils.dobStringToDateTime("2000-12-30").toDate().toString());
     }
 }
 
