@@ -142,16 +142,15 @@ public class ManifestRepository extends BaseRepository {
      * @return the manifest tagged as active
      */
     public Manifest getActiveManifest() {
-        Manifest manifests = null;
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
                 " WHERE " + ACTIVE + " =?", new String[]{"1"})) {
             if (cursor.moveToFirst()) {
-                manifests= readCursor(cursor);
+                return readCursor(cursor);
             }
         } catch (Exception e) {
             Timber.e(e);
         }
-        return manifests;
+        return null;
 
     }
 

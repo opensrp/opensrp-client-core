@@ -124,16 +124,15 @@ public class ClientFormRepository extends BaseRepository {
      * @return active ClientForm for the passed identifier
      */
     public ClientForm getActiveClientFormByIdentifier(String identifier) {
-        ClientForm clientForm = null;
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
                 " WHERE " + IDENTIFIER + " =? AND " + ACTIVE + " = 1", new String[]{identifier})) {
             if (cursor.moveToFirst()) {
-                clientForm = readCursor(cursor);
+               return readCursor(cursor);
             }
         } catch (Exception e) {
             Timber.e(e);
         }
-        return clientForm;
+        return null;
 
     }
 
