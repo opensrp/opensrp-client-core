@@ -29,9 +29,7 @@ import static org.smartregister.TestUtils.getContext;
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-
 public class UtilsTest extends BaseUnitTest {
-
 
     @Test
     public void assertConvertDateFormatTestReturnsDate() throws Exception {
@@ -294,3 +292,4 @@ public class UtilsTest extends BaseUnitTest {
         assertEquals(Utils.dobStringToDate("2000-12-30").toString(), Utils.dobStringToDateTime("2000-12-30").toDate().toString());
     }
 }
+
