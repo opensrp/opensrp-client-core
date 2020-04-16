@@ -73,6 +73,7 @@ public class ResetAppUtil {
                         for (PreResetAppCheck preResetAppCheck : preResetAppChecks) {
                             if (!preResetAppCheck.isCheckOk(application)) {
                                 if (resetCancelled) {
+                                    cancelProcess();
                                     return;
                                 }
 
@@ -81,6 +82,7 @@ public class ResetAppUtil {
                         }
 
                         if (resetCancelled) {
+                            cancelProcess();
                             return;
                         }
 
@@ -90,6 +92,7 @@ public class ResetAppUtil {
                                 });
 
                         if (resetCancelled) {
+                            cancelProcess();
                             return;
                         }
 
@@ -98,7 +101,6 @@ public class ResetAppUtil {
                                 .execute(() -> {
                                     // Done here, what should we do
                                     application.logoutCurrentUser();
-
                                     resetAppDialog.dismiss();
                                 });
 
@@ -182,6 +184,12 @@ public class ResetAppUtil {
         }
 
         return null;
+    }
+
+    protected void cancelProcess() {
+        if (resetAppDialog != null) {
+            resetAppDialog.dismiss();
+        }
     }
 
 
