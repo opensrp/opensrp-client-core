@@ -14,6 +14,8 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 09-04-2020.
  */
@@ -35,7 +37,7 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
         application.startService(new Intent(application.getApplicationContext(), SyncIntentService.class));*/
 
-        PreResetSync syncIntentService = new PreResetSync();
+        PreResetSync syncIntentService = new PreResetSync(application);
         syncIntentService.performSync();
     }
 
@@ -63,18 +65,20 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
     @Override
     public void onSyncStart() {
         // Do nothing for now
+        Timber.e("Sync is starting");
     }
 
     @Override
     public void onSyncInProgress(FetchStatus fetchStatus) {
         if (fetchStatus == FetchStatus.fetchProgress) {
-
+            Timber.e("Sync progress is %s", fetchStatus.displayValue());
         }
     }
 
     @Override
     public void onSyncComplete(FetchStatus fetchStatus) {
         // Do nothing for now
+        Timber.e("The sync is complete");
     }
 
     @NonNull

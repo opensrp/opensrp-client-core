@@ -883,7 +883,7 @@ public class EventClientRepository extends BaseRepository {
     public int getUnSyncedEventsCount() {
         int count = 0;
         String query = "SELECT count("
-                + _ID
+                + event_column.json
                 + ") FROM "
                 + Table.event.name()
                 + " WHERE "

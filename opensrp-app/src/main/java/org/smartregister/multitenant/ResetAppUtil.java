@@ -5,6 +5,8 @@ import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.evernote.android.job.JobManager;
+
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.exception.AppResetException;
@@ -61,6 +63,8 @@ public class ResetAppUtil {
                         coreLibraryExecutors.mainThread()
                                 .execute(() -> {
                                     // Done here, what should we do
+                                    application.logoutCurrentUser();
+                                    JobManager.create(application).cancelAll();
                                 });
 
                     } catch (PreResetAppOperationException | AppResetException e) {
