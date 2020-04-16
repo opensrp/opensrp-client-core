@@ -19,6 +19,7 @@ public class PreResetSync extends SyncIntentService {
     }
 
     protected void performSync() {
+        init(context);
         handleSync();
     }
 
