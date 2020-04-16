@@ -33,6 +33,10 @@ import timber.log.Timber;
 public class DocumentConfigurationIntentService extends BaseSyncIntentService {
     public static final String MANIFEST_SYNC_URL = "rest/manifest/";
     public static final String CLIENT_FORM_SYNC_URL = "rest/clientForm";
+    public static final String FORM_VERSION = "form_version";
+    public static final String CURRENT_FORM_VERSION = "current_form_version";
+    public static final String IDENTIFIERS = "identifiers";
+    public static final String FORM_IDENTIFIER = "form_identifier";
     private Context context;
     private HTTPAgent httpAgent;
     private ManifestRepository manifestRepository;
@@ -93,14 +97,16 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         //Note active manifest is null for the first time synchronization of the application
         Manifest activeManifest = manifestRepository.getActiveManifest();
 
-        if (activeManifest!=null && !activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())) {
+        if (activeManifest != null && !activeManifest.getFormVersion().equals(receivedManifest.getFormVersion())) {
             //Untaging the active manifest and saving the received manifest and tagging it as active
             activeManifest.setActive(false);
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
+            saveReceivedManifest(receivedManifest);
+        } else if (activeManifest == null) {
+            saveReceivedManifest(receivedManifest);
         }
 
-        saveReceivedManifest(receivedManifest);
         syncClientForms(receivedManifest);
     }
 
@@ -108,14 +114,17 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         //Fetching Client Forms for identifiers in the manifest
         for (String identifier : activeManifest.getIdentifiers()) {
             try {
-                fetchClientForm(identifier, activeManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
+                ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
+                if (clientForm == null || !clientForm.getVersion().equals(activeManifest.getFormVersion())) {
+                    fetchClientForm(identifier, activeManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
+                }
             } catch (Exception e) {
                 Timber.e(e);
             }
         }
     }
 
-    protected void fetchClientForm(String identifier, String formVersion, ClientForm activeClientForm) throws Exception {
+    protected void fetchClientForm(String identifier, String formVersion, ClientForm activeClientForm) throws NoHttpResponseException {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(CLIENT_FORM_SYNC_URL + " http agent is null");
@@ -129,9 +138,9 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}{2}",
                         baseUrl, CLIENT_FORM_SYNC_URL,
-                        URLEncoder.encode("?form_identifier=" + identifier +
-                                "&form_version=" + formVersion +
-                                (activeClientForm == null ? "" : "&current_form_version=" + activeClientForm.getVersion()))));
+                        URLEncoder.encode("?" + FORM_IDENTIFIER + "=" + identifier +
+                                "&" + FORM_VERSION + "=" + formVersion +
+                                (activeClientForm == null ? "" : "&" + CURRENT_FORM_VERSION + "=" + activeClientForm.getVersion()))));
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(CLIENT_FORM_SYNC_URL + " not returned data");
@@ -169,12 +178,12 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         manifest.setCreatedAt(manifestDTO.getCreatedAt());
 
         JSONObject json = manifestDTO.getJson();
-        if (json.has("forms_version")) {
-            manifest.setFormVersion(json.getString("forms_version"));
+        if (json.has(FORM_VERSION)) {
+            manifest.setFormVersion(json.getString(FORM_VERSION));
         }
 
-        if (json.has("identifiers")) {
-            List<String> identifiers = new Gson().fromJson(json.getString("identifiers"),
+        if (json.has(IDENTIFIERS)) {
+            List<String> identifiers = new Gson().fromJson(json.getString(IDENTIFIERS),
                     new TypeToken<List<String>>() {
                     }.getType());
             manifest.setIdentifiers(identifiers);
