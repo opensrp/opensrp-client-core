@@ -1,10 +1,8 @@
 package org.smartregister.dto;
 
-import org.json.JSONObject;
-
 public class ClientFormDTO {
     private Long id;
-    private JSONObject json;
+    private String json;
 
     public Long getId() {
         return id;
@@ -14,11 +12,11 @@ public class ClientFormDTO {
         this.id = id;
     }
 
-    public JSONObject getJson() {
+    public String getJson() {
         return json;
     }
 
-    public void setJson(JSONObject json) {
+    public void setJson(String json) {
         this.json = json;
     }
 }

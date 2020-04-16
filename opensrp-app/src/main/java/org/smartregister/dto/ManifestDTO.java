@@ -1,12 +1,10 @@
 package org.smartregister.dto;
 
-import org.json.JSONObject;
-
 import java.util.Date;
 
 public class ManifestDTO {
     private Long id;
-    private JSONObject json;
+    private String json;
     private String appVersion;
     private String appId;
     private Date createdAt;
@@ -20,11 +18,11 @@ public class ManifestDTO {
         this.id = id;
     }
 
-    public JSONObject getJson() {
+    public String getJson() {
         return json;
     }
 
-    public void setJson(JSONObject json) {
+    public void setJson(String json) {
         this.json = json;
     }
 
