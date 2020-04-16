@@ -588,11 +588,13 @@ public class TaskRepository extends BaseRepository {
         getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s NOT IN (?,?)", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name(), TaskStatus.CANCELLED.name()});
     }
 
-    public int getUnsyncedCreatedTasksCount() {
+    public int getUnsyncedCreatedTasksAndTaskStatusCount() {
         Cursor cursor = null;
         int unsyncedRecordsCount = 0;
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT count(*) FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT count(*) FROM %s WHERE %s =? OR %s IS NULL OR %s = ?"
+                    , TASK_TABLE, SYNC_STATUS, SERVER_VERSION, SYNC_STATUS)
+                    , new String[]{BaseRepository.TYPE_Created, BaseRepository.TYPE_Unsynced});
             if (cursor.moveToNext()) {
                 unsyncedRecordsCount = cursor.getInt(0);
             }

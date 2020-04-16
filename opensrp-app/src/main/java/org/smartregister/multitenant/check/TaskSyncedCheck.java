@@ -33,7 +33,7 @@ public class TaskSyncedCheck implements PreResetAppCheck{
     public boolean isTaskSynced(@NonNull DrishtiApplication application) {
         TaskRepository taskRepository = application.getContext().getTaskRepository();
         if (taskRepository != null) {
-            return taskRepository.getUnsyncedCreatedTasksCount() == 0;
+            return taskRepository.getUnsyncedCreatedTasksAndTaskStatusCount() == 0;
         }
 
         return false;
