@@ -52,13 +52,13 @@ public class ManifestRepository extends BaseRepository {
 
     private static final String CREATE_MANIFEST_APP_VERSION_INDEX = "CREATE INDEX "
             + MANIFEST_TABLE + "_" + APP_VERSION + "_ind ON " + MANIFEST_TABLE + "(" + APP_VERSION + ")";
-    private static final String CREATE_MANIFEST_APP_ACTIVE_INDEX = "CREATE INDEX "
+    private static final String CREATE_MANIFEST_IS_ACTIVE_INDEX = "CREATE INDEX "
             + MANIFEST_TABLE + "_" + ACTIVE + "_ind ON " + MANIFEST_TABLE + "(" + ACTIVE + ")";
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_MANIFEST_TABLE);
         database.execSQL(CREATE_MANIFEST_APP_VERSION_INDEX);
-        database.execSQL(CREATE_MANIFEST_APP_ACTIVE_INDEX);
+        database.execSQL(CREATE_MANIFEST_IS_ACTIVE_INDEX);
     }
 
     protected String getManifestTableName() {

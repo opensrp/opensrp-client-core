@@ -50,13 +50,13 @@ public class ClientFormRepository extends BaseRepository {
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
     private static final String CREATE_CLIENT_FORM_IDENTIFIER_INDEX = "CREATE INDEX "
             + CLIENT_FORM_TABLE + "_" + IDENTIFIER + "_ind ON " + CLIENT_FORM_TABLE + "(" + IDENTIFIER + ")";
-    private static final String CREATE_CLIENT_FORM_ACTIVE_INDEX = "CREATE INDEX "
+    private static final String CREATE_CLIENT_FORM_IS_ACTIVE_INDEX = "CREATE INDEX "
             + CLIENT_FORM_TABLE + "_" + ACTIVE + "_ind ON " + CLIENT_FORM_TABLE + "(" + ACTIVE + ")";
 
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_CLIENT_FORM_TABLE);
         database.execSQL(CREATE_CLIENT_FORM_IDENTIFIER_INDEX);
-        database.execSQL(CREATE_CLIENT_FORM_ACTIVE_INDEX);
+        database.execSQL(CREATE_CLIENT_FORM_IS_ACTIVE_INDEX);
     }
 
     protected String getClientFormTableName() {
