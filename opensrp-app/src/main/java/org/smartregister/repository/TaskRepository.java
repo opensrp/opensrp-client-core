@@ -587,4 +587,22 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
         getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s NOT IN (?,?)", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name(), TaskStatus.CANCELLED.name()});
     }
+
+    public int getUnsyncedCreatedTasksCount() {
+        Cursor cursor = null;
+        int unsyncedRecordsCount = 0;
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT count(*) FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
+            if (cursor.moveToNext()) {
+                unsyncedRecordsCount = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return unsyncedRecordsCount;
+    }
 }
