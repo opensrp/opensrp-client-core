@@ -821,12 +821,36 @@ public class Utils {
             return false;
         }
 
+        // Delete the journal file
         File journal = new File(databases, databaseName + "-journal");
         if (journal.exists()) {
             if (journal.delete()) {
                 Timber.i("Database %s journal deleted", databaseName);
             } else {
                 Timber.e("Failed to delete database %s journal", databaseName);
+                return false;
+            }
+        }
+
+        // Delete the journal shm file
+        File shmFile = new File(databases, databaseName + "-shm");
+        if (shmFile.exists()) {
+            if (shmFile.delete()) {
+                Timber.i("Database %s-shm deleted", databaseName);
+            } else {
+                Timber.e("Failed to delete database %s-shm", databaseName);
+                return false;
+            }
+        }
+
+
+        // Delete the journal wal file
+        File walFile = new File(databases, databaseName + "-wal");
+        if (walFile.exists()) {
+            if (walFile.delete()) {
+                Timber.i("Database %s-wal deleted", databaseName);
+            } else {
+                Timber.e("Failed to delete database %s-wal", databaseName);
                 return false;
             }
         }
