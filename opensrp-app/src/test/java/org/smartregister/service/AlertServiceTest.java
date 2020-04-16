@@ -15,6 +15,8 @@ import org.smartregister.util.ActionBuilder;
 
 import java.util.HashMap;
 
+import static org.mockito.Mockito.spy;
+
 public class AlertServiceTest extends BaseUnitTest {
     @Mock
     private AlertRepository alertRepository;
@@ -101,4 +103,71 @@ public class AlertServiceTest extends BaseUnitTest {
         Mockito.verify(alertRepository).deleteAllAlertsForEntity("Case Y");
         Mockito.verifyNoMoreInteractions(alertRepository);
     }
+
+    @Test
+    public void testConstructorWithAlertParam() {
+        Alert alert = new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22");
+
+        service.create(alert);
+        Mockito.verify(alertRepository).createAlert(alert);
+    }
+
+    @Test
+    public void testFindEntityById() {
+        service.findByEntityId("entity-id");
+        Mockito.verify(alertRepository.findByEntityId("entity-id"));
+    }
+
+    @Test
+    public void testFindByEntityIdAndAlertNames() {
+        service.findByEntityIdAndAlertNames("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository.findByEntityIdAndAlertNames("Entity 1", "AncAlert"));
+    }
+
+    @Test
+    public void testByEntityIdAndOffline() {
+        service.findByEntityIdAndOffline("Entity 1", "PncAlert");
+        Mockito.verify(alertRepository.findOfflineByEntityIdAndName("Entity 1", "AncAlert"));
+    }
+
+    @Test
+    public void testFindByEntityIdAndScheduleName() {
+        service.findByEntityIdAndScheduleName("Entity 1", "Schedule 1");
+        Mockito.verify(alertRepository.findByEntityIdAndScheduleName("Entity 1", "Schedule 1"));
+    }
+
+    @Test
+    public  void testChangeAlertStatusToInProcess() {
+        service = spy(service);
+        service.changeAlertStatusToInProcess("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository).changeAlertStatusToInProcess("Entity 1", "AncAlert");
+        Mockito.verify(service).updateFtsSearchAfterStatusChange("Entity 1", "AncAlert");
+    }
+
+    @Test
+    public void testChangeAlertStatusToComplete() {
+        service = spy(service);
+        service.changeAlertStatusToComplete("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository).changeAlertStatusToComplete("Entity 1", "AncAlert");
+        Mockito.verify(service).updateFtsSearchAfterStatusChange("Entity 1", "AncAlert");
+    }
+
+    @Test
+    public void testDeleteAlert() {
+        service.deleteAlert("Entity 1", "Visit 1");
+        Mockito.verify(alertRepository).deleteVaccineAlertForEntity("Entity 1", "Visit 1");
+    }
+
+    @Test
+    public void testDeleteOfflineAlerts() {
+        service.deleteOfflineAlerts("Entity 1");
+        Mockito.verify(alertRepository).deleteOfflineAlertsForEntity("Entity 1");
+    }
+
+    @Test
+    public void testDeleteOfflineAlertsWithNames() {
+        service.deleteOfflineAlerts("Entity 1", "AncAlert");
+        Mockito.verify(alertRepository).deleteOfflineAlertsForEntity("Entity 1", "AncAlert");
+    }
+
 }

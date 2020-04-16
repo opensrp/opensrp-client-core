@@ -233,6 +233,7 @@ dependencies {
     def powerMockVersion = '1.7.1'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
+    testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
 }
