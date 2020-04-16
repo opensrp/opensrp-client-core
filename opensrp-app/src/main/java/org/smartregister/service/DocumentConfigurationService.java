@@ -1,7 +1,5 @@
 package org.smartregister.service;
 
-import android.support.annotation.VisibleForTesting;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -24,11 +22,11 @@ import java.util.List;
 import timber.log.Timber;
 
 public class DocumentConfigurationService {
-    private static final String MANIFEST_SYNC_URL = "rest/manifest/";
-    private static final String CLIENT_FORM_SYNC_URL = "rest/clientForm";
     public static final String FORM_VERSION = "form_version";
     public static final String CURRENT_FORM_VERSION = "current_form_version";
     public static final String IDENTIFIERS = "identifiers";
+    private static final String MANIFEST_SYNC_URL = "rest/manifest/";
+    private static final String CLIENT_FORM_SYNC_URL = "rest/clientForm";
     private static final String FORM_IDENTIFIER = "form_identifier";
 
     private HTTPAgent httpAgent;
