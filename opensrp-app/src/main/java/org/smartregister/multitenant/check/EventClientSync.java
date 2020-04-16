@@ -9,11 +9,11 @@ import org.smartregister.sync.intent.SyncIntentService;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 09-04-2020.
  */
-public class PreResetSync extends SyncIntentService {
+public class EventClientSync extends SyncIntentService {
 
     private Context context;
 
-    public PreResetSync(@NonNull Context context) {
+    public EventClientSync(@NonNull Context context) {
         this.context = context;
         attachBaseContext(context);
     }

@@ -6,45 +6,38 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.multitenant.PreResetAppCheck;
 import org.smartregister.multitenant.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
-import org.smartregister.repository.EventClientRepository;
+import org.smartregister.repository.StructureRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import timber.log.Timber;
 
 /**
- * Created by Ephraim Kigamba - nek.eam@gmail.com on 09-04-2020.
+ * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-04-2020.
  */
-public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroadcastReceiver.SyncStatusListener {
+public class StructureSyncedCheck implements PreResetAppCheck, SyncStatusBroadcastReceiver.SyncStatusListener {
 
-    public static final String UNIQUE_NAME = "EventClientSyncedCheck";
-    private SyncStatusBroadcastReceiver syncStatusBroadcastReceiver;
+    public static final String UNIQUE_NAME = "StructureSyncedCheck";
 
     @Override
     public boolean isCheckOk(@NonNull DrishtiApplication drishtiApplication) {
-        return isEventsClientSynced(drishtiApplication);
+        return isStructuresSynced(drishtiApplication);
     }
 
     @Override
     public void performPreResetAppOperations(@NonNull DrishtiApplication application) throws PreResetAppOperationException {
-        SyncStatusBroadcastReceiver.init(application.getBaseContext());
-        syncStatusBroadcastReceiver = SyncStatusBroadcastReceiver.getInstance();
-        syncStatusBroadcastReceiver.addSyncStatusListener(this);
-
-        /*
-        application.startService(new Intent(application.getApplicationContext(), SyncIntentService.class));*/
-
-        EventClientSync syncIntentService = new EventClientSync(application);
-        syncIntentService.performSync();
+        StructuresSync structuresSync = new StructuresSync(application);
+        structuresSync.performSync();
     }
 
-    public boolean isEventsClientSynced(@NonNull DrishtiApplication application) {
-        EventClientRepository eventClientRepository = application.getContext().getEventClientRepository();
-        if (eventClientRepository != null) {
-            return eventClientRepository.getUnSyncedEventsCount() == 0;
+    public boolean isStructuresSynced(@NonNull DrishtiApplication application) {
+        StructureRepository structureRepository = application.getContext().getStructureRepository();
+        if (structureRepository != null) {
+            return structureRepository.getUnsyncedStructuresCount() == 0;
         }
 
         return false;
     }
+
 
     @Override
     public void onSyncStart() {
@@ -63,8 +56,6 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
     public void onSyncComplete(FetchStatus fetchStatus) {
         // Do nothing for now
         Timber.e("The sync is complete");
-
-        syncStatusBroadcastReceiver.removeSyncStatusListener(this);
     }
 
     @NonNull
