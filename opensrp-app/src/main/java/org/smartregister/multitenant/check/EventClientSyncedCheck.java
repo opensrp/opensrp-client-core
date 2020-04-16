@@ -30,11 +30,12 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
     @Override
     public void performPreResetAppOperations(@NonNull DrishtiApplication application) throws PreResetAppOperationException {
-        /*SyncStatusBroadcastReceiver.init(application.getBaseContext());
+        SyncStatusBroadcastReceiver.init(application.getBaseContext());
         SyncStatusBroadcastReceiver syncStatusBroadcastReceiver = SyncStatusBroadcastReceiver.getInstance();
 
         syncStatusBroadcastReceiver.addSyncStatusListener(this);
 
+        /*
         application.startService(new Intent(application.getApplicationContext(), SyncIntentService.class));*/
 
         PreResetSync syncIntentService = new PreResetSync(application);

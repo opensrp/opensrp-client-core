@@ -1,0 +1,72 @@
+package org.smartregister.multitenant.ui;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
+import org.smartregister.R;
+
+/**
+ * Created by Ephraim Kigamba - nek.eam@gmail.com on 16-04-2020.
+ */
+public class ResetAppDialog extends DialogFragment {
+
+    private TextView instructionsTv;
+    private DialogInterface.OnCancelListener onCancelListener;
+
+    public static ResetAppDialog newInstance() {
+        ResetAppDialog frag = new ResetAppDialog();
+        Bundle args = new Bundle();
+        frag.setArguments(args);
+        return frag;
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        // Get the layout inflater
+        LayoutInflater inflater = requireActivity().getLayoutInflater();
+        View view = inflater.inflate(R.layout.dialog_reset_progress, null);
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+
+        return new AlertDialog.Builder(requireActivity())
+                .setView(view)
+
+                .setTitle("App Reset Status")
+                .setNegativeButton(android.R.string.cancel,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                if (onCancelListener != null) {
+                                    onCancelListener.onCancel(dialog);
+                                }
+                            }
+                        }
+                )
+                .create();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        instructionsTv = getDialog().findViewById(R.id.resetApp_text);
+    }
+
+    public void showText(@NonNull String showText) {
+        if (instructionsTv != null) {
+            instructionsTv.setText(showText);
+        }
+    }
+
+    public void setOnCancelListener(@NonNull DialogInterface.OnCancelListener onCancelListener) {
+        this.onCancelListener = onCancelListener;
+    }
+
+}

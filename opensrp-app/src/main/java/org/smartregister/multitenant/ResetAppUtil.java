@@ -1,9 +1,12 @@
 package org.smartregister.multitenant;
 
+import android.app.Activity;
 import android.content.SharedPreferences;
+import android.support.annotation.AnyThread;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import com.evernote.android.job.JobManager;
 
@@ -13,6 +16,7 @@ import org.smartregister.exception.AppResetException;
 import org.smartregister.multitenant.check.EventClientSyncedCheck;
 import org.smartregister.multitenant.exception.PreResetAppOperationException;
 import org.smartregister.multitenant.executor.CoreLibraryExecutors;
+import org.smartregister.multitenant.ui.ResetAppDialog;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.AppDatabase;
 import org.smartregister.util.Utils;
@@ -33,6 +37,8 @@ public class ResetAppUtil {
     private DrishtiApplication application;
     private CoreLibraryExecutors coreLibraryExecutors;
     private ArrayList<PreResetAppCheck> preResetAppChecks = new ArrayList<>();
+    private ResetAppDialog resetAppDialog;
+    private boolean resetCancelled = false;
 
     public ResetAppUtil(@NonNull DrishtiApplication drishtiApplication) {
         this.application = drishtiApplication;
@@ -40,10 +46,23 @@ public class ResetAppUtil {
         preResetAppChecks.add(new EventClientSyncedCheck());
     }
 
-    public void startResetProcess() {
+    public void startResetProcess(@NonNull AppCompatActivity activity) {
+        resetCancelled = false;
         // Show some UI here to display the reset progress
-        performPreResetChecks();
+        resetAppDialog = ResetAppDialog.newInstance();
+        resetAppDialog.show(activity.getSupportFragmentManager(), "rest-app-dialog");
+        resetAppDialog.setOnCancelListener((dialogInterface) -> {
+            showProgressText("Cancelling...");
+            resetCancelled = true;
+        });
+        resetAppDialog.showText("Cancelling services..");
+        JobManager.create(application).cancelAll();
 
+        resetAppDialog.showText("Performing data checks...");
+
+        if (!resetCancelled) {
+            performPreResetChecks();
+        }
     }
 
     public void performPreResetChecks() {
@@ -53,18 +72,34 @@ public class ResetAppUtil {
                     try {
                         for (PreResetAppCheck preResetAppCheck : preResetAppChecks) {
                             if (!preResetAppCheck.isCheckOk(application)) {
-                                performPreResetOperations(preResetAppCheck);
+                                if (resetCancelled) {
+                                    return;
+                                }
 
+                                performPreResetOperations(preResetAppCheck);
                             }
                         }
 
-                        performResetOperations();
+                        if (resetCancelled) {
+                            return;
+                        }
 
+                        coreLibraryExecutors.mainThread()
+                                .execute(() -> {
+                                    resetAppDialog.showText("Clearing application data...");
+                                });
+
+                        if (resetCancelled) {
+                            return;
+                        }
+
+                        performResetOperations();
                         coreLibraryExecutors.mainThread()
                                 .execute(() -> {
                                     // Done here, what should we do
                                     application.logoutCurrentUser();
-                                    JobManager.create(application).cancelAll();
+
+                                    resetAppDialog.dismiss();
                                 });
 
                     } catch (PreResetAppOperationException | AppResetException e) {
@@ -150,8 +185,16 @@ public class ResetAppUtil {
     }
 
 
-    @MainThread
+    @AnyThread
     public void showProgressText(@NonNull String progressText) {
+        if (resetCancelled) {
+            return;
+        }
+
+        coreLibraryExecutors.mainThread()
+                .execute(() -> {
+                    resetAppDialog.showText(progressText);
+                });
 
     }
 }
