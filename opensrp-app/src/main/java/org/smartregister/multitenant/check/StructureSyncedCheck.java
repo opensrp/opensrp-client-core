@@ -1,12 +1,15 @@
 package org.smartregister.multitenant.check;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.multitenant.PreResetAppCheck;
 import org.smartregister.multitenant.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.StructureRepository;
+import org.smartregister.sync.helper.LocationServiceHelper;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import timber.log.Timber;
@@ -18,6 +21,7 @@ public class StructureSyncedCheck implements PreResetAppCheck, SyncStatusBroadca
 
     public static final String UNIQUE_NAME = "StructureSyncedCheck";
 
+    @WorkerThread
     @Override
     public boolean isCheckOk(@NonNull DrishtiApplication drishtiApplication) {
         return isStructuresSynced(drishtiApplication);
@@ -25,10 +29,15 @@ public class StructureSyncedCheck implements PreResetAppCheck, SyncStatusBroadca
 
     @Override
     public void performPreResetAppOperations(@NonNull DrishtiApplication application) throws PreResetAppOperationException {
-        StructuresSync structuresSync = new StructuresSync(application);
-        structuresSync.performSync();
+        org.smartregister.Context context = CoreLibrary.getInstance().context();
+        LocationServiceHelper locationServiceHelper = new LocationServiceHelper(
+                context.getLocationRepository(),
+                context.getLocationTagRepository(),
+                context.getStructureRepository());
+        locationServiceHelper.syncCreatedStructureToServer();
     }
 
+    @WorkerThread
     public boolean isStructuresSynced(@NonNull DrishtiApplication application) {
         StructureRepository structureRepository = application.getContext().getStructureRepository();
         if (structureRepository != null) {

@@ -1,6 +1,7 @@
 package org.smartregister.multitenant.check;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.multitenant.PreResetAppCheck;
@@ -19,11 +20,13 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
     public static final String UNIQUE_NAME = "EventClientSyncedCheck";
     private SyncStatusBroadcastReceiver syncStatusBroadcastReceiver;
 
+    @WorkerThread
     @Override
     public boolean isCheckOk(@NonNull DrishtiApplication drishtiApplication) {
         return isEventsClientSynced(drishtiApplication);
     }
 
+    @WorkerThread
     @Override
     public void performPreResetAppOperations(@NonNull DrishtiApplication application) throws PreResetAppOperationException {
         SyncStatusBroadcastReceiver.init(application.getBaseContext());
