@@ -33,9 +33,6 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
         syncStatusBroadcastReceiver = SyncStatusBroadcastReceiver.getInstance();
         syncStatusBroadcastReceiver.addSyncStatusListener(this);
 
-        /*
-        application.startService(new Intent(application.getApplicationContext(), SyncIntentService.class));*/
-
         EventClientSync syncIntentService = new EventClientSync(application);
         syncIntentService.performSync();
     }

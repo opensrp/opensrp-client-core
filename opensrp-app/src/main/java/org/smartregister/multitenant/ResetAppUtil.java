@@ -14,6 +14,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.multitenant.check.EventClientSyncedCheck;
+import org.smartregister.multitenant.check.SettingsSyncedCheck;
 import org.smartregister.multitenant.check.StructureSyncedCheck;
 import org.smartregister.multitenant.check.TaskSyncedCheck;
 import org.smartregister.multitenant.exception.PreResetAppOperationException;
@@ -46,6 +47,7 @@ public class ResetAppUtil {
         this.application = drishtiApplication;
         coreLibraryExecutors = new CoreLibraryExecutors();
         preResetAppChecks.add(new EventClientSyncedCheck());
+        preResetAppChecks.add(new SettingsSyncedCheck());
         preResetAppChecks.add(new StructureSyncedCheck());
         preResetAppChecks.add(new TaskSyncedCheck());
     }

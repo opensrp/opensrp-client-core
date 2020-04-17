@@ -40,11 +40,7 @@ public class StructureSyncedCheck implements PreResetAppCheck, SyncStatusBroadca
     @WorkerThread
     public boolean isStructuresSynced(@NonNull DrishtiApplication application) {
         StructureRepository structureRepository = application.getContext().getStructureRepository();
-        if (structureRepository != null) {
-            return structureRepository.getUnsyncedStructuresCount() == 0;
-        }
-
-        return false;
+        return structureRepository.getUnsyncedStructuresCount() == 0;
     }
 
 

@@ -192,4 +192,27 @@ public class SettingsRepository extends DrishtiRepository {
 
         return value;
     }
+
+    public int queryUnsyncedSettingsCount() {
+        Cursor cursor = null;
+        int rowCount = 0;
+        try {
+            SQLiteDatabase database = masterRepository.getReadableDatabase();
+
+            cursor = database.query(SETTINGS_TABLE_NAME, new String[]{"count(*)"}, SETTINGS_SYNC_STATUS_COLUMN + " = ?", new String[]{SyncStatus.PENDING.name()}, null, null, null, null);
+
+            if (cursor != null && cursor.moveToNext()) {
+                rowCount = cursor.getInt(0);
+            }
+
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return rowCount;
+    }
 }
