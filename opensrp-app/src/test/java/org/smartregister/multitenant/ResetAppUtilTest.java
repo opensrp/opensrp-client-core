@@ -4,7 +4,6 @@ import android.arch.persistence.db.SupportSQLiteOpenHelper;
 import android.content.SharedPreferences;
 import android.os.Build;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,13 +14,10 @@ import org.mockito.junit.MockitoRule;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
-import org.robolectric.shadow.api.Shadow;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.TestApplication;
-import org.smartregister.domain.jsonmapping.LoginResponseData;
-import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.multitenant.exception.PreResetAppOperationException;
 import org.smartregister.p2p.P2PLibrary;
@@ -32,8 +28,6 @@ import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.repository.Repository;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.view.activity.DrishtiApplication;
-
-import java.security.KeyStoreException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -58,15 +52,19 @@ public class ResetAppUtilTest {
         resetAppUtil = Mockito.spy(new ResetAppUtil(DrishtiApplication.getInstance()));
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
+    /*@Ignore
     @Test
     public void startResetProcess() {
-        resetAppUtil.startResetProcess();
+        MultiLanguageActivity formActivity = Robolectric.buildActivity(MultiLanguageActivity.class)
+                .create()
+                .start()
+                .resume()
+                .visible()
+                .get();
+
+        resetAppUtil.startResetProcess(formActivity);
         Mockito.verify(resetAppUtil).performPreResetChecks();
-    }
+    }*/
 
     @Test
     public void performPreResetChecks() {
