@@ -407,7 +407,6 @@ public class JsonFormUtils {
         if (StringUtils.isBlank(value)) { return; }
 
         String type = getString(jsonObject, AllConstants.TYPE);
-        String entity =  getString(jsonObject, OPENMRS_ENTITY);;
         if (AllConstants.CHECK_BOX.equals(type)) {
             try {
                 List<Object> optionValues = new ArrayList<>();
@@ -416,6 +415,7 @@ public class JsonFormUtils {
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         boolean optionValue = option.optBoolean(VALUE);
+                        String entity =  getString(jsonObject, OPENMRS_ENTITY);
                         if (optionValue) {
                             option.put(AllConstants.TYPE, type);
                             option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
