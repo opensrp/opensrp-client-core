@@ -1,6 +1,7 @@
 package org.smartregister.view.fragment;
 
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GestureDetectorCompat;
 import android.view.MotionEvent;
@@ -17,6 +18,7 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
+import org.smartregister.view.activity.BaseProfileActivity;
 
 /**
  * Created by ndegwamartin on 2020-04-21.
@@ -46,8 +48,20 @@ public class BaseProfileFragmentTest extends BaseUnitTest {
     @Mock
     private MotionEvent motionEvent2;
 
+    @Mock
+    private BaseProfileActivity baseProfileActivity;
+
+    @Mock
+    private AppBarLayout appBarLayout;
+
     @Captor
     private ArgumentCaptor<BaseProfileFragment> baseProfileFragmentArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Boolean> appBarLayoutExpandedArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Boolean> appBarLayoutAnimateArgumentCaptor;
 
     @Before
     public void setUp() {
@@ -104,7 +118,7 @@ public class BaseProfileFragmentTest extends BaseUnitTest {
     }
 
     @Test
-    public void testOnFlingProcessorReturnsTrueIfXtranlationGreatherThanSwipeOffMaxPath() {
+    public void testOnFlingProcessorReturnsTrueIfXTranlationGreatherThanSwipeOffMaxPath() {
 
         Mockito.doReturn(500f).when(motionEvent1).getX();
         Mockito.doReturn(100f).when(motionEvent2).getX();
@@ -117,7 +131,7 @@ public class BaseProfileFragmentTest extends BaseUnitTest {
     }
 
     @Test
-    public void testOnFlingProcessorReturnsFalseIfXtranlationLessThanSwipeOffMaxPath() {
+    public void testOnFlingProcessorReturnsFalseIfXTranlationLessThanSwipeOffMaxPath() {
 
         Mockito.doReturn(400f).when(motionEvent1).getX();
         Mockito.doReturn(300f).when(motionEvent2).getX();
@@ -126,6 +140,48 @@ public class BaseProfileFragmentTest extends BaseUnitTest {
 
         Assert.assertNotNull(result);
         Assert.assertFalse(result);
+
+    }
+
+    @Test
+    public void testOnFlingProcessorSetsAppBarLayoutExpandedToTrueWhenYTranlationGreaterThanSwipeOffMinPath() {
+
+        Mockito.doReturn(200f).when(motionEvent1).getY();
+        Mockito.doReturn(50f).when(motionEvent2).getY();
+
+        Mockito.doReturn(baseProfileActivity).when(baseProfileFragment).getActivity();
+        Mockito.doReturn(appBarLayout).when(baseProfileActivity).getProfileAppBarLayout();
+
+        Boolean result = baseProfileFragment.onFlingProcessor(motionEvent1, motionEvent2, 250.0f);
+
+        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
+
+        Mockito.verify(appBarLayout).setExpanded(appBarLayoutExpandedArgumentCaptor.capture(), appBarLayoutAnimateArgumentCaptor.capture());
+        Boolean isExpanded = appBarLayoutExpandedArgumentCaptor.getValue();
+        Assert.assertNotNull(isExpanded);
+        Assert.assertFalse(isExpanded);
+
+    }
+
+    @Test
+    public void testOnFlingProcessorSetsAppBarLayoutExpandedToFalseWhenYTranlationLessThanSwipeOffMinPath() {
+
+        Mockito.doReturn(100f).when(motionEvent1).getY();
+        Mockito.doReturn(550f).when(motionEvent2).getY();
+
+        Mockito.doReturn(baseProfileActivity).when(baseProfileFragment).getActivity();
+        Mockito.doReturn(appBarLayout).when(baseProfileActivity).getProfileAppBarLayout();
+
+        Boolean result = baseProfileFragment.onFlingProcessor(motionEvent1, motionEvent2, 250.0f);
+
+        Assert.assertNotNull(result);
+        Assert.assertFalse(result);
+
+        Mockito.verify(appBarLayout).setExpanded(appBarLayoutExpandedArgumentCaptor.capture(), appBarLayoutAnimateArgumentCaptor.capture());
+        Boolean isExpanded = appBarLayoutExpandedArgumentCaptor.getValue();
+        Assert.assertNotNull(isExpanded);
+        Assert.assertTrue(isExpanded);
 
     }
 }
