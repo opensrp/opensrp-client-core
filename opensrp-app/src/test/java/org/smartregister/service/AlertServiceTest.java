@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -98,10 +99,10 @@ public class AlertServiceTest extends BaseUnitTest {
         service.close(firstAction);
         service.close(secondAction);
 
-        Mockito.verify(alertRepository).markAlertAsClosed("Case X", "ANC 1", "2012-01-01");
-        Mockito.verify(alertRepository).markAlertAsClosed("Case Y", "ANC 2", "2012-01-01");
-        Mockito.verify(alertRepository).findByEntityIdAndAlertNames("Case X", "ANC 1");
-        Mockito.verify(alertRepository).findByEntityIdAndAlertNames("Case Y", "ANC 2");
+        verify(alertRepository).markAlertAsClosed("Case X", "ANC 1", "2012-01-01");
+        verify(alertRepository).markAlertAsClosed("Case Y", "ANC 2", "2012-01-01");
+        verify(alertRepository).findByEntityIdAndAlertNames("Case X", "ANC 1");
+        verify(alertRepository).findByEntityIdAndAlertNames("Case Y", "ANC 2");
         Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
@@ -193,6 +194,17 @@ public class AlertServiceTest extends BaseUnitTest {
 
         verify(service).updateFtsSearch(alert, true);
 
+    }
+
+    @Test
+    public void testUpdateFtsSearchInACR() {
+        AllCommonsRepository allCommonsRepository = mock(AllCommonsRepository.class);
+        when(allCommonsRepositoryMap.get("bind 1")).thenReturn(allCommonsRepository);
+        String[] alertFilterVisitCodes = new String[] {"AncFilter"};
+        when(commonFtsObject.getAlertFilterVisitCodes()).thenReturn(alertFilterVisitCodes);
+        service.updateFtsSearchInACR("bind 1", "Entity 1",  "baseEntityId", "id 1");
+
+        verify(allCommonsRepository).updateSearch("Entity 1", "baseEntityId", "id 1", alertFilterVisitCodes);
     }
 
 }
