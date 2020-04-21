@@ -1,5 +1,6 @@
 package org.smartregister.location.helper;
 
+import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,7 @@ public class LocationHelper {
         this.DEFAULT_LOCATION_LEVEL = defaultLocationLevel;
     }
 
+    @VisibleForTesting
     public LocationHelper(LocationHelper locationHelper) {
         instance = locationHelper;
     }

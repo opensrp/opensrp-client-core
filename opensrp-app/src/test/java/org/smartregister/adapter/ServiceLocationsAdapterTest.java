@@ -25,6 +25,9 @@ import static org.mockito.Mockito.when;
 public class ServiceLocationsAdapterTest extends BaseUnitTest {
 
     @Mock
+    private LayoutInflater layoutInflater;
+
+    @Mock
     private Context applicationContext;
 
     private ArrayList<String> locationNames;
@@ -50,9 +53,6 @@ public class ServiceLocationsAdapterTest extends BaseUnitTest {
         locationNames = new ArrayList<>();
         locationNames.add("test1"); locationNames.add("test2"); locationNames.add("test3");
     }
-
-    @Mock
-    private LayoutInflater layoutInflater;
 
     @Test
     public void testGetCount() {
@@ -89,7 +89,7 @@ public class ServiceLocationsAdapterTest extends BaseUnitTest {
         ServiceLocationsAdapter adapter = getAdapterWithFakeClients();
         itemsListView.setAdapter(adapter);
 
-        when(applicationContext.getSystemService(android.content.Context.LAYOUT_INFLATER_SERVICE)).thenReturn(layoutInflater);
+        when(applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).thenReturn(layoutInflater);
         Mockito.doReturn(linearLayout).when(layoutInflater).inflate(R.layout.location_picker_dropdown_item, null);
 
         LocationHelper locationHelper = new LocationHelper(locationHelperInstance);
