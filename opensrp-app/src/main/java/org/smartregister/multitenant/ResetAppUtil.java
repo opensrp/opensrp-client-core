@@ -1,6 +1,9 @@
 package org.smartregister.multitenant;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.AnyThread;
 import android.support.annotation.MainThread;
@@ -12,6 +15,7 @@ import com.evernote.android.job.JobManager;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
+import org.smartregister.R;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.multitenant.check.EventClientSyncedCheck;
 import org.smartregister.multitenant.check.SettingsSyncedCheck;
@@ -58,13 +62,13 @@ public class ResetAppUtil {
         resetAppDialog = ResetAppDialog.newInstance();
         resetAppDialog.show(activity.getSupportFragmentManager(), "rest-app-dialog");
         resetAppDialog.setOnCancelListener((dialogInterface) -> {
-            showProgressText("Cancelling...");
+            showProgressText(activity.getString(R.string.cancelling));
             resetCancelled = true;
         });
-        resetAppDialog.showText("Cancelling services..");
+        resetAppDialog.showText(activity.getString(R.string.cancelling_services));
         JobManager.create(application).cancelAll();
 
-        resetAppDialog.showText("Performing data checks...");
+        resetAppDialog.showText(activity.getString(R.string.performing_data_checks));
 
         if (!resetCancelled) {
             performPreResetChecks();
@@ -210,5 +214,29 @@ public class ResetAppUtil {
                     resetAppDialog.showText(progressText);
                 });
 
+    }
+
+    protected void killRunningServices() {
+        ArrayList<ActivityManager.RunningServiceInfo> runningServices = getRunningServicesForApp();
+
+        for (ActivityManager.RunningServiceInfo runningServiceInfo: runningServices) {
+            try {
+                application.stopService(new Intent(application, Class.forName(runningServiceInfo.service.getClassName())));
+            } catch (ClassNotFoundException e) {
+                Timber.e(e);
+            }
+        }
+    }
+
+    private ArrayList<ActivityManager.RunningServiceInfo> getRunningServicesForApp() {
+        ArrayList<ActivityManager.RunningServiceInfo> runningServices = new ArrayList<>();
+        ActivityManager manager = (ActivityManager) application.getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (service.clientPackage.contains(application.getPackageName())) {
+                runningServices.add(service);
+            }
+        }
+
+        return runningServices;
     }
 }
