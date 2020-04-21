@@ -12,8 +12,16 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
+import org.smartregister.domain.jsonmapping.User;
+import org.smartregister.domain.jsonmapping.util.Team;
+import org.smartregister.domain.jsonmapping.util.TeamLocation;
+import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 
 import java.text.SimpleDateFormat;
@@ -290,6 +298,34 @@ public class UtilsTest extends BaseUnitTest {
     @Test
     public void testDobStringToDateShouldReturnCorrectDate() {
         assertEquals(Utils.dobStringToDate("2000-12-30").toString(), Utils.dobStringToDateTime("2000-12-30").toDate().toString());
+    }
+
+    @Test
+    public void testGetFilterValueShouldGetCorrectFilterValue() {
+        LoginResponseData loginResponseData = new LoginResponseData();
+
+        Team team = new Team();
+        team.uuid = "team_uuid";
+
+        TeamLocation teamLocation = new TeamLocation();
+        teamLocation.uuid = "location_uuid";
+
+        TeamMember teamMember = new TeamMember();
+        teamMember.team = team;
+        teamMember.team.location = teamLocation;
+        teamMember.team = team;
+
+        User user = new User();
+        user.setUsername("user_name");
+
+        loginResponseData.team = teamMember;
+        loginResponseData.user = user;
+        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload(loginResponseData);
+
+        assertEquals(loginResponseData.team.team.uuid, Utils.getFilterValue(loginResponse, SyncFilter.TEAM));
+        assertEquals(loginResponseData.team.team.uuid, Utils.getFilterValue(loginResponse, SyncFilter.TEAM_ID));
+        assertEquals(loginResponseData.team.team.location.uuid, Utils.getFilterValue(loginResponse, SyncFilter.LOCATION));
+        assertEquals(loginResponseData.user.getUsername(), Utils.getFilterValue(loginResponse, SyncFilter.PROVIDER));
     }
 }
 
