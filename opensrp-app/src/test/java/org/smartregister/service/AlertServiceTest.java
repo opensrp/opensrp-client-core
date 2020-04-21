@@ -207,4 +207,17 @@ public class AlertServiceTest extends BaseUnitTest {
         verify(allCommonsRepository).updateSearch("Entity 1", "baseEntityId", "id 1", alertFilterVisitCodes);
     }
 
+    @Test
+    public void testUpdateFtsSearch() {
+        service = spy(service);
+        Alert alert = new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22");
+        when(commonFtsObject.getAlertBindType("Schedule 1")).thenReturn("AncBindType");
+        when(commonFtsObject.alertUpdateVisitCode("Schedule 1")).thenReturn(true);
+
+        service.updateFtsSearch(alert, false);
+
+        verify(service).updateFtsSearchInACR("AncBindType", "Case X", "Schedule_1", AlertStatus.normal.value());
+        verify(service).updateFtsSearchInACR("AncBindType", "Case X", CommonFtsObject.phraseColumn, "ANC 1");
+    }
+
 }
