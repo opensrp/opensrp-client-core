@@ -46,7 +46,7 @@ public abstract class BaseListFragment<T extends ListContract.Identifiable> exte
         return view;
     }
 
-    protected AppExecutors.Request fetchRequestType(){
+    protected AppExecutors.Request fetchRequestType() {
         return AppExecutors.Request.DISK_THREAD;
     }
 
@@ -77,10 +77,13 @@ public abstract class BaseListFragment<T extends ListContract.Identifiable> exte
         RecyclerView recyclerView = view.findViewById(getRecyclerViewID());
         recyclerView.setHasFixedSize(false);
 
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        if (hasDivider())
-            recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
+        if (getContext() != null) {
+            RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
+            recyclerView.setLayoutManager(layoutManager);
+        }
+
+        if (hasDivider() && getContext() != null)
+            recyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
         progressBar = view.findViewById(getProgressBarID());
         progressBar.setVisibility(View.GONE);

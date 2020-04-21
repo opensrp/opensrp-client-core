@@ -1,5 +1,7 @@
 package org.smartregister.view.interactor;
 
+import android.support.annotation.VisibleForTesting;
+
 import org.jetbrains.annotations.NotNull;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
@@ -20,6 +22,11 @@ public class ListInteractor<T extends ListContract.Identifiable> implements List
 
     public ListInteractor() {
         appExecutors = new AppExecutors();
+    }
+
+    @VisibleForTesting
+    ListInteractor(AppExecutors appExecutors){
+        this.appExecutors = appExecutors;
     }
 
     @Override

@@ -19,7 +19,7 @@ public class ListPresenter<T extends ListContract.Identifiable> implements ListC
 
     @Nullable
     private WeakReference<ListContract.View<T>> weakReference;
-    private ListContract.Interactor<T> interactor = new ListInteractor<>();
+    private ListContract.Interactor<T> interactor;
     private ListContract.Model<T> model;
 
     /**
@@ -34,9 +34,7 @@ public class ListPresenter<T extends ListContract.Identifiable> implements ListC
         if (currentView != null)
             currentView.setLoadingState(true);
 
-        if (interactor != null) {
-            interactor.runRequest(callable, request, this);
-        }
+        getInteractor().runRequest(callable, request, this);
     }
 
     @Override
@@ -89,5 +87,13 @@ public class ListPresenter<T extends ListContract.Identifiable> implements ListC
     @Override
     public <M extends ListContract.Model<T>> M getModel() {
         return (M) model;
+    }
+
+    @Override
+    public ListContract.Interactor<T> getInteractor() {
+        if(interactor == null)
+            interactor = new ListInteractor<>();
+
+        return interactor;
     }
 }

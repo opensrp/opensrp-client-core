@@ -87,6 +87,8 @@ public interface ListContract {
         View<T> getView();
 
         <M extends Model<T>> M getModel();
+
+        ListContract.Interactor<T> getInteractor();
     }
 
     interface Interactor<T extends ListContract.Identifiable> {
