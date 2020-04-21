@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -51,6 +52,7 @@ public class SyncUtilsTest {
         doReturn(settingsRepository).when(opensrpContext).allSettings();
     }
 
+    @Ignore
     @Test
     public void testIsAppVersionAllowedShouldReturnCorrectStatus() throws PackageManager.NameNotFoundException {
         mockStatic(Utils.class);

@@ -2,6 +2,7 @@ package org.smartregister.view.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.Fragment;
 import android.view.MenuItem;
 
@@ -12,6 +13,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.event.Event;
 import org.smartregister.event.Listener;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -25,11 +27,6 @@ import org.smartregister.view.controller.NavigationController;
 
 import java.util.Map;
 
-import static org.smartregister.AllConstants.ENTITY_ID_PARAM;
-import static org.smartregister.AllConstants.FIELD_OVERRIDES_PARAM;
-import static org.smartregister.AllConstants.FORM_NAME_PARAM;
-import static org.smartregister.AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
-import static org.smartregister.event.Event.ON_LOGOUT;
 
 /**
  * Created by koros on 10/12/15.
@@ -54,7 +51,7 @@ public abstract class SecuredFragment extends Fragment {
                 }
             }
         };
-        ON_LOGOUT.addListener(logoutListener);
+        Event.ON_LOGOUT.addListener(logoutListener);
 
         if (context().IsUserLoggedOut()) {
             DrishtiApplication application = (DrishtiApplication) this.getActivity()
@@ -91,10 +88,11 @@ public abstract class SecuredFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
+
         if (i == R.id.switchLanguageMenuItem) {
+
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Utils.showShortToast(getActivity(), R.string.language_change_prepend_message + " " + newLanguagePreference
-                    + ". " + R.string.language_change_append_message + ".");
+            showToastNotification(R.string.language_change_prepend_message + " " + newLanguagePreference + ". " + R.string.language_change_append_message + ".");
 
             return super.onOptionsItemSelected(item);
         } else {
@@ -129,10 +127,10 @@ public abstract class SecuredFragment extends Fragment {
         this.metaData = metaData;
 
         Intent intent = new Intent(getActivity(), formType);
-        intent.putExtra(FORM_NAME_PARAM, formName);
-        intent.putExtra(ENTITY_ID_PARAM, entityId);
+        intent.putExtra(AllConstants.FORM_NAME_PARAM, formName);
+        intent.putExtra(AllConstants.ENTITY_ID_PARAM, entityId);
         addFieldOverridesIfExist(intent);
-        startActivityForResult(intent, FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE);
+        startActivityForResult(intent, AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE);
     }
 
     private void addFieldOverridesIfExist(Intent intent) {
@@ -140,14 +138,10 @@ public abstract class SecuredFragment extends Fragment {
             Map<String, String> metaDataMap = new Gson()
                     .fromJson(this.metaData, new TypeToken<Map<String, String>>() {
                     }.getType());
-            if (metaDataMap.containsKey(FIELD_OVERRIDES_PARAM)) {
-                intent.putExtra(FIELD_OVERRIDES_PARAM, metaDataMap.get(FIELD_OVERRIDES_PARAM));
+            if (metaDataMap.containsKey(AllConstants.FIELD_OVERRIDES_PARAM)) {
+                intent.putExtra(AllConstants.FIELD_OVERRIDES_PARAM, metaDataMap.get(AllConstants.FIELD_OVERRIDES_PARAM));
             }
         }
-    }
-
-    private boolean isSuccessfulFormSubmission(int resultCode) {
-        return resultCode == AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE;
     }
 
     private boolean hasMetadata() {
@@ -155,11 +149,15 @@ public abstract class SecuredFragment extends Fragment {
     }
 
     protected Context context() {
-        return CoreLibrary.getInstance().context()
-                .updateApplicationContext(this.getActivity().getApplicationContext());
+        return CoreLibrary.getInstance().context().updateApplicationContext(this.getActivity().getApplicationContext());
     }
 
     public boolean isPaused() {
         return isPaused;
+    }
+
+    @VisibleForTesting
+    protected void showToastNotification(String message) {
+        Utils.showShortToast(getActivity(), message);
     }
 }
