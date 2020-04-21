@@ -173,13 +173,15 @@ public class BaseProfileFragmentTest extends BaseUnitTest {
         Mockito.doReturn(baseProfileActivity).when(baseProfileFragment).getActivity();
         Mockito.doReturn(appBarLayout).when(baseProfileActivity).getProfileAppBarLayout();
 
-        Boolean result = baseProfileFragment.onFlingProcessor(motionEvent1, motionEvent2, 250.0f);
+        Boolean result = baseProfileFragment.onFlingProcessor(motionEvent1, motionEvent2, 350.0f);
 
         Assert.assertNotNull(result);
+
         Assert.assertFalse(result);
 
         Mockito.verify(appBarLayout).setExpanded(appBarLayoutExpandedArgumentCaptor.capture(), appBarLayoutAnimateArgumentCaptor.capture());
         Boolean isExpanded = appBarLayoutExpandedArgumentCaptor.getValue();
+
         Assert.assertNotNull(isExpanded);
         Assert.assertTrue(isExpanded);
 
