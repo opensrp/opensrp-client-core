@@ -416,7 +416,9 @@
     <string name="outdated_app">This is an outdated app. Please update to the latest version to continue.</string>
     <string name="sync_upload_progress_float">Sync upload progress %d%%</string>
     <string name="cancelling">Cancelling...</string>
-    <string name="cancelling_services">Cancelling services..</string>
+    <string name="stopping_services">Stopping services..</string>
     <string name="performing_data_checks">Performing data checks...</string>
+    <string name="app_reset_status">App Reset Status</string>
+    <string name="clearing_application_data">Clearing application data...</string>
 
 </resources>

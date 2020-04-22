@@ -1,4 +1,4 @@
-package org.smartregister.multitenant.ui;
+package org.smartregister.view.dialog;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -19,6 +19,7 @@ public class ResetAppDialog extends DialogFragment {
 
     private TextView instructionsTv;
     private DialogInterface.OnCancelListener onCancelListener;
+    private String waitingText = null;
 
     public static ResetAppDialog newInstance() {
         ResetAppDialog frag = new ResetAppDialog();
@@ -39,8 +40,7 @@ public class ResetAppDialog extends DialogFragment {
 
         return new AlertDialog.Builder(requireActivity())
                 .setView(view)
-
-                .setTitle("App Reset Status")
+                .setTitle(R.string.app_reset_status)
                 .setNegativeButton(android.R.string.cancel,
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -57,11 +57,16 @@ public class ResetAppDialog extends DialogFragment {
     public void onStart() {
         super.onStart();
         instructionsTv = getDialog().findViewById(R.id.resetApp_text);
+
+        showText(waitingText);
     }
 
     public void showText(@NonNull String showText) {
         if (instructionsTv != null) {
+            waitingText = null;
             instructionsTv.setText(showText);
+        } else {
+            waitingText = showText;
         }
     }
 

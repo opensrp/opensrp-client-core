@@ -4,8 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import org.json.JSONException;
-import org.smartregister.multitenant.PreResetAppCheck;
-import org.smartregister.multitenant.exception.PreResetAppOperationException;
+import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 import org.smartregister.view.activity.DrishtiApplication;

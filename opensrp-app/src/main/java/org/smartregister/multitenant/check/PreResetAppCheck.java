@@ -1,9 +1,9 @@
-package org.smartregister.multitenant;
+package org.smartregister.multitenant.check;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
-import org.smartregister.multitenant.exception.PreResetAppOperationException;
+import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.view.activity.DrishtiApplication;
 
 /**

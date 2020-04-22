@@ -1,15 +1,11 @@
 package org.smartregister.multitenant;
 
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.annotation.AnyThread;
-import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
 import com.evernote.android.job.JobManager;
 
@@ -18,14 +14,16 @@ import org.smartregister.P2POptions;
 import org.smartregister.R;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.multitenant.check.EventClientSyncedCheck;
+import org.smartregister.multitenant.check.PreResetAppCheck;
 import org.smartregister.multitenant.check.SettingsSyncedCheck;
 import org.smartregister.multitenant.check.StructureSyncedCheck;
 import org.smartregister.multitenant.check.TaskSyncedCheck;
-import org.smartregister.multitenant.exception.PreResetAppOperationException;
-import org.smartregister.multitenant.executor.CoreLibraryExecutors;
-import org.smartregister.multitenant.ui.ResetAppDialog;
+import org.smartregister.exception.PreResetAppOperationException;
+import org.smartregister.executor.CoreLibraryExecutors;
+import org.smartregister.view.dialog.ResetAppDialog;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.AppDatabase;
+import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -39,7 +37,7 @@ import timber.log.Timber;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 09-04-2020.
  */
-public class ResetAppUtil {
+public class ResetAppHelper {
 
     private DrishtiApplication application;
     private CoreLibraryExecutors coreLibraryExecutors;
@@ -47,7 +45,7 @@ public class ResetAppUtil {
     private ResetAppDialog resetAppDialog;
     private boolean resetCancelled = false;
 
-    public ResetAppUtil(@NonNull DrishtiApplication drishtiApplication) {
+    public ResetAppHelper(@NonNull DrishtiApplication drishtiApplication) {
         this.application = drishtiApplication;
         coreLibraryExecutors = new CoreLibraryExecutors();
         preResetAppChecks.add(new EventClientSyncedCheck());
@@ -65,7 +63,8 @@ public class ResetAppUtil {
             showProgressText(activity.getString(R.string.cancelling));
             resetCancelled = true;
         });
-        resetAppDialog.showText(activity.getString(R.string.cancelling_services));
+
+        resetAppDialog.showText(activity.getString(R.string.stopping_services));
         JobManager.create(application).cancelAll();
 
         resetAppDialog.showText(activity.getString(R.string.performing_data_checks));
@@ -83,7 +82,21 @@ public class ResetAppUtil {
                         for (PreResetAppCheck preResetAppCheck : preResetAppChecks) {
                             if (!preResetAppCheck.isCheckOk(application)) {
                                 if (resetCancelled) {
-                                    cancelProcess();
+                                    dismissDialog();
+                                    return;
+                                }
+
+                                if (!NetworkUtils.isNetworkAvailable()) {
+                                    dismissDialog();
+                                    coreLibraryExecutors.mainThread().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Toast.makeText(application, "No Internet Connection Available", Toast.LENGTH_LONG)
+                                                    .show();
+                                        }
+                                    });
+
+                                    resetCancelled = true;
                                     return;
                                 }
 
@@ -92,17 +105,14 @@ public class ResetAppUtil {
                         }
 
                         if (resetCancelled) {
-                            cancelProcess();
+                            dismissDialog();
                             return;
                         }
 
-                        coreLibraryExecutors.mainThread()
-                                .execute(() -> {
-                                    resetAppDialog.showText("Clearing application data...");
-                                });
+                        showProgressText(application.getString(R.string.clearing_application_data));
 
                         if (resetCancelled) {
-                            cancelProcess();
+                            dismissDialog();
                             return;
                         }
 
@@ -111,7 +121,7 @@ public class ResetAppUtil {
                                 .execute(() -> {
                                     // Done here, what should we do
                                     application.logoutCurrentUser();
-                                    resetAppDialog.dismiss();
+                                    dismissDialog();
                                 });
 
                     } catch (PreResetAppOperationException | AppResetException e) {
@@ -196,7 +206,7 @@ public class ResetAppUtil {
         return null;
     }
 
-    protected void cancelProcess() {
+    protected void dismissDialog() {
         if (resetAppDialog != null) {
             resetAppDialog.dismiss();
         }
@@ -211,32 +221,11 @@ public class ResetAppUtil {
 
         coreLibraryExecutors.mainThread()
                 .execute(() -> {
-                    resetAppDialog.showText(progressText);
+                    if (resetAppDialog != null) {
+                        resetAppDialog.showText(progressText);
+                    }
                 });
 
     }
 
-    protected void killRunningServices() {
-        ArrayList<ActivityManager.RunningServiceInfo> runningServices = getRunningServicesForApp();
-
-        for (ActivityManager.RunningServiceInfo runningServiceInfo: runningServices) {
-            try {
-                application.stopService(new Intent(application, Class.forName(runningServiceInfo.service.getClassName())));
-            } catch (ClassNotFoundException e) {
-                Timber.e(e);
-            }
-        }
-    }
-
-    private ArrayList<ActivityManager.RunningServiceInfo> getRunningServicesForApp() {
-        ArrayList<ActivityManager.RunningServiceInfo> runningServices = new ArrayList<>();
-        ActivityManager manager = (ActivityManager) application.getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (service.clientPackage.contains(application.getPackageName())) {
-                runningServices.add(service);
-            }
-        }
-
-        return runningServices;
-    }
 }

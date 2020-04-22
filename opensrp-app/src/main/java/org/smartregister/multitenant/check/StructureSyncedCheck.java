@@ -5,8 +5,7 @@ import android.support.annotation.WorkerThread;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.multitenant.PreResetAppCheck;
-import org.smartregister.multitenant.exception.PreResetAppOperationException;
+import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.sync.helper.LocationServiceHelper;

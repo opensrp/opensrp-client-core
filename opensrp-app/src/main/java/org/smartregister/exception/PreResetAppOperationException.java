@@ -1,4 +1,4 @@
-package org.smartregister.multitenant.exception;
+package org.smartregister.exception;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 09-04-2020.

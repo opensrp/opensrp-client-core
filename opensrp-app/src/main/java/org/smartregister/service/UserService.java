@@ -365,7 +365,7 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+         String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
                 ? userInfo.user.getUsername() : userName;
         boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));

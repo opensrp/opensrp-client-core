@@ -1,4 +1,4 @@
-package org.smartregister.multitenant.executor;
+package org.smartregister.executor;
 
 import android.os.Handler;
 import android.os.Looper;

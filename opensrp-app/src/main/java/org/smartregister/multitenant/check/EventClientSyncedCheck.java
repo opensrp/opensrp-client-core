@@ -4,8 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.multitenant.PreResetAppCheck;
-import org.smartregister.multitenant.exception.PreResetAppOperationException;
+import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -35,6 +34,8 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
 
         EventClientSync syncIntentService = new EventClientSync(application);
         syncIntentService.performSync();
+
+        syncStatusBroadcastReceiver.removeSyncStatusListener(this);
     }
 
     public boolean isEventsClientSynced(@NonNull DrishtiApplication application) {
@@ -63,8 +64,6 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
     public void onSyncComplete(FetchStatus fetchStatus) {
         // Do nothing for now
         Timber.e("The sync is complete");
-
-        syncStatusBroadcastReceiver.removeSyncStatusListener(this);
     }
 
     @NonNull
