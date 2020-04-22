@@ -6,18 +6,18 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QueryGeneratorTest {
+public class QueryComposerTest {
 
-    @Test(expected = QueryGenerator.InvalidQueryException.class)
-    public void testGenerator() throws QueryGenerator.InvalidQueryException {
-        QueryGenerator generator = new QueryGenerator();
+    @Test(expected = QueryComposer.InvalidQueryException.class)
+    public void testGenerator() throws QueryComposer.InvalidQueryException {
+        QueryComposer generator = new QueryComposer();
         generator.generateQuery();
     }
 
     @Test
-    public void testGeneratorWithMainSelect() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorWithMainSelect() throws QueryComposer.InvalidQueryException {
         String mainSelect = "select * from table1";
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
         generator.withMainSelect(mainSelect);
 
 
@@ -31,7 +31,7 @@ public class QueryGeneratorTest {
     }
 
     @Test
-    public void testGeneratorColumns() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorColumns() throws QueryComposer.InvalidQueryException {
 
         String values = "SELECT table1.column1 , table1.column2 , table1.column3 FROM table1";
 
@@ -39,7 +39,7 @@ public class QueryGeneratorTest {
         strings.add("table1.column2");
         strings.add("table1.column3");
 
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
         generator.withMainTable("table1");
         generator.withColumn("table1.column1");
         generator.withColumns(strings);
@@ -48,14 +48,14 @@ public class QueryGeneratorTest {
     }
 
     @Test
-    public void testGeneratorWhere() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorWhere() throws QueryComposer.InvalidQueryException {
 
         String values = "SELECT table1.column1 , table1.column2 FROM table1 WHERE ( table1.column1 = '12345' ) AND ( table1.column2 = '45678' )";
 
         List<String> strings = new ArrayList<>();
         strings.add("table1.column2");
 
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
         generator.withMainTable("table1");
         generator.withColumn("table1.column1");
         generator.withColumns(strings);
@@ -69,14 +69,14 @@ public class QueryGeneratorTest {
     }
 
     @Test
-    public void testGeneratorJoins() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorJoins() throws QueryComposer.InvalidQueryException {
 
         String values = "SELECT table1.column1 , table1.column2 , table2.column1 FROM table1 " +
                 "INNER JOIN table2 ON table1.id = table2.other_id " +
                 "INNER JOIN table3 ON table1.id = table3.other_id " +
                 "INNER JOIN table4 ON table1.id = table4.other_id";
 
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
 
         List<String> columns = new ArrayList<>();
         columns.add("table1.column2");
@@ -97,7 +97,7 @@ public class QueryGeneratorTest {
     }
 
     @Test
-    public void testGeneratorSort() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorSort() throws QueryComposer.InvalidQueryException {
 
         String values = "SELECT table1.column1 , table1.column2 , table1.column3 FROM table1 ORDER BY table1.id, table1.column2, table1.column3";
 
@@ -105,7 +105,7 @@ public class QueryGeneratorTest {
         columns.add("table1.column2");
         columns.add("table1.column3");
 
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
         generator.withMainTable("table1");
         generator.withColumn("table1.column1");
         generator.withColumns(columns);
@@ -118,7 +118,7 @@ public class QueryGeneratorTest {
     }
 
     @Test
-    public void testGeneratorLimit() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorLimit() throws QueryComposer.InvalidQueryException {
 
         String values = "SELECT table1.column1 , table1.column2 , table1.column3 FROM table1 LIMIT 0 , 10";
 
@@ -126,7 +126,7 @@ public class QueryGeneratorTest {
         columns.add("table1.column2");
         columns.add("table1.column3");
 
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
         generator.withMainTable("table1");
         generator.withColumn("table1.column1");
         generator.withColumns(columns);
@@ -137,7 +137,7 @@ public class QueryGeneratorTest {
     }
 
     @Test
-    public void testGeneratorComplete() throws QueryGenerator.InvalidQueryException {
+    public void testGeneratorComplete() throws QueryComposer.InvalidQueryException {
 
         String values = "SELECT table1.column1 , table1.column2 , table2.column1 FROM table1 " +
                 "INNER JOIN table2 ON table1.id = table2.other_id " +
@@ -146,7 +146,7 @@ public class QueryGeneratorTest {
                 "ORDER BY table1.id, table1.column2, table2.column1 " +
                 "LIMIT 0 , 10";
 
-        QueryGenerator generator = new QueryGenerator();
+        QueryComposer generator = new QueryComposer();
 
         List<String> columns = new ArrayList<>();
         columns.add("table1.column2");
@@ -175,13 +175,13 @@ public class QueryGeneratorTest {
     public void testSearchQuery() {
         String expected = "select object_id from ec_family_member_search where phrase match '\"Kenyatta\"*'";
 
-        String value = QueryGenerator.getFtsQuery("ec_family_member", "Kenyatta");
+        String value = QueryComposer.getFtsQuery("ec_family_member", "Kenyatta");
         Assert.assertEquals(expected, value);
 
 
         expected = "select object_id from ec_family_search where phrase match '\"Kenyatta\"*'";
 
-        value = QueryGenerator.getFtsQuery("ec_family", "Kenyatta");
+        value = QueryComposer.getFtsQuery("ec_family", "Kenyatta");
         Assert.assertEquals(expected, value);
     }
 }

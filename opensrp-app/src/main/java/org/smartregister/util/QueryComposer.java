@@ -10,7 +10,7 @@ import java.util.List;
  * @author ronald
  * Simplify query generation to allow generating complex queries piece by piece
  */
-public class QueryGenerator {
+public class QueryComposer {
 
     private String mainSelect;
     private Columns columns;
@@ -35,13 +35,13 @@ public class QueryGenerator {
         StringBuilder builder = new StringBuilder(getMainSelect());
 
         if (whereClause != null)
-            builder.append(" ").append(whereClause.generateQuery());
+            builder.append(" ").append(whereClause.composeQuery());
 
         if (sortClause != null)
-            builder.append(" ").append(sortClause.generateQuery());
+            builder.append(" ").append(sortClause.composeQuery());
 
         if (limitClause != null)
-            builder.append(limitClause.generateQuery());
+            builder.append(limitClause.composeQuery());
 
         return builder.toString();
     }
@@ -50,12 +50,12 @@ public class QueryGenerator {
         StringBuilder builder = new StringBuilder();
         if (StringUtils.isBlank(mainSelect)) {
             builder.append("SELECT ")
-                    .append(columns.generateQuery())
+                    .append(columns.composeQuery())
                     .append(" FROM ")
                     .append(mainTable);
 
             if (joinClause != null)
-                builder.append(" ").append(joinClause.generateQuery());
+                builder.append(" ").append(joinClause.composeQuery());
 
             return builder.toString();
         } else {
@@ -91,32 +91,32 @@ public class QueryGenerator {
         return sortClause;
     }
 
-    public QueryGenerator withMainTable(String mainTable) {
+    public QueryComposer withMainTable(String mainTable) {
         this.mainTable = mainTable;
         return this;
     }
 
-    public QueryGenerator withMainSelect(String mainSelect) {
+    public QueryComposer withMainSelect(String mainSelect) {
         this.mainSelect = mainSelect;
         return this;
     }
 
-    public QueryGenerator withColumns(List<String> values) {
+    public QueryComposer withColumns(List<String> values) {
         getColumns().addColumns(values);
         return this;
     }
 
-    public QueryGenerator withColumn(String value) {
+    public QueryComposer withColumn(String value) {
         getColumns().addColumn(value);
         return this;
     }
 
-    public QueryGenerator withJoinClause(List<String> values) {
+    public QueryComposer withJoinClause(List<String> values) {
         getJoinClause().addJoinClause(values);
         return this;
     }
 
-    public QueryGenerator withJoinClause(String value) {
+    public QueryComposer withJoinClause(String value) {
         getJoinClause().addJoinClause(value);
         return this;
     }
@@ -128,34 +128,34 @@ public class QueryGenerator {
         return whereClause;
     }
 
-    public QueryGenerator withWhereClause(List<String> values) {
+    public QueryComposer withWhereClause(List<String> values) {
         getWhereClause().addWhereClause(values);
         return this;
     }
 
-    public QueryGenerator withWhereClause(String value) {
+    public QueryComposer withWhereClause(String value) {
         getWhereClause().addWhereClause(value);
         return this;
     }
 
-    public QueryGenerator withLimitClause(int start, int end) {
+    public QueryComposer withLimitClause(int start, int end) {
         getLimitClause().addLimitClause(start, end);
         return this;
     }
 
-    public QueryGenerator withSortColumn(List<String> values) {
+    public QueryComposer withSortColumn(List<String> values) {
         getSortClause().addSortColumn(values);
         return this;
     }
 
-    public QueryGenerator withSortColumn(String value) {
+    public QueryComposer withSortColumn(String value) {
         getSortClause().addSortColumn(value);
         return this;
     }
 
     public interface QueryValue {
 
-        String generateQuery();
+        String composeQuery();
 
     }
 
@@ -179,7 +179,7 @@ public class QueryGenerator {
         }
 
         @Override
-        public String generateQuery() {
+        public String composeQuery() {
             if (strings == null || strings.size() == 0)
                 return "";
 
@@ -213,7 +213,7 @@ public class QueryGenerator {
         }
 
         @Override
-        public String generateQuery() {
+        public String composeQuery() {
             if (strings == null)
                 return "";
 
@@ -245,7 +245,7 @@ public class QueryGenerator {
         }
 
         @Override
-        public String generateQuery() {
+        public String composeQuery() {
             if (strings == null || strings.size() == 0)
                 return "";
 
@@ -273,7 +273,7 @@ public class QueryGenerator {
         }
 
         @Override
-        public String generateQuery() {
+        public String composeQuery() {
             return " LIMIT " + start + " , " + end;
         }
     }
@@ -298,7 +298,7 @@ public class QueryGenerator {
         }
 
         @Override
-        public String generateQuery() {
+        public String composeQuery() {
             if (strings == null || strings.size() == 0)
                 return "";
 
