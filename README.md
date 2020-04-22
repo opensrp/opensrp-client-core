@@ -252,6 +252,7 @@ Class | Provides
 `StringUtil` | String manipulation utility
 `TimelineEventComparator` | Timeline event comparator
 `Utils` | Date conversion, android preference manipulator, view generator, metrics humanizer among other basic utility functions.
+`AppExecutors` | Provides implementation of the executor interface that allows grouping request. Grouping tasks like this avoids the effects of task starvation (e.g. disk reads don't wait behind webservice requests)
 
 
 The utility classes can be found under `org.smartregister.util`
@@ -296,6 +297,15 @@ Methods in the ICompression interface are
 *__void compress(String inputFilePath, String compressedOutputFilepath)__* Compress file in file path `inputFilePath` and output to location `compressedOutputFilepath`
 
 *__void decompress(String compressedInputFilePath, String decompressedOutputFilePath)__* Decompress file in file path `compressedInputFilePath` and output to location `decompressedOutputFilePath`
+
+## 10. Bootstrap View Generation
+
+You can quickly bootstrap view generation that take the format of a `Register` or `Profile` using the package `org.smartregister.view`. Views that render a Register can extend the `BaseRegisterFragment`
+that implements basic register functionality such as searching, listing, sorting and counting number of records on the generic base view whilst reading a `cursor` object.
+
+For views that display a generic List of items but require heavier customization, using the `org.smartregister.view.fragment.BaseListFragment<T>` allows you to render any generic list while providing a context
+aware background executor and error handling that only requires provisioning or `Callable` function to act as a data source. 
+Check the Sample app's `ReportFragment` that consumes a `Retrofit` response and renders a list of objects.
 
 ## Configurability
 
