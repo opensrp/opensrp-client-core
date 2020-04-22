@@ -1,6 +1,7 @@
 package org.smartregister.sync.intent;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.ClientFormRepository;
@@ -41,7 +42,10 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         super.onHandleIntent(intent);
 
         try {
-            DocumentConfigurationService documentConfigurationService = new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, getApplicationContext().getPackageName());
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionName = pInfo.versionName;
+
+            DocumentConfigurationService documentConfigurationService = new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, versionName);
             documentConfigurationService.fetchManifest();
         } catch (Exception e) {
             Timber.e(e);

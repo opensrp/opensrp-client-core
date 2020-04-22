@@ -1,6 +1,7 @@
 package org.smartregister.service;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
@@ -15,18 +16,18 @@ import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ManifestRepository;
 
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 
 import timber.log.Timber;
 
 public class DocumentConfigurationService {
+    public static final String MANIFEST_FORMS_VERSION = "forms_version";
     public static final String FORM_VERSION = "form_version";
     public static final String CURRENT_FORM_VERSION = "current_form_version";
     public static final String IDENTIFIERS = "identifiers";
-    private static final String MANIFEST_SYNC_URL = "rest/manifest/";
-    private static final String CLIENT_FORM_SYNC_URL = "rest/clientForm";
+    private static final String MANIFEST_SYNC_URL = "/rest/manifest/";
+    private static final String CLIENT_FORM_SYNC_URL = "/rest/clientForm";
     private static final String FORM_IDENTIFIER = "form_identifier";
 
     private HTTPAgent httpAgent;
@@ -52,16 +53,18 @@ public class DocumentConfigurationService {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
         }
         Response resp = httpAgent.fetch(
-                MessageFormat.format("{0}{1}{2}",
-                        baseUrl, MANIFEST_SYNC_URL, packageName));
+                MessageFormat.format("{0}{1}",
+                        baseUrl, MANIFEST_SYNC_URL));
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(MANIFEST_SYNC_URL + " not returned data");
         }
 
-        ManifestDTO receivedManifestDTO =
-                new Gson().fromJson(resp.payload().toString(), ManifestDTO.class);
+        List<ManifestDTO> receivedManifestDTOs =
+                new Gson().fromJson(resp.payload().toString(), new TypeToken<List<ManifestDTO>>() {
+                }.getType());
 
+        ManifestDTO receivedManifestDTO = receivedManifestDTOs.get(receivedManifestDTOs.size() - 1);
         Manifest receivedManifest = convertManifestDTOToManifest(receivedManifestDTO);
 
         //Note active manifest is null for the first time synchronization of the application
@@ -108,17 +111,17 @@ public class DocumentConfigurationService {
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}{2}",
                         baseUrl, CLIENT_FORM_SYNC_URL,
-                        URLEncoder.encode("?" + FORM_IDENTIFIER + "=" + identifier +
+                        "?" + FORM_IDENTIFIER + "=" + identifier +
                                 "&" + FORM_VERSION + "=" + formVersion +
-                                (activeClientForm == null ? "" : "&" + CURRENT_FORM_VERSION + "=" + activeClientForm.getVersion()))));
+                                (activeClientForm == null ? "" : "&" + CURRENT_FORM_VERSION + "=" + activeClientForm.getVersion())));
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(CLIENT_FORM_SYNC_URL + " not returned data");
         }
 
-
+        Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy, hh:mm:ss aaa").create();
         ClientFormResponse clientFormResponse =
-                new Gson().fromJson(resp.payload().toString(), ClientFormResponse.class);
+                gson.fromJson(resp.payload().toString(), ClientFormResponse.class);
 
         if (activeClientForm == null || !clientFormResponse.getClientFormMetadata().getVersion().equals(activeClientForm.getVersion())) {
             //if the previously active client form is not null it should be untagged from being new nor active
@@ -172,13 +175,12 @@ public class DocumentConfigurationService {
 
     protected Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO) throws JSONException {
         Manifest manifest = new Manifest();
-        manifest.setId(manifestDTO.getId().toString());
         manifest.setAppVersion(manifestDTO.getAppVersion());
         manifest.setCreatedAt(manifestDTO.getCreatedAt());
 
         JSONObject json = new JSONObject(manifestDTO.getJson());
-        if (json.has(FORM_VERSION)) {
-            manifest.setFormVersion(json.getString(FORM_VERSION));
+        if (json.has(MANIFEST_FORMS_VERSION)) {
+            manifest.setFormVersion(json.getString(MANIFEST_FORMS_VERSION));
         }
 
         if (json.has(IDENTIFIERS)) {

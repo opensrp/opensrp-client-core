@@ -1,21 +1,22 @@
 package org.smartregister.dto;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ManifestDTO {
-    private Long id;
+public class ManifestDTO implements Serializable {
+    private String identifier;
     private String json;
     private String appVersion;
     private String appId;
     private Date createdAt;
     private Date updatedAt;
 
-    public Long getId() {
-        return id;
+    public String getIdentifier() {
+        return identifier;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getJson() {

@@ -8,7 +8,6 @@ import com.google.gson.reflect.TypeToken;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Manifest;
 
 import java.text.ParseException;
@@ -42,7 +41,7 @@ public class ManifestRepository extends BaseRepository {
 
     private static final String CREATE_MANIFEST_TABLE =
             "CREATE TABLE " + MANIFEST_TABLE + " (" +
-                    ID + " VARCHAR NOT NULL PRIMARY KEY," +
+                    ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                     APP_VERSION + " VARCHAR , " +
                     FORM_VERSION + " VARCHAR , " +
                     IDENTIFIERS + " VARCHAR , " +
@@ -66,10 +65,10 @@ public class ManifestRepository extends BaseRepository {
     }
 
     public void addOrUpdate(Manifest manifest) {
-        if (StringUtils.isBlank(manifest.getId()))
-            throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, manifest.getId());
+
+        if (manifest.getId() != null)
+            contentValues.put(ID, manifest.getId());
         contentValues.put(APP_VERSION, manifest.getAppVersion());
         contentValues.put(FORM_VERSION, manifest.getFormVersion());
         contentValues.put(IDENTIFIERS, new Gson().toJson(manifest.getIdentifiers()));
@@ -159,6 +158,7 @@ public class ManifestRepository extends BaseRepository {
 
     /**
      * Delete manifest by id
+     *
      * @param manifestId
      */
     public void delete(String manifestId) {
