@@ -116,6 +116,7 @@ public class ResetAppHelper {
                             return;
                         }
 
+                        Timber.e("User %s has completely reset the app", application.getUsername());
                         performResetOperations();
                         coreLibraryExecutors.mainThread()
                                 .execute(() -> {
