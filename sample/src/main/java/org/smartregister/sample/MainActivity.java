@@ -19,6 +19,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
@@ -155,6 +156,9 @@ public class MainActivity extends MultiLanguageActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_report_sample) {
+            BasicActivity.startFragment(this, ReportFragment.TAG);
             return true;
         }
 

@@ -1,0 +1,48 @@
+package org.smartregister.view.adapter;
+
+
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
+
+import org.smartregister.view.ListContract;
+import org.smartregister.view.viewholder.ListableViewHolder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author rkodev
+ */
+
+public abstract class ListableAdapter<T extends ListContract.Identifiable, H extends ListableViewHolder<T>> extends RecyclerView.Adapter<H> {
+
+    protected List<T> items = new ArrayList<>();
+    protected ListContract.View<T> view;
+
+    public ListableAdapter(List<T> items, ListContract.View<T> view) {
+        if (items != null)
+            this.items.addAll(items);
+
+        this.view = view;
+    }
+
+    public void reloadData(@Nullable List<T> items) {
+        this.items.clear();
+        if (items != null)
+            this.items.addAll(items);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull H holder, int position) {
+        holder.resetView();
+        T t = items.get(position);
+        if (t != null)
+            holder.bindView(t, view);
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+}
