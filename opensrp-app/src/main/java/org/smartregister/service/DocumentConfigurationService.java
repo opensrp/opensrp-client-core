@@ -137,7 +137,7 @@ public class DocumentConfigurationService {
 
     protected ClientForm convertClientFormResponseToClientForm(ClientFormResponse clientFormResponse) {
         ClientForm clientForm = new ClientForm();
-        clientForm.setId(clientFormResponse.getClientForm().getId().toString());
+        clientForm.setId(clientFormResponse.getClientForm().getId());
         clientForm.setCreatedAt(clientFormResponse.getClientFormMetadata().getCreatedAt());
         clientForm.setIdentifier(clientFormResponse.getClientFormMetadata().getIdentifier());
         clientForm.setJson(clientFormResponse.getClientForm().getJson());

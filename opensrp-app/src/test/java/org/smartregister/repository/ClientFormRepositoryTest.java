@@ -95,12 +95,6 @@ public class ClientFormRepositoryTest extends BaseUnitTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddOrUpdateShouldThrowException() {
-        ClientForm clientForm = new ClientForm();
-        clientFormRepository.addOrUpdate(clientForm);
-    }
-
     @Test
     public void testGetActiveClientFormByIdentifier() {
         String identifier = "en/child/enrollment.json";

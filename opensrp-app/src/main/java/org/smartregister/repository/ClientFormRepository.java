@@ -36,7 +36,7 @@ public class ClientFormRepository extends BaseRepository {
     protected static final String CLIENT_FORM_TABLE = "client_form";
     public static final String CREATE_CLIENT_FORM_TABLE =
             "CREATE TABLE " + CLIENT_FORM_TABLE + " (" +
-                    ID + " VARCHAR NOT NULL PRIMARY KEY," +
+                    ID + " INTEGER PRIMARY KEY," +
                     VERSION + " VARCHAR , " +
                     IDENTIFIER + " VARCHAR , " +
                     MODULE + " VARCHAR , " +
@@ -64,8 +64,6 @@ public class ClientFormRepository extends BaseRepository {
     }
 
     public void addOrUpdate(ClientForm clientForm) {
-        if (StringUtils.isBlank(clientForm.getId()))
-            throw new IllegalArgumentException("id not provided");
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, clientForm.getId());
         contentValues.put(VERSION, clientForm.getVersion());
@@ -82,7 +80,7 @@ public class ClientFormRepository extends BaseRepository {
 
     protected ClientForm readCursor(Cursor cursor) {
         ClientForm clientForm = new ClientForm();
-        clientForm.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        clientForm.setId(cursor.getInt(cursor.getColumnIndex(ID)));
         clientForm.setVersion(cursor.getString(cursor.getColumnIndex(VERSION)));
         clientForm.setIdentifier(cursor.getString(cursor.getColumnIndex(IDENTIFIER)));
         clientForm.setModule(cursor.getString(cursor.getColumnIndex(MODULE)));
@@ -145,9 +143,9 @@ public class ClientFormRepository extends BaseRepository {
      *
      * @param clientFormId
      */
-    public void delete(String clientFormId) {
+    public void delete(int clientFormId) {
         SQLiteDatabase database = getWritableDatabase();
-        database.delete(CLIENT_FORM_TABLE, ID + "= ?", new String[]{clientFormId});
+        database.delete(CLIENT_FORM_TABLE, ID + "= ?", new String[]{String.valueOf(clientFormId)});
     }
 
 }
