@@ -51,18 +51,18 @@ public class DocumentConfigurationServiceTest {
 
     @Test
     public void convertManifestDTOToManifest() {
-        String manifestDTOJson = "{\"json\":\"{\\\"form_version\\\":\\\"0.0.1\\\",\\\"identifiers\\\":[\\\"anc/member_registration.json\\\",\\\"anc/pregnancy_outcome.json\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.0.1\",\"id\":1}";
+        String manifestDTOJson = "{\"json\":\"{\\\"form_versions\\\":\\\"0.0.1\\\",\\\"identifiers\\\":[\\\"anc/member_registration.json\\\",\\\"anc/pregnancy_outcome.json\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.0.1\",\"id\":1}";
         ManifestDTO manifestDTO = new Gson().fromJson(manifestDTOJson, ManifestDTO.class);
         Manifest manifest;
         try {
             manifest = documentConfigurationService.convertManifestDTOToManifest(manifestDTO);
-            Assert.assertEquals(manifest.getId(), manifestDTO.getId().toString());
             Assert.assertEquals(manifest.getAppVersion(), manifestDTO.getAppVersion());
             Assert.assertEquals(manifest.getCreatedAt(), manifestDTO.getCreatedAt());
 
             JSONObject json = new JSONObject(manifestDTO.getJson());
             Assert.assertEquals(manifest.getFormVersion(), json.getString(FORM_VERSION));
-            Assert.assertEquals(manifest.getIdentifiers(), new Gson().fromJson(json.getString(IDENTIFIERS), new TypeToken<List<String>>() {}.getType()));
+            Assert.assertEquals(manifest.getIdentifiers(), new Gson().fromJson(json.getString(IDENTIFIERS), new TypeToken<List<String>>() {
+            }.getType()));
         } catch (JSONException e) {
             Timber.e(e);
         }
@@ -74,7 +74,6 @@ public class DocumentConfigurationServiceTest {
         String clientFormResponseJson = "{\"clientForm\":{\"id\":3,\"json\":\"{}\"},\"clientFormMetadata\":{\"id\":3,\"identifier\":\"opd/reg.json\",\"version\":\"0.0.3\"}}";
         ClientFormResponse clientFormResponse = new Gson().fromJson(clientFormResponseJson, ClientFormResponse.class);
         ClientForm clientForm = documentConfigurationService.convertClientFormResponseToClientForm(clientFormResponse);
-        Assert.assertEquals(clientForm.getId(), clientFormResponse.getClientForm().getId().toString());
         Assert.assertEquals(clientForm.getIdentifier(), clientFormResponse.getClientFormMetadata().getIdentifier());
         Assert.assertEquals(clientForm.getCreatedAt(), clientFormResponse.getClientFormMetadata().getCreatedAt());
         Assert.assertEquals(clientForm.getJson(), clientFormResponse.getClientForm().getJson());

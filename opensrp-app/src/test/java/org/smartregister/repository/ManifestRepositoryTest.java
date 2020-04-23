@@ -92,12 +92,6 @@ public class ManifestRepositoryTest extends BaseUnitTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testAddOrUpdateShouldThrowException() {
-        Manifest manifest = new Manifest();
-        manifestRepository.addOrUpdate(manifest);
-    }
-
 
     @Test
     public void testGetAllManifests() {
