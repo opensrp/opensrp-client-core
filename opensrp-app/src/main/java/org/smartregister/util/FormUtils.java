@@ -21,9 +21,11 @@ import org.smartregister.clientandeventmodel.FormEntityConverter;
 import org.smartregister.clientandeventmodel.FormField;
 import org.smartregister.clientandeventmodel.FormInstance;
 import org.smartregister.clientandeventmodel.SubFormData;
+import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
+import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
 import org.w3c.dom.Attr;
@@ -1120,5 +1122,37 @@ public class FormUtils {
 
     private void createNewClientDocument(org.smartregister.cloudant.models.Client client) {
         mCloudantDataHandler.createClientDocument(client);
+    }
+
+    public static JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity, org.smartregister.util.FormUtils formUtils,String locale) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = formIdentity;
+        if(!locale.equals("en")){
+            localeFormIdentity = localeFormIdentity+"-"+locale;
+        }
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+        try {
+            if (clientForm != null) {
+                Timber.d("============%s form loaded from db============", formIdentity);
+                String jsonString = convertStandardJSONString(clientForm.getJson());
+                return new JSONObject(jsonString);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+        Timber.d("============%s form loaded from Assets=============", formIdentity);
+        return formUtils.getFormJson(formIdentity);
+    }
+
+    private static String convertStandardJSONString(String data_json) {
+        data_json = data_json.replaceAll("\\\\r\\\\n", "");
+        data_json = data_json.replace("\"{", "{");
+        data_json = data_json.replace("}\",", "},");
+        data_json = data_json.replace("}\"", "}");
+        data_json = data_json.replace("\\n","");
+        data_json = data_json.replace("\\\"","\"");
+        return data_json;
     }
 }
