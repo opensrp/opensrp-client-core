@@ -1,6 +1,7 @@
-language: android
-# sudo set to required because of an issue with how TravisCI handles builds in Docker containers https://github.com/travis-ci/travis-ci/issues/3695.
-# Setting sudo to required prevents Travis from testing the project in a Docker container.
+language: minimal
+os: linux
+dist: xenial
+group: edge
 sudo: required
 
 before_cache:
@@ -14,33 +15,45 @@ cache:
 
 env:
   global:
-    # wait up to 10 minutes for adb to connect to emulator
-    - ADB_INSTALL_TIMEOUT=10
-    - MALLOC_ARENA_MAX=2
-
-android:
-  components:
-    # tools required
-    - tools
-    # The BuildTools version used by your project
-    - build-tools-28.0.3
-    # The SDK version used to compile your projects
-    - android-28
+    # for updates check developer.android.com/studio#downloads (current 26.1.1)
+    - ANDROID_SDK_TOOLS=sdk-tools-linux-4333796.zip
 
 addons:
   apt_packages:
     - pandoc
 
-script:
+before_install:
+  # set JAVA_HOME path
+  - export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+  # download and unzip Android SDK command line tools
+  - wget -nv https://dl.google.com/android/repository/$ANDROID_SDK_TOOLS
+  - unzip -q $ANDROID_SDK_TOOLS -d $HOME/sdk
+  # set SDK tools path variable and ANDROID_HOME
+  - export PATH=$PATH:$HOME/sdk/tools/bin
+  - export ANDROID_HOME=$HOME/sdk
+  # create empty cfg file to prevent sdkmanager warning message
+  - mkdir -p $HOME/.android && touch $HOME/.android/repositories.cfg
+install:
+  # accept licenses for all available packages that have not already been accepted
+  - yes | sdkmanager "platforms;android-28"
+  - yes | sdkmanager --licenses >/dev/null
+  - yes | sdkmanager "platforms;android-28"
+before_script:
   - echo "Travis branch is $TRAVIS_BRANCH"
   - echo "Travis branch is in pull request $TRAVIS_PULL+REQUEST"
-  - chmod 755 gradlew
   - ls -la
-  # Enable the line below once we get all the test passing, currently most of the tests are failing 
-  # so we'll just if the project compiles
-  #Run All tests Unit and Instrumentation
-  - travis_wait ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
+  - java -version
+  - sudo apt-get install openjdk-8-jdk
+  - java -version
+  # set executable flag for gradle wrapper
+  - chmod +x gradlew
+
+script:
+  - ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
+
+after_success:
   - ./gradlew coveralls --stacktrace
+
 
 after_failure:
   - pandoc opensrp-app/build/reports/tests/index.html -t plain

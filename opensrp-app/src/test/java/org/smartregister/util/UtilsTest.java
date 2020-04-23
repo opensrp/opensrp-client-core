@@ -9,16 +9,27 @@ import com.google.common.collect.ImmutableMap;
 
 import org.joda.time.DateTime;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.Location;
+import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.jsonmapping.LoginResponseData;
+import org.smartregister.domain.jsonmapping.User;
+import org.smartregister.domain.jsonmapping.util.Team;
+import org.smartregister.domain.jsonmapping.util.TeamLocation;
+import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -29,9 +40,7 @@ import static org.smartregister.TestUtils.getContext;
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-
 public class UtilsTest extends BaseUnitTest {
-
 
     @Test
     public void assertConvertDateFormatTestReturnsDate() throws Exception {
@@ -293,4 +302,78 @@ public class UtilsTest extends BaseUnitTest {
     public void testDobStringToDateShouldReturnCorrectDate() {
         assertEquals(Utils.dobStringToDate("2000-12-30").toString(), Utils.dobStringToDateTime("2000-12-30").toDate().toString());
     }
+
+    @Test
+    public void testGetFilterValueShouldGetCorrectFilterValue() {
+        LoginResponseData loginResponseData = getLoginResponseData();
+        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload(loginResponseData);
+        assertEquals(loginResponseData.team.team.uuid, Utils.getFilterValue(loginResponse, SyncFilter.TEAM));
+        assertEquals(loginResponseData.team.team.uuid, Utils.getFilterValue(loginResponse, SyncFilter.TEAM_ID));
+        assertEquals(loginResponseData.team.team.location.uuid, Utils.getFilterValue(loginResponse, SyncFilter.LOCATION));
+        assertEquals(loginResponseData.user.getUsername(), Utils.getFilterValue(loginResponse, SyncFilter.PROVIDER));
+    }
+
+    @Test
+    @Ignore
+    public void testGetPropertiesShouldGetPropertyFile() {
+        AppProperties appProperties = Utils.getProperties(RuntimeEnvironment.application);
+        assertTrue(appProperties.getPropertyBoolean("property_4"));
+        assertEquals("property_1", appProperties.getProperty("property_1"));
+        assertEquals("property_2", appProperties.getProperty("property_2"));
+        assertEquals("property_3", appProperties.getProperty("property_3"));
+    }
+
+    @Test
+    public void testGetUserDefaultTeamIdShoulGetCorrectTeamId() {
+        LoginResponseData loginResponseData = getLoginResponseData();
+        assertEquals(loginResponseData.team.team.uuid, Utils.getUserDefaultTeamId(loginResponseData));
+    }
+
+    @Test
+    public void testIsEmptyCollectionShouldReturnCorrectStatus() {
+        List<String> list = new ArrayList<>();
+        list.add("string");
+        assertFalse(Utils.isEmptyCollection(list));
+        list.clear();
+        assertTrue(Utils.isEmptyCollection(list));
+    }
+
+    @Test
+    public void testIsEmptyMapShouldReturnCorrectStatus() {
+        Map<String, String> map = new HashMap<>();
+        map.put("key", "string");
+        assertFalse(Utils.isEmptyMap(map));
+        map.clear();
+        assertTrue(Utils.isEmptyMap(map));
+    }
+
+    @Test
+    public void testGetNameShouldGetCorrectlyFormattedName() {
+        assertEquals("John Doe", Utils.getName("John", "Doe"));
+        assertEquals("John", Utils.getName("John", ""));
+        assertEquals("Doe", Utils.getName("", "Doe"));
+    }
+
+    private LoginResponseData getLoginResponseData() {
+        Team team = new Team();
+        team.uuid = "team_uuid";
+
+        TeamLocation teamLocation = new TeamLocation();
+        teamLocation.uuid = "location_uuid";
+
+        TeamMember teamMember = new TeamMember();
+        teamMember.team = team;
+        teamMember.team.location = teamLocation;
+        teamMember.team = team;
+
+        User user = new User();
+        user.setUsername("user_name");
+
+        LoginResponseData loginResponseData = new LoginResponseData();
+        loginResponseData.team = teamMember;
+        loginResponseData.user = user;
+
+        return loginResponseData;
+    }
 }
+

@@ -76,9 +76,6 @@ public class SyncUtilsTest {
         doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
         assertTrue(syncUtils.isAppVersionAllowed());
 
-        // when the min version value is already set:
-        doReturn(null).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
-
         // 1. outdated app
         doReturn("2").when(settingsRepository).get(eq(MIN_ALLOWED_APP_VERSION));
         when(Utils.getVersionCode(any())).thenReturn(1l);
