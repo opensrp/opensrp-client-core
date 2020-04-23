@@ -1124,14 +1124,16 @@ public class FormUtils {
         mCloudantDataHandler.createClientDocument(client);
     }
 
-    public static JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity, org.smartregister.util.FormUtils formUtils,String locale) {
+    public JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity) {
         ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = formIdentity;
-        if(!locale.equals("en")){
-            localeFormIdentity = localeFormIdentity+"-"+locale;
+        if (!locale.equals("en")) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
         }
+
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
         try {
             if (clientForm != null) {
@@ -1143,16 +1145,16 @@ public class FormUtils {
             Timber.e(e);
         }
         Timber.d("============%s form loaded from Assets=============", formIdentity);
-        return formUtils.getFormJson(formIdentity);
+        return getFormJson(formIdentity);
     }
 
-    private static String convertStandardJSONString(String data_json) {
+    private String convertStandardJSONString(String data_json) {
         data_json = data_json.replaceAll("\\\\r\\\\n", "");
         data_json = data_json.replace("\"{", "{");
         data_json = data_json.replace("}\",", "},");
         data_json = data_json.replace("}\"", "}");
-        data_json = data_json.replace("\\n","");
-        data_json = data_json.replace("\\\"","\"");
+        data_json = data_json.replace("\\n", "");
+        data_json = data_json.replace("\\\"", "\"");
         return data_json;
     }
 }
