@@ -15,7 +15,8 @@ import java.util.List;
  * @author rkodev
  */
 
-public abstract class ListableAdapter<T extends ListContract.Identifiable, H extends ListableViewHolder<T>> extends RecyclerView.Adapter<H> {
+public abstract class ListableAdapter<T extends ListContract.Identifiable, H extends ListableViewHolder<T>>
+        extends RecyclerView.Adapter<H> implements ListContract.Adapter<T> {
 
     protected List<T> items = new ArrayList<>();
     protected ListContract.View<T> view;
@@ -27,10 +28,16 @@ public abstract class ListableAdapter<T extends ListContract.Identifiable, H ext
         this.view = view;
     }
 
+    @Override
     public void reloadData(@Nullable List<T> items) {
         this.items.clear();
         if (items != null)
             this.items.addAll(items);
+    }
+
+    @Override
+    public RecyclerView.Adapter getRecyclerAdapter() {
+        return this;
     }
 
     @Override
