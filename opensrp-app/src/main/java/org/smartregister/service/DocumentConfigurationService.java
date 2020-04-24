@@ -7,7 +7,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.CoreLibrary;
+import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.Manifest;
 import org.smartregister.domain.Response;
@@ -30,25 +30,26 @@ public class DocumentConfigurationService {
     private static final String MANIFEST_SYNC_URL = "/rest/manifest/";
     private static final String CLIENT_FORM_SYNC_URL = "/rest/clientForm";
     private static final String FORM_IDENTIFIER = "form_identifier";
-
+    private final DristhiConfiguration configuration;
     private HTTPAgent httpAgent;
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
     private String packageName;
 
-    public DocumentConfigurationService(HTTPAgent httpAgentArg, ManifestRepository manifestRepositoryArg, ClientFormRepository clientFormRepositoryArg, String packageNameArg) {
+    public DocumentConfigurationService(HTTPAgent httpAgentArg, ManifestRepository manifestRepositoryArg, ClientFormRepository clientFormRepositoryArg, String packageNameArg, DristhiConfiguration
+            configurationArg) {
         httpAgent = httpAgentArg;
         manifestRepository = manifestRepositoryArg;
         clientFormRepository = clientFormRepositoryArg;
         packageName = packageNameArg;
+        configuration = configurationArg;
     }
 
     public void fetchManifest() throws NoHttpResponseException, JSONException, IllegalArgumentException {
         if (httpAgent == null) {
             throw new IllegalArgumentException(MANIFEST_SYNC_URL + " http agent is null");
         }
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
+        String baseUrl = configuration.dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
@@ -99,12 +100,10 @@ public class DocumentConfigurationService {
     }
 
     protected void fetchClientForm(String identifier, String formVersion, ClientForm activeClientForm) throws NoHttpResponseException {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(CLIENT_FORM_SYNC_URL + " http agent is null");
         }
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
+        String baseUrl = configuration.dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 
 import org.smartregister.CoreLibrary;
+import org.smartregister.DristhiConfiguration;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.service.DocumentConfigurationService;
@@ -20,6 +21,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
+    private DristhiConfiguration configuration;
 
     public DocumentConfigurationIntentService() {
         super("DocumentConfigurationIntentService");
@@ -34,6 +36,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         manifestRepository = CoreLibrary.getInstance().context().getManifestRepository();
         clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        configuration = CoreLibrary.getInstance().context().configuration();
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -45,7 +48,7 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
             PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
             String versionName = pInfo.versionName;
 
-            DocumentConfigurationService documentConfigurationService = new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, versionName);
+            DocumentConfigurationService documentConfigurationService = new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, versionName, configuration);
             documentConfigurationService.fetchManifest();
         } catch (Exception e) {
             Timber.e(e);

@@ -4,6 +4,11 @@ public class ClientFormResponse {
     private ClientFormDTO clientForm;
     private ClientFormMetadataDTO clientFormMetadata;
 
+    public ClientFormResponse(ClientFormDTO clientForm, ClientFormMetadataDTO clientFormMetadata) {
+        this.clientForm = clientForm;
+        this.clientFormMetadata = clientFormMetadata;
+    }
+
     public ClientFormDTO getClientForm() {
         return clientForm;
     }
