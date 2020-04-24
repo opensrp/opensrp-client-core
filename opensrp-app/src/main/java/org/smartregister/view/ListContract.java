@@ -4,6 +4,7 @@ package org.smartregister.view;
 import android.support.annotation.IdRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.RecyclerView;
 
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.adapter.ListableAdapter;
@@ -44,12 +45,20 @@ public interface ListContract {
         void onFetchError(Exception ex);
 
         @NonNull
-        ListableAdapter<T, ListableViewHolder<T>> adapter();
+        ListContract.Adapter<T> adapter();
 
         @NonNull
         Presenter<T> loadPresenter();
 
         boolean hasDivider();
+    }
+
+    interface Adapter<T extends ListContract.Identifiable>{
+        void reloadData(@Nullable List<T> items);
+
+        RecyclerView.Adapter getRecyclerAdapter();
+
+        void notifyDataSetChanged();
     }
 
     interface Presenter<T extends ListContract.Identifiable> {

@@ -16,9 +16,7 @@ import android.widget.ProgressBar;
 
 import org.smartregister.util.AppExecutors;
 import org.smartregister.view.ListContract;
-import org.smartregister.view.adapter.ListableAdapter;
 import org.smartregister.view.presenter.ListPresenter;
-import org.smartregister.view.viewholder.ListableViewHolder;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -30,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class BaseListFragment<T extends ListContract.Identifiable> extends Fragment implements ListContract.View<T> {
 
     protected View view;
-    protected ListableAdapter<T, ListableViewHolder<T>> mAdapter;
+    protected ListContract.Adapter<T> mAdapter;
     protected ProgressBar progressBar;
     protected ListContract.Presenter<T> presenter;
     protected List<T> list;
@@ -89,7 +87,7 @@ public abstract class BaseListFragment<T extends ListContract.Identifiable> exte
         progressBar.setVisibility(View.GONE);
 
         mAdapter = adapter();
-        recyclerView.setAdapter(mAdapter);
+        recyclerView.setAdapter(mAdapter.getRecyclerAdapter());
     }
 
     @Override
@@ -119,7 +117,7 @@ public abstract class BaseListFragment<T extends ListContract.Identifiable> exte
 
     @NonNull
     @Override
-    public abstract ListableAdapter<T, ListableViewHolder<T>> adapter();
+    public abstract ListContract.Adapter<T> adapter();
 
     @NonNull
     @Override
