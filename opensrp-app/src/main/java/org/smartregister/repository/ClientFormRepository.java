@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.ClientForm;
 
 import java.text.ParseException;
@@ -128,7 +127,7 @@ public class ClientFormRepository extends BaseRepository {
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
                 " WHERE " + IDENTIFIER + " =? AND " + ACTIVE + " = 1", new String[]{identifier})) {
             if (cursor.moveToFirst()) {
-               return readCursor(cursor);
+                return readCursor(cursor);
             }
         } catch (Exception e) {
             Timber.e(e);

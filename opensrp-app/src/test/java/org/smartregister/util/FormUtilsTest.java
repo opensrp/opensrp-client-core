@@ -3,12 +3,10 @@ package org.smartregister.util;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.os.LocaleList;
 import android.util.Xml;
 
 import junit.framework.Assert;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;

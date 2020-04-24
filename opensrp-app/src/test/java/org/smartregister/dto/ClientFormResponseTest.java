@@ -6,8 +6,6 @@ import org.junit.Test;
 import java.util.Calendar;
 import java.util.Date;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by cozej4 on 2020-04-24.
  *
@@ -17,7 +15,7 @@ public class ClientFormResponseTest {
 
     @Test
     public void getClientForm() {
-        ClientFormDTO clientFormDTO =  new ClientFormDTO();
+        ClientFormDTO clientFormDTO = new ClientFormDTO();
         clientFormDTO.setId(1);
         clientFormDTO.setJson("[\"test json\"]");
 
@@ -31,16 +29,16 @@ public class ClientFormResponseTest {
         clientFormMetadataDTO.setModule("ANC");
         clientFormMetadataDTO.setVersion("0.0.1");
 
-        ClientFormResponse clientFormResponse = new ClientFormResponse(clientFormDTO,clientFormMetadataDTO);
+        ClientFormResponse clientFormResponse = new ClientFormResponse(clientFormDTO, clientFormMetadataDTO);
 
 
-        Assert.assertEquals("referral/anc_form",clientFormResponse.getClientFormMetadata().getIdentifier());
-        Assert.assertEquals("test jurisdiction",clientFormResponse.getClientFormMetadata().getJurisdiction());
-        Assert.assertEquals("ANC Referral form",clientFormResponse.getClientFormMetadata().getLabel());
-        Assert.assertEquals("ANC",clientFormResponse.getClientFormMetadata().getModule());
-        Assert.assertEquals("0.0.1",clientFormResponse.getClientFormMetadata().getVersion());
-        Assert.assertEquals(now,clientFormResponse.getClientFormMetadata().getCreatedAt());
-        Assert.assertEquals(1,clientFormResponse.getClientForm().getId());
-        Assert.assertEquals("[\"test json\"]",clientFormResponse.getClientForm().getJson());
+        Assert.assertEquals("referral/anc_form", clientFormResponse.getClientFormMetadata().getIdentifier());
+        Assert.assertEquals("test jurisdiction", clientFormResponse.getClientFormMetadata().getJurisdiction());
+        Assert.assertEquals("ANC Referral form", clientFormResponse.getClientFormMetadata().getLabel());
+        Assert.assertEquals("ANC", clientFormResponse.getClientFormMetadata().getModule());
+        Assert.assertEquals("0.0.1", clientFormResponse.getClientFormMetadata().getVersion());
+        Assert.assertEquals(now, clientFormResponse.getClientFormMetadata().getCreatedAt());
+        Assert.assertEquals(1, clientFormResponse.getClientForm().getId());
+        Assert.assertEquals("[\"test json\"]", clientFormResponse.getClientForm().getJson());
     }
 }
