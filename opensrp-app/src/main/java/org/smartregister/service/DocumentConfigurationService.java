@@ -47,11 +47,7 @@ public class DocumentConfigurationService {
         if (httpAgent == null) {
             throw new IllegalArgumentException(MANIFEST_SYNC_URL + " http agent is null");
         }
-        String baseUrl = configuration.dristhiBaseURL();
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-        }
+        String baseUrl = getBaseUrl();
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}",
                         baseUrl, MANIFEST_SYNC_URL));
@@ -66,7 +62,12 @@ public class DocumentConfigurationService {
 
         ManifestDTO receivedManifestDTO = receivedManifestDTOs.get(receivedManifestDTOs.size() - 1);
         Manifest receivedManifest = convertManifestDTOToManifest(receivedManifestDTO);
+        updateActiveManifest(receivedManifest);
 
+        syncClientForms(receivedManifest);
+    }
+
+    protected void updateActiveManifest(Manifest receivedManifest){
         //Note active manifest is null for the first time synchronization of the application
         Manifest activeManifest = manifestRepository.getActiveManifest();
 
@@ -79,8 +80,6 @@ public class DocumentConfigurationService {
         } else if (activeManifest == null) {
             saveReceivedManifest(receivedManifest);
         }
-
-        syncClientForms(receivedManifest);
     }
 
     protected void syncClientForms(Manifest activeManifest) {
@@ -101,11 +100,7 @@ public class DocumentConfigurationService {
         if (httpAgent == null) {
             throw new IllegalArgumentException(CLIENT_FORM_SYNC_URL + " http agent is null");
         }
-        String baseUrl = configuration.dristhiBaseURL();
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-        }
+        String baseUrl = getBaseUrl();
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}{2}",
                         baseUrl, CLIENT_FORM_SYNC_URL,
@@ -195,5 +190,13 @@ public class DocumentConfigurationService {
 
     }
 
+    private String getBaseUrl(){
+        String baseUrl = configuration.dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+        return baseUrl;
+    }
 
 }
