@@ -1130,7 +1130,7 @@ public class FormUtils {
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = formIdentity;
-        if (!locale.equals("en")) {
+        if (!"en".equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 

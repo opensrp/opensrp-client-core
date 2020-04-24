@@ -54,7 +54,7 @@ public class DocumentConfigurationServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        documentConfigurationService = Mockito.spy(new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, "0.0.1", configuration));
+        documentConfigurationService = Mockito.spy(new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration));
         Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
     }
 

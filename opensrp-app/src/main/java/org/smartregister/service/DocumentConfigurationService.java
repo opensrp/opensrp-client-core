@@ -34,14 +34,12 @@ public class DocumentConfigurationService {
     private HTTPAgent httpAgent;
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
-    private String packageName;
 
-    public DocumentConfigurationService(HTTPAgent httpAgentArg, ManifestRepository manifestRepositoryArg, ClientFormRepository clientFormRepositoryArg, String packageNameArg, DristhiConfiguration
+    public DocumentConfigurationService(HTTPAgent httpAgentArg, ManifestRepository manifestRepositoryArg, ClientFormRepository clientFormRepositoryArg, DristhiConfiguration
             configurationArg) {
         httpAgent = httpAgentArg;
         manifestRepository = manifestRepositoryArg;
         clientFormRepository = clientFormRepositoryArg;
-        packageName = packageNameArg;
         configuration = configurationArg;
     }
 
