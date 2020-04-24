@@ -186,7 +186,7 @@ public class DocumentConfigurationService {
         }
 
         if (json.has(IDENTIFIERS)) {
-            List<String> identifiers = new Gson().fromJson(json.getString(IDENTIFIERS),
+            List<String> identifiers = new Gson().fromJson(json.getJSONArray(IDENTIFIERS).toString(),
                     new TypeToken<List<String>>() {
                     }.getType());
             manifest.setIdentifiers(identifiers);
