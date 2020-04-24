@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
@@ -140,7 +141,11 @@ public class DocumentConfigurationService {
         clientForm.setId(clientFormResponse.getClientForm().getId());
         clientForm.setCreatedAt(clientFormResponse.getClientFormMetadata().getCreatedAt());
         clientForm.setIdentifier(clientFormResponse.getClientFormMetadata().getIdentifier());
-        clientForm.setJson(clientFormResponse.getClientForm().getJson());
+
+        String jsonString = StringEscapeUtils.unescapeJson(clientFormResponse.getClientForm().getJson());
+        jsonString = jsonString.substring(1, jsonString.length() - 1); //TODO DO NOT REMOVE this necessary evil; necessary because the unescaped json String still contains " at the beginning and end of the string making it not a valid json string
+
+        clientForm.setJson(jsonString);
         clientForm.setVersion(clientFormResponse.getClientFormMetadata().getVersion());
         clientForm.setLabel(clientFormResponse.getClientFormMetadata().getLabel());
         clientForm.setJurisdiction(clientFormResponse.getClientFormMetadata().getJurisdiction());

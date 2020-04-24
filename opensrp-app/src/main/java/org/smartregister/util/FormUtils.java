@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -1138,8 +1139,7 @@ public class FormUtils {
         try {
             if (clientForm != null) {
                 Timber.d("============%s form loaded from db============", formIdentity);
-                String jsonString = convertStandardJSONString(clientForm.getJson());
-                return new JSONObject(jsonString);
+                return new JSONObject(clientForm.getJson());
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -1148,13 +1148,4 @@ public class FormUtils {
         return getFormJson(formIdentity);
     }
 
-    private String convertStandardJSONString(String data_json) {
-        data_json = data_json.replaceAll("\\\\r\\\\n", "");
-        data_json = data_json.replace("\"{", "{");
-        data_json = data_json.replace("}\",", "},");
-        data_json = data_json.replace("}\"", "}");
-        data_json = data_json.replace("\\n", "");
-        data_json = data_json.replace("\\\"", "\"");
-        return data_json;
-    }
 }
