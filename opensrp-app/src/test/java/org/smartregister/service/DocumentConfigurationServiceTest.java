@@ -99,7 +99,7 @@ public class DocumentConfigurationServiceTest {
 
     @Test
     public void fetchManifest() throws Exception {
-        String jsonObject = "[{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}]";
+        String jsonObject = "[{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}]";
         Mockito.when(httpAgent.fetch("http://opensrp_base_url/rest/manifest/")).thenReturn(
                 new Response<String>(
                         success,
@@ -113,7 +113,7 @@ public class DocumentConfigurationServiceTest {
     }
 
     @Test
-    public void fetchClientForm() throws Exception {
+    public void fetchClientForm() {
         String manifestJson = "{\"identifiers\":[\"referrals/anc_referral_form\"],\"formVersion\":\"0.0.8\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\"}";
         Gson gson = new GsonBuilder().setDateFormat("MMM dd, yyyy, hh:mm:ss aaa").create();
         Manifest activeManifest = gson.fromJson(manifestJson, Manifest.class);
