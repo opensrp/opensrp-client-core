@@ -18,6 +18,7 @@ import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.repository.PlanDefinitionSearchRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
@@ -35,6 +36,7 @@ public class PlanIntentServiceHelper {
 
     private PlanDefinitionRepository planDefinitionRepository;
     private LocationRepository locationRepository;
+    private PlanDefinitionSearchRepository planDefinitionSearchRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
 
@@ -48,15 +50,17 @@ public class PlanIntentServiceHelper {
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
             instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository(),
-                    CoreLibrary.getInstance().context().getLocationRepository());
+                    CoreLibrary.getInstance().context().getLocationRepository(), CoreLibrary.getInstance().context().getPlanDefinitionSearchRepository());
         }
         return instance;
     }
 
-    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository, LocationRepository locationRepository) {
+    private PlanIntentServiceHelper(PlanDefinitionRepository planRepository, LocationRepository locationRepository,
+                                    PlanDefinitionSearchRepository planDefinitionSearchRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
         this.locationRepository = locationRepository;
+        this.planDefinitionSearchRepository = planDefinitionSearchRepository;
     }
 
     public void syncPlans() {
@@ -113,9 +117,22 @@ public class PlanIntentServiceHelper {
 
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
-            throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
+            throw new NoHttpResponseException(PLAN_IDENTIFIERS_URL + " did not return any data");
         }
         return resp.payload().toString();
+    }
+
+    public void updatePlanDefinitionSearch(String jurisdictionId) {
+        try {
+            String identifiersResponse = fetchPlanIdentifiersForCurrentUser();
+            List<String> identifiers =  gson.fromJson(identifiersResponse, new TypeToken<List<String>>() {}.getType());
+
+            for (String identifier : identifiers) {
+                planDefinitionSearchRepository.updateEndDate(jurisdictionId, identifier, LocalDate.now().minusDays(1).toDate().getTime());
+            }
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        }
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {

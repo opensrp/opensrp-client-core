@@ -110,6 +110,16 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
 
     }
 
+    public void updateEndDate(String jurisdictionId, String planIdentifier, Long end) {
+
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(END, end);
+        db.update(PLAN_DEFINITION_SEARCH_TABLE, contentValues, String.format("%s= ? AND %s= ? AND %s = ?",
+                JURISDICTION_ID, PLAN_ID, STATUS), new String[] {jurisdictionId, planIdentifier, ACTIVE});
+        db.close();
+    }
+
     public PlanDefinitionRepository getPlanDefinitionRepository() {
         if (planDefinitionRepository == null) {
             planDefinitionRepository = new PlanDefinitionRepository();

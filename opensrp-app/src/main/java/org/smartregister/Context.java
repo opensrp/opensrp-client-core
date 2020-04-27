@@ -34,6 +34,7 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
+import org.smartregister.repository.PlanDefinitionSearchRepository;
 import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.ServiceProvidedRepository;
 import org.smartregister.repository.SettingsRepository;
@@ -212,6 +213,7 @@ public class Context {
     private LocationRepository locationRepository;
     private StructureRepository structureRepository;
     private PlanDefinitionRepository planDefinitionRepository;
+    private PlanDefinitionSearchRepository planDefinitionSearchRepository;
     private AppProperties appProperties;
     private LocationTagRepository locationTagRepository;
 
@@ -1149,6 +1151,13 @@ public class Context {
             planDefinitionRepository = new PlanDefinitionRepository();
         }
         return planDefinitionRepository;
+    }
+
+    public PlanDefinitionSearchRepository getPlanDefinitionSearchRepository() {
+        if (planDefinitionSearchRepository == null) {
+            planDefinitionSearchRepository = new PlanDefinitionSearchRepository();
+        }
+        return planDefinitionSearchRepository;
     }
 
     public AppProperties getAppProperties() {
