@@ -8,25 +8,38 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.commonregistry.AllCommonsRepository;
+import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.util.ActionBuilder;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AlertServiceTest extends BaseUnitTest {
     @Mock
     private AlertRepository alertRepository;
+
+    @Mock
+    private CommonFtsObject commonFtsObject;
+
+    @Mock
+    private Map<String, AllCommonsRepository> allCommonsRepositoryMap;
 
     private AlertService service;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        service = new AlertService(alertRepository);
+        service = new AlertService(alertRepository, commonFtsObject, allCommonsRepositoryMap);
     }
 
     @Test
@@ -86,8 +99,10 @@ public class AlertServiceTest extends BaseUnitTest {
         service.close(firstAction);
         service.close(secondAction);
 
-        Mockito.verify(alertRepository).markAlertAsClosed("Case X", "ANC 1", "2012-01-01");
-        Mockito.verify(alertRepository).markAlertAsClosed("Case Y", "ANC 2", "2012-01-01");
+        verify(alertRepository).markAlertAsClosed("Case X", "ANC 1", "2012-01-01");
+        verify(alertRepository).markAlertAsClosed("Case Y", "ANC 2", "2012-01-01");
+        verify(alertRepository).findByEntityIdAndAlertNames("Case X", "ANC 1");
+        verify(alertRepository).findByEntityIdAndAlertNames("Case Y", "ANC 2");
         Mockito.verifyNoMoreInteractions(alertRepository);
     }
 
@@ -168,6 +183,41 @@ public class AlertServiceTest extends BaseUnitTest {
     public void testDeleteOfflineAlertsWithNames() {
         service.deleteOfflineAlerts("Entity 1", "AncAlert");
         Mockito.verify(alertRepository).deleteOfflineAlertsForEntity("Entity 1", "AncAlert");
+    }
+
+    @Test
+    public void testUpdateFtsSearchAfterStatusChange() {
+        service = spy(service);
+        Alert alert = new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22");
+        when(service.findByEntityIdAndAlertNames("Entity 1", "AncAlert")).thenReturn(Collections.singletonList(alert));
+        service.updateFtsSearchAfterStatusChange("Entity 1", "AncAlert");
+
+        verify(service).updateFtsSearch(alert, true);
+
+    }
+
+    @Test
+    public void testUpdateFtsSearchInACR() {
+        AllCommonsRepository allCommonsRepository = mock(AllCommonsRepository.class);
+        when(allCommonsRepositoryMap.get("bind 1")).thenReturn(allCommonsRepository);
+        String[] alertFilterVisitCodes = new String[] {"AncFilter"};
+        when(commonFtsObject.getAlertFilterVisitCodes()).thenReturn(alertFilterVisitCodes);
+        service.updateFtsSearchInACR("bind 1", "Entity 1",  "baseEntityId", "id 1");
+
+        verify(allCommonsRepository).updateSearch("Entity 1", "baseEntityId", "id 1", alertFilterVisitCodes);
+    }
+
+    @Test
+    public void testUpdateFtsSearch() {
+        service = spy(service);
+        Alert alert = new Alert("Case X", "Schedule 1", "ANC 1", AlertStatus.normal, "2012-01-01", "2012-01-22");
+        when(commonFtsObject.getAlertBindType("Schedule 1")).thenReturn("AncBindType");
+        when(commonFtsObject.alertUpdateVisitCode("Schedule 1")).thenReturn(true);
+
+        service.updateFtsSearch(alert, false);
+
+        verify(service).updateFtsSearchInACR("AncBindType", "Case X", "Schedule_1", AlertStatus.normal.value());
+        verify(service).updateFtsSearchInACR("AncBindType", "Case X", CommonFtsObject.phraseColumn, "ANC 1");
     }
 
 }

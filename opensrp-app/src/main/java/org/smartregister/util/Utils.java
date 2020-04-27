@@ -31,6 +31,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -363,20 +364,8 @@ public class Utils {
         return Build.VERSION.SDK_INT >= VERSION_CODES.JELLY_BEAN;
     }
 
-    public static String getName(String firstName, String lastName) {
-        firstName = firstName.trim();
-        lastName = lastName.trim();
-        if (StringUtils.isNotBlank(firstName) && StringUtils.isNotBlank(lastName)) {
-            return firstName + " " + lastName;
-        } else {
-            if (StringUtils.isNotBlank(firstName)) {
-                return firstName;
-            } else if (StringUtils.isNotBlank(lastName)) {
-                return lastName;
-            }
-        }
-
-        return "";
+    public static String getName(@NonNull String firstName, @NonNull String lastName) {
+        return (firstName.trim() + " " + lastName.trim()).trim();
     }
 
     public static String readAssetContents(Context context, String path) {

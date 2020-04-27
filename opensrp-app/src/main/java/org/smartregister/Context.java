@@ -23,6 +23,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
+import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
@@ -32,6 +33,7 @@ import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
+import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.MotherRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.repository.ReportRepository;
@@ -214,6 +216,8 @@ public class Context {
     private PlanDefinitionRepository planDefinitionRepository;
     private AppProperties appProperties;
     private LocationTagRepository locationTagRepository;
+    private ManifestRepository manifestRepository;
+    private ClientFormRepository clientFormRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1156,6 +1160,20 @@ public class Context {
             appProperties = Utils.getProperties(this.applicationContext);
         }
         return appProperties;
+    }
+
+    public ManifestRepository getManifestRepository() {
+        if (manifestRepository == null) {
+            manifestRepository = new ManifestRepository();
+        }
+        return manifestRepository;
+    }
+
+    public ClientFormRepository getClientFormRepository() {
+        if (clientFormRepository == null) {
+            clientFormRepository = new ClientFormRepository();
+        }
+        return clientFormRepository;
     }
 
 ///////////////////////////////////////////////////////////////////////////////

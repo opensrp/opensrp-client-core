@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -52,7 +51,6 @@ public class SyncUtilsTest {
         doReturn(settingsRepository).when(opensrpContext).allSettings();
     }
 
-    @Ignore
     @Test
     public void testIsAppVersionAllowedShouldReturnCorrectStatus() throws PackageManager.NameNotFoundException {
         mockStatic(Utils.class);
@@ -77,9 +75,6 @@ public class SyncUtilsTest {
         when(Utils.getVersionCode(any())).thenReturn(3l);
         doReturn(setting).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
         assertTrue(syncUtils.isAppVersionAllowed());
-
-        // when the min version value is already set:
-        doReturn(null).when(settingsRepository).getSetting(eq(MIN_ALLOWED_APP_VERSION_SETTING));
 
         // 1. outdated app
         doReturn("2").when(settingsRepository).get(eq(MIN_ALLOWED_APP_VERSION));
