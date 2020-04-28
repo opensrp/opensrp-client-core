@@ -116,4 +116,8 @@ public abstract class SyncConfiguration {
     public abstract List<String> getSynchronizedLocationTags();
 
     public abstract String getTopAllowedLocationLevel();
+
+    public boolean shouldClearDataOnLogout() {
+        return false;
+    }
 }

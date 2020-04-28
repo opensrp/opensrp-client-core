@@ -19,6 +19,7 @@ import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
+import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.SaveANMLocationTask;
@@ -608,6 +609,17 @@ public class UserService {
 
     public void logoutSession() {
         session().expire();
+
+        SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
+        if (syncConfiguration.shouldClearDataOnLogout()) {
+            logoutUserCompletely();
+        }
+
+        ON_LOGOUT.notifyListeners(true);
+    }
+
+    public void logoutUserCompletely() {
+        (new ResetAppHelper(DrishtiApplication.getInstance())).startResetProcess(null);
         ON_LOGOUT.notifyListeners(true);
     }
 

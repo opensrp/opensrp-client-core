@@ -100,12 +100,6 @@ public abstract class SecuredFragment extends Fragment {
         }
     }
 
-    /**
-     * This is being deprecated since it leaves room for losing production data that is not synced to
-     * the server. @Todo - Finish the documentation on the preferred method to use instead of this for
-     * complete logouts
-     */
-    @Deprecated
     public void logoutUser() {
         context().userService().logout();
         startActivity(new Intent(getActivity(), LoginActivity.class));

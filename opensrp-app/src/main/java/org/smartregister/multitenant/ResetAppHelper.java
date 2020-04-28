@@ -54,20 +54,26 @@ public class ResetAppHelper {
         preResetAppChecks.add(new TaskSyncedCheck());
     }
 
-    public void startResetProcess(@NonNull AppCompatActivity activity) {
+    public void startResetProcess(@Nullable AppCompatActivity activity) {
         resetCancelled = false;
         // Show some UI here to display the reset progress
-        resetAppDialog = ResetAppDialog.newInstance();
-        resetAppDialog.show(activity.getSupportFragmentManager(), "rest-app-dialog");
-        resetAppDialog.setOnCancelListener((dialogInterface) -> {
-            showProgressText(activity.getString(R.string.cancelling));
-            resetCancelled = true;
-        });
 
-        resetAppDialog.showText(activity.getString(R.string.stopping_services));
+        if (activity != null) {
+            resetAppDialog = ResetAppDialog.newInstance();
+            resetAppDialog.show(activity.getSupportFragmentManager(), "rest-app-dialog");
+            resetAppDialog.setOnCancelListener((dialogInterface) -> {
+                showProgressText(activity.getString(R.string.cancelling));
+                resetCancelled = true;
+            });
+
+            resetAppDialog.showText(activity.getString(R.string.stopping_services));
+        }
+
         JobManager.create(application).cancelAll();
 
-        resetAppDialog.showText(activity.getString(R.string.performing_data_checks));
+        if (resetAppDialog != null) {
+            resetAppDialog.showText(activity.getString(R.string.performing_data_checks));
+        }
 
         if (!resetCancelled) {
             performPreResetChecks();
@@ -119,11 +125,7 @@ public class ResetAppHelper {
                         Timber.w("User %s has completely reset the app", application.getUsername());
                         performResetOperations();
                         appExecutors.mainThread()
-                                .execute(() -> {
-                                    // Done here, what should we do
-                                    application.logoutCurrentUser();
-                                    dismissDialog();
-                                });
+                                .execute(this::dismissDialog);
 
                     } catch (PreResetAppOperationException | AppResetException e) {
                         Timber.e(e);
