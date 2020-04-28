@@ -417,5 +417,15 @@ public class UtilsTest extends BaseUnitTest {
         assertEquals(new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(true));
         assertEquals(new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(false));
     }
+
+    @Test
+    public void testGetUserInitialsShouldGetCorrectInitials() {
+        assertEquals("Me", Utils.getUserInitials());
+        Utils.getAllSharedPreferences().updateANMUserName("provider");
+        Utils.getAllSharedPreferences().updateANMPreferredName("provider", "provider name");
+        assertEquals("pn", Utils.getUserInitials());
+        Utils.getAllSharedPreferences().updateANMPreferredName("provider", "provider");
+        assertEquals("p", Utils.getUserInitials());
+    }
 }
 
