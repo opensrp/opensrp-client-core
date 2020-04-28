@@ -183,6 +183,10 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
         Assert.assertEquals(OPENSRP_ID_NO_HYPHENS, capturedIdFilterParam);
 
+        Boolean isQRCodeParam  = qrCodeArgumentCaptor.getValue();
+        Assert.assertNotNull(isQRCodeParam);
+        Assert.assertTrue(isQRCodeParam);
+
     }
 
     @Test
