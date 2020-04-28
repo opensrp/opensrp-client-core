@@ -18,7 +18,6 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
-import org.smartregister.repository.ReportRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.repository.TaskRepository;
 import org.smartregister.repository.UniqueIdRepository;
