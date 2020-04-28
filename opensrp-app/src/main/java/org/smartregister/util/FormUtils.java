@@ -21,9 +21,11 @@ import org.smartregister.clientandeventmodel.FormEntityConverter;
 import org.smartregister.clientandeventmodel.FormField;
 import org.smartregister.clientandeventmodel.FormInstance;
 import org.smartregister.clientandeventmodel.SubFormData;
+import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
+import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
 import org.w3c.dom.Attr;
@@ -1121,4 +1123,28 @@ public class FormUtils {
     private void createNewClientDocument(org.smartregister.cloudant.models.Client client) {
         mCloudantDataHandler.createClientDocument(client);
     }
+
+    public JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = formIdentity;
+        if (!"en".equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+        try {
+            if (clientForm != null) {
+                Timber.d("============%s form loaded from db============", formIdentity);
+                return new JSONObject(clientForm.getJson());
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+        Timber.d("============%s form loaded from Assets=============", formIdentity);
+        return getFormJson(formIdentity);
+    }
+
 }
