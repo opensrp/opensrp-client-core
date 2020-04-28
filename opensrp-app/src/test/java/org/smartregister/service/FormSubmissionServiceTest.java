@@ -35,9 +35,9 @@ public class FormSubmissionServiceTest {
     @Mock
     private FormDataRepository formDataRepository;
     @Mock
-    Map<String, AllCommonsRepository> allCommonsRepositoryMap;
+    private Map<String, AllCommonsRepository> allCommonsRepositoryMap;
     @Mock
-    AllCommonsRepository allCommonsRepository;
+    private AllCommonsRepository allCommonsRepository;
 
     private FormSubmissionService service;
 
@@ -124,7 +124,7 @@ public class FormSubmissionServiceTest {
     }
 
     @Test
-    public void testUpdateFTSSearch() throws Exception {
+    public void testPrivateUpdateFTSSearch() throws Exception {
         service = new FormSubmissionService(ziggyService, formDataRepository, allSettings, allCommonsRepositoryMap);
         when(allCommonsRepositoryMap.isEmpty()).thenReturn(false);
         when(allCommonsRepositoryMap.get("bindtype_1")).thenReturn(allCommonsRepository);
@@ -133,7 +133,7 @@ public class FormSubmissionServiceTest {
     }
 
     @Test
-    public void testUpdateFTSSearchWithEmptyAllC0mmonsrepositoryMap() throws Exception {
+    public void testPrivateUpdateFTSSearchWithEmptyAllC0mmonsrepositoryMap() throws Exception {
         when(allCommonsRepositoryMap.isEmpty()).thenReturn(true);
         when(allCommonsRepositoryMap.get("bindtype_1")).thenReturn(allCommonsRepository);
         Whitebox.invokeMethod(service, "updateFTSsearch", "bindtype_1", "entity_1");
