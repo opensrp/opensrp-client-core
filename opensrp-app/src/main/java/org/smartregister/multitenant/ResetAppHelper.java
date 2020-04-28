@@ -20,6 +20,7 @@ import org.smartregister.multitenant.check.StructureSyncedCheck;
 import org.smartregister.multitenant.check.TaskSyncedCheck;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.executor.CoreLibraryExecutors;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.view.dialog.ResetAppDialog;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.AppDatabase;
@@ -40,14 +41,14 @@ import timber.log.Timber;
 public class ResetAppHelper {
 
     private DrishtiApplication application;
-    private CoreLibraryExecutors coreLibraryExecutors;
+    private AppExecutors appExecutors;
     private ArrayList<PreResetAppCheck> preResetAppChecks = new ArrayList<>();
     private ResetAppDialog resetAppDialog;
     private boolean resetCancelled = false;
 
     public ResetAppHelper(@NonNull DrishtiApplication drishtiApplication) {
         this.application = drishtiApplication;
-        coreLibraryExecutors = new CoreLibraryExecutors();
+        appExecutors = new AppExecutors();
         preResetAppChecks.add(new EventClientSyncedCheck());
         preResetAppChecks.add(new SettingsSyncedCheck());
         preResetAppChecks.add(new StructureSyncedCheck());
@@ -76,7 +77,7 @@ public class ResetAppHelper {
 
     public void performPreResetChecks() {
         // Should be handled in the background
-        coreLibraryExecutors.diskIO()
+        appExecutors.diskIO()
                 .execute(() -> {
                     try {
                         for (PreResetAppCheck preResetAppCheck : preResetAppChecks) {
@@ -88,7 +89,7 @@ public class ResetAppHelper {
 
                                 if (!NetworkUtils.isNetworkAvailable()) {
                                     dismissDialog();
-                                    coreLibraryExecutors.mainThread().execute(new Runnable() {
+                                    appExecutors.mainThread().execute(new Runnable() {
                                         @Override
                                         public void run() {
                                             Toast.makeText(application, "No Internet Connection Available", Toast.LENGTH_LONG)
@@ -116,9 +117,9 @@ public class ResetAppHelper {
                             return;
                         }
 
-                        Timber.e("User %s has completely reset the app", application.getUsername());
+                        Timber.w("User %s has completely reset the app", application.getUsername());
                         performResetOperations();
-                        coreLibraryExecutors.mainThread()
+                        appExecutors.mainThread()
                                 .execute(() -> {
                                     // Done here, what should we do
                                     application.logoutCurrentUser();
@@ -220,7 +221,7 @@ public class ResetAppHelper {
             return;
         }
 
-        coreLibraryExecutors.mainThread()
+        appExecutors.mainThread()
                 .execute(() -> {
                     if (resetAppDialog != null) {
                         resetAppDialog.showText(progressText);

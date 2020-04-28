@@ -103,7 +103,6 @@ import static org.smartregister.util.Log.logError;
  * Class containing some static utility methods.
  */
 public class Utils {
-    private static final String TAG = "Utils";
     private static final SimpleDateFormat UI_DF = new SimpleDateFormat("dd-MM-yyyy", Utils.getDefaultLocale());
     private static final SimpleDateFormat UI_DTF = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Utils.getDefaultLocale());
 
@@ -795,8 +794,9 @@ public class Utils {
     }
 
     public static boolean deleteRoomDb(@NonNull Context context, @NonNull String databaseName) {
-        File databases = new File(context.getApplicationInfo().dataDir + "/databases");
-        File db = new File(databases, databaseName);
+        boolean operationSuccessful;
+        File databasesFolder = new File(context.getApplicationInfo().dataDir + "/databases");
+        File db = new File(databasesFolder, databaseName);
         if (!db.exists()) {
             Timber.i("Room database %s does not exist", databaseName);
             return false;
@@ -810,18 +810,32 @@ public class Utils {
         }
 
         // Delete the journal file
-        File journal = new File(databases, databaseName + "-journal");
-        if (journal.exists()) {
-            if (journal.delete()) {
-                Timber.i("Database %s journal deleted", databaseName);
+        operationSuccessful = deleteDbJournal(databasesFolder, databaseName);
+
+        // Delete the db shm & wal file
+        return operationSuccessful && deleteDbTemporaryFiles(databaseName, databasesFolder);
+    }
+
+    /**
+     * Deletes the wal & shm temporary files for a DB
+     *
+     * @param databaseName
+     * @param databasesFolder
+     * @return
+     */
+    protected static boolean deleteDbTemporaryFiles(@NonNull String databaseName, File databasesFolder) {
+        boolean operationSuccessful = true;
+        File walFile = new File(databasesFolder, databaseName + "-wal");
+        if (walFile.exists()) {
+            if (walFile.delete()) {
+                Timber.i("Database %s-wal deleted", databaseName);
             } else {
-                Timber.e("Failed to delete database %s journal", databaseName);
-                return false;
+                Timber.e("Failed to delete database %s-wal", databaseName);
+                operationSuccessful = false;
             }
         }
 
-        // Delete the journal shm file
-        File shmFile = new File(databases, databaseName + "-shm");
+        File shmFile = new File(databasesFolder, databaseName + "-shm");
         if (shmFile.exists()) {
             if (shmFile.delete()) {
                 Timber.i("Database %s-shm deleted", databaseName);
@@ -831,14 +845,16 @@ public class Utils {
             }
         }
 
+        return operationSuccessful;
+    }
 
-        // Delete the journal wal file
-        File walFile = new File(databases, databaseName + "-wal");
-        if (walFile.exists()) {
-            if (walFile.delete()) {
-                Timber.i("Database %s-wal deleted", databaseName);
+    protected static boolean deleteDbJournal(File databases, @NonNull String databaseName) {
+        File journal = new File(databases, databaseName + "-journal");
+        if (journal.exists()) {
+            if (journal.delete()) {
+                Timber.i("Database %s journal deleted", databaseName);
             } else {
-                Timber.e("Failed to delete database %s-wal", databaseName);
+                Timber.e("Failed to delete database %s journal", databaseName);
                 return false;
             }
         }

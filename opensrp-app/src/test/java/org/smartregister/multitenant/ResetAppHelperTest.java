@@ -26,6 +26,7 @@ import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.repository.Repository;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowAppDatabase;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.mock.ReportsActivityMock;
 
@@ -71,10 +72,10 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
     @Test
     public void performPreResetChecksShouldPerformChecksOnAllComponents() throws PreResetAppOperationException {
-        CoreLibraryExecutors coreLibraryExecutors = ReflectionHelpers.getField(resetAppHelper, "coreLibraryExecutors");
-        Executor diskIoExceutor = Mockito.spy((Executor) ReflectionHelpers.getField(coreLibraryExecutors, "diskIO"));
-        Executor networkIoExceutor = Mockito.spy((Executor) ReflectionHelpers.getField(coreLibraryExecutors, "networkIO"));
-        Executor mainThreadExceutor = Mockito.spy((Executor) ReflectionHelpers.getField(coreLibraryExecutors, "mainThread"));
+        AppExecutors appExecutors = ReflectionHelpers.getField(resetAppHelper, "appExecutors");
+        Executor diskIoExceutor = Mockito.spy((Executor) ReflectionHelpers.getField(appExecutors, "diskIO"));
+        Executor networkIoExceutor = Mockito.spy((Executor) ReflectionHelpers.getField(appExecutors, "networkIO"));
+        Executor mainThreadExceutor = Mockito.spy((Executor) ReflectionHelpers.getField(appExecutors, "mainThread"));
 
         Mockito.doAnswer(invocation -> {
             Runnable runnable = invocation.getArgument(0);
@@ -94,9 +95,9 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
             return null;
         }).when(mainThreadExceutor).execute(Mockito.any(Runnable.class));
 
-        ReflectionHelpers.setField(coreLibraryExecutors, "diskIO", diskIoExceutor);
-        ReflectionHelpers.setField(coreLibraryExecutors, "networkIO", networkIoExceutor);
-        ReflectionHelpers.setField(coreLibraryExecutors, "mainThread", mainThreadExceutor);
+        ReflectionHelpers.setField(appExecutors, "diskIO", diskIoExceutor);
+        ReflectionHelpers.setField(appExecutors, "networkIO", networkIoExceutor);
+        ReflectionHelpers.setField(appExecutors, "mainThread", mainThreadExceutor);
 
         ArrayList<PreResetAppCheck> preResetAppChecks = ReflectionHelpers.getField(resetAppHelper, "preResetAppChecks");
         ArrayList<PreResetAppCheck> mockedPreResetAppChecks = new ArrayList<>();
