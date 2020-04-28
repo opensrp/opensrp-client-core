@@ -3,7 +3,6 @@ package org.smartregister.multitenant;
 import android.arch.persistence.db.SupportSQLiteOpenHelper;
 import android.content.SharedPreferences;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -44,13 +43,10 @@ import static org.junit.Assert.assertTrue;
 public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
     private ResetAppHelper resetAppHelper;
-    private DrishtiApplication drishtiApplication;
 
     @Before
     public void setUp() throws Exception {
-        drishtiApplication = Mockito.spy(DrishtiApplication.getInstance());
-        ReflectionHelpers.setStaticField(DrishtiApplication.class, "mInstance", drishtiApplication);
-        resetAppHelper = Mockito.spy(new ResetAppHelper(drishtiApplication));
+        resetAppHelper = Mockito.spy(new ResetAppHelper(DrishtiApplication.getInstance()));
     }
 
     @Test
@@ -117,7 +113,6 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
             Mockito.verify(preResetAppCheck).isCheckOk(Mockito.eq(DrishtiApplication.getInstance()));
         }
 
-        Mockito.verify(drishtiApplication).logoutCurrentUser();
         Mockito.verify(resetAppHelper).dismissDialog();
     }
 
