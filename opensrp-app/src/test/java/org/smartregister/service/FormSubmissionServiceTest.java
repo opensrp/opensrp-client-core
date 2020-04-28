@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
@@ -140,8 +141,8 @@ public class FormSubmissionServiceTest {
     @Test
     public void testPrivateUpdateFTSSearchWithEmptyAllC0mmonsrepositoryMap() throws Exception {
         when(allCommonsRepositoryMap.isEmpty()).thenReturn(true);
-        when(allCommonsRepositoryMap.get("bindtype_1")).thenReturn(allCommonsRepository);
-        Whitebox.invokeMethod(service, "updateFTSsearch", "bindtype_1", "entity_1");
+        Object ftsSearchUpdated = Whitebox.invokeMethod(service, "updateFTSsearch", "bindtype_1", "entity_1");
+        assertFalse((Boolean) ftsSearchUpdated);
         verify(allCommonsRepository, times(0)).updateSearch("entity_1");
     }
 
