@@ -8,6 +8,8 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
+import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.repository.AllSettings;
@@ -17,6 +19,13 @@ import org.smartregister.util.FormSubmissionBuilder;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class FormSubmissionServiceTest {
     @Mock
@@ -25,6 +34,10 @@ public class FormSubmissionServiceTest {
     private AllSettings allSettings;
     @Mock
     private FormDataRepository formDataRepository;
+    @Mock
+    Map<String, AllCommonsRepository> allCommonsRepositoryMap;
+    @Mock
+    AllCommonsRepository allCommonsRepository;
 
     private FormSubmissionService service;
 
@@ -95,5 +108,35 @@ public class FormSubmissionServiceTest {
         inOrder.verify(ziggyService).saveForm(paramsForSecondSubmission, "{}");
         inOrder.verify(formDataRepository).updateServerVersion("instance id 2", "1");
         inOrder.verify(allSettings).savePreviousFormSyncIndex("1");
+    }
+
+    @Test
+    public void testConstructor() {
+        service = null;
+        assertNull(service);
+        service = new FormSubmissionService(ziggyService, formDataRepository, allSettings, allCommonsRepositoryMap);
+        assertNotNull(service);
+        assertNotNull(Whitebox.getInternalState(service, "ziggyService"));
+        assertNotNull(Whitebox.getInternalState(service, "formDataRepository"));
+        assertNotNull(Whitebox.getInternalState(service, "allSettings"));
+        assertNotNull(Whitebox.getInternalState(service, "allCommonsRepositoryMap"));
+
+    }
+
+    @Test
+    public void testUpdateFTSSearch() throws Exception {
+        service = new FormSubmissionService(ziggyService, formDataRepository, allSettings, allCommonsRepositoryMap);
+        when(allCommonsRepositoryMap.isEmpty()).thenReturn(false);
+        when(allCommonsRepositoryMap.get("bindtype_1")).thenReturn(allCommonsRepository);
+        Whitebox.invokeMethod(service, "updateFTSsearch", "bindtype_1", "entity_1");
+        verify(allCommonsRepository).updateSearch("entity_1");
+    }
+
+    @Test
+    public void testUpdateFTSSearchWithEmptyAllC0mmonsrepositoryMap() throws Exception {
+        when(allCommonsRepositoryMap.isEmpty()).thenReturn(true);
+        when(allCommonsRepositoryMap.get("bindtype_1")).thenReturn(allCommonsRepository);
+        Whitebox.invokeMethod(service, "updateFTSsearch", "bindtype_1", "entity_1");
+        verify(allCommonsRepository, times(0)).updateSearch("entity_1");
     }
 }
