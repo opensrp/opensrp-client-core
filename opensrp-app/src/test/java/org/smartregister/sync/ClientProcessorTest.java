@@ -4,12 +4,11 @@ import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +24,7 @@ import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.TestSyncConfiguration;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.sync.mock.MockEditor;
@@ -64,17 +64,13 @@ public class ClientProcessorTest extends BaseUnitTest {
     private CommonRepository cr;
     @Mock
     private SharedPreferences sharedPreferences;
-    private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
 
-    //    private ActivityController<MockActivity> controller;
-//    private MockActivity activity;
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        CoreLibrary.init(context);
+        CoreLibrary.init(context, new TestSyncConfiguration());
         Mockito.when(context.detailsRepository()).thenReturn(detailsRepository);
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+
         PowerMockito.when(coreLibrary.context()).thenReturn(context);
         PowerMockito.when(context.commonrepository(Mockito.anyString())).thenReturn(cr);
         PowerMockito.when(cr.executeInsertStatement(Mockito.any(ContentValues.class), Mockito.anyString())).thenReturn(1l);
@@ -186,7 +182,6 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     }
 
-    @Ignore
     @Test
     public void updateClientDetailsTableCallsSaveClientDetails() throws Exception {
         clientProcessor = new ClientProcessor(context.applicationContext());
@@ -203,10 +198,8 @@ public class ClientProcessorTest extends BaseUnitTest {
         ClientProcessor clientProcessorspy = Mockito.spy(clientProcessor);
         clientProcessorspy.updateClientDetailsTable(eventList.get(0), clientList.get(0));
         Mockito.verify(clientProcessorspy, Mockito.atLeastOnce()).saveClientDetails(anyString(), ArgumentMatchers.<String, String>anyMap(), anyLong());
-
     }
 
-    @Ignore
     @Test
     public void processCaseModelReturnsNotNUll() throws Exception {
         clientProcessor = new ClientProcessor(context.applicationContext());
@@ -220,7 +213,7 @@ public class ClientProcessorTest extends BaseUnitTest {
         for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
-//        ClientProcessor clientProcessorspy = Mockito.spy(clientProcessor);
+
         JSONObject clientClassification = new JSONObject(ClientData.clientClassificationJson);
         JSONArray clientClassificationArray = clientClassification.getJSONArray("case_classification_rules");
         JSONObject clientClassificationRulesObject = clientClassificationArray.getJSONObject(0);

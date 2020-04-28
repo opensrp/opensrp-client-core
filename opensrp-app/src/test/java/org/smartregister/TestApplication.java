@@ -15,7 +15,7 @@ public class TestApplication extends DrishtiApplication {
         mInstance = this;
         context = Context.getInstance();
         context.updateApplicationContext(getApplicationContext());
-        CoreLibrary.init(context);
+        CoreLibrary.init(context, null, 1588062490000l);
 
         setTheme(R.style.Theme_AppCompat); //or just R.style.Theme_AppCompat
     }
