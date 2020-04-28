@@ -16,7 +16,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.exception.PreResetAppOperationException;
-import org.smartregister.executor.CoreLibraryExecutors;
 import org.smartregister.multitenant.check.PreResetAppCheck;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
@@ -113,7 +112,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
         resetAppHelper.performPreResetChecks();
 
-        Assert.assertEquals(4, preResetAppChecks.size());
+        assertEquals(4, preResetAppChecks.size());
         for (PreResetAppCheck preResetAppCheck: mockedPreResetAppChecks) {
             Mockito.verify(preResetAppCheck).isCheckOk(Mockito.eq(DrishtiApplication.getInstance()));
         }
@@ -209,9 +208,5 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
         assertNull(resetAppHelper.removePreResetAppCheck(appCheckName));
         assertTrue(resetAppHelper.addPreResetAppCheck(appCheck));
         assertEquals(appCheck, resetAppHelper.removePreResetAppCheck(appCheckName));
-    }
-
-    @Test
-    public void showProgressText() {
     }
 }

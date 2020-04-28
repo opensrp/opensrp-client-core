@@ -17,7 +17,6 @@ import timber.log.Timber;
 public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroadcastReceiver.SyncStatusListener {
 
     public static final String UNIQUE_NAME = "EventClientSyncedCheck";
-    private SyncStatusBroadcastReceiver syncStatusBroadcastReceiver;
 
     @WorkerThread
     @Override
@@ -29,7 +28,7 @@ public class EventClientSyncedCheck implements PreResetAppCheck, SyncStatusBroad
     @Override
     public void performPreResetAppOperations(@NonNull DrishtiApplication application) throws PreResetAppOperationException {
         SyncStatusBroadcastReceiver.init(application.getBaseContext());
-        syncStatusBroadcastReceiver = SyncStatusBroadcastReceiver.getInstance();
+        SyncStatusBroadcastReceiver syncStatusBroadcastReceiver = SyncStatusBroadcastReceiver.getInstance();
         syncStatusBroadcastReceiver.addSyncStatusListener(this);
 
         EventClientSync syncIntentService = new EventClientSync(application);
