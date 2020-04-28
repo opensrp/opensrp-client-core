@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
@@ -40,6 +41,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.smartregister.TestUtils.getContext;
+import static org.smartregister.util.Utils.getDefaultLocale;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -403,10 +405,17 @@ public class UtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetPrefferedNameShouldGetCorrectPrefferedName() {
+    public void testGetPrefferedNameShouldGetCorrectPreferredName() {
         Utils.getAllSharedPreferences().updateANMUserName("provider");
         Utils.getAllSharedPreferences().updateANMPreferredName("provider", "prov");
         assertEquals("prov", Utils.getPrefferedName());
+    }
+
+    @Test
+    public void testGetBuildDateShouldGetCorrectBuildDate() {
+        Date date = new Date(CoreLibrary.getBuildTimeStamp());
+        assertEquals(new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(true));
+        assertEquals(new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(false));
     }
 }
 
