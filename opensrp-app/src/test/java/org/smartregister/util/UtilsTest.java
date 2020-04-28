@@ -8,11 +8,14 @@ import android.widget.TableRow;
 import com.google.common.collect.ImmutableMap;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.Years;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
@@ -27,6 +30,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,8 +38,10 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.smartregister.TestUtils.getContext;
+import static org.smartregister.util.Utils.getDefaultLocale;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
@@ -324,7 +330,7 @@ public class UtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetUserDefaultTeamIdShoulGetCorrectTeamId() {
+    public void testGetUserDefaultTeamIdShouldGetCorrectTeamId() {
         LoginResponseData loginResponseData = getLoginResponseData();
         assertEquals(loginResponseData.team.team.uuid, Utils.getUserDefaultTeamId(loginResponseData));
     }
@@ -374,6 +380,52 @@ public class UtilsTest extends BaseUnitTest {
         loginResponseData.user = user;
 
         return loginResponseData;
+    }
+
+    @Test
+    public void testGetAgeFromDateShouldGetCorrectAge() {
+        String date = "2000-12-12";
+        DateTime dateTime = DateTime.parse(date);
+        assertEquals(Utils.getAgeFromDate(date), Years.yearsBetween(dateTime.toLocalDate(), LocalDate.now()).getYears());
+    }
+
+    @Test
+    public void testGetDobShouldGetCorrectDob() {
+        int age = 10;
+        String datePattern = "YYYY-MM-dd";
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -age);
+        assertEquals(cal.getWeekYear() + "-" + "01" + "-" + "01", Utils.getDob(age, datePattern));
+        assertEquals("01" + "-" + "01" + "-" +  cal.getWeekYear(), Utils.getDob(age));
+    }
+
+    @Test
+    public void testGetAllSharedPreferencesShouldGetPreferences() {
+        assertNotNull(Utils.getAllSharedPreferences());
+    }
+
+    @Test
+    public void testGetPrefferedNameShouldGetCorrectPreferredName() {
+        Utils.getAllSharedPreferences().updateANMUserName("provider");
+        Utils.getAllSharedPreferences().updateANMPreferredName("provider", "prov");
+        assertEquals("prov", Utils.getPrefferedName());
+    }
+
+    @Test
+    public void testGetBuildDateShouldGetCorrectBuildDate() {
+        Date date = new Date(CoreLibrary.getBuildTimeStamp());
+        assertEquals(new SimpleDateFormat("dd MMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(true));
+        assertEquals(new SimpleDateFormat("dd MMMM yyyy", getDefaultLocale()).format(date), Utils.getBuildDate(false));
+    }
+
+    @Test
+    public void testGetUserInitialsShouldGetCorrectInitials() {
+        assertEquals("Me", Utils.getUserInitials());
+        Utils.getAllSharedPreferences().updateANMUserName("provider");
+        Utils.getAllSharedPreferences().updateANMPreferredName("provider", "provider name");
+        assertEquals("pn", Utils.getUserInitials());
+        Utils.getAllSharedPreferences().updateANMPreferredName("provider", "provider");
+        assertEquals("p", Utils.getUserInitials());
     }
 }
 
