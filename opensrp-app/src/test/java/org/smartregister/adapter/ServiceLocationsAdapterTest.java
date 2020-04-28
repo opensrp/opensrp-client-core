@@ -42,9 +42,6 @@ public class ServiceLocationsAdapterTest extends BaseUnitTest {
     private TextView textView;
 
     @Mock
-    private LocationHelper locationHelperInstance;
-
-    @Mock
     private ImageView imageView;
 
     @Mock
