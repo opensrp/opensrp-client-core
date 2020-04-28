@@ -19,7 +19,7 @@ import org.smartregister.location.helper.LocationHelper;
 
 import java.util.ArrayList;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 public class ServiceLocationsAdapterTest extends BaseUnitTest {
@@ -46,6 +46,9 @@ public class ServiceLocationsAdapterTest extends BaseUnitTest {
 
     @Mock
     private ImageView imageView;
+
+    @Mock
+    private LocationHelper locationHelper;
 
     @Before
     public void setUp() throws Exception {
@@ -92,8 +95,15 @@ public class ServiceLocationsAdapterTest extends BaseUnitTest {
         when(applicationContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).thenReturn(layoutInflater);
         Mockito.doReturn(linearLayout).when(layoutInflater).inflate(R.layout.location_picker_dropdown_item, null);
 
-        LocationHelper locationHelper = new LocationHelper(locationHelperInstance);
-        when(locationHelper.getInstance().getOpenMrsReadableName(any(String.class))).thenReturn("three");
+        ArrayList<String> ALLOWED_LEVELS;
+        String DEFAULT_LOCATION_LEVEL = "Health Facility";
+        String SCHOOL = "School";
+        ALLOWED_LEVELS = new ArrayList<>();
+        ALLOWED_LEVELS.add(DEFAULT_LOCATION_LEVEL);
+        ALLOWED_LEVELS.add(SCHOOL);
+
+        LocationHelper.init(ALLOWED_LEVELS, "Health Facility");
+        when(locationHelper.getOpenMrsReadableName(anyString())).thenReturn("three");
 
         Mockito.doReturn(textView).when(linearLayout).findViewById(android.R.id.text1);
         Mockito.doReturn(imageView).when(linearLayout).findViewById(R.id.checkbox);

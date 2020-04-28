@@ -1,6 +1,5 @@
 package org.smartregister.location.helper;
 
-import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -56,11 +55,6 @@ public class LocationHelper {
         setParentAndChildLocationIds(getDefaultLocation());
         this.ALLOWED_LEVELS = allowedLevels;
         this.DEFAULT_LOCATION_LEVEL = defaultLocationLevel;
-    }
-
-    @VisibleForTesting
-    public LocationHelper(LocationHelper locationHelper) {
-        instance = locationHelper;
     }
 
     public static void init(ArrayList<String> allowedLevels, String defaultLocationLevel) {
