@@ -162,4 +162,23 @@ public class FormSubmissionServiceTest {
         verify(allCommonsRepository).updateSearch("formid1");
 
     }
+
+    @Test
+    public void testUpdateFTSSearchForInnerBindType() {
+        service = spy(service);
+        Whitebox.setInternalState(service, "allCommonsRepositoryMap", allCommonsRepositoryMap);
+        when(allCommonsRepositoryMap.get("innerBindType")).thenReturn(allCommonsRepository);
+        FormSubmission formSubmission = mock(FormSubmission.class);
+        FormData form = mock(FormData.class);
+        when(formSubmission.getForm()).thenReturn(form);
+        when(form.getBind_type()).thenReturn("bindtype1");
+        FormField field = new FormField("baseEntityid", "formid1", "innerBindType.id");
+        List<FormField> fields = Collections.singletonList(field);
+        when(form.fields()).thenReturn(fields);
+
+        service.updateFTSsearch(formSubmission);
+        verify(allCommonsRepository).updateSearch("formid1");
+
+    }
+
 }
