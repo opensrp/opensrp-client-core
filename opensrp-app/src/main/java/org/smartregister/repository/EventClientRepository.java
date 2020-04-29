@@ -880,6 +880,34 @@ public class EventClientRepository extends BaseRepository {
         return result;
     }
 
+    public int getUnSyncedEventsCount() {
+        int count = 0;
+        String query = "SELECT count("
+                + event_column.json
+                + ") FROM "
+                + Table.event.name()
+                + " WHERE "
+                + event_column.syncStatus
+                + " IN (?, ?)  AND length("
+                + event_column.json
+                + ")>2";
+        Cursor cursor = null;
+        try {
+            cursor = getReadableDatabase().rawQuery(query, new String[]{BaseRepository.TYPE_Unsynced, BaseRepository.TYPE_Unprocessed});
+            if (cursor.moveToNext()) {
+                count = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+            return -1;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+
+        return count;
+    }
 
     public List<String> getUnValidatedEventFormSubmissionIds(int limit) {
         List<String> ids = new ArrayList<>();

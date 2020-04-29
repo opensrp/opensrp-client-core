@@ -1,6 +1,9 @@
 package org.smartregister.view.contract;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 
 import java.lang.ref.WeakReference;
 
@@ -50,7 +53,12 @@ public interface BaseLoginContract {
 
         Activity getActivityContext();
 
+        @NonNull
+        AppCompatActivity getAppCompatActivity();
+
         boolean isAppVersionAllowed();
+
+        void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener);
     }
 
     interface Interactor {

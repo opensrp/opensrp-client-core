@@ -112,4 +112,8 @@ public class AllSettings {
         return settingsRepository.queryUnsyncedSettings();
     }
 
+    public int getUnsyncedSettingsCount() {
+        return settingsRepository.queryUnsyncedSettingsCount();
+    }
+
 }

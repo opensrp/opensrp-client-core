@@ -8,7 +8,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
+import android.support.v7.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -242,6 +244,11 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     @Override
+    public AppCompatActivity getAppCompatActivity() {
+        return this;
+    }
+
+    @Override
     public void updateProgressMessage(String message) {
         progressDialog.setTitle(message);
     }
@@ -266,5 +273,18 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
             Timber.e(e);
         }
         return  isAppVersionAllowed;
+    }
+
+    @Override
+    public void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener) {
+        String username = DrishtiApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
+        String teamName = DrishtiApplication.getInstance().getContext().allSharedPreferences().fetchDefaultTeam(username);
+        new android.support.v7.app.AlertDialog.Builder(this)
+                .setTitle(R.string.clear_data_dialog_title)
+                .setMessage(String.format(getString(R.string.clear_data_dialog_message), username, teamName))
+                .setPositiveButton(R.string.ok, onClickListener)
+                .setNegativeButton(android.R.string.cancel, onClickListener)
+                .setCancelable(false)
+                .show();
     }
 }

@@ -194,10 +194,12 @@ public class Repository extends SQLiteOpenHelper {
         return DrishtiApplication.getInstance().getPassword();
     }
 
-    public void deleteRepository() {
+    public boolean deleteRepository() {
         close();
-        context.deleteDatabase(dbName);
-        context.getDatabasePath(dbName).delete();
+        boolean deleteTry1 = context.deleteDatabase(dbName);
+        boolean deleteTry2 = context.getDatabasePath(dbName).delete();
+
+        return deleteTry1 || deleteTry2;
     }
 
 }

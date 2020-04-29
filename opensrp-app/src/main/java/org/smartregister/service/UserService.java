@@ -21,7 +21,6 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
@@ -366,7 +365,7 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+         String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
                 ? userInfo.user.getUsername() : userName;
         boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));
@@ -745,5 +744,9 @@ public class UserService {
         byte[] vals = outputStream.toByteArray();
 
         return Base64.encodeToString(vals, Base64.DEFAULT);
+    }
+
+    public KeyStore getKeyStore() {
+        return keyStore;
     }
 }
