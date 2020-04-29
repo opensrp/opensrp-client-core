@@ -15,6 +15,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.exception.PreResetAppOperationException;
+import org.smartregister.listener.OnCompleteClearDataCallback;
 import org.smartregister.multitenant.check.PreResetAppCheck;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.authorizer.P2PAuthorizationService;
@@ -61,8 +62,8 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
                 .visible()
                 .get();
 
-        resetAppHelper.startResetProcess(formActivity);
-        Mockito.verify(resetAppHelper).performPreResetChecksAndResetProcess();
+        resetAppHelper.startResetProcess(formActivity, null);
+        Mockito.verify(resetAppHelper).performPreResetChecksAndResetProcess(Mockito.nullable(OnCompleteClearDataCallback.class));
     }
 
     @Test
@@ -106,7 +107,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
         ReflectionHelpers.setField(resetAppHelper, "preResetAppChecks", mockedPreResetAppChecks);
 
-        resetAppHelper.performPreResetChecksAndResetProcess();
+        resetAppHelper.performPreResetChecksAndResetProcess(null);
 
         assertEquals(4, preResetAppChecks.size());
         for (PreResetAppCheck preResetAppCheck: mockedPreResetAppChecks) {
