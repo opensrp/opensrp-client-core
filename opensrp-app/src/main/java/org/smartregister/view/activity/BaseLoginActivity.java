@@ -277,9 +277,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener) {
-        android.support.v7.app.AlertDialog alertDialog = new android.support.v7.app.AlertDialog.Builder(this)
-                .setTitle("Do you want to clear data to login with a different team/location")
-                .setMessage("You are trying to login with a user in a different team/location. This will require as to upload any pending data and clear the data for the current user. Do you want to continue?")
+        new android.support.v7.app.AlertDialog.Builder(this)
+                .setTitle(R.string.clear_data_dialog_title)
+                .setMessage(R.string.clear_data_dialog_message)
                 .setPositiveButton(R.string.ok, onClickListener)
                 .setNegativeButton(android.R.string.cancel, onClickListener)
                 .setCancelable(false)
