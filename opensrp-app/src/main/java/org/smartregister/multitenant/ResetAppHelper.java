@@ -14,6 +14,7 @@ import org.smartregister.P2POptions;
 import org.smartregister.R;
 import org.smartregister.exception.AppResetException;
 import org.smartregister.exception.PreResetAppOperationException;
+import org.smartregister.listener.OnCompleteClearDataCallback;
 import org.smartregister.multitenant.check.EventClientSyncedCheck;
 import org.smartregister.multitenant.check.PreResetAppCheck;
 import org.smartregister.multitenant.check.SettingsSyncedCheck;
@@ -44,6 +45,7 @@ public class ResetAppHelper {
     private ArrayList<PreResetAppCheck> preResetAppChecks = new ArrayList<>();
     private ResetAppDialog resetAppDialog;
     private boolean resetCancelled = false;
+    private OnCompleteClearDataCallback onCompleteClearDataCallback;
 
     public ResetAppHelper(@NonNull DrishtiApplication drishtiApplication) {
         this.application = drishtiApplication;
@@ -54,7 +56,8 @@ public class ResetAppHelper {
         preResetAppChecks.add(new TaskSyncedCheck());
     }
 
-    public void startResetProcess(@Nullable AppCompatActivity activity) {
+    public void startResetProcess(@Nullable AppCompatActivity activity, @Nullable OnCompleteClearDataCallback onCompleteClearDataCallback) {
+
         resetCancelled = false;
         // Show some UI here to display the reset progress
 
@@ -76,11 +79,11 @@ public class ResetAppHelper {
         }
 
         if (!resetCancelled) {
-            performPreResetChecks();
+            performPreResetChecksAndResetProcess(onCompleteClearDataCallback);
         }
     }
 
-    public void performPreResetChecks() {
+    public void performPreResetChecksAndResetProcess(@Nullable OnCompleteClearDataCallback onCompleteClearDataCallback) {
         // Should be handled in the background
         appExecutors.diskIO()
                 .execute(() -> {
@@ -125,7 +128,16 @@ public class ResetAppHelper {
                         Timber.w("User %s has completely reset the app", application.getUsername());
                         performResetOperations();
                         appExecutors.mainThread()
-                                .execute(this::dismissDialog);
+                                .execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dismissDialog();
+
+                                        if (onCompleteClearDataCallback != null) {
+                                            onCompleteClearDataCallback.onComplete();
+                                        }
+                                    }
+                                });
 
                     } catch (PreResetAppOperationException | AppResetException e) {
                         Timber.e(e);

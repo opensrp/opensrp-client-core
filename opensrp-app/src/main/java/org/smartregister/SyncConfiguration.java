@@ -117,7 +117,7 @@ public abstract class SyncConfiguration {
 
     public abstract String getTopAllowedLocationLevel();
 
-    public boolean shouldClearDataOnLogout() {
+    public boolean clearDataOnNewTeamLogin() {
         return false;
     }
 }

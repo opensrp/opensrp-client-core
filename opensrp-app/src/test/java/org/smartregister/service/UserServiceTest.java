@@ -195,7 +195,7 @@ public class UserServiceTest extends BaseUnitTest {
     @Test
     public void shouldDeleteDataAndSettingsWhenLogoutHappens() throws Exception {
         SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
-        Mockito.doReturn(false).when(syncConfiguration).shouldClearDataOnLogout();
+        Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
 
         userService.logout();

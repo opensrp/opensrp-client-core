@@ -62,7 +62,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
                 .get();
 
         resetAppHelper.startResetProcess(formActivity);
-        Mockito.verify(resetAppHelper).performPreResetChecks();
+        Mockito.verify(resetAppHelper).performPreResetChecksAndResetProcess();
     }
 
     @Test
@@ -106,7 +106,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
         ReflectionHelpers.setField(resetAppHelper, "preResetAppChecks", mockedPreResetAppChecks);
 
-        resetAppHelper.performPreResetChecks();
+        resetAppHelper.performPreResetChecksAndResetProcess();
 
         assertEquals(4, preResetAppChecks.size());
         for (PreResetAppCheck preResetAppCheck: mockedPreResetAppChecks) {

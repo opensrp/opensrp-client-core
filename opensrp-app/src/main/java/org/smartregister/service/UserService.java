@@ -609,17 +609,6 @@ public class UserService {
 
     public void logoutSession() {
         session().expire();
-
-        SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
-        if (syncConfiguration.shouldClearDataOnLogout()) {
-            logoutUserCompletely();
-        }
-
-        ON_LOGOUT.notifyListeners(true);
-    }
-
-    public void logoutUserCompletely() {
-        (new ResetAppHelper(DrishtiApplication.getInstance())).startResetProcess(null);
         ON_LOGOUT.notifyListeners(true);
     }
 

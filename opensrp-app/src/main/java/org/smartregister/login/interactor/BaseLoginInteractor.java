@@ -1,6 +1,8 @@
 package org.smartregister.login.interactor;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
@@ -16,9 +18,10 @@ import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
 import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
-import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
+import org.smartregister.listener.OnCompleteClearDataCallback;
 import org.smartregister.login.task.RemoteLoginTask;
+import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
@@ -146,8 +149,28 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                     }
                                 }
                             } else {
-                                // Valid user from wrong group trying to log in
-                                getLoginView().showErrorDialog(getApplicationContext().getString(R.string.unauthorized_group));
+
+                                if (CoreLibrary.getInstance().getSyncConfiguration().clearDataOnNewTeamLogin()) {
+                                    getLoginView().showClearDataDialog(new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                                ResetAppHelper resetAppHelper = new ResetAppHelper(DrishtiApplication.getInstance());
+                                                resetAppHelper.startResetProcess(getLoginView().getAppCompatActivity(), new OnCompleteClearDataCallback() {
+                                                    @Override
+                                                    public void onComplete() {
+                                                        login(new WeakReference<>(getLoginView()), userName, password);
+                                                    }
+                                                });
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    // Valid user from wrong group trying to log in
+                                    getLoginView().showErrorDialog(getApplicationContext().getString(R.string.unauthorized_group));
+                                }
+
                             }
                         } else {
                             if (loginResponse == null) {
