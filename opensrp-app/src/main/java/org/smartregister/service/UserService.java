@@ -19,7 +19,6 @@ import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
-import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sync.SaveANMLocationTask;

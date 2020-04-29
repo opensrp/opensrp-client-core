@@ -277,9 +277,11 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener) {
+        String username = DrishtiApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
+        String teamName = DrishtiApplication.getInstance().getContext().allSharedPreferences().fetchDefaultTeam(username);
         new android.support.v7.app.AlertDialog.Builder(this)
                 .setTitle(R.string.clear_data_dialog_title)
-                .setMessage(R.string.clear_data_dialog_message)
+                .setMessage(String.format(getString(R.string.clear_data_dialog_message), username, teamName))
                 .setPositiveButton(R.string.ok, onClickListener)
                 .setNegativeButton(android.R.string.cancel, onClickListener)
                 .setCancelable(false)

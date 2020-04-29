@@ -45,7 +45,6 @@ public class ResetAppHelper {
     private ArrayList<PreResetAppCheck> preResetAppChecks = new ArrayList<>();
     private ResetAppDialog resetAppDialog;
     private boolean resetCancelled = false;
-    private OnCompleteClearDataCallback onCompleteClearDataCallback;
 
     public ResetAppHelper(@NonNull DrishtiApplication drishtiApplication) {
         this.application = drishtiApplication;
