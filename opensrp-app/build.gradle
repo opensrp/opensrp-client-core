@@ -202,6 +202,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'android.arch.core', module: 'runtime'
     }
+    // Add the dependency for the Performance Monitoring library
+    implementation 'com.google.firebase:firebase-perf:19.0.7'
 }
 
 dependencies {
