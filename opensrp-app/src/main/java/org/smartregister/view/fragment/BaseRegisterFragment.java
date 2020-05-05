@@ -3,6 +3,7 @@ package org.smartregister.view.fragment;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -25,7 +26,6 @@ import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ResponseErrorStatus;
-import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
@@ -175,7 +175,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     public void onQRCodeSucessfullyScanned(String qrCode) {
-        Timber.i( "QR code: %s", qrCode);
+        Timber.i("QR code: %s", qrCode);
         if (StringUtils.isNotBlank(qrCode)) {
             filter(qrCode.replace("-", ""), "", getMainCondition(), true);
             setUniqueID(qrCode);
@@ -257,7 +257,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         renderView();
     }
 
-    private void renderView() {
+    @VisibleForTesting
+    protected void renderView() {
         getDefaultOptionsProvider();
         if (isPausedOrRefreshList()) {
             presenter.initializeQueries(getMainCondition());
@@ -273,8 +274,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     public void setTotalPatients() {
         if (headerTextDisplay != null) {
             headerTextDisplay.setText(clientAdapter.getTotalcount() > 1 ?
-                    String.format(getString(R.string.clients), clientAdapter.getTotalcount()) :
-                    String.format(getString(R.string.client), clientAdapter.getTotalcount()));
+                    String.format(getActivity().getString(R.string.clients), clientAdapter.getTotalcount()) :
+                    String.format(getActivity().getString(R.string.client), clientAdapter.getTotalcount()));
 
             filterRelativeLayout.setVisibility(View.GONE);
         }
@@ -395,24 +396,23 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         refreshSyncStatusViews(fetchStatus);
     }
 
-    private void refreshSyncStatusViews(FetchStatus fetchStatus) {
+    @VisibleForTesting
+    protected void refreshSyncStatusViews(FetchStatus fetchStatus) {
 
         if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
             Utils.showShortToast(getActivity(), getString(R.string.syncing));
-            Timber.i( getString(R.string.syncing));
+            Timber.i(getString(R.string.syncing));
         } else {
             if (fetchStatus != null) {
 
                 if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
-                    if(fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
+                    if (fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
                         Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
-                        Timber.i( getString(R.string.sync_failed_malformed_url));
-                    }
-                    else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
+                        Timber.i(getString(R.string.sync_failed_malformed_url));
+                    } else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
                         Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
                         Timber.i(getString(R.string.sync_failed_timeout_error));
-                    }
-                    else {
+                    } else {
                         Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
                         Timber.i(getString(R.string.sync_failed));
                     }
@@ -424,15 +424,14 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
                     renderView();
 
                     Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
-                    Timber.i( getString(R.string.sync_complete));
+                    Timber.i(getString(R.string.sync_complete));
 
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {
 
                     Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
-                    Timber.i( getString(R.string.sync_failed_no_internet));
+                    Timber.i(getString(R.string.sync_failed_no_internet));
                 }
-            }
-            else{
+            } else {
                 Timber.i("Fetch Status NULL");
             }
 
