@@ -23,6 +23,7 @@ public class NetworkUtils {
 
         } catch (Exception e) {
             Timber.e(e);
+
         }
 
         return false;

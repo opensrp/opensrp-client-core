@@ -3,9 +3,13 @@ package org.smartregister.service;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.User;
@@ -190,8 +194,14 @@ public class UserServiceTest extends BaseUnitTest {
 
     @Test
     public void shouldDeleteDataAndSettingsWhenLogoutHappens() throws Exception {
+        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
+
         userService.logout();
 
+        verify(repository).deleteRepository();
+        verify(repository).deleteRepository();
         verify(repository).deleteRepository();
         verify(allSettings).savePreviousFetchIndex("0");
         verify(allSettings).registerANM("", "");

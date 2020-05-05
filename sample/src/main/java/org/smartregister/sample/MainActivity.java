@@ -11,11 +11,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
+import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.LangUtils;
 import org.smartregister.view.activity.MultiLanguageActivity;
@@ -25,6 +29,11 @@ import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends MultiLanguageActivity {
+
+
+    DatePicker picker;
+    Button btnGet;
+    TextView tvw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +45,23 @@ public class MainActivity extends MultiLanguageActivity {
         setTitle(R.string.app_name);
 
         Activity activity = this;
+        tvw = (TextView) findViewById(R.id.textView1);
+        picker = (DatePicker) findViewById(R.id.datePicker1);
+
+        picker.setMinDate(new LocalDate().minusYears(2).toDate().getTime());
+
+        picker.setMaxDate(new LocalDate().plusYears(3).toDate().getTime());
+
+        picker.updateDate(2019, 5, 22);
+
+        btnGet = (Button) findViewById(R.id.button1);
+        btnGet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvw.setText("Selected Date: " + picker.getDayOfMonth() + "/" + (picker.getMonth() + 1) + "/" + picker.getYear());
+            }
+        });
+
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +156,9 @@ public class MainActivity extends MultiLanguageActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        } else if (id == R.id.action_report_sample) {
+            BasicActivity.startFragment(this, ReportFragment.TAG);
             return true;
         }
 
