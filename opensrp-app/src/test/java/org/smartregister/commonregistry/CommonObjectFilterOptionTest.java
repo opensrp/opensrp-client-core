@@ -2,11 +2,9 @@ package org.smartregister.commonregistry;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.util.EasyMap;
-import org.smartregister.view.contract.SmartRegisterClient;
 
 import java.util.Collections;
 import java.util.Map;
@@ -22,9 +20,6 @@ import static org.smartregister.commonregistry.CommonObjectFilterOption.ByColumn
  */
 
 public class CommonObjectFilterOptionTest extends BaseUnitTest {
-
-    @Mock
-    SmartRegisterClient client;
 
     private String fieldname;
     private String criteria;
