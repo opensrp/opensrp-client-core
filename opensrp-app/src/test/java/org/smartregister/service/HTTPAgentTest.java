@@ -6,6 +6,7 @@ import android.util.Base64;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -102,6 +103,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.MALFORMED_URL.message(), resp.message());
     }
 
+    @Ignore
     @Test
     public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp(){
         PowerMockito.mockStatic(Base64.class);
