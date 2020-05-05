@@ -103,8 +103,8 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.MALFORMED_URL.message(), resp.message());
     }
 
-    @Ignore
     @Test
+    @Ignore
     public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp(){
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://mockbin.org/bin/e42f7256-18b2-40b9-a20c-40fdc564d06f", "", "");
