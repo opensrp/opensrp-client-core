@@ -103,6 +103,7 @@ public class HTTPAgentTest {
         Assert.assertEquals(LoginResponse.MALFORMED_URL.message(), resp.message());
     }
 
+    @Ignore
     @Test
     @Ignore
     public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp(){
