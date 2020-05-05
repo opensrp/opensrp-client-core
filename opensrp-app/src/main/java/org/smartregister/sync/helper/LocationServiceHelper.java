@@ -3,6 +3,8 @@ package org.smartregister.sync.helper;
 import android.content.Context;
 import android.text.TextUtils;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -52,12 +54,14 @@ public class LocationServiceHelper {
     private LocationRepository locationRepository;
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
+    private Trace locationSyncTrace;
 
     public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
         this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
+        this.locationSyncTrace  = FirebasePerformance.getInstance().newTrace("location_sync");
     }
 
     public static LocationServiceHelper getInstance() {
@@ -124,13 +128,21 @@ public class LocationServiceHelper {
 
         JSONObject request = new JSONObject();
         request.put("is_jurisdiction", isJurisdiction);
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+
+        locationSyncTrace.putAttribute("team", team);
+        locationSyncTrace.putAttribute("action", "fetch");
         if (isJurisdiction) {
+            locationSyncTrace.putAttribute("type", "location");
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
             request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
         } else {
+            locationSyncTrace.putAttribute("type", "structure");
             request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
         request.put("serverVersion", serverVersion);
+        locationSyncTrace.start();
 
         resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
@@ -141,6 +153,7 @@ public class LocationServiceHelper {
         if (resp.isFailure()) {
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
+        locationSyncTrace.stop();
 
         return resp.payload().toString();
     }

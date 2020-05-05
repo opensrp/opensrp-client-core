@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -52,6 +54,8 @@ public class TaskServiceHelper {
 
     private boolean syncByGroupIdentifier = true;
 
+    private Trace taskSyncTrace;
+
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
      * @param syncByGroupIdentifier flag for determining if tasks should be synced by group identifier
@@ -76,6 +80,7 @@ public class TaskServiceHelper {
     public TaskServiceHelper(TaskRepository taskRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.taskRepository = taskRepository;
+        this.taskSyncTrace = FirebasePerformance.getInstance().newTrace("task_sync");
     }
 
     public List<Task> syncTasks() {
@@ -144,13 +149,19 @@ public class TaskServiceHelper {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+        taskSyncTrace.putAttribute("team", team);
+        taskSyncTrace.putAttribute("action", "fetch");
+
+        taskSyncTrace.start();
         Response resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, SYNC_TASK_URL),
                 request.toString());
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
-
+        taskSyncTrace.stop();
         return resp.payload().toString();
     }
 

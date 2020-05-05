@@ -6,6 +6,9 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
@@ -19,6 +22,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
@@ -41,6 +45,9 @@ public class SyncIntentService extends BaseSyncIntentService {
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
+    private Trace eventSyncTrace;
+
+    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -54,6 +61,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
+        eventSyncTrace = FirebasePerformance.getInstance().newTrace("event_sync");
     }
 
     @Override
@@ -105,7 +113,13 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void pullECFromServer() {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+        eventSyncTrace.putAttribute("team", team);
+        eventSyncTrace.putAttribute("action", "fetch");
+        eventSyncTrace.start();
         fetchRetry(0);
+        eventSyncTrace.stop();
     }
 
     private synchronized void fetchRetry(final int count) {

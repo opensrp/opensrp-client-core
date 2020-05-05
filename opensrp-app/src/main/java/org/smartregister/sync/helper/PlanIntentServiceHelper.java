@@ -2,6 +2,8 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 
+import com.google.firebase.perf.FirebasePerformance;
+import com.google.firebase.perf.metrics.Trace;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -44,6 +46,8 @@ public class PlanIntentServiceHelper {
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
 
+    private Trace planSyncTrace;
+
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
             instance = new PlanIntentServiceHelper(CoreLibrary.getInstance().context().getPlanDefinitionRepository(),
@@ -56,6 +60,7 @@ public class PlanIntentServiceHelper {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
         this.locationRepository = locationRepository;
+        this.planSyncTrace  = FirebasePerformance.getInstance().newTrace("plan_sync");
     }
 
     public void syncPlans() {
@@ -93,6 +98,10 @@ public class PlanIntentServiceHelper {
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+        planSyncTrace.putAttribute("team", team);
+        planSyncTrace.putAttribute("action", "fetch");
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -105,6 +114,7 @@ public class PlanIntentServiceHelper {
             request.put("organizations", new JSONArray(organizationIds));
         }
         request.put("serverVersion", serverVersion);
+        planSyncTrace.start();
 
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
@@ -121,6 +131,7 @@ public class PlanIntentServiceHelper {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
+        planSyncTrace.stop();
         return resp.payload().toString();
     }
 
