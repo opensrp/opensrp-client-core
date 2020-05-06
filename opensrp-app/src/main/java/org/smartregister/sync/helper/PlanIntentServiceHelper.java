@@ -30,6 +30,12 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PLAN_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
@@ -60,7 +66,7 @@ public class PlanIntentServiceHelper {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.planDefinitionRepository = planRepository;
         this.locationRepository = locationRepository;
-        this.planSyncTrace  = FirebasePerformance.getInstance().newTrace("plan_sync");
+        this.planSyncTrace  = FirebasePerformance.getInstance().newTrace(PLAN_SYNC);
     }
 
     public void syncPlans() {
@@ -78,9 +84,21 @@ public class PlanIntentServiceHelper {
             Long maxServerVersion = 0l;
 
             String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
+
+            String providerId = allSharedPreferences.fetchRegisteredANM();
+            String team = allSharedPreferences.fetchDefaultTeam(providerId);
+
+            planSyncTrace.putAttribute(TEAM, team);
+            planSyncTrace.putAttribute(ACTION, FETCH);
+
+            planSyncTrace.start();
             String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion);
+
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
+
+            planSyncTrace.putAttribute(COUNT, String.valueOf(plans.size()));
+            planSyncTrace.stop();
             for (PlanDefinition plan : plans) {
                 try {
                     planDefinitionRepository.addOrUpdate(plan);
@@ -98,10 +116,6 @@ public class PlanIntentServiceHelper {
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
-        String providerId = allSharedPreferences.fetchRegisteredANM();
-        String team = allSharedPreferences.fetchDefaultTeam(providerId);
-        planSyncTrace.putAttribute("team", team);
-        planSyncTrace.putAttribute("action", "fetch");
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -114,7 +128,6 @@ public class PlanIntentServiceHelper {
             request.put("organizations", new JSONArray(organizationIds));
         }
         request.put("serverVersion", serverVersion);
-        planSyncTrace.start();
 
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
@@ -131,7 +144,6 @@ public class PlanIntentServiceHelper {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
         }
-        planSyncTrace.stop();
         return resp.payload().toString();
     }
 

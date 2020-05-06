@@ -37,6 +37,13 @@ import java.util.Map;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.EVENT_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+
 public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
@@ -46,6 +53,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
     private Trace eventSyncTrace;
+    private String team;
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
@@ -61,7 +69,9 @@ public class SyncIntentService extends BaseSyncIntentService {
         this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
-        eventSyncTrace = FirebasePerformance.getInstance().newTrace("event_sync");
+        eventSyncTrace = FirebasePerformance.getInstance().newTrace(EVENT_SYNC);
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        team = allSharedPreferences.fetchDefaultTeam(providerId);
     }
 
     @Override
@@ -113,13 +123,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void pullECFromServer() {
-        String providerId = allSharedPreferences.fetchRegisteredANM();
-        String team = allSharedPreferences.fetchDefaultTeam(providerId);
-        eventSyncTrace.putAttribute("team", team);
-        eventSyncTrace.putAttribute("action", "fetch");
-        eventSyncTrace.start();
         fetchRetry(0);
-        eventSyncTrace.stop();
     }
 
     private synchronized void fetchRetry(final int count) {
@@ -143,6 +147,10 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
             }
+
+            eventSyncTrace.putAttribute(TEAM, team);
+            eventSyncTrace.putAttribute(ACTION, FETCH);
+            eventSyncTrace.start();
 
             String url = baseUrl + SYNC_URL;
             Response resp;
@@ -201,6 +209,8 @@ public class SyncIntentService extends BaseSyncIntentService {
                 }
                 fetchRetry(0);
             }
+            eventSyncTrace.putAttribute(COUNT, String.valueOf(eCount));
+            eventSyncTrace.stop();
         } catch (Exception e) {
             Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
@@ -268,6 +278,10 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.e(e);
             }
             String jsonPayload = request.toString();
+            eventSyncTrace.putAttribute(TEAM, team);
+            eventSyncTrace.putAttribute(ACTION, PUSH);
+            eventSyncTrace.putAttribute(COUNT, String.valueOf(eventsUploadedCount));
+            eventSyncTrace.start();
             Response<String> response = httpAgent.post(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -277,6 +291,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.e("Events sync failed.");
                 isSuccessfulPushSync = false;
             }
+            eventSyncTrace.stop();
             db.markEventsAsSynced(pendingEvents);
             Timber.i("Events synced successfully.");
             updateProgress(eventsUploadedCount, totalEventCount);

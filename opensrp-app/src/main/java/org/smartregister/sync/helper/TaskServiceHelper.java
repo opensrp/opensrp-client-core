@@ -35,6 +35,13 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TASK_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+
 public class TaskServiceHelper {
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
@@ -55,6 +62,8 @@ public class TaskServiceHelper {
     private boolean syncByGroupIdentifier = true;
 
     private Trace taskSyncTrace;
+
+    private String team;
 
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
@@ -80,7 +89,9 @@ public class TaskServiceHelper {
     public TaskServiceHelper(TaskRepository taskRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.taskRepository = taskRepository;
-        this.taskSyncTrace = FirebasePerformance.getInstance().newTrace("task_sync");
+        this.taskSyncTrace = FirebasePerformance.getInstance().newTrace(TASK_SYNC);
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        team = allSharedPreferences.fetchDefaultTeam(providerId);
     }
 
     public List<Task> syncTasks() {
@@ -109,9 +120,17 @@ public class TaskServiceHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             long maxServerVersion = 0L;
+
+            taskSyncTrace.putAttribute(TEAM, team);
+            taskSyncTrace.putAttribute(ACTION, FETCH);
+
+            taskSyncTrace.start();
             String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
+
+            taskSyncTrace.putAttribute(COUNT, String.valueOf(tasks.size()));
+            taskSyncTrace.stop();
             if (tasks != null && tasks.size() > 0) {
                 for (Task task : tasks) {
                     try {
@@ -149,19 +168,12 @@ public class TaskServiceHelper {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
         }
 
-        String providerId = allSharedPreferences.fetchRegisteredANM();
-        String team = allSharedPreferences.fetchDefaultTeam(providerId);
-        taskSyncTrace.putAttribute("team", team);
-        taskSyncTrace.putAttribute("action", "fetch");
-
-        taskSyncTrace.start();
         Response resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, SYNC_TASK_URL),
                 request.toString());
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
         }
-        taskSyncTrace.stop();
         return resp.payload().toString();
     }
 
@@ -236,6 +248,10 @@ public class TaskServiceHelper {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
         if (!tasks.isEmpty()) {
+            taskSyncTrace.putAttribute(TEAM, team);
+            taskSyncTrace.putAttribute(ACTION, PUSH);
+            taskSyncTrace.putAttribute(COUNT, String.valueOf(tasks));
+            taskSyncTrace.start();
             String jsonPayload = taskGson.toJson(tasks);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
             Response<String> response = httpAgent.postWithJsonResponse(
@@ -243,6 +259,7 @@ public class TaskServiceHelper {
                             baseUrl,
                             ADD_TASK_URL),
                     jsonPayload);
+            taskSyncTrace.stop();
             if (response.isFailure()) {
                 Timber.e("Failed to create new tasks on server.: %s", response.payload());
                 return;

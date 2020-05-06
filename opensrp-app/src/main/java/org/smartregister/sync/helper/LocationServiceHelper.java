@@ -36,7 +36,16 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.FETCH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION;
+import static org.smartregister.AllConstants.PerformanceMonitoring.LOCATION_SYNC;
+import static org.smartregister.AllConstants.PerformanceMonitoring.PUSH;
+import static org.smartregister.AllConstants.PerformanceMonitoring.STRUCTURE;
+import static org.smartregister.AllConstants.PerformanceMonitoring.TEAM;
+import static org.smartregister.AllConstants.TYPE;
 
 public class LocationServiceHelper {
 
@@ -55,13 +64,16 @@ public class LocationServiceHelper {
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
     private Trace locationSyncTrace;
+    private String team;
 
     public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.locationRepository = locationRepository;
         this.locationTagRepository = locationTagRepository;
         this.structureRepository = structureRepository;
-        this.locationSyncTrace  = FirebasePerformance.getInstance().newTrace("location_sync");
+        this.locationSyncTrace  = FirebasePerformance.getInstance().newTrace(LOCATION_SYNC);
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        team = allSharedPreferences.fetchDefaultTeam(providerId);
     }
 
     public static LocationServiceHelper getInstance() {
@@ -82,9 +94,21 @@ public class LocationServiceHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
+
+            locationSyncTrace.putAttribute(TEAM, team);
+            locationSyncTrace.putAttribute(ACTION, FETCH);
+            if (isJurisdiction) {
+                locationSyncTrace.putAttribute(TYPE, LOCATION);
+            } else {
+                locationSyncTrace.putAttribute(TYPE, STRUCTURE);
+            }
+            locationSyncTrace.start();
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
             List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
             }.getType());
+
+            locationSyncTrace.putAttribute(COUNT, String.valueOf(locations.size()));
+            locationSyncTrace.stop();
 
             for (Location location : locations) {
                 try {
@@ -125,24 +149,16 @@ public class LocationServiceHelper {
         }
 
         Response resp;
-
         JSONObject request = new JSONObject();
         request.put("is_jurisdiction", isJurisdiction);
-        String providerId = allSharedPreferences.fetchRegisteredANM();
-        String team = allSharedPreferences.fetchDefaultTeam(providerId);
-
-        locationSyncTrace.putAttribute("team", team);
-        locationSyncTrace.putAttribute("action", "fetch");
         if (isJurisdiction) {
-            locationSyncTrace.putAttribute("type", "location");
+
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
             request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
         } else {
-            locationSyncTrace.putAttribute("type", "structure");
             request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
         request.put("serverVersion", serverVersion);
-        locationSyncTrace.start();
 
         resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
@@ -153,7 +169,6 @@ public class LocationServiceHelper {
         if (resp.isFailure()) {
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
         }
-        locationSyncTrace.stop();
 
         return resp.payload().toString();
     }
@@ -238,6 +253,12 @@ public class LocationServiceHelper {
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+
+            locationSyncTrace.putAttribute(TEAM, team);
+            locationSyncTrace.putAttribute(ACTION, PUSH);
+            locationSyncTrace.putAttribute(TYPE, STRUCTURE);
+            locationSyncTrace.putAttribute(COUNT, String.valueOf(locations.size()));
+            locationSyncTrace.start();
             Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -247,7 +268,7 @@ public class LocationServiceHelper {
                 Timber.e("Failed to create new locations on server: %s", response.payload());
                 return;
             }
-
+            locationSyncTrace.stop();
             Set<String> unprocessedIds = new HashSet<>();
             if (StringUtils.isNotBlank(response.payload())) {
                 if (response.payload().startsWith(LOCATIONS_NOT_PROCESSED)) {
