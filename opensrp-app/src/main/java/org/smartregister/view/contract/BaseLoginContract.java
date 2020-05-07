@@ -59,6 +59,10 @@ public interface BaseLoginContract {
         boolean isAppVersionAllowed();
 
         void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener);
+
+        String getAuthTokenType();
+
+        boolean isNewAccount();
     }
 
     interface Interactor {
