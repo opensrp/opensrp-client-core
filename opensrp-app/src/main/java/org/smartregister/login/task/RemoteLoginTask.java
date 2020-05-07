@@ -1,6 +1,9 @@
 package org.smartregister.login.task;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -9,6 +12,9 @@ import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountHelper;
+import org.smartregister.account.AccountResponse;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
@@ -16,6 +22,8 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import timber.log.Timber;
+
+import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
 
 /**
  * Created by ndegwamartin on 22/06/2018.
@@ -25,13 +33,15 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     private BaseLoginContract.View mLoginView;
     private final String mUsername;
     private final String mPassword;
+    private final AccountAuthenticatorXml mAccountAuthenticatorXml;
 
     private final Listener<LoginResponse> afterLoginCheck;
 
-    public RemoteLoginTask(BaseLoginContract.View loginView, String username, String password, Listener<LoginResponse> afterLoginCheck) {
+    public RemoteLoginTask(BaseLoginContract.View loginView, String username, String password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
         mLoginView = loginView;
         mUsername = username;
         mPassword = password;
+        mAccountAuthenticatorXml = accountAuthenticatorXml;
         this.afterLoginCheck = afterLoginCheck;
     }
 
@@ -43,23 +53,52 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
     @Override
     protected LoginResponse doInBackground(Void... params) {
-        LoginResponse loginResponse = getOpenSRPContext().userService().isValidRemoteLogin(mUsername, mPassword);
-        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
-            publishProgress(R.string.loading_client_settings);
 
-            SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
-            syncSettingsServiceHelper.setUsername(mUsername);
-            syncSettingsServiceHelper.setPassword(mPassword);
+        LoginResponse loginResponse;
+        Bundle userData = null;
+        try {
 
-            try {
-                JSONArray settings = pullSetting(syncSettingsServiceHelper, loginResponse);
-                JSONObject data = new JSONObject();
-                data.put(AllConstants.PREF_KEY.SETTINGS, settings);
-                loginResponse.setRawData(data);
-            } catch (JSONException e) {
-                Timber.e(e);
+            AccountResponse response = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD);
+
+            AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
+
+            final Account account = new Account(mUsername, mAccountAuthenticatorXml.getAccountType());
+
+            loginResponse = getOpenSRPContext().userService().fetchUserDetails(response.getAccessToken());
+
+            if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
+
+                userData = getOpenSRPContext().userService().saveUserGroup(mUsername, mPassword, loginResponse.payload());
+
+                if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
+
+
+                    publishProgress(R.string.loading_client_settings);
+
+
+                    SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
+                    try {
+                        JSONArray settings = pullSetting(syncSettingsServiceHelper, loginResponse);
+                        JSONObject data = new JSONObject();
+                        data.put(AllConstants.PREF_KEY.SETTINGS, settings);
+                        loginResponse.setRawData(data);
+                    } catch (JSONException e) {
+                        Timber.e(e);
+                    }
+
+                }
             }
+
+            mAccountManager.addAccountExplicitly(account, response.getAccessToken(), userData);
+            mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
+            mAccountManager.setUserData(account, AccountHelper.KEY_REFRESH_TOKEN, response.getRefreshToken());
+
+
+        } catch (Exception e) {
+
+            loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(e.getMessage());
         }
+
         return loginResponse;
     }
 

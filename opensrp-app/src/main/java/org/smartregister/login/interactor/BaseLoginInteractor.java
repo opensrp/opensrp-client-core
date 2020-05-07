@@ -12,6 +12,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.R;
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
@@ -72,7 +73,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         if (localLogin) {
             localLogin(view, userName, password);
         } else {
-            remoteLogin(userName, password);
+            remoteLogin(userName, password, CoreLibrary.getInstance().getAccountAuthenticatorXml());
         }
 
         Timber.i("Login result finished " + DateTime.now().toString());
@@ -115,19 +116,19 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }).start();
     }
 
-    private void remoteLogin(final String userName, final String password) {
+    private void remoteLogin(final String userName, final String password, final AccountAuthenticatorXml accountAuthenticatorXml) {
 
         try {
             if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_url))) {
                 getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
-                tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+                tryRemoteLogin(userName, password, accountAuthenticatorXml, new Listener<LoginResponse>() {
 
                     public void onEvent(LoginResponse loginResponse) {
                         getLoginView().enableLoginButton(true);
                         if (loginResponse == LoginResponse.SUCCESS) {
-                            String username=loginResponse.payload()!=null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                            String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
                                     ? loginResponse.payload().user.getUsername() : userName;
                             if (getUserService().isUserInPioneerGroup(username)) {
                                 TimeStatus timeStatus = getUserService().validateDeviceTime(
@@ -198,11 +199,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
     }
 
-    private void tryRemoteLogin(final String userName, final String password, final Listener<LoginResponse> afterLogincheck) {
+    private void tryRemoteLogin(final String userName, final String password, final AccountAuthenticatorXml accountAuthenticatorXml, final Listener<LoginResponse> afterLogincheck) {
         if (remoteLoginTask != null && !remoteLoginTask.isCancelled()) {
             remoteLoginTask.cancel(true);
         }
-        remoteLoginTask = new RemoteLoginTask(getLoginView(), userName, password, afterLogincheck);
+        remoteLoginTask = new RemoteLoginTask(getLoginView(), userName, password, accountAuthenticatorXml, afterLogincheck);
         remoteLoginTask.execute();
     }
 

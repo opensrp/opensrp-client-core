@@ -1,5 +1,6 @@
 package org.smartregister.view.activity;
 
+import android.accounts.AccountAuthenticatorActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -171,7 +172,6 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     }
 
 
-
     private void remoteLogin(final View view, final String userName, final String password) {
 
         try {
@@ -267,7 +267,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }
 
-    private void goToHome() {
+    protected void goToHome() {
         startActivity(new Intent(this, NativeHomeActivity.class));
         finish();
     }
