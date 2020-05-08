@@ -4,10 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.util.Base64;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,9 +15,6 @@ import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.BaseRepository;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.List;
 
 import timber.log.Timber;
@@ -37,9 +32,6 @@ import static org.smartregister.util.Utils.getVersionCode;
  */
 public class SyncUtils {
 
-
-    private static final String DETAILS_URL = "/user-details?anm-id=";
-
     private org.smartregister.Context opensrpContent = CoreLibrary.getInstance().context();
 
     private Context context;
@@ -49,33 +41,7 @@ public class SyncUtils {
     }
 
     public boolean verifyAuthorization() {
-        String baseUrl = opensrpContent.configuration().dristhiBaseURL();
-        if (baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-        }
-        final String username = opensrpContent.allSharedPreferences().fetchRegisteredANM();
-        final String password = opensrpContent.allSettings().fetchANMPassword();
-        baseUrl = baseUrl + DETAILS_URL + username;
-        try {
-            URL url = new URL(baseUrl);
-            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            final String basicAuth = "Basic " + Base64.encodeToString((username + ":" + password).getBytes(), Base64.NO_WRAP);
-            urlConnection.setRequestProperty("Authorization", basicAuth);
-            int statusCode = urlConnection.getResponseCode();
-            urlConnection.disconnect();
-            if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                Timber.i("User not authorized. User access was revoked, will log off user");
-                return false;
-            } else if (statusCode != HttpStatus.SC_OK) {
-                Timber.w("Error occurred verifying authorization, User will not be logged off");
-            } else {
-                Timber.i("User is Authorized");
-            }
-
-        } catch (IOException e) {
-            Timber.e(e);
-        }
-        return true;
+        return CoreLibrary.getInstance().context().getHttpAgent().verifyAuthorization();
     }
 
     public void logoutUser() {
@@ -152,7 +118,9 @@ public class SyncUtils {
     }
 
     private synchronized String getIncrementedServerVersion(Setting setting) {
-        if (setting == null || StringUtils.isBlank(setting.getVersion())) { return null; }
+        if (setting == null || StringUtils.isBlank(setting.getVersion())) {
+            return null;
+        }
         return String.valueOf(Long.valueOf(setting.getVersion()) + 1);
     }
 

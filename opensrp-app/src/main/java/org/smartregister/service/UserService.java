@@ -2,6 +2,7 @@ package org.smartregister.service;
 
 import android.annotation.TargetApi;
 import android.os.Build;
+import android.os.Bundle;
 import android.security.KeyPairGeneratorSpec;
 import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
@@ -11,6 +12,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.SyncFilter;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -291,6 +293,31 @@ public class UserService {
         return false;
     }
 
+    public LoginResponse oauth2Authenticate(String userName, String password) {
+        String requestURL;
+
+        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
+
+        LoginResponse loginResponse = httpAgent
+                .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
+
+        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
+            saveUserGroup(userName, password, loginResponse.payload());
+        }
+
+        return loginResponse;
+    }
+
+    public LoginResponse fetchUserDetails(String accessToken) {
+        String requestURL;
+
+        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
+
+        LoginResponse loginResponse = httpAgent.fetchUserDetails(requestURL, accessToken);
+
+        return loginResponse;
+    }
+
     public LoginResponse isValidRemoteLogin(String userName, String password) {
         String requestURL;
 
@@ -337,7 +364,7 @@ public class UserService {
             username = allSharedPreferences.fetchRegisteredANM();
         allSharedPreferences.updateANMUserName(username);
         DrishtiApplication.getInstance().getRepository().getReadableDatabase();
-        allSettings.registerANM(username, password);
+        allSettings.registerANM(username);
         return loginSuccessful;
     }
 
@@ -545,15 +572,19 @@ public class UserService {
      * @param userInfo The user's info from the
      *                 endpoint (should contain the {team}.{team}.{uuid} key)
      */
-    public void saveUserGroup(String userName, String password, LoginResponseData userInfo) {
-        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
-                ? userInfo.user.getUsername() : userName;
+    public Bundle saveUserGroup(String userName, String password, LoginResponseData userInfo) {
+        Bundle bundle = new Bundle();
+
+        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername()) ? userInfo.user.getUsername() : userName;
+        bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_NAME, username);
+
+
         if (keyStore != null && username != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(username);
 
                 if (password == null) {
-                    return;
+                    return null;
                 }
 
 
@@ -572,7 +603,10 @@ public class UserService {
                 }
 
                 if (StringUtils.isBlank(groupId)) {
-                    return;
+                    return null;
+                } else {
+
+                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, groupId);
                 }
 
                 if (privateKeyEntry != null) {
@@ -593,6 +627,8 @@ public class UserService {
                 Timber.e(e);
             }
         }
+
+        return bundle;
     }
 
     public boolean hasARegisteredUser() {
@@ -601,7 +637,7 @@ public class UserService {
 
     public void logout() {
         logoutSession();
-        allSettings.registerANM("", "");
+        allSettings.registerANM("");
         allSettings.savePreviousFetchIndex("0");
         DrishtiApplication.getInstance().getRepository().deleteRepository();
     }
