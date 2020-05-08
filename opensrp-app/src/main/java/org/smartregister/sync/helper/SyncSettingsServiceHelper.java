@@ -85,7 +85,7 @@ public class SyncSettingsServiceHelper {
             return null;
         }
 
-        Response resp = httpAgent.fetchWithCredentials(url, getUsername(), getPassword());
+        Response resp = httpAgent.fetchWithCredentials(url);
 
         if (resp.isFailure()) {
             Timber.e(" %s  not returned data ", url);
@@ -142,23 +142,5 @@ public class SyncSettingsServiceHelper {
 
         return siteSettingsPayload;
     }
-
-    public String getUsername() {
-        return username != null ? username : sharedPreferences.fetchRegisteredANM();
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password != null ? password : CoreLibrary.getInstance().context().allSettings().fetchANMPassword();
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-
 }
 
