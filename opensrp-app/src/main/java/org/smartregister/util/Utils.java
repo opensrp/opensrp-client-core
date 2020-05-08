@@ -24,6 +24,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.content.res.XmlResourceParser;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -59,7 +60,9 @@ import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
 import org.smartregister.SyncFilter;
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.commonregistry.CommonPersonObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
@@ -860,5 +863,48 @@ public class Utils {
         }
 
         return true;
+    }
+
+    protected static String safeArrayToString(char[] array) {
+
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : array) {
+            stringBuilder.append(c);
+        }
+        return stringBuilder.toString();
+    }
+
+    public static AccountAuthenticatorXml parseAuthenticatorXMLConfigData(Context context) {
+        try {
+            int eventType = -1;
+            String namespace = "http://schemas.android.com/apk/res/android";
+            AccountAuthenticatorXml authenticatorXml = new AccountAuthenticatorXml();
+            XmlResourceParser parser = context.getResources().getXml(R.xml.authenticator);
+
+            while (eventType != XmlResourceParser.END_DOCUMENT) {
+                if (eventType == XmlResourceParser.START_TAG) {
+                    String element = parser.getName();
+
+                    if ("account-authenticator".equals(element)) {
+                        //Account type id
+                        String accountType = parser.getAttributeValue(namespace, "accountType");
+                        authenticatorXml.setAccountType(accountType);
+
+                        //Account Name
+                        int labelId = parser.getAttributeResourceValue(namespace, "label",0);
+                        authenticatorXml.setAccountName(context.getResources().getString(labelId));
+
+                        //Icon
+                        int iconImageResourceId = parser.getAttributeResourceValue(namespace, "icon", 0);
+                        authenticatorXml.setIcon(iconImageResourceId);
+                    }
+                }
+                eventType = parser.next();
+            }
+            return authenticatorXml;
+        } catch (Exception e) {
+            Timber.e(e);
+            return null;
+        }
     }
 }
