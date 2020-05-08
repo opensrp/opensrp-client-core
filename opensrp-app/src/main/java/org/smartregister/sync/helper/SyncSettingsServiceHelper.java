@@ -102,8 +102,12 @@ public class SyncSettingsServiceHelper {
             globalSettings = pullGlobalSettingsFromServer();
         }
 
+<<<<<<< HEAD
         aggregateSettings(settings, globalSettings);
     }
+=======
+        Response resp = httpAgent.fetchWithCredentials(url);
+>>>>>>> Migrate user service
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
         if (globalSettings.length() > 0) {
@@ -228,5 +232,6 @@ public class SyncSettingsServiceHelper {
     public void setPassword(String password) {
         this.password = password;
     }
+
 }
 
