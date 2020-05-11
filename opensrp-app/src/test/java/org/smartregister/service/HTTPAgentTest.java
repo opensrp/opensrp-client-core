@@ -1,6 +1,7 @@
 package org.smartregister.service;
 
-import android.content.Context;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.util.Base64;
 
 import org.json.JSONObject;
@@ -12,11 +13,17 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.SyncConfiguration;
+import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
@@ -29,10 +36,13 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Base64.class, File.class, FileInputStream.class})
+@PrepareForTest({Base64.class, File.class, FileInputStream.class, Context.class, AccountHelper.class, CoreLibrary.class})
 public class HTTPAgentTest {
     @Mock
-    private Context context;
+    private android.content.Context context;
+
+    @Mock
+    private Context openSrpContext;
 
     @Mock
     private AllSettings allSettings;
@@ -46,6 +56,21 @@ public class HTTPAgentTest {
     @Mock
     private ProfileImage profileImage;
 
+    @Mock
+    private AccountAuthenticatorXml accountAuthenticatorXml;
+
+    @Mock
+    private Account account;
+
+    @Mock
+    private CoreLibrary coreLibrary;
+
+    @Mock
+    private AccountManager accountManager;
+
+    @Mock
+    private SyncConfiguration syncConfiguration;
+
     @Rule
     private TemporaryFolder folder = new TemporaryFolder();
 
@@ -54,24 +79,41 @@ public class HTTPAgentTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+
+        PowerMockito.mockStatic(Context.class);
+        PowerMockito.when(Context.getInstance()).thenReturn(openSrpContext);
+        Mockito.doReturn(context).when(context).getApplicationContext();
+
+        PowerMockito.mockStatic(CoreLibrary.class);
+        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
+        Mockito.doReturn(accountManager).when(coreLibrary).getAccountManager();
+        Mockito.doReturn(accountAuthenticatorXml).when(coreLibrary).getAccountAuthenticatorXml();
+
+        Mockito.doReturn(accountManager).when(coreLibrary).getAccountManager();
+        Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
+        Mockito.doReturn(1).when(syncConfiguration).getMaxAuthenticationRetries();
+
+        PowerMockito.mockStatic(AccountHelper.class);
+        PowerMockito.when(AccountHelper.getOauthAccountByType(accountAuthenticatorXml.getAccountType())).thenReturn(account);
+
         httpAgent = new HTTPAgent(context, allSettings, allSharedPreferences, dristhiConfiguration);
     }
 
     @Test
-    public void testFetchFailsGivenWrongUrl(){
+    public void testFetchFailsGivenWrongUrl() {
         Response<String> resp = httpAgent.fetch("wrong.url");
         Assert.assertEquals(ResponseStatus.failure, resp.status());
     }
 
     @Test
-    public void testFetchPassesGivenCorrectUrl(){
+    public void testFetchPassesGivenCorrectUrl() {
         PowerMockito.mockStatic(Base64.class);
         Response<String> resp = httpAgent.fetch("https://google.com");
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
     @Test
-    public void testPostFailsGivenWrongUrl(){
+    public void testPostFailsGivenWrongUrl() {
         HashMap<String, String> map = new HashMap<>();
         map.put("title", "OpenSRP Testing Tuesdays");
         JSONObject jObject = new JSONObject(map);
@@ -80,7 +122,7 @@ public class HTTPAgentTest {
     }
 
     @Test
-    public void testPostPassesGivenCorrectUrl(){
+    public void testPostPassesGivenCorrectUrl() {
         PowerMockito.mockStatic(Base64.class);
         HashMap<String, String> map = new HashMap<>();
         map.put("title", "OpenSRP Testing Tuesdays");
@@ -90,14 +132,14 @@ public class HTTPAgentTest {
     }
 
     @Test
-    public void testUrlCanBeAccessWithGivenCredentials(){
+    public void testUrlCanBeAccessWithGivenCredentials() {
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://www.mocky.io/v2/5e54de89310000d559eb33d9", "", "");
         Assert.assertEquals(LoginResponse.SUCCESS.message(), resp.message());
     }
 
     @Test
-    public void testUrlCanBeAccessWithGivenCredentialsGivenWrongUrl(){
+    public void testUrlCanBeAccessWithGivenCredentialsGivenWrongUrl() {
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("wrong.url", "", "");
         Assert.assertEquals(LoginResponse.MALFORMED_URL.message(), resp.message());
@@ -105,27 +147,27 @@ public class HTTPAgentTest {
 
     @Test
     @Ignore
-    public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp(){
+    public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp() {
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://mockbin.org/bin/e42f7256-18b2-40b9-a20c-40fdc564d06f", "", "");
         Assert.assertEquals(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message(), resp.message());
     }
 
     @Test
-    public void testfetchWithCredentialsFailsGivenWrongUrl(){
-        Response<String> resp = httpAgent.fetchWithCredentials("wrong.url", "", "");
+    public void testfetchWithCredentialsFailsGivenWrongUrl() {
+        Response<String> resp = httpAgent.fetchWithCredentials("wrong.url");
         Assert.assertEquals(ResponseStatus.failure, resp.status());
     }
 
     @Test
-    public void testfetchWithCredentialsPassesGivenCorrectUrl(){
+    public void testfetchWithCredentialsPassesGivenCorrectUrl() {
         PowerMockito.mockStatic(Base64.class);
-        Response<String> resp = httpAgent.fetchWithCredentials("https://google.com", "", "");
+        Response<String> resp = httpAgent.fetchWithCredentials("https://google.com");
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
     @Test
-    public void testHttpImagePostGivenWrongUrl(){
+    public void testHttpImagePostGivenWrongUrl() {
         String resp = httpAgent.httpImagePost("wrong.url", profileImage);
         Assert.assertEquals("", resp);
     }
@@ -144,7 +186,7 @@ public class HTTPAgentTest {
     }
 
     @Test
-    public void testPostWithJsonResponse(){
+    public void testPostWithJsonResponse() {
         PowerMockito.mockStatic(Base64.class);
         HashMap<String, String> map = new HashMap<>();
         map.put("title", "OpenSRP Testing Tuesdays");
