@@ -55,4 +55,14 @@ public class TestSyncConfiguration extends SyncConfiguration {
     public String getTopAllowedLocationLevel() {
         return null;
     }
+
+    @Override
+    public String getOauthClientId() {
+        return "opensrp-client-id";
+    }
+
+    @Override
+    public String getOauthClientSecret() {
+        return "$om3cl13nt$3cret";
+    }
 }
