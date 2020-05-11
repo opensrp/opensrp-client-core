@@ -194,7 +194,7 @@ public class UserServiceTest extends BaseUnitTest {
 
         userService.remoteLogin("user X", "password Y", userInfo);
 
-        verify(allSettings).registerANM("user X", "password Y");
+        verify(allSettings).registerANM("user X");
         verify(session).setPassword("password Y");
     }
 
@@ -210,7 +210,7 @@ public class UserServiceTest extends BaseUnitTest {
         verify(repository).deleteRepository();
         verify(repository).deleteRepository();
         verify(allSettings).savePreviousFetchIndex("0");
-        verify(allSettings).registerANM("", "");
+        verify(allSettings).registerANM("");
     }
 
     @Test
