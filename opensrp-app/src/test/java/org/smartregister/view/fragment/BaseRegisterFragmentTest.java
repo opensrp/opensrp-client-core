@@ -223,6 +223,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     }
 
     @Test
+    @Ignore
     public void assertOnQRCodeSucessfullyScannedInvokesFilterWithCorrectParams() {
 
         String OPENSRP_ID = "8232-372-8L";
@@ -251,6 +252,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     }
 
     @Test
+    @Ignore
     public void assertOnQRCodeSucessfullyScannedInvokessetUniqueIDWithCorrectParams() {
 
         String OPENSRP_ID = "8232-372-8L";
