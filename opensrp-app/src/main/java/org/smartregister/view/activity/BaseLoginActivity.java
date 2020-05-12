@@ -64,6 +64,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         mLoginPresenter.setLanguage();
         setupViews(mLoginPresenter);
         syncUtils = new SyncUtils(this);
+
+        authTokenType = getIntent().getStringExtra(AccountHelper.INTENT_KEY.AUTH_TYPE);
+
     }
 
     @Override
@@ -292,15 +295,13 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     public String getAuthTokenType() {
 
-        authTokenType = getIntent().getStringExtra(AccountHelper.INTENT_KEY.AUTH_TYPE);
-
         if (authTokenType == null)
             authTokenType = AccountHelper.TOKEN_TYPE.PROVIDER;
 
         return authTokenType;
     }
 
-    public boolean isNewAccount(){
+    public boolean isNewAccount() {
         return getIntent().getBooleanExtra(AccountHelper.INTENT_KEY.IS_NEW_ACCOUNT, false);
     }
 }
