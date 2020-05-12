@@ -248,11 +248,11 @@ public class JsonFormUtilsTest {
             "      \"err\": \"Please specify your education level\",\n" +
             "      \"value\": true\n" +
             "    },\n" +
-            "    \"value\":\"Secondary\",\n" +
+            "    \"value\":\"primary\",\n" +
             "    \"openmrs_entity_parent\": \"\",\n" +
             "    \"label\": \"Highest level of school\",\n" +
             "    \"type\": \"native_radio\",\n" +
-            "    \"key\": \"educ_level\",\n" +
+            "    \"key\": \"educ_level_2\",\n" +
             "    \"label_text_style\": \"bold\"\n" +
             "  }\n" +
             "]";
@@ -483,6 +483,98 @@ public class JsonFormUtilsTest {
             "\"openmrs_entity_id\":\"age\",\"type\":\"edit_text\",\"hint\":\"Age\"},{\"key\":\"home_address\"," +
             "\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"address2\"," +
             "\"type\":\"edit_text\",\"hint\":\"Home address\",\"edit_type\":\"name\",\"value\":\"Nairobi\"}]";
+
+
+    private final String SINGLE_STEP_WITH_SECTIONS = "{\n" +
+            "  \"count\": \"1\",\n" +
+            "  \"encounter_type\": \"encounter_type\",\n" +
+            "  \"entity_id\": \"\",\n" +
+            "  \"metadata\": {\n" +
+            "    \"start\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"start\",\n" +
+            "      \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"end\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"end\",\n" +
+            "      \"openmrs_entity_id\": \"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"today\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"encounter\",\n" +
+            "      \"openmrs_entity_id\": \"encounter_date\"\n" +
+            "    },\n" +
+            "    \"deviceid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"deviceid\",\n" +
+            "      \"openmrs_entity_id\": \"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"subscriberid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"subscriberid\",\n" +
+            "      \"openmrs_entity_id\": \"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"simserial\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"simserial\",\n" +
+            "      \"openmrs_entity_id\": \"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"phonenumber\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"phonenumber\",\n" +
+            "      \"openmrs_entity_id\": \"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"encounter_location\": \"\"\n" +
+            "  },\n" +
+            "  \"step1\": {\n" +
+            "    \"title\": \"Step 1\",\n" +
+            "    \"next\": \"step2\",\n" +
+            "    \"display_back_button\": \"true\",\n" +
+            "    \"sections\": [\n" +
+            "      {\n" +
+            "        \"fields\": [\n" +
+            "          {\n" +
+            "            \"key\": \"gps\",\n" +
+            "            \"type\": \"gps\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"\",\n" +
+            "            \"openmrs_entity_id\": \"\",\n" +
+            "            \"value\": \"gps\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"lbl_scan_respiratory_specimen_barcode\",\n" +
+            "            \"type\": \"label\",\n" +
+            "            \"text\": \"Scan respiratory specimen barcode\",\n" +
+            "            \"text_color\": \"#000000\",\n" +
+            "            \"top_margin\": \"15dp\",\n" +
+            "            \"has_bg\": true,\n" +
+            "            \"has_drawable_end\": true,\n" +
+            "            \"bg_color\": \"#ffffff\",\n" +
+            "            \"value\": \"scan_respiratory_specimen_barcode\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"lbl_affix_respiratory_specimen_label\",\n" +
+            "            \"type\": \"label\",\n" +
+            "            \"text\": \"Manually affix label\",\n" +
+            "            \"top_margin\": \"30dp\",\n" +
+            "            \"text_color\": \"#000000\",\n" +
+            "            \"has_bg\": true,\n" +
+            "            \"has_drawable_end\": true,\n" +
+            "            \"bg_color\": \"#ffffff\",\n" +
+            "            \"value\": \"affix_respiratory_specimen_label\"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  }\n" +
+            "}";
 
     @Before
     public void setUp() throws Exception {
@@ -1252,5 +1344,19 @@ public class JsonFormUtilsTest {
 
         formattedDate = JsonFormUtils.formatDate("2970-12-02 01:12:34", false);
         assertEquals(yyyyMMddHHmmss.parse("2970-12-02 01:12:34").toString(), formattedDate.toString());
+    }
+
+    @Test
+    public void testGetFieldValueFromJsonObjShouldGetCorrectValue() {
+        assertEquals("Secondary", JsonFormUtils.getFieldValue(multiStepForm, "educ_level"));
+        assertEquals( "primary" , JsonFormUtils.getFieldValue(multiStepForm, "educ_level_2"));
+    }
+
+    @Test
+    public void testSectionFieldsShouldGetCorrectSectionMap() throws JSONException {
+        Map<String, String> sectionsMap = JsonFormUtils.sectionFields(new JSONObject(SINGLE_STEP_WITH_SECTIONS));
+        assertEquals("gps", sectionsMap.get("gps"));
+        assertNotNull("scan_respiratory_specimen_barcode", sectionsMap.get("lbl_scan_respiratory_specimen_barcode"));
+        assertNotNull("affix_respiratory_specimen_label", sectionsMap.get("lbl_affix_respiratory_specimen_label"));
     }
 }
