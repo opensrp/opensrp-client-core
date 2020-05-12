@@ -67,4 +67,27 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
         assertEquals("SELECT COUNT(*) FROM event", actualQuery);
     }
 
+    @Test
+    public void testJoinWithalertsWithAlertName() {
+        String actualQuery = smartRegisterQueryBuilder.joinwithALerts("table1", "Alert1");
+        assertEquals("SELECT COUNT(*) FROM table1 LEFT JOIN alerts  ON table1.id = alerts.caseID AND  alerts.scheduleName = 'Alert1'", actualQuery);
+    }
+
+    @Test
+    public void testJoinWithalerts() {
+        String actualQuery = smartRegisterQueryBuilder.joinwithALerts("table1");
+        assertEquals("SELECT COUNT(*) FROM table1 LEFT JOIN alerts  ON table1.id = alerts.caseID ", actualQuery);
+    }
+
+    @Test
+    public void testCustomJoin() {
+        String actualQuery = smartRegisterQueryBuilder.customJoin("JOIN table2 ON table1.id = table2.entityId");
+        assertEquals("SELECT COUNT(*) FROM table1 JOIN table2 ON table1.id = table2.entityId", actualQuery);
+    }
+
+    @Test
+    public void testToString() {
+        assertEquals(selectquery, smartRegisterQueryBuilder.toString());
+    }
+
 }
