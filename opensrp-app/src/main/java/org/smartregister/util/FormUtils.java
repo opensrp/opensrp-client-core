@@ -2,10 +2,13 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.apache.commons.codec.CharEncoding;
 import org.json.JSONArray;
@@ -42,6 +45,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -1145,6 +1149,56 @@ public class FormUtils {
         }
         Timber.d("============%s form loaded from Assets=============", formIdentity);
         return getFormJson(formIdentity);
+    }
+
+    @Nullable
+    public JSONObject getSubFormJsonFromRepository(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = formIdentity;
+        if (!"en".equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        String dbFormName = TextUtils.isEmpty(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+        try {
+            if (clientForm != null) {
+                Timber.d("============%s form loaded from db============", dbFormName);
+                String originalJson = clientForm.getJson();
+
+                return new JSONObject(NativeFormLangUtils.getTranslatedString(originalJson, context));
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public BufferedReader getRulesFromRepository(String fileName) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = fileName;
+        if (!"en".equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", localeFormIdentity);
+            String originalJson = clientForm.getJson();
+
+            return new BufferedReader(new StringReader(originalJson));
+        }
+
+        return null;
     }
 
 }
