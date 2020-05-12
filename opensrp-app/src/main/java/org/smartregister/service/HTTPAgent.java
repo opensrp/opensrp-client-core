@@ -28,7 +28,6 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
-import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.SyncUtils;
@@ -80,7 +79,6 @@ import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
     private Context context;
-    private AllSettings settings;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
     private GZIPCompression gzipCompression;
@@ -96,10 +94,9 @@ public class HTTPAgent {
 
     private SyncUtils syncUtils;
 
-    public HTTPAgent(Context context, AllSettings settings, AllSharedPreferences
+    public HTTPAgent(Context context, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
         this.context = context;
-        this.settings = settings;
         this.allSharedPreferences = allSharedPreferences;
         this.configuration = configuration;
         gzipCompression = new GZIPCompression();
@@ -826,9 +823,7 @@ public class HTTPAgent {
         AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
         AccountManager accountManager = CoreLibrary.getInstance().getAccountManager();
 
-
         Account account = AccountHelper.getOauthAccountByType(authenticatorXml.getAccountType());
-        String authToken = accountManager.peekAuthToken(account, AccountHelper.TOKEN_TYPE.PROVIDER);
 
         accountManager.setAuthToken(account, AccountHelper.TOKEN_TYPE.PROVIDER, response.getAccessToken());
         accountManager.setPassword(account, response.getAccessToken());
