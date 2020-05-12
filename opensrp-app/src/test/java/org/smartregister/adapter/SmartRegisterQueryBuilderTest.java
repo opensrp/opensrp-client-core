@@ -6,6 +6,9 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -88,6 +91,26 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
     @Test
     public void testToString() {
         assertEquals(selectquery, smartRegisterQueryBuilder.toString());
+    }
+
+    @Test
+    public void testToStringFts() {
+        List<String> ids = new ArrayList<>();
+        ids.add("id1");
+        ids.add("id2");
+
+        String actualQuery = smartRegisterQueryBuilder.toStringFts(ids, "id");
+        assertEquals("SELECT COUNT(*) FROM table1 WHERE id IN ('id1','id2') ", actualQuery);
+    }
+
+    @Test
+    public void testToStringFtsWithWhereClause() {
+        List<String> ids = new ArrayList<>();
+        ids.add("id3");
+        ids.add("id4");
+        smartRegisterQueryBuilder.setSelectquery("SELECT COUNT(*) FROM table1 WHERE id IN ('id1','id2')");
+        String actualQuery = smartRegisterQueryBuilder.toStringFts(ids, "id");
+        assertEquals("SELECT COUNT(*) FROM table1  WHERE id IN ('id3','id4') ", actualQuery);
     }
 
 }
