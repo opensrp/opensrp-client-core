@@ -26,7 +26,7 @@ public class ServiceLocationsAdapter extends BaseAdapter {
 
     public ServiceLocationsAdapter(Context context, ArrayList<String> locationNames) {
         this.context = context;
-        this.locationNames = locationNames == null ? new ArrayList<String>() : locationNames;
+        this.locationNames = locationNames == null ? new ArrayList<>() : locationNames;
         this.views = new HashMap<>();
     }
 
