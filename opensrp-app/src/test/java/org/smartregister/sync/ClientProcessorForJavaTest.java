@@ -553,12 +553,6 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         Assert.assertFalse(clientProcessor.processClientClass(classificationRule, event, null));
     }
 
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
-        clientProcessor = null;
-    }
-
     @Test
     public void processCaseModelWhenGivenColumnConfigurationFromEventObsShouldPopulateContentValuesAsPerColumnConfiguration() {
         String eventJson = "{\"baseEntityId\":\"021a1da2-cebf-44fa-9ef3-3ffc18fa6356\",\"entityType\":\"vaccination\",\"eventDate\":\"2018-10-15T20:00:00.000-04:00\",\"eventType\":\"Vaccination\",\"formSubmissionId\":\"e9c0c4ec-63c3-4104-958e-21e133efd3b2\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"1410AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"date\",\"fieldType\":\"concept\",\"formSubmissionField\":\"rota_2\",\"humanReadableValues\":[],\"parentCode\":\"159698AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"2018-10-16\"]},{\"fieldCode\":\"1418AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"calculate\",\"fieldType\":\"concept\",\"formSubmissionField\":\"rota_2_dose\",\"humanReadableValues\":[],\"parentCode\":\"159698AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"2\"]}],\"providerId\":\"chwone\",\"version\":1567465052005,\"clientApplicationVersion\":1,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-10-07T05:49:52.992-04:00\",\"dateEdited\":\"2019-09-18T06:10:56.784-04:00\",\"serverVersion\":1568801628709}";
@@ -571,7 +565,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
         clientProcessor.processCaseModel(event, null, column, contentValues);
 
-        Assert.assertEquals("rota_2", contentValues.getAsString("name"));
+        assertEquals("rota_2", contentValues.getAsString("name"));
     }
 
 
@@ -587,7 +581,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
         clientProcessor.processCaseModel(event, null, column, contentValues);
 
-        Assert.assertEquals("chwone", contentValues.getAsString("anmid"));
+        assertEquals("chwone", contentValues.getAsString("anmid"));
     }
 
 
@@ -605,7 +599,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
         clientProcessor.processCaseModel(event, client, column, contentValues);
 
-        Assert.assertEquals("4602652", contentValues.getAsString("unique_id"));
+        assertEquals("4602652", contentValues.getAsString("unique_id"));
     }
 
 
@@ -623,7 +617,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
         clientProcessor.processCaseModel(event, client, column, contentValues);
 
-        Assert.assertEquals("af3e29be-88ee-4063-bb02-963a64c664ab", contentValues.getAsString("relational_id"));
+        assertEquals("af3e29be-88ee-4063-bb02-963a64c664ab", contentValues.getAsString("relational_id"));
     }
 
 
@@ -642,6 +636,12 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         ReflectionHelpers.setStaticField(ClientProcessorForJava.class, "instance", clientProcessor);
         clientProcessor.processCaseModel(event, client, column, contentValues);
 
-        Assert.assertEquals("Kasabuni", contentValues.get("village_town"));
+        assertEquals("Kasabuni", contentValues.get("village_town"));
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        clientProcessor = null;
     }
 }
