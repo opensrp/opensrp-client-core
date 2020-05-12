@@ -96,7 +96,7 @@ public class HTTPAgentTest {
         PowerMockito.mockStatic(AccountHelper.class);
         PowerMockito.when(AccountHelper.getOauthAccountByType(accountAuthenticatorXml.getAccountType())).thenReturn(account);
 
-        httpAgent = new HTTPAgent(context, allSettings, allSharedPreferences, dristhiConfiguration);
+        httpAgent = new HTTPAgent(context, allSharedPreferences, dristhiConfiguration);
     }
 
     @Test

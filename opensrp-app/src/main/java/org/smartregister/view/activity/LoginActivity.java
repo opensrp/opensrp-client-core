@@ -1,6 +1,5 @@
 package org.smartregister.view.activity;
 
-import android.accounts.AccountAuthenticatorActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;

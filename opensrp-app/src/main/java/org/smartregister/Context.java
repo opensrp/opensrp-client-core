@@ -518,8 +518,7 @@ public class Context {
 
     public HTTPAgent httpAgent() {
         if (httpAgent == null) {
-            httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
-                    configuration());
+            httpAgent = new HTTPAgent(applicationContext, allSharedPreferences(), configuration());
         }
         return httpAgent;
     }
