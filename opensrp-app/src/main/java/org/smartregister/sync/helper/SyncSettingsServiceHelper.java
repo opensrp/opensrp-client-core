@@ -28,8 +28,6 @@ public class SyncSettingsServiceHelper {
 
     private HTTPAgent httpAgent;
     private String baseUrl;
-    private String username;
-    private String password;
     private AllSharedPreferences sharedPreferences;
 
     public SyncSettingsServiceHelper(String baseUrl, HTTPAgent httpAgent) {

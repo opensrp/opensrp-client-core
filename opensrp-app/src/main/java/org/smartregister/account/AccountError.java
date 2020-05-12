@@ -15,4 +15,12 @@ public class AccountError implements Serializable {
         this.error = error;
 
     }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public String getError() {
+        return error;
+    }
 }
