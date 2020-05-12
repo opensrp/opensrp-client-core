@@ -19,7 +19,6 @@ import timber.log.Timber;
  */
 public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
-    private String TAG = AccountAuthenticator.class.getCanonicalName();
     private final Context mContext;
 
     public AccountAuthenticator(Context context) {
@@ -117,6 +116,6 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public String getRefreshToken() {
-      return AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN,CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
+        return AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
     }
 }
