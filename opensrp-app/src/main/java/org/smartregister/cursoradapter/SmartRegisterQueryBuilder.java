@@ -75,7 +75,7 @@ public class SmartRegisterQueryBuilder {
         return selectquery + ";";
     }
 
-    public String SelectInitiateMainTable(String tablename, String[] columns) {
+    public String selectInitiateMainTable(String tablename, String[] columns) {
         return selectInitiateMainTable(tablename, columns, "id");
     }
 
@@ -89,7 +89,7 @@ public class SmartRegisterQueryBuilder {
         return Selectquery;
     }
 
-    public String SelectInitiateMainTable(String tablenames[], String[] columns) {
+    public String selectInitiateMainTable(String tablenames[], String[] columns) {
         Selectquery = "Select " + tablenames[0] + ".id as _id";
         for (String column : columns) {
             Selectquery = Selectquery + " , " + column;
@@ -106,7 +106,7 @@ public class SmartRegisterQueryBuilder {
         return Selectquery;
     }
 
-    public String SelectInitiateMainTableCounts(String tablename) {
+    public String selectInitiateMainTableCounts(String tablename) {
         Selectquery = "SELECT COUNT(*)";
         Selectquery = Selectquery + " FROM " + tablename;
         return Selectquery;
