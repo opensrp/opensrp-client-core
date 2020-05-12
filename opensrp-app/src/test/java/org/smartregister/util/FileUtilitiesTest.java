@@ -1,37 +1,59 @@
 package org.smartregister.util;
 
+import android.os.Environment;
+
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 
+import static org.mockito.Mockito.when;
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Environment.class})
 public class FileUtilitiesTest {
 
     private String FILE_NAME = "newFile.ext";
 
     @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
+    public TemporaryFolder storageDirectory = new TemporaryFolder();
+    private File existentDirectory;
+
+    public FileUtilitiesTest() throws IOException {
+    }
+
+    @Before
+    public void setup() {
+        existentDirectory = storageDirectory.getRoot();
+        PowerMockito.mockStatic(Environment.class);
+    }
 
     @Mock
-    private FileWriterFactory fileWriterFactory;
-    private Writer fileWriter = spy(new StringWriter());
-    File anyValidFile = new File(".");
+    private BufferedWriter mockWriter;
 
     @Test
-    public void initIndexFile_validFile_addsEmptyraces(){
-        //arrange
-        doReturn(fileWriter).when(fileWriterFactory).create(any(File.class));
+    public void initIndexFile_validFile_addsEmptyraces() throws Exception {
+        String testData = "string to write";
+        when(Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
+        PowerMockito.whenNew(BufferedWriter.class).withAnyArguments().thenReturn(mockWriter);
+        FileUtilities fileUtils = new FileUtilities();
+        try
+        {
+            fileUtils.write(FILE_NAME, testData);
+        } catch (Exception e)
+        {
+            Assert.fail();
+        }
 
-        // act
-        new ClassUnderTest(fileWriterFactory).initIndexFile(anyValidFile);
-
-        //assert
-        verify(fileWriterFactory)create(anyValidFile);
-        assertEquals("text written to File", "[]", fileWriter.toString());
-        verify(fileWriter).close();
     }
     @Test
     public void assertReturnsCorrectFileExtension() {
