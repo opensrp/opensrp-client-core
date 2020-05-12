@@ -32,8 +32,6 @@ import timber.log.Timber;
  */
 public class StructureRepository extends LocationRepository {
 
-    private static final String TAG = StructureRepository.class.getCanonicalName();
-
     protected static String STRUCTURE_TABLE = "structure";
     private static final String SYNC_STATUS = "sync_status";
 
@@ -211,5 +209,23 @@ public class StructureRepository extends LocationRepository {
             jsonData = new JsonData(jsonArray, maxRowId);
         }
         return jsonData;
+    }
+
+    public int getUnsyncedStructuresCount() {
+        Cursor cursor = null;
+        int structuresCount = 0;
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT count(*) FROM %s WHERE %s = ?", STRUCTURE_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Created});
+            if (cursor.moveToNext()) {
+                structuresCount = cursor.getInt(0);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return structuresCount;
     }
 }

@@ -36,7 +36,7 @@ public class SyncStatusBroadcastReceiver extends BroadcastReceiver {
         syncStatusListeners = new ArrayList<>();
     }
 
-        public static void init(Context context) {
+    public static void init(Context context) {
         if (singleton != null) {
             destroy(context);
         }

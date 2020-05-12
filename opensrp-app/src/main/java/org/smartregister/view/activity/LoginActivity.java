@@ -72,6 +72,8 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         initializeBuildDetails();
         setDoneActionHandlerOnPasswordField();
         initializeProgressDialog();
+
+
     }
 
     @Override
