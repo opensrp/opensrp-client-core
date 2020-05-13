@@ -196,59 +196,57 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         presenter.initializeQueries(getMainCondition());
         updateSearchView();
         setServiceModeViewDrawableRight(null);
-
-        // QR Code
-        qrCodeScanImageView = view.findViewById(R.id.scanQrCode);
-        if (qrCodeScanImageView != null) {
-            qrCodeScanImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) getActivity();
-                    if (baseRegisterActivity != null) {
-                        baseRegisterActivity.startQrCodeScanner();
-                    }
-                }
-            });
-        }
-
-        //Sync
-        syncButton = view.findViewById(R.id.sync_refresh);
-        if (syncButton != null) {
-            syncButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
-                }
-            });
-        }
-
-        View topLeftLayout = view.findViewById(R.id.top_left_layout);
-        if (topLeftLayout != null) {
-            topLeftLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    qrCodeScanImageView.performLongClick();
-                }
-            });
-        }
-
+        attachQrCode(view);
+        attachSyncButton(view);
+        attachTopLeftLayout(view);
+        attachProgressBar(view);
         /*// Location
         facilitySelection = view.findViewById(R.id.facility_selection);
         if (facilitySelection != null) {m
             facilitySelection.init();
         }*/
 
+        // Sort and Filter
+        headerTextDisplay = view.findViewById(R.id.header_text_display);
+        filterStatus = view.findViewById(R.id.filter_status);
+        filterRelativeLayout = view.findViewById(R.id.filter_display_view);
+    }
+
+    protected void attachTopLeftLayout(View view) {
+        View topLeftLayout = view.findViewById(R.id.top_left_layout);
+        if (topLeftLayout != null) {
+            topLeftLayout.setOnClickListener(v -> qrCodeScanImageView.performLongClick());
+        }
+    }
+
+    protected void attachProgressBar(View view) {
         // Progress bar
         syncProgressBar = view.findViewById(R.id.sync_progress_bar);
         if (syncProgressBar != null) {
             FadingCircle circle = new FadingCircle();
             syncProgressBar.setIndeterminateDrawable(circle);
         }
+    }
 
-        // Sort and Filter
-        headerTextDisplay = view.findViewById(R.id.header_text_display);
-        filterStatus = view.findViewById(R.id.filter_status);
-        filterRelativeLayout = view.findViewById(R.id.filter_display_view);
+    protected void attachSyncButton(View view) {
+        //Sync
+        syncButton = view.findViewById(R.id.sync_refresh);
+        if (syncButton != null) {
+            syncButton.setOnClickListener(view1 -> SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG));
+        }
+    }
+
+    protected void attachQrCode(View view) {
+        // QR Code
+        qrCodeScanImageView = view.findViewById(R.id.scanQrCode);
+        if (qrCodeScanImageView != null) {
+            qrCodeScanImageView.setOnClickListener(v -> {
+                BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) getActivity();
+                if (baseRegisterActivity != null) {
+                    baseRegisterActivity.startQrCodeScanner();
+                }
+            });
+        }
     }
 
     @Override
