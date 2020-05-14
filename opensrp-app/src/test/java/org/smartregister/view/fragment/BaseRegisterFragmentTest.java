@@ -476,19 +476,19 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         Mockito.doReturn(resources).when(activitySpy).getResources();
         Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
 
-        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
-        Mockito.doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
+        View Layout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        Mockito.doReturn(Layout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
-        ProgressBar  syncProgressBar = parentLayout.findViewById(R.id.sync_progress_bar);
-        ImageView syncButton = parentLayout.findViewById(R.id.sync_refresh);
+        ProgressBar  progressBar = Layout.findViewById(R.id.sync_progress_bar);
+        ImageView imageView = Layout.findViewById(R.id.sync_refresh);
 
-        ReflectionHelpers.setField(baseRegisterFragment, "syncProgressBar", syncProgressBar);
-        ReflectionHelpers.setField(baseRegisterFragment, "syncButton", syncButton);
+        ReflectionHelpers.setField(baseRegisterFragment, "syncProgressBar", progressBar);
+        ReflectionHelpers.setField(baseRegisterFragment, "syncButton", imageView);
 
         baseRegisterFragment.refreshSyncStatusViews(FetchStatus.noConnection);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
-        Assert.assertEquals(View.GONE,syncProgressBar.getVisibility());
-        Assert.assertEquals(View.VISIBLE,syncButton.getVisibility());
+        Assert.assertEquals(View.GONE,progressBar.getVisibility());
+        Assert.assertEquals(View.VISIBLE,imageView.getVisibility());
     }
 
     @Test
