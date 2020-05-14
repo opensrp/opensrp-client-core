@@ -17,6 +17,8 @@ import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ManifestRepository;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -100,6 +102,16 @@ public class DocumentConfigurationService {
         if (httpAgent == null) {
             throw new IllegalArgumentException(CLIENT_FORM_SYNC_URL + " http agent is null");
         }
+
+        if (identifier != null) {
+            try {
+                identifier = URLEncoder.encode(identifier, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                Timber.e(e);
+            }
+        }
+
+
         String baseUrl = getBaseUrl();
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}{2}",
@@ -174,6 +186,8 @@ public class DocumentConfigurationService {
         Manifest manifest = new Manifest();
         manifest.setAppVersion(manifestDTO.getAppVersion());
         manifest.setCreatedAt(manifestDTO.getCreatedAt());
+
+        manifestDTO.setJson(manifestDTO.getJson().replace("\\", "\\\\"));
 
         JSONObject json = new JSONObject(manifestDTO.getJson());
         if (json.has(MANIFEST_FORMS_VERSION)) {

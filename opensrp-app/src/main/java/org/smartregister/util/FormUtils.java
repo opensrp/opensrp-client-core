@@ -1139,6 +1139,13 @@ public class FormUtils {
         }
 
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        if (clientForm == null) {
+            String revisedFormName = localeFormIdentity .endsWith(".json")
+                    ? localeFormIdentity.substring(0, localeFormIdentity.length() - 5) : localeFormIdentity + ".json";
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+        }
+
         try {
             if (clientForm != null) {
                 Timber.d("============%s form loaded from db============", formIdentity);
@@ -1163,8 +1170,20 @@ public class FormUtils {
         }
 
         String dbFormName = TextUtils.isEmpty(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
-
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+
+        if (clientForm == null) {
+            String revisedFormName = dbFormName.endsWith(".json")
+                    ? dbFormName.substring(0, localeFormIdentity.length() - 5) : dbFormName + ".json";
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+
+            if (clientForm == null) {
+                subFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
+                dbFormName = TextUtils.isEmpty(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+                clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+            }
+        }
+
         try {
             if (clientForm != null) {
                 Timber.d("============%s form loaded from db============", dbFormName);
