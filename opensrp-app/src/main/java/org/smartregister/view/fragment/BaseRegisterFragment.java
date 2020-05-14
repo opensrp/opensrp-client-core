@@ -396,46 +396,48 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
 
     @VisibleForTesting
     protected void refreshSyncStatusViews(FetchStatus fetchStatus) {
-
-        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
-            Utils.showShortToast(getActivity(), getString(R.string.syncing));
-            Timber.i(getString(R.string.syncing));
+        if (isSyncing()) {
+            Utils.showShortToast(getActivity(), getActivity().getString(R.string.syncing));
+            Timber.i(getActivity().getString(R.string.syncing));
+            refreshSyncProgressSpinner();
         } else {
             if (fetchStatus != null) {
-
                 if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
                     if (fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
-                        Timber.i(getString(R.string.sync_failed_malformed_url));
+                        Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed_malformed_url));
+                        Timber.i(getActivity().getString(R.string.sync_failed_malformed_url));
                     } else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
-                        Timber.i(getString(R.string.sync_failed_timeout_error));
+                        Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed_timeout_error));
+                        Timber.i(getActivity().getString(R.string.sync_failed_timeout_error));
                     } else {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
-                        Timber.i(getString(R.string.sync_failed));
+                        Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed));
+                        Timber.i(getActivity().getString(R.string.sync_failed));
                     }
-
-                } else if (fetchStatus.equals(FetchStatus.fetched)
-                        || fetchStatus.equals(FetchStatus.nothingFetched)) {
-
+                    refreshSyncProgressSpinner();
+                } else if (fetchStatus.equals(FetchStatus.fetched) || fetchStatus.equals(FetchStatus.nothingFetched)) {
                     setRefreshList(true);
                     renderView();
 
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
-                    Timber.i(getString(R.string.sync_complete));
-
+                    Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_complete));
+                    Timber.i(getActivity().getString(R.string.sync_complete));
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {
 
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
-                    Timber.i(getString(R.string.sync_failed_no_internet));
+                    Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed_no_internet));
+                    Timber.i(getActivity().getString(R.string.sync_failed_no_internet));
+                    refreshSyncProgressSpinner();
+                } else {
+                    refreshSyncProgressSpinner();
                 }
             } else {
                 Timber.i("Fetch Status NULL");
+                refreshSyncProgressSpinner();
             }
-
         }
+    }
 
-        refreshSyncProgressSpinner();
+    @VisibleForTesting
+    protected boolean isSyncing() {
+        return SyncStatusBroadcastReceiver.getInstance().isSyncing();
     }
 
     @Override
@@ -450,8 +452,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         super.onPause();
     }
 
+    @VisibleForTesting
     protected void refreshSyncProgressSpinner() {
-        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+        if (isSyncing()) {
             if (syncProgressBar != null) {
                 syncProgressBar.setVisibility(View.VISIBLE);
             }

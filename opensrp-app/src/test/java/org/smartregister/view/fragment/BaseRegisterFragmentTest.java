@@ -1,6 +1,8 @@
 package org.smartregister.view.fragment;
 
 import android.content.Intent;
+import android.content.res.Resources;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,6 +35,7 @@ import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.domain.FetchStatus;
+import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 
@@ -93,6 +98,9 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
     @Captor
     private ArgumentCaptor<Integer> intArgumentCaptor;
+
+    @Mock
+    private Resources resources;
 
     @Before
     public void setUp() {
@@ -376,5 +384,122 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
         Assert.assertEquals("benji", headerTextDisplay.getText().toString());
         Assert.assertEquals("5 patients ASC", filterStatus.getText().toString());
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingTrue() {
+        Mockito.doReturn(true).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+
+        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        Mockito.doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
+
+        ProgressBar  syncProgressBar = parentLayout.findViewById(R.id.sync_progress_bar);
+        ImageView syncButton = parentLayout.findViewById(R.id.sync_refresh);
+
+        ReflectionHelpers.setField(baseRegisterFragment, "syncProgressBar", syncProgressBar);
+        ReflectionHelpers.setField(baseRegisterFragment, "syncButton", syncButton);
+        baseRegisterFragment.refreshSyncStatusViews(FetchStatus.fetchStarted);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+        Assert.assertEquals(View.VISIBLE,syncProgressBar.getVisibility());
+        Assert.assertEquals(View.GONE,syncButton.getVisibility());
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalse() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        baseRegisterFragment.refreshSyncStatusViews(FetchStatus.fetchStarted);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalseFetchStatusFailedMalformedUrl() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        FetchStatus status = FetchStatus.fetchedFailed;
+        status.setDisplayValue(ResponseErrorStatus.malformed_url.name());
+        baseRegisterFragment.refreshSyncStatusViews(status);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalseFetchStatusFailed() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        FetchStatus status = FetchStatus.fetchedFailed;
+        status.setDisplayValue(ResponseErrorStatus.not_found.name());
+        baseRegisterFragment.refreshSyncStatusViews(status);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalseFetchStatusFailedTimeout() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        FetchStatus status = FetchStatus.fetchedFailed;
+        status.setDisplayValue(ResponseErrorStatus.timeout.name());
+        baseRegisterFragment.refreshSyncStatusViews(status);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalseFetchStatusFetched() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        baseRegisterFragment.refreshSyncStatusViews(FetchStatus.fetched);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalseFetchStatusNoConnection() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+
+        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        Mockito.doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
+
+        ProgressBar  syncProgressBar = parentLayout.findViewById(R.id.sync_progress_bar);
+        ImageView syncButton = parentLayout.findViewById(R.id.sync_refresh);
+
+        ReflectionHelpers.setField(baseRegisterFragment, "syncProgressBar", syncProgressBar);
+        ReflectionHelpers.setField(baseRegisterFragment, "syncButton", syncButton);
+
+        baseRegisterFragment.refreshSyncStatusViews(FetchStatus.noConnection);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
+        Assert.assertEquals(View.GONE,syncProgressBar.getVisibility());
+        Assert.assertEquals(View.VISIBLE,syncButton.getVisibility());
+    }
+
+    @Test
+    public void testRefreshSyncStatusViewsWithSyncingFalseFetchStatusNull() {
+        Mockito.doReturn(false).when(baseRegisterFragment).isSyncing();
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+        Mockito.doReturn(resources).when(activitySpy).getResources();
+        Mockito.doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        baseRegisterFragment.refreshSyncStatusViews(null);
+        Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
     }
 }
