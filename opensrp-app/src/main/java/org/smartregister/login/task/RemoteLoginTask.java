@@ -2,6 +2,8 @@ package org.smartregister.login.task;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountsException;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
@@ -13,6 +15,7 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.account.AccountResponse;
 import org.smartregister.domain.LoginResponse;
@@ -58,43 +61,61 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         Bundle userData = null;
         try {
 
-            AccountResponse response = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD);
+            AccountConfiguration accountConfiguration = CoreLibrary.getInstance().context().getHttpAgent().fetchOAuthConfiguration();
 
-            AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
+            if (accountConfiguration != null) {
 
-            final Account account = new Account(mUsername, mAccountAuthenticatorXml.getAccountType());
+                if (!accountConfiguration.getGrantTypesSupported().contains(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD))
+                    throw new AccountsException("OAuth configuration DOES NOT support the Password Grant Type");
 
-            loginResponse = getOpenSRPContext().userService().fetchUserDetails(response.getAccessToken());
+                //Persist config resources
+                SharedPreferences.Editor sharedPrefEditor = CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit();
 
-            if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
+                sharedPrefEditor.putString(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL, accountConfiguration.getTokenEndpoint());
+                sharedPrefEditor.putString(AccountHelper.CONFIGURATION_CONSTANTS.AUTHORIZATION_ENDPOINT_URL, accountConfiguration.getAuthorizationEndpoint());
+                sharedPrefEditor.putString(AccountHelper.CONFIGURATION_CONSTANTS.ISSUER_ENDPOINT_URL, accountConfiguration.getIssuerEndpoint());
+                sharedPrefEditor.apply();
 
-                userData = getOpenSRPContext().userService().saveUserGroup(mUsername, mPassword, loginResponse.payload());
+                AccountResponse response = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
 
-                if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
+                AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
+
+                final Account account = new Account(mUsername, mAccountAuthenticatorXml.getAccountType());
+
+                loginResponse = getOpenSRPContext().userService().fetchUserDetails(response.getAccessToken());
+
+                if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
+
+                    userData = getOpenSRPContext().userService().saveUserGroup(mUsername, mPassword, loginResponse.payload());
+
+                    if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
 
-                    publishProgress(R.string.loading_client_settings);
+                        publishProgress(R.string.loading_client_settings);
 
-                    SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
+                        SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 
-                    try {
-                        JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+                        try {
+                            JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
 
-                        JSONObject prefSettingsData = new JSONObject();
-                        prefSettingsData.put(AllConstants.PREF_KEY.SETTINGS, settings);
-                        loginResponse.setRawData(prefSettingsData);
+                            JSONObject prefSettingsData = new JSONObject();
+                            prefSettingsData.put(AllConstants.PREF_KEY.SETTINGS, settings);
+                            loginResponse.setRawData(prefSettingsData);
 
-                    } catch (JSONException e) {
-                        Timber.e(e);
+                        } catch (JSONException e) {
+                            Timber.e(e);
+                        }
+
                     }
-
                 }
+
+                mAccountManager.addAccountExplicitly(account, response.getAccessToken(), userData);
+                mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
+                mAccountManager.setUserData(account, AccountHelper.KEY_REFRESH_TOKEN, response.getRefreshToken());
+
+            } else {
+                throw new AccountsException("Could not fetch OAuth Configuration");
             }
-
-            mAccountManager.addAccountExplicitly(account, response.getAccessToken(), userData);
-            mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
-            mAccountManager.setUserData(account, AccountHelper.KEY_REFRESH_TOKEN, response.getRefreshToken());
-
 
         } catch (Exception e) {
 
