@@ -116,4 +116,7 @@ public class AllSettings {
         return settingsRepository.queryUnsyncedSettingsCount();
     }
 
+    public AllSharedPreferences getPreferences() {
+        return preferences;
+    }
 }
