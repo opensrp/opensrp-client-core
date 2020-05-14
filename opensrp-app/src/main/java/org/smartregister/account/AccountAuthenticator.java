@@ -59,7 +59,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
                     Timber.d("Authenticate with saved credentials");
 
-                    AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(account.name, password, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD);
+                    AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(account.name, password, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, CoreLibrary.getInstance().context().allSettings().get(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL));
                     authToken = accountResponse.getAccessToken();
                     refreshToken = accountResponse.getRefreshToken();
 
