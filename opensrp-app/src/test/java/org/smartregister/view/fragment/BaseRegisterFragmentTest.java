@@ -357,4 +357,24 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         baseRegisterFragment.onSyncComplete(FetchStatus.fetched);
         Mockito.verify(baseRegisterFragment).refreshSyncStatusViews(FetchStatus.fetched);
     }
+
+    @Test
+    public void testUpdateFilterAndFilterStatus() {
+        View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
+        Mockito.doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
+
+        TextView headerTextDisplay = parentLayout.findViewById(R.id.header_text_display);
+        TextView filterStatus = parentLayout.findViewById(R.id.filter_status);
+        RelativeLayout filterRelativeLayout = parentLayout.findViewById(R.id.filter_display_view);
+
+        ReflectionHelpers.setField(baseRegisterFragment, "headerTextDisplay", headerTextDisplay);
+        ReflectionHelpers.setField(baseRegisterFragment, "filterRelativeLayout", filterRelativeLayout);
+        ReflectionHelpers.setField(baseRegisterFragment, "filterStatus", filterStatus);
+
+        Mockito.doReturn(5).when(clientAdapter).getTotalcount();
+        baseRegisterFragment.updateFilterAndFilterStatus("benji", "ASC");
+
+        Assert.assertEquals("benji", headerTextDisplay.getText().toString());
+        Assert.assertEquals("5 patients ASC", filterStatus.getText().toString());
+    }
 }
