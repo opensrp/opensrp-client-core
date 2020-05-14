@@ -15,7 +15,17 @@ public class AccountHelper {
     public final static String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     public final static int MAX_AUTH_RETRIES = 1;
 
+
+    public static final class CONFIGURATION_CONSTANTS {
+
+        public final static String TOKEN_ENDPOINT_URL = "token_endpoint_url";
+        public final static String AUTHORIZATION_ENDPOINT_URL = "authorization_endpoint_url";
+        public final static String ISSUER_ENDPOINT_URL = "issuer_endpoint_url";
+    }
+
     public static final class OAUTH {
+
+        public final static String ACCOUNT_CONFIGURATION_ENDPOINT = "/rest/config/keycloak";
         public final static String TOKEN_ENDPOINT = "/oauth/token";
 
         public static final class GRANT_TYPE {
