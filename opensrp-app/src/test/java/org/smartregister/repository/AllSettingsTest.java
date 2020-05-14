@@ -258,4 +258,10 @@ public class AllSettingsTest extends BaseUnitTest {
         doReturn("team").when(allSharedPreferences).fetchDefaultTeam(anyString());
         assertEquals("team", allSettings.fetchDefaultTeam("user-name"));
     }
+
+    @Test
+    public void testFetchDefaultLocalityIdShouldReturnCorrectLocalityId() {
+        doReturn("locality").when(allSharedPreferences).fetchDefaultLocalityId(anyString());
+        assertEquals("locality", allSettings.fetchDefaultLocalityId("user-name"));
+    }
 }

@@ -128,6 +128,10 @@ public class AllSettings {
         return preferences.fetchDefaultTeam(username);
     }
 
+    public String fetchDefaultLocalityId(String username) {
+        return preferences.fetchDefaultLocalityId(username);
+    }
+
     public AllSharedPreferences getPreferences() {
         return preferences;
     }
