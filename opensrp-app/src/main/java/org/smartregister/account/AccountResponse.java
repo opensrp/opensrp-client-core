@@ -16,9 +16,11 @@ public class AccountResponse {
     @SerializedName("refresh_token")
     private String refreshToken;
 
+    @SerializedName("refresh_expires_in")
+    private Integer refreshExpiresIn;
 
     @SerializedName("expires_in")
-    private Integer ExpiresIn;
+    private Integer expiresIn;
 
     @SerializedName("scope")
     private String Scope;
@@ -53,10 +55,14 @@ public class AccountResponse {
     }
 
     public Integer getExpiresIn() {
-        return ExpiresIn;
+        return expiresIn;
     }
 
     public String getScope() {
         return Scope;
+    }
+
+    public Integer getRefreshExpiresIn() {
+        return refreshExpiresIn;
     }
 }
