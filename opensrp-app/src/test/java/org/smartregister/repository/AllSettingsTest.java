@@ -16,6 +16,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -233,5 +234,34 @@ public class AllSettingsTest extends BaseUnitTest {
 
         Assert.assertEquals("testUnsyncedKey", settings.get(0).getKey());
         Assert.assertEquals("testUnsyncedValue", settings.get(0).getValue());
+    }
+
+    @Test
+    public void testGetPreferences() {
+        assertEquals(allSharedPreferences, allSettings.getPreferences());
+    }
+
+    @Test
+    public void testFetchRegisteredANMShouldReturnCorrectProvider() {
+        doReturn("provider").when(allSharedPreferences).fetchRegisteredANM();
+        assertEquals("provider", allSettings.fetchRegisteredANM());
+    }
+
+    @Test
+    public void testFetchDefaultTeamIdShouldReturnCorrectTeamId() {
+        doReturn("team-id").when(allSharedPreferences).fetchDefaultTeamId(anyString());
+        assertEquals("team-id", allSettings.fetchDefaultTeamId("user-name"));
+    }
+
+    @Test
+    public void testFetchDefaultTeamShouldReturnCorrectTeam() {
+        doReturn("team").when(allSharedPreferences).fetchDefaultTeam(anyString());
+        assertEquals("team", allSettings.fetchDefaultTeam("user-name"));
+    }
+
+    @Test
+    public void testFetchDefaultLocalityIdShouldReturnCorrectLocalityId() {
+        doReturn("locality").when(allSharedPreferences).fetchDefaultLocalityId(anyString());
+        assertEquals("locality", allSettings.fetchDefaultLocalityId("user-name"));
     }
 }
