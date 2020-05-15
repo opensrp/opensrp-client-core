@@ -16,7 +16,6 @@ import static org.smartregister.AllConstants.DEFAULT_TEAM_ID_PREFIX;
 import static org.smartregister.AllConstants.DEFAULT_TEAM_PREFIX;
 import static org.smartregister.AllConstants.DRISHTI_BASE_URL;
 import static org.smartregister.AllConstants.ENCRYPTED_GROUP_ID_PREFIX;
-import static org.smartregister.AllConstants.ENCRYPTED_PASSWORD_PREFIX;
 import static org.smartregister.AllConstants.FORCE_REMOTE_LOGIN;
 import static org.smartregister.AllConstants.IS_SYNC_INITIAL_KEY;
 import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
@@ -71,19 +70,6 @@ public class AllSharedPreferences {
 
     public void saveServerTimeZone(String serverTimeZone) {
         preferences.edit().putString(SERVER_TIMEZONE, serverTimeZone).commit();
-    }
-
-    public String fetchEncryptedPassword(String username) {
-        if (username != null) {
-            return preferences.getString(ENCRYPTED_PASSWORD_PREFIX + username, null);
-        }
-        return null;
-    }
-
-    public void saveEncryptedPassword(String username, String password) {
-        if (username != null) {
-            preferences.edit().putString(ENCRYPTED_PASSWORD_PREFIX + username, password).commit();
-        }
     }
 
     public String fetchPioneerUser() {
