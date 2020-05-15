@@ -2,10 +2,8 @@ package org.smartregister.view.activity;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
-import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.json.JSONObject;
 import org.smartregister.util.FormUtils;
@@ -21,11 +19,9 @@ import timber.log.Timber;
 public class DynamicJsonFormActivity extends JsonFormActivity {
 
 
-
     @NonNull
     @Override
     public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
-        //ClientFormRepository
         try {
             FormUtils formUtils = FormUtils.getInstance(context);
             BufferedReader bufferedReader = formUtils.getRulesFromRepository(fileName);

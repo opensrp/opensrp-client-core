@@ -1178,8 +1178,8 @@ public class FormUtils {
             clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
 
             if (clientForm == null) {
-                subFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
-                dbFormName = TextUtils.isEmpty(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+                String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
+                dbFormName = TextUtils.isEmpty(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
             }
         }
