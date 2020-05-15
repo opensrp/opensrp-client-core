@@ -459,5 +459,11 @@ public class AllConstants {
     public interface JSON {
         String KEY = "key";
         String VALUE = "value";
+
+        interface Property {
+            String IS_NEW = "is_new";
+            String FORM_VERSION = "form_version";
+            String CLIENT_FORM_ID = "client_form_id";
+        }
     }
 }

@@ -1150,7 +1150,11 @@ public class FormUtils {
         try {
             if (clientForm != null) {
                 Timber.d("============%s form loaded from db============", formIdentity);
-                return new JSONObject(clientForm.getJson());
+
+                JSONObject formJson = new JSONObject(clientForm.getJson());
+                injectFormStatus(formJson, clientForm);
+
+                return formJson;
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -1228,6 +1232,18 @@ public class FormUtils {
     protected String extractFormNameWithoutExtension(String localeFormIdentity) {
         return localeFormIdentity.endsWith(AllConstants.JSON_FILE_EXTENSION)
                 ? localeFormIdentity.substring(0, localeFormIdentity.length() - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
+    }
+
+    public void injectFormStatus(@NonNull JSONObject jsonObject, @NonNull ClientForm clientForm) {
+        if (clientForm.isNew()) {
+            try {
+                jsonObject.put(AllConstants.JSON.Property.IS_NEW, clientForm.isNew());
+                jsonObject.put(AllConstants.JSON.Property.CLIENT_FORM_ID, clientForm.getId());
+                jsonObject.put(AllConstants.JSON.Property.FORM_VERSION, clientForm.getVersion());
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
     }
 
 }
