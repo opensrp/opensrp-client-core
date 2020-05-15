@@ -213,22 +213,14 @@ public class UserService {
 
     public boolean isUserInValidGroup(final String userName, final String password) {
         // Check if everything OK for local login
-        if (keyStore != null && userName != null && password != null && !allSharedPreferences
-                .fetchForceRemoteLogin()) {
+        if (keyStore != null && userName != null && password != null && !allSharedPreferences.fetchForceRemoteLogin()) {
             String username = userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM()) ? allSharedPreferences.fetchRegisteredANM() : userName;
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(username);
                 if (privateKeyEntry != null) {
-                    // Compare stored encrypted password with provided password
-                    String encryptedPassword = allSharedPreferences.
-                            fetchEncryptedPassword(username);
-                    String decryptedPassword = decryptString(privateKeyEntry, encryptedPassword);
-
-                    if (password.equals(decryptedPassword)) {
-                        String groupId = getGroupId(username, privateKeyEntry);
-                        if (groupId != null) {
-                            return isValidGroupId(groupId);
-                        }
+                    String groupId = getGroupId(username, privateKeyEntry);
+                    if (groupId != null) {
+                        return isValidGroupId(groupId);
                     }
                 }
             } catch (Exception e) {
@@ -586,7 +578,6 @@ public class UserService {
                     return null;
                 }
 
-
                 String groupId = null;
 
                 SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
@@ -603,19 +594,15 @@ public class UserService {
 
                 if (StringUtils.isBlank(groupId)) {
                     return null;
-                } else {
-
-                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, groupId);
                 }
 
                 if (privateKeyEntry != null) {
-                    // First save the encrypted password
-                    String encryptedPassword = encryptString(privateKeyEntry, password);
-                    allSharedPreferences.saveEncryptedPassword(username, encryptedPassword);
 
                     // Then save the encrypted group
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
                     allSharedPreferences.saveEncryptedGroupId(username, encryptedGroupId);
+
+                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, encryptedGroupId);
 
                     // Finally, save the pioneer user
                     if (allSharedPreferences.fetchPioneerUser() == null) {
