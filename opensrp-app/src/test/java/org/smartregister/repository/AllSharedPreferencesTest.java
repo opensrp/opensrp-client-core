@@ -75,19 +75,6 @@ public class AllSharedPreferencesTest extends TestCase {
     }
 
     @Test
-    public void assertFetchEncryptedPassword() {
-        Assert.assertNull(allSharedPreferences.fetchEncryptedPassword(null));
-        Assert.assertNotNull(allSharedPreferences.fetchEncryptedPassword(""));
-        Assert.assertEquals(allSharedPreferences.fetchEncryptedPassword(""), str);
-    }
-
-    @Test
-    public void assertSaveEncryptedPassword() {
-        allSharedPreferences.saveEncryptedPassword("uname", "pword");
-        Mockito.verify(preferences, Mockito.times(1)).edit();
-    }
-
-    @Test
     public void assertFetchPioneerUser() {
         Assert.assertEquals(allSharedPreferences.fetchPioneerUser(), str);
     }
@@ -309,7 +296,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void testFetchLastSyncDate() {
-        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+        Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
         assertEquals((Long) 2000L, allSharedPreferences.fetchLastSyncDate(1000L));
     }
@@ -340,7 +327,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void testFetchLastCheckTimeStamp() {
-        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+        Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
         assertEquals(2000L, allSharedPreferences.fetchLastCheckTimeStamp());
     }
@@ -371,14 +358,14 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void testFetchLastSettingsSyncTimeStamp() {
-        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+        Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
         assertEquals(2000L, allSharedPreferences.fetchLastSettingsSyncTimeStamp());
     }
 
     @Test
     public void testIsMigratedToSqlite4() {
-        Mockito.when(preferences.getBoolean(any(),  anyBoolean())).thenReturn(true);
+        Mockito.when(preferences.getBoolean(any(), anyBoolean())).thenReturn(true);
 
         assertTrue(allSharedPreferences.isMigratedToSqlite4());
     }
@@ -397,7 +384,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void testGetLastPeerToPeerSyncProcessedEvent() {
-        Mockito.when(preferences.getInt(any(),  anyInt())).thenReturn(10);
+        Mockito.when(preferences.getInt(any(), anyInt())).thenReturn(10);
 
         assertEquals(10, allSharedPreferences.getLastPeerToPeerSyncProcessedEvent());
     }
@@ -416,7 +403,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void isPeerToPeerUnprocessedEvents() {
-        Mockito.when(preferences.getBoolean(any(),  anyBoolean())).thenReturn(true);
+        Mockito.when(preferences.getBoolean(any(), anyBoolean())).thenReturn(true);
 
         assertTrue(allSharedPreferences.isPeerToPeerUnprocessedEvents());
     }
@@ -447,7 +434,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void testFetchLastClientProcessedTimeStamp() {
-        Mockito.when(preferences.getLong(any(),  anyLong())).thenReturn(2000L);
+        Mockito.when(preferences.getLong(any(), anyLong())).thenReturn(2000L);
 
         assertEquals(2000L, allSharedPreferences.fetchLastClientProcessedTimeStamp());
     }
@@ -466,7 +453,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void testFetchTransactionsKilledFlag() {
-        Mockito.when(preferences.getBoolean(any(),  anyBoolean())).thenReturn(true);
+        Mockito.when(preferences.getBoolean(any(), anyBoolean())).thenReturn(true);
 
         assertTrue(allSharedPreferences.fetchTransactionsKilledFlag());
     }
