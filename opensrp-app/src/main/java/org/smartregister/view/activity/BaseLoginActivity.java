@@ -51,6 +51,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     private Boolean showPasswordChecked = false;
     private SyncUtils syncUtils;
     private String authTokenType;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,16 +167,19 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showErrorDialog(@StringRes int title, String message) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .create();
+
+        if (alertDialog == null) {
+            alertDialog = new AlertDialog.Builder(this)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).create();
+        }
+
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
         alertDialog.show();
 
     }
