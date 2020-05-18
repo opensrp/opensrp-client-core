@@ -1246,4 +1246,22 @@ public class FormUtils {
         }
     }
 
+    public static int getClientFormId(@NonNull JSONObject jsonObject) {
+        try {
+            return jsonObject.getInt(AllConstants.JSON.Property.CLIENT_FORM_ID);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return 0;
+        }
+    }
+
+    public static boolean isFormNew(@NonNull JSONObject jsonObject) {
+        try {
+            return jsonObject.getBoolean(AllConstants.JSON.Property.IS_NEW);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return false;
+        }
+    }
+
 }
