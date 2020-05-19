@@ -37,6 +37,7 @@ import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
 import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.PERSON_ATTRIBUTE;
 import static org.smartregister.util.JsonFormUtils.PERSON_INDENTIFIER;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
 import static org.smartregister.util.JsonFormUtils.SAVE_OBS_AS_ARRAY;
@@ -1374,5 +1375,18 @@ public class JsonFormUtilsTest {
         JsonFormUtils.fillSubFormIdentifiers(pids, jsonObject, "entity_id");
         assertEquals(1, pids.size());
         assertEquals("value", pids.get(OPENMRS_ENTITY_ID));
+    }
+
+    @Test
+    public void testFillSubFormAttributesShouldFillCorrectAttributes() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ENTITY_ID, "entity_id");
+        jsonObject.put(VALUE, "value");
+        jsonObject.put(OPENMRS_ENTITY, PERSON_ATTRIBUTE);
+        jsonObject.put(OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        Map<String, Object> patientAttributes = new HashMap<>();
+        JsonFormUtils.fillSubFormAttributes(patientAttributes, jsonObject, "entity_id");
+        assertEquals(1, patientAttributes.size());
+        assertEquals("value", patientAttributes.get(OPENMRS_ENTITY_ID));
     }
 }
