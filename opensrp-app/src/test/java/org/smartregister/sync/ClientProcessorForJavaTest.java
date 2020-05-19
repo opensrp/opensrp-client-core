@@ -639,6 +639,24 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         assertEquals("Kasabuni", contentValues.get("village_town"));
     }
 
+    @Test
+    public void processFieldShouldCreateCaseBasedOnObsValueFilled() {
+        //Field field = JsonFormUtils.gson.fromJson("{\"creates_case\":[\"ec_family\"],\"field\":\"rType.sampleField\",\"field_value\":\"Family Registration\", \"values\": []}"
+        Field field = JsonFormUtils.gson.fromJson("{\"creates_case\":[\"ec_family_disability\"],\"field\":\"obs.formSubmissionField\", \"values\": [\"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"], \"concept\": \"disabilities\"}"
+                , Field.class);
+        Event event = JsonFormUtils.gson.fromJson("{\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"entityType\":\"ec_family_member\",\"eventDate\":\"2019-09-23T20:00:00.000-04:00\",\"eventType\":\"Family Member Registration\",\"formSubmissionId\":\"af7143d3-33d9-4bb2-9fe5-14937b4ae92f\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"surname\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"Kim\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"age_calculated\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"18.0\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"wra\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0\"]},{\"fieldCode\":\"162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"disabilities\",\"humanReadableValues\":[\"No\"],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phone_number\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0723433455\"]},{\"fieldCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"service_provider\",\"humanReadableValues\":[\"None\"],\"parentCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"164369AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"start\",\"fieldType\":\"concept\",\"formSubmissionField\":\"start\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:18:41\"]},{\"fieldCode\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"end\",\"fieldType\":\"concept\",\"formSubmissionField\":\"end\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:21:34\"]},{\"fieldCode\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"phonenumber\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phonenumber\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"+15555215554\"]}],\"providerId\":\"chwone\",\"version\":1569309694752,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.108-04:00\",\"dateEdited\":\"2019-11-13T00:42:43.387-05:00\",\"serverVersion\":1573623789891 }"
+                , Event.class);
+        Client client = JsonFormUtils.gson.fromJson("{\"birthdate\":\"2001-09-23T20:00:00.000-04:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"firstName\":\"Jonny\",\"gender\":\"Male\",\"middleName\":\"Kamau\",\"relationships\":{\"family\":[\"af3e29be-88ee-4063-bb02-963a64c664ab\"]},\"addresses\":[],\"attributes\":{\"id_avail\":\"[\\\"chk_none\\\"]\",\"Community_Leader\":\"[\\\"chk_none\\\"]\",\"Health_Insurance_Type\":\"iCHF\",\"Health_Insurance_Number\":\"123\"},\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"identifiers\":{\"opensrp_id\":\"4602652\"},\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.015-04:00\",\"serverVersion\":1569311069836}"
+                , Client.class);
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+
+        assertTrue(clientProcessorForJava.processField(field, event, client));
+        ArgumentCaptor<ArrayList<String>> createsCaseCaptor = ArgumentCaptor.forClass(ArrayList.class);
+        Mockito.verify(clientProcessorForJava).processCaseModel(Mockito.eq(event), Mockito.eq(client), createsCaseCaptor.capture());
+        Assert.assertEquals("ec_family_disability", createsCaseCaptor.getValue().get(0));
+    }
+
     @After
     public void tearDown() {
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
