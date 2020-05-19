@@ -654,7 +654,7 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
         assertTrue(clientProcessorForJava.processField(field, event, client));
         ArgumentCaptor<ArrayList<String>> createsCaseCaptor = ArgumentCaptor.forClass(ArrayList.class);
         Mockito.verify(clientProcessorForJava).processCaseModel(Mockito.eq(event), Mockito.eq(client), createsCaseCaptor.capture());
-        Assert.assertEquals("ec_family_disability", createsCaseCaptor.getValue().get(0));
+        assertEquals("ec_family_disability", createsCaseCaptor.getValue().get(0));
     }
 
     @After
