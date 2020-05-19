@@ -1143,7 +1143,7 @@ public class FormUtils {
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
 
         if (clientForm == null) {
-            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity, localeFormIdentity.length());
+            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
             clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
         }
 
@@ -1174,7 +1174,7 @@ public class FormUtils {
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
 
         if (clientForm == null) {
-            String revisedFormName = extractFormNameWithoutExtension(dbFormName, localeFormIdentity.length());
+            String revisedFormName = extractFormNameWithoutExtension(dbFormName);
             clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
 
             if (clientForm == null) {
@@ -1189,7 +1189,11 @@ public class FormUtils {
                 Timber.d("============%s form loaded from db============", dbFormName);
                 String originalJson = clientForm.getJson();
 
-                return new JSONObject(NativeFormLangUtils.getTranslatedString(originalJson, context));
+                if (translateSubForm) {
+                    originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+                }
+
+                return new JSONObject(originalJson);
             }
         } catch (JSONException e) {
             Timber.e(e);
@@ -1221,9 +1225,9 @@ public class FormUtils {
     }
 
     @NonNull
-    protected String extractFormNameWithoutExtension(String localeFormIdentity, int length) {
+    protected String extractFormNameWithoutExtension(String localeFormIdentity) {
         return localeFormIdentity.endsWith(AllConstants.JSON_FILE_EXTENSION)
-                ? localeFormIdentity.substring(0, length - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
+                ? localeFormIdentity.substring(0, localeFormIdentity.length() - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
     }
 
 }
