@@ -167,4 +167,27 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
+    @Test
+    public void testSearchQuerFtsWithSearchJoinTableArray() {
+        String expectedQuery = "SELECT object_id FROM table1_search " +
+                "WHERE object_id IN ( SELECT object_id FROM table1_search WHERE where id in (1,2,3) AND phrase MATCH 'John*'  " +
+                "UNION  SELECT object_relational_id FROM table2_search WHERE phrase MATCH 'John*'  " +
+                "UNION   SELECT object_relational_id FROM table3_search WHERE phrase MATCH 'John*'   ) " +
+                "ORDER BY created_at ASC LIMIT 0,10";
+        String[] searchJoinTables = {"table2", "table3"};
+        String actualQuery = smartRegisterQueryBuilder.searchQueryFts("table1",
+                searchJoinTables, "where id in (1,2,3)", "John",
+                "created_at ASC", 10, 0);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testSearchQuerFtsWithSearchJoinTableArrayMissingJoinTablesAndFilter() {
+        String expectedQuery = "SELECT object_id FROM table1_search WHERE where id in (1,2,3) AND phrase MATCH 'John*'  ORDER BY created_at ASC LIMIT 0,10";
+        String actualQuery = smartRegisterQueryBuilder.searchQueryFts("table1",
+                new String[]{}, "where id in (1,2,3)", "John",
+                "created_at ASC", 10, 0);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
 }
