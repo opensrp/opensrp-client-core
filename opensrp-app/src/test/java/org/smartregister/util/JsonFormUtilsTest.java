@@ -13,6 +13,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
@@ -208,8 +209,9 @@ public class JsonFormUtilsTest {
             "    \"label_text_style\": \"bold\"\n" +
             "  },\n" +
             "   {\n" +
-            "    \"openmrs_entity\": \"other_entity\",\n" +
-            "    \"openmrs_entity_id\": \"other_entity_id\",\n" +
+            "    \"openmrs_entity\": \"person\",\n" +
+            "    \"openmrs_entity_id\": \"first_name\",\n" +
+            "    \"entity_id\": \"entity_id\",\n" +
             "    \"options\": [\n" +
             "      {\n" +
             "        \"openmrs_entity\": \"entity\",\n" +
@@ -1388,5 +1390,12 @@ public class JsonFormUtilsTest {
         JsonFormUtils.fillSubFormAttributes(patientAttributes, jsonObject, "entity_id");
         assertEquals(1, patientAttributes.size());
         assertEquals("value", patientAttributes.get(OPENMRS_ENTITY_ID));
+    }
+
+    @Test
+    public void testGetSubFormFieldValueShouldGetCorrectValue() throws JSONException {
+        JSONArray jsonArray = new JSONArray(STEP_1_FIELDS);
+        String value = JsonFormUtils.getSubFormFieldValue(jsonArray, FormEntityConstants.Person.first_name, "entity_id");
+        assertEquals("primary", value);
     }
 }
