@@ -113,4 +113,18 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
         assertEquals("SELECT COUNT(*) FROM table1  WHERE id IN ('id3','id4') ", actualQuery);
     }
 
+    @Test
+    public void testToStringFtsWithSortBy() {
+        List<String> ids = new ArrayList<>();
+        ids.add("id4");
+        ids.add("id5");
+
+        String query = "SELECT COUNT(*) FROM table1 JOIN table2 ON table1.id = table2.entityId WHERE table1.id IS NOT NULL";
+        smartRegisterQueryBuilder.setSelectquery(query);
+
+        String actualQuery = smartRegisterQueryBuilder.toStringFts(ids, "table1", "id", "created_at ASC");
+        assertEquals("SELECT COUNT(*) FROM table1 JOIN table2 ON table1.id = table2.entityId  WHERE table1.id IN ('id4','id5')  ORDER BY table1.created_at ASC", actualQuery);
+
+    }
+
 }
