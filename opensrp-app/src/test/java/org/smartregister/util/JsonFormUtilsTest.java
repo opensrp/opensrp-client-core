@@ -34,10 +34,13 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
+import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.PERSON_INDENTIFIER;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
 import static org.smartregister.util.JsonFormUtils.SAVE_OBS_AS_ARRAY;
+import static org.smartregister.util.JsonFormUtils.VALUE;
 import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 
 /**
@@ -1358,5 +1361,18 @@ public class JsonFormUtilsTest {
         assertEquals("gps", sectionsMap.get("gps"));
         assertNotNull("scan_respiratory_specimen_barcode", sectionsMap.get("lbl_scan_respiratory_specimen_barcode"));
         assertNotNull("affix_respiratory_specimen_label", sectionsMap.get("lbl_affix_respiratory_specimen_label"));
+    }
+
+    @Test
+    public void testFillSubFormIdentifiersShouldAddCorrectIdentifiers() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ENTITY_ID, "entity_id");
+        jsonObject.put(VALUE, "value");
+        jsonObject.put(OPENMRS_ENTITY, PERSON_INDENTIFIER);
+        jsonObject.put(OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        Map<String, String> pids = new HashMap<>();
+        JsonFormUtils.fillSubFormIdentifiers(pids, jsonObject, "entity_id");
+        assertEquals(1, pids.size());
+        assertEquals("value", pids.get(OPENMRS_ENTITY_ID));
     }
 }
