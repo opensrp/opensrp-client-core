@@ -149,4 +149,22 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
+    @Test
+    public void testCountQueryFts() {
+        String expectedQuery = "SELECT COUNT(object_id) FROM table1_search " +
+                "WHERE where id in (1,2,3) AND phrase MATCH 'John*'  " +
+                "UNION SELECT object_relational_id FROM table2_search WHERE phrase MATCH 'John*' ";
+        String actualQuery = smartRegisterQueryBuilder.countQueryFts("table1",
+                "table2", "where id in (1,2,3)", "John");
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testCountQueryFtsWithoutSearchJoinTableAndFilter() {
+        String expectedQuery = "SELECT COUNT(object_id) FROM table1_search WHERE where id in (1,2,3)";
+        String actualQuery = smartRegisterQueryBuilder.countQueryFts("table1",
+                "", "where id in (1,2,3)", "");
+        assertEquals(expectedQuery, actualQuery);
+    }
+
 }
