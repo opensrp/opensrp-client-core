@@ -19,10 +19,12 @@ import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -33,9 +35,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyVararg;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
 import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.KEY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
 import static org.smartregister.util.JsonFormUtils.PERSON_ATTRIBUTE;
@@ -1397,5 +1401,25 @@ public class JsonFormUtilsTest {
         JSONArray jsonArray = new JSONArray(STEP_1_FIELDS);
         String value = JsonFormUtils.getSubFormFieldValue(jsonArray, FormEntityConstants.Person.first_name, "entity_id");
         assertEquals("primary", value);
+    }
+
+    @Test
+    public void testCreateObservationShouldCreateCorrectObservation() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(KEY, "key");
+        Event event = new Event();
+        List values = new ArrayList<>();
+        values.add("value1");
+        values.add("value2");
+        Whitebox.invokeMethod(JsonFormUtils.class, "createObservation", event, jsonObject, values);
+        List<Obs> obsList = event.getObs();
+        assertEquals(1, obsList.size());
+        Obs obs = obsList.get(0);
+        assertEquals("formsubmissionField", obs.getFieldType());
+        assertEquals("text", obs.getFieldDataType());
+        assertEquals("key", obs.getFormSubmissionField());
+        assertEquals("key", obs.getFieldCode());
+        assertFalse(obs.isSaveObsAsArray());
+        assertEquals(values, obs.getValues());
     }
 }
