@@ -2,8 +2,8 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Xml;
 
 import com.google.gson.Gson;
@@ -11,10 +11,12 @@ import com.google.gson.GsonBuilder;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
@@ -873,7 +875,7 @@ public class FormUtils {
     public String retrieveValueForLinkedRecord(String link, JSONObject entityJson) {
         try {
             String entityRelationships = readFileFromAssetsFolder(
-                    "www/form/entity_relationship" + ".json");
+                    "www/form/entity_relationship" + AllConstants.JSON_FILE_EXTENSION);
             JSONArray json = new JSONArray(entityRelationships);
             Timber.i(json.toString());
 
@@ -1091,16 +1093,16 @@ public class FormUtils {
         if (mContext != null) {
             try {
                 String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase("en") ? "" : "-" + locale;
+                locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
 
                 InputStream inputStream;
                 try {
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form" + locale + "/" + formIdentity + ".json");
+                            .open("json.form" + locale + "/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 } catch (FileNotFoundException e) {
                     // file for the language not found, defaulting to english language
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form/" + formIdentity + ".json");
+                            .open("json.form/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 }
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(inputStream, CharEncoding.UTF_8));
@@ -1134,15 +1136,14 @@ public class FormUtils {
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = formIdentity;
-        if (!"en".equals(locale)) {
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
 
         if (clientForm == null) {
-            String revisedFormName = localeFormIdentity .endsWith(".json")
-                    ? localeFormIdentity.substring(0, localeFormIdentity.length() - 5) : localeFormIdentity + ".json";
+            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity, localeFormIdentity.length());
             clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
         }
 
@@ -1165,21 +1166,20 @@ public class FormUtils {
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = formIdentity;
-        if (!"en".equals(locale)) {
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
-        String dbFormName = TextUtils.isEmpty(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+        String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
 
         if (clientForm == null) {
-            String revisedFormName = dbFormName.endsWith(".json")
-                    ? dbFormName.substring(0, localeFormIdentity.length() - 5) : dbFormName + ".json";
+            String revisedFormName = extractFormNameWithoutExtension(dbFormName, localeFormIdentity.length());
             clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
 
             if (clientForm == null) {
                 String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
-                dbFormName = TextUtils.isEmpty(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
+                dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
             }
         }
@@ -1205,7 +1205,7 @@ public class FormUtils {
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = fileName;
-        if (!"en".equals(locale)) {
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
@@ -1218,6 +1218,12 @@ public class FormUtils {
         }
 
         return null;
+    }
+
+    @NonNull
+    protected String extractFormNameWithoutExtension(String localeFormIdentity, int length) {
+        return localeFormIdentity.endsWith(AllConstants.JSON_FILE_EXTENSION)
+                ? localeFormIdentity.substring(0, length - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
     }
 
 }

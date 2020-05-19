@@ -17,8 +17,6 @@ import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ManifestRepository;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.List;
 
