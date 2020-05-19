@@ -471,7 +471,7 @@ public class LocationHelper {
             formLocation.key = name;
 
             Set<String> levels = node.getTags();
-            formLocation.level = "";
+            formLocation.level = levels != null && !levels.isEmpty() ? levels.iterator().next() : "";
 
 
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(openMrsLocationData);
