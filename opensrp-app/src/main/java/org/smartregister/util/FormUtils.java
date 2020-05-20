@@ -1158,6 +1158,15 @@ public class FormUtils {
             }
         } catch (JSONException e) {
             Timber.e(e);
+
+            // Check if there is a backup
+            ClientForm rollbackForm = getAppropriateRollbackForm(clientForm);
+
+            if (rollbackForm != null) {
+                // Show dialog asking user if they want to rollback to the previous available version X
+                // if YES, then provide that form instead
+                // if NO, then continue down
+            }
         }
         Timber.d("============%s form loaded from Assets=============", formIdentity);
         return getFormJson(formIdentity);
@@ -1257,6 +1266,11 @@ public class FormUtils {
 
     public static boolean isFormNew(@NonNull JSONObject jsonObject) {
         return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
+    }
+
+    @Nullable
+    public ClientForm getAppropriateRollbackForm(@NonNull ClientForm corruptedForm) {
+        //List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
     }
 
 }
