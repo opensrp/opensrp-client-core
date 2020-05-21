@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,6 +32,8 @@ import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
+import org.smartregister.listener.OnFormFetchedCallback;
+import org.smartregister.listener.RollbackDialogCallback;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
@@ -1130,11 +1134,57 @@ public class FormUtils {
         mCloudantDataHandler.createClientDocument(client);
     }
 
-    public JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity) {
-        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
-        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull String formIdentity) {
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(formIdentity, null);
+    }
 
+    public void getFormJsonFromRepositoryOrAssets(@NonNull String formIdentity, @Nullable OnFormFetchedCallback onFormFetchedCallback) {
+        getFormJsonFromRepositoryOrAssetsWithOptionalCallback(formIdentity, onFormFetchedCallback);
+    }
+
+    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(String formIdentity, @Nullable OnFormFetchedCallback onFormFetchedCallback) {
+        ClientForm clientForm = getClientFormFromRepository(formIdentity);
+
+        try {
+            if (clientForm != null) {
+                Timber.d("============%s form loaded from db============", formIdentity);
+
+                JSONObject formJson = new JSONObject(clientForm.getJson());
+                injectFormStatus(formJson, clientForm);
+
+                if (onFormFetchedCallback != null) {
+                    onFormFetchedCallback.onFormFetched(formJson);
+                    return null;
+                }  else {
+                    return formJson;
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+
+            if (onFormFetchedCallback != null) {
+                handleJsonFormError(formIdentity, onFormFetchedCallback);
+            } else {
+                return null;
+            }
+        }
+
+        Timber.d("============%s form loaded from Assets=============", formIdentity);
+        JSONObject jsonObject = getFormJson(formIdentity);
+
+        if (onFormFetchedCallback != null) {
+            onFormFetchedCallback.onFormFetched(jsonObject);
+            return null;
+        }  else {
+            return jsonObject;
+        }
+    }
+
+    private ClientForm getClientFormFromRepository(String formIdentity) {
         //Check the current locale of the app to load the correct version of the form in the desired language
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
         String localeFormIdentity = formIdentity;
         if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
@@ -1146,30 +1196,43 @@ public class FormUtils {
             String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
             clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
         }
+        return clientForm;
+    }
 
-        try {
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", formIdentity);
+    public void handleJsonFormError(@NonNull String formIdentity, @NonNull OnFormFetchedCallback onFormFetchedCallback) {
+        ClientForm clientForm = getClientFormFromRepository(formIdentity);
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
 
-                JSONObject formJson = new JSONObject(clientForm.getJson());
-                injectFormStatus(formJson, clientForm);
+        if (clientForms.size() > 0) {
+            // Show dialog asking user if they want to rollback to the previous available version X
+            // if YES, then provide that form instead
+            // if NO, then continue down
 
-                return formJson;
-            }
-        } catch (JSONException e) {
-            Timber.e(e);
+            ViewUtil.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
+                @Override
+                public void onFormSelected(@NonNull ClientForm selectedForm) {
+                    JSONObject jsonObject = null;
 
-            // Check if there is a backup
-            ClientForm rollbackForm = getAppropriateRollbackForm(clientForm);
+                    if (selectedForm.getJson() != null) {
+                        try {
+                            jsonObject = new JSONObject(selectedForm.getJson());
+                        } catch (JSONException ex) {
+                            Timber.e(ex);
+                        }
+                    } else if (selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
+                        jsonObject = getFormJson(formIdentity);
+                    }
 
-            if (rollbackForm != null) {
-                // Show dialog asking user if they want to rollback to the previous available version X
-                // if YES, then provide that form instead
-                // if NO, then continue down
-            }
+                    onFormFetchedCallback.onFormFetched(jsonObject);
+                }
+
+                @Override
+                public void onCancelClicked() {
+                    onFormFetchedCallback.onFormFetched(null);
+                }
+            });
         }
-        Timber.d("============%s form loaded from Assets=============", formIdentity);
-        return getFormJson(formIdentity);
     }
 
     @Nullable
@@ -1267,10 +1330,24 @@ public class FormUtils {
     public static boolean isFormNew(@NonNull JSONObject jsonObject) {
         return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
     }
-
+/*
     @Nullable
-    public ClientForm getAppropriateRollbackForm(@NonNull ClientForm corruptedForm) {
-        //List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
-    }
+    public List<ClientForm> getAvailableRollbackForms(@NonNull ClientForm corruptedForm) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        ManifestRepository manifestRepository = CoreLibrary.getInstance().context().getManifestRepository();
+        List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(corruptedForm.getIdentifier());
+        List<Manifest> manifests = manifestRepository.getAllManifests();
+
+        Collections.sort(manifests, new Comparator<Manifest>() {
+            @Override
+            public int compare(Manifest o1, Manifest o2) {
+                DefaultArtifactVersion v2 = new DefaultArtifactVersion(o1.getFormVersion());
+
+                return 0;
+            }
+        });
+
+        // Remove the current form from the available options
+    }*/
 
 }

@@ -145,6 +145,27 @@ public class ClientFormRepository extends BaseRepository {
 
 
     /**
+     * Get the latest ClientForms for the passed identifier. The latest ClientForm might not be
+     * active if unstable
+     *
+     * @param identifier of a the client form
+     * @return active ClientForm for the passed identifier
+     */
+    public ClientForm getLatestFormByIdentifier(String identifier) {
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
+                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC", new String[]{identifier})) {
+            if (cursor.moveToFirst()) {
+                return readCursor(cursor);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return null;
+
+    }
+
+
+    /**
      * Delete client form by id
      *
      * @param clientFormId
