@@ -1256,12 +1256,7 @@ public class FormUtils {
     }
 
     public static boolean isFormNew(@NonNull JSONObject jsonObject) {
-        try {
-            return jsonObject.getBoolean(AllConstants.JSON.Property.IS_NEW);
-        } catch (JSONException e) {
-            Timber.e(e);
-            return false;
-        }
+        return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
     }
 
 }
