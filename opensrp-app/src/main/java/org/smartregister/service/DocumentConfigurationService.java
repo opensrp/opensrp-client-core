@@ -100,6 +100,7 @@ public class DocumentConfigurationService {
         if (httpAgent == null) {
             throw new IllegalArgumentException(CLIENT_FORM_SYNC_URL + " http agent is null");
         }
+
         String baseUrl = getBaseUrl();
         Response resp = httpAgent.fetch(
                 MessageFormat.format("{0}{1}{2}",
