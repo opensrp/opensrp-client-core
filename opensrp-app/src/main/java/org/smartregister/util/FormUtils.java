@@ -35,6 +35,7 @@ import org.smartregister.listener.RollbackDialogCallback;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
+import org.smartregister.view.dialog.FormRollbackDialog;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1207,7 +1208,7 @@ public class FormUtils {
             // if YES, then provide that form instead
             // if NO, then continue down
 
-            ViewUtil.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
+            FormRollbackDialog.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
                 @Override
                 public void onFormSelected(@NonNull ClientForm selectedForm) {
                     JSONObject jsonObject = null;

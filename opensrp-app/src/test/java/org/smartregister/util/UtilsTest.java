@@ -427,5 +427,15 @@ public class UtilsTest extends BaseUnitTest {
         Utils.getAllSharedPreferences().updateANMPreferredName("provider", "provider");
         assertEquals("p", Utils.getUserInitials());
     }
+
+    @Test
+    public void testGetAppIdShouldReturnAppId() {
+        Assert.assertEquals("org.smartregister", Utils.getAppId(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testGetAppVersionShouldReturnAppVersion() {
+        Assert.assertEquals("1.11.3-SNAPSHOT", Utils.getAppVersion(RuntimeEnvironment.application));
+    }
 }
 

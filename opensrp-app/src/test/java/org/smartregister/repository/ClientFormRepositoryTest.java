@@ -119,6 +119,18 @@ public class ClientFormRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testGetLatestFormByIdentifier() {
+        String identifier = "en/child/enrollment.json";
+        clientFormRepository.getLatestFormByIdentifier(identifier);
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT * FROM " + CLIENT_FORM_TABLE +
+                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC LIMIT 1", stringArgumentCaptor.getValue());
+        assertEquals(1, argsCaptor.getValue().length);
+        assertEquals(identifier, argsCaptor.getValue()[0]);
+
+    }
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(ClientFormRepository.COLUMNS);

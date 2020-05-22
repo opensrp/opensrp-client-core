@@ -153,7 +153,7 @@ public class ClientFormRepository extends BaseRepository {
      */
     public ClientForm getLatestFormByIdentifier(String identifier) {
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
-                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC", new String[]{identifier})) {
+                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC LIMIT 1", new String[]{identifier})) {
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
             }

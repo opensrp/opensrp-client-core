@@ -864,7 +864,7 @@ public class Utils {
     }
 
     @Nullable
-    public static String getAppName(@NonNull Context context) {
+    public static String getAppId(@NonNull Context context) {
         PackageInfo packageInfo = getPackageInfo(context);
 
         return packageInfo != null? packageInfo.packageName : null;
