@@ -120,6 +120,7 @@ public class AllConstants {
     public static final String SPINNER = "spinner";
     public static final String ROWID = "rowid";
     public static final String MULTI_SELECT_LIST = "multi_select_list";
+    public static final String JSON_FILE_EXTENSION = ".json";
 
 
     public static class Immunizations {
