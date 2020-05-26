@@ -113,4 +113,81 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
         assertEquals("SELECT COUNT(*) FROM table1  WHERE id IN ('id3','id4') ", actualQuery);
     }
 
+    @Test
+    public void testToStringFtsWithSortBy() {
+        List<String> ids = new ArrayList<>();
+        ids.add("id4");
+        ids.add("id5");
+
+        String query = "SELECT COUNT(*) FROM table1 JOIN table2 ON table1.id = table2.entityId WHERE table1.id IS NOT NULL";
+        smartRegisterQueryBuilder.setSelectquery(query);
+
+        String actualQuery = smartRegisterQueryBuilder.toStringFts(ids, "table1", "id", "created_at ASC");
+        assertEquals("SELECT COUNT(*) FROM table1 JOIN table2 ON table1.id = table2.entityId  WHERE table1.id IN ('id4','id5')  ORDER BY table1.created_at ASC", actualQuery);
+
+    }
+
+    @Test
+    public void testSearchQueryFts() {
+        String expectedQuery = "SELECT object_id FROM table1_search WHERE object_id " +
+                "IN ( SELECT object_id FROM table1_search WHERE where id in (1,2,3) " +
+                "AND phrase MATCH 'John*'  UNION SELECT object_relational_id " +
+                "FROM table2_search WHERE phrase MATCH 'John*'  ) " +
+                "ORDER BY created_at ASC LIMIT 0,10";
+        String actualQuery = smartRegisterQueryBuilder.searchQueryFts("table1",
+                "table2", "where id in (1,2,3)", "John",
+                "created_at ASC", 10, 0);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testSearchQueryFtsWithoutSearchJoinTableAndFilter() {
+        String expectedQuery = "SELECT object_id FROM table1_search WHERE where id in (1,2,3) ORDER BY created_at ASC LIMIT 0,10";
+        String actualQuery = smartRegisterQueryBuilder.searchQueryFts("table1",
+                "", "where id in (1,2,3)", "",
+                "created_at ASC", 10, 0);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testCountQueryFts() {
+        String expectedQuery = "SELECT COUNT(object_id) FROM table1_search " +
+                "WHERE where id in (1,2,3) AND phrase MATCH 'John*'  " +
+                "UNION SELECT object_relational_id FROM table2_search WHERE phrase MATCH 'John*' ";
+        String actualQuery = smartRegisterQueryBuilder.countQueryFts("table1",
+                "table2", "where id in (1,2,3)", "John");
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testCountQueryFtsWithoutSearchJoinTableAndFilter() {
+        String expectedQuery = "SELECT COUNT(object_id) FROM table1_search WHERE where id in (1,2,3)";
+        String actualQuery = smartRegisterQueryBuilder.countQueryFts("table1",
+                "", "where id in (1,2,3)", "");
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testSearchQuerFtsWithSearchJoinTableArray() {
+        String expectedQuery = "SELECT object_id FROM table1_search " +
+                "WHERE object_id IN ( SELECT object_id FROM table1_search WHERE where id in (1,2,3) AND phrase MATCH 'John*'  " +
+                "UNION  SELECT object_relational_id FROM table2_search WHERE phrase MATCH 'John*'  " +
+                "UNION   SELECT object_relational_id FROM table3_search WHERE phrase MATCH 'John*'   ) " +
+                "ORDER BY created_at ASC LIMIT 0,10";
+        String[] searchJoinTables = {"table2", "table3"};
+        String actualQuery = smartRegisterQueryBuilder.searchQueryFts("table1",
+                searchJoinTables, "where id in (1,2,3)", "John",
+                "created_at ASC", 10, 0);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testSearchQuerFtsWithSearchJoinTableArrayMissingJoinTablesAndFilter() {
+        String expectedQuery = "SELECT object_id FROM table1_search WHERE where id in (1,2,3) AND phrase MATCH 'John*'  ORDER BY created_at ASC LIMIT 0,10";
+        String actualQuery = smartRegisterQueryBuilder.searchQueryFts("table1",
+                new String[]{}, "where id in (1,2,3)", "John",
+                "created_at ASC", 10, 0);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
 }
