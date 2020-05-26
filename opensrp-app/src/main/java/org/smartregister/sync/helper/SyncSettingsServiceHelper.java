@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
+import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Setting;
 import org.smartregister.domain.SyncStatus;
@@ -27,6 +29,8 @@ public class SyncSettingsServiceHelper {
 
     private HTTPAgent httpAgent;
     private String baseUrl;
+    private String username;
+    private String password;
     private AllSharedPreferences sharedPreferences;
 
     public SyncSettingsServiceHelper(String baseUrl, HTTPAgent httpAgent) {
@@ -64,7 +68,11 @@ public class SyncSettingsServiceHelper {
     }
 
     private JSONArray getSettings() throws JSONException {
-        JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue());
+
+        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
+        String authToken = AccountHelper.getCachedOAuthToken(sharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+
+        JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
         getGlobalSettings(settings);
         getExtraSettings(settings);
         return settings;
@@ -100,12 +108,8 @@ public class SyncSettingsServiceHelper {
             globalSettings = pullGlobalSettingsFromServer();
         }
 
-<<<<<<< HEAD
         aggregateSettings(settings, globalSettings);
     }
-=======
-        Response resp = httpAgent.fetchWithCredentials(url);
->>>>>>> Migrate user service
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
         if (globalSettings.length() > 0) {
@@ -149,9 +153,9 @@ public class SyncSettingsServiceHelper {
      * @return settings {@link JSONArray} -- a JSON array of all the settings
      * @throws JSONException
      */
-    public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
+    public JSONArray pullSettingsFromServer(String syncFilterValue, String accessToken) throws JSONException {
         String url = SettingsSyncIntentService.SETTINGS_URL + "?" + getSettingsSyncFilterParam().value() + "=" + syncFilterValue + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
-        return pullSettings(url);
+        return pullSettings(url, accessToken);
     }
 
     @VisibleForTesting
@@ -185,7 +189,7 @@ public class SyncSettingsServiceHelper {
         return siteSettingsPayload;
     }
 
-    private JSONArray pullSettings(String directoryUrl) throws JSONException {
+    private JSONArray pullSettings(String directoryUrl, String accessToken) throws JSONException {
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
@@ -200,7 +204,7 @@ public class SyncSettingsServiceHelper {
             return null;
         }
 
-        Response resp = getResponse(completeUrl);
+        Response resp = getResponse(completeUrl, accessToken);
 
         if (resp == null || resp.isFailure()) {
             Timber.e(" %s  not returned data ", completeUrl);
@@ -211,8 +215,8 @@ public class SyncSettingsServiceHelper {
     }
 
     @VisibleForTesting
-    protected Response<String> getResponse(String completeUrl) {
-        return httpAgent.fetchWithCredentials(completeUrl, getUsername(), getPassword());
+    protected Response<String> getResponse(String completeUrl, String accessToken) {
+        return httpAgent.fetchWithCredentials(completeUrl, accessToken);
     }
 
     public String getUsername() {
@@ -230,6 +234,4 @@ public class SyncSettingsServiceHelper {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }
-

@@ -101,13 +101,10 @@ public abstract class DrishtiApplication extends Application {
     }
 
     public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = CoreLibrary.getInstance().context()
-                .sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
-                .toArray(new DrishtiRepository[drishtireposotorylist.size()]);
+        ArrayList<DrishtiRepository> drishtiRepositoryList = CoreLibrary.getInstance().context().sharedRepositories();
+        DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null,
-                    drishtireposotoryarray);
+            repository = new Repository(getInstance().getApplicationContext(), null, drishtiRepositoryArray);
         }
         return repository;
     }

@@ -1,6 +1,7 @@
 package org.smartregister;
 
 import org.smartregister.account.AccountHelper;
+import org.smartregister.view.activity.BaseLoginActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,4 +182,6 @@ public abstract class SyncConfiguration {
     public int getMaxAuthenticationRetries() {
         return AccountHelper.MAX_AUTH_RETRIES;
     }
+
+    public abstract Class<? extends BaseLoginActivity> getAuthenticationActivity();
 }

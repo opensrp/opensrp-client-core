@@ -24,6 +24,8 @@ import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
+import java.util.Arrays;
+
 import timber.log.Timber;
 
 import static org.smartregister.domain.LoginResponse.CUSTOM_SERVER_RESPONSE;
@@ -58,10 +60,19 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     protected LoginResponse doInBackground(Void... params) {
 
         LoginResponse loginResponse;
-        Bundle userData = null;
         try {
 
             AccountConfiguration accountConfiguration = CoreLibrary.getInstance().context().getHttpAgent().fetchOAuthConfiguration();
+
+            boolean isKeyclockConfigured = accountConfiguration != null;
+
+            if (!isKeyclockConfigured) {
+                accountConfiguration = new AccountConfiguration();
+                accountConfiguration.setGrantTypesSupported(Arrays.asList(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD));
+                accountConfiguration.setTokenEndpoint(CoreLibrary.getInstance().context().configuration().dristhiBaseURL() + AccountHelper.OAUTH.TOKEN_ENDPOINT);
+                accountConfiguration.setAuthorizationEndpoint("");
+                accountConfiguration.setIssuerEndpoint("");
+            }
 
             if (accountConfiguration != null) {
 
@@ -86,7 +97,11 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
 
-                    userData = getOpenSRPContext().userService().saveUserGroup(mUsername, mPassword, loginResponse.payload());
+                    Bundle userData = getOpenSRPContext().userService().saveUserGroup(mUsername, mPassword, loginResponse.payload());
+
+                    mAccountManager.addAccountExplicitly(account, response.getRefreshToken(), userData);
+                    mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
+                    mAccountManager.setPassword(account, response.getRefreshToken());
 
                     if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
@@ -95,7 +110,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 
                         try {
-                            JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+                            JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()),response.getAccessToken());
 
                             JSONObject prefSettingsData = new JSONObject();
                             prefSettingsData.put(AllConstants.PREF_KEY.SETTINGS, settings);
@@ -107,10 +122,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                     }
                 }
-
-                mAccountManager.addAccountExplicitly(account, response.getAccessToken(), userData);
-                mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
-                mAccountManager.setUserData(account, AccountHelper.KEY_REFRESH_TOKEN, response.getRefreshToken());
 
             } else {
                 throw new AccountsException("Could not fetch OAuth Configuration");
