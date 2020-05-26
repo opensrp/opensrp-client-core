@@ -88,16 +88,16 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
 
-            navigateToHomePage(userName, password);
+            navigateToHomePage(userName);
 
         } else {
             loginWithLocalFlag(view, false, userName, password);
         }
     }
 
-    private void navigateToHomePage(String userName, String password) {
+    private void navigateToHomePage(String userName) {
 
-        getUserService().localLogin(userName, password);
+        getUserService().localLogin(userName);
         getLoginView().goToHome(false);
 
         CoreLibrary.getInstance().initP2pLibrary(userName);
@@ -136,7 +136,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                 );
                                 if (!AllConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
 
-                                    remoteLoginWith(username, password, loginResponse);
+                                    remoteLoginWith(username, loginResponse);
 
                                 } else {
                                     if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
@@ -207,8 +207,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         remoteLoginTask.execute();
     }
 
-    private void remoteLoginWith(String userName, String password, LoginResponse loginResponse) {
-        getUserService().remoteLogin(userName, password, loginResponse.payload());
+    private void remoteLoginWith(String userName, LoginResponse loginResponse) {
+        getUserService().processLoginResponseDataForUser(userName, loginResponse.payload());
         processServerSettings(loginResponse);
 
         scheduleJobsPeriodically();

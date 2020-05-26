@@ -121,7 +121,7 @@ public class LoginActivityTest extends BaseUnitTest {
         Button login_button = activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
 
-        Mockito.verify(userService, Mockito.atLeastOnce()).localLogin(anyString(), anyString());
+        Mockito.verify(userService, Mockito.atLeastOnce()).localLogin(anyString());
 
     }
 

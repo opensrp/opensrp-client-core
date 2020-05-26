@@ -36,4 +36,20 @@ public class AccountConfiguration {
     public List<String> getGrantTypesSupported() {
         return grantTypesSupported;
     }
+
+    public void setIssuerEndpoint(String issuerEndpoint) {
+        this.issuerEndpoint = issuerEndpoint;
+    }
+
+    public void setAuthorizationEndpoint(String authorizationEndpoint) {
+        this.authorizationEndpoint = authorizationEndpoint;
+    }
+
+    public void setTokenEndpoint(String tokenEndpoint) {
+        this.tokenEndpoint = tokenEndpoint;
+    }
+
+    public void setGrantTypesSupported(List<String> grantTypesSupported) {
+        this.grantTypesSupported = grantTypesSupported;
+    }
 }

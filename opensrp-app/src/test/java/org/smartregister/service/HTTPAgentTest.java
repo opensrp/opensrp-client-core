@@ -155,14 +155,14 @@ public class HTTPAgentTest {
 
     @Test
     public void testfetchWithCredentialsFailsGivenWrongUrl() {
-        Response<String> resp = httpAgent.fetchWithCredentials("wrong.url");
+        Response<String> resp = httpAgent.fetchWithCredentials("wrong.url","sample-test-token");
         Assert.assertEquals(ResponseStatus.failure, resp.status());
     }
 
     @Test
     public void testfetchWithCredentialsPassesGivenCorrectUrl() {
         PowerMockito.mockStatic(Base64.class);
-        Response<String> resp = httpAgent.fetchWithCredentials("https://google.com");
+        Response<String> resp = httpAgent.fetchWithCredentials("https://google.com","sample-test-token");
         Assert.assertEquals(ResponseStatus.success, resp.status());
     }
 
