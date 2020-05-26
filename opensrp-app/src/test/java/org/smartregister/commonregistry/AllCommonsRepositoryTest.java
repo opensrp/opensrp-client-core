@@ -8,9 +8,11 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.AlertRepository;
 import org.smartregister.repository.TimelineEventRepository;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -78,6 +80,55 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     public void testCount() {
         allCommonsRepository.count();
         verify(personRepository).count();
+    }
+
+    @Test
+    public void testFindByCaseIds() {
+        List<String> expectedCaseIds = new ArrayList<>();
+        expectedCaseIds.add("case 1");
+        expectedCaseIds.add("case 2");
+
+        allCommonsRepository.findByCaseIDs(expectedCaseIds);
+        verify(personRepository).findByCaseIDs(new String[] {expectedCaseIds.get(0), expectedCaseIds.get(1)});
+    }
+
+    @Test
+    public void testFindByRelationIds() {
+        List<String> expectedRelationIds = new ArrayList<>();
+        expectedRelationIds.add("relation id 1");
+        expectedRelationIds.add("relation id 2");
+
+        allCommonsRepository.findByRelationalIDs(expectedRelationIds);
+        verify(personRepository).findByRelationalIDs(new String[] {expectedRelationIds.get(0), expectedRelationIds.get(1)});
+    }
+
+    @Test
+    public void testFindByRelation_Ids() {
+        List<String> expectedRelationIds = new ArrayList<>();
+        expectedRelationIds.add("relation id 1");
+        expectedRelationIds.add("relation id 2");
+
+        allCommonsRepository.findByRelational_IDs(expectedRelationIds);
+        verify(personRepository).findByRelational_IDs(new String[] {expectedRelationIds.get(0), expectedRelationIds.get(1)});
+    }
+
+    @Test
+    public void testClose() {
+        String entityId = "Entity 1";
+        allCommonsRepository.close(entityId);
+        verify(alertRepository).deleteAllAlertsForEntity(entityId);
+        verify(timelineEventRepository).deleteAllTimelineEventsForEntity(entityId);
+        verify(personRepository).close(entityId);
+    }
+
+    @Test
+    public void testMergeDetails() {
+        String entityId = "Entity 1";
+        Map<String, String> details = new HashMap<>();
+        details.put("case id", "Case 1");
+
+        allCommonsRepository.mergeDetails(entityId, details);
+        verify(personRepository).mergeDetails(entityId, details);
     }
 
 }
