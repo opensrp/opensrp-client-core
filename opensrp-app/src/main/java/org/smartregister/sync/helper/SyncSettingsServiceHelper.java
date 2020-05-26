@@ -5,6 +5,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Setting;
 import org.smartregister.domain.SyncStatus;
@@ -52,7 +54,9 @@ public class SyncSettingsServiceHelper {
             Timber.e(e);
         }
 
-        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterValue());
+        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
+        String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
 
         if (settings != null && settings.length() > 0) {
             settings = ServerSettingsHelper.saveSetting(settings);
@@ -64,7 +68,7 @@ public class SyncSettingsServiceHelper {
     /**
      * @param syncFilterValue the actual value to use with the filter param
      */
-    public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
+    public JSONArray pullSettingsFromServer(String syncFilterValue, String accessToken) throws JSONException {
 
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
@@ -83,7 +87,7 @@ public class SyncSettingsServiceHelper {
             return null;
         }
 
-        Response resp = httpAgent.fetchWithCredentials(url);
+        Response resp = httpAgent.fetchWithCredentials(url, accessToken);
 
         if (resp.isFailure()) {
             Timber.e(" %s  not returned data ", url);

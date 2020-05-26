@@ -160,7 +160,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             }
 
             if (context.userService().isValidLocalLogin(userName, password)) {
-                localLoginWith(userName, password);
+                localLoginWith(userName);
             } else {
                 showErrorDialog(getString(R.string.login_failed_dialog_message));
                 view.setClickable(true);
@@ -184,7 +184,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
                     public void onEvent(LoginResponse loginResponse) {
                         if (loginResponse == SUCCESS) {
-                            remoteLoginWith(userName, password, loginResponse.payload());
+                            remoteLoginWith(userName, loginResponse.payload());
                         } else {
                             if (loginResponse == null) {
                                 showErrorDialog("Login failed. Unknown reason. Try Again");
@@ -254,14 +254,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
     }
 
-    private void localLoginWith(String userName, String password) {
-        context.userService().localLogin(userName, password);
+    private void localLoginWith(String userName) {
+        context.userService().localLogin(userName);
         goToHome();
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }
 
-    private void remoteLoginWith(String userName, String password, LoginResponseData userInfo) {
-        context.userService().remoteLogin(userName, password, userInfo);
+    private void remoteLoginWith(String userName, LoginResponseData userInfo) {
+        context.userService().processLoginResponseDataForUser(userName, userInfo);
         goToHome();
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }

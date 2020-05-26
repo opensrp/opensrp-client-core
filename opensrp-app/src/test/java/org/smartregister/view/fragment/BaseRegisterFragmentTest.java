@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
@@ -116,6 +117,9 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         intent.putExtra(BaseRegisterFragment.TOOLBAR_TITLE, TEST_RANDOM_STRING);
 
         activity = Robolectric.buildActivity(AppCompatActivity.class, intent).get();
+
+        AppCompatActivity activitySpy = Mockito.spy(activity);
+        Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
     }
 
     @Test

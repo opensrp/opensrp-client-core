@@ -136,7 +136,7 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
         password.setText("password");
         Button login_button = activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
-        Mockito.verify(userService, Mockito.atLeastOnce()).remoteLogin(anyString(), anyString(), any(LoginResponseData.class));
+        Mockito.verify(userService, Mockito.atLeastOnce()).processLoginResponseDataForUser(anyString(), any(LoginResponseData.class));
         destroyController();
 
 
