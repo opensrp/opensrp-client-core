@@ -8,7 +8,11 @@ import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.vijay.jsonwizard.interfaces.JsonApi;
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -1138,11 +1142,11 @@ public class FormUtils {
         return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(formIdentity, null);
     }
 
-    public void getFormJsonFromRepositoryOrAssets(@NonNull String formIdentity, @Nullable OnFormFetchedCallback onFormFetchedCallback) {
+    public void getFormJsonFromRepositoryOrAssets(@NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
         getFormJsonFromRepositoryOrAssetsWithOptionalCallback(formIdentity, onFormFetchedCallback);
     }
 
-    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(String formIdentity, @Nullable OnFormFetchedCallback onFormFetchedCallback) {
+    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
         ClientForm clientForm = getClientFormFromRepository(formIdentity);
 
         try {
@@ -1163,7 +1167,13 @@ public class FormUtils {
             Timber.e(e);
 
             if (onFormFetchedCallback != null) {
-                handleJsonFormError(formIdentity, onFormFetchedCallback);
+                handleJsonFormError(false, formIdentity, form -> {
+                    try {
+                        onFormFetchedCallback.onFormFetched(new JSONObject(form));
+                    } catch (JSONException ex) {
+                        Timber.e(ex);
+                    }
+                });
             } else {
                 return null;
             }
@@ -1198,7 +1208,11 @@ public class FormUtils {
         return clientForm;
     }
 
-    public void handleJsonFormError(@NonNull String formIdentity, @NonNull OnFormFetchedCallback onFormFetchedCallback) {
+    public void handleJsonFormError(@NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        handleJsonFormError(false, formIdentity, onFormFetchedCallback);
+    }
+
+    public void handleJsonFormError(boolean isRulesFile, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
         ClientForm clientForm = getClientFormFromRepository(formIdentity);
         ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
         List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
@@ -1211,19 +1225,24 @@ public class FormUtils {
             FormRollbackDialog.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
                 @Override
                 public void onFormSelected(@NonNull ClientForm selectedForm) {
-                    JSONObject jsonObject = null;
+                    if (selectedForm.getJson() == null && selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
 
-                    if (selectedForm.getJson() != null) {
-                        try {
-                            jsonObject = new JSONObject(selectedForm.getJson());
-                        } catch (JSONException ex) {
-                            Timber.e(ex);
+                        if (isRulesFile) {
+                            try {
+                                clientForm.setJson(Utils.convertStreamToString(mContext.getAssets().open(formIdentity)));
+                            } catch (IOException e) {
+                                Timber.e(e);
+                            }
+                        } else {
+                            JSONObject jsonObject = getFormJson(formIdentity);
+
+                            if (jsonObject != null) {
+                                clientForm.setJson(jsonObject.toString());
+                            }
                         }
-                    } else if (selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
-                        jsonObject = getFormJson(formIdentity);
                     }
 
-                    onFormFetchedCallback.onFormFetched(jsonObject);
+                    onFormFetchedCallback.onFormFetched(clientForm.getJson());
                 }
 
                 @Override
@@ -1245,6 +1264,7 @@ public class FormUtils {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
+        String workingFormIdentiy = localeFormIdentity;
         String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
 
@@ -1256,6 +1276,12 @@ public class FormUtils {
                 String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
                 dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+
+                if (clientForm != null) {
+                    workingFormIdentiy = dbFormName;
+                }
+            } else {
+                workingFormIdentiy = revisedFormName;
             }
         }
 
@@ -1272,6 +1298,10 @@ public class FormUtils {
             }
         } catch (JSONException e) {
             Timber.e(e);
+
+            if (context instanceof JsonSubFormAndRulesLoader) {
+                ((JsonSubFormAndRulesLoader) context).handleFormError(false, workingFormIdentiy);
+            }
         }
 
         return null;

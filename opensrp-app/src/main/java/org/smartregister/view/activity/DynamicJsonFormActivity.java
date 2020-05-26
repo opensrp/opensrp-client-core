@@ -4,13 +4,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.listener.OnFormFetchedCallback;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.util.FormUtils;
 
@@ -23,7 +26,6 @@ import timber.log.Timber;
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 07-05-2020.
  */
 public class DynamicJsonFormActivity extends JsonFormActivity {
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,5 +98,23 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
         }
 
         return dbForm;
+    }
+
+    public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
+        FormUtils formUtils = null;
+        try {
+            formUtils = FormUtils.getInstance(this);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+
+        if (formUtils != null) {
+            formUtils.handleJsonFormError(isRulesFile, formIdentifier, form -> {
+                Toast.makeText(this, R.string.form_changed_reopen_to_take_effect, Toast.LENGTH_LONG)
+                        .show();
+
+                DynamicJsonFormActivity.this.finish();
+            });
+        }
     }
 }

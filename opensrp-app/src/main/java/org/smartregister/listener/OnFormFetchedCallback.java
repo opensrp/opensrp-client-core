@@ -7,7 +7,7 @@ import org.json.JSONObject;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 21-05-2020.
  */
-public interface OnFormFetchedCallback {
+public interface OnFormFetchedCallback<T> {
 
-    void onFormFetched(@Nullable JSONObject jsonObject);
+    void onFormFetched(@Nullable T form);
 }
