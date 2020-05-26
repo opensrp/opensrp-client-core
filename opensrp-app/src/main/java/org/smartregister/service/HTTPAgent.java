@@ -132,6 +132,11 @@ public class HTTPAgent {
 
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
+
+                AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
+                String authToken = AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+                AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+
                 refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
                 urlConnection = initializeHttp(requestURLPath);
 
@@ -155,6 +160,9 @@ public class HTTPAgent {
             //If unauthorized, request new token
 
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+
+                String authToken = AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+                AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
 
                 refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
                 urlConnection = generatePostRequest(postURLPath, jsonPayload, authenticatorXml);
@@ -271,6 +279,11 @@ public class HTTPAgent {
             //If unauthorized, request new token
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
+                AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
+
+                String authToken = AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+                AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+
                 refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
                 urlConnection = initializeHttp(requestURL);
 
@@ -291,11 +304,7 @@ public class HTTPAgent {
 
             InputStream inputStream = null;
 
-            if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-
-                syncUtils.logoutUser();
-
-            } else if (statusCode >= HttpStatus.SC_BAD_REQUEST)
+            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
@@ -754,6 +763,7 @@ public class HTTPAgent {
     }
 
     public boolean verifyAuthorization() {
+
         String baseUrl = configuration.dristhiBaseURL();
 
         if (baseUrl.endsWith("/")) {
@@ -765,17 +775,23 @@ public class HTTPAgent {
         HttpURLConnection urlConnection = null;
 
         try {
-            URL url = new URL(baseUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection = initializeHttp(baseUrl);
 
             AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-            if (AccountHelper.getOauthAccountByType(authenticatorXml.getAccountType()) != null)
-                urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+            String authToken = AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+
             int statusCode = urlConnection.getResponseCode();
 
-            if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+
+                AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+
+                refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+                urlConnection = initializeHttp(baseUrl);
+
                 Timber.i("User not authorized. User access was revoked, will log off user");
-                return false;
+                return HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode() ? false : true;
             } else if (statusCode != HttpStatus.SC_OK) {
                 Timber.w("Error occurred verifying authorization, User will not be logged off");
             } else {
