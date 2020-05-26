@@ -285,21 +285,6 @@ public class UserService {
         return false;
     }
 
-    public LoginResponse oauth2Authenticate(String userName, String password) {
-        String requestURL;
-
-        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
-
-        LoginResponse loginResponse = httpAgent
-                .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
-
-        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
-            saveUserGroup(userName, password, loginResponse.payload());
-        }
-
-        return loginResponse;
-    }
-
     public LoginResponse fetchUserDetails(String accessToken) {
         String requestURL;
 
@@ -315,8 +300,7 @@ public class UserService {
 
         requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
 
-        LoginResponse loginResponse = httpAgent
-                .urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
+        LoginResponse loginResponse = httpAgent.urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
 
         if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
             saveUserGroup(userName, password, loginResponse.payload());
@@ -334,23 +318,20 @@ public class UserService {
         return httpAgent.fetch(requestURL);
     }
 
-    private boolean loginWith(String userName, String password) {
+    private boolean loginWith(String userName) {
         boolean loginSuccessful = true;
-        if (usesGroupIdAsDBPassword(userName)) {
-            String encryptedGroupId = allSharedPreferences.fetchEncryptedGroupId(userName);
-            try {
-                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
-                if (privateKeyEntry != null) {
-                    String groupId = decryptString(privateKeyEntry, encryptedGroupId);
-                    setupContextForLogin(userName, groupId);
-                }
-            } catch (Exception e) {
-                Timber.e(e);
-                loginSuccessful = false;
+        String encryptedGroupId = allSharedPreferences.fetchEncryptedGroupId(userName);
+        try {
+            KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
+            if (privateKeyEntry != null) {
+                String groupId = decryptString(privateKeyEntry, encryptedGroupId);
+                setupContextForLogin(userName, groupId);
             }
-        } else {
-            setupContextForLogin(userName, password);
+        } catch (Exception e) {
+            Timber.e(e);
+            loginSuccessful = false;
         }
+
         String username = userName;
         if (allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName))
             username = allSharedPreferences.fetchRegisteredANM();
@@ -379,14 +360,14 @@ public class UserService {
         return false;
     }
 
-    public void localLogin(String userName, String password) {
-        loginWith(userName, password);
+    public void localLogin(String userName) {
+        loginWith(userName);
     }
 
-    public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
+    public void processLoginResponseDataForUser(String userName, LoginResponseData userInfo) {
         String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
                 ? userInfo.user.getUsername() : userName;
-        boolean loginSuccessful = loginWith(username, password);
+        boolean loginSuccessful = loginWith(username);
         saveAnmLocation(getUserLocation(userInfo));
         saveAnmTeam(getUserTeam(userInfo));
         saveUserInfo(getUserData(userInfo));

@@ -127,9 +127,17 @@ public class HTTPAgent {
     public Response<String> fetch(String requestURLPath) {
         try {
 
-            HttpURLConnection urlConnection = httpURLConnectionTries(requestURLPath);
+            HttpURLConnection urlConnection = initializeHttp(requestURLPath);
+            //If unauthorized, request new token
 
-            return handleResponse(urlConnection);
+            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+
+                refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+                urlConnection = initializeHttp(requestURLPath);
+
+            }
+
+            return processResponse(urlConnection);
 
         } catch (IOException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
@@ -137,58 +145,51 @@ public class HTTPAgent {
         }
     }
 
-    @NonNull
-    private HttpURLConnection httpURLConnectionTries(String requestURLPath) throws IOException {
-
-        int authRetries = 0;
-        HttpURLConnection urlConnection = null;
-
-        while (authRetries < CoreLibrary.getInstance().getSyncConfiguration().getMaxAuthenticationRetries() + 1) {
-
-            authRetries++;
-
-            urlConnection = initializeHttp(requestURLPath);
-
-            if (urlConnection.getResponseCode() == HttpStatus.SC_UNAUTHORIZED) {
-
-                refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
-
-            } else {
-                break;
-            }
-
-        }
-        return urlConnection;
-    }
-
     public Response<String> post(String postURLPath, String jsonPayload) {
         HttpURLConnection urlConnection;
         AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
         try {
-            urlConnection = initializeHttp(postURLPath);
 
-            urlConnection.setDoOutput(true);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
-            urlConnection.setRequestProperty("Content-Encoding", "gzip");
-            urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+            urlConnection = generatePostRequest(postURLPath, jsonPayload, authenticatorXml);
 
+            //If unauthorized, request new token
 
-            OutputStream os = urlConnection.getOutputStream();
-            BufferedOutputStream writer = new BufferedOutputStream(os);
-            writer.write(gzipCompression.compress(jsonPayload));
-            writer.flush();
-            writer.close();
-            os.close();
+            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
-            urlConnection.connect();
+                refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+                urlConnection = generatePostRequest(postURLPath, jsonPayload, authenticatorXml);
 
-            return handleResponse(urlConnection);
+            }
+
+            return processResponse(urlConnection);
 
         } catch (IOException ex) {
             Timber.e(ex, "EXCEPTION: %s", ex.toString());
             return new Response<>(ResponseStatus.failure, null);
         }
+    }
+
+    @NonNull
+    private HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload, AccountAuthenticatorXml authenticatorXml) throws IOException {
+        HttpURLConnection urlConnection;
+        urlConnection = initializeHttp(postURLPath);
+
+        urlConnection.setDoOutput(true);
+        urlConnection.setRequestMethod("POST");
+        urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+        urlConnection.setRequestProperty("Content-Encoding", "gzip");
+        urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+
+
+        OutputStream os = urlConnection.getOutputStream();
+        BufferedOutputStream writer = new BufferedOutputStream(os);
+        writer.write(gzipCompression.compress(jsonPayload));
+        writer.flush();
+        writer.close();
+        os.close();
+
+        urlConnection.connect();
+        return urlConnection;
     }
 
     public Response<String> postWithJsonResponse(String postURLPath, String jsonPayload) {
@@ -265,8 +266,16 @@ public class HTTPAgent {
 
         try {
 
-            HttpURLConnection urlConnection = httpURLConnectionTries(requestURL);
-            return handleResponse(urlConnection);
+            HttpURLConnection urlConnection = initializeHttp(requestURL);
+
+            //If unauthorized, request new token
+            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+
+                refreshAuthenticationToken(AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+                urlConnection = initializeHttp(requestURL);
+
+            }
+            return processResponse(urlConnection);
 
         } catch (IOException ex) {
             Timber.e(ex, "EXCEPTION %s", ex.toString());
@@ -275,7 +284,7 @@ public class HTTPAgent {
 
     }
 
-    private Response<String> handleResponse(HttpURLConnection urlConnection) {
+    private Response<String> processResponse(HttpURLConnection urlConnection) {
         String responseString;
         try {
             int statusCode = urlConnection.getResponseCode();
@@ -612,7 +621,8 @@ public class HTTPAgent {
         try {
             url = requestURL.replaceAll("\\s+", "");
 
-            urlConnection = httpURLConnectionTries(url);
+            urlConnection = initializeHttp(url);
+            urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(oauthAccessToken).toString());
 
             int statusCode = urlConnection.getResponseCode();
 
