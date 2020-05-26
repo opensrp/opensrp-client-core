@@ -209,10 +209,9 @@ public class UserServiceTest extends BaseUnitTest {
 
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("user X");
 
-        userService.remoteLogin("user X", "password Y", userInfo);
+        userService.processLoginResponseDataForUser("user X", userInfo);
 
         verify(allSettings).registerANM("user X");
-        verify(session).setPassword("password Y");
     }
 
     @Test

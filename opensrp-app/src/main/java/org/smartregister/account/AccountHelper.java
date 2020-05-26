@@ -5,6 +5,8 @@ import android.accounts.AccountManager;
 
 import org.smartregister.CoreLibrary;
 
+import timber.log.Timber;
+
 /**
  * Created by ndegwamartin on 2020-04-27.
  */
@@ -64,7 +66,7 @@ public class AccountHelper {
     public static String getAccountManagerValue(String key, String accountType) {
         Account account = AccountHelper.getOauthAccountByType(accountType);
         if (account != null) {
-            return CoreLibrary.getInstance().getAccountManager().getUserData(account, key);
+            return accountManager.getUserData(account, key);
         }
         return null;
     }
@@ -72,11 +74,35 @@ public class AccountHelper {
     /**
      * @param accountType   unique name to identify our account type in the Account Manager
      * @param authTokenType type of token requested from server e.g. PROVIDER, ADMIN
-     * @return
+     * @return access token
      */
     public static String getOAuthToken(String accountType, String authTokenType) {
         Account account = getOauthAccountByType(accountType);
 
+        try {
+            return accountManager.blockingGetAuthToken(account, authTokenType, true);
+        } catch (Exception ex) {
+            Timber.e(ex, "EXCEPTION: %s", ex.toString());
+            return null;
+        }
+    }
+
+    /** This method invalidates the auth token so that the Authenticator can fetch a new one from server
+     * @param accountType unique name to identify our account type in the Account Manager
+     * @param authToken   token to invalidate
+     */
+    public static void invalidateAuthToken(String accountType, String authToken) {
+        accountManager.invalidateAuthToken(accountType, authToken);
+    }
+
+
+    /**
+     * @param accountType   unique name to identify our account type in the Account Manager
+     * @param authTokenType type of token requested from server e.g. PROVIDER, ADMIN
+     * @return access token cached
+     */
+    public static String getCachedOAuthToken(String accountType, String authTokenType) {
+        Account account = getOauthAccountByType(accountType);
         return accountManager.peekAuthToken(account, authTokenType);
     }
 

@@ -1,5 +1,6 @@
 package org.smartregister.account;
 
+import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
 import android.accounts.AccountManager;
@@ -9,8 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 
+import org.apache.http.HttpStatus;
 import org.smartregister.CoreLibrary;
-import org.smartregister.view.activity.LoginActivity;
 
 import timber.log.Timber;
 
@@ -30,7 +31,7 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle addAccount(AccountAuthenticatorResponse response, String accountType, String authTokenType, String[] requiredFeatures, Bundle options) throws NetworkErrorException {
 
-        final Intent intent = new Intent(mContext, LoginActivity.class);
+        final Intent intent = new Intent(mContext, CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
         intent.putExtra(AccountHelper.INTENT_KEY.ACCOUNT_TYPE, accountType);
         intent.putExtra(AccountHelper.INTENT_KEY.AUTH_TYPE, authTokenType);
         intent.putExtra(AccountHelper.INTENT_KEY.IS_NEW_ACCOUNT, true);
@@ -59,9 +60,14 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
                     Timber.d("Authenticate with saved credentials");
 
-                    AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(account.name, password, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, CoreLibrary.getInstance().context().allSettings().get(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL));
-                    authToken = accountResponse.getAccessToken();
-                    refreshToken = accountResponse.getRefreshToken();
+                    AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticateRefreshToken(password);
+                    if (accountResponse.getStatus() == HttpStatus.SC_OK) {
+                        authToken = accountResponse.getAccessToken();
+                        refreshToken = accountResponse.getRefreshToken();
+
+                        accountManager.setPassword(account, refreshToken);
+                        accountManager.setAuthToken(account, authTokenType, authToken);
+                    }
 
                 } catch (Exception e) {
                     Timber.e(e);
@@ -74,11 +80,10 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
             result.putString(AccountManager.KEY_ACCOUNT_NAME, account.name);
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, account.type);
             result.putString(AccountManager.KEY_AUTHTOKEN, authToken);
-            result.putString(AccountHelper.KEY_REFRESH_TOKEN, refreshToken);
             return result;
         }
 
-        final Intent intent = new Intent(mContext, LoginActivity.class);
+        final Intent intent = new Intent(mContext, CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
         intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
         intent.putExtra(AccountHelper.INTENT_KEY.ACCOUNT_TYPE, account.type);
         intent.putExtra(AccountHelper.INTENT_KEY.AUTH_TYPE, authTokenType);
@@ -112,10 +117,5 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
         return null;
-    }
-
-    @Override
-    public String getRefreshToken() {
-        return AccountHelper.getAccountManagerValue(AccountHelper.KEY_REFRESH_TOKEN, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
     }
 }
