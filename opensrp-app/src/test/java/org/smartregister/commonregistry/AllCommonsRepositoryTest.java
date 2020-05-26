@@ -1,5 +1,7 @@
 package org.smartregister.commonregistry;
 
+import android.content.ContentValues;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -103,7 +105,7 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testFindByRelation_Ids() {
+    public void testFindByRelationIds2() {
         List<String> expectedRelationIds = new ArrayList<>();
         expectedRelationIds.add("relation id 1");
         expectedRelationIds.add("relation id 2");
@@ -129,6 +131,39 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
 
         allCommonsRepository.mergeDetails(entityId, details);
         verify(personRepository).mergeDetails(entityId, details);
+    }
+
+    @Test
+    public void testUpdate() {
+        String tableName = "sprayed_structures";
+        String caseId = "Case 1";
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("status", "Ready");
+
+        allCommonsRepository.update(tableName, contentValues, caseId);
+        verify(personRepository).updateColumn(tableName,contentValues,caseId);
+
+    }
+
+    @Test
+    public void testCustomQuery() {
+        String tableName = "sprayed_structures";
+        String sql = "SELECT count(*) FROM sprayed_structures WHERE status = ?";
+        String[] selectionArgs = {"Complete"};
+
+        allCommonsRepository.customQuery(sql, selectionArgs, tableName);
+        verify(personRepository).customQuery(sql, selectionArgs, tableName);
+
+    }
+
+    @Test
+    public void testCustomQueryForCompleteRow() {
+        String tableName = "sprayed_structures";
+        String sql = "SELECT count(*) FROM sprayed_structures WHERE status = ?";
+        String[] selectionArgs = {"Complete"};
+
+        allCommonsRepository.customQueryForCompleteRow(sql, selectionArgs, tableName);
+        verify(personRepository).customQueryForCompleteRow(sql, selectionArgs, tableName);
     }
 
 }
