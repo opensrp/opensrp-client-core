@@ -2,6 +2,7 @@ package org.smartregister.util;
 
 import android.os.Environment;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 @PrepareForTest({Environment.class})
 public class FileUtilitiesTest {
 
-    private String FILE_NAME = "newFile.ext";
+    private String FILE_NAME = "newFile.txt";
 
     @Rule
     public TemporaryFolder storageDirectory = new TemporaryFolder();
@@ -48,8 +49,15 @@ public class FileUtilitiesTest {
         FileUtilities fileUtils = new FileUtilities();
         try
         {
+            //Write
             fileUtils.write(FILE_NAME, testData);
-        } catch (Exception e)
+            // Read it from temp file
+            String path = existentDirectory.getPath() + File.separator + "EZ_time_tracker" + File.separator + FILE_NAME;
+            File file = new File(path);
+            final String writenText = FileUtils.readFileToString(file);
+            Assert.assertEquals(testData, writenText);
+        }
+        catch (Exception e)
         {
             Assert.fail();
         }
