@@ -8,8 +8,6 @@ import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.vijay.jsonwizard.interfaces.JsonApi;
 import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
 import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 import com.vijay.jsonwizard.utils.Utils;
@@ -1167,9 +1165,10 @@ public class FormUtils {
             Timber.e(e);
 
             if (onFormFetchedCallback != null) {
-                handleJsonFormError(false, formIdentity, form -> {
+                handleJsonFormOrRulesError(false, formIdentity, form -> {
                     try {
-                        onFormFetchedCallback.onFormFetched(new JSONObject(form));
+                        JSONObject jsonObject = form == null ? null : new JSONObject(form);
+                        onFormFetchedCallback.onFormFetched(jsonObject);
                     } catch (JSONException ex) {
                         Timber.e(ex);
                     }
@@ -1208,11 +1207,11 @@ public class FormUtils {
         return clientForm;
     }
 
-    public void handleJsonFormError(@NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
-        handleJsonFormError(false, formIdentity, onFormFetchedCallback);
+    public void handleJsonFormOrRulesError(@NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        handleJsonFormOrRulesError(false, formIdentity, onFormFetchedCallback);
     }
 
-    public void handleJsonFormError(boolean isRulesFile, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+    public void handleJsonFormOrRulesError(boolean isRulesFile, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
         ClientForm clientForm = getClientFormFromRepository(formIdentity);
         ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
         List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
@@ -1222,39 +1221,43 @@ public class FormUtils {
             // if YES, then provide that form instead
             // if NO, then continue down
 
-            FormRollbackDialog.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
-                @Override
-                public void onFormSelected(@NonNull ClientForm selectedForm) {
-                    if (selectedForm.getJson() == null && selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
+            boolean dialogIsShowing = (mContext instanceof JsonSubFormAndRulesLoader) && ((JsonSubFormAndRulesLoader) mContext).isVisibleFormErrorAndRollbackDialog();
 
-                        if (isRulesFile) {
-                            try {
-                                clientForm.setJson(Utils.convertStreamToString(mContext.getAssets().open(formIdentity)));
-                            } catch (IOException e) {
-                                Timber.e(e);
-                            }
-                        } else {
-                            JSONObject jsonObject = getFormJson(formIdentity);
+            if (!dialogIsShowing) {
+                FormRollbackDialog.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
+                    @Override
+                    public void onFormSelected(@NonNull ClientForm selectedForm) {
+                        if (selectedForm.getJson() == null && selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
 
-                            if (jsonObject != null) {
-                                clientForm.setJson(jsonObject.toString());
+                            if (isRulesFile) {
+                                try {
+                                    clientForm.setJson(Utils.convertStreamToString(mContext.getAssets().open(formIdentity)));
+                                } catch (IOException e) {
+                                    Timber.e(e);
+                                }
+                            } else {
+                                JSONObject jsonObject = getFormJson(formIdentity);
+
+                                if (jsonObject != null) {
+                                    clientForm.setJson(jsonObject.toString());
+                                }
                             }
                         }
+
+                        onFormFetchedCallback.onFormFetched(clientForm.getJson());
                     }
 
-                    onFormFetchedCallback.onFormFetched(clientForm.getJson());
-                }
-
-                @Override
-                public void onCancelClicked() {
-                    onFormFetchedCallback.onFormFetched(null);
-                }
-            });
+                    @Override
+                    public void onCancelClicked() {
+                        onFormFetchedCallback.onFormFetched(null);
+                    }
+                });
+            }
         }
     }
 
     @Nullable
-    public JSONObject getSubFormJsonFromRepository(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) {
+    public JSONObject getSubFormJsonFromRepository(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) throws JSONException {
         ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
         String locale = mContext.getResources().getConfiguration().locale.getLanguage();
 
@@ -1264,7 +1267,6 @@ public class FormUtils {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
-        String workingFormIdentiy = localeFormIdentity;
         String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
 
@@ -1277,31 +1279,18 @@ public class FormUtils {
                 dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
                 clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
 
-                if (clientForm != null) {
-                    workingFormIdentiy = dbFormName;
-                }
-            } else {
-                workingFormIdentiy = revisedFormName;
             }
         }
 
-        try {
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", dbFormName);
-                String originalJson = clientForm.getJson();
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", dbFormName);
+            String originalJson = clientForm.getJson();
 
-                if (translateSubForm) {
-                    originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
-                }
-
-                return new JSONObject(originalJson);
+            if (translateSubForm) {
+                originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
             }
-        } catch (JSONException e) {
-            Timber.e(e);
 
-            if (context instanceof JsonSubFormAndRulesLoader) {
-                ((JsonSubFormAndRulesLoader) context).handleFormError(false, workingFormIdentiy);
-            }
+            return new JSONObject(originalJson);
         }
 
         return null;

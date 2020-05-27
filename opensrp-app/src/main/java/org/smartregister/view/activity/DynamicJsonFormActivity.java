@@ -10,10 +10,10 @@ import android.widget.Toast;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
-import org.smartregister.listener.OnFormFetchedCallback;
 import org.smartregister.util.AppExecutors;
 import org.smartregister.util.FormUtils;
 
@@ -72,7 +72,7 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
                 });
     }
 
-    @NonNull
+    @Nullable
     @Override
     public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
         try {
@@ -88,11 +88,20 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
         return super.getRules(context, fileName);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public JSONObject getSubForm(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) throws Exception {
         FormUtils formUtils = FormUtils.getInstance(context);
-        JSONObject dbForm =  formUtils.getSubFormJsonFromRepository(formIdentity, subFormsLocation, context, translateSubForm);
+        JSONObject dbForm = null;
+        try {
+            dbForm = formUtils.getSubFormJsonFromRepository(formIdentity, subFormsLocation, context, translateSubForm);
+
+        } catch (JSONException ex) {
+            Timber.e(ex);
+            handleFormError(false, formIdentity);
+            return null;
+        }
+
         if (dbForm == null) {
             return super.getSubForm(formIdentity, subFormsLocation, context, translateSubForm);
         }
@@ -100,6 +109,7 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
         return dbForm;
     }
 
+    @Override
     public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
         FormUtils formUtils = null;
         try {
@@ -109,9 +119,11 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
         }
 
         if (formUtils != null) {
-            formUtils.handleJsonFormError(isRulesFile, formIdentifier, form -> {
-                Toast.makeText(this, R.string.form_changed_reopen_to_take_effect, Toast.LENGTH_LONG)
-                        .show();
+            formUtils.handleJsonFormOrRulesError(isRulesFile, formIdentifier, form -> {
+                if (form != null) {
+                    Toast.makeText(this, R.string.form_changed_reopen_to_take_effect, Toast.LENGTH_LONG)
+                            .show();
+                }
 
                 DynamicJsonFormActivity.this.finish();
             });

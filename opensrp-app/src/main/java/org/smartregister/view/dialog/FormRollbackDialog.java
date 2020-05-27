@@ -8,6 +8,8 @@ import android.support.annotation.VisibleForTesting;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
+
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -67,7 +69,20 @@ public class FormRollbackDialog {
                 }
             }
         });
+        builderSingle.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                if (mContext instanceof JsonSubFormAndRulesLoader) {
+                    ((JsonSubFormAndRulesLoader) mContext).setVisibleFormErrorAndRollbackDialog(false);
+                }
+            }
+        });
 
+
+
+        if (mContext instanceof JsonSubFormAndRulesLoader) {
+            ((JsonSubFormAndRulesLoader) mContext).setVisibleFormErrorAndRollbackDialog(true);
+        }
         return builderSingle.show();
     }
 
