@@ -462,7 +462,7 @@ public class JsonFormUtils {
 
         String entityVal = getString(jsonObject, OPENMRS_ENTITY);
 
-        if (StringUtils.isNotBlank(entityVal) && entityVal.equals(CONCEPT)) {
+        if (CONCEPT.equals(entityVal)) {
             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
             String entityParentVal = getString(jsonObject, OPENMRS_ENTITY_PARENT);
 
