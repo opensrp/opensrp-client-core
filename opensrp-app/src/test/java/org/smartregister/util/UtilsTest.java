@@ -430,12 +430,12 @@ public class UtilsTest extends BaseUnitTest {
 
     @Test
     public void testGetAppIdShouldReturnAppId() {
-        Assert.assertEquals("org.smartregister", Utils.getAppId(RuntimeEnvironment.application));
+        assertEquals("org.smartregister", Utils.getAppId(RuntimeEnvironment.application));
     }
 
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
-        Assert.assertEquals("1.11.3-SNAPSHOT", Utils.getAppVersion(RuntimeEnvironment.application));
+        assertEquals("1.11.3-SNAPSHOT", Utils.getAppVersion(RuntimeEnvironment.application));
     }
 }
 

@@ -15,7 +15,9 @@ import org.smartregister.repository.ClientFormRepository;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 22-05-2020.

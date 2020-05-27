@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Xml;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -259,7 +260,7 @@ public class FormUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void getSubFormFromRepository() {
+    public void getSubFormFromRepository() throws JSONException {
         String subFormIdentifier = "some_tests";
         ClientForm clientForm = new ClientForm();
         clientForm.setJson("{}");
