@@ -407,23 +407,23 @@ public class JsonFormUtils {
         if (StringUtils.isBlank(value)) { return; }
 
         String type = getString(jsonObject, AllConstants.TYPE);
-        String entity =  CONCEPT;
+        String entity =  getString(jsonObject, OPENMRS_ENTITY);
         if (AllConstants.CHECK_BOX.equals(type)) {
             try {
                 List<Object> optionValues = new ArrayList<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
-                    String checkboxEntity = getString(jsonObject, OPENMRS_ENTITY);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         boolean optionValue = option.optBoolean(VALUE);
+                        entity = getString(jsonObject, OPENMRS_ENTITY);
                         if (optionValue) {
                             option.put(AllConstants.TYPE, type);
                             option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                             option.put(KEY, jsonObject.getString(KEY));
-                            if (CONCEPT.equals(checkboxEntity)) {
+                            if (CONCEPT.equals(entity)) {
                                 // For options with concepts create an observation for each
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), checkboxEntity);
+                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
                             } else {
                                 optionValues.add(option.optString(AllConstants.TEXT));
                             }
