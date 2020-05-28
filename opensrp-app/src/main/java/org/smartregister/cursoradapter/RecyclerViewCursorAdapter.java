@@ -116,7 +116,7 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
-        if (newCursor.equals(mCursor)) {
+        if (newCursor==null || newCursor.equals(mCursor)) {
             return null;
         }
         final Cursor oldCursor = mCursor;
