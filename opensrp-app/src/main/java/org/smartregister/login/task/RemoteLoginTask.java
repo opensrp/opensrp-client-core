@@ -54,7 +54,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setPassword(mPassword);
 
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+                JSONArray settings = pullSetting(syncSettingsServiceHelper, loginResponse);
 
                 JSONObject data = new JSONObject();
                 data.put(AllConstants.PREF_KEY.SETTINGS, settings);
@@ -93,5 +93,19 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         return CoreLibrary.getInstance().context();
     }
 
+    protected JSONArray pullSetting(SyncSettingsServiceHelper syncSettingsServiceHelper, LoginResponse loginResponse) {
+        JSONArray settings = new JSONArray();
+        try {
+            if (CoreLibrary.getInstance().getSyncConfiguration().resolveSettings()) {
+                settings = syncSettingsServiceHelper.pullSettingsFromServerAndResolveSettings(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+            } else {
+                settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        return settings;
+    }
 }
 
