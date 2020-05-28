@@ -422,5 +422,7 @@
     <string name="clearing_application_data">Clearing application data...</string>
     <string name="clear_data_dialog_title">Do you want to clear data to login with a different team/location</string>
     <string name="clear_data_dialog_message">You are trying to login with a user in a different team/location. Upload of pending data and clearing of data for user %s in Team %s is required. Do you want to continue?</string>
+    <string name="form_update_title">Form Update</string>
+    <string name="form_update_message">This form has content updates</string>
 
 </resources>
