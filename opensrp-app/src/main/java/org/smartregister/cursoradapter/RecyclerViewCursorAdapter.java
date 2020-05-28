@@ -116,7 +116,7 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
-        if (newCursor==null || newCursor.equals(mCursor)) {
+        if (newCursor == null || newCursor.equals(mCursor)) {
             return null;
         }
         final Cursor oldCursor = mCursor;
@@ -124,19 +124,12 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
             oldCursor.unregisterDataSetObserver(mDataSetObserver);
         }
         mCursor = newCursor;
-        if (mCursor != null) {
-            if (mDataSetObserver != null) {
-                mCursor.registerDataSetObserver(mDataSetObserver);
-            }
-            mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
-            mDataValid = true;
-            notifyDataSetChanged();
-        } else {
-            mRowIdColumn = -1;
-            mDataValid = false;
-            notifyDataSetChanged();
-            //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
+        if (mDataSetObserver != null) {
+            mCursor.registerDataSetObserver(mDataSetObserver);
         }
+        mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
+        mDataValid = true;
+        notifyDataSetChanged();
         return oldCursor;
     }
 
