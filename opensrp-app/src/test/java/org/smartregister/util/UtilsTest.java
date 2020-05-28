@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -435,7 +436,7 @@ public class UtilsTest extends BaseUnitTest {
 
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
-        assertEquals("1.11.3-SNAPSHOT", Utils.getAppVersion(RuntimeEnvironment.application));
+        assertEquals(BuildConfig.VERSION_NAME, Utils.getAppVersion(RuntimeEnvironment.application));
     }
 }
 

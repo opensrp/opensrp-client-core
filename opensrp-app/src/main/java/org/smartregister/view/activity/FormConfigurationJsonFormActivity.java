@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AlertDialog;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ import timber.log.Timber;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 07-05-2020.
  */
-public class DynamicJsonFormActivity extends JsonFormActivity {
+public class FormConfigurationJsonFormActivity extends JsonFormActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,7 +34,7 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
 
         JSONObject jsonObject = getmJSONObject();
         if (FormUtils.isFormNew(jsonObject)) {
-            showFormVersionUpdateDialog( getString(R.string.form_update_title), getString(R.string.form_update_message));
+            showFormVersionUpdateDialog(getString(R.string.form_update_title), getString(R.string.form_update_message));
         }
     }
 
@@ -59,7 +60,8 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
                 .show();
     }
 
-    private void negateIsNewClientForm(int clientFormId) {
+    @VisibleForTesting
+    protected void negateIsNewClientForm(int clientFormId) {
         AppExecutors appExecutors = new AppExecutors();
 
         appExecutors.diskIO()
@@ -125,7 +127,7 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
                             .show();
                 }
 
-                DynamicJsonFormActivity.this.finish();
+                FormConfigurationJsonFormActivity.this.finish();
             });
         }
     }
