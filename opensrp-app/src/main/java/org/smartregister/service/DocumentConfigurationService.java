@@ -117,6 +117,10 @@ public class DocumentConfigurationService {
         ClientFormResponse clientFormResponse =
                 gson.fromJson(resp.payload().toString(), ClientFormResponse.class);
 
+        if (clientFormResponse != null) {
+            throw new NoHttpResponseException(CLIENT_FORM_SYNC_URL + " not returned data");
+        }
+
         if (latestClientForm == null || !clientFormResponse.getClientFormMetadata().getVersion().equals(latestClientForm.getVersion())) {
             //if the previously active client form is not null it should be untagged from being new nor active
             if (latestClientForm != null) {
