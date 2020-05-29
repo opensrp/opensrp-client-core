@@ -13,6 +13,7 @@ import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.ByteArrayBuffer;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.account.AccountAuthenticatorXml;
@@ -121,7 +122,7 @@ public class HTTPAgent {
         if (setOauthToken) {
             AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
             if (AccountHelper.getOauthAccountByType(authenticatorXml.getAccountType()) != null)
-                urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
         }
         return urlConnection;
     }
@@ -218,8 +219,8 @@ public class HTTPAgent {
             url = requestURL.replaceAll("\\s+", "");
             urlConnection = initializeHttp(url, false);
 
-            final String basicAuth = "Basic " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
-            urlConnection.setRequestProperty("Authorization", basicAuth);
+            final String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             int statusCode = urlConnection.getResponseCode();
             InputStream inputStream;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
@@ -265,7 +266,6 @@ public class HTTPAgent {
 
     public DownloadStatus downloadFromUrl(String url, String filename) {
 
-        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
         Response<DownloadStatus> status = downloadFromURL(url, filename);
         Timber.d("downloading file name : %s and url %s", filename, url);
         return status.payload();
@@ -276,7 +276,7 @@ public class HTTPAgent {
         try {
 
             HttpURLConnection urlConnection = initializeHttp(requestURL, false);
-            urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(accessToken).toString());
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
 
 
             //If unauthorized, request new token
@@ -385,10 +385,10 @@ public class HTTPAgent {
                 }
                 reader.close();
             } else {
-                Timber.d("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
+                Timber.e("SERVER RESPONSE %s Server returned non-OK status: %s :-", status, httpUrlConnection.getResponseMessage());
                 BufferedReader reader = new BufferedReader(new InputStreamReader(httpUrlConnection.getErrorStream()));
                 while ((line = reader.readLine()) != null) {
-                    Timber.d("SERVER RESPONSE %s", line);
+                    Timber.e("SERVER RESPONSE %s", line);
                 }
                 reader.close();
             }
@@ -566,7 +566,7 @@ public class HTTPAgent {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestProperty("charset", "utf-8");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            urlConnection.setRequestProperty("Authorization", "Basic " + base64Auth);
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
             urlConnection.setUseCaches(false);
 
             outputStream = urlConnection.getOutputStream();
@@ -586,6 +586,7 @@ public class HTTPAgent {
                 Timber.d("response String: %s using request url %s", responseString, url);
 
                 AccountResponse accountResponse = gson.fromJson(responseString, AccountResponse.class);
+                accountResponse.setStatus(statusCode);
                 return accountResponse;
 
             } else {
@@ -629,7 +630,7 @@ public class HTTPAgent {
             url = requestURL.replaceAll("\\s+", "");
 
             urlConnection = initializeHttp(url, false);
-            urlConnection.setRequestProperty("Authorization", new StringBuilder("Bearer ").append(oauthAccessToken).toString());
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(oauthAccessToken).toString());
 
             int statusCode = urlConnection.getResponseCode();
 
@@ -825,11 +826,11 @@ public class HTTPAgent {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestProperty("charset", "utf-8");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            urlConnection.setRequestProperty("Authorization", "Basic " + base64Auth);
+            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
             urlConnection.setUseCaches(false);
 
             outputStream = urlConnection.getOutputStream();
-            writer = new BufferedOutputStream(outputStream);//Bearer
+            writer = new BufferedOutputStream(outputStream);
             writer.write(postData);
             writer.flush();
 
@@ -844,6 +845,7 @@ public class HTTPAgent {
                 Timber.d("response String: %s using request url %s", responseString, tokenEndpointURL);
 
                 AccountResponse accountResponse = gson.fromJson(responseString, AccountResponse.class);
+                accountResponse.setStatus(statusCode);
                 return accountResponse;
 
             } else {

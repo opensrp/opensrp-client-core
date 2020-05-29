@@ -38,6 +38,10 @@ public class AccountResponse {
         return status;
     }
 
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
     public AccountError getAccountError() {
         return accountError;
     }
