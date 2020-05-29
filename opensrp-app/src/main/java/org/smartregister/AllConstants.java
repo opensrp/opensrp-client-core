@@ -489,4 +489,12 @@ public class AllConstants {
         String LOCATION_NAME = "location_name";
     }
 
+    public static class HTTP_REQUEST_HEADERS {
+        public static String AUTHORIZATION = "Authorization";
+    }
+
+    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
+        public static String BEARER = "Bearer";
+        public static String BASIC = "Basic";
+    }
 }
