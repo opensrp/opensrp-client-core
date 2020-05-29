@@ -228,7 +228,7 @@ public class ClientProcessorForJava {
                             Object values = getValue(segment, responseKey);
                             List<String> docSegmentResponseValues = new ArrayList<>();
                             if (values instanceof List) {
-                                docSegmentResponseValues = getValues((List) value);
+                                docSegmentResponseValues = getValues((List) values);
                             }
 
                             if (docSegmentFieldValue.equalsIgnoreCase(fieldValue) && (!Collections

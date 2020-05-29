@@ -77,6 +77,13 @@ public class ClientFormRepository extends BaseRepository {
         getWritableDatabase().replace(getClientFormTableName(), null, contentValues);
     }
 
+    public void setIsNew(boolean isNew, int formId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ID, formId);
+        contentValues.put(IS_NEW, isNew);
+        getWritableDatabase().update(getClientFormTableName(),contentValues, ID + " = ?", new String[]{String.valueOf(formId)});
+    }
+
     protected ClientForm readCursor(Cursor cursor) {
         ClientForm clientForm = new ClientForm();
         clientForm.setId(cursor.getInt(cursor.getColumnIndex(ID)));
