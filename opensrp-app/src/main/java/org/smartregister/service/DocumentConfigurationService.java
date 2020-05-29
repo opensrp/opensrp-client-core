@@ -1,5 +1,7 @@
 package org.smartregister.service;
 
+import android.content.Context;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -7,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.Manifest;
@@ -16,6 +19,8 @@ import org.smartregister.dto.ManifestDTO;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ManifestRepository;
+import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -30,6 +35,8 @@ public class DocumentConfigurationService {
     private static final String MANIFEST_SYNC_URL = "/rest/manifest/";
     private static final String CLIENT_FORM_SYNC_URL = "/rest/clientForm";
     private static final String FORM_IDENTIFIER = "form_identifier";
+    private static final String APP_ID = "app_id";
+    private static final String APP_VERSION = "app_version";
     private final DristhiConfiguration configuration;
     private HTTPAgent httpAgent;
     private ManifestRepository manifestRepository;
@@ -47,24 +54,26 @@ public class DocumentConfigurationService {
         if (httpAgent == null) {
             throw new IllegalArgumentException(MANIFEST_SYNC_URL + " http agent is null");
         }
+
+        Context context = CoreLibrary.getInstance().context().applicationContext();
+
         String baseUrl = getBaseUrl();
-        Response resp = httpAgent.fetch(
-                MessageFormat.format("{0}{1}",
-                        baseUrl, MANIFEST_SYNC_URL));
+        String finalUrls = MessageFormat.format("{0}{1}",
+                baseUrl, MANIFEST_SYNC_URL, "?" + APP_ID + "=" + Utils.getAppId(context) +
+                        "&" + APP_VERSION + "=" + Utils.getAppVersion(context));
+        Response resp = httpAgent.fetch(finalUrls);
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(MANIFEST_SYNC_URL + " not returned data");
         }
 
-        List<ManifestDTO> receivedManifestDTOs =
-                new Gson().fromJson(resp.payload().toString(), new TypeToken<List<ManifestDTO>>() {
-                }.getType());
+        ManifestDTO receivedManifestDTO = JsonFormUtils.gson.fromJson(resp.payload().toString(), ManifestDTO.class);
 
-        ManifestDTO receivedManifestDTO = receivedManifestDTOs.get(receivedManifestDTOs.size() - 1);
-        Manifest receivedManifest = convertManifestDTOToManifest(receivedManifestDTO);
-        updateActiveManifest(receivedManifest);
-
-        syncClientForms(receivedManifest);
+        if (receivedManifestDTO != null) {
+            Manifest receivedManifest = convertManifestDTOToManifest(receivedManifestDTO);
+            updateActiveManifest(receivedManifest);
+            syncClientForms(receivedManifest);
+        }
     }
 
     protected void updateActiveManifest(Manifest receivedManifest){
