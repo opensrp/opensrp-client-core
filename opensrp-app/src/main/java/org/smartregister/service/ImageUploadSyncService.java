@@ -10,6 +10,8 @@ import org.smartregister.repository.ImageRepository;
 
 import java.util.List;
 
+import timber.log.Timber;
+
 import static org.smartregister.util.Log.logError;
 import static org.smartregister.util.Log.logInfo;
 
@@ -40,6 +42,8 @@ public class ImageUploadSyncService extends IntentService {
                                 + AllConstants.PROFILE_IMAGES_UPLOAD_PATH, profileImages.get(i));
                 if (response.contains("success")) {
                     imageRepo.close(profileImages.get(i).getImageid());
+                } else {
+                    Timber.e(new StringBuilder("Image Upload: could NOT upload image ID: ").append(profileImages.get(i).getImageid()).append(" PATH: ").append(profileImages.get(i).getFilepath()).toString());
                 }
             }
         } catch (Exception e) {

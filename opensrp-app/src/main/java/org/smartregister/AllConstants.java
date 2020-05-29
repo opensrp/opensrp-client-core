@@ -466,4 +466,13 @@ public class AllConstants {
             String CLIENT_FORM_ID = "client_form_id";
         }
     }
+
+    public static class HTTP_REQUEST_HEADERS {
+        public static String AUTHORIZATION = "Authorization";
+    }
+
+    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
+        public static String BEARER = "Bearer";
+        public static String BASIC = "Basic";
+    }
 }
