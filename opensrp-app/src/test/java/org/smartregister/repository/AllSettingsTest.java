@@ -11,7 +11,6 @@ import org.smartregister.domain.Setting;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -115,13 +114,6 @@ public class AllSettingsTest extends BaseUnitTest {
         Mockito.doNothing().doNothing().when(settingsRepository).updateSetting(Mockito.anyString(), Mockito.anyString());
         allSettings.saveUserInformation("");
         Mockito.verify(settingsRepository, Mockito.times(1)).updateSetting(Mockito.anyString(), Mockito.anyString());
-    }
-
-    @Test
-    public void assertGetAuthParamsReturnsUserNamePassword() {
-        Mockito.when(allSharedPreferences.fetchRegisteredANM()).thenReturn("username");
-        Map<String, String> auth = allSettings.getAuthParams();
-        Assert.assertEquals("username", auth.get("username"));
     }
 
     @Test

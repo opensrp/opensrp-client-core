@@ -498,4 +498,12 @@ public class AllConstants {
         String FOREIGN_CLIENT = "ForeignClient";
         String FOREIGN_EVENT = "ForeignEvent";
     }
+    public static class HTTP_REQUEST_HEADERS {
+        public static String AUTHORIZATION = "Authorization";
+    }
+
+    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
+        public static String BEARER = "Bearer";
+        public static String BASIC = "Basic";
+    }
 }
