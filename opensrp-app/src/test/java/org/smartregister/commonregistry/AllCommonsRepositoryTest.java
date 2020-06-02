@@ -18,6 +18,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /*
@@ -164,6 +165,30 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
 
         allCommonsRepository.customQueryForCompleteRow(sql, selectionArgs, tableName);
         verify(personRepository).customQueryForCompleteRow(sql, selectionArgs, tableName);
+    }
+
+    @Test
+    public void testUpdateSearchWithListToRemove() {
+        String caseId = "Case id 1";
+        String field = "status";
+        String value = "synced";
+        String[] listToremove = {"created", "deleted"};
+
+        allCommonsRepository.updateSearch(caseId,field,value,listToremove);
+        verify(personRepository).populateSearchValues(caseId,field,value,listToremove);
+    }
+
+    @Test
+    public void testUpdateSearchWithListToRemoveMissingCaseId() {
+        allCommonsRepository.updateSearch(null,"status","synced",new String[]{"created", "deleted"});
+        verifyZeroInteractions(personRepository);
+    }
+
+    @Test
+    public void testDeleteSearchRecord() {
+        String caseId = "Case id 1";
+        allCommonsRepository.deleteSearchRecord(caseId);
+        verify(personRepository).deleteSearchRecord(caseId);
     }
 
 }
