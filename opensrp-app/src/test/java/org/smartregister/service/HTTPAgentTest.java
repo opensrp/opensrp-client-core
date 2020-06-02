@@ -852,7 +852,7 @@ public class HTTPAgentTest {
     }
 
     @Test
-    public void testUrlCanBeAccessWithGivenCredentialsReturnsCorrectErrorResponseErrorResponseForIOException() throws Exception {
+    public void testUrlCanBeAccessWithGivenCredentialsReturnsCorrectErrorResponseForIOException() throws Exception {
 
         PowerMockito.mockStatic(Base64.class);
 
