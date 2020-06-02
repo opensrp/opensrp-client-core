@@ -2,6 +2,7 @@ package org.smartregister.service;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
 import android.util.Log;
 
@@ -31,7 +32,6 @@ import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
-import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 
 import java.io.BufferedInputStream;
@@ -81,6 +81,9 @@ import static org.smartregister.domain.LoginResponse.UNKNOWN_RESPONSE;
 import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
+
+    private static final int FILE_UPLOAD_CHUNK_SIZE_BYTES = 4096;
+
     private Context context;
     private AllSharedPreferences allSharedPreferences;
     private DristhiConfiguration configuration;
@@ -96,7 +99,6 @@ public class HTTPAgent {
 
     private static final String DETAILS_URL = "/user-details?anm-id=";
 
-    private SyncUtils syncUtils;
 
     public HTTPAgent(Context context, AllSharedPreferences
             allSharedPreferences, DristhiConfiguration configuration) {
@@ -105,15 +107,15 @@ public class HTTPAgent {
         this.configuration = configuration;
         gson = new Gson();
         gzipCompression = new GZIPCompression();
-        syncUtils = new SyncUtils(context.getApplicationContext());
     }
 
     /**
      * This method initializes httpurlconnection
      */
     private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException {
-        URL url = new URL(requestURLPath);
-        HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+        HttpURLConnection urlConnection = getHttpURLConnection(requestURLPath);
+
         if (urlConnection instanceof HttpsURLConnection) {
             OpensrpSSLHelper opensrpSSLHelper = new OpensrpSSLHelper(context, configuration);
             ((HttpsURLConnection) urlConnection).setSSLSocketFactory(opensrpSSLHelper.getSSLSocketFactory());
@@ -128,19 +130,21 @@ public class HTTPAgent {
         return urlConnection;
     }
 
+    @VisibleForTesting
+    protected HttpURLConnection getHttpURLConnection(String requestURLPath) throws IOException {
+        URL url = new URL(requestURLPath);
+        return (HttpURLConnection) url.openConnection();
+    }
+
     public Response<String> fetch(String requestURLPath) {
         try {
 
             HttpURLConnection urlConnection = initializeHttp(requestURLPath, true);
-            //If unauthorized, request new token
 
+            //If unauthorized invalidate cache of old token retry
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
-                AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-
-                String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
-                if (authToken != null)
-                    AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+                invalidateExpiredCachedAccessToken();
 
                 urlConnection = initializeHttp(requestURLPath, true);
 
@@ -154,20 +158,23 @@ public class HTTPAgent {
         }
     }
 
+    public void invalidateExpiredCachedAccessToken() {
+        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
+        String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        if (authToken != null)
+            AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+    }
+
     public Response<String> post(String postURLPath, String jsonPayload) {
         HttpURLConnection urlConnection;
-        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
         try {
 
             urlConnection = generatePostRequest(postURLPath, jsonPayload);
 
-            //If unauthorized, request new token
-
+            //If unauthorized invalidate cache of old token retry
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
-                String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
-                if (authToken != null)
-                    AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+                invalidateExpiredCachedAccessToken();
 
                 urlConnection = generatePostRequest(postURLPath, jsonPayload);
 
@@ -182,7 +189,8 @@ public class HTTPAgent {
     }
 
     @NonNull
-    private HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException {
+    @VisibleForTesting
+    protected HttpURLConnection generatePostRequest(String postURLPath, String jsonPayload) throws IOException {
         HttpURLConnection urlConnection;
         urlConnection = initializeHttp(postURLPath, true);
 
@@ -191,10 +199,13 @@ public class HTTPAgent {
         urlConnection.setRequestProperty("Content-Type", "application/json; charset=utf-8");
         urlConnection.setRequestProperty("Content-Encoding", "gzip");
 
+        byte[] content = gzipCompression.compress(jsonPayload);
+        urlConnection.setFixedLengthStreamingMode(content.length);
 
         OutputStream os = urlConnection.getOutputStream();
         BufferedOutputStream writer = new BufferedOutputStream(os);
-        writer.write(gzipCompression.compress(jsonPayload));
+
+        writer.write(content);
         writer.flush();
         writer.close();
         os.close();
@@ -279,8 +290,7 @@ public class HTTPAgent {
             HttpURLConnection urlConnection = initializeHttp(requestURL, false);
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
 
-
-            //If unauthorized, request new token
+            //If unauthorized invalidate cache of old token retry
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
                 AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
@@ -353,11 +363,12 @@ public class HTTPAgent {
 
             httpUrlConnection = initializeHttp(urlString, true);
 
+            httpUrlConnection.setRequestMethod("POST");
             httpUrlConnection.setUseCaches(false);
             httpUrlConnection.setDoInput(true);
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-
+            httpUrlConnection.setChunkedStreamingMode(FILE_UPLOAD_CHUNK_SIZE_BYTES);
 
             outputStream = httpUrlConnection.getOutputStream();
             writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
@@ -424,7 +435,7 @@ public class HTTPAgent {
         writer.flush();
 
         FileInputStream inputStream = new FileInputStream(uploadImageFile);
-        byte[] buffer = new byte[4096];
+        byte[] buffer = new byte[FILE_UPLOAD_CHUNK_SIZE_BYTES];
         int bytesRead = -1;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
             outputStream.write(buffer, 0, bytesRead);
@@ -538,13 +549,14 @@ public class HTTPAgent {
         this.readTimeout = readTimeout;
     }
 
-    public AccountResponse oauth2authenticate(String username, String password, String grantType, String tokenEndpointURL) {
+    public AccountResponse oauth2authenticateCore(StringBuilder requestParamBuilder, String grantType, String tokenEndpointURL) {
 
-        AccountError accountError = null;
+
+        AccountError accountError;
         HttpURLConnection urlConnection = null;
-        String url = null;
         OutputStream outputStream = null;
         BufferedOutputStream writer = null;
+        InputStream inputStream;
 
         try {
             urlConnection = initializeHttp(tokenEndpointURL, false);
@@ -554,16 +566,14 @@ public class HTTPAgent {
 
             final String base64Auth = BaseEncoding.base64().encode(new String(clientId + ":" + clientSecret).getBytes());
 
-            StringBuilder requestParamBuilder = new StringBuilder();
             requestParamBuilder.append("&grant_type=").append(grantType);
-            requestParamBuilder.append("&username=").append(username);
-            requestParamBuilder.append("&password=").append(password);
             requestParamBuilder.append("&client_id=").append(clientId);
             requestParamBuilder.append("&client_secret=").append(clientSecret);
 
             byte[] postData = requestParamBuilder.toString().getBytes(CharEncoding.UTF_8);
             int postDataLength = postData.length;
 
+            urlConnection.setFixedLengthStreamingMode(postDataLength);
             urlConnection.setDoOutput(true);
             urlConnection.setInstanceFollowRedirects(false);
             urlConnection.setRequestMethod("POST");
@@ -579,7 +589,6 @@ public class HTTPAgent {
             writer.flush();
 
             int statusCode = urlConnection.getResponseCode();
-            InputStream inputStream;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
@@ -587,7 +596,7 @@ public class HTTPAgent {
             String responseString = IOUtils.toString(inputStream);
             if (statusCode == HttpStatus.SC_OK) {
 
-                Timber.d("response String: %s using request url %s", responseString, url);
+                Timber.d("response String: %s using request url %s", responseString, tokenEndpointURL);
 
                 AccountResponse accountResponse = gson.fromJson(responseString, AccountResponse.class);
                 accountResponse.setStatus(statusCode);
@@ -600,17 +609,17 @@ public class HTTPAgent {
 
             }
         } catch (MalformedURLException e) {
-            Timber.e(e, "Failed to check credentials bad url %s", url);
+            Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
             accountError = new AccountError(0, MALFORMED_URL.name());
 
         } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating %s", username);
+            Timber.e(e, "SocketTimeoutException when authenticating");
 
             accountError = new AccountError(0, TIMEOUT.name());
 
-            Timber.e(e, "Failed to check credentials of: %s using %s . Error: %s", username, url, e.toString());
+            Timber.e(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
         } catch (IOException e) {
-            Timber.e(e, "Failed to check credentials of: %s  using %s . Error: %s", username, url, e.toString());
+            Timber.e(e, "Failed to check credentials using %s . Error: %s", tokenEndpointURL, e.toString());
             accountError = new AccountError(0, NO_INTERNET_CONNECTIVITY.name());
 
         } finally {
@@ -624,6 +633,24 @@ public class HTTPAgent {
         //If we got here there was an issue with no server status code
         return new AccountResponse(0, accountError);
 
+    }
+
+    public AccountResponse oauth2authenticate(String username, String password, String grantType, String tokenEndpointURL) {
+
+        StringBuilder requestParamBuilder = new StringBuilder();
+        requestParamBuilder.append("&username=").append(username);
+        requestParamBuilder.append("&password=").append(password);
+
+        return oauth2authenticateCore(requestParamBuilder, grantType, tokenEndpointURL);
+    }
+
+    public AccountResponse oauth2authenticateRefreshToken(String refreshToken) {
+
+        String tokenEndpointURL = allSharedPreferences.getPreferences().getString(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL, "");
+        StringBuilder requestParamBuilder = new StringBuilder();
+        requestParamBuilder.append("&refresh_token=").append(refreshToken);
+
+        return oauth2authenticateCore(requestParamBuilder, AccountHelper.OAUTH.GRANT_TYPE.REFRESH_TOKEN, tokenEndpointURL);
     }
 
     public LoginResponse fetchUserDetails(String requestURL, String oauthAccessToken) {
@@ -768,15 +795,11 @@ public class HTTPAgent {
 
             urlConnection = initializeHttp(baseUrl, true);
 
-            AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-
             int statusCode = urlConnection.getResponseCode();
 
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
-                String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
-                if (authToken != null)
-                    AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
+                invalidateExpiredCachedAccessToken();
 
                 urlConnection = initializeHttp(baseUrl, true);
 
@@ -797,93 +820,6 @@ public class HTTPAgent {
         return true;
     }
 
-    public AccountResponse oauth2authenticateRefreshToken(String refreshToken) {
-
-        AccountError accountError = null;
-        HttpURLConnection urlConnection = null;
-        OutputStream outputStream = null;
-        BufferedOutputStream writer = null;
-        InputStream inputStream = null;
-
-        String clientId = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientId();
-        String clientSecret = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientSecret();
-        String tokenEndpointURL = null;
-        try {
-
-            tokenEndpointURL = CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().getString(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL, "");
-            urlConnection = initializeHttp(tokenEndpointURL, false);
-
-            final String base64Auth = BaseEncoding.base64().encode(new String(clientId + ":" + clientSecret).getBytes());
-
-            StringBuilder requestParamBuilder = new StringBuilder();
-            requestParamBuilder.append("&grant_type=").append(AccountHelper.OAUTH.GRANT_TYPE.REFRESH_TOKEN);
-            requestParamBuilder.append("&refresh_token=").append(refreshToken);
-            requestParamBuilder.append("&client_id=").append(clientId);
-            requestParamBuilder.append("&client_secret=").append(clientSecret);
-
-            byte[] postData = requestParamBuilder.toString().getBytes(CharEncoding.UTF_8);
-            int postDataLength = postData.length;
-
-            urlConnection.setDoOutput(true);
-            urlConnection.setInstanceFollowRedirects(false);
-            urlConnection.setRequestMethod("POST");
-            urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            urlConnection.setRequestProperty("charset", "utf-8");
-            urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
-            urlConnection.setUseCaches(false);
-
-            outputStream = urlConnection.getOutputStream();
-            writer = new BufferedOutputStream(outputStream);
-            writer.write(postData);
-            writer.flush();
-
-            int statusCode = urlConnection.getResponseCode();
-            if (statusCode >= HttpStatus.SC_BAD_REQUEST)
-                inputStream = urlConnection.getErrorStream();
-            else
-                inputStream = urlConnection.getInputStream();
-            String responseString = IOUtils.toString(inputStream);
-            if (statusCode == HttpStatus.SC_OK) {
-
-                Timber.d("response String: %s using request url %s", responseString, tokenEndpointURL);
-
-                AccountResponse accountResponse = gson.fromJson(responseString, AccountResponse.class);
-                accountResponse.setStatus(statusCode);
-                return accountResponse;
-
-            } else {
-
-                accountError = gson.fromJson(responseString, AccountError.class);
-                return new AccountResponse(statusCode, accountError);
-
-            }
-        } catch (MalformedURLException e) {
-            Timber.e(e, "Failed to check credentials bad url %s", tokenEndpointURL);
-            accountError = new AccountError(0, MALFORMED_URL.name());
-
-        } catch (SocketTimeoutException e) {
-            Timber.e(e, "SocketTimeoutException when authenticating %s", refreshToken);
-
-            accountError = new AccountError(0, TIMEOUT.name());
-
-            Timber.e(e, "Failed to check credentials of: %s using %s . Error: %s", refreshToken, tokenEndpointURL, e.toString());
-        } catch (IOException e) {
-            Timber.e(e, "Failed to check credentials of: %s  using %s . Error: %s", refreshToken, tokenEndpointURL, e.toString());
-            accountError = new AccountError(0, NO_INTERNET_CONNECTIVITY.name());
-
-        } finally {
-            closeConnection(urlConnection);
-            closeIOStream(writer);
-            closeIOStream(outputStream);
-
-        }
-
-        //If we got here there was an issue with no server status code
-        return new AccountResponse(0, accountError);
-
-    }
-
     public AccountConfiguration fetchOAuthConfiguration() {
 
         String baseUrl = configuration.dristhiBaseURL();
@@ -898,8 +834,8 @@ public class HTTPAgent {
 
         InputStream inputStream = null;
         try {
-            URL url = new URL(baseUrl);
-            urlConnection = (HttpURLConnection) url.openConnection();
+
+            urlConnection = getHttpURLConnection(baseUrl);
 
             int statusCode = urlConnection.getResponseCode();
             if (statusCode == HttpStatus.SC_OK) {

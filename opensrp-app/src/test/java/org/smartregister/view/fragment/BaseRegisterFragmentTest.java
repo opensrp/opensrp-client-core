@@ -26,22 +26,27 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ResponseErrorStatus;
+import org.smartregister.util.AppProperties;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 
 /**
  * Created by ndegwamartin on 2020-04-28.
  */
+
+@PrepareForTest({CoreLibrary.class})
 public class BaseRegisterFragmentTest extends BaseUnitTest {
 
     private BaseRegisterFragment baseRegisterFragment;
@@ -102,6 +107,9 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     @Mock
     private Resources resources;
 
+    @Mock
+    private AppProperties appProperties;
+
     @Before
     public void setUp() {
 
@@ -120,6 +128,13 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
         AppCompatActivity activitySpy = Mockito.spy(activity);
         Mockito.doReturn(activitySpy).when(baseRegisterFragment).getActivity();
+
+        CoreLibrary.init(opensrpContext);
+        Mockito.doReturn(appProperties).when(opensrpContext).getAppProperties();
+
+        Mockito.doReturn(opensrpContext).when(baseRegisterFragment).context();
+
+        Mockito.doNothing().when(baseRegisterFragment).showShortToast(ArgumentMatchers.eq(activitySpy), ArgumentMatchers.anyString());
     }
 
     @Test
@@ -227,7 +242,6 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     }
 
     @Test
-    @Ignore
     public void assertOnQRCodeSucessfullyScannedInvokesFilterWithCorrectParams() {
 
         String OPENSRP_ID = "8232-372-8L";
@@ -402,15 +416,15 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         Mockito.doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
-        ProgressBar  syncProgressBar = parentLayout.findViewById(R.id.sync_progress_bar);
+        ProgressBar syncProgressBar = parentLayout.findViewById(R.id.sync_progress_bar);
         ImageView syncButton = parentLayout.findViewById(R.id.sync_refresh);
 
         ReflectionHelpers.setField(baseRegisterFragment, "syncProgressBar", syncProgressBar);
         ReflectionHelpers.setField(baseRegisterFragment, "syncButton", syncButton);
         baseRegisterFragment.refreshSyncStatusViews(FetchStatus.fetchStarted);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
-        Assert.assertEquals(View.VISIBLE,syncProgressBar.getVisibility());
-        Assert.assertEquals(View.GONE,syncButton.getVisibility());
+        Assert.assertEquals(View.VISIBLE, syncProgressBar.getVisibility());
+        Assert.assertEquals(View.GONE, syncButton.getVisibility());
     }
 
     @Test
@@ -485,7 +499,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         View Layout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         Mockito.doReturn(Layout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
 
-        ProgressBar  progressBar = Layout.findViewById(R.id.sync_progress_bar);
+        ProgressBar progressBar = Layout.findViewById(R.id.sync_progress_bar);
         ImageView imageView = Layout.findViewById(R.id.sync_refresh);
 
         ReflectionHelpers.setField(baseRegisterFragment, "syncProgressBar", progressBar);
@@ -493,8 +507,8 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
 
         baseRegisterFragment.refreshSyncStatusViews(FetchStatus.noConnection);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
-        Assert.assertEquals(View.GONE,progressBar.getVisibility());
-        Assert.assertEquals(View.VISIBLE,imageView.getVisibility());
+        Assert.assertEquals(View.GONE, progressBar.getVisibility());
+        Assert.assertEquals(View.VISIBLE, imageView.getVisibility());
     }
 
     @Test

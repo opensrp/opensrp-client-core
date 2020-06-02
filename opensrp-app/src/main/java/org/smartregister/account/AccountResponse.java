@@ -23,7 +23,7 @@ public class AccountResponse {
     private Integer expiresIn;
 
     @SerializedName("scope")
-    private String Scope;
+    private String scope;
 
     private int status;
 
@@ -63,7 +63,7 @@ public class AccountResponse {
     }
 
     public String getScope() {
-        return Scope;
+        return scope;
     }
 
     public Integer getRefreshExpiresIn() {
