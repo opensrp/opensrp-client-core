@@ -65,6 +65,6 @@ public class FileUtilitiesTest {
     }
     @Test
     public void assertReturnsCorrectFileExtension() {
-        Assert.assertEquals(FileUtilities.getFileExtension(FILE_NAME), "ext");
+        Assert.assertEquals(FileUtilities.getFileExtension(FILE_NAME), "txt");
     }
 }
