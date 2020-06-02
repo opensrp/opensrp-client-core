@@ -127,7 +127,7 @@ public class DocumentConfigurationService {
         ClientFormResponse clientFormResponse =
                 gson.fromJson(resp.payload().toString(), ClientFormResponse.class);
 
-        if (clientFormResponse != null) {
+        if (clientFormResponse == null) {
             throw new NoHttpResponseException(CLIENT_FORM_SYNC_URL + " not returned data");
         }
 
