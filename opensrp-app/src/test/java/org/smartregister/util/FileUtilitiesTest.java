@@ -25,6 +25,9 @@ public class FileUtilitiesTest {
 
     private String FILE_NAME = "newFile.txt";
 
+    @Mock
+    private BufferedWriter mockWriter;
+
     @Rule
     public TemporaryFolder storageDirectory = new TemporaryFolder();
     private File existentDirectory;
@@ -33,16 +36,13 @@ public class FileUtilitiesTest {
     }
 
     @Before
-    public void setup() {
+    public void setUp() {
         existentDirectory = storageDirectory.getRoot();
         PowerMockito.mockStatic(Environment.class);
     }
 
-    @Mock
-    private BufferedWriter mockWriter;
-
     @Test
-    public void initIndexFile_validFile_addsEmptyraces() throws Exception {
+    public void assertWriteWritesSuccessfully() throws Exception {
         String testData = "string to write";
         when(Environment.getExternalStorageDirectory()).thenReturn(existentDirectory);
         PowerMockito.whenNew(BufferedWriter.class).withAnyArguments().thenReturn(mockWriter);
