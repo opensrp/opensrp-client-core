@@ -33,6 +33,7 @@ public class DocumentConfigurationService {
     public static final String CURRENT_FORM_VERSION = "current_form_version";
     public static final String IDENTIFIERS = "identifiers";
     private static final String MANIFEST_SYNC_URL = "/rest/manifest/";
+    private static final String MANIFEST_SEARCH_URL = "/rest/manifest/search";
     private static final String CLIENT_FORM_SYNC_URL = "/rest/clientForm";
     private static final String FORM_IDENTIFIER = "form_identifier";
     private static final String APP_ID = "app_id";
@@ -59,7 +60,7 @@ public class DocumentConfigurationService {
 
         String baseUrl = getBaseUrl();
         String finalUrls = MessageFormat.format("{0}{1}",
-                baseUrl, MANIFEST_SYNC_URL, "?" + APP_ID + "=" + Utils.getAppId(context) +
+                baseUrl, MANIFEST_SEARCH_URL + "?" + APP_ID + "=" + Utils.getAppId(context) +
                         "&" + APP_VERSION + "=" + Utils.getAppVersion(context));
         Response resp = httpAgent.fetch(finalUrls);
 
