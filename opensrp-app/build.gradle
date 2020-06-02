@@ -130,6 +130,10 @@ android {
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    testLogging {
+        // to see the exceptions of failed tests in Travis-CI console.
+        exceptionFormat = 'full'
+    }
 }
 
 def filesToCopy = copySpec {
