@@ -4,6 +4,8 @@ import android.content.ContentValues;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseUnitTest;
@@ -17,7 +19,10 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 /*
@@ -33,6 +38,9 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     private AlertRepository alertRepository;
 
     private AllCommonsRepository allCommonsRepository;
+
+    @Captor
+    private ArgumentCaptor<HashMap> mapArgumentCaptor;
 
     @Before
     public void setUp() throws Exception {
@@ -164,6 +172,96 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
 
         allCommonsRepository.customQueryForCompleteRow(sql, selectionArgs, tableName);
         verify(personRepository).customQueryForCompleteRow(sql, selectionArgs, tableName);
+    }
+
+    @Test
+    public void testUpdateSearchWithListToRemove() {
+        String caseId = "Case id 1";
+        String field = "status";
+        String value = "synced";
+        String[] listToremove = {"created", "deleted"};
+
+        allCommonsRepository.updateSearch(caseId,field,value,listToremove);
+        verify(personRepository).populateSearchValues(caseId,field,value,listToremove);
+    }
+
+    @Test
+    public void testUpdateSearchWithListToRemoveMissingCaseId() {
+        allCommonsRepository.updateSearch(null,"status","synced",new String[]{"created", "deleted"});
+        verifyZeroInteractions(personRepository);
+    }
+
+    @Test
+    public void testDeleteSearchRecord() {
+        String caseId = "Case id 1";
+        allCommonsRepository.deleteSearchRecord(caseId);
+        verify(personRepository).deleteSearchRecord(caseId);
+    }
+
+    @Test
+    public void testUpdateSearchWithNoCaseId() {
+        allCommonsRepository.updateSearch("");
+        verifyZeroInteractions(personRepository);
+    }
+
+    @Test
+    public void testUpdateSearchWithCaseId() {
+        String caseId = "Case id 1";
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("status", "Ready");
+        when(personRepository.populateSearchValues(caseId)).thenReturn(contentValues);
+
+        allCommonsRepository.updateSearch(caseId);
+        verify(personRepository).searchBatchInserts(mapArgumentCaptor.capture());
+
+        HashMap actualsearchMap = mapArgumentCaptor.getValue();
+        assertNotNull(actualsearchMap);
+        ContentValues actualContentValues = (ContentValues) actualsearchMap.get(caseId);
+        assertNotNull(actualContentValues);
+        assertEquals(1, actualContentValues.size());
+        assertEquals("Ready", actualContentValues.getAsString("status"));
+
+    }
+
+    @Test
+    public void testUpdateSearchWithNoCaseIdList() {
+        allCommonsRepository.updateSearch(new ArrayList<>());
+        verifyZeroInteractions(personRepository);
+    }
+
+    @Test
+    public void testUpdateSearchWithCaseIdList() {
+        String caseId1 = "Case id 1";
+        String caseId2 = "Case id 2";
+        List<String> caseIdList = new ArrayList<>();
+        caseIdList.add(caseId1);
+        caseIdList.add(caseId2);
+
+        ContentValues contentValues1 = new ContentValues();
+        contentValues1.put("status", "Ready");
+        doReturn(contentValues1).when(personRepository).populateSearchValues(caseId1);
+
+        ContentValues contentValues2 = new ContentValues();
+        contentValues2.put("status", "Complete");
+        doReturn(contentValues2).when(personRepository).populateSearchValues(caseId2);
+
+        allCommonsRepository.updateSearch(caseIdList);
+        verify(personRepository).searchBatchInserts(mapArgumentCaptor.capture());
+
+        HashMap actualsearchMap = mapArgumentCaptor.getValue();
+        assertNotNull(actualsearchMap);
+        assertEquals(2, actualsearchMap.size());
+
+        ContentValues actualContentValues1 = (ContentValues) actualsearchMap.get(caseId1);
+        assertNotNull(actualContentValues1);
+        assertEquals(1, actualContentValues1.size());
+        assertEquals("Ready", actualContentValues1.getAsString("status"));
+
+        ContentValues actualContentValues2 = (ContentValues) actualsearchMap.get(caseId2);
+        assertNotNull(actualContentValues2);
+        assertEquals(1, actualContentValues2.size());
+        assertEquals("Complete", actualContentValues2.getAsString("status"));
+
     }
 
 }
