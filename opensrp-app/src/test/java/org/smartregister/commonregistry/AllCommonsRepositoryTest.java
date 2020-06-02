@@ -20,6 +20,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -231,23 +232,35 @@ public class AllCommonsRepositoryTest extends BaseUnitTest {
     @Test
     public void testUpdateSearchWithCaseIdList() {
         String caseId1 = "Case id 1";
+        String caseId2 = "Case id 2";
         List<String> caseIdList = new ArrayList<>();
         caseIdList.add(caseId1);
+        caseIdList.add(caseId2);
 
         ContentValues contentValues1 = new ContentValues();
         contentValues1.put("status", "Ready");
-        when(personRepository.populateSearchValues(caseId1)).thenReturn(contentValues1);
+        doReturn(contentValues1).when(personRepository).populateSearchValues(caseId1);
 
+        ContentValues contentValues2 = new ContentValues();
+        contentValues2.put("status", "Complete");
+        doReturn(contentValues2).when(personRepository).populateSearchValues(caseId2);
 
         allCommonsRepository.updateSearch(caseIdList);
         verify(personRepository).searchBatchInserts(mapArgumentCaptor.capture());
 
         HashMap actualsearchMap = mapArgumentCaptor.getValue();
         assertNotNull(actualsearchMap);
-        ContentValues actualContentValues = (ContentValues) actualsearchMap.get(caseId1);
-        assertNotNull(actualContentValues);
-        assertEquals(1, actualContentValues.size());
-        assertEquals("Ready", actualContentValues.getAsString("status"));
+        assertEquals(2, actualsearchMap.size());
+
+        ContentValues actualContentValues1 = (ContentValues) actualsearchMap.get(caseId1);
+        assertNotNull(actualContentValues1);
+        assertEquals(1, actualContentValues1.size());
+        assertEquals("Ready", actualContentValues1.getAsString("status"));
+
+        ContentValues actualContentValues2 = (ContentValues) actualsearchMap.get(caseId2);
+        assertNotNull(actualContentValues2);
+        assertEquals(1, actualContentValues2.size());
+        assertEquals("Complete", actualContentValues2.getAsString("status"));
 
     }
 
