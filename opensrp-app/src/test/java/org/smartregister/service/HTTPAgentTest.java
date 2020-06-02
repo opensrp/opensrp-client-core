@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -38,6 +37,7 @@ import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.util.LoginResponseTestData;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -50,6 +50,8 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Base64.class, File.class, FileInputStream.class, Context.class, AccountHelper.class, CoreLibrary.class, IOUtils.class})
@@ -91,6 +93,9 @@ public class HTTPAgentTest {
     private HttpURLConnection httpURLConnection;
 
     @Mock
+    private HttpsURLConnection httpsURLConnection;
+
+    @Mock
     private OutputStream outputStream;
 
     @Mock
@@ -105,9 +110,11 @@ public class HTTPAgentTest {
     private HTTPAgent httpAgent;
     private static final String TEST_USERNAME = "demo";
     private static final String TEST_PASSWORD = "password";
+    public static final String TEST_BASE_URL = "https://my-server.com/";
     private static final String TEST_TOKEN_ENDPOINT = "https://my-server.com/oauth/token";
     private static final String SECURE_RESOURCE_ENDPOINT = "https://my-server.com/my/secure/resource";
     private static final String KEYClOAK_CONFIGURATION_ENDPOINT = "https://my-server.com/rest/config/keycloak";
+    private static final String USER_DETAILS_ENDPOINT = "https://my-server.com/opensrp/security/authenticate";
 
     private final String SAMPLE_TEST_TOKEN = "sample-test-token";
     private final String SAMPLE_REFRESH_TOKEN = "sample-refresh-token";
@@ -192,7 +199,6 @@ public class HTTPAgentTest {
     }
 
     @Test
-    @Ignore
     public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp() {
         PowerMockito.mockStatic(Base64.class);
         LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://mockbin.org/bin/e42f7256-18b2-40b9-a20c-40fdc564d06f", "", "");
@@ -436,7 +442,7 @@ public class HTTPAgentTest {
 
         HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
 
-        Mockito.doReturn("https://my-server.com/").when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
         Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(KEYClOAK_CONFIGURATION_ENDPOINT);
 
         Mockito.doReturn(inputStream).when(httpURLConnection).getInputStream();
@@ -558,6 +564,344 @@ public class HTTPAgentTest {
         Assert.assertEquals(AccountHelper.OAUTH.GRANT_TYPE.REFRESH_TOKEN, capturedGrantTypeValue);
         Assert.assertEquals(TEST_TOKEN_ENDPOINT, capturedTokenEndpointValue);
 
+
+    }
+
+    @Test
+    public void testFetchUserDetailsConstructsCorrectResponse() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+        Mockito.doReturn(inputStream).when(httpsURLConnection).getInputStream();
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpsURLConnection).getResponseCode();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        PowerMockito.when(IOUtils.toString(inputStream)).thenReturn(LoginResponseTestData.USER_DETAILS_REQUEST_SERVER_RESPONSE);
+
+        LoginResponse loginResponse = httpAgentSpy.fetchUserDetails(USER_DETAILS_ENDPOINT, SAMPLE_TEST_TOKEN);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("Login successful.", loginResponse.message());
+        Assert.assertNotNull(loginResponse.payload());
+
+        Assert.assertNotNull(loginResponse.payload().user);
+        Assert.assertEquals("demo", loginResponse.payload().user.getUsername());
+        Assert.assertEquals("Demo User", loginResponse.payload().user.getPreferredName());
+        Assert.assertEquals("93c6526-6667-3333-a611112-f3b309999999", loginResponse.payload().user.getBaseEntityId());
+
+        Assert.assertNotNull(loginResponse.payload().time);
+        Assert.assertEquals("2020-06-02 08:21:40", loginResponse.payload().time.getTime());
+        Assert.assertEquals("Africa/Nairobi", loginResponse.payload().time.getTimeZone());
+
+        Assert.assertNotNull(loginResponse.payload().locations);
+        Assert.assertNotNull(loginResponse.payload().locations.getLocationsHierarchy());
+
+        Assert.assertNotNull(loginResponse.payload().jurisdictions);
+        Assert.assertEquals(1, loginResponse.payload().jurisdictions.size());
+        Assert.assertNotNull("Health Team Kasarani", loginResponse.payload().jurisdictions.get(0));
+
+        Assert.assertNotNull(loginResponse.payload().team);
+        Assert.assertEquals("93c6526-6667-3333-a611112-f3b309999999", loginResponse.payload().team.identifier);
+        Assert.assertEquals("93c6526-6667-3333-a611112-f3b309999999", loginResponse.payload().team.uuid);
+
+        Assert.assertEquals("SUCCESS", loginResponse.name());
+
+        ArgumentCaptor<String> headerKey = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> headerValue = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(httpsURLConnection).setRequestProperty(headerKey.capture(), headerValue.capture());
+        String capturedKey = headerKey.getValue();
+        String capturedValue = headerValue.getValue();
+
+        Assert.assertEquals(capturedKey, AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION);
+        Assert.assertEquals(capturedValue, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " " + SAMPLE_TEST_TOKEN);
+
+    }
+
+    @Test
+    public void testFetchUserDetailsConstructsCorrectResponseForUnauthorizedRequests() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+        Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(httpsURLConnection).getResponseCode();
+
+        LoginResponse loginResponse = httpAgentSpy.fetchUserDetails(USER_DETAILS_ENDPOINT, SAMPLE_TEST_TOKEN);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("Please check the credentials", loginResponse.message());
+        Assert.assertNull(loginResponse.payload());
+
+        Assert.assertEquals("UNAUTHORIZED", loginResponse.name());
+
+    }
+
+    @Test
+    public void testFetchUserDetailsConstructsCorrectResponseForRandomServerError() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+
+        Mockito.doReturn(errorStream).when(httpsURLConnection).getInputStream();
+        Mockito.doReturn(HttpURLConnection.HTTP_INTERNAL_ERROR).when(httpsURLConnection).getResponseCode();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        PowerMockito.when(IOUtils.toString(errorStream)).thenReturn("<html><p><b>message</b> Oops, something went wrong </u></p></html>");
+
+        LoginResponse loginResponse = httpAgentSpy.fetchUserDetails(USER_DETAILS_ENDPOINT, SAMPLE_TEST_TOKEN);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("Dristhi login failed. Try later", loginResponse.message());
+        Assert.assertNull(loginResponse.payload());
+
+        Assert.assertEquals("UNKNOWN_RESPONSE", loginResponse.name());
+
+    }
+
+
+    @Test
+    public void testFetchUserDetailsConstructsCorrectResponseForMalformedURLRequests() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+        Mockito.doThrow(new MalformedURLException()).when(httpsURLConnection).getResponseCode();
+
+        LoginResponse loginResponse = httpAgentSpy.fetchUserDetails(USER_DETAILS_ENDPOINT, SAMPLE_TEST_TOKEN);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("Incorrect url", loginResponse.message());
+        Assert.assertNull(loginResponse.payload());
+
+        Assert.assertEquals("MALFORMED_URL", loginResponse.name());
+
+    }
+
+    @Test
+    public void testFetchUserDetailsConstructsCorrectResponseForConnectionTimedOutRequests() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+        Mockito.doThrow(new SocketTimeoutException()).when(httpsURLConnection).getResponseCode();
+
+        LoginResponse loginResponse = httpAgentSpy.fetchUserDetails(USER_DETAILS_ENDPOINT, SAMPLE_TEST_TOKEN);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("The server could not be reached. Try again", loginResponse.message());
+        Assert.assertNull(loginResponse.payload());
+
+        Assert.assertEquals("TIMEOUT", loginResponse.name());
+
+    }
+
+
+    @Test
+    public void testFetchUserDetailsConstructsCorrectResponseForRequestsWithNetworkConnectivity() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+        Mockito.doThrow(new IOException()).when(httpsURLConnection).getResponseCode();
+
+        LoginResponse loginResponse = httpAgentSpy.fetchUserDetails(USER_DETAILS_ENDPOINT, SAMPLE_TEST_TOKEN);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("No internet connection. Please ensure data connectivity", loginResponse.message());
+        Assert.assertNull(loginResponse.payload());
+
+        Assert.assertEquals("NO_INTERNET_CONNECTIVITY", loginResponse.name());
+
+    }
+
+
+    @Test
+    public void testVerifyAuthorizationReturnsTrueForAuthorizedResponse() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(KEYClOAK_CONFIGURATION_ENDPOINT);
+
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpURLConnection).getResponseCode();
+
+        boolean isVerified = httpAgentSpy.verifyAuthorization();
+        Assert.assertTrue(isVerified);
+
+    }
+
+    @Test
+    public void testVerifyAuthorizationReturnsFalseForUnauthorizedResponse() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection("https://my-server.com/user-details?anm-id=" + TEST_USERNAME);
+
+        Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(httpURLConnection).getResponseCode();
+
+        boolean isVerified = httpAgentSpy.verifyAuthorization();
+        Assert.assertFalse(isVerified);
+
+    }
+
+    @Test
+    public void testUrlCanBeAccessWithGivenCredentialsReturnsUnauthorizedResponse() throws Exception {
+
+        PowerMockito.mockStatic(Base64.class);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+
+        Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(httpURLConnection).getResponseCode();
+
+        LoginResponse response = httpAgentSpy.urlCanBeAccessWithGivenCredentials(USER_DETAILS_ENDPOINT, TEST_USERNAME, TEST_PASSWORD);
+        Assert.assertNotNull(response);
+        Assert.assertNotNull(response.message());
+        Assert.assertNull(response.payload());
+        Assert.assertEquals("Please check the credentials", response.message());
+
+    }
+
+    @Test
+    public void testUrlCanBeAccessWithGivenCredentialsReturnsErrorResponseForMalformedURL() throws Exception {
+
+        PowerMockito.mockStatic(Base64.class);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+
+        Mockito.doThrow(new MalformedURLException()).when(httpURLConnection).getResponseCode();
+
+        LoginResponse response = httpAgentSpy.urlCanBeAccessWithGivenCredentials(USER_DETAILS_ENDPOINT, TEST_USERNAME, TEST_PASSWORD);
+        Assert.assertNotNull(response);
+        Assert.assertNull(response.payload());
+        Assert.assertNotNull(response.message());
+        Assert.assertEquals(LoginResponse.MALFORMED_URL.name(), response.name());
+
+    }
+
+    @Test
+    public void testUrlCanBeAccessWithGivenCredentialsReturnsCorrectErrorResponseForSocketTimeout() throws Exception {
+
+        PowerMockito.mockStatic(Base64.class);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+
+        Mockito.doThrow(new MalformedURLException()).when(httpURLConnection).getResponseCode();
+
+
+        LoginResponse response = httpAgentSpy.urlCanBeAccessWithGivenCredentials(USER_DETAILS_ENDPOINT, TEST_USERNAME, TEST_PASSWORD);
+        Assert.assertNotNull(response);
+        Assert.assertNull(response.payload());
+        Assert.assertNotNull(response.message());
+        Assert.assertEquals(LoginResponse.MALFORMED_URL.name(), response.name());
+
+    }
+
+    @Test
+    public void testUrlCanBeAccessWithGivenCredentialsReturnsCorrectErrorResponseErrorResponseForIOException() throws Exception {
+
+        PowerMockito.mockStatic(Base64.class);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+
+        Mockito.doThrow(new IOException()).when(httpURLConnection).getResponseCode();
+
+
+        LoginResponse response = httpAgentSpy.urlCanBeAccessWithGivenCredentials(USER_DETAILS_ENDPOINT, TEST_USERNAME, TEST_PASSWORD);
+        Assert.assertNotNull(response);
+        Assert.assertNull(response.payload());
+        Assert.assertNotNull(response.message());
+        Assert.assertEquals(LoginResponse.NO_INTERNET_CONNECTIVITY.name(), response.name());
+
+    }
+
+    @Test
+    public void testUrlCanBeAccessWithGivenCredentialsReturnsCorrectResponseForRandomServerError() throws Exception {
+
+        PowerMockito.mockStatic(Base64.class);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
+
+        Mockito.doReturn(errorStream).when(httpsURLConnection).getErrorStream();
+        Mockito.doReturn(HttpURLConnection.HTTP_INTERNAL_ERROR).when(httpsURLConnection).getResponseCode();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        PowerMockito.when(IOUtils.toString(errorStream)).thenReturn("<html><p><b>message</b> Oops, something went wrong </u></p></html>");
+
+        LoginResponse loginResponse = httpAgentSpy.urlCanBeAccessWithGivenCredentials(USER_DETAILS_ENDPOINT, TEST_USERNAME, TEST_PASSWORD);
+
+        Assert.assertNotNull(loginResponse);
+        Assert.assertNotNull(loginResponse.message());
+        Assert.assertEquals("Oops, something went wrong", loginResponse.message());
+        Assert.assertNull(loginResponse.payload());
+
+        Assert.assertEquals("CUSTOM_SERVER_RESPONSE", loginResponse.name());
 
     }
 }
