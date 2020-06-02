@@ -234,11 +234,13 @@ public class HTTPAgent {
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             int statusCode = urlConnection.getResponseCode();
             InputStream inputStream;
+            String responseString = "";
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
-            String responseString = IOUtils.toString(inputStream);
+            if (inputStream != null)
+                responseString = IOUtils.toString(inputStream);
             if (statusCode == HttpStatus.SC_OK) {
 
                 Timber.d("response String: %s using request url %s", responseString, url);
@@ -662,11 +664,15 @@ public class HTTPAgent {
             int statusCode = urlConnection.getResponseCode();
 
             InputStream inputStream;
+            String responseString = null;
             if (statusCode >= HttpStatus.SC_BAD_REQUEST)
                 inputStream = urlConnection.getErrorStream();
             else
                 inputStream = urlConnection.getInputStream();
-            String responseString = IOUtils.toString(inputStream);
+
+            if (inputStream != null)
+                responseString = IOUtils.toString(inputStream);
+
             if (statusCode == HttpStatus.SC_OK) {
 
                 Timber.d("response String: %s using request url %s", responseString, url);
@@ -800,7 +806,7 @@ public class HTTPAgent {
                 urlConnection = initializeHttp(baseUrl, true);
 
                 Timber.i("User not authorized. User access was revoked, will log off user");
-                return HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode() ? false : true;
+                return false;
             } else if (statusCode != HttpStatus.SC_OK) {
                 Timber.w("Error occurred verifying authorization, User will not be logged off");
             } else {
