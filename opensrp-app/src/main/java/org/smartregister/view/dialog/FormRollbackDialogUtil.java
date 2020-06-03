@@ -22,7 +22,7 @@ import java.util.List;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 22-05-2020.
  */
-public class FormRollbackDialog {
+public class FormRollbackDialogUtil {
 
     public static AlertDialog showAvailableRollbackFormsDialog(@NonNull Context mContext, @NonNull List<ClientForm> clientFormList, @NonNull ClientForm currentClientForm, @NonNull RollbackDialogCallback rollbackDialogCallback) {
         AlertDialog.Builder builderSingle = new AlertDialog.Builder(mContext);

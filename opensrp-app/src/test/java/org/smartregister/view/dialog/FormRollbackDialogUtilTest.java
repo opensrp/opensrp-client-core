@@ -22,13 +22,13 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 22-05-2020.
  */
-public class FormRollbackDialogTest extends BaseUnitTest {
+public class FormRollbackDialogUtilTest extends BaseUnitTest {
 
     @Test
     public void selectFormShouldReturnFalseWhenCurrentCorruptedFormIsChosen() {
         ClientForm clientForm = new ClientForm();
 
-        assertFalse(FormRollbackDialog.selectForm(0, "0.0.3" + RuntimeEnvironment.application.getString(R.string.current_corrupted_form)
+        assertFalse(FormRollbackDialogUtil.selectForm(0, "0.0.3" + RuntimeEnvironment.application.getString(R.string.current_corrupted_form)
                 , RuntimeEnvironment.application, new ArrayList<ClientForm>(), clientForm, Mockito.mock(RollbackDialogCallback.class)));
     }
 
@@ -36,7 +36,7 @@ public class FormRollbackDialogTest extends BaseUnitTest {
     public void selectFormShouldReturnFalseWhenItemIndexDoesNotExist() {
         ClientForm clientForm = new ClientForm();
 
-        assertFalse(FormRollbackDialog.selectForm(2, "0.0.3"
+        assertFalse(FormRollbackDialogUtil.selectForm(2, "0.0.3"
                 , RuntimeEnvironment.application, new ArrayList<ClientForm>(), clientForm, Mockito.mock(RollbackDialogCallback.class)));
     }
 
@@ -54,7 +54,7 @@ public class FormRollbackDialogTest extends BaseUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "clientFormRepository", clientFormRepository);
 
         RollbackDialogCallback rollbackDialogCallback = Mockito.mock(RollbackDialogCallback.class);
-        assertTrue(FormRollbackDialog.selectForm(0, "0.0.2"
+        assertTrue(FormRollbackDialogUtil.selectForm(0, "0.0.2"
                 , RuntimeEnvironment.application, clientFormsList, highClientFormVersion, rollbackDialogCallback));
         Mockito.verify(rollbackDialogCallback).onFormSelected(clientForm);
 
@@ -92,7 +92,7 @@ public class FormRollbackDialogTest extends BaseUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "clientFormRepository", clientFormRepository);
 
         RollbackDialogCallback rollbackDialogCallback = Mockito.mock(RollbackDialogCallback.class);
-        assertTrue(FormRollbackDialog.selectForm(0, "base version"
+        assertTrue(FormRollbackDialogUtil.selectForm(0, "base version"
                 , RuntimeEnvironment.application, clientFormsList, highClientFormVersion, rollbackDialogCallback));
 
         ArgumentCaptor<ClientForm> clientFormArgumentCaptor = ArgumentCaptor.forClass(ClientForm.class);

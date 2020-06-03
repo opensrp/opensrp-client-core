@@ -37,7 +37,7 @@ import org.smartregister.listener.RollbackDialogCallback;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
-import org.smartregister.view.dialog.FormRollbackDialog;
+import org.smartregister.view.dialog.FormRollbackDialogUtil;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -1224,7 +1224,7 @@ public class FormUtils {
             boolean dialogIsShowing = (mContext instanceof JsonSubFormAndRulesLoader) && ((JsonSubFormAndRulesLoader) mContext).isVisibleFormErrorAndRollbackDialog();
 
             if (!dialogIsShowing) {
-                FormRollbackDialog.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
+                FormRollbackDialogUtil.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
                     @Override
                     public void onFormSelected(@NonNull ClientForm selectedForm) {
                         if (selectedForm.getJson() == null && selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
