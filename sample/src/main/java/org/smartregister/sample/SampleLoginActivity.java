@@ -2,7 +2,6 @@ package org.smartregister.sample;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import org.smartregister.sample.presenter.LoginPresenter;
 import org.smartregister.view.activity.BaseLoginActivity;
