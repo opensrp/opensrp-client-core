@@ -105,4 +105,29 @@ public class ANCServiceTypeTest {
         assertEquals("KB Injection Depoprovera", KB_Injection_Depoprovera.displayName());
         assertEquals("kb", KB_Injection_Depoprovera.category());
     }
+
+    @Test
+    public void testTryParse() {
+        assertEquals(ANCServiceType.valueOf("ANC_1"), ANCServiceType.tryParse("ANC 1", null));
+        assertEquals(ANCServiceType.valueOf("ANC_2"), ANCServiceType.tryParse("ANC 2", null));
+        assertEquals(ANCServiceType.valueOf("ANC_3"), ANCServiceType.tryParse("ANC 3", null));
+        assertEquals(ANCServiceType.valueOf("ANC_4"), ANCServiceType.tryParse("ANC 4", null));
+        assertEquals(ANCServiceType.valueOf("TT_1"), ANCServiceType.tryParse("TT 1", null));
+        assertEquals(ANCServiceType.valueOf("TT_2"), ANCServiceType.tryParse("TT 2", null));
+        assertEquals(ANCServiceType.valueOf("TT_BOOSTER"), ANCServiceType.tryParse("TT Booster", null));
+        assertEquals(ANCServiceType.valueOf("IFA"), ANCServiceType.tryParse("IFA 1", null));
+        assertEquals(ANCServiceType.valueOf("IFA"), ANCServiceType.tryParse("IFA 2", null));
+        assertEquals(ANCServiceType.valueOf("IFA"), ANCServiceType.tryParse("IFA 3", null));
+        assertEquals(ANCServiceType.valueOf("HB_TEST"), ANCServiceType.tryParse("HB Test 1", null));
+        assertEquals(ANCServiceType.valueOf("HB_TEST"),  ANCServiceType.tryParse("HB Test 2", null));
+        assertEquals(ANCServiceType.valueOf("DELIVERY_PLAN"),  ANCServiceType.tryParse("Delivery Plan", null));
+        assertEquals(ANCServiceType.valueOf("PNC"),  ANCServiceType.tryParse("PNC", null));
+        assertEquals(ANCServiceType.valueOf("PNC_1"),  ANCServiceType.tryParse("PNC 1", null));
+        assertEquals(ANCServiceType.valueOf("PNC_2"),  ANCServiceType.tryParse("PNC 2", null));
+        assertEquals(ANCServiceType.valueOf("PNC_3"),  ANCServiceType.tryParse("PNC 3", null));
+        assertEquals(ANCServiceType.valueOf("KB_IUD"),  ANCServiceType.tryParse("KB IUD", null));
+        assertEquals(ANCServiceType.valueOf("KB_Implant"),  ANCServiceType.tryParse("KB Implant", null));
+        assertEquals(ANCServiceType.valueOf("KB_Injection_Cyclofem"),  ANCServiceType.tryParse("KB Injection Cyclofem", null));
+        assertEquals(ANCServiceType.valueOf("KB_Injection_Depoprovera"),  ANCServiceType.tryParse("KB Injection Depoprovera", null));
+    }
 }
