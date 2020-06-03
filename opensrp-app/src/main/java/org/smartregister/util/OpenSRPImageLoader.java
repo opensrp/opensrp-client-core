@@ -160,8 +160,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                 public HttpResponse performRequest(Request<?> request, Map<String, String>
                         headers) throws IOException, AuthFailureError {
 
-                    String accessToken = AccountHelper.getOAuthToken(CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
-                    headers.put(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
+                    addBearerTokenAuthorizationHeader(headers);
 
                     return super.performRequest(request, headers);
                 }
@@ -175,8 +174,7 @@ public class OpenSRPImageLoader extends ImageLoader {
                 @Override
                 public HttpResponse performRequest(Request<?> request, Map<String, String> headers) throws IOException, AuthFailureError {
 
-                    String accessToken = AccountHelper.getOAuthToken(CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
-                    headers.put(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
+                    addBearerTokenAuthorizationHeader(headers);
 
                     return super.performRequest(request, headers);
                 }
@@ -185,6 +183,11 @@ public class OpenSRPImageLoader extends ImageLoader {
             requestQueue = Volley.newRequestQueue(context, stack);
         }
         return requestQueue;
+    }
+
+    private static void addBearerTokenAuthorizationHeader(Map<String, String> headers) {
+        String accessToken = AccountHelper.getOAuthToken(CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        headers.put(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
     }
 
     /**
