@@ -655,7 +655,7 @@ public class HTTPAgentTest {
 
         Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
 
-        Mockito.doReturn(errorStream).when(httpsURLConnection).getInputStream();
+        Mockito.doReturn(errorStream).when(httpsURLConnection).getErrorStream();
         Mockito.doReturn(HttpURLConnection.HTTP_INTERNAL_ERROR).when(httpsURLConnection).getResponseCode();
 
         PowerMockito.mockStatic(IOUtils.class);
@@ -665,10 +665,10 @@ public class HTTPAgentTest {
 
         Assert.assertNotNull(loginResponse);
         Assert.assertNotNull(loginResponse.message());
-        Assert.assertEquals("Dristhi login failed. Try later", loginResponse.message());
+        Assert.assertEquals("Oops, something went wrong", loginResponse.message());
         Assert.assertNull(loginResponse.payload());
 
-        Assert.assertEquals("UNKNOWN_RESPONSE", loginResponse.name());
+        Assert.assertEquals("CUSTOM_SERVER_RESPONSE", loginResponse.name());
 
     }
 
@@ -719,7 +719,7 @@ public class HTTPAgentTest {
 
 
     @Test
-    public void testFetchUserDetailsConstructsCorrectResponseForRequestsWithNetworkConnectivity() throws Exception {
+    public void testFetchUserDetailsConstructsCorrectResponseForRequestsWithoutNetworkConnectivity() throws Exception {
 
         URL url = PowerMockito.mock(URL.class);
         Assert.assertNotNull(url);
@@ -840,14 +840,14 @@ public class HTTPAgentTest {
         Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
         Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(USER_DETAILS_ENDPOINT);
 
-        Mockito.doThrow(new MalformedURLException()).when(httpURLConnection).getResponseCode();
+        Mockito.doThrow(new SocketTimeoutException()).when(httpURLConnection).getResponseCode();
 
 
         LoginResponse response = httpAgentSpy.urlCanBeAccessWithGivenCredentials(USER_DETAILS_ENDPOINT, TEST_USERNAME, TEST_PASSWORD);
         Assert.assertNotNull(response);
         Assert.assertNull(response.payload());
         Assert.assertNotNull(response.message());
-        Assert.assertEquals(LoginResponse.MALFORMED_URL.name(), response.name());
+        Assert.assertEquals(LoginResponse.TIMEOUT.name(), response.name());
 
     }
 
