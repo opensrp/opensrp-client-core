@@ -120,6 +120,7 @@ public class AllConstants {
     public static final String SPINNER = "spinner";
     public static final String ROWID = "rowid";
     public static final String MULTI_SELECT_LIST = "multi_select_list";
+    public static final String JSON_FILE_EXTENSION = ".json";
 
 
     public static class Immunizations {
@@ -458,5 +459,11 @@ public class AllConstants {
     public interface JSON {
         String KEY = "key";
         String VALUE = "value";
+
+        interface Property {
+            String IS_NEW = "is_new";
+            String FORM_VERSION = "form_version";
+            String CLIENT_FORM_ID = "client_form_id";
+        }
     }
 }

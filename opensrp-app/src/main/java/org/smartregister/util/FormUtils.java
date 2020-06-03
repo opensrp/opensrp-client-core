@@ -2,16 +2,21 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
@@ -42,6 +47,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -869,7 +875,7 @@ public class FormUtils {
     public String retrieveValueForLinkedRecord(String link, JSONObject entityJson) {
         try {
             String entityRelationships = readFileFromAssetsFolder(
-                    "www/form/entity_relationship" + ".json");
+                    "www/form/entity_relationship" + AllConstants.JSON_FILE_EXTENSION);
             JSONArray json = new JSONArray(entityRelationships);
             Timber.i(json.toString());
 
@@ -1087,16 +1093,16 @@ public class FormUtils {
         if (mContext != null) {
             try {
                 String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase("en") ? "" : "-" + locale;
+                locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
 
                 InputStream inputStream;
                 try {
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form" + locale + "/" + formIdentity + ".json");
+                            .open("json.form" + locale + "/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 } catch (FileNotFoundException e) {
                     // file for the language not found, defaulting to english language
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form/" + formIdentity + ".json");
+                            .open("json.form/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 }
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(inputStream, CharEncoding.UTF_8));
@@ -1130,21 +1136,127 @@ public class FormUtils {
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = formIdentity;
-        if (!"en".equals(locale)) {
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+        }
+
         try {
             if (clientForm != null) {
                 Timber.d("============%s form loaded from db============", formIdentity);
-                return new JSONObject(clientForm.getJson());
+
+                JSONObject formJson = new JSONObject(clientForm.getJson());
+                injectFormStatus(formJson, clientForm);
+
+                return formJson;
             }
         } catch (JSONException e) {
             Timber.e(e);
         }
         Timber.d("============%s form loaded from Assets=============", formIdentity);
         return getFormJson(formIdentity);
+    }
+
+    @Nullable
+    public JSONObject getSubFormJsonFromRepository(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = formIdentity;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(dbFormName);
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+
+            if (clientForm == null) {
+                String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
+                dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
+                clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+            }
+        }
+
+        try {
+            if (clientForm != null) {
+                Timber.d("============%s form loaded from db============", dbFormName);
+                String originalJson = clientForm.getJson();
+
+                if (translateSubForm) {
+                    originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+                }
+
+                return new JSONObject(originalJson);
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public BufferedReader getRulesFromRepository(String fileName) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = fileName;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", localeFormIdentity);
+            String originalJson = clientForm.getJson();
+
+            return new BufferedReader(new StringReader(originalJson));
+        }
+
+        return null;
+    }
+
+    @NonNull
+    protected String extractFormNameWithoutExtension(String localeFormIdentity) {
+        return localeFormIdentity.endsWith(AllConstants.JSON_FILE_EXTENSION)
+                ? localeFormIdentity.substring(0, localeFormIdentity.length() - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
+    }
+
+    public void injectFormStatus(@NonNull JSONObject jsonObject, @NonNull ClientForm clientForm) {
+        if (clientForm.isNew()) {
+            try {
+                jsonObject.put(AllConstants.JSON.Property.IS_NEW, clientForm.isNew());
+                jsonObject.put(AllConstants.JSON.Property.CLIENT_FORM_ID, clientForm.getId());
+                jsonObject.put(AllConstants.JSON.Property.FORM_VERSION, clientForm.getVersion());
+            } catch (JSONException e) {
+                Timber.e(e);
+            }
+        }
+    }
+
+    public static int getClientFormId(@NonNull JSONObject jsonObject) {
+        try {
+            return jsonObject.getInt(AllConstants.JSON.Property.CLIENT_FORM_ID);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return 0;
+        }
+    }
+
+    public static boolean isFormNew(@NonNull JSONObject jsonObject) {
+        return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
     }
 
 }

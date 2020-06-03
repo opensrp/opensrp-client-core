@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -22,6 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -47,6 +50,9 @@ import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
  * Created by kaderchowdhury on 14/11/17.
  */
 public class JsonFormUtilsTest {
+
+    @Captor
+    ArgumentCaptor<Obs> obsArgumentCaptor;
 
     private String formresultJson =
             "{\"count\":\"1\",\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\"," +
@@ -671,6 +677,52 @@ public class JsonFormUtilsTest {
         org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
+    }
+
+    @Test
+    public void addObservationAddsCombinedObservationFormSubmissionFieldForCheckboxesToEvent() throws Exception {
+        String observationJsonObjectString =
+                "      {\n" +
+                        "        \"key\": \"testMicrosResult\",\n" +
+                        "        \"openmrs_entity_parent\": \"\",\n" +
+                        "        \"openmrs_entity\": \"\",\n" +
+                        "        \"openmrs_entity_id\": \"\",\n" +
+                        "        \"type\": \"check_box\",\n" +
+                        "        \"label\": \"Microscopy Result\",\n" +
+                        "        \"value\": \"true\",\n" +
+                        "        \"options\": [\n" +
+                        "          {\n" +
+                        "            \"key\": \"Negative\",\n" +
+                        "            \"text\": \"Negative\",\n" +
+                        "            \"value\": \"false\"\n" +
+                        "          },\n" +
+                        "          {\n" +
+                        "            \"key\": \"PositiveFalciparum\",\n" +
+                        "            \"text\": \"Positive - Falciparum\",\n" +
+                        "            \"value\": \"false\"\n" +
+                        "          },\n" +
+                        "          {\n" +
+                        "            \"key\": \"PositiveVivax\",\n" +
+                        "            \"text\": \"Positive - Vivax\",\n" +
+                        "            \"value\": \"true\"\n" +
+                        "          },\n" +
+                        "          {\n" +
+                        "            \"key\": \"Fg\",\n" +
+                        "            \"text\": \"Fg\",\n" +
+                        "            \"value\": \"true\"\n" +
+                        "          }\n" +
+                        "        ]\n" +
+                        "      }";
+        JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
+        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        JsonFormUtils.addObservation(event, observationJsonObject);
+        Mockito.verify(event, Mockito.atLeastOnce()).addObs(obsArgumentCaptor.capture());
+        List<Object> values = obsArgumentCaptor.getValue().getValues();
+        assertEquals(2, values.size());
+        assertTrue(values.contains("Fg"));
+        assertTrue(values.contains("Positive - Vivax"));
+        assertFalse(values.contains("Positive - Falciparum"));
+
     }
 
     @Test
