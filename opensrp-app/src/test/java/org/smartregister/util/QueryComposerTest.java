@@ -184,4 +184,41 @@ public class QueryComposerTest {
         value = QueryComposer.getFtsQuery("ec_family", "Kenyatta");
         Assert.assertEquals(expected, value);
     }
+
+    @Test
+    public void testDisjointClause() throws QueryComposer.InvalidQueryException {
+        QueryComposer.Disjoint disjoint = new QueryComposer.Disjoint()
+                .addDisjointClause(" ifnull(name,'') != ''  ")
+                .addDisjointClause(" age > 18  ")
+                .addDisjointClause(" age between 0 and 5" );
+
+        String expectation  = "(  ifnull(name,'') != ''   ) OR (  age > 18   ) OR (  age between 0 and 5 )";
+        Assert.assertEquals(expectation, disjoint.composeQuery());
+
+        List<String> columns = new ArrayList<>();
+        columns.add("table1.column1");
+        columns.add("table1.column2");
+        columns.add("table1.column3");
+
+        QueryComposer composer = new QueryComposer();
+        composer.withMainTable("table1");
+        composer.withColumn("table1.column1");
+        composer.withColumns(columns);
+        composer.withWhereClause(" table1.column2 != null ");
+
+        composer.withWhereClause(new QueryComposer.Disjoint()
+                .addDisjointClause(" ifnull(name,'') != ''  ")
+                .addDisjointClause(" table1.column2 > 18  ")
+                .addDisjointClause(" table1.column2 between 0 and 5" ));
+
+        composer.withLimitClause(0, 10);
+
+
+        String query = "SELECT table1.column1 , table1.column1 , table1.column2 , table1.column3 FROM table1 WHERE " +
+                "(  table1.column2 != null  ) " +
+                "AND ( (  ifnull(name,'') != ''   ) OR (  table1.column2 > 18   ) OR (  table1.column2 between 0 and 5 ) ) " +
+                "LIMIT 0 , 10";
+
+        Assert.assertEquals(query,composer.generateQuery());
+    }
 }
