@@ -14,6 +14,8 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
@@ -31,7 +33,7 @@ import timber.log.Timber;
 /**
  * Created by Vincent Karuri on 08/05/2019
  */
-public class PlanIntentServiceHelper {
+public class PlanIntentServiceHelper extends BaseHelper {
 
     private PlanDefinitionRepository planDefinitionRepository;
     private LocationRepository locationRepository;
@@ -44,6 +46,7 @@ public class PlanIntentServiceHelper {
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
     protected static final int PLAN_PULL_LIMIT = 1000; //this is set on the server
+    private long totalRecords;
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -60,14 +63,22 @@ public class PlanIntentServiceHelper {
     }
 
     public void syncPlans() {
-        int batchFetchCount = batchFetchPlansFromServer();
+        int batchFetchCount = batchFetchPlansFromServer(true);
+
+        SyncProgress syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.PLANS);
+        syncProgress.setTotalRecords(totalRecords);
 
         while(batchFetchCount >= PLAN_PULL_LIMIT) {
-            batchFetchCount = batchFetchPlansFromServer();
+            batchFetchCount = batchFetchPlansFromServer(false);
+            syncProgress.setPercentageSynced((int) (batchFetchCount/totalRecords) * 100);
+            sendSyncProgressBroadcast(syncProgress, context);
         }
+        syncProgress.setPercentageSynced((int) (batchFetchCount/totalRecords) * 100);
+        sendSyncProgressBroadcast(syncProgress, context);
     }
 
-    private int batchFetchPlansFromServer() {
+    private int batchFetchPlansFromServer(boolean returnCount) {
         int batchFetchCount = 0;
         try {
             long serverVersion = 0;
@@ -83,7 +94,7 @@ public class PlanIntentServiceHelper {
             Long maxServerVersion = 0l;
 
             String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
-            String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion);
+            String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion, returnCount);
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
             }.getType());
             for (PlanDefinition plan : plans) {
@@ -105,7 +116,7 @@ public class PlanIntentServiceHelper {
         return batchFetchCount;
     }
 
-    private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
+    private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -118,6 +129,7 @@ public class PlanIntentServiceHelper {
             request.put("organizations", new JSONArray(organizationIds));
         }
         request.put("serverVersion", serverVersion);
+        request.put(AllConstants.RETURN_COUNT, returnCount);
 
         if (httpAgent == null) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.noConnection));
@@ -133,6 +145,9 @@ public class PlanIntentServiceHelper {
         if (resp.isFailure()) {
             context.sendBroadcast(Utils.completeSync(FetchStatus.nothingFetched));
             throw new NoHttpResponseException(SYNC_PLANS_URL + " did not return any data");
+        }
+        if (returnCount) {
+            totalRecords = resp.getTotalRecords();
         }
         return resp.payload().toString();
     }
