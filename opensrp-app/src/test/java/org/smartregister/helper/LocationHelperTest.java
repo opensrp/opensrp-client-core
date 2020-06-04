@@ -161,6 +161,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         String locationIds = spiedLocationHelper.locationIdsFromHierarchy();
 
         Mockito.verify(spiedLocationHelper).locationsFromHierarchy(Mockito.eq(true), Mockito.nullable(String.class));
-        Assert.assertEquals("718b2864-7d6a-44c8-b5b6-bb375f82654e,2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8", locationIds);
+        assertEquals("718b2864-7d6a-44c8-b5b6-bb375f82654e,2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8", locationIds);
     }
 }
