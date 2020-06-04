@@ -6,6 +6,7 @@ import android.util.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
+import org.smartregister.AllConstants;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.compression.GZIPCompression;
 import org.smartregister.domain.DownloadStatus;
@@ -19,6 +20,7 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.ssl.OpensrpSSLHelper;
 import org.smartregister.util.DownloadForm;
+import org.smartregister.util.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
@@ -246,6 +248,7 @@ public class HTTPAgent {
 
     private Response<String> handleResponse(HttpURLConnection urlConnection) {
         String responseString;
+        String totalRecords;
         try {
             int statusCode = urlConnection.getResponseCode();
 
@@ -256,6 +259,8 @@ public class HTTPAgent {
                 inputStream = urlConnection.getInputStream();
 
             responseString = IOUtils.toString(inputStream);
+
+            totalRecords = urlConnection.getHeaderField(AllConstants.TOTAL_RECORDS);
 
             Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
@@ -275,7 +280,7 @@ public class HTTPAgent {
                 urlConnection.disconnect();
             }
         }
-        return new Response<>(ResponseStatus.success, responseString);
+        return new Response<>(ResponseStatus.success, responseString).withTotalRecords(Utils.tryParseLong(totalRecords,0));
     }
 
 

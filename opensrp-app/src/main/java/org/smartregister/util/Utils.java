@@ -888,4 +888,12 @@ public class Utils {
         }
     }
 
+    public static Long tryParseLong(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
 }
