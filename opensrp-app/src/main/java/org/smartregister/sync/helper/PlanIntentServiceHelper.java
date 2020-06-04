@@ -43,6 +43,7 @@ public class PlanIntentServiceHelper {
 
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
+    protected static final int PLAN_PULL_LIMIT = 1000; //this is set on the server
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -59,6 +60,15 @@ public class PlanIntentServiceHelper {
     }
 
     public void syncPlans() {
+        int batchFetchCount = batchFetchPlansFromServer();
+
+        while(batchFetchCount >= PLAN_PULL_LIMIT) {
+            batchFetchCount = batchFetchPlansFromServer();
+        }
+    }
+
+    private int batchFetchPlansFromServer() {
+        int batchFetchCount = 0;
         try {
             long serverVersion = 0;
             try {
@@ -85,11 +95,14 @@ public class PlanIntentServiceHelper {
             }
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
+                batchFetchCount = plans.size();
                 allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
+
+        return batchFetchCount;
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
