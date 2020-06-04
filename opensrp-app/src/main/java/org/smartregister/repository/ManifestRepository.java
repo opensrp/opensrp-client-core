@@ -103,7 +103,7 @@ public class ManifestRepository extends BaseRepository {
      *
      * @return a list of all Manifests in the repository
      */
-    public List<Manifest> getAllManifestsManifest() {
+    public List<Manifest> getAllManifests() {
         List<Manifest> manifests = new ArrayList<>();
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getManifestTableName() +
                 " ORDER BY " + CREATED_AT + " DESC ", null)) {

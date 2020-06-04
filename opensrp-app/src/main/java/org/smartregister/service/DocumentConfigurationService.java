@@ -86,7 +86,7 @@ public class DocumentConfigurationService {
         //Fetching Client Forms for identifiers in the manifest
         for (String identifier : activeManifest.getIdentifiers()) {
             try {
-                ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(identifier);
+                ClientForm clientForm = clientFormRepository.getLatestFormByIdentifier(identifier);
                 if (clientForm == null || !clientForm.getVersion().equals(activeManifest.getFormVersion())) {
                     fetchClientForm(identifier, activeManifest.getFormVersion(), clientFormRepository.getActiveClientFormByIdentifier(identifier));
                 }
@@ -96,7 +96,7 @@ public class DocumentConfigurationService {
         }
     }
 
-    protected void fetchClientForm(String identifier, String formVersion, ClientForm activeClientForm) throws NoHttpResponseException {
+    protected void fetchClientForm(String identifier, String formVersion, ClientForm latestClientForm) throws NoHttpResponseException {
         if (httpAgent == null) {
             throw new IllegalArgumentException(CLIENT_FORM_SYNC_URL + " http agent is null");
         }
@@ -107,7 +107,7 @@ public class DocumentConfigurationService {
                         baseUrl, CLIENT_FORM_SYNC_URL,
                         "?" + FORM_IDENTIFIER + "=" + identifier +
                                 "&" + FORM_VERSION + "=" + formVersion +
-                                (activeClientForm == null ? "" : "&" + CURRENT_FORM_VERSION + "=" + activeClientForm.getVersion())));
+                                (latestClientForm == null ? "" : "&" + CURRENT_FORM_VERSION + "=" + latestClientForm.getVersion())));
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(CLIENT_FORM_SYNC_URL + " not returned data");
@@ -117,12 +117,12 @@ public class DocumentConfigurationService {
         ClientFormResponse clientFormResponse =
                 gson.fromJson(resp.payload().toString(), ClientFormResponse.class);
 
-        if (activeClientForm == null || !clientFormResponse.getClientFormMetadata().getVersion().equals(activeClientForm.getVersion())) {
+        if (latestClientForm == null || !clientFormResponse.getClientFormMetadata().getVersion().equals(latestClientForm.getVersion())) {
             //if the previously active client form is not null it should be untagged from being new nor active
-            if (activeClientForm != null) {
-                activeClientForm.setActive(false);
-                activeClientForm.setNew(false);
-                clientFormRepository.addOrUpdate(activeClientForm);
+            if (latestClientForm != null) {
+                latestClientForm.setActive(false);
+                latestClientForm.setNew(false);
+                clientFormRepository.addOrUpdate(latestClientForm);
             }
             ClientForm clientForm = convertClientFormResponseToClientForm(clientFormResponse);
             saveReceivedClientForm(clientForm);
@@ -153,7 +153,7 @@ public class DocumentConfigurationService {
         manifestRepository.addOrUpdate(receivedManifest);
 
         //deleting the third oldest manifest from the repository
-        List<Manifest> manifestsList = manifestRepository.getAllManifestsManifest();
+        List<Manifest> manifestsList = manifestRepository.getAllManifests();
         if (manifestsList.size() > 2) {
             manifestRepository.delete(manifestsList.get(2).getId());
         }

@@ -4,10 +4,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AlertDialog;
+import android.widget.Toast;
 
 import com.vijay.jsonwizard.activities.JsonFormActivity;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -22,8 +26,7 @@ import timber.log.Timber;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 07-05-2020.
  */
-public class DynamicJsonFormActivity extends JsonFormActivity {
-
+public class FormConfigurationJsonFormActivity extends JsonFormActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,7 +34,7 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
 
         JSONObject jsonObject = getmJSONObject();
         if (FormUtils.isFormNew(jsonObject)) {
-            showFormVersionUpdateDialog( getString(R.string.form_update_title), getString(R.string.form_update_message));
+            showFormVersionUpdateDialog(getString(R.string.form_update_title), getString(R.string.form_update_message));
         }
     }
 
@@ -57,7 +60,8 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
                 .show();
     }
 
-    private void negateIsNewClientForm(int clientFormId) {
+    @VisibleForTesting
+    protected void negateIsNewClientForm(int clientFormId) {
         AppExecutors appExecutors = new AppExecutors();
 
         appExecutors.diskIO()
@@ -70,7 +74,7 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
                 });
     }
 
-    @NonNull
+    @Nullable
     @Override
     public BufferedReader getRules(@NonNull Context context, @NonNull String fileName) throws IOException {
         try {
@@ -86,15 +90,45 @@ public class DynamicJsonFormActivity extends JsonFormActivity {
         return super.getRules(context, fileName);
     }
 
-    @NonNull
+    @Nullable
     @Override
     public JSONObject getSubForm(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) throws Exception {
         FormUtils formUtils = FormUtils.getInstance(context);
-        JSONObject dbForm =  formUtils.getSubFormJsonFromRepository(formIdentity, subFormsLocation, context, translateSubForm);
+        JSONObject dbForm = null;
+        try {
+            dbForm = formUtils.getSubFormJsonFromRepository(formIdentity, subFormsLocation, context, translateSubForm);
+
+        } catch (JSONException ex) {
+            Timber.e(ex);
+            handleFormError(false, formIdentity);
+            return null;
+        }
+
         if (dbForm == null) {
             return super.getSubForm(formIdentity, subFormsLocation, context, translateSubForm);
         }
 
         return dbForm;
+    }
+
+    @Override
+    public void handleFormError(boolean isRulesFile, @NonNull String formIdentifier) {
+        FormUtils formUtils = null;
+        try {
+            formUtils = FormUtils.getInstance(this);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+
+        if (formUtils != null) {
+            formUtils.handleJsonFormOrRulesError(isRulesFile, formIdentifier, form -> {
+                if (form != null) {
+                    Toast.makeText(this, R.string.form_changed_reopen_to_take_effect, Toast.LENGTH_LONG)
+                            .show();
+                }
+
+                FormConfigurationJsonFormActivity.this.finish();
+            });
+        }
     }
 }
