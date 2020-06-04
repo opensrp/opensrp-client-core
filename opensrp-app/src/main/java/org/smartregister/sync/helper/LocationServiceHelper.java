@@ -73,9 +73,9 @@ public class LocationServiceHelper {
         int batchFetchCount = locationStructures.size();
 
         while( locationStructures != null &&  batchFetchCount >= LOCATION_PULL_LIMIT) {
-            List<Location> batchFetchTasks = batchSyncLocationsStructures(isJurisdiction);
-            locationStructures.addAll(batchFetchTasks);
-            batchFetchCount = batchFetchTasks.size();
+            List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction);
+            locationStructures.addAll(batchLocationStructures);
+            batchFetchCount = batchLocationStructures.size();
         }
 
         return locationStructures;
