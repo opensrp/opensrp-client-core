@@ -1348,24 +1348,5 @@ public class FormUtils {
     public static boolean isFormNew(@NonNull JSONObject jsonObject) {
         return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
     }
-/*
-    @Nullable
-    public List<ClientForm> getAvailableRollbackForms(@NonNull ClientForm corruptedForm) {
-        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
-        ManifestRepository manifestRepository = CoreLibrary.getInstance().context().getManifestRepository();
-        List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(corruptedForm.getIdentifier());
-        List<Manifest> manifests = manifestRepository.getAllManifests();
-
-        Collections.sort(manifests, new Comparator<Manifest>() {
-            @Override
-            public int compare(Manifest o1, Manifest o2) {
-                DefaultArtifactVersion v2 = new DefaultArtifactVersion(o1.getFormVersion());
-
-                return 0;
-            }
-        });
-
-        // Remove the current form from the available options
-    }*/
 
 }
