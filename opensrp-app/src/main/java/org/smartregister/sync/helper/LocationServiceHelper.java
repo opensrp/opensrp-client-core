@@ -44,6 +44,7 @@ public class LocationServiceHelper {
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
+    protected static final int LOCATION_PULL_LIMIT = 1000; //this is set on the server
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
@@ -68,6 +69,19 @@ public class LocationServiceHelper {
     }
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
+        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction);
+        int batchFetchCount = locationStructures.size();
+
+        while( locationStructures != null &&  batchFetchCount >= LOCATION_PULL_LIMIT) {
+            List<Location> batchFetchTasks = batchSyncLocationsStructures(isJurisdiction);
+            locationStructures.addAll(batchFetchTasks);
+            batchFetchCount = batchFetchTasks.size();
+        }
+
+        return locationStructures;
+    }
+
+    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
