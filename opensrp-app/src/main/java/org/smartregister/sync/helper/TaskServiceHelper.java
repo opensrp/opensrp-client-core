@@ -43,6 +43,7 @@ public class TaskServiceHelper {
     public static final String UPDATE_STATUS_URL = "/rest/task/update_status";
     public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
+    protected static final int TASK_PULL_LIMIT = 1000; //this is set on the server
 
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
@@ -95,6 +96,20 @@ public class TaskServiceHelper {
     public List<Task> fetchTasksFromServer() {
         Set<String> planDefinitions = getPlanDefinitionIds();
         List<String> groups = getLocationIds();
+
+        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups);
+        int batchFetchCount = tasks.size();
+
+        while( tasks != null &&  batchFetchCount >= TASK_PULL_LIMIT) {
+            List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups);
+            tasks.addAll(batchFetchTasks);
+            batchFetchCount = batchFetchTasks.size();
+        }
+
+        return tasks;
+    }
+
+    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups) {
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
