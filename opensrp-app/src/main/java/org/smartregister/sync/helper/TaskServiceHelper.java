@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 
@@ -13,8 +14,11 @@ import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.exception.NoHttpResponseException;
@@ -52,6 +56,8 @@ public class TaskServiceHelper {
     protected static TaskServiceHelper instance;
 
     private boolean syncByGroupIdentifier = true;
+
+    private long totalRecords;
 
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
@@ -97,19 +103,31 @@ public class TaskServiceHelper {
         Set<String> planDefinitions = getPlanDefinitionIds();
         List<String> groups = getLocationIds();
 
-        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups);
+        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups, true);
         int batchFetchCount = tasks.size();
 
         while( tasks != null &&  batchFetchCount >= TASK_PULL_LIMIT) {
-            List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups);
+            List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups, false);
             tasks.addAll(batchFetchTasks);
             batchFetchCount = batchFetchTasks.size();
+
+            SyncProgress syncProgress = new SyncProgress();
+            syncProgress.setSyncEntity(SyncEntity.TASKS);
+            syncProgress.setTotalRecords(totalRecords);
+            syncProgress.setPercentageSynced((int) (tasks.size()/totalRecords) * 100);
+            sendSyncProgressBroadcast(syncProgress);
         }
+
+        SyncProgress syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.TASKS);
+        syncProgress.setTotalRecords(totalRecords);
+        syncProgress.setPercentageSynced((int) (tasks.size()/totalRecords) * 100);
+        sendSyncProgressBroadcast(syncProgress);
 
         return tasks;
     }
 
-    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups) {
+    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups, boolean returnCount) {
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -119,7 +137,7 @@ public class TaskServiceHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             long maxServerVersion = 0L;
-            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
+            String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion, returnCount);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
             if (tasks != null && tasks.size() > 0) {
@@ -143,7 +161,7 @@ public class TaskServiceHelper {
         return null;
     }
 
-    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion) throws Exception {
+    private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount) throws Exception {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
@@ -154,6 +172,7 @@ public class TaskServiceHelper {
 
         JSONObject request = isSyncByGroupIdentifier() ? getSyncTaskRequest(plan, group, serverVersion) :
                 getSyncTaskRequest(plan, getOwner(), serverVersion);
+        request.put(AllConstants.RETURN_COUNT, returnCount);
 
         if (httpAgent == null) {
             throw new IllegalArgumentException(SYNC_TASK_URL + " http agent is null");
@@ -164,6 +183,10 @@ public class TaskServiceHelper {
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(SYNC_TASK_URL + " not returned data");
+        }
+
+        if (returnCount) {
+            totalRecords = resp.getTotalRecords();
         }
 
         return resp.payload().toString();
@@ -263,6 +286,13 @@ public class TaskServiceHelper {
             }
 
         }
+    }
+
+    private void sendSyncProgressBroadcast(SyncProgress syncProgress) {
+        Intent intent = new Intent();
+        intent.setAction(AllConstants.SYNC_PROGRESS.ACTION_SYNC_PROGRESS);
+        intent.putExtra(AllConstants.SYNC_PROGRESS.SYNC_PROGRESS_DATA, syncProgress);
+        context.sendBroadcast(intent);
     }
 }
 

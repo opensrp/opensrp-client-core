@@ -123,7 +123,7 @@ public class AllConstants {
     public static final String JSON_FILE_EXTENSION = ".json";
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
-    public static final String TOTAL_RECORDS = "total_records";
+    public static final String RETURN_COUNT = "return_count";
 
 
     public static class Immunizations {
@@ -468,5 +468,11 @@ public class AllConstants {
             String FORM_VERSION = "form_version";
             String CLIENT_FORM_ID = "client_form_id";
         }
+    }
+
+    public interface SYNC_PROGRESS {
+        String ACTION_SYNC_PROGRESS = "action_sync_progress";
+        String TOTAL_RECORDS = "total_records";
+        String SYNC_PROGRESS_DATA = "sync_progress_data";
     }
 }

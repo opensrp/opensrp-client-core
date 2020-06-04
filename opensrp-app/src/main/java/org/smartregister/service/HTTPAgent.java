@@ -260,7 +260,7 @@ public class HTTPAgent {
 
             responseString = IOUtils.toString(inputStream);
 
-            totalRecords = urlConnection.getHeaderField(AllConstants.TOTAL_RECORDS);
+            totalRecords = urlConnection.getHeaderField(AllConstants.SYNC_PROGRESS.TOTAL_RECORDS);
 
             Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
