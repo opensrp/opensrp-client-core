@@ -37,7 +37,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-public class TaskServiceHelper {
+public class TaskServiceHelper extends BaseHelper {
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
@@ -106,23 +106,21 @@ public class TaskServiceHelper {
         List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups, true);
         int batchFetchCount = tasks.size();
 
+        SyncProgress syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.TASKS);
+        syncProgress.setTotalRecords(totalRecords);
+
         while( tasks != null &&  batchFetchCount >= TASK_PULL_LIMIT) {
             List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups, false);
             tasks.addAll(batchFetchTasks);
             batchFetchCount = batchFetchTasks.size();
 
-            SyncProgress syncProgress = new SyncProgress();
-            syncProgress.setSyncEntity(SyncEntity.TASKS);
-            syncProgress.setTotalRecords(totalRecords);
             syncProgress.setPercentageSynced((int) (tasks.size()/totalRecords) * 100);
-            sendSyncProgressBroadcast(syncProgress);
+            sendSyncProgressBroadcast(syncProgress, context);
         }
 
-        SyncProgress syncProgress = new SyncProgress();
-        syncProgress.setSyncEntity(SyncEntity.TASKS);
-        syncProgress.setTotalRecords(totalRecords);
         syncProgress.setPercentageSynced((int) (tasks.size()/totalRecords) * 100);
-        sendSyncProgressBroadcast(syncProgress);
+        sendSyncProgressBroadcast(syncProgress, context);
 
         return tasks;
     }
@@ -288,11 +286,5 @@ public class TaskServiceHelper {
         }
     }
 
-    private void sendSyncProgressBroadcast(SyncProgress syncProgress) {
-        Intent intent = new Intent();
-        intent.setAction(AllConstants.SYNC_PROGRESS.ACTION_SYNC_PROGRESS);
-        intent.putExtra(AllConstants.SYNC_PROGRESS.SYNC_PROGRESS_DATA, syncProgress);
-        context.sendBroadcast(intent);
-    }
 }
 
