@@ -96,7 +96,7 @@ public class ManifestRepositoryTest extends BaseUnitTest {
     @Test
     public void testGetAllManifests() {
         when(sqLiteDatabase.rawQuery("SELECT * FROM " + MANIFEST_TABLE + " ORDER BY " + CREATED_AT + " DESC ", null)).thenReturn(getCursor());
-        List<Manifest> manifests = manifestRepository.getAllManifestsManifest();
+        List<Manifest> manifests = manifestRepository.getAllManifests();
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
 
         assertEquals("SELECT * FROM manifest ORDER BY created_at DESC ", stringArgumentCaptor.getValue());

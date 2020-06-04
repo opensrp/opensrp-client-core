@@ -5,6 +5,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Xml;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,6 +21,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -259,7 +261,7 @@ public class FormUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void getSubFormFromRepository() {
+    public void getSubFormFromRepository() throws JSONException {
         String subFormIdentifier = "some_tests";
         ClientForm clientForm = new ClientForm();
         clientForm.setJson("{}");
@@ -276,4 +278,45 @@ public class FormUtilsTest extends BaseUnitTest {
 
         Assert.assertEquals(0, jsonObject.length());
     }
+
+    @Test
+    public void injectFormStatusShouldAddClientFormDetailsToJsonObject() throws JSONException {
+        ClientForm clientForm = new ClientForm();
+        clientForm.setId(3);
+        clientForm.setNew(true);
+        clientForm.setVersion("0.0.1");
+        JSONObject jsonObject = new JSONObject();
+        formUtils.injectFormStatus(jsonObject, clientForm);
+
+        Assert.assertEquals(3, jsonObject.getInt(AllConstants.JSON.Property.CLIENT_FORM_ID));
+        Assert.assertTrue(jsonObject.getBoolean(AllConstants.JSON.Property.IS_NEW));
+        Assert.assertEquals("0.0.1", jsonObject.getString(AllConstants.JSON.Property.FORM_VERSION));
+    }
+
+    @Test
+    public void getClientFormIdShouldReturnClientFormIdPropertyOnJSONObject() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(AllConstants.JSON.Property.CLIENT_FORM_ID, 3);
+        Assert.assertEquals(3, FormUtils.getClientFormId(jsonObject));
+    }
+
+    @Test
+    public void getClientFormIdShouldReturn0WhenJSONObjectDoesNotHaveClientFormId() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertEquals(0, FormUtils.getClientFormId(jsonObject));
+    }
+
+    @Test
+    public void isFormNewShouldReturnFalseWhenJSONObjectDoesNotHaveIsNewProperty() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertFalse(FormUtils.isFormNew(jsonObject));
+    }
+
+    @Test
+    public void isFormNewShouldReturnTrueWhenJSONObjectIsNewPropertyIsTrue() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(AllConstants.JSON.Property.IS_NEW, true);
+        Assert.assertTrue(FormUtils.isFormNew(jsonObject));
+    }
+
 }
