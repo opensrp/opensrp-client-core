@@ -16,6 +16,8 @@ import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
@@ -35,8 +37,9 @@ import java.util.Set;
 import timber.log.Timber;
 
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.AllConstants.RETURN_COUNT;
 
-public class LocationServiceHelper {
+public class LocationServiceHelper extends BaseHelper {
 
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
@@ -53,6 +56,7 @@ public class LocationServiceHelper {
     private LocationRepository locationRepository;
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
+    private long totalRecords;
 
     public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
@@ -69,19 +73,32 @@ public class LocationServiceHelper {
     }
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
-        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction);
+        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction, true);
         int batchFetchCount = locationStructures.size();
 
+        SyncProgress syncProgress = new SyncProgress();
+        if (isJurisdiction) {
+            syncProgress.setSyncEntity(SyncEntity.LOCATIONS);
+        } else {
+            syncProgress.setSyncEntity(SyncEntity.STRUCTURES);
+        }
+        syncProgress.setTotalRecords(totalRecords);
+
         while( locationStructures != null &&  batchFetchCount >= LOCATION_PULL_LIMIT) {
-            List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction);
+            List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction, false);
             locationStructures.addAll(batchLocationStructures);
             batchFetchCount = batchLocationStructures.size();
-        }
 
+            syncProgress.setPercentageSynced((int) (batchLocationStructures.size()/totalRecords) * 100);
+            sendSyncProgressBroadcast(syncProgress, context);
+
+        }
+        syncProgress.setPercentageSynced((int) (locationStructures.size()/totalRecords) * 100);
+        sendSyncProgressBroadcast(syncProgress, context);
         return locationStructures;
     }
 
-    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction) {
+    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction, boolean returnCount) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
@@ -92,7 +109,7 @@ public class LocationServiceHelper {
         if (serverVersion > 0) serverVersion += 1;
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
-            String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
+            String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds), returnCount);
             List<Location> locations = locationGson.fromJson(featureResponse, new TypeToken<List<Location>>() {
             }.getType());
 
@@ -121,7 +138,7 @@ public class LocationServiceHelper {
         return null;
     }
 
-    private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue) throws Exception {
+    private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue, boolean returnCount) throws Exception {
 
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
@@ -138,6 +155,7 @@ public class LocationServiceHelper {
 
         JSONObject request = new JSONObject();
         request.put("is_jurisdiction", isJurisdiction);
+        request.put(RETURN_COUNT, returnCount);
         if (isJurisdiction) {
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
             request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
@@ -154,6 +172,10 @@ public class LocationServiceHelper {
 
         if (resp.isFailure()) {
             throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+        }
+
+        if (returnCount) {
+            totalRecords = resp.getTotalRecords();
         }
 
         return resp.payload().toString();
