@@ -2,6 +2,7 @@ package org.smartregister.sync.helper;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import org.smartregister.AllConstants;
 import org.smartregister.domain.SyncProgress;
@@ -16,6 +17,6 @@ public class BaseHelper {
         Intent intent = new Intent();
         intent.setAction(AllConstants.SYNC_PROGRESS.ACTION_SYNC_PROGRESS);
         intent.putExtra(AllConstants.SYNC_PROGRESS.SYNC_PROGRESS_DATA, syncProgress);
-        context.sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 }
