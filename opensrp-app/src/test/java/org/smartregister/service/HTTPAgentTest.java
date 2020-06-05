@@ -32,6 +32,7 @@ import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.account.AccountResponse;
+import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.domain.Response;
@@ -39,8 +40,10 @@ import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.util.LoginResponseTestData;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -104,6 +107,18 @@ public class HTTPAgentTest {
     @Mock
     private InputStream errorStream;
 
+    @Mock
+    private File dirFile;
+
+    @Mock
+    private File file;
+
+    @Mock
+    private BufferedInputStream bufferedInputStream;
+
+    @Mock
+    private FileOutputStream fileOutputStream;
+
     @Rule
     private TemporaryFolder folder = new TemporaryFolder();
 
@@ -115,6 +130,7 @@ public class HTTPAgentTest {
     private static final String SECURE_RESOURCE_ENDPOINT = "https://my-server.com/my/secure/resource";
     private static final String KEYClOAK_CONFIGURATION_ENDPOINT = "https://my-server.com/rest/config/keycloak";
     private static final String USER_DETAILS_ENDPOINT = "https://my-server.com/opensrp/security/authenticate";
+    private static final String TEST_IMAGE_DOWNLOAD_ENDPOINT = "https://my-server.com/opensrp/multimedia/myimage.jpg";
 
     private final String SAMPLE_TEST_TOKEN = "sample-test-token";
     private final String SAMPLE_REFRESH_TOKEN = "sample-refresh-token";
@@ -126,6 +142,7 @@ public class HTTPAgentTest {
     private static final String OAUTH_CONFIGURATION_SERVER_RESPONSE = "{\"issuer\":\"https://my-server.com/oauth/issuer\",\r\n\"authorization_endpoint\": \"https://my-server.com/oauth/auth\",\r\n\"token_endpoint\": \"https://my-server.com/oauth/token\",\r\n\"grant_types_supported\":[\"authorization code\",\"implicit\",\"password\"]\r\n}";
     private static final String FETCH_DATA_REQUEST_SERVER_RESPONSE = "{status:{\"response_status\":\"success\"},payload: \"My secure resources from the server\"\r\n\r\n}";
     private static final String SAMPLE_POST_REQUEST_PAYLOAD = "{\"payload\":\"My POST Payload\"}";
+    private static final String TEST_FILE_NAME = "Profile";
 
     @Before
     public void setUp() {
@@ -904,4 +921,96 @@ public class HTTPAgentTest {
         Assert.assertEquals("CUSTOM_SERVER_RESPONSE", loginResponse.name());
 
     }
+
+    @Test
+    public void testDownloadFromUrl() throws Exception {
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(dirFile).when(httpAgentSpy).getSDCardDownloadPath();
+        Mockito.doReturn(file).when(httpAgentSpy).getFile(TEST_FILE_NAME, dirFile);
+        Mockito.doReturn(false).when(dirFile).exists();
+        Mockito.doReturn(true).when(dirFile).mkdirs();
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_DOWNLOAD_ENDPOINT);
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpsURLConnection).getResponseCode();
+        Mockito.doReturn(inputStream).when(httpsURLConnection).getInputStream();
+        Mockito.doReturn(bufferedInputStream).when(httpAgentSpy).getBufferedInputStream(inputStream);
+        Mockito.doReturn(1985).when(bufferedInputStream).available();
+        Mockito.doReturn(-1).when(bufferedInputStream).read();
+
+        Mockito.doReturn(fileOutputStream).when(httpAgentSpy).getFileOutputStream(file);
+
+        DownloadStatus downloadStatus = httpAgentSpy.downloadFromUrl(TEST_IMAGE_DOWNLOAD_ENDPOINT, TEST_FILE_NAME);
+        Assert.assertNotNull(downloadStatus);
+        Assert.assertEquals("Download successful", downloadStatus.displayValue());
+
+        Mockito.verify(fileOutputStream).write(ArgumentMatchers.any(byte[].class));
+        Mockito.verify(fileOutputStream).flush();
+        Mockito.verify(fileOutputStream).close();
+
+    }
+
+
+    @Test
+    public void testDownloadFromUrlReturnsCorrectResponseIfNothingDownloaded() throws Exception {
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(dirFile).when(httpAgentSpy).getSDCardDownloadPath();
+        Mockito.doReturn(file).when(httpAgentSpy).getFile(TEST_FILE_NAME, dirFile);
+        Mockito.doReturn(false).when(dirFile).exists();
+        Mockito.doReturn(true).when(dirFile).mkdirs();
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_DOWNLOAD_ENDPOINT);
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpsURLConnection).getResponseCode();
+
+        Mockito.doReturn(inputStream).when(httpsURLConnection).getInputStream();
+
+        DownloadStatus downloadStatus = httpAgentSpy.downloadFromUrl(TEST_IMAGE_DOWNLOAD_ENDPOINT, TEST_FILE_NAME);
+        Assert.assertNotNull(downloadStatus);
+        Assert.assertEquals("Nothing downloaded.", downloadStatus.displayValue());
+
+
+    }
+
+    @Test
+    public void testDownloadFromUrlReturnsCorrectResponseIfIOExceptionThrown() throws Exception {
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(dirFile).when(httpAgentSpy).getSDCardDownloadPath();
+        Mockito.doReturn(file).when(httpAgentSpy).getFile(TEST_FILE_NAME, dirFile);
+        Mockito.doReturn(false).when(dirFile).exists();
+        Mockito.doReturn(true).when(dirFile).mkdirs();
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_DOWNLOAD_ENDPOINT);
+        Mockito.doThrow(new IOException()).when(httpsURLConnection).getResponseCode();
+
+        DownloadStatus downloadStatus = httpAgentSpy.downloadFromUrl(TEST_IMAGE_DOWNLOAD_ENDPOINT, TEST_FILE_NAME);
+        Assert.assertNotNull(downloadStatus);
+        Assert.assertEquals("Download failed.", downloadStatus.displayValue());
+
+
+    }
+
+    @Test
+    public void testDownloadFromUrlReturnsCorrectResponseIfConnectionStatusIsNOT200() throws Exception {
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(dirFile).when(httpAgentSpy).getSDCardDownloadPath();
+        Mockito.doReturn(file).when(httpAgentSpy).getFile(TEST_FILE_NAME, dirFile);
+        Mockito.doReturn(true).when(dirFile).exists();
+
+        Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_DOWNLOAD_ENDPOINT);
+        Mockito.doReturn(HttpURLConnection.HTTP_NOT_FOUND).when(httpsURLConnection).getResponseCode();
+
+        DownloadStatus downloadStatus = httpAgentSpy.downloadFromUrl(TEST_IMAGE_DOWNLOAD_ENDPOINT, TEST_FILE_NAME);
+        Assert.assertNotNull(downloadStatus);
+        Assert.assertEquals("Download failed.", downloadStatus.displayValue());
+
+
+    }
+
 }
