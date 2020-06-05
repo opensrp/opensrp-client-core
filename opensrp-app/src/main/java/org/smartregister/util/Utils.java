@@ -902,7 +902,7 @@ public class Utils {
         } else if (partialCount < 1) {
             return 0;
         } else {
-           return  (int) (partialCount/totalCount) * 100;
+           return  Math.round(( partialCount * 100f) /  totalCount);
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,6 +18,8 @@ import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
@@ -24,6 +27,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
@@ -41,6 +45,8 @@ public class SyncIntentService extends BaseSyncIntentService {
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
+    private long totalRecords;
+    private int fetchedRecords = 0 ;
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -105,10 +111,10 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void pullECFromServer() {
-        fetchRetry(0);
+        fetchRetry(0, true);
     }
 
-    private synchronized void fetchRetry(final int count) {
+    private synchronized void fetchRetry(final int count, boolean returnCount) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
@@ -137,6 +143,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
                 syncParams.put("serverVersion", lastSyncDatetime);
                 syncParams.put("limit", getEventPullLimit());
+                syncParams.put(AllConstants.RETURN_COUNT, returnCount);
                 resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
             } else {
                 url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
@@ -157,6 +164,10 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
+            }
+
+            if (returnCount) {
+                totalRecords = resp.getTotalRecords();
             }
             int eCount;
             JSONObject jsonObject = new JSONObject();
@@ -185,7 +196,8 @@ public class SyncIntentService extends BaseSyncIntentService {
                     processClient(serverVersionPair);
                     ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
                 }
-                fetchRetry(0);
+                sendSyncProgressBroadcast(eCount);
+                fetchRetry(0, false);
             }
         } catch (Exception e) {
             Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
@@ -196,7 +208,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     public void fetchFailed(int count) {
         if (count < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries()) {
             int newCount = count + 1;
-            fetchRetry(newCount);
+            fetchRetry(newCount, false);
         } else {
             complete(FetchStatus.fetchedFailed);
         }
@@ -344,6 +356,18 @@ public class SyncIntentService extends BaseSyncIntentService {
             Timber.e(e);
         }
         return count;
+    }
+
+    protected void sendSyncProgressBroadcast(int eventCount) {
+        fetchedRecords = fetchedRecords + eventCount;
+        SyncProgress syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.EVENTS);
+        syncProgress.setTotalRecords(totalRecords);
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, fetchedRecords));
+        Intent intent = new Intent();
+        intent.setAction(AllConstants.SYNC_PROGRESS.ACTION_SYNC_PROGRESS);
+        intent.putExtra(AllConstants.SYNC_PROGRESS.SYNC_PROGRESS_DATA, syncProgress);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 
     public int getEventPullLimit() {
