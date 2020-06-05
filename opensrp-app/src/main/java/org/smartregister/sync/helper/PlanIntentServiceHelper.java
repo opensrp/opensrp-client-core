@@ -71,10 +71,10 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
         while(batchFetchCount >= PLAN_PULL_LIMIT) {
             batchFetchCount = batchFetchPlansFromServer(false);
-            syncProgress.setPercentageSynced((int) (batchFetchCount/totalRecords) * 100);
+            syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
             sendSyncProgressBroadcast(syncProgress, context);
         }
-        syncProgress.setPercentageSynced((int) (batchFetchCount/totalRecords) * 100);
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
         sendSyncProgressBroadcast(syncProgress, context);
     }
 

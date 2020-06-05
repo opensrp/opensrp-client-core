@@ -89,11 +89,11 @@ public class LocationServiceHelper extends BaseHelper {
             locationStructures.addAll(batchLocationStructures);
             batchFetchCount = batchLocationStructures.size();
 
-            syncProgress.setPercentageSynced((int) (batchLocationStructures.size()/totalRecords) * 100);
+            syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchLocationStructures.size()));
             sendSyncProgressBroadcast(syncProgress, context);
 
         }
-        syncProgress.setPercentageSynced((int) (locationStructures.size()/totalRecords) * 100);
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locationStructures.size()));
         sendSyncProgressBroadcast(syncProgress, context);
         return locationStructures;
     }

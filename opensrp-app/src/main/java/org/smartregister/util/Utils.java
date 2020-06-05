@@ -896,4 +896,14 @@ public class Utils {
         }
     }
 
+    public static int calculatePercentage(long totalCount, long partialCount){
+        if (totalCount < 1) {
+            return 100;
+        } else if (partialCount < 1) {
+            return 0;
+        } else {
+           return  (int) (partialCount/totalCount) * 100;
+        }
+    }
+
 }

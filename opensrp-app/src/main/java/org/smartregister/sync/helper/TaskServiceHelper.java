@@ -115,11 +115,11 @@ public class TaskServiceHelper extends BaseHelper {
             tasks.addAll(batchFetchTasks);
             batchFetchCount = batchFetchTasks.size();
 
-            syncProgress.setPercentageSynced((int) (tasks.size()/totalRecords) * 100);
+            syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
             sendSyncProgressBroadcast(syncProgress, context);
         }
 
-        syncProgress.setPercentageSynced((int) (tasks.size()/totalRecords) * 100);
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
         sendSyncProgressBroadcast(syncProgress, context);
 
         return tasks;
