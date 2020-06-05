@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
-import android.util.Log;
 
 import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
@@ -39,6 +38,7 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -422,7 +422,7 @@ public class HTTPAgent {
     }
 
     private void attachImage(PrintWriter writer, ProfileImage image, OutputStream outputStream) throws IOException {
-        File uploadImageFile = new File(image.getFilepath());
+        File uploadImageFile = getDownloadFolder(image.getFilepath());
         String fileName = uploadImageFile.getName();
 
         writer.append("--" + boundary).append(crlf);
@@ -718,18 +718,18 @@ public class HTTPAgent {
 
         HttpURLConnection httpUrlConnection = null;
         try {
-            File dir = new File(FormPathService.sdcardPathDownload);
+            File dir = getSDCardDownloadPath();
 
             if (!dir.exists()) {
                 dir.mkdirs();
             }
 
-            File file = new File(dir, fileName);
+            File file = getFile(fileName, dir);
 
             long startTime = System.currentTimeMillis();
-            Log.d("DownloadFormService", "download begin");
-            Log.d("DownloadFormService", "download url: " + downloadURL_);
-            Log.d("DownloadFormService", "download file name: " + fileName);
+            Timber.d("DownloadFormService %s", "download begin");
+            Timber.d("DownloadFormService %s %s", "download url: ", downloadURL_);
+            Timber.d("DownloadFormService %s %s", "download file name: ", fileName);
 
 
             String downloadURL = downloadURL_.replaceAll("\\s+", "");
@@ -740,14 +740,14 @@ public class HTTPAgent {
             if (status == HttpURLConnection.HTTP_OK) {
 
                 InputStream inputStream = httpUrlConnection.getInputStream();
-                BufferedInputStream bufferedInputStream = new BufferedInputStream(inputStream);
+                BufferedInputStream bufferedInputStream = getBufferedInputStream(inputStream);
 
                 long fileLength = bufferedInputStream.available();
                 if (fileLength == 0) {
                     return new Response<DownloadStatus>(ResponseStatus.success,
                             DownloadStatus.nothingDownloaded);
                 }
-                Log.d("DownloadFormService", "file length : " + fileLength);
+                Timber.d("DownloadFormService %s %d", "file length : ", fileLength);
 
                 ByteArrayBuffer baf = new ByteArrayBuffer(9999);
                 int current = 0;
@@ -756,22 +756,22 @@ public class HTTPAgent {
                 }
 
                 /* Convert the bytes to String */
-                FileOutputStream fos = new FileOutputStream(file);
+                FileOutputStream fos = getFileOutputStream(file);
                 fos.write(baf.toByteArray());
                 fos.flush();
                 fos.close();
 
-                Log.d("DownloadFormService",
-                        "download finished in " + ((System.currentTimeMillis() - startTime) / 1000)
-                                + " sec");
+                Timber.d("DownloadFormService %s %d %s",
+                        "download finished in ", ((System.currentTimeMillis() - startTime) / 1000)
+                        , " sec");
 
             } else {
-                Log.d("RESPONSE", "Server returned non-OK status: " + status);
+                Timber.d("RESPONSE %s %s ", "Server returned non-OK status: ", status);
                 return new Response<DownloadStatus>(ResponseStatus.failure, DownloadStatus.failedDownloaded);
             }
 
         } catch (IOException e) {
-            Log.d("DownloadFormService", "download error : " + e);
+            Timber.d(e, "DownloadFormService");
             return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.failedDownloaded);
         } finally {
 
@@ -779,6 +779,35 @@ public class HTTPAgent {
         }
 
         return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.downloaded);
+    }
+
+    @VisibleForTesting
+    @NonNull
+    protected FileOutputStream getFileOutputStream(File file) throws FileNotFoundException {
+        return new FileOutputStream(file);
+    }
+
+    @VisibleForTesting
+    @NonNull
+    protected BufferedInputStream getBufferedInputStream(InputStream inputStream) {
+        return new BufferedInputStream(inputStream);
+    }
+
+    @VisibleForTesting
+    @NonNull
+    protected File getFile(String fileName, File dir) {
+        return new File(dir, fileName);
+    }
+
+    @VisibleForTesting
+    protected File getSDCardDownloadPath() {
+        return getDownloadFolder(FormPathService.sdcardPathDownload);
+    }
+
+    @NonNull
+    @VisibleForTesting
+    protected File getDownloadFolder(String sdcardPathDownload) {
+        return new File(sdcardPathDownload);
     }
 
     public boolean verifyAuthorization() {
