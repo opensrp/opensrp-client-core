@@ -37,12 +37,12 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
     private BaseLoginContract.View mLoginView;
     private final String mUsername;
-    private final String mPassword;
+    private final char[] mPassword;
     private final AccountAuthenticatorXml mAccountAuthenticatorXml;
 
     private final Listener<LoginResponse> afterLoginCheck;
 
-    public RemoteLoginTask(BaseLoginContract.View loginView, String username, String password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
+    public RemoteLoginTask(BaseLoginContract.View loginView, String username, char[] password, AccountAuthenticatorXml accountAuthenticatorXml, Listener<LoginResponse> afterLoginCheck) {
         mLoginView = loginView;
         mUsername = username;
         mPassword = password;

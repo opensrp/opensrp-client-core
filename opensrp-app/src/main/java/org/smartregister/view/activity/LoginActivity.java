@@ -25,6 +25,7 @@ import org.smartregister.R;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.event.Listener;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.LangUtils;
 import org.smartregister.util.SyncUtils;
@@ -117,7 +118,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         view.setClickable(false);
 
         final String userName = userNameEditText.getText().toString();
-        final String password = passwordEditText.getText().toString();
+        final char[] password = SecurityHelper.readValue(passwordEditText.getText());
 
         if (context.userService().hasARegisteredUser()) {
             localLogin(view, userName, password);
@@ -152,7 +153,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         progressDialog.setMessage(getString(R.string.loggin_in_dialog_message));
     }
 
-    private void localLogin(View view, String userName, String password) {
+    private void localLogin(View view, String userName, char[] password) {
         try {
             if (!syncUtils.isAppVersionAllowed()) {
                 showErrorDialog(getString(R.string.outdated_app));
@@ -160,7 +161,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
             }
 
             if (context.userService().isValidLocalLogin(userName, password)) {
-                localLoginWith(userName);
+                localLoginWith(userName, password);
             } else {
                 showErrorDialog(getString(R.string.login_failed_dialog_message));
                 view.setClickable(true);
@@ -171,7 +172,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
     }
 
 
-    private void remoteLogin(final View view, final String userName, final String password) {
+    private void remoteLogin(final View view, final String userName, final char[] password) {
 
         try {
             if (!syncUtils.isAppVersionAllowed()) {
@@ -184,7 +185,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
                 tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
                     public void onEvent(LoginResponse loginResponse) {
                         if (loginResponse == SUCCESS) {
-                            remoteLoginWith(userName, loginResponse.payload());
+                            remoteLoginWith(userName, password, loginResponse.payload());
                         } else {
                             if (loginResponse == null) {
                                 showErrorDialog("Login failed. Unknown reason. Try Again");
@@ -216,7 +217,7 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         dialog.show();
     }
 
-    private void tryRemoteLogin(final String userName, final String password, final
+    private void tryRemoteLogin(final String userName, final char[] password, final
     Listener<LoginResponse> afterLoginCheck) {
         LockingBackgroundTask task = new LockingBackgroundTask(new ProgressIndicator() {
             @Override
@@ -254,14 +255,14 @@ public class LoginActivity extends Activity implements View.OnClickListener {
         inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), HIDE_NOT_ALWAYS);
     }
 
-    private void localLoginWith(String userName) {
-        context.userService().localLogin(userName);
+    private void localLoginWith(String userName, char[] password) {
+        context.userService().localLogin(userName, password);
         goToHome();
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }
 
-    private void remoteLoginWith(String userName, LoginResponseData userInfo) {
-        context.userService().processLoginResponseDataForUser(userName, userInfo);
+    private void remoteLoginWith(String userName, char[] password, LoginResponseData userInfo) {
+        context.userService().processLoginResponseDataForUser(userName, password, userInfo);
         goToHome();
         DrishtiSyncScheduler.startOnlyIfConnectedToNetwork(getApplicationContext());
     }

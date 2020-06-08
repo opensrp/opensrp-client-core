@@ -38,7 +38,7 @@ public abstract class DrishtiApplication extends Application {
     protected Locale locale = null;
     protected Context context;
     protected Repository repository;
-    private String password;
+    private char[] password;
     private String username;
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
@@ -117,7 +117,7 @@ public abstract class DrishtiApplication extends Application {
         return repository;
     }
 
-    public String getPassword() {
+    public char[] getPassword() {
         if (password == null) {
 
             String username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
@@ -127,7 +127,7 @@ public abstract class DrishtiApplication extends Application {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(char[] password) {
         this.password = password;
     }
 
