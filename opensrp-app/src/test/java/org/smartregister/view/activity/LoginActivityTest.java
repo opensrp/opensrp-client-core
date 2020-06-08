@@ -109,7 +109,7 @@ public class LoginActivityTest extends BaseUnitTest {
     @Test
     public void localLoginTest() {
         Mockito.doReturn(true).when(userService).hasARegisteredUser();
-        Mockito.doReturn(true).when(userService).isValidLocalLogin(anyString(), anyString());
+        Mockito.doReturn(true).when(userService).isValidLocalLogin(anyString(), any(char[].class));
         Mockito.doReturn(allSharedPreferences).when(context_).allSharedPreferences();
 
         EditText username = activity.findViewById(R.id.login_userNameText);
@@ -121,7 +121,7 @@ public class LoginActivityTest extends BaseUnitTest {
         Button login_button = activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
 
-        Mockito.verify(userService, Mockito.atLeastOnce()).localLogin(anyString());
+        Mockito.verify(userService, Mockito.atLeastOnce()).localLogin(anyString(), any(char[].class));
 
     }
 

@@ -126,8 +126,8 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
     @Test
     public void remoteLoginTest() {
         when(userService.hasARegisteredUser()).thenReturn(false);
-        when(userService.isValidLocalLogin(anyString(), anyString())).thenReturn(true);
-        when(userService.isValidRemoteLogin(anyString(), anyString())).thenReturn(LoginResponse.SUCCESS.withPayload(new LoginResponseData()));
+        when(userService.isValidLocalLogin(anyString(), any(char[].class))).thenReturn(true);
+        when(userService.isValidRemoteLogin(anyString(),any(char[].class))).thenReturn(LoginResponse.SUCCESS.withPayload(new LoginResponseData()));
         when(context_.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(allSharedPreferences.fetchBaseURL(anyString())).thenReturn("base url");
         EditText username = activity.findViewById(R.id.login_userNameText);
@@ -136,7 +136,7 @@ public class LoginActivityWithRemoteLoginTest extends BaseUnitTest {
         password.setText("password");
         Button login_button = activity.findViewById(R.id.login_loginButton);
         login_button.performClick();
-        Mockito.verify(userService, Mockito.atLeastOnce()).processLoginResponseDataForUser(anyString(), any(LoginResponseData.class));
+        Mockito.verify(userService, Mockito.atLeastOnce()).processLoginResponseDataForUser(anyString(),any(char[].class), any(LoginResponseData.class));
         destroyController();
 
 

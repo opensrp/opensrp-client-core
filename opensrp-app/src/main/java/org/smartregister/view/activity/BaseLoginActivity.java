@@ -28,6 +28,7 @@ import android.widget.TextView;
 import org.joda.time.DateTime;
 import org.smartregister.R;
 import org.smartregister.account.AccountHelper;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -207,7 +208,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == R.integer.login || actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE) {
             String username = userNameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+            char[] password = SecurityHelper.readValue(passwordEditText.getText());
             mLoginPresenter.attemptLogin(username, password);
             return true;
         }
@@ -218,7 +219,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     public void onClick(View v) {
         if (v.getId() == R.id.login_login_btn) {
             String username = userNameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
+            char[] password = SecurityHelper.readValue(passwordEditText.getText());
             mLoginPresenter.attemptLogin(username, password);
         }
     }

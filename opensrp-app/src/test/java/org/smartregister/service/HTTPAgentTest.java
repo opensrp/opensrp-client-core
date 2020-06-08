@@ -124,7 +124,7 @@ public class HTTPAgentTest {
 
     private HTTPAgent httpAgent;
     private static final String TEST_USERNAME = "demo";
-    private static final String TEST_PASSWORD = "password";
+    private static final char[] TEST_PASSWORD = "password".toCharArray();
     public static final String TEST_BASE_URL = "https://my-server.com/";
     private static final String TEST_TOKEN_ENDPOINT = "https://my-server.com/oauth/token";
     private static final String SECURE_RESOURCE_ENDPOINT = "https://my-server.com/my/secure/resource";
@@ -204,21 +204,21 @@ public class HTTPAgentTest {
     @Test
     public void testUrlCanBeAccessWithGivenCredentials() {
         PowerMockito.mockStatic(Base64.class);
-        LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://www.mocky.io/v2/5e54de89310000d559eb33d9", "", "");
+        LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://www.mocky.io/v2/5e54de89310000d559eb33d9", "", "".toCharArray());
         Assert.assertEquals(LoginResponse.SUCCESS.message(), resp.message());
     }
 
     @Test
     public void testUrlCanBeAccessWithGivenCredentialsGivenWrongUrl() {
         PowerMockito.mockStatic(Base64.class);
-        LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("wrong.url", "", "");
+        LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("wrong.url", "", "".toCharArray());
         Assert.assertEquals(LoginResponse.MALFORMED_URL.message(), resp.message());
     }
 
     @Test
     public void testUrlCanBeAccessWithGivenCredentialsGivenEmptyResp() {
         PowerMockito.mockStatic(Base64.class);
-        LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://mockbin.org/bin/e42f7256-18b2-40b9-a20c-40fdc564d06f", "", "");
+        LoginResponse resp = httpAgent.urlCanBeAccessWithGivenCredentials("http://mockbin.org/bin/e42f7256-18b2-40b9-a20c-40fdc564d06f", "", "".toCharArray());
         Assert.assertEquals(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message(), resp.message());
     }
 
@@ -562,9 +562,9 @@ public class HTTPAgentTest {
 
         AccountResponse accountResponse = Mockito.mock(AccountResponse.class);
 
-        Mockito.doReturn(accountResponse).when(httpAgentSpy).oauth2authenticateCore(ArgumentMatchers.any(StringBuilder.class), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        Mockito.doReturn(accountResponse).when(httpAgentSpy).oauth2authenticateCore(ArgumentMatchers.any(StringBuffer.class), ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
 
-        ArgumentCaptor<StringBuilder> requestParamStringBuilder = ArgumentCaptor.forClass(StringBuilder.class);
+        ArgumentCaptor<StringBuffer> requestParamStringBuilder = ArgumentCaptor.forClass(StringBuffer.class);
         ArgumentCaptor<String> grantType = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> tokenEndPoint = ArgumentCaptor.forClass(String.class);
 

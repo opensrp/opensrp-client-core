@@ -61,12 +61,12 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     @Override
-    public void login(WeakReference<BaseLoginContract.View> view, String userName, String password) {
+    public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
         loginWithLocalFlag(view, !getSharedPreferences().fetchForceRemoteLogin()
                 && userName.equalsIgnoreCase(getSharedPreferences().fetchRegisteredANM()), userName, password);
     }
 
-    public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, String password) {
+    public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, char[] password) {
 
         getLoginView().hideKeyboard();
         getLoginView().enableLoginButton(false);
@@ -79,7 +79,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         Timber.i("Login result finished " + DateTime.now().toString());
     }
 
-    private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, String password) {
+    private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
         getLoginView().enableLoginButton(true);
         boolean isAuthenticated = getUserService().isUserInValidGroup(userName, password);
         if (!isAuthenticated) {
@@ -88,16 +88,16 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
         } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
 
-            navigateToHomePage(userName);
+            navigateToHomePage(userName, password);
 
         } else {
             loginWithLocalFlag(view, false, userName, password);
         }
     }
 
-    private void navigateToHomePage(String userName) {
+    private void navigateToHomePage(String userName, char[] password) {
 
-        getUserService().localLogin(userName);
+        getUserService().localLogin(userName, password);
         getLoginView().goToHome(false);
 
         CoreLibrary.getInstance().initP2pLibrary(userName);
@@ -116,7 +116,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }).start();
     }
 
-    private void remoteLogin(final String userName, final String password, final AccountAuthenticatorXml accountAuthenticatorXml) {
+    private void remoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml) {
 
         try {
             if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_url))) {
@@ -136,7 +136,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                 );
                                 if (!AllConstants.TIME_CHECK || timeStatus.equals(TimeStatus.OK)) {
 
-                                    remoteLoginWith(username, loginResponse);
+                                    remoteLoginWith(username, password, loginResponse);
 
                                 } else {
                                     if (timeStatus.equals(TimeStatus.TIMEZONE_MISMATCH)) {
@@ -199,7 +199,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
     }
 
-    private void tryRemoteLogin(final String userName, final String password, final AccountAuthenticatorXml accountAuthenticatorXml, final Listener<LoginResponse> afterLogincheck) {
+    private void tryRemoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml, final Listener<LoginResponse> afterLogincheck) {
         if (remoteLoginTask != null && !remoteLoginTask.isCancelled()) {
             remoteLoginTask.cancel(true);
         }
@@ -207,8 +207,8 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         remoteLoginTask.execute();
     }
 
-    private void remoteLoginWith(String userName, LoginResponse loginResponse) {
-        getUserService().processLoginResponseDataForUser(userName, loginResponse.payload());
+    private void remoteLoginWith(String userName, char[] password, LoginResponse loginResponse) {
+        getUserService().processLoginResponseDataForUser(userName, password, loginResponse.payload());
         processServerSettings(loginResponse);
 
         scheduleJobsPeriodically();

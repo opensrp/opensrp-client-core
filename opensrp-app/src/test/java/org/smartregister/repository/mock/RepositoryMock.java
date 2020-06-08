@@ -50,7 +50,7 @@ public class RepositoryMock extends Repository {
     }
 
     @Override
-    public boolean canUseThisPassword(String password) {
+    public boolean canUseThisPassword(char[] password) {
         return super.canUseThisPassword(password);
     }
 
