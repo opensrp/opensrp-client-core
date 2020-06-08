@@ -102,18 +102,6 @@ public class AllSharedPreferencesTest extends TestCase {
     }
 
     @Test
-    public void assertfetchEncryptedGroupId() {
-        Assert.assertNull(allSharedPreferences.fetchEncryptedGroupId(null));
-        Assert.assertEquals(allSharedPreferences.fetchEncryptedGroupId("uname"), str);
-    }
-
-    @Test
-    public void assertsaveEncryptedGroupId() {
-        allSharedPreferences.saveEncryptedGroupId("uname", "Id");
-        Mockito.verify(preferences, Mockito.times(1)).edit();
-    }
-
-    @Test
     public void assertsaveLanguagePreference() {
         allSharedPreferences.saveLanguagePreference("EN");
         Mockito.verify(preferences, Mockito.times(1)).edit();

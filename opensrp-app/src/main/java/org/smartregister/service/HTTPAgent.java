@@ -30,6 +30,7 @@ import org.smartregister.domain.ResponseErrorStatus;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.ssl.OpensrpSSLHelper;
 
 import java.io.BufferedInputStream;
@@ -222,7 +223,7 @@ public class HTTPAgent {
         Timber.d("postURLPath: %s and jsonPayLoad: %s", postURLPath, jsonPayload);
     }
 
-    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, String password) {
+    public LoginResponse urlCanBeAccessWithGivenCredentials(String requestURL, String userName, char[] password) {
         LoginResponse loginResponse = null;
         HttpURLConnection urlConnection = null;
         String url = null;
@@ -230,7 +231,8 @@ public class HTTPAgent {
             url = requestURL.replaceAll("\\s+", "");
             urlConnection = initializeHttp(url, false);
 
-            final String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + Base64.encodeToString((userName + ":" + password).getBytes(), Base64.NO_WRAP);
+            byte[] credentials = SecurityHelper.toBytes(new StringBuffer(userName).append(':').append(password));//(new StringBuffer(userName).append(':').append(password)).toString().getBytes();
+            final String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + Base64.encodeToString(credentials, Base64.NO_WRAP);
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             int statusCode = urlConnection.getResponseCode();
             InputStream inputStream;
@@ -547,7 +549,7 @@ public class HTTPAgent {
         this.readTimeout = readTimeout;
     }
 
-    public AccountResponse oauth2authenticateCore(StringBuilder requestParamBuilder, String grantType, String tokenEndpointURL) {
+    public AccountResponse oauth2authenticateCore(StringBuffer requestParamBuffer, String grantType, String tokenEndpointURL) {
 
 
         AccountError accountError;
@@ -564,11 +566,11 @@ public class HTTPAgent {
 
             final String base64Auth = BaseEncoding.base64().encode(new String(clientId + ":" + clientSecret).getBytes());
 
-            requestParamBuilder.append("&grant_type=").append(grantType);
-            requestParamBuilder.append("&client_id=").append(clientId);
-            requestParamBuilder.append("&client_secret=").append(clientSecret);
+            requestParamBuffer.append("&grant_type=").append(grantType);
+            requestParamBuffer.append("&client_id=").append(clientId);
+            requestParamBuffer.append("&client_secret=").append(clientSecret);
 
-            byte[] postData = requestParamBuilder.toString().getBytes(CharEncoding.UTF_8);
+            byte[] postData = requestParamBuffer.toString().getBytes(CharEncoding.UTF_8);
             int postDataLength = postData.length;
 
             urlConnection.setFixedLengthStreamingMode(postDataLength);
@@ -633,9 +635,9 @@ public class HTTPAgent {
 
     }
 
-    public AccountResponse oauth2authenticate(String username, String password, String grantType, String tokenEndpointURL) {
+    public AccountResponse oauth2authenticate(String username, char[] password, String grantType, String tokenEndpointURL) {
 
-        StringBuilder requestParamBuilder = new StringBuilder();
+        StringBuffer requestParamBuilder = new StringBuffer();
         requestParamBuilder.append("&username=").append(username);
         requestParamBuilder.append("&password=").append(password);
 
@@ -645,7 +647,7 @@ public class HTTPAgent {
     public AccountResponse oauth2authenticateRefreshToken(String refreshToken) {
 
         String tokenEndpointURL = allSharedPreferences.getPreferences().getString(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL, "");
-        StringBuilder requestParamBuilder = new StringBuilder();
+        StringBuffer requestParamBuilder = new StringBuffer();
         requestParamBuilder.append("&refresh_token=").append(refreshToken);
 
         return oauth2authenticateCore(requestParamBuilder, AccountHelper.OAUTH.GRANT_TYPE.REFRESH_TOKEN, tokenEndpointURL);

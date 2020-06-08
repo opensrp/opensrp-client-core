@@ -14,7 +14,6 @@ import static org.smartregister.AllConstants.DEFAULT_LOCALITY_ID_PREFIX;
 import static org.smartregister.AllConstants.DEFAULT_TEAM_ID_PREFIX;
 import static org.smartregister.AllConstants.DEFAULT_TEAM_PREFIX;
 import static org.smartregister.AllConstants.DRISHTI_BASE_URL;
-import static org.smartregister.AllConstants.ENCRYPTED_GROUP_ID_PREFIX;
 import static org.smartregister.AllConstants.FORCE_REMOTE_LOGIN;
 import static org.smartregister.AllConstants.IS_SYNC_INITIAL_KEY;
 import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
@@ -138,19 +137,6 @@ public class AllSharedPreferences {
 
     public void saveCurrentLocality(String currentLocality) {
         preferences.edit().putString(CURRENT_LOCALITY, currentLocality).commit();
-    }
-
-    public String fetchEncryptedGroupId(String username) {
-        if (username != null) {
-            return preferences.getString(ENCRYPTED_GROUP_ID_PREFIX + username, null);
-        }
-        return null;
-    }
-
-    public void saveEncryptedGroupId(String username, String groupId) {
-        if (username != null) {
-            preferences.edit().putString(ENCRYPTED_GROUP_ID_PREFIX + username, groupId).commit();
-        }
     }
 
     public String fetchLanguagePreference() {

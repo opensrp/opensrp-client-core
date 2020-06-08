@@ -41,7 +41,7 @@ public class TestApplication extends DrishtiApplication {
     }
 
     @Override
-    public String getPassword() {
-        return "";
+    public char[] getPassword() {
+        return new char[]{};
     }
 }
