@@ -48,6 +48,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -106,6 +107,9 @@ public class HTTPAgentTest {
     private InputStream inputStream;
 
     @Mock
+    private FileInputStream fileInputStream;
+
+    @Mock
     private InputStream errorStream;
 
     @Mock
@@ -120,6 +124,9 @@ public class HTTPAgentTest {
     @Mock
     private FileOutputStream fileOutputStream;
 
+    @Mock
+    private PrintWriter printWriter;
+
     @Rule
     private TemporaryFolder folder = new TemporaryFolder();
 
@@ -132,6 +139,10 @@ public class HTTPAgentTest {
     private static final String KEYClOAK_CONFIGURATION_ENDPOINT = "https://my-server.com/rest/config/keycloak";
     private static final String USER_DETAILS_ENDPOINT = "https://my-server.com/opensrp/security/authenticate";
     private static final String TEST_IMAGE_DOWNLOAD_ENDPOINT = "https://my-server.com/opensrp/multimedia/myimage.jpg";
+    private static final String TEST_IMAGE_UPLOAD_ENDPOINT = "https://my-server.com/opensrp/multimedia/";
+    private static final String TEST_IMAGE_FILE_PATH = "file://usr/sdcard/dev0/data/org.smartregister.core/localimage.jpg";
+    protected static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
+    protected static final String TEST_ANM_ID = "demo";
 
     private final String SAMPLE_TEST_TOKEN = "sample-test-token";
     private final String SAMPLE_REFRESH_TOKEN = "sample-refresh-token";
@@ -164,6 +175,7 @@ public class HTTPAgentTest {
 
         PowerMockito.mockStatic(AccountHelper.class);
         PowerMockito.when(AccountHelper.getOauthAccountByType(accountAuthenticatorXml.getAccountType())).thenReturn(account);
+        PowerMockito.when(AccountHelper.getOAuthToken(accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
 
         httpAgent = new HTTPAgent(context, allSharedPreferences, dristhiConfiguration);
         httpAgent.setConnectTimeout(60000);
@@ -1014,4 +1026,77 @@ public class HTTPAgentTest {
 
     }
 
+    @Test
+    public void testHttpImagePostConfiguresConnectionRequestCorrectly() throws Exception {
+
+        PowerMockito.mockStatic(Base64.class);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_UPLOAD_ENDPOINT);
+        Mockito.doReturn(outputStream).when(httpURLConnection).getOutputStream();
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpURLConnection).getResponseCode();
+        Mockito.doReturn(file).when(httpAgentSpy).getDownloadFolder(TEST_IMAGE_FILE_PATH);
+        Mockito.doReturn(fileInputStream).when(httpAgentSpy).getFileInputStream(file);
+        Mockito.doReturn(inputStream).when(httpURLConnection).getInputStream();
+        Mockito.doReturn(-1).when(fileInputStream).read(ArgumentMatchers.any(byte[].class));
+
+        Mockito.doReturn(printWriter).when(httpAgentSpy).getPrintWriter(outputStream);
+        Mockito.doReturn("myFileName").when(file).getName();
+        Mockito.doReturn(printWriter).when(printWriter).append(ArgumentMatchers.any(CharSequence.class));
+
+        ProfileImage profileImage = new ProfileImage();
+        profileImage.setFilepath(TEST_IMAGE_FILE_PATH);
+        profileImage.setAnmId(TEST_ANM_ID);
+        profileImage.setEntityID(TEST_BASE_ENTITY_ID);
+        profileImage.setContenttype("png");
+        profileImage.setFilecategory("coverpic");
+
+        httpAgentSpy.httpImagePost(TEST_IMAGE_UPLOAD_ENDPOINT, profileImage);
+
+        Mockito.verify(httpURLConnection).setDoOutput(true);
+        Mockito.verify(httpURLConnection).setDoInput(true);
+        Mockito.verify(httpURLConnection).setRequestMethod("POST");
+
+        ArgumentCaptor<String> requestAttributeCaptor = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> requestValueCaptor = ArgumentCaptor.forClass(String.class);
+
+        Mockito.verify(httpURLConnection, Mockito.times(2)).setRequestProperty(requestAttributeCaptor.capture(), requestValueCaptor.capture());
+        List<String> requestAttributeCaptorValues = requestAttributeCaptor.getAllValues();
+        List<String> requestValueCaptorValues = requestValueCaptor.getAllValues();
+
+        Assert.assertEquals("Authorization", requestAttributeCaptorValues.get(0));
+        Assert.assertEquals("Bearer " + SAMPLE_TEST_TOKEN, requestValueCaptorValues.get(0));
+
+        Assert.assertEquals("Content-Type", requestAttributeCaptorValues.get(1));
+        Assert.assertTrue(requestValueCaptorValues.get(1).startsWith("multipart/form-data;boundary="));
+
+        Mockito.verify(httpURLConnection).setUseCaches(false);
+        Mockito.verify(httpURLConnection).setChunkedStreamingMode(HTTPAgent.FILE_UPLOAD_CHUNK_SIZE_BYTES);
+
+        //Attach Image
+        Mockito.verify(httpAgentSpy).getDownloadFolder(TEST_IMAGE_FILE_PATH);
+
+        ArgumentCaptor<CharSequence> printWriterCaptor = ArgumentCaptor.forClass(CharSequence.class);
+
+        Mockito.verify(printWriter, Mockito.times(49)).append(printWriterCaptor.capture());
+
+        List<CharSequence> printWriterAppendedValues = printWriterCaptor.getAllValues();
+
+        Assert.assertTrue(printWriterAppendedValues.contains("Content-Disposition: form-data; name=\"file\"; filename=\"myFileName\""));
+        Assert.assertTrue(printWriterAppendedValues.contains("Content-Disposition: form-data; name=\"anm-id\""));
+        Assert.assertTrue(printWriterAppendedValues.contains("Content-Disposition: form-data; name=\"entity-id\""));
+        Assert.assertTrue(printWriterAppendedValues.contains("Content-Disposition: form-data; name=\"file-category\""));
+        Assert.assertTrue(printWriterAppendedValues.contains("Content-Disposition: form-data; name=\"content-type\""));
+        Assert.assertTrue(printWriterAppendedValues.contains(profileImage.getAnmId()));
+        Assert.assertTrue(printWriterAppendedValues.contains(profileImage.getEntityID()));
+        Assert.assertTrue(printWriterAppendedValues.contains(profileImage.getFilecategory()));
+        Assert.assertTrue(printWriterAppendedValues.contains(profileImage.getContenttype()));
+        Assert.assertTrue(printWriterAppendedValues.contains("Content-Type: text/plain; charset=UTF-8"));
+
+        Mockito.verify(printWriter, Mockito.times(7)).flush();
+    }
 }
