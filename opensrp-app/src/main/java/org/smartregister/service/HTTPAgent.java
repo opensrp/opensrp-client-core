@@ -48,6 +48,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -83,7 +84,7 @@ import static org.smartregister.util.HttpResponseUtil.getResponseBody;
 
 public class HTTPAgent {
 
-    private static final int FILE_UPLOAD_CHUNK_SIZE_BYTES = 4096;
+    public static final int FILE_UPLOAD_CHUNK_SIZE_BYTES = 4096;
 
     private Context context;
     private AllSharedPreferences allSharedPreferences;
@@ -375,7 +376,7 @@ public class HTTPAgent {
             httpUrlConnection.setChunkedStreamingMode(FILE_UPLOAD_CHUNK_SIZE_BYTES);
 
             outputStream = httpUrlConnection.getOutputStream();
-            writer = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
+            writer = getPrintWriter(outputStream);
 
             // attach image
             attachImage(writer, image, outputStream);
@@ -427,6 +428,12 @@ public class HTTPAgent {
         return responseString;
     }
 
+    @VisibleForTesting
+    @NonNull
+    protected PrintWriter getPrintWriter(OutputStream outputStream) throws UnsupportedEncodingException {
+        return new PrintWriter(new OutputStreamWriter(outputStream, CharEncoding.UTF_8), true);
+    }
+
     private void attachImage(PrintWriter writer, ProfileImage image, OutputStream outputStream) throws IOException {
         File uploadImageFile = getDownloadFolder(image.getFilepath());
         String fileName = uploadImageFile.getName();
@@ -438,7 +445,7 @@ public class HTTPAgent {
         writer.append(crlf);
         writer.flush();
 
-        FileInputStream inputStream = new FileInputStream(uploadImageFile);
+        FileInputStream inputStream = getFileInputStream(uploadImageFile);
         byte[] buffer = new byte[FILE_UPLOAD_CHUNK_SIZE_BYTES];
         int bytesRead = -1;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -568,7 +575,7 @@ public class HTTPAgent {
             String clientId = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientId();
             String clientSecret = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientSecret();
 
-            final String base64Auth = BaseEncoding.base64().encode(new String(clientId + ":" + clientSecret).getBytes(CharEncoding.UTF_8));
+            final String base64Auth = BaseEncoding.base64().encode(new StringBuffer(clientId).append(':').append(clientSecret).toString().getBytes(CharEncoding.UTF_8));
 
             requestParamBuffer.append("&grant_type=").append(grantType);
             requestParamBuffer.append("&client_id=").append(clientId);
@@ -785,6 +792,12 @@ public class HTTPAgent {
         }
 
         return new Response<DownloadStatus>(ResponseStatus.success, DownloadStatus.downloaded);
+    }
+
+    @VisibleForTesting
+    @NonNull
+    protected FileInputStream getFileInputStream(File uploadImageFile) throws FileNotFoundException {
+        return new FileInputStream(uploadImageFile);
     }
 
     @VisibleForTesting
