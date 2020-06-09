@@ -8,8 +8,8 @@ import android.util.Base64;
 import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
 
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.util.ByteArrayBuffer;
@@ -232,7 +232,7 @@ public class HTTPAgent {
             url = requestURL.replaceAll("\\s+", "");
             urlConnection = initializeHttp(url, false);
 
-            byte[] credentials = SecurityHelper.toBytes(new StringBuffer(userName).append(':').append(password));//(new StringBuffer(userName).append(':').append(password)).toString().getBytes();
+            byte[] credentials = SecurityHelper.toBytes(new StringBuffer(userName).append(':').append(password));
             final String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + Base64.encodeToString(credentials, Base64.NO_WRAP);
             urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             int statusCode = urlConnection.getResponseCode();
@@ -568,7 +568,7 @@ public class HTTPAgent {
             String clientId = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientId();
             String clientSecret = CoreLibrary.getInstance().getSyncConfiguration().getOauthClientSecret();
 
-            final String base64Auth = BaseEncoding.base64().encode(new String(clientId + ":" + clientSecret).getBytes());
+            final String base64Auth = BaseEncoding.base64().encode(new String(clientId + ":" + clientSecret).getBytes(CharEncoding.UTF_8));
 
             requestParamBuffer.append("&grant_type=").append(grantType);
             requestParamBuffer.append("&client_id=").append(clientId);

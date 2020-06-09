@@ -7,6 +7,7 @@ import android.util.Base64;
 
 import com.google.common.io.BaseEncoding;
 
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONObject;
 import org.junit.Assert;
@@ -300,9 +301,9 @@ public class HTTPAgentTest {
         Mockito.verify(httpURLConnection).setConnectTimeout(60000);
         Mockito.verify(httpURLConnection).setReadTimeout(60000);
 
-        String requestParams = "&grant_type=" + AccountHelper.OAUTH.GRANT_TYPE.PASSWORD + "&username=" + TEST_USERNAME + "&password=" + TEST_PASSWORD + "&client_id=" + TEST_CLIENT_ID + "&client_secret=" + TEST_CLIENT_SECRET;
+        String requestParams = "&grant_type=" + AccountHelper.OAUTH.GRANT_TYPE.PASSWORD + "&username=" + TEST_USERNAME + "&password=" + String.valueOf(TEST_PASSWORD) + "&client_id=" + TEST_CLIENT_ID + "&client_secret=" + TEST_CLIENT_SECRET;
 
-        Mockito.verify(httpURLConnection).setFixedLengthStreamingMode(requestParams.getBytes().length);
+        Mockito.verify(httpURLConnection).setFixedLengthStreamingMode(requestParams.getBytes(CharEncoding.UTF_8).length);
         Mockito.verify(httpURLConnection).setDoOutput(true);
         Mockito.verify(httpURLConnection).setInstanceFollowRedirects(false);
         Mockito.verify(httpURLConnection).setRequestMethod("POST");
@@ -310,7 +311,7 @@ public class HTTPAgentTest {
         Mockito.verify(httpURLConnection).setRequestProperty("charset", "utf-8");
         Mockito.verify(httpURLConnection).setRequestProperty(ArgumentMatchers.eq("Content-Length"), ArgumentMatchers.anyString());
         Mockito.verify(httpURLConnection).setUseCaches(false);
-        final String base64Auth = BaseEncoding.base64().encode(new String(TEST_CLIENT_ID + ":" + TEST_CLIENT_SECRET).getBytes());
+        final String base64Auth = BaseEncoding.base64().encode(new String(TEST_CLIENT_ID + ":" + TEST_CLIENT_SECRET).getBytes(CharEncoding.UTF_8));
         Mockito.verify(httpURLConnection).setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
         Mockito.verify(httpURLConnection).setInstanceFollowRedirects(false);
 
