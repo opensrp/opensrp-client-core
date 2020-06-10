@@ -138,6 +138,11 @@ public class QueryComposer {
         return this;
     }
 
+    public QueryComposer withWhereClause(Disjoint disjoint) {
+        getWhereClause().addWhereDisjoint(disjoint);
+        return this;
+    }
+
     public QueryComposer withLimitClause(int start, int end) {
         getLimitClause().addLimitClause(start, end);
         return this;
@@ -226,14 +231,14 @@ public class QueryComposer {
     }
 
     public static class WhereClause implements QueryValue {
-        private List<String> strings;
+        private List<QueryValue> values;
 
         private WhereClause() {
-            strings = new ArrayList<>();
+            values = new ArrayList<>();
         }
 
         private void addWhereClause(List<String> values) {
-            if (strings == null || strings.size() == 0) return;
+            if (values == null || values.size() == 0) return;
             for (String s : values) {
                 addWhereClause(s);
             }
@@ -241,7 +246,58 @@ public class QueryComposer {
 
         private void addWhereClause(String value) {
             if (StringUtils.isNotBlank(value))
+                values.add(new Phrase(value));
+        }
+
+        private void addWhereDisjoint(Disjoint disjoint) {
+            if (disjoint != null)
+                values.add(disjoint);
+        }
+
+        @Override
+        public String composeQuery() {
+            if (values == null || values.size() == 0)
+                return "";
+
+            StringBuilder builder = new StringBuilder(" WHERE ");
+            int x = 0;
+            for (QueryValue queryValue : values) {
+                if (x > 0) builder.append(" ");
+
+                if (x > 0) builder.append("AND ");
+                builder.append("( ").append(queryValue.composeQuery()).append(" )");
+
+                if (x == 0) x = 1;
+            }
+            return builder.toString().trim();
+        }
+    }
+
+    private static class Phrase implements QueryValue {
+        private String phrase;
+
+        public Phrase(String phrase) {
+            this.phrase = phrase;
+        }
+
+        @Override
+        public String composeQuery() {
+            return phrase;
+        }
+    }
+
+    public static class Disjoint implements QueryValue {
+        private List<String> strings;
+
+        public Disjoint() {
+            strings = new ArrayList<>();
+        }
+
+        public Disjoint addDisjointClause(String value) {
+            if (StringUtils.isNotBlank(value))
                 strings.add(value);
+
+            return this;
         }
 
         @Override
@@ -249,12 +305,12 @@ public class QueryComposer {
             if (strings == null || strings.size() == 0)
                 return "";
 
-            StringBuilder builder = new StringBuilder(" WHERE ");
+            StringBuilder builder = new StringBuilder();
             int x = 0;
             for (String s : strings) {
                 if (x > 0) builder.append(" ");
 
-                if (x > 0) builder.append("AND ");
+                if (x > 0) builder.append("OR ");
                 builder.append("( ").append(s).append(" )");
 
                 if (x == 0) x = 1;

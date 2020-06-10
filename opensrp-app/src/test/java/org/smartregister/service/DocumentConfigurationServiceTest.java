@@ -1,5 +1,8 @@
 package org.smartregister.service;
 
+import android.content.Context;
+import android.content.res.Configuration;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -12,6 +15,11 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.BuildConfig;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.Manifest;
@@ -34,7 +42,8 @@ import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS
  *
  * @author cozej4 https://github.com/cozej4
  */
-public class DocumentConfigurationServiceTest {
+public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
+
     @Mock
     private HTTPAgent httpAgent;
 
@@ -56,6 +65,8 @@ public class DocumentConfigurationServiceTest {
         MockitoAnnotations.initMocks(this);
         documentConfigurationService = Mockito.spy(new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration));
         Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
+
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", RuntimeEnvironment.application);
     }
 
     @Test
@@ -99,8 +110,12 @@ public class DocumentConfigurationServiceTest {
 
     @Test
     public void fetchManifest() throws Exception {
-        String jsonObject = "[{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}]";
-        Mockito.when(httpAgent.fetch("http://opensrp_base_url/rest/manifest/")).thenReturn(
+        Context previousValue = CoreLibrary.getInstance().context().applicationContext();
+        Context newContext = Mockito.spy(RuntimeEnvironment.application);
+        Mockito.doReturn(RuntimeEnvironment.application).when(newContext).createConfigurationContext(Mockito.nullable(Configuration.class));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", newContext);
+        String jsonObject = "{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}";
+        Mockito.when(httpAgent.fetch("http://opensrp_base_url/rest/manifest/search?app_id=org.smartregister&app_version=" + BuildConfig.VERSION_NAME)).thenReturn(
                 new Response<String>(
                         success,
                         jsonObject));
@@ -110,6 +125,7 @@ public class DocumentConfigurationServiceTest {
         documentConfigurationService.fetchManifest();
 
         Mockito.verify(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", previousValue);
     }
 
     @Test

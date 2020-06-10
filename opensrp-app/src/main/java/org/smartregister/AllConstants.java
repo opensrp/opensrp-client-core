@@ -122,6 +122,8 @@ public class AllConstants {
     public static final String MULTI_SELECT_LIST = "multi_select_list";
     public static final String JSON_FILE_EXTENSION = ".json";
 
+    public static final String CLIENT_FORM_ASSET_VERSION = "base version";
+
 
     public static class Immunizations {
         public static final String BCG = "bcg";
@@ -459,5 +461,11 @@ public class AllConstants {
     public interface JSON {
         String KEY = "key";
         String VALUE = "value";
+
+        interface Property {
+            String IS_NEW = "is_new";
+            String FORM_VERSION = "form_version";
+            String CLIENT_FORM_ID = "client_form_id";
+        }
     }
 }

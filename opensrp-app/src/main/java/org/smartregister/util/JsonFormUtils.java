@@ -423,7 +423,7 @@ public class JsonFormUtils {
                             option.put(KEY, jsonObject.getString(KEY));
                             if (CONCEPT.equals(entity)) {
                                 // For options with concepts create an observation for each
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)), entity);
+                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                             } else {
                                 optionValues.add(option.optString(AllConstants.TEXT));
                             }
@@ -438,11 +438,11 @@ public class JsonFormUtils {
                 Timber.e(e1);
             }
         } else {
-            createObservation(e, jsonObject, value, entity);
+            createObservation(e, jsonObject, value);
         }
     }
 
-    private static void createObservation(Event e, JSONObject jsonObject, String value, String entity) {
+    private static void createObservation(Event e, JSONObject jsonObject, String value) {
         List<Object> vall = new ArrayList<>();
 
         String formSubmissionField = getString(jsonObject, KEY);
@@ -462,7 +462,7 @@ public class JsonFormUtils {
 
         String entityVal = getString(jsonObject, OPENMRS_ENTITY);
 
-        if (StringUtils.isNotBlank(entityVal) && entityVal.equals(entity)) {
+        if (CONCEPT.equals(entityVal)) {
             String entityIdVal = getString(jsonObject, OPENMRS_ENTITY_ID);
             String entityParentVal = getString(jsonObject, OPENMRS_ENTITY_PARENT);
 

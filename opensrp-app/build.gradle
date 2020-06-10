@@ -130,6 +130,10 @@ android {
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    testLogging {
+        // to see the exceptions of failed tests in Travis-CI console.
+        exceptionFormat = 'full'
+    }
 }
 
 def filesToCopy = copySpec {
@@ -203,7 +207,7 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-    implementation('org.smartregister:opensrp-client-native-form:1.8.6-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-native-form:1.9.2-KIG-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'id.zelory', module: 'compressor'
         exclude group: 'com.android.support', module: 'recyclerview-v7'
