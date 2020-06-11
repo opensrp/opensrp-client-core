@@ -140,6 +140,7 @@ public class HTTPAgentTest {
     private static final String USER_DETAILS_ENDPOINT = "https://my-server.com/opensrp/security/authenticate";
     private static final String TEST_IMAGE_DOWNLOAD_ENDPOINT = "https://my-server.com/opensrp/multimedia/myimage.jpg";
     private static final String TEST_IMAGE_UPLOAD_ENDPOINT = "https://my-server.com/opensrp/multimedia/";
+    private static final String TEST_USER_INFO_ENDPOINT = "https://keycloak.my-server.com/auth/userinfo";
     private static final String TEST_IMAGE_FILE_PATH = "file://usr/sdcard/dev0/data/org.smartregister.core/localimage.jpg";
     protected static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
     protected static final String TEST_ANM_ID = "demo";
@@ -154,6 +155,7 @@ public class HTTPAgentTest {
     private static final String OAUTH_CONFIGURATION_SERVER_RESPONSE = "{\"issuer\":\"https://my-server.com/oauth/issuer\",\r\n\"authorization_endpoint\": \"https://my-server.com/oauth/auth\",\r\n\"token_endpoint\": \"https://my-server.com/oauth/token\",\r\n\"grant_types_supported\":[\"authorization code\",\"implicit\",\"password\"]\r\n}";
     private static final String FETCH_DATA_REQUEST_SERVER_RESPONSE = "{status:{\"response_status\":\"success\"},payload: \"My secure resources from the server\"\r\n\r\n}";
     private static final String SAMPLE_POST_REQUEST_PAYLOAD = "{\"payload\":\"My POST Payload\"}";
+    private static final String ACCOUNT_INFO_REQUEST_SERVER_RESPONSE = "{   \"name\":\"Test User\",   \"email\":\"demo@smartegister.org\",   \"enabled\":true,   \"preferred_username\":\"demo\",   \"email_verified\":true}";
     private static final String TEST_FILE_NAME = "Profile";
 
     @Before
@@ -772,7 +774,7 @@ public class HTTPAgentTest {
 
 
     @Test
-    public void testVerifyAuthorizationReturnsTrueForAuthorizedResponse() throws Exception {
+    public void testVerifyAuthorizationLegacyReturnsTrueForAuthorizedResponse() throws Exception {
 
         URL url = PowerMockito.mock(URL.class);
         Assert.assertNotNull(url);
@@ -783,6 +785,52 @@ public class HTTPAgentTest {
         Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(KEYClOAK_CONFIGURATION_ENDPOINT);
 
         Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpURLConnection).getResponseCode();
+
+        boolean isVerified = httpAgentSpy.verifyAuthorizationLegacy();
+        Assert.assertTrue(isVerified);
+
+    }
+
+    @Test
+    public void testVerifyAuthorizationLegacyReturnsFalseForUnauthorizedResponse() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection("https://my-server.com/user-details?anm-id=" + TEST_USERNAME);
+
+        Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(httpURLConnection).getResponseCode();
+
+        boolean isVerified = httpAgentSpy.verifyAuthorizationLegacy();
+        Assert.assertFalse(isVerified);
+
+    }
+
+
+    @Test
+    public void testVerifyAuthorizationReturnsTrueForAuthorizedResponse() throws Exception {
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(sharedPreferences).when(allSharedPreferences).getPreferences();
+
+        Mockito.doReturn(TEST_USER_INFO_ENDPOINT).when(sharedPreferences).getString(AccountHelper.CONFIGURATION_CONSTANTS.USERINFO_ENDPOINT_URL, "");
+
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_USER_INFO_ENDPOINT);
+
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpURLConnection).getResponseCode();
+
+        Mockito.doReturn(inputStream).when(httpURLConnection).getInputStream();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        PowerMockito.when(IOUtils.toString(inputStream)).thenReturn(ACCOUNT_INFO_REQUEST_SERVER_RESPONSE);
 
         boolean isVerified = httpAgentSpy.verifyAuthorization();
         Assert.assertTrue(isVerified);
@@ -797,9 +845,13 @@ public class HTTPAgentTest {
 
         HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
 
-        Mockito.doReturn(TEST_BASE_URL).when(dristhiConfiguration).dristhiBaseURL();
-        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
-        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection("https://my-server.com/user-details?anm-id=" + TEST_USERNAME);
+        Mockito.doReturn(sharedPreferences).when(allSharedPreferences).getPreferences();
+
+        Mockito.doReturn(TEST_USER_INFO_ENDPOINT).when(sharedPreferences).getString(AccountHelper.CONFIGURATION_CONSTANTS.USERINFO_ENDPOINT_URL, "");
+
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_USER_INFO_ENDPOINT);
+
+        Mockito.doReturn(false).when(httpAgentSpy).verifyAuthorizationLegacy();
 
         Mockito.doReturn(HttpURLConnection.HTTP_UNAUTHORIZED).when(httpURLConnection).getResponseCode();
 

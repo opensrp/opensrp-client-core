@@ -111,7 +111,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 
                         try {
-                            JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()),response.getAccessToken());
+                            JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()), response.getAccessToken());
 
                             JSONObject prefSettingsData = new JSONObject();
                             prefSettingsData.put(AllConstants.PREF_KEY.SETTINGS, settings);
