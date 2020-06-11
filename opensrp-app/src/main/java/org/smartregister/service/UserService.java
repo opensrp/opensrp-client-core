@@ -322,7 +322,7 @@ public class UserService {
     private boolean loginWith(String userName, char[] password) {
         boolean loginSuccessful = true;
 
-        if (usesGroupIdAsDBPassword(userName)) {
+        if (usesGroupIdAsDBPassword()) {
 
             String encryptedGroupId = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
 
@@ -352,20 +352,10 @@ public class UserService {
     /**
      * Checks whether to use the groupId for the current user to decrypt the database
      *
-     * @param userName The user to check
      * @return TRUE if the user decrypts the database using the groupId
      */
-    private boolean usesGroupIdAsDBPassword(String userName) {
-        try {
-            if (keyStore != null && keyStore.containsAlias(userName)) {
-                if (AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()) != null) {
-                    return true;
-                }
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return false;
+    private boolean usesGroupIdAsDBPassword() {
+        return AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()) != null;
     }
 
     public void localLogin(String userName, char[] password) {
