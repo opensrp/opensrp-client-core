@@ -860,14 +860,17 @@ public class HTTPAgent {
                 Timber.w("Error occurred verifying authorization, User will not be logged off");
             }
 
-            if (!userInfo.getEnabled()) {
+            if (userInfo == null || userInfo.getEnabled() == null)
+                return verifyAuthorizationLegacy();
 
-                Timber.i("User not authorized. User access was revoked, will log off user");
+            if (userInfo.getEnabled()) {
+
+                Timber.i("User is Authorized");
                 return true;
 
             } else {
 
-                Timber.i("User is Authorized");
+                Timber.i("User not authorized. User access was revoked, will log off user");
                 return false;
             }
 
@@ -877,6 +880,48 @@ public class HTTPAgent {
 
             closeConnection(urlConnection);
             closeIOStream(inputStream);
+        }
+        return true;
+    }
+
+    //For backward compatibility
+    public boolean verifyAuthorizationLegacy() {
+
+        String baseUrl = configuration.dristhiBaseURL();
+
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
+        }
+        final String username = allSharedPreferences.fetchRegisteredANM();
+        baseUrl = baseUrl + DETAILS_URL + username;
+
+        HttpURLConnection urlConnection = null;
+
+        try {
+
+            urlConnection = initializeHttp(baseUrl, true);
+
+            int statusCode = urlConnection.getResponseCode();
+
+            if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+
+                invalidateExpiredCachedAccessToken();
+
+                urlConnection = initializeHttp(baseUrl, true);
+
+                Timber.i("User not authorized. User access was revoked, will log off user");
+                return false;
+            } else if (statusCode != HttpStatus.SC_OK) {
+                Timber.w("Error occurred verifying authorization, User will not be logged off");
+            } else {
+                Timber.i("User is Authorized");
+            }
+
+        } catch (IOException e) {
+            Timber.e(e);
+        } finally {
+
+            closeConnection(urlConnection);
         }
         return true;
     }
