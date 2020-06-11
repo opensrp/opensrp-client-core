@@ -18,6 +18,9 @@ public class AccountConfiguration {
     @SerializedName("token_endpoint")
     private String tokenEndpoint;
 
+    @SerializedName("userinfo_endpoint")
+    private String userinfoEndpoint;
+
     @SerializedName("grant_types_supported")
     private List<String> grantTypesSupported;
 
@@ -31,6 +34,10 @@ public class AccountConfiguration {
 
     public String getTokenEndpoint() {
         return tokenEndpoint;
+    }
+
+    public String getUserinfoEndpoint() {
+        return userinfoEndpoint;
     }
 
     public List<String> getGrantTypesSupported() {
@@ -47,6 +54,10 @@ public class AccountConfiguration {
 
     public void setTokenEndpoint(String tokenEndpoint) {
         this.tokenEndpoint = tokenEndpoint;
+    }
+
+    public void setUserinfoEndpoint(String userinfoEndpoint) {
+        this.userinfoEndpoint = userinfoEndpoint;
     }
 
     public void setGrantTypesSupported(List<String> grantTypesSupported) {
