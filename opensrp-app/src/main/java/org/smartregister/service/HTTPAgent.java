@@ -21,6 +21,7 @@ import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountError;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.account.AccountResponse;
+import org.smartregister.account.AccountUserInfo;
 import org.smartregister.compression.GZIPCompression;
 import org.smartregister.domain.DownloadStatus;
 import org.smartregister.domain.LoginResponse;
@@ -827,34 +828,47 @@ public class HTTPAgent {
 
     public boolean verifyAuthorization() {
 
-        String baseUrl = configuration.dristhiBaseURL();
-
-        if (baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-        }
-        final String username = allSharedPreferences.fetchRegisteredANM();
-        baseUrl = baseUrl + DETAILS_URL + username;
+        String userInfoUrl = allSharedPreferences.getPreferences().getString(AccountHelper.CONFIGURATION_CONSTANTS.USERINFO_ENDPOINT_URL, "");
 
         HttpURLConnection urlConnection = null;
 
+        InputStream inputStream = null;
+
         try {
 
-            urlConnection = initializeHttp(baseUrl, true);
+            urlConnection = initializeHttp(userInfoUrl, true);
 
-            int statusCode = urlConnection.getResponseCode();
+            AccountUserInfo userInfo = null;
 
             if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
 
                 invalidateExpiredCachedAccessToken();
 
-                urlConnection = initializeHttp(baseUrl, true);
+                urlConnection = initializeHttp(userInfoUrl, true);
+
+            }
+
+            if (urlConnection.getResponseCode() == HttpStatus.SC_OK) {
+
+                inputStream = urlConnection.getInputStream();
+
+                String responseString = IOUtils.toString(inputStream);
+
+                userInfo = gson.fromJson(responseString, AccountUserInfo.class);
+
+            } else {
+                Timber.w("Error occurred verifying authorization, User will not be logged off");
+            }
+
+            if (!userInfo.getEnabled()) {
 
                 Timber.i("User not authorized. User access was revoked, will log off user");
-                return false;
-            } else if (statusCode != HttpStatus.SC_OK) {
-                Timber.w("Error occurred verifying authorization, User will not be logged off");
+                return true;
+
             } else {
+
                 Timber.i("User is Authorized");
+                return false;
             }
 
         } catch (IOException e) {
@@ -862,6 +876,7 @@ public class HTTPAgent {
         } finally {
 
             closeConnection(urlConnection);
+            closeIOStream(inputStream);
         }
         return true;
     }
