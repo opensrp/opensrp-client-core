@@ -8,7 +8,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
@@ -34,6 +36,12 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
+import static org.smartregister.AllConstants.LocationConstants.LOCATION;
+import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
+import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
+import static org.smartregister.AllConstants.LocationConstants.TEAM;
+import static org.smartregister.AllConstants.LocationConstants.UUID;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 public class LocationServiceHelper {
@@ -41,9 +49,11 @@ public class LocationServiceHelper {
     public static final String LOCATION_STRUCTURE_URL = "/rest/location/sync";
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
     public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
+    public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
+
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
@@ -113,12 +123,8 @@ public class LocationServiceHelper {
         if (httpAgent == null) {
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-        }
+
+        String baseUrl = getFormattedBaseUrl();
 
         Response resp;
 
@@ -168,12 +174,8 @@ public class LocationServiceHelper {
         if (httpAgent == null) {
             throw new IllegalArgumentException(COMMON_LOCATIONS_SERVICE_URL + " http agent is null");
         }
-        String baseUrl = CoreLibrary.getInstance().context().
-                configuration().dristhiBaseURL();
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
-        }
+
+        String baseUrl = getFormattedBaseUrl();
 
         SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
 
@@ -246,6 +248,65 @@ public class LocationServiceHelper {
                 }
             }
         }
+    }
+
+    public void fetchOpenMrsLocationsByTeamIds() throws NoHttpResponseException, JSONException {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        if (httpAgent == null) {
+            throw new IllegalArgumentException(OPENMRS_LOCATION_BY_TEAM_IDS + " http agent is null");
+        }
+        String baseUrl = getFormattedBaseUrl();
+
+        Response resp = httpAgent.post(
+                MessageFormat.format("{0}{1}", baseUrl, OPENMRS_LOCATION_BY_TEAM_IDS),
+                new JSONArray().put(allSharedPreferences.fetchDefaultLocalityId(
+                        allSharedPreferences.fetchRegisteredANM())).toString());
+
+        if (resp.isFailure()) {
+            throw new NoHttpResponseException(OPENMRS_LOCATION_BY_TEAM_IDS + " not returned data");
+        }
+
+        JSONArray teamLocations = new JSONArray(resp.payload().toString());
+
+        for (int index = 0; index < teamLocations.length(); index++) {
+            JSONObject openMrsLocation = teamLocations.getJSONObject(index);
+            if (openMrsLocation.has(LOCATIONS) && openMrsLocation.has(TEAM)) {
+                JSONArray actualLocations = openMrsLocation.getJSONArray(LOCATIONS);
+                saveOpenMrsTeamLocation(openMrsLocation, actualLocations);
+            }
+        }
+    }
+
+    private void saveOpenMrsTeamLocation(JSONObject openMrsLocation, JSONArray actualLocations) throws JSONException {
+        for (int currentIndex = 0; currentIndex < actualLocations.length(); currentIndex++) {
+            JSONObject actualLocation = actualLocations.getJSONObject(currentIndex);
+            if (actualLocation.has(DISPLAY) && actualLocation.has(UUID)) {
+                Location location = new Location();
+                location.setId(actualLocation.getString(UUID));
+                LocationProperty property = new LocationProperty();
+                property.setUid(actualLocation.getString(UUID));
+                property.setParentId(openMrsLocation.getJSONObject(TEAM).getJSONObject(LOCATION).getString(UUID));
+                property.setName(actualLocation.getString(DISPLAY));
+                location.setProperties(property);
+                locationRepository.addOrUpdate(location);
+
+                //Save tag with a special keyword for team members on the location tags table.
+                LocationTag locationTag = new LocationTag();
+                locationTag.setLocationId(location.getId());
+                locationTag.setName(SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS);
+                locationTagRepository.addOrUpdate(locationTag);
+            }
+        }
+    }
+
+    @NotNull
+    private String getFormattedBaseUrl() {
+        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+        return baseUrl;
     }
 
 }

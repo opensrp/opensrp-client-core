@@ -9,12 +9,14 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.dao.LocationsDao;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -228,6 +230,15 @@ public class LocationRepository extends BaseRepository {
     protected Location readCursor(Cursor cursor) {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
+    }
+
+    /**
+     * Return a list of locations matching the specified tags
+     * @param tags location tags
+     * @return list of locations
+     */
+    public List<Location> getLocationsByTags(Set<String> tags){
+        return LocationsDao.getLocationsByTags(tags);
     }
 
 }
