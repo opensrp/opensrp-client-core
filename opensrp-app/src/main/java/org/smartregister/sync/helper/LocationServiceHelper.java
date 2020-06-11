@@ -119,7 +119,7 @@ public class LocationServiceHelper {
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue) throws Exception {
 
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
         }
@@ -138,10 +138,7 @@ public class LocationServiceHelper {
         }
         request.put("serverVersion", serverVersion);
 
-        resp = httpAgent.post(
-                MessageFormat.format("{0}{1}",
-                        baseUrl,
-                        LOCATION_STRUCTURE_URL),
+        resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
                 request.toString());
 
         if (resp.isFailure()) {
@@ -170,14 +167,16 @@ public class LocationServiceHelper {
     }
 
     public void fetchLocationsByLevelAndTags() throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+
+        HTTPAgent httpAgent = getHttpAgent();
+
         if (httpAgent == null) {
             throw new IllegalArgumentException(COMMON_LOCATIONS_SERVICE_URL + " http agent is null");
         }
 
         String baseUrl = getFormattedBaseUrl();
 
-        SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
+        SyncConfiguration configs = getSyncConfiguration();
 
         JSONObject requestPayload = new JSONObject();
         requestPayload.put("locationUUID", allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM()));
@@ -221,13 +220,16 @@ public class LocationServiceHelper {
         }
     }
 
+    public SyncConfiguration getSyncConfiguration() {
+        return CoreLibrary.getInstance().getSyncConfiguration();
+    }
+
     public void syncCreatedStructureToServer() {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Location> locations = structureRepository.getAllUnsynchedCreatedStructures();
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            Response<String> response = httpAgent.postWithJsonResponse(
+            Response<String> response = getHttpAgent().postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             CREATE_STRUCTURE_URL),
@@ -251,7 +253,7 @@ public class LocationServiceHelper {
     }
 
     public void fetchOpenMrsLocationsByTeamIds() throws NoHttpResponseException, JSONException {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(OPENMRS_LOCATION_BY_TEAM_IDS + " http agent is null");
         }
@@ -300,8 +302,12 @@ public class LocationServiceHelper {
         }
     }
 
+    public HTTPAgent getHttpAgent() {
+        return CoreLibrary.getInstance().context().getHttpAgent();
+    }
+
     @NotNull
-    private String getFormattedBaseUrl() {
+    public String getFormattedBaseUrl() {
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
