@@ -13,11 +13,18 @@ import static org.smartregister.AllConstants.LocationConstants.UUID;
 
 public class LocationsDao extends AbstractDao {
 
+    /**
+     * Return a list of locations matching the specified tags
+     *
+     * @param tags location tags
+     * @return list of locations
+     */
     public static List<Location> getLocationsByTags(Set<String> tags) {
-        String sql = String.format("SELECT uuid,  location.name as location_name, parent_id\n" +
+        String sql = String.format("SELECT uuid, location.name as location_name, parent_id\n" +
                 "FROM location\n" +
                 "         INNER JOIN location_tag on location.uuid = location_tag.location_id\n" +
-                "WHERE location_tag.name IN ('%s');",  StringUtils.join(tags, "', '"));
+                "WHERE location_tag.name IN ('%s');", StringUtils.join(tags, "', '"));
+
         DataMap<Location> dataMap = cursor -> {
             Location location = new Location();
             location.setId(getCursorValue(cursor, UUID));
@@ -29,6 +36,6 @@ public class LocationsDao extends AbstractDao {
             return location;
         };
 
-        return readData(sql, dataMap);
+        return AbstractDao.readData(sql, dataMap);
     }
 }

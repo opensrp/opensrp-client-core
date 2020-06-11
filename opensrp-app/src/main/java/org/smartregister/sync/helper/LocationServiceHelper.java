@@ -266,6 +266,7 @@ public class LocationServiceHelper {
             throw new NoHttpResponseException(OPENMRS_LOCATION_BY_TEAM_IDS + " not returned data");
         }
 
+        Timber.i(resp.payload().toString());
         JSONArray teamLocations = new JSONArray(resp.payload().toString());
 
         for (int index = 0; index < teamLocations.length(); index++) {
