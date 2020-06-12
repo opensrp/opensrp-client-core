@@ -1,8 +1,10 @@
 package org.smartregister.location.helper;
 
+import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.form.FormLocation;
 import org.smartregister.domain.jsonmapping.Location;
@@ -471,7 +473,7 @@ public class LocationHelper {
             formLocation.key = name;
 
             Set<String> levels = node.getTags();
-            formLocation.level = levels != null && !levels.isEmpty() ? levels.iterator().next() : "";
+            formLocation.level = isLocationTagsShownEnabled() && levels != null && !levels.isEmpty() ? levels.iterator().next() : "";
 
 
             LinkedHashMap<String, TreeNode<String, Location>> childMap = childMap(openMrsLocationData);
@@ -509,6 +511,11 @@ public class LocationHelper {
         }
 
         return allLocationData;
+    }
+
+    @VisibleForTesting
+    protected boolean isLocationTagsShownEnabled() {
+        return Utils.getBooleanProperty(AllConstants.PROPERTY.LOCATION_PICKER_TAG_SHOWN);
     }
 
     /**

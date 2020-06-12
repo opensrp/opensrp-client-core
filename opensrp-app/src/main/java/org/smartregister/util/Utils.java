@@ -516,8 +516,7 @@ public class Utils {
 
     public static boolean getBooleanProperty(String key) {
 
-        return CoreLibrary.getInstance().context().getAppProperties().hasProperty(key) ? CoreLibrary.getInstance().context().getAppProperties().getPropertyBoolean(key) : false;
-
+        return CoreLibrary.getInstance().context().getAppProperties().isTrue(key);
     }
 
     public static void showToast(Context context, String message) {

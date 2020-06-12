@@ -259,7 +259,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
     }
 
 
-
     @Test
     public void testGenerateLocationHierarchyTreeWithMapAndOtherOptionFalseShouldReturnEmptyList() {
         locationHelper = Mockito.spy(locationHelper);
@@ -301,6 +300,32 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals(1, formLocation.nodes.size());
     }
 
+    @Test
+    public void testGenerateLocationHierarchyTreeWithMapShouldReturnListWithZambiaFormLocationAndLocationTags() {
+        locationHelper = Mockito.spy(locationHelper);
+        String locationData = "{\"locationsHierarchy\":{\"map\":{\"9c3e8715-1c59-44db-9709-2b49f440ef00\":{\"children\":{\"2e823ceb-4de6-41ac-8025-e2ae3512a331\":{\"children\":{\"620332e0-6108-4611-bac5-8b48d20051c9\":{\"children\":{\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\":{\"children\":{\"1b0ba804-54c3-40ef-820b-a8eaffa5d054\":{\"id\":\"1b0ba804-54c3-40ef-820b-a8eaffa5d054\",\"label\":\"ra_ksh_5\",\"node\":{\"locationId\":\"1b0ba804-54c3-40ef-820b-a8eaffa5d054\",\"name\":\"ra_ksh_5\",\"parentLocation\":{\"locationId\":\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\",\"name\":\"ra Kashikishi HAHC\",\"parentLocation\":{\"locationId\":\"620332e0-6108-4611-bac5-8b48d20051c9\",\"name\":\"ra Nchelenge\",\"serverVersion\":0,\"voided\":false},\"serverVersion\":0,\"voided\":false},\"tags\":[\"Operational Area\"],\"serverVersion\":0,\"voided\":false},\"parent\":\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\"}},\"id\":\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\",\"label\":\"ra Kashikishi HAHC\",\"node\":{\"locationId\":\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\",\"name\":\"ra Kashikishi HAHC\",\"parentLocation\":{\"locationId\":\"620332e0-6108-4611-bac5-8b48d20051c9\",\"name\":\"ra Nchelenge\",\"parentLocation\":{\"locationId\":\"2e823ceb-4de6-41ac-8025-e2ae3512a331\",\"name\":\"ra Luapula\",\"serverVersion\":0,\"voided\":false},\"serverVersion\":0,\"voided\":false},\"tags\":[\"Village\"],\"serverVersion\":0,\"voided\":false},\"parent\":\"620332e0-6108-4611-bac5-8b48d20051c9\"}},\"id\":\"620332e0-6108-4611-bac5-8b48d20051c9\",\"label\":\"ra Nchelenge\",\"node\":{\"locationId\":\"620332e0-6108-4611-bac5-8b48d20051c9\",\"name\":\"ra Nchelenge\",\"parentLocation\":{\"locationId\":\"2e823ceb-4de6-41ac-8025-e2ae3512a331\",\"name\":\"ra Luapula\",\"parentLocation\":{\"locationId\":\"9c3e8715-1c59-44db-9709-2b49f440ef00\",\"name\":\"ra Zambia\",\"serverVersion\":0,\"voided\":false},\"serverVersion\":0,\"voided\":false},\"tags\":[\"District\"],\"serverVersion\":0,\"voided\":false},\"parent\":\"2e823ceb-4de6-41ac-8025-e2ae3512a331\"}},\"id\":\"2e823ceb-4de6-41ac-8025-e2ae3512a331\",\"label\":\"ra Luapula\",\"node\":{\"locationId\":\"2e823ceb-4de6-41ac-8025-e2ae3512a331\",\"name\":\"ra Luapula\",\"parentLocation\":{\"locationId\":\"9c3e8715-1c59-44db-9709-2b49f440ef00\",\"name\":\"ra Zambia\",\"serverVersion\":0,\"voided\":false},\"tags\":[\"Province\"],\"serverVersion\":0,\"voided\":false},\"parent\":\"9c3e8715-1c59-44db-9709-2b49f440ef00\"}},\"id\":\"9c3e8715-1c59-44db-9709-2b49f440ef00\",\"label\":\"ra Zambia\",\"node\":{\"locationId\":\"9c3e8715-1c59-44db-9709-2b49f440ef00\",\"name\":\"ra Zambia\",\"tags\":[\"Country\"],\"serverVersion\":0,\"voided\":false}}},\"parentChildren\":{\"9c3e8715-1c59-44db-9709-2b49f440ef00\":[\"2e823ceb-4de6-41ac-8025-e2ae3512a331\"],\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\":[\"1b0ba804-54c3-40ef-820b-a8eaffa5d054\"],\"620332e0-6108-4611-bac5-8b48d20051c9\":[\"ed7c4a07-6e02-4784-ae9a-9cd41cfef390\"],\"2e823ceb-4de6-41ac-8025-e2ae3512a331\":[\"620332e0-6108-4611-bac5-8b48d20051c9\"]}}}";
+
+        ArrayList<String> allowedLevels = new ArrayList<>();
+        allowedLevels.add("Country");
+        allowedLevels.add("Province");
+        allowedLevels.add("Region");
+        allowedLevels.add("District");
+        allowedLevels.add("Sub-district");
+        allowedLevels.add("Operational Area");
+
+        LinkedHashMap<String, TreeNode<String, Location>> map = AssetHandler.jsonStringToJava(locationData, LocationTree.class).getLocationsHierarchy();
+
+        Mockito.doReturn(true).when(locationHelper).isLocationTagsShownEnabled();
+        List<FormLocation> formLocationsList = locationHelper.generateLocationHierarchyTree(false, allowedLevels, map);
+
+        assertEquals(1, formLocationsList.size());
+
+        FormLocation formLocation = formLocationsList.get(0);
+        assertEquals("Zambia", formLocation.name);
+        assertEquals("ra Zambia", formLocation.key);
+        assertEquals("Country", formLocation.level);
+        assertEquals(1, formLocation.nodes.size());
+    }
 
     @Test
     public void testGenerateLocationHierarchyTreeShouldReturnListWithOtherFormLocationOnly() {
@@ -321,7 +346,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals("Other", formLocation.key);
         assertEquals("", formLocation.level);
     }
-
 
 
     @Test
