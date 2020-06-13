@@ -330,8 +330,8 @@ public class UserService {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 if (privateKeyEntry != null) {
-                    byte[] groupId = Base64.decode(encryptedGroupId, Base64.DEFAULT);
-                    setupContextForLogin(SecurityHelper.toChars(decryptString(privateKeyEntry, encryptedGroupId)));
+                    byte[] groupId =  decryptString(privateKeyEntry, encryptedGroupId);
+                    setupContextForLogin(SecurityHelper.toChars(groupId));
                     SecurityHelper.clearArray(groupId);
                 }
             } catch (Exception e) {
