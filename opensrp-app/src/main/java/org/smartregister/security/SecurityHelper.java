@@ -37,8 +37,9 @@ public class SecurityHelper {
      * @param array character array
      */
     public static void clearArray(byte[] array) {
-
-        Arrays.fill(array, (byte) 0);
+        if (array != null) {
+            Arrays.fill(array, (byte) 0);
+        }
     }
 
     /**
@@ -47,7 +48,9 @@ public class SecurityHelper {
      * @param array character array
      */
     public static void clearArray(char[] array) {
-        Arrays.fill(array, '*');
+        if (array != null) {
+            Arrays.fill(array, '*');
+        }
     }
 
     /**

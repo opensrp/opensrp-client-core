@@ -23,7 +23,7 @@ public class AccountHelper {
         public final static String TOKEN_ENDPOINT_URL = "token_endpoint_url";
         public final static String AUTHORIZATION_ENDPOINT_URL = "authorization_endpoint_url";
         public final static String ISSUER_ENDPOINT_URL = "issuer_endpoint_url";
-        public static final String USERINFO_ENDPOINT_URL = "userinfo_endpint_url";
+        public static final String USERINFO_ENDPOINT_URL = "userinfo_endpoint_url";
     }
 
     public static final class OAUTH {

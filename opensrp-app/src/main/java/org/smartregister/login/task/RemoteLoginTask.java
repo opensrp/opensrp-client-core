@@ -103,6 +103,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     mAccountManager.addAccountExplicitly(account, response.getRefreshToken(), userData);
                     mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
                     mAccountManager.setPassword(account, response.getRefreshToken());
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID));
 
                     if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
