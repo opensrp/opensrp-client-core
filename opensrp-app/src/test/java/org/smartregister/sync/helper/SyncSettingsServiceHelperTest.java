@@ -83,7 +83,7 @@ public class SyncSettingsServiceHelperTest extends BaseRobolectricUnitTest {
         params.add("locationId=location-uuid");
         Mockito.doReturn(params).when(syncConfiguration).getExtraSettingsParameters();
 
-        Mockito.doReturn(new Response<>(ResponseStatus.success, settingsResponse)).when(syncSettingsServiceHelper).getResponse(ArgumentMatchers.anyString());
+        Mockito.doReturn(new Response<>(ResponseStatus.success, settingsResponse)).when(syncSettingsServiceHelper).getResponse(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         int size = syncSettingsServiceHelper.processIntent();
         Assert.assertEquals(3, size);
     }

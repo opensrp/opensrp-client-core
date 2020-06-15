@@ -159,10 +159,10 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         return CoreLibrary.getInstance().context();
     }
 
-    protected JSONArray pullSetting(SyncSettingsServiceHelper syncSettingsServiceHelper, LoginResponse loginResponse) {
+    protected JSONArray pullSetting(SyncSettingsServiceHelper syncSettingsServiceHelper, LoginResponse loginResponse, String accessToken) {
         JSONArray settings = new JSONArray();
         try {
-            settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+            settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()), accessToken);
         } catch (JSONException e) {
             Timber.e(e);
         }
