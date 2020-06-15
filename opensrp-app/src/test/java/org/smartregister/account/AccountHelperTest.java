@@ -2,8 +2,10 @@ package org.smartregister.account;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import android.os.Bundle;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -88,6 +90,18 @@ public class AccountHelperTest extends BaseUnitTest {
 
         Mockito.verify(accountManager).peekAuthToken(account, AUTH_TOKEN_TYPE);
         Assert.assertEquals(TEST_TOKEN_VALUE, cachedAuthToken);
+    }
+
+    @Test
+    public void testReAuthenticateUserAfterSessionExpired() {
+
+        Account account = new Account(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE);
+        Mockito.doReturn(Mockito.mock(AccountManagerFuture.class)).when(accountManager).updateCredentials(account, AUTH_TOKEN_TYPE, null, null, null, null);
+
+        AccountManagerFuture<Bundle> reAuthenticationFuture = AccountHelper.reAuthenticateUserAfterSessionExpired(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE, AUTH_TOKEN_TYPE);
+        Assert.assertNotNull(reAuthenticationFuture);
+
+        Mockito.verify(accountManager).updateCredentials(account, AUTH_TOKEN_TYPE, null, null, null, null);
     }
 
 }

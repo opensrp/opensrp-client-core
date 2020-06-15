@@ -73,8 +73,8 @@ public class SyncSettingsServiceHelper {
         String authToken = AccountHelper.getCachedOAuthToken(sharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
 
         JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
-        getGlobalSettings(settings);
-        getExtraSettings(settings);
+        getGlobalSettings(settings, authToken);
+        getExtraSettings(settings, authToken);
         return settings;
     }
 
@@ -84,14 +84,14 @@ public class SyncSettingsServiceHelper {
     }
 
     // will automatically use the resolve check
-    private void getExtraSettings(JSONArray settings) throws JSONException {
+    private void getExtraSettings(JSONArray settings, String accessToken) throws JSONException {
         JSONArray completeExtraSettings = new JSONArray();
         if (getInstance().getSyncConfiguration().hasExtraSettingsSync()) {
             List<String> syncParams = getInstance().getSyncConfiguration().getExtraSettingsParameters();
             if (syncParams.size() > 0) {
                 for (String params : syncParams) {
                     String url = SettingsSyncIntentService.SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + "&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
-                    JSONArray extraSettings = pullSettings(url);
+                    JSONArray extraSettings = pullSettings(url, accessToken);
                     if (extraSettings != null) {
                         aggregateSettings(completeExtraSettings, extraSettings);
                     }
@@ -102,10 +102,10 @@ public class SyncSettingsServiceHelper {
         }
     }
 
-    private void getGlobalSettings(JSONArray settings) throws JSONException {
+    private void getGlobalSettings(JSONArray settings, String accessToken) throws JSONException {
         JSONArray globalSettings = new JSONArray();
         if (getInstance().getSyncConfiguration().hasGlobalSettings()) {
-            globalSettings = pullGlobalSettingsFromServer();
+            globalSettings = pullGlobalSettingsFromServer(accessToken);
         }
 
         aggregateSettings(settings, globalSettings);
@@ -169,9 +169,9 @@ public class SyncSettingsServiceHelper {
      * @return settings {@link JSONArray} -- a JSON array of all the settings
      * @throws JSONException
      */
-    public JSONArray pullGlobalSettingsFromServer() throws JSONException {
+    public JSONArray pullGlobalSettingsFromServer(String accessToken) throws JSONException {
         String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
-        return pullSettings(url);
+        return pullSettings(url, accessToken);
     }
 
 
@@ -217,21 +217,5 @@ public class SyncSettingsServiceHelper {
     @VisibleForTesting
     protected Response<String> getResponse(String completeUrl, String accessToken) {
         return httpAgent.fetchWithCredentials(completeUrl, accessToken);
-    }
-
-    public String getUsername() {
-        return username != null ? username : sharedPreferences.fetchRegisteredANM();
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password != null ? password : getInstance().context().allSettings().fetchANMPassword();
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 }
