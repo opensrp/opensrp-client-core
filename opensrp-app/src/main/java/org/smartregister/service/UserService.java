@@ -24,6 +24,7 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.security.PasswordHash;
 import org.smartregister.security.SecurityHelper;
 import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
@@ -45,6 +46,7 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -216,16 +218,33 @@ public class UserService {
         // Check if everything OK for local login
         if (keyStore != null && userName != null && password != null && !allSharedPreferences.fetchForceRemoteLogin(userName)) {
             String username = userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM()) ? allSharedPreferences.fetchRegisteredANM() : userName;
+            byte[] storedHash = null;
+            byte[] passwordHash = null;
+            byte[] passwordSalt = null;
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(username);
                 if (privateKeyEntry != null) {
-                    char[] groupId = getGroupId(username, privateKeyEntry);
-                    if (groupId != null) {
-                        return isValidGroupId(groupId);
+
+                    // Compare stored password hash with provided password hash
+                    storedHash = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+
+                    passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+                    passwordHash = SecurityHelper.hashPassword(password, passwordSalt);
+
+                    if (storedHash != null && Arrays.equals(storedHash, passwordHash)) {
+                        char[] groupId = getGroupId(username, privateKeyEntry);
+                        if (groupId != null) {
+                            return isValidGroupId(groupId);
+                        }
                     }
                 }
             } catch (Exception e) {
                 Timber.e(e);
+            } finally {
+                SecurityHelper.clearArray(password);
+                SecurityHelper.clearArray(passwordHash);
+                SecurityHelper.clearArray(passwordSalt);
+                SecurityHelper.clearArray(storedHash);
             }
         }
 
@@ -563,6 +582,7 @@ public class UserService {
                     return null;
                 }
 
+                PasswordHash passwordHash = SecurityHelper.getPasswordHash(password);
                 SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
                 if (syncConfiguration.getEncryptionParam() != null) {
                     SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
@@ -571,7 +591,7 @@ public class UserService {
                     } else if (SyncFilter.LOCATION.equals(syncFilter) || SyncFilter.LOCATION_ID.equals(syncFilter)) {
                         groupId = SecurityHelper.toBytes(getUserLocationId(userInfo).toCharArray());
                     } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        groupId = SecurityHelper.toBytes(new StringBuffer(username).append('-').append(password));
+                        groupId = SecurityHelper.toBytes(new StringBuffer(username).append('-').append(passwordHash.getPassword()));
                     }
                 }
 
@@ -584,6 +604,9 @@ public class UserService {
                     // Then save the encrypted group
                     String encryptedGroupId = encryptString(privateKeyEntry, groupId);
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, encryptedGroupId);
+
+                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD, Base64.encodeToString(passwordHash.getPassword(), Base64.DEFAULT));
+                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, Base64.encodeToString(passwordHash.getSalt(), Base64.DEFAULT));
 
                     // Finally, save the pioneer user
                     if (allSharedPreferences.fetchPioneerUser() == null) {
