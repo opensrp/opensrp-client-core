@@ -126,8 +126,8 @@ public class HTTPAgent {
         urlConnection.setReadTimeout(getReadTimeout());
         if (setOauthToken) {
             AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-            if (AccountHelper.getOauthAccountByType(authenticatorXml.getAccountType()) != null)
-                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(AccountHelper.getOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
+            if (AccountHelper.getOauthAccountByNameAndType(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType()) != null)
+                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(AccountHelper.getOAuthToken(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).toString());
         }
         return urlConnection;
     }
@@ -162,7 +162,7 @@ public class HTTPAgent {
 
     public void invalidateExpiredCachedAccessToken() {
         AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-        String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        String authToken = AccountHelper.getCachedOAuthToken(allSharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
         if (authToken != null)
             AccountHelper.invalidateAuthToken(authenticatorXml.getAccountType(), authToken);
     }
