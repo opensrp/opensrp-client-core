@@ -186,7 +186,7 @@ public class OpenSRPImageLoader extends ImageLoader {
     }
 
     private static void addBearerTokenAuthorizationHeader(Map<String, String> headers) {
-        String accessToken = AccountHelper.getOAuthToken(CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        String accessToken = AccountHelper.getOAuthToken(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
         headers.put(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, new StringBuilder(AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BEARER + " ").append(accessToken).toString());
     }
 

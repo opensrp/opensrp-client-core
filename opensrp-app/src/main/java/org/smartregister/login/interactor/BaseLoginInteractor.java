@@ -62,8 +62,10 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     @Override
     public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
-        loginWithLocalFlag(view, !getSharedPreferences().fetchForceRemoteLogin()
-                && userName.equalsIgnoreCase(getSharedPreferences().fetchRegisteredANM()), userName, password);
+
+        boolean localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
+        loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password);
+
     }
 
     public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, char[] password) {
