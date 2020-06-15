@@ -207,9 +207,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == R.integer.login || actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE) {
-            String username = userNameEditText.getText().toString();
-            char[] password = SecurityHelper.readValue(passwordEditText.getText());
-            mLoginPresenter.attemptLogin(username, password);
+            attemptLogin();
             return true;
         }
         return false;
@@ -218,10 +216,14 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.login_login_btn) {
-            String username = userNameEditText.getText().toString();
-            char[] password = SecurityHelper.readValue(passwordEditText.getText());
-            mLoginPresenter.attemptLogin(username, password);
+            attemptLogin();
         }
+    }
+
+    protected void attemptLogin() {
+        String username = userNameEditText.getText().toString().trim();
+        char[] password = SecurityHelper.readValue(passwordEditText.getText());
+        mLoginPresenter.attemptLogin(username, password);
     }
 
     @Override

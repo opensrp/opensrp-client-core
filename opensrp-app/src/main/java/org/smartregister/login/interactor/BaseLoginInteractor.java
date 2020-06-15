@@ -20,6 +20,7 @@ import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.listener.OnCompleteClearDataCallback;
+import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
@@ -83,18 +84,24 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
         getLoginView().enableLoginButton(true);
-        boolean isAuthenticated = getUserService().isUserInValidGroup(userName, password);
-        if (!isAuthenticated) {
 
-            getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
+        new LocalLoginTask(view.get(), userName, password, isAuthenticated -> {
 
-        } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+            if (!isAuthenticated) {
 
-            navigateToHomePage(userName, password);
+                getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
 
-        } else {
-            loginWithLocalFlag(view, false, userName, password);
-        }
+            } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+
+                navigateToHomePage(userName, password);
+
+            } else {
+                loginWithLocalFlag(view, false, userName, password);
+            }
+
+
+        }).execute();
+
     }
 
     private void navigateToHomePage(String userName, char[] password) {
