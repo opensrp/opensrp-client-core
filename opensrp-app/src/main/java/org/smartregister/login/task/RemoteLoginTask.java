@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.accounts.AccountsException;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 
 import org.json.JSONArray;
@@ -104,6 +105,13 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
                     mAccountManager.setPassword(account, response.getRefreshToken());
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT));
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        mAccountManager.notifyAccountAuthenticated(account);
+                    }
 
                     if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
