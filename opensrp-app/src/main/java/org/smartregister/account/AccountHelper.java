@@ -54,18 +54,46 @@ public class AccountHelper {
         public final static String ADMIN = "admin";
     }
 
+    /**
+     * Gets OAuth Account by the account name and account type
+     *
+     * @param accountName name of account within account manage
+     * @param accountType unique name to identify our account type in the Account Manager
+     * @return Account retrieved
+     */
+    public static Account getOauthAccountByNameAndType(String accountName, String accountType) {
 
-    public static Account getOauthAccountByType(String accountType) {
         Account[] accounts = accountManager.getAccountsByType(accountType);
-        if (accounts.length > 0) {
-            Account account = accounts[0];
-            return account;
+        return accounts.length > 0 ? selectAccount(accounts, accountName) : null;
+    }
+
+    /**
+     * Get specified Account by name from the list returned by the account manager
+     *
+     * @param accountName name of account within account manage
+     * @param accounts    list of Accounts returned by the Account Manager
+     * @return Account selected from list
+     */
+    public static Account selectAccount(Account[] accounts, String accountName) {
+        for (Account account : accounts) {
+            if (accountName.equals(account.name)) {
+                return account;
+            }
         }
+
         return null;
     }
 
-    public static String getAccountManagerValue(String key, String accountType) {
-        Account account = AccountHelper.getOauthAccountByType(accountType);
+    /**
+     * Gets user data value with the specified key from the Account Manager
+     *
+     * @param key         of the user data value we want to retrieve
+     * @param accountType unique name to identify our account type in the Account Manager
+     * @param accountName name of account within account manage
+     * @return access token
+     */
+    public static String getAccountManagerValue(String key, String accountName, String accountType) {
+        Account account = AccountHelper.getOauthAccountByNameAndType(accountName, accountType);
         if (account != null) {
             return accountManager.getUserData(account, key);
         }
@@ -73,12 +101,15 @@ public class AccountHelper {
     }
 
     /**
+     * Gets OAuth Token
+     *
+     * @param accountName   name of account within account manage
      * @param accountType   unique name to identify our account type in the Account Manager
      * @param authTokenType type of token requested from server e.g. PROVIDER, ADMIN
      * @return access token
      */
-    public static String getOAuthToken(String accountType, String authTokenType) {
-        Account account = getOauthAccountByType(accountType);
+    public static String getOAuthToken(String accountName, String accountType, String authTokenType) {
+        Account account = getOauthAccountByNameAndType(accountName, accountType);
 
         try {
             return accountManager.blockingGetAuthToken(account, authTokenType, true);
@@ -88,7 +119,9 @@ public class AccountHelper {
         }
     }
 
-    /** This method invalidates the auth token so that the Authenticator can fetch a new one from server
+    /**
+     * This method invalidates the auth token so that the Authenticator can fetch a new one from server
+     *
      * @param accountType unique name to identify our account type in the Account Manager
      * @param authToken   token to invalidate
      */
@@ -98,12 +131,13 @@ public class AccountHelper {
 
 
     /**
+     * @param accountName   name of account within account manage
      * @param accountType   unique name to identify our account type in the Account Manager
      * @param authTokenType type of token requested from server e.g. PROVIDER, ADMIN
      * @return access token cached
      */
-    public static String getCachedOAuthToken(String accountType, String authTokenType) {
-        Account account = getOauthAccountByType(accountType);
+    public static String getCachedOAuthToken(String accountName, String accountType, String authTokenType) {
+        Account account = getOauthAccountByNameAndType(accountName, accountType);
         return accountManager.peekAuthToken(account, authTokenType);
     }
 

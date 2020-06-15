@@ -176,8 +176,8 @@ public class HTTPAgentTest {
         Mockito.doReturn(1).when(syncConfiguration).getMaxAuthenticationRetries();
 
         PowerMockito.mockStatic(AccountHelper.class);
-        PowerMockito.when(AccountHelper.getOauthAccountByType(accountAuthenticatorXml.getAccountType())).thenReturn(account);
-        PowerMockito.when(AccountHelper.getOAuthToken(accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
+        PowerMockito.when(AccountHelper.getOauthAccountByNameAndType(TEST_USERNAME, accountAuthenticatorXml.getAccountType())).thenReturn(account);
+        PowerMockito.when(AccountHelper.getOAuthToken(TEST_USERNAME, accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
 
         httpAgent = new HTTPAgent(context, allSharedPreferences, dristhiConfiguration);
         httpAgent.setConnectTimeout(60000);
@@ -509,7 +509,7 @@ public class HTTPAgentTest {
         PowerMockito.when(IOUtils.toString(errorStream)).thenReturn(FETCH_DATA_REQUEST_SERVER_RESPONSE);
 
         PowerMockito.mockStatic(AccountHelper.class);
-        PowerMockito.when(AccountHelper.getCachedOAuthToken(accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
+        PowerMockito.when(AccountHelper.getCachedOAuthToken(TEST_USERNAME, accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
 
         Response<String> response = httpAgentSpy.fetch(SECURE_RESOURCE_ENDPOINT);
         Assert.assertNotNull(response);
@@ -534,7 +534,7 @@ public class HTTPAgentTest {
         PowerMockito.when(IOUtils.toString(errorStream)).thenReturn(FETCH_DATA_REQUEST_SERVER_RESPONSE);
 
         PowerMockito.mockStatic(AccountHelper.class);
-        PowerMockito.when(AccountHelper.getCachedOAuthToken(accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
+        PowerMockito.when(AccountHelper.getCachedOAuthToken(TEST_USERNAME, accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
 
         Mockito.doReturn(httpURLConnection).when(httpAgentSpy).generatePostRequest(SECURE_RESOURCE_ENDPOINT, SAMPLE_POST_REQUEST_PAYLOAD);
 
@@ -557,7 +557,7 @@ public class HTTPAgentTest {
         PowerMockito.when(IOUtils.toString(errorStream)).thenReturn(FETCH_DATA_REQUEST_SERVER_RESPONSE);
 
         PowerMockito.mockStatic(AccountHelper.class);
-        PowerMockito.when(AccountHelper.getCachedOAuthToken(accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
+        PowerMockito.when(AccountHelper.getCachedOAuthToken(TEST_USERNAME, accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
 
         Response<String> response = httpAgentSpy.fetchWithCredentials(SECURE_RESOURCE_ENDPOINT, SAMPLE_TEST_TOKEN);
         Assert.assertNotNull(response);
