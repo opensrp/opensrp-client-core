@@ -2,6 +2,8 @@ package org.smartregister.account;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.os.Bundle;
 
 import org.smartregister.CoreLibrary;
 
@@ -14,7 +16,6 @@ public class AccountHelper {
 
     private static AccountManager accountManager = CoreLibrary.getInstance().getAccountManager();
 
-    public final static String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     public final static int MAX_AUTH_RETRIES = 1;
 
 
@@ -141,5 +142,19 @@ public class AccountHelper {
         return accountManager.peekAuthToken(account, authTokenType);
     }
 
+    /**
+     * Prompt the user to re-authenticate
+     *
+     * @param accountName   name of account within account manage
+     * @param accountType   unique name to identify our account type in the Account Manager
+     * @param authTokenType type of token requested from server e.g. PROVIDER, ADMIN
+     * @return access token
+     */
+    public static AccountManagerFuture<Bundle> reAuthenticateUserAfterSessionExpired(String accountName, String accountType, String authTokenType) {
+        Account account = getOauthAccountByNameAndType(accountName, accountType);
+        return accountManager.updateCredentials(account, authTokenType, null, null, null, null);
+
+
+    }
 
 }

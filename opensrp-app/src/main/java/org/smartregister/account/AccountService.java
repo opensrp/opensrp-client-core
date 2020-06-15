@@ -9,10 +9,15 @@ import android.os.IBinder;
  */
 public class AccountService extends Service {
 
+    private AccountAuthenticator authenticator;
+
+    @Override
+    public void onCreate() {
+        authenticator = new AccountAuthenticator(this);
+    }
+
     @Override
     public IBinder onBind(Intent intent) {
-
-        AccountAuthenticator authenticator = new AccountAuthenticator(this);
         return authenticator.getIBinder();
 
     }

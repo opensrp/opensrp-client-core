@@ -1,9 +1,15 @@
 package org.smartregister.util;
 
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -11,10 +17,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.Setting;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.BaseRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 import timber.log.Timber;
@@ -44,12 +52,27 @@ public class SyncUtils {
         return CoreLibrary.getInstance().context().getHttpAgent().verifyAuthorization();
     }
 
-    public void logoutUser() {
+    public void logoutUser() throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
-        opensrpContent.userService().forceRemoteLogin();
+        opensrpContent.userService().forceRemoteLogin(opensrpContent.allSharedPreferences().fetchRegisteredANM());
+
+        Intent logoutUserIntent = getLogoutUserIntent();
+
+        AccountManagerFuture<Bundle> reAuthenticateFuture = AccountHelper.reAuthenticateUserAfterSessionExpired(opensrpContent.allSharedPreferences().fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        Intent accountAuthenticatorIntent = reAuthenticateFuture.getResult().getParcelable(AccountManager.KEY_INTENT);
+        accountAuthenticatorIntent.putExtras(logoutUserIntent);
+        context.startActivity(logoutUserIntent);
+
+        //logoff opensrp session
+        opensrpContent.userService().logoutSession();
+    }
+
+    @NonNull
+    private Intent getLogoutUserIntent() {
+
         Intent intent = new Intent(Intent.ACTION_MAIN);
-        intent.addCategory(Intent.CATEGORY_LAUNCHER);
         intent.setPackage(context.getPackageName());
+
         //retrieve the main/launcher activity defined in the manifest and open it
         List<ResolveInfo> activities = context.getPackageManager().queryIntentActivities(intent, 0);
         if (activities.size() == 1) {
@@ -58,10 +81,9 @@ public class SyncUtils {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.putExtra(ACCOUNT_DISABLED, context.getString(R.string.account_disabled_logged_off));
-            context.startActivity(intent);
         }
-        //logoff opensrp session
-        opensrpContent.userService().logoutSession();
+
+        return intent;
     }
 
     public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
