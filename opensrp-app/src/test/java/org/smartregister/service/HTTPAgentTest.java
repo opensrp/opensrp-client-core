@@ -175,6 +175,8 @@ public class HTTPAgentTest {
         Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
         Mockito.doReturn(1).when(syncConfiguration).getMaxAuthenticationRetries();
 
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+
         PowerMockito.mockStatic(AccountHelper.class);
         PowerMockito.when(AccountHelper.getOauthAccountByNameAndType(TEST_USERNAME, accountAuthenticatorXml.getAccountType())).thenReturn(account);
         PowerMockito.when(AccountHelper.getOAuthToken(TEST_USERNAME, accountAuthenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER)).thenReturn(SAMPLE_TEST_TOKEN);
