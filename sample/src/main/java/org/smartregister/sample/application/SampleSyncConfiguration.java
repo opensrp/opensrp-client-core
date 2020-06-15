@@ -5,6 +5,7 @@ import org.smartregister.SyncConfiguration;
 import org.smartregister.SyncFilter;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.sample.BuildConfig;
+import org.smartregister.view.activity.BaseLoginActivity;
 
 import java.util.List;
 
@@ -71,5 +72,10 @@ public class SampleSyncConfiguration extends SyncConfiguration {
     @Override
     public String getOauthClientSecret() {
         return BuildConfig.OAUTH_CLIENT_SECRET;
+    }
+
+    @Override
+    public Class<? extends BaseLoginActivity> getAuthenticationActivity() {
+        return null;
     }
 }
