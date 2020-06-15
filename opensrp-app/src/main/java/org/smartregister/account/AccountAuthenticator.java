@@ -111,11 +111,19 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response, Account account, Bundle options) throws NetworkErrorException {
-        return null;
+        return options;
     }
 
     @Override
     public Bundle updateCredentials(AccountAuthenticatorResponse response, Account account, String authTokenType, Bundle options) throws NetworkErrorException {
-        return null;
+
+        final Intent intent = new Intent(mContext, CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
+        intent.putExtra(AccountHelper.INTENT_KEY.AUTH_TYPE, authTokenType);
+        intent.putExtra(AccountHelper.INTENT_KEY.IS_NEW_ACCOUNT, false);
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, response);
+
+        final Bundle bundle = new Bundle();
+        bundle.putParcelable(AccountManager.KEY_INTENT, intent);
+        return bundle;
     }
 }
