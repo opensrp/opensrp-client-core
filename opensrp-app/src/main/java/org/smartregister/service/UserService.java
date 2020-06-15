@@ -297,7 +297,7 @@ public class UserService {
             char[] userGroupId = getGroupId(userName);
             char[] pioneerGroupId = getGroupId(pioneerUser);
 
-            if (userGroupId != null && userGroupId.equals(pioneerGroupId)) {
+            if (userGroupId != null && Arrays.equals(pioneerGroupId, userGroupId)) {
                 return isValidGroupId(userGroupId);
             }
         }
@@ -569,12 +569,12 @@ public class UserService {
         String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername()) ? userInfo.user.getUsername() : userName;
         bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_NAME, username);
 
-
         if (keyStore != null && username != null) {
 
             byte[] groupId = null;
 
             try {
+
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(username);
 
                 if (password == null) {
