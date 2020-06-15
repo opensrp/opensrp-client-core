@@ -30,6 +30,7 @@ public class AllSharedPreferencesTest extends TestCase {
     private SharedPreferences preferences;
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
+    private static final String USERNAME = "USERNAME";
     AllSharedPreferences allSharedPreferences;
     private final String str = "default";
 
@@ -54,13 +55,13 @@ public class AllSharedPreferencesTest extends TestCase {
     @Test
     public void assertupdateANMUserNameCallsPreferenceEdit() {
         allSharedPreferences.updateANMUserName("");
-        Mockito.verify(preferences, Mockito.times(1)).edit();
+        Mockito.verify(preferences, Mockito.times(2)).edit();
     }
 
     @Test
     public void assertFetchForceRemoteLogin() {
-        Mockito.when(preferences.getBoolean(AllConstants.FORCE_REMOTE_LOGIN, true)).thenReturn(true);
-        Assert.assertEquals(allSharedPreferences.fetchForceRemoteLogin(), true);
+        Mockito.when(preferences.getBoolean(AllConstants.FORCE_REMOTE_LOGIN + "_" + USERNAME, true)).thenReturn(true);
+        Assert.assertEquals(allSharedPreferences.fetchForceRemoteLogin(USERNAME), true);
     }
 
     @Test
@@ -168,7 +169,7 @@ public class AllSharedPreferencesTest extends TestCase {
 
     @Test
     public void assertSaveForceRemoteLogin() {
-        allSharedPreferences.saveForceRemoteLogin(true);
+        allSharedPreferences.saveForceRemoteLogin(true, USERNAME);
         Mockito.verify(preferences, Mockito.times(1)).edit();
     }
 

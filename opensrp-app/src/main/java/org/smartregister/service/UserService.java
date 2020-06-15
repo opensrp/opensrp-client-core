@@ -170,7 +170,7 @@ public class UserService {
         }
 
         if (!result.equals(TimeStatus.OK)) {
-            forceRemoteLogin();
+            forceRemoteLogin(allSharedPreferences.fetchRegisteredANM());
         }
 
         return result;
@@ -211,12 +211,12 @@ public class UserService {
 
     public boolean isValidLocalLogin(String userName, char[] password) {
         return allSharedPreferences.fetchRegisteredANM().equals(userName) && DrishtiApplication.getInstance().getRepository()
-                .canUseThisPassword(password) && !allSharedPreferences.fetchForceRemoteLogin();
+                .canUseThisPassword(password) && !allSharedPreferences.fetchForceRemoteLogin(userName);
     }
 
     public boolean isUserInValidGroup(final String userName, final char[] password) {
         // Check if everything OK for local login
-        if (keyStore != null && userName != null && password != null && !allSharedPreferences.fetchForceRemoteLogin()) {
+        if (keyStore != null && userName != null && password != null && !allSharedPreferences.fetchForceRemoteLogin(userName)) {
             String username = userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM()) ? allSharedPreferences.fetchRegisteredANM() : userName;
             byte[] storedHash = null;
             byte[] passwordHash = null;
@@ -270,7 +270,7 @@ public class UserService {
     public char[] getGroupId(String userName, KeyStore.PrivateKeyEntry privateKeyEntry) {
         if (privateKeyEntry != null) {
 
-            String encryptedGroupId = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
+            String encryptedGroupId = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
 
             if (encryptedGroupId != null) {
                 try {
@@ -342,14 +342,14 @@ public class UserService {
     private boolean loginWith(String userName, char[] password) {
         boolean loginSuccessful = true;
 
-        if (usesGroupIdAsDBPassword()) {
+        if (usesGroupIdAsDBPassword(userName)) {
 
-            String encryptedGroupId = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
+            String encryptedGroupId = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
 
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
                 if (privateKeyEntry != null) {
-                    byte[] groupId =  decryptString(privateKeyEntry, encryptedGroupId);
+                    byte[] groupId = decryptString(privateKeyEntry, encryptedGroupId);
                     setupContextForLogin(SecurityHelper.toChars(groupId));
                     SecurityHelper.clearArray(groupId);
                 }
@@ -372,10 +372,11 @@ public class UserService {
     /**
      * Checks whether to use the groupId for the current user to decrypt the database
      *
+     * @param username the username
      * @return TRUE if the user decrypts the database using the groupId
      */
-    private boolean usesGroupIdAsDBPassword() {
-        return AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()) != null;
+    private boolean usesGroupIdAsDBPassword(String username) {
+        return AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, username, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()) != null;
     }
 
     public void localLogin(String userName, char[] password) {
@@ -403,11 +404,11 @@ public class UserService {
                         StringUtils.isNotBlank(allSharedPreferences.fetchDefaultTeamId(username))) &&
                 (getUserLocation(userInfo) != null ||
                         StringUtils.isNotBlank(allSettings.fetchANMLocation())))
-            allSharedPreferences.saveForceRemoteLogin(false);
+            allSharedPreferences.saveForceRemoteLogin(false, username);
     }
 
-    public void forceRemoteLogin() {
-        allSharedPreferences.saveForceRemoteLogin(true);
+    public void forceRemoteLogin(String userName) {
+        allSharedPreferences.saveForceRemoteLogin(true, userName);
     }
 
     public User getUserData(LoginResponseData userInfo) {

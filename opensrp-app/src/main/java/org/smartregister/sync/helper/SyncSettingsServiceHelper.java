@@ -55,7 +55,7 @@ public class SyncSettingsServiceHelper {
         }
 
         AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-        String authToken = AccountHelper.getCachedOAuthToken(authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        String authToken = AccountHelper.getCachedOAuthToken(sharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
         JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
 
         if (settings != null && settings.length() > 0) {

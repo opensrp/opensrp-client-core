@@ -45,7 +45,7 @@ public class AccountHelperTest extends BaseUnitTest {
     @Test
     public void testGetOauthAccountByType() {
 
-        Account account = AccountHelper.getOauthAccountByType(CORE_ACCOUNT_TYPE);
+        Account account = AccountHelper.getOauthAccountByNameAndType(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE);
         Assert.assertNotNull(account);
         Assert.assertEquals(CORE_ACCOUNT_NAME, account.name);
     }
@@ -57,7 +57,7 @@ public class AccountHelperTest extends BaseUnitTest {
 
         Mockito.doReturn(TEST_VALUE).when(accountManager).getUserData(ArgumentMatchers.any(Account.class), ArgumentMatchers.eq(TEST_KEY));
 
-        String value = AccountHelper.getAccountManagerValue(TEST_KEY, CORE_ACCOUNT_TYPE);
+        String value = AccountHelper.getAccountManagerValue(TEST_KEY, CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE);
         Assert.assertNotNull(value);
         Assert.assertEquals(TEST_VALUE, value);
     }
@@ -66,7 +66,7 @@ public class AccountHelperTest extends BaseUnitTest {
     public void testGetOAuthToken() throws AuthenticatorException, OperationCanceledException, IOException {
 
         Mockito.doReturn(TEST_TOKEN_VALUE).when(accountManager).blockingGetAuthToken(new Account(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE), AUTH_TOKEN_TYPE, true);
-        String myToken = AccountHelper.getOAuthToken(CORE_ACCOUNT_TYPE, AUTH_TOKEN_TYPE);
+        String myToken = AccountHelper.getOAuthToken(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE, AUTH_TOKEN_TYPE);
         Assert.assertNotNull(myToken);
         Assert.assertEquals(TEST_TOKEN_VALUE, myToken);
     }
@@ -84,7 +84,7 @@ public class AccountHelperTest extends BaseUnitTest {
         Account account = new Account(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE);
         Mockito.doReturn(TEST_TOKEN_VALUE).when(accountManager).peekAuthToken(account, AUTH_TOKEN_TYPE);
 
-        String cachedAuthToken = AccountHelper.getCachedOAuthToken(CORE_ACCOUNT_TYPE, AUTH_TOKEN_TYPE);
+        String cachedAuthToken = AccountHelper.getCachedOAuthToken(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE, AUTH_TOKEN_TYPE);
 
         Mockito.verify(accountManager).peekAuthToken(account, AUTH_TOKEN_TYPE);
         Assert.assertEquals(TEST_TOKEN_VALUE, cachedAuthToken);
