@@ -43,10 +43,10 @@ public class AccountHelper {
         public final static String ACCOUNT_TYPE = "ACCOUNT_TYPE";
         public final static String AUTH_TYPE = "AUTH_TYPE";
         public final static String ACCOUNT_NAME = "ACCOUNT_NAME";
-        public static final String ERROR_MESSAGE = "ERROR_MESSAGE";
-        public final static String ACCOUNT_PASSWORD = "ACCOUNT_PASSWORD";
         public final static String IS_NEW_ACCOUNT = "IS_NEW_ACCOUNT";
         public final static String ACCOUNT_GROUP_ID = "ACCOUNT_GROUP_ID";
+        public final static String ACCOUNT_PASSWORD = "ACCOUNT_PASSWORD";
+        public final static String ACCOUNT_PASSWORD_SALT = "ACCOUNT_PASSWORD_SALT";
     }
 
     public static final class TOKEN_TYPE {
