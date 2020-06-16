@@ -428,5 +428,6 @@
     <string name="rollback_dialog_title">Select a rollback form</string>
     <string name="cannot_select_corrupted_form_rollback">You cannot select this form because it\'s corrupted!</string>
     <string name="form_changed_reopen_to_take_effect">Form has been successfully selected! Reopen this form for the changes to take effect</string>
+    <string name="replication_error_occurred">Replication error occurred</string>
 
 </resources>
