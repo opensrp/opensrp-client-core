@@ -51,7 +51,7 @@ public class LocationServiceHelperTest extends BaseUnitTest {
     private SyncConfiguration syncConfiguration;
 
     @Before
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Whitebox.setInternalState(locationServiceHelper, "locationTagRepository", locationTagRepository);
