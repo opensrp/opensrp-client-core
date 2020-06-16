@@ -36,6 +36,7 @@ import timber.log.Timber;
 import static org.smartregister.domain.ResponseStatus.success;
 import static org.smartregister.service.DocumentConfigurationService.FORM_VERSION;
 import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
+import static org.smartregister.service.DocumentConfigurationService.MANIFEST_FORMS_VERSION;
 
 /**
  * Created by cozej4 on 2020-04-16.
@@ -71,7 +72,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
     @Test
     public void convertManifestDTOToManifest() throws JSONException {
-        String manifestDTOJson = "{\"json\":\"{\\\"form_versions\\\":\\\"0.0.1\\\",\\\"identifiers\\\":[\\\"anc/member_registration.json\\\",\\\"anc/pregnancy_outcome.json\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.0.1\",\"id\":1}";
+        String manifestDTOJson = "{\"json\":\"{\\\"forms_version\\\":\\\"0.0.1\\\",\\\"identifiers\\\":[\\\"anc/member_registration.json\\\",\\\"anc/pregnancy_outcome.json\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.0.1\",\"id\":1}";
         ManifestDTO manifestDTO = new Gson().fromJson(manifestDTOJson, ManifestDTO.class);
         Manifest manifest;
         manifest = documentConfigurationService.convertManifestDTOToManifest(manifestDTO);
@@ -79,7 +80,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         Assert.assertEquals(manifest.getCreatedAt(), manifestDTO.getCreatedAt());
 
         JSONObject json = new JSONObject(manifestDTO.getJson());
-        Assert.assertEquals(manifest.getFormVersion(), json.getString(FORM_VERSION));
+        Assert.assertEquals(manifest.getFormVersion(), json.getString(MANIFEST_FORMS_VERSION));
         Assert.assertEquals(manifest.getIdentifiers(), new Gson().fromJson(json.getString(IDENTIFIERS), new TypeToken<List<String>>() {
         }.getType()));
     }
