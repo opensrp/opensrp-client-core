@@ -9,8 +9,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.util.ReflectionHelpers;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTag;
@@ -28,7 +28,7 @@ import java.util.Collections;
 
 import static org.mockito.Mockito.when;
 
-public class LocationServiceHelperTest extends BaseUnitTest {
+public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Mock
     private Repository repository;
@@ -53,9 +53,13 @@ public class LocationServiceHelperTest extends BaseUnitTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
+        AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().allSharedPreferences());
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Whitebox.setInternalState(locationServiceHelper, "locationTagRepository", locationTagRepository);
         Whitebox.setInternalState(locationServiceHelper, "locationRepository", locationRepository);
+        Whitebox.setInternalState(locationServiceHelper, "allSharedPreferences", allSharedPreferences);
+        Mockito.doReturn("anm").when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn("fb7ed5db-138d-4e6f-94d8-bc443b58dadb").when(allSharedPreferences).fetchDefaultLocalityId("anm");
         Mockito.doReturn("https://sample-stage.smartregister.org/opensrp/").when(locationServiceHelper).getFormattedBaseUrl();
         Mockito.doReturn(httpAgent).when(locationServiceHelper).getHttpAgent();
         Mockito.doReturn(syncConfiguration).when(locationServiceHelper).getSyncConfiguration();
@@ -63,10 +67,6 @@ public class LocationServiceHelperTest extends BaseUnitTest {
         Mockito.doReturn(Collections.singletonList("Facility")).when(syncConfiguration).getSynchronizedLocationTags();
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
-        AllSharedPreferences spiedAllSharedPreferences = Mockito.spy((AllSharedPreferences)ReflectionHelpers.getField(locationServiceHelper, "allSharedPreferences"));
-        ReflectionHelpers.setField(locationServiceHelper, "allSharedPreferences", spiedAllSharedPreferences);
-        Mockito.doReturn("anm").when(spiedAllSharedPreferences).fetchRegisteredANM();
-        Mockito.doReturn("fb7ed5db-138d-4e6f-94d8-bc443b58dadb").when(spiedAllSharedPreferences).fetchDefaultLocalityId("anm");
     }
 
     @Test
