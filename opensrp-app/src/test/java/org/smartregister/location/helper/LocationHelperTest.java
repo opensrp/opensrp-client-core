@@ -390,4 +390,14 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals(firstOne.name, formLocationList.get(0).name);
         assertEquals(lastOne.name, formLocationList.get(1).name);
     }
+
+    @Test
+    public void testGetOpenMrsLocationName() {
+        ANMLocationController anmLocationController = Mockito.spy(CoreLibrary.getInstance().context().anmLocationController());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "anmLocationController", anmLocationController);
+
+        Mockito.doReturn(anmLocation2)
+                .when(anmLocationController).get();
+        assertEquals("Jambula Girls School", locationHelper.getOpenMrsLocationName("982eb3f3-b7e3-450f-a38e-d067f2345212"));
+    }
 }
