@@ -3,6 +3,7 @@ package org.smartregister.view.fragment;
 import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -25,7 +26,6 @@ import org.smartregister.R;
 import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.ResponseErrorStatus;
-import org.smartregister.job.SyncServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
@@ -175,7 +175,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     }
 
     public void onQRCodeSucessfullyScanned(String qrCode) {
-        Timber.i( "QR code: %s", qrCode);
+        Timber.i("QR code: %s", qrCode);
         if (StringUtils.isNotBlank(qrCode)) {
             filter(qrCode.replace("-", ""), "", getMainCondition(), true);
             setUniqueID(qrCode);
@@ -196,59 +196,57 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         presenter.initializeQueries(getMainCondition());
         updateSearchView();
         setServiceModeViewDrawableRight(null);
-
-        // QR Code
-        qrCodeScanImageView = view.findViewById(R.id.scanQrCode);
-        if (qrCodeScanImageView != null) {
-            qrCodeScanImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) getActivity();
-                    if (baseRegisterActivity != null) {
-                        baseRegisterActivity.startQrCodeScanner();
-                    }
-                }
-            });
-        }
-
-        //Sync
-        syncButton = view.findViewById(R.id.sync_refresh);
-        if (syncButton != null) {
-            syncButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG);
-                }
-            });
-        }
-
-        View topLeftLayout = view.findViewById(R.id.top_left_layout);
-        if (topLeftLayout != null) {
-            topLeftLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    qrCodeScanImageView.performLongClick();
-                }
-            });
-        }
-
+        attachQrCode(view);
+        attachSyncButton(view);
+        attachTopLeftLayout(view);
+        attachProgressBar(view);
         /*// Location
         facilitySelection = view.findViewById(R.id.facility_selection);
         if (facilitySelection != null) {m
             facilitySelection.init();
         }*/
 
+        // Sort and Filter
+        headerTextDisplay = view.findViewById(R.id.header_text_display);
+        filterStatus = view.findViewById(R.id.filter_status);
+        filterRelativeLayout = view.findViewById(R.id.filter_display_view);
+    }
+
+    protected void attachTopLeftLayout(View view) {
+        View topLeftLayout = view.findViewById(R.id.top_left_layout);
+        if (topLeftLayout != null) {
+            topLeftLayout.setOnClickListener(v -> qrCodeScanImageView.performLongClick());
+        }
+    }
+
+    protected void attachProgressBar(View view) {
         // Progress bar
         syncProgressBar = view.findViewById(R.id.sync_progress_bar);
         if (syncProgressBar != null) {
             FadingCircle circle = new FadingCircle();
             syncProgressBar.setIndeterminateDrawable(circle);
         }
+    }
 
-        // Sort and Filter
-        headerTextDisplay = view.findViewById(R.id.header_text_display);
-        filterStatus = view.findViewById(R.id.filter_status);
-        filterRelativeLayout = view.findViewById(R.id.filter_display_view);
+    protected void attachSyncButton(View view) {
+        //Sync
+        syncButton = view.findViewById(R.id.sync_refresh);
+        if (syncButton != null) {
+            syncButton.setOnClickListener(view1 -> SyncSettingsServiceJob.scheduleJobImmediately(SyncSettingsServiceJob.TAG));
+        }
+    }
+
+    protected void attachQrCode(View view) {
+        // QR Code
+        qrCodeScanImageView = view.findViewById(R.id.scanQrCode);
+        if (qrCodeScanImageView != null) {
+            qrCodeScanImageView.setOnClickListener(v -> {
+                BaseRegisterActivity baseRegisterActivity = (BaseRegisterActivity) getActivity();
+                if (baseRegisterActivity != null) {
+                    baseRegisterActivity.startQrCodeScanner();
+                }
+            });
+        }
     }
 
     @Override
@@ -257,7 +255,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         renderView();
     }
 
-    private void renderView() {
+    @VisibleForTesting
+    protected void renderView() {
         getDefaultOptionsProvider();
         if (isPausedOrRefreshList()) {
             presenter.initializeQueries(getMainCondition());
@@ -273,8 +272,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     public void setTotalPatients() {
         if (headerTextDisplay != null) {
             headerTextDisplay.setText(clientAdapter.getTotalcount() > 1 ?
-                    String.format(getString(R.string.clients), clientAdapter.getTotalcount()) :
-                    String.format(getString(R.string.client), clientAdapter.getTotalcount()));
+                    String.format(getActivity().getString(R.string.clients), clientAdapter.getTotalcount()) :
+                    String.format(getActivity().getString(R.string.client), clientAdapter.getTotalcount()));
 
             filterRelativeLayout.setVisibility(View.GONE);
         }
@@ -395,50 +394,50 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         refreshSyncStatusViews(fetchStatus);
     }
 
-    private void refreshSyncStatusViews(FetchStatus fetchStatus) {
-
-        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
-            Utils.showShortToast(getActivity(), getString(R.string.syncing));
-            Timber.i( getString(R.string.syncing));
+    @VisibleForTesting
+    protected void refreshSyncStatusViews(FetchStatus fetchStatus) {
+        if (isSyncing()) {
+            Utils.showShortToast(getActivity(), getActivity().getString(R.string.syncing));
+            Timber.i(getActivity().getString(R.string.syncing));
+            refreshSyncProgressSpinner();
         } else {
             if (fetchStatus != null) {
-
                 if (fetchStatus.equals(FetchStatus.fetchedFailed)) {
-                    if(fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_malformed_url));
-                        Timber.i( getString(R.string.sync_failed_malformed_url));
+                    if (fetchStatus.displayValue().equals(ResponseErrorStatus.malformed_url.name())) {
+                        Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed_malformed_url));
+                        Timber.i(getActivity().getString(R.string.sync_failed_malformed_url));
+                    } else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
+                        Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed_timeout_error));
+                        Timber.i(getActivity().getString(R.string.sync_failed_timeout_error));
+                    } else {
+                        Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed));
+                        Timber.i(getActivity().getString(R.string.sync_failed));
                     }
-                    else if (fetchStatus.displayValue().equals(ResponseErrorStatus.timeout.name())) {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed_timeout_error));
-                        Timber.i(getString(R.string.sync_failed_timeout_error));
-                    }
-                    else {
-                        Utils.showShortToast(getActivity(), getString(R.string.sync_failed));
-                        Timber.i(getString(R.string.sync_failed));
-                    }
-
-                } else if (fetchStatus.equals(FetchStatus.fetched)
-                        || fetchStatus.equals(FetchStatus.nothingFetched)) {
-
+                    refreshSyncProgressSpinner();
+                } else if (fetchStatus.equals(FetchStatus.fetched) || fetchStatus.equals(FetchStatus.nothingFetched)) {
                     setRefreshList(true);
                     renderView();
 
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_complete));
-                    Timber.i( getString(R.string.sync_complete));
-
+                    Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_complete));
+                    Timber.i(getActivity().getString(R.string.sync_complete));
                 } else if (fetchStatus.equals(FetchStatus.noConnection)) {
 
-                    Utils.showShortToast(getActivity(), getString(R.string.sync_failed_no_internet));
-                    Timber.i( getString(R.string.sync_failed_no_internet));
+                    Utils.showShortToast(getActivity(), getActivity().getString(R.string.sync_failed_no_internet));
+                    Timber.i(getActivity().getString(R.string.sync_failed_no_internet));
+                    refreshSyncProgressSpinner();
+                } else {
+                    refreshSyncProgressSpinner();
                 }
-            }
-            else{
+            } else {
                 Timber.i("Fetch Status NULL");
+                refreshSyncProgressSpinner();
             }
-
         }
+    }
 
-        refreshSyncProgressSpinner();
+    @VisibleForTesting
+    protected boolean isSyncing() {
+        return SyncStatusBroadcastReceiver.getInstance().isSyncing();
     }
 
     @Override
@@ -453,8 +452,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         super.onPause();
     }
 
+    @VisibleForTesting
     protected void refreshSyncProgressSpinner() {
-        if (SyncStatusBroadcastReceiver.getInstance().isSyncing()) {
+        if (isSyncing()) {
             if (syncProgressBar != null) {
                 syncProgressBar.setVisibility(View.VISIBLE);
             }

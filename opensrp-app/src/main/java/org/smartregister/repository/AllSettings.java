@@ -116,4 +116,23 @@ public class AllSettings {
         return settingsRepository.queryUnsyncedSettingsCount();
     }
 
+    public String fetchRegisteredANM() {
+        return preferences.fetchRegisteredANM();
+    }
+
+    public String fetchDefaultTeamId(String username) {
+        return preferences.fetchDefaultTeamId(username);
+    }
+
+    public String fetchDefaultTeam(String username) {
+        return preferences.fetchDefaultTeam(username);
+    }
+
+    public String fetchDefaultLocalityId(String username) {
+        return preferences.fetchDefaultLocalityId(username);
+    }
+
+    public AllSharedPreferences getPreferences() {
+        return preferences;
+    }
 }

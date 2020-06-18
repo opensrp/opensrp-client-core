@@ -422,5 +422,12 @@
     <string name="clearing_application_data">Clearing application data...</string>
     <string name="clear_data_dialog_title">Do you want to clear data to login with a different team/location</string>
     <string name="clear_data_dialog_message">You are trying to login with a user in a different team/location. Upload of pending data and clearing of data for user %s in Team %s is required. Do you want to continue?</string>
+    <string name="form_update_title">Form Update</string>
+    <string name="form_update_message">This form has content updates</string>
+    <string name="current_corrupted_form">(Current Corrupted Form)</string>
+    <string name="rollback_dialog_title">Select a rollback form</string>
+    <string name="cannot_select_corrupted_form_rollback">You cannot select this form because it\'s corrupted!</string>
+    <string name="form_changed_reopen_to_take_effect">Form has been successfully selected! Reopen this form for the changes to take effect</string>
+    <string name="replication_error_occurred">Replication error occurred</string>
 
 </resources>

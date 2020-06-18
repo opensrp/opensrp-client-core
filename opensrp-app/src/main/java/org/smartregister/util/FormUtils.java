@@ -2,16 +2,23 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.vijay.jsonwizard.interfaces.JsonSubFormAndRulesLoader;
+import com.vijay.jsonwizard.utils.NativeFormLangUtils;
+import com.vijay.jsonwizard.utils.Utils;
 
 import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
@@ -25,9 +32,12 @@ import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
+import org.smartregister.listener.OnFormFetchedCallback;
+import org.smartregister.listener.RollbackDialogCallback;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
+import org.smartregister.view.dialog.FormRollbackDialogUtil;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -42,6 +52,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -869,7 +880,7 @@ public class FormUtils {
     public String retrieveValueForLinkedRecord(String link, JSONObject entityJson) {
         try {
             String entityRelationships = readFileFromAssetsFolder(
-                    "www/form/entity_relationship" + ".json");
+                    "www/form/entity_relationship" + AllConstants.JSON_FILE_EXTENSION);
             JSONArray json = new JSONArray(entityRelationships);
             Timber.i(json.toString());
 
@@ -1087,16 +1098,16 @@ public class FormUtils {
         if (mContext != null) {
             try {
                 String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-                locale = locale.equalsIgnoreCase("en") ? "" : "-" + locale;
+                locale = locale.equalsIgnoreCase(Locale.ENGLISH.getLanguage()) ? "" : "-" + locale;
 
                 InputStream inputStream;
                 try {
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form" + locale + "/" + formIdentity + ".json");
+                            .open("json.form" + locale + "/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 } catch (FileNotFoundException e) {
                     // file for the language not found, defaulting to english language
                     inputStream = mContext.getApplicationContext().getAssets()
-                            .open("json.form/" + formIdentity + ".json");
+                            .open("json.form/" + formIdentity + AllConstants.JSON_FILE_EXTENSION);
                 }
                 BufferedReader reader = new BufferedReader(
                         new InputStreamReader(inputStream, CharEncoding.UTF_8));
@@ -1124,27 +1135,218 @@ public class FormUtils {
         mCloudantDataHandler.createClientDocument(client);
     }
 
-    public JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity) {
+    @Nullable
+    public JSONObject getFormJsonFromRepositoryOrAssets(@NonNull String formIdentity) {
+        return getFormJsonFromRepositoryOrAssetsWithOptionalCallback(formIdentity, null);
+    }
+
+    public void getFormJsonFromRepositoryOrAssets(@NonNull String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        getFormJsonFromRepositoryOrAssetsWithOptionalCallback(formIdentity, onFormFetchedCallback);
+    }
+
+    private JSONObject getFormJsonFromRepositoryOrAssetsWithOptionalCallback(String formIdentity, @Nullable OnFormFetchedCallback<JSONObject> onFormFetchedCallback) {
+        ClientForm clientForm = getClientFormFromRepository(formIdentity);
+
+        try {
+            if (clientForm != null) {
+                Timber.d("============%s form loaded from db============", formIdentity);
+
+                JSONObject formJson = new JSONObject(clientForm.getJson());
+                injectFormStatus(formJson, clientForm);
+
+                if (onFormFetchedCallback != null) {
+                    onFormFetchedCallback.onFormFetched(formJson);
+                    return null;
+                }  else {
+                    return formJson;
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e);
+
+            if (onFormFetchedCallback != null) {
+                handleJsonFormOrRulesError(false, formIdentity, form -> {
+                    try {
+                        JSONObject jsonObject = form == null ? null : new JSONObject(form);
+                        onFormFetchedCallback.onFormFetched(jsonObject);
+                    } catch (JSONException ex) {
+                        Timber.e(ex);
+                    }
+                });
+            } else {
+                return null;
+            }
+        }
+
+        Timber.d("============%s form loaded from Assets=============", formIdentity);
+        JSONObject jsonObject = getFormJson(formIdentity);
+
+        if (onFormFetchedCallback != null) {
+            onFormFetchedCallback.onFormFetched(jsonObject);
+            return null;
+        }  else {
+            return jsonObject;
+        }
+    }
+
+    private ClientForm getClientFormFromRepository(String formIdentity) {
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String localeFormIdentity = formIdentity;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+        }
+        return clientForm;
+    }
+
+    public void handleJsonFormOrRulesError(@NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        handleJsonFormOrRulesError(false, formIdentity, onFormFetchedCallback);
+    }
+
+    public void handleJsonFormOrRulesError(boolean isRulesFile, @NonNull String formIdentity, @NonNull OnFormFetchedCallback<String> onFormFetchedCallback) {
+        ClientForm clientForm = getClientFormFromRepository(formIdentity);
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        List<ClientForm> clientForms = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+
+        if (clientForms.size() > 0) {
+            // Show dialog asking user if they want to rollback to the previous available version X
+            // if YES, then provide that form instead
+            // if NO, then continue down
+
+            boolean dialogIsShowing = (mContext instanceof JsonSubFormAndRulesLoader) && ((JsonSubFormAndRulesLoader) mContext).isVisibleFormErrorAndRollbackDialog();
+
+            if (!dialogIsShowing) {
+                FormRollbackDialogUtil.showAvailableRollbackFormsDialog(mContext, clientForms, clientForm, new RollbackDialogCallback() {
+                    @Override
+                    public void onFormSelected(@NonNull ClientForm selectedForm) {
+                        if (selectedForm.getJson() == null && selectedForm.getVersion().equals(AllConstants.CLIENT_FORM_ASSET_VERSION)) {
+
+                            if (isRulesFile) {
+                                try {
+                                    clientForm.setJson(Utils.convertStreamToString(mContext.getAssets().open(formIdentity)));
+                                } catch (IOException e) {
+                                    Timber.e(e);
+                                }
+                            } else {
+                                JSONObject jsonObject = getFormJson(formIdentity);
+
+                                if (jsonObject != null) {
+                                    clientForm.setJson(jsonObject.toString());
+                                }
+                            }
+                        }
+
+                        onFormFetchedCallback.onFormFetched(clientForm.getJson());
+                    }
+
+                    @Override
+                    public void onCancelClicked() {
+                        onFormFetchedCallback.onFormFetched(null);
+                    }
+                });
+            }
+        }
+    }
+
+    @Nullable
+    public JSONObject getSubFormJsonFromRepository(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) throws JSONException {
         ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
         String locale = mContext.getResources().getConfiguration().locale.getLanguage();
 
         //Check the current locale of the app to load the correct version of the form in the desired language
         String localeFormIdentity = formIdentity;
-        if (!"en".equals(locale)) {
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
+            localeFormIdentity = localeFormIdentity + "-" + locale;
+        }
+
+        String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
+        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+
+        if (clientForm == null) {
+            String revisedFormName = extractFormNameWithoutExtension(dbFormName);
+            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
+
+            if (clientForm == null) {
+                String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
+                dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
+                clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
+
+            }
+        }
+
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", dbFormName);
+            String originalJson = clientForm.getJson();
+
+            if (translateSubForm) {
+                originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
+            }
+
+            return new JSONObject(originalJson);
+        }
+
+        return null;
+    }
+
+    @Nullable
+    public BufferedReader getRulesFromRepository(String fileName) {
+        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
+        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
+
+        //Check the current locale of the app to load the correct version of the form in the desired language
+        String localeFormIdentity = fileName;
+        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
             localeFormIdentity = localeFormIdentity + "-" + locale;
         }
 
         ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
-        try {
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", formIdentity);
-                return new JSONObject(clientForm.getJson());
+        if (clientForm != null) {
+            Timber.d("============%s form loaded from db============", localeFormIdentity);
+            String originalJson = clientForm.getJson();
+
+            return new BufferedReader(new StringReader(originalJson));
+        }
+
+        return null;
+    }
+
+    @NonNull
+    protected String extractFormNameWithoutExtension(String localeFormIdentity) {
+        return localeFormIdentity.endsWith(AllConstants.JSON_FILE_EXTENSION)
+                ? localeFormIdentity.substring(0, localeFormIdentity.length() - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
+    }
+
+    public void injectFormStatus(@NonNull JSONObject jsonObject, @NonNull ClientForm clientForm) {
+        if (clientForm.isNew()) {
+            try {
+                jsonObject.put(AllConstants.JSON.Property.IS_NEW, clientForm.isNew());
+                jsonObject.put(AllConstants.JSON.Property.CLIENT_FORM_ID, clientForm.getId());
+                jsonObject.put(AllConstants.JSON.Property.FORM_VERSION, clientForm.getVersion());
+            } catch (JSONException e) {
+                Timber.e(e);
             }
+        }
+    }
+
+    public static int getClientFormId(@NonNull JSONObject jsonObject) {
+        try {
+            return jsonObject.getInt(AllConstants.JSON.Property.CLIENT_FORM_ID);
         } catch (JSONException e) {
             Timber.e(e);
+            return 0;
         }
-        Timber.d("============%s form loaded from Assets=============", formIdentity);
-        return getFormJson(formIdentity);
+    }
+
+    public static boolean isFormNew(@NonNull JSONObject jsonObject) {
+        return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
     }
 
 }

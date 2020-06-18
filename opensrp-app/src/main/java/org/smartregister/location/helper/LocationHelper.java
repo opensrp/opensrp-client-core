@@ -232,15 +232,18 @@ public class LocationHelper {
         return null;
     }
 
-
     public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, ArrayList<String> allowedLevels) {
+        LinkedHashMap<String, TreeNode<String, Location>> map = map();
+        return generateLocationHierarchyTree(withOtherOption,allowedLevels,map);
+    }
+
+    public List<FormLocation> generateLocationHierarchyTree(boolean withOtherOption, ArrayList<String> allowedLevels, Map<String, TreeNode<String, Location>> map) {
         if (Utils.isEmptyCollection(allowedLevels)) {
             return new ArrayList<>();
         }
 
         List<FormLocation> formLocationList = new ArrayList<>();
         try {
-            LinkedHashMap<String, TreeNode<String, Location>> map = map();
             if (!Utils.isEmptyMap(map)) {
                 for (Map.Entry<String, TreeNode<String, Location>> entry : map.entrySet()) {
                     List<FormLocation> foundLocationList = getFormJsonData(entry.getValue(), allowedLevels);
@@ -652,7 +655,7 @@ public class LocationHelper {
     }
 
 
-    private LinkedHashMap<String, TreeNode<String, Location>> map() {
+    public LinkedHashMap<String, TreeNode<String, Location>> map() {
         String locationData = CoreLibrary.getInstance().context().anmLocationController().get();
         LocationTree locationTree = AssetHandler.jsonStringToJava(locationData, LocationTree.class);
         if (locationTree != null) {

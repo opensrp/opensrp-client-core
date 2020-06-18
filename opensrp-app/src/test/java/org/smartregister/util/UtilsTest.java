@@ -15,6 +15,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -426,6 +427,16 @@ public class UtilsTest extends BaseUnitTest {
         assertEquals("pn", Utils.getUserInitials());
         Utils.getAllSharedPreferences().updateANMPreferredName("provider", "provider");
         assertEquals("p", Utils.getUserInitials());
+    }
+
+    @Test
+    public void testGetAppIdShouldReturnAppId() {
+        assertEquals("org.smartregister", Utils.getAppId(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testGetAppVersionShouldReturnAppVersion() {
+        assertEquals(BuildConfig.VERSION_NAME, Utils.getAppVersion(RuntimeEnvironment.application));
     }
 }
 

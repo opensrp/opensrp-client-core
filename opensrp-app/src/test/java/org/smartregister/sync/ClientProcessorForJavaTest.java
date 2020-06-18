@@ -43,6 +43,7 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.shadows.ShadowAssetHandler;
 import org.smartregister.util.AssetHandler;
 import org.smartregister.util.DateTimeTypeConverter;
+import org.smartregister.util.JsonFormUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -550,6 +551,110 @@ public class ClientProcessorForJavaTest extends BaseUnitTest {
 
         ClassificationRule classificationRule = gson.fromJson("{\"comment\":\"Child: This rule checks whether a given case belongs to Child register\",\"rule\":{\"type\":\"event\",\"fields\":[{\"field\":\"eventType\",\"field_value\":\"New Woman Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update Birth Registration\",\"creates_case\":[\"ec_client\",\"ec_child_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Close\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Update ANC Registration\",\"creates_case\":[\"ec_client\",\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Visit\",\"creates_case\":[\"ec_mother_details\"]},{\"field\":\"eventType\",\"field_value\":\"Opd Registration\",\"creates_case\":[\"ec_client\"]}]}}", ClassificationRule.class);
         Assert.assertFalse(clientProcessor.processClientClass(classificationRule, event, null));
+    }
+
+    @Test
+    public void processCaseModelWhenGivenColumnConfigurationFromEventObsShouldPopulateContentValuesAsPerColumnConfiguration() {
+        String eventJson = "{\"baseEntityId\":\"021a1da2-cebf-44fa-9ef3-3ffc18fa6356\",\"entityType\":\"vaccination\",\"eventDate\":\"2018-10-15T20:00:00.000-04:00\",\"eventType\":\"Vaccination\",\"formSubmissionId\":\"e9c0c4ec-63c3-4104-958e-21e133efd3b2\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"1410AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"date\",\"fieldType\":\"concept\",\"formSubmissionField\":\"rota_2\",\"humanReadableValues\":[],\"parentCode\":\"159698AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"2018-10-16\"]},{\"fieldCode\":\"1418AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"calculate\",\"fieldType\":\"concept\",\"formSubmissionField\":\"rota_2_dose\",\"humanReadableValues\":[],\"parentCode\":\"159698AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"2\"]}],\"providerId\":\"chwone\",\"version\":1567465052005,\"clientApplicationVersion\":1,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-10-07T05:49:52.992-04:00\",\"dateEdited\":\"2019-09-18T06:10:56.784-04:00\",\"serverVersion\":1568801628709}";
+        String columnJson = "{\"column_name\":\"name\",\"json_mapping\":{\"field\":\"obs.fieldCode\",\"concept\":\"1410AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"value_field\":\"formSubmissionField\"}}";
+        Event event = JsonFormUtils.gson.fromJson(eventJson, Event.class);
+
+        Column column = JsonFormUtils.gson.fromJson(columnJson, Column.class);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("base_entity_id", "021a1da2-cebf-44fa-9ef3-3ffc18fa6356");
+
+        clientProcessor.processCaseModel(event, null, column, contentValues);
+
+        assertEquals("rota_2", contentValues.getAsString("name"));
+    }
+
+
+    @Test
+    public void processCaseModelWhenGivenColumnConfigurationFromEventFieldShouldPopulateContentValues() {
+        String eventJson = "{\"baseEntityId\":\"021a1da2-cebf-44fa-9ef3-3ffc18fa6356\",\"entityType\":\"vaccination\",\"eventDate\":\"2018-10-15T20:00:00.000-04:00\",\"eventType\":\"Vaccination\",\"formSubmissionId\":\"e9c0c4ec-63c3-4104-958e-21e133efd3b2\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"1410AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"date\",\"fieldType\":\"concept\",\"formSubmissionField\":\"rota_2\",\"humanReadableValues\":[],\"parentCode\":\"159698AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"2018-10-16\"]},{\"fieldCode\":\"1418AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"calculate\",\"fieldType\":\"concept\",\"formSubmissionField\":\"rota_2_dose\",\"humanReadableValues\":[],\"parentCode\":\"159698AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"2\"]}],\"providerId\":\"chwone\",\"version\":1567465052005,\"clientApplicationVersion\":1,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-10-07T05:49:52.992-04:00\",\"dateEdited\":\"2019-09-18T06:10:56.784-04:00\",\"serverVersion\":1568801628709}";
+        String columnJson = "{\"column_name\":\"anmid\",\"json_mapping\":{\"field\":\"providerId\"}}";
+        Event event = JsonFormUtils.gson.fromJson(eventJson, Event.class);
+
+        Column column = JsonFormUtils.gson.fromJson(columnJson, Column.class);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("base_entity_id", "021a1da2-cebf-44fa-9ef3-3ffc18fa6356");
+
+        clientProcessor.processCaseModel(event, null, column, contentValues);
+
+        assertEquals("chwone", contentValues.getAsString("anmid"));
+    }
+
+
+    @Test
+    public void processCaseModelWhenGivenColumnConfigurationFromClientIdentifiersFieldShouldPopulateContentValues() {
+        String eventJson = "{\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"entityType\":\"ec_family_member\",\"eventDate\":\"2019-09-23T20:00:00.000-04:00\",\"eventType\":\"Family Member Registration\",\"formSubmissionId\":\"af7143d3-33d9-4bb2-9fe5-14937b4ae92f\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"surname\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"Kim\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"age_calculated\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"18.0\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"wra\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0\"]},{\"fieldCode\":\"162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"disabilities\",\"humanReadableValues\":[\"No\"],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phone_number\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0723433455\"]},{\"fieldCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"service_provider\",\"humanReadableValues\":[\"None\"],\"parentCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"164369AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"start\",\"fieldType\":\"concept\",\"formSubmissionField\":\"start\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:18:41\"]},{\"fieldCode\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"end\",\"fieldType\":\"concept\",\"formSubmissionField\":\"end\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:21:34\"]},{\"fieldCode\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"phonenumber\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phonenumber\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"+15555215554\"]}],\"providerId\":\"chwone\",\"version\":1569309694752,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.108-04:00\",\"dateEdited\":\"2019-11-13T00:42:43.387-05:00\",\"serverVersion\":1573623789891}";
+        String clientJson = "{\"birthdate\":\"2001-09-23T20:00:00.000-04:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"firstName\":\"Jonny\",\"gender\":\"Male\",\"middleName\":\"Kamau\",\"relationships\":{\"family\":[\"af3e29be-88ee-4063-bb02-963a64c664ab\"]},\"addresses\":[],\"attributes\":{\"id_avail\":\"[\\\"chk_none\\\"]\",\"Community_Leader\":\"[\\\"chk_none\\\"]\",\"Health_Insurance_Type\":\"iCHF\",\"Health_Insurance_Number\":\"123\"},\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"identifiers\":{\"opensrp_id\":\"4602652\"},\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.015-04:00\",\"serverVersion\":1569311069836}";
+        String columnJson = "{\"column_name\":\"unique_id\",\"json_mapping\":{\"field\":\"identifiers.opensrp_id\"},\"type\":\"Client\"}";
+        Event event = JsonFormUtils.gson.fromJson(eventJson, Event.class);
+        Client client = JsonFormUtils.gson.fromJson(clientJson, Client.class);
+
+        Column column = JsonFormUtils.gson.fromJson(columnJson, Column.class);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("base_entity_id", "3a221190-c004-4297-88bd-4b925e19098f");
+
+        clientProcessor.processCaseModel(event, client, column, contentValues);
+
+        assertEquals("4602652", contentValues.getAsString("unique_id"));
+    }
+
+
+    @Test
+    public void processCaseModelWhenGivenColumnConfigurationFromClientRelationshipsFieldShouldPopulateContentValues() {
+        String eventJson = "{\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"entityType\":\"ec_family_member\",\"eventDate\":\"2019-09-23T20:00:00.000-04:00\",\"eventType\":\"Family Member Registration\",\"formSubmissionId\":\"af7143d3-33d9-4bb2-9fe5-14937b4ae92f\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"surname\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"Kim\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"age_calculated\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"18.0\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"wra\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0\"]},{\"fieldCode\":\"162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"disabilities\",\"humanReadableValues\":[\"No\"],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phone_number\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0723433455\"]},{\"fieldCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"service_provider\",\"humanReadableValues\":[\"None\"],\"parentCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"164369AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"start\",\"fieldType\":\"concept\",\"formSubmissionField\":\"start\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:18:41\"]},{\"fieldCode\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"end\",\"fieldType\":\"concept\",\"formSubmissionField\":\"end\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:21:34\"]},{\"fieldCode\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"phonenumber\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phonenumber\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"+15555215554\"]}],\"providerId\":\"chwone\",\"version\":1569309694752,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.108-04:00\",\"dateEdited\":\"2019-11-13T00:42:43.387-05:00\",\"serverVersion\":1573623789891}";
+        String clientJson = "{\"birthdate\":\"2001-09-23T20:00:00.000-04:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"firstName\":\"Jonny\",\"gender\":\"Male\",\"middleName\":\"Kamau\",\"relationships\":{\"family\":[\"af3e29be-88ee-4063-bb02-963a64c664ab\"]},\"addresses\":[],\"attributes\":{\"id_avail\":\"[\\\"chk_none\\\"]\",\"Community_Leader\":\"[\\\"chk_none\\\"]\",\"Health_Insurance_Type\":\"iCHF\",\"Health_Insurance_Number\":\"123\"},\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"identifiers\":{\"opensrp_id\":\"4602652\"},\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.015-04:00\",\"serverVersion\":1569311069836}";
+        String columnJson = "{\"column_name\":\"relational_id\",\"json_mapping\":{\"field\":\"relationships.family\"},\"type\":\"Client\"}";
+        Event event = JsonFormUtils.gson.fromJson(eventJson, Event.class);
+        Client client = JsonFormUtils.gson.fromJson(clientJson, Client.class);
+
+        Column column = JsonFormUtils.gson.fromJson(columnJson, Column.class);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("base_entity_id", "3a221190-c004-4297-88bd-4b925e19098f");
+
+        clientProcessor.processCaseModel(event, client, column, contentValues);
+
+        assertEquals("af3e29be-88ee-4063-bb02-963a64c664ab", contentValues.getAsString("relational_id"));
+    }
+
+
+    @Test
+    public void processCaseModelWhenGivenColumnConfigurationFromClientAddressesFieldShouldPopulateContentValues() {
+        String eventJson = "{\"baseEntityId\":\"5b85d576-51cd-4ccc-bfd7-2b67d4af89e3\",\"entityType\":\"ec_family\",\"eventDate\":\"2019-09-24T08:12:12.000-04:00\",\"eventType\":\"Update Family Relations\",\"formSubmissionId\":\"fc673dfe-a720-405e-9b2a-0b2e4067364b\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[],\"providerId\":\"chwone\",\"version\":1569316332001,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T05:13:17.700-04:00\",\"dateEdited\":\"2019-11-13T00:42:43.445-05:00\",\"serverVersion\":1573623789901}";
+        String clientJson = "{\"birthdate\":\"1970-01-01T01:00:00.000-05:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"firstName\":\"Kitoto\",\"gender\":\"Male\",\"lastName\":\"Family\",\"relationships\":{\"family_head\":[\"9f424541-b5c6-46e5-af99-6c8d6d28559c\"],\"primary_caregiver\":[\"41b652a2-167a-4e32-9717-013b5031c972\"]},\"addresses\":[{\"addressFields\":{\"landmark\":\"Chandaria Factory\"},\"addressType\":\"\",\"cityVillage\":\"Kasabuni\"}],\"attributes\":{},\"baseEntityId\":\"5b85d576-51cd-4ccc-bfd7-2b67d4af89e3\",\"identifiers\":{\"opensrp_id\":\"4626057_family\"},\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T08:10:33.460-04:00\",\"dateEdited\":\"2019-09-24T05:13:17.679-04:00\",\"serverVersion\":1569316449432}";
+        String columnJson = "{\"column_name\":\"village_town\",\"json_mapping\":{\"field\":\"addresses.cityVillage\"},\"type\":\"Client\"}";
+        Event event = JsonFormUtils.gson.fromJson(eventJson, Event.class);
+        Client client = JsonFormUtils.gson.fromJson(clientJson, Client.class);
+
+        Column column = JsonFormUtils.gson.fromJson(columnJson, Column.class);
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("base_entity_id", "5b85d576-51cd-4ccc-bfd7-2b67d4af89e3");
+
+        ReflectionHelpers.setStaticField(ClientProcessorForJava.class, "instance", clientProcessor);
+        clientProcessor.processCaseModel(event, client, column, contentValues);
+
+        assertEquals("Kasabuni", contentValues.get("village_town"));
+    }
+
+    @Test
+    public void processFieldShouldCreateCaseBasedOnObsValueFilled() {
+        //Field field = JsonFormUtils.gson.fromJson("{\"creates_case\":[\"ec_family\"],\"field\":\"rType.sampleField\",\"field_value\":\"Family Registration\", \"values\": []}"
+        Field field = JsonFormUtils.gson.fromJson("{\"creates_case\":[\"ec_family_disability\"],\"field\":\"obs.formSubmissionField\", \"values\": [\"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"], \"concept\": \"disabilities\"}"
+                , Field.class);
+        Event event = JsonFormUtils.gson.fromJson("{\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"entityType\":\"ec_family_member\",\"eventDate\":\"2019-09-23T20:00:00.000-04:00\",\"eventType\":\"Family Member Registration\",\"formSubmissionId\":\"af7143d3-33d9-4bb2-9fe5-14937b4ae92f\",\"locationId\":\"2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8\",\"obs\":[{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"surname\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"Kim\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"age_calculated\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"18.0\"]},{\"fieldCode\":\"\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"wra\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0\"]},{\"fieldCode\":\"162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"disabilities\",\"humanReadableValues\":[\"No\"],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"1066AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"159635AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phone_number\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"0723433455\"]},{\"fieldCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"text\",\"fieldType\":\"concept\",\"formSubmissionField\":\"service_provider\",\"humanReadableValues\":[\"None\"],\"parentCode\":\"1542AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"saveObsAsArray\":false,\"values\":[\"164369AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"]},{\"fieldCode\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"start\",\"fieldType\":\"concept\",\"formSubmissionField\":\"start\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:18:41\"]},{\"fieldCode\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"end\",\"fieldType\":\"concept\",\"formSubmissionField\":\"end\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"2019-09-24 10:21:34\"]},{\"fieldCode\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"fieldDataType\":\"phonenumber\",\"fieldType\":\"concept\",\"formSubmissionField\":\"phonenumber\",\"humanReadableValues\":[],\"parentCode\":\"\",\"saveObsAsArray\":false,\"values\":[\"+15555215554\"]}],\"providerId\":\"chwone\",\"version\":1569309694752,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.108-04:00\",\"dateEdited\":\"2019-11-13T00:42:43.387-05:00\",\"serverVersion\":1573623789891 }"
+                , Event.class);
+        Client client = JsonFormUtils.gson.fromJson("{\"birthdate\":\"2001-09-23T20:00:00.000-04:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"firstName\":\"Jonny\",\"gender\":\"Male\",\"middleName\":\"Kamau\",\"relationships\":{\"family\":[\"af3e29be-88ee-4063-bb02-963a64c664ab\"]},\"addresses\":[],\"attributes\":{\"id_avail\":\"[\\\"chk_none\\\"]\",\"Community_Leader\":\"[\\\"chk_none\\\"]\",\"Health_Insurance_Type\":\"iCHF\",\"Health_Insurance_Number\":\"123\"},\"baseEntityId\":\"3a221190-c004-4297-88bd-4b925e19098f\",\"identifiers\":{\"opensrp_id\":\"4602652\"},\"clientApplicationVersion\":2,\"clientDatabaseVersion\":11,\"dateCreated\":\"2019-09-24T03:44:30.015-04:00\",\"serverVersion\":1569311069836}"
+                , Client.class);
+
+        ClientProcessorForJava clientProcessorForJava = Mockito.spy(clientProcessor);
+
+        assertTrue(clientProcessorForJava.processField(field, event, client));
+        ArgumentCaptor<ArrayList<String>> createsCaseCaptor = ArgumentCaptor.forClass(ArrayList.class);
+        Mockito.verify(clientProcessorForJava).processCaseModel(Mockito.eq(event), Mockito.eq(client), createsCaseCaptor.capture());
+        assertEquals("ec_family_disability", createsCaseCaptor.getValue().get(0));
     }
 
     @After

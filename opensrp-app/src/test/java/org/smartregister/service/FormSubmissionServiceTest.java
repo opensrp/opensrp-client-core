@@ -14,6 +14,7 @@ import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormData;
 import org.smartregister.domain.form.FormField;
 import org.smartregister.domain.form.FormSubmission;
+import org.smartregister.domain.form.SubForm;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.util.EasyMap;
@@ -21,6 +22,7 @@ import org.smartregister.util.FormSubmissionBuilder;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -179,6 +181,31 @@ public class FormSubmissionServiceTest {
 
         service.updateFTSsearch(formSubmission);
         verify(allCommonsRepository).updateSearch("formid1");
+
+    }
+
+
+    @Test
+    public void testUpdateFTSSearchForSubForms() {
+        String subFormBindType = "subBindType1";
+        String subFormEntityId = "subEntityId1";
+        Whitebox.setInternalState(service, "allCommonsRepositoryMap", allCommonsRepositoryMap);
+        when(allCommonsRepositoryMap.get(subFormBindType)).thenReturn(allCommonsRepository);
+        FormSubmission formSubmission = mock(FormSubmission.class);
+        FormData form = mock(FormData.class);
+        when(formSubmission.getForm()).thenReturn(form);
+        when(form.getBind_type()).thenReturn("bindtype1");
+
+        SubForm subForm = mock(SubForm.class);
+        when(subForm.getBindType()).thenReturn(subFormBindType);
+        Map<String, String> instance = new HashMap<>();
+        instance.put("id", subFormEntityId);
+        when(subForm.instances()).thenReturn(Collections.singletonList(instance));
+        List<SubForm> subforms = Collections.singletonList(subForm);
+        when(form.getSub_forms()).thenReturn(subforms);
+
+        service.updateFTSsearch(formSubmission);
+        verify(allCommonsRepository).updateSearch(subFormEntityId);
 
     }
 

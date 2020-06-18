@@ -5,9 +5,9 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.util.Xml;
 
-import junit.framework.Assert;
-
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +19,9 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -234,4 +237,86 @@ public class FormUtilsTest extends BaseUnitTest {
         Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier("sick_child_referral_form");
         Assert.assertNotNull(form);
     }
+
+    @Test
+    public void extractFormNameWithoutExtensionShouldReturnNameWithoutExtension() {
+        String expectedAns = "registration_form";
+
+        Assert.assertEquals(expectedAns, formUtils.extractFormNameWithoutExtension("registration_form.json"));
+    }
+
+    @Test
+    public void getRulesFromRepositoryShouldCallRepositoryQueryingClientForm() {
+        String rulesFileIdentifier = "registration_calculation.yml";
+        ClientForm clientForm = new ClientForm();
+        clientForm.setJson("");
+        ClientFormRepository clientFormRepository = Mockito.mock(ClientFormRepository.class);
+        Mockito.doReturn(clientFormRepository).when(context).getClientFormRepository();
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
+
+        Assert.assertNotNull(formUtils.getRulesFromRepository(rulesFileIdentifier));
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+    }
+
+    @Test
+    public void getSubFormFromRepository() throws JSONException {
+        String subFormIdentifier = "some_tests";
+        ClientForm clientForm = new ClientForm();
+        clientForm.setJson("{}");
+        ClientFormRepository clientFormRepository = Mockito.mock(ClientFormRepository.class);
+        Mockito.doReturn(clientFormRepository).when(context).getClientFormRepository();
+        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
+        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
+
+        JSONObject jsonObject = formUtils.getSubFormJsonFromRepository(subFormIdentifier, null, RuntimeEnvironment.application, false);
+
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(subFormIdentifier));
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(subFormIdentifier + ".json"));
+        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
+
+        Assert.assertEquals(0, jsonObject.length());
+    }
+
+    @Test
+    public void injectFormStatusShouldAddClientFormDetailsToJsonObject() throws JSONException {
+        ClientForm clientForm = new ClientForm();
+        clientForm.setId(3);
+        clientForm.setNew(true);
+        clientForm.setVersion("0.0.1");
+        JSONObject jsonObject = new JSONObject();
+        formUtils.injectFormStatus(jsonObject, clientForm);
+
+        Assert.assertEquals(3, jsonObject.getInt(AllConstants.JSON.Property.CLIENT_FORM_ID));
+        Assert.assertTrue(jsonObject.getBoolean(AllConstants.JSON.Property.IS_NEW));
+        Assert.assertEquals("0.0.1", jsonObject.getString(AllConstants.JSON.Property.FORM_VERSION));
+    }
+
+    @Test
+    public void getClientFormIdShouldReturnClientFormIdPropertyOnJSONObject() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(AllConstants.JSON.Property.CLIENT_FORM_ID, 3);
+        Assert.assertEquals(3, FormUtils.getClientFormId(jsonObject));
+    }
+
+    @Test
+    public void getClientFormIdShouldReturn0WhenJSONObjectDoesNotHaveClientFormId() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertEquals(0, FormUtils.getClientFormId(jsonObject));
+    }
+
+    @Test
+    public void isFormNewShouldReturnFalseWhenJSONObjectDoesNotHaveIsNewProperty() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        Assert.assertFalse(FormUtils.isFormNew(jsonObject));
+    }
+
+    @Test
+    public void isFormNewShouldReturnTrueWhenJSONObjectIsNewPropertyIsTrue() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(AllConstants.JSON.Property.IS_NEW, true);
+        Assert.assertTrue(FormUtils.isFormNew(jsonObject));
+    }
+
 }

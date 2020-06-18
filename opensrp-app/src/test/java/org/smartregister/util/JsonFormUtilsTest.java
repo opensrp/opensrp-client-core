@@ -6,6 +6,8 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
@@ -13,16 +15,18 @@ import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -34,16 +38,24 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
+import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.KEY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.PERSON_ATTRIBUTE;
+import static org.smartregister.util.JsonFormUtils.PERSON_INDENTIFIER;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
 import static org.smartregister.util.JsonFormUtils.SAVE_OBS_AS_ARRAY;
+import static org.smartregister.util.JsonFormUtils.VALUE;
 import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
 public class JsonFormUtilsTest {
+
+    @Captor
+    ArgumentCaptor<Obs> obsArgumentCaptor;
 
     private String formresultJson =
             "{\"count\":\"1\",\"mother\":{\"encounter_type\":\"New Woman Registration\"},\"entity_id\":\"\"," +
@@ -204,8 +216,9 @@ public class JsonFormUtilsTest {
             "    \"label_text_style\": \"bold\"\n" +
             "  },\n" +
             "   {\n" +
-            "    \"openmrs_entity\": \"other_entity\",\n" +
-            "    \"openmrs_entity_id\": \"other_entity_id\",\n" +
+            "    \"openmrs_entity\": \"person\",\n" +
+            "    \"openmrs_entity_id\": \"first_name\",\n" +
+            "    \"entity_id\": \"entity_id\",\n" +
             "    \"options\": [\n" +
             "      {\n" +
             "        \"openmrs_entity\": \"entity\",\n" +
@@ -248,11 +261,11 @@ public class JsonFormUtilsTest {
             "      \"err\": \"Please specify your education level\",\n" +
             "      \"value\": true\n" +
             "    },\n" +
-            "    \"value\":\"Secondary\",\n" +
+            "    \"value\":\"primary\",\n" +
             "    \"openmrs_entity_parent\": \"\",\n" +
             "    \"label\": \"Highest level of school\",\n" +
             "    \"type\": \"native_radio\",\n" +
-            "    \"key\": \"educ_level\",\n" +
+            "    \"key\": \"educ_level_2\",\n" +
             "    \"label_text_style\": \"bold\"\n" +
             "  }\n" +
             "]";
@@ -484,6 +497,98 @@ public class JsonFormUtilsTest {
             "\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"person_address\",\"openmrs_entity_id\":\"address2\"," +
             "\"type\":\"edit_text\",\"hint\":\"Home address\",\"edit_type\":\"name\",\"value\":\"Nairobi\"}]";
 
+
+    private final String SINGLE_STEP_WITH_SECTIONS = "{\n" +
+            "  \"count\": \"1\",\n" +
+            "  \"encounter_type\": \"encounter_type\",\n" +
+            "  \"entity_id\": \"\",\n" +
+            "  \"metadata\": {\n" +
+            "    \"start\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"start\",\n" +
+            "      \"openmrs_entity_id\": \"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"end\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"end\",\n" +
+            "      \"openmrs_entity_id\": \"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"today\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"encounter\",\n" +
+            "      \"openmrs_entity_id\": \"encounter_date\"\n" +
+            "    },\n" +
+            "    \"deviceid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"deviceid\",\n" +
+            "      \"openmrs_entity_id\": \"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"subscriberid\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"subscriberid\",\n" +
+            "      \"openmrs_entity_id\": \"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"simserial\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"simserial\",\n" +
+            "      \"openmrs_entity_id\": \"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"phonenumber\": {\n" +
+            "      \"openmrs_entity_parent\": \"\",\n" +
+            "      \"openmrs_entity\": \"concept\",\n" +
+            "      \"openmrs_data_type\": \"phonenumber\",\n" +
+            "      \"openmrs_entity_id\": \"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+            "    },\n" +
+            "    \"encounter_location\": \"\"\n" +
+            "  },\n" +
+            "  \"step1\": {\n" +
+            "    \"title\": \"Step 1\",\n" +
+            "    \"next\": \"step2\",\n" +
+            "    \"display_back_button\": \"true\",\n" +
+            "    \"sections\": [\n" +
+            "      {\n" +
+            "        \"fields\": [\n" +
+            "          {\n" +
+            "            \"key\": \"gps\",\n" +
+            "            \"type\": \"gps\",\n" +
+            "            \"openmrs_entity_parent\": \"\",\n" +
+            "            \"openmrs_entity\": \"\",\n" +
+            "            \"openmrs_entity_id\": \"\",\n" +
+            "            \"value\": \"gps\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"lbl_scan_respiratory_specimen_barcode\",\n" +
+            "            \"type\": \"label\",\n" +
+            "            \"text\": \"Scan respiratory specimen barcode\",\n" +
+            "            \"text_color\": \"#000000\",\n" +
+            "            \"top_margin\": \"15dp\",\n" +
+            "            \"has_bg\": true,\n" +
+            "            \"has_drawable_end\": true,\n" +
+            "            \"bg_color\": \"#ffffff\",\n" +
+            "            \"value\": \"scan_respiratory_specimen_barcode\"\n" +
+            "          },\n" +
+            "          {\n" +
+            "            \"key\": \"lbl_affix_respiratory_specimen_label\",\n" +
+            "            \"type\": \"label\",\n" +
+            "            \"text\": \"Manually affix label\",\n" +
+            "            \"top_margin\": \"30dp\",\n" +
+            "            \"text_color\": \"#000000\",\n" +
+            "            \"has_bg\": true,\n" +
+            "            \"has_drawable_end\": true,\n" +
+            "            \"bg_color\": \"#ffffff\",\n" +
+            "            \"value\": \"affix_respiratory_specimen_label\"\n" +
+            "          }\n" +
+            "        ]\n" +
+            "      }\n" +
+            "    ]\n" +
+            "  }\n" +
+            "}";
+
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
@@ -576,6 +681,52 @@ public class JsonFormUtilsTest {
         org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
+    }
+
+    @Test
+    public void addObservationAddsCombinedObservationFormSubmissionFieldForCheckboxesToEvent() throws Exception {
+        String observationJsonObjectString =
+                "      {\n" +
+                        "        \"key\": \"testMicrosResult\",\n" +
+                        "        \"openmrs_entity_parent\": \"\",\n" +
+                        "        \"openmrs_entity\": \"\",\n" +
+                        "        \"openmrs_entity_id\": \"\",\n" +
+                        "        \"type\": \"check_box\",\n" +
+                        "        \"label\": \"Microscopy Result\",\n" +
+                        "        \"value\": \"true\",\n" +
+                        "        \"options\": [\n" +
+                        "          {\n" +
+                        "            \"key\": \"Negative\",\n" +
+                        "            \"text\": \"Negative\",\n" +
+                        "            \"value\": \"false\"\n" +
+                        "          },\n" +
+                        "          {\n" +
+                        "            \"key\": \"PositiveFalciparum\",\n" +
+                        "            \"text\": \"Positive - Falciparum\",\n" +
+                        "            \"value\": \"false\"\n" +
+                        "          },\n" +
+                        "          {\n" +
+                        "            \"key\": \"PositiveVivax\",\n" +
+                        "            \"text\": \"Positive - Vivax\",\n" +
+                        "            \"value\": \"true\"\n" +
+                        "          },\n" +
+                        "          {\n" +
+                        "            \"key\": \"Fg\",\n" +
+                        "            \"text\": \"Fg\",\n" +
+                        "            \"value\": \"true\"\n" +
+                        "          }\n" +
+                        "        ]\n" +
+                        "      }";
+        JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
+        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        JsonFormUtils.addObservation(event, observationJsonObject);
+        Mockito.verify(event, Mockito.atLeastOnce()).addObs(obsArgumentCaptor.capture());
+        List<Object> values = obsArgumentCaptor.getValue().getValues();
+        assertEquals(2, values.size());
+        assertTrue(values.contains("Fg"));
+        assertTrue(values.contains("Positive - Vivax"));
+        assertFalse(values.contains("Positive - Falciparum"));
+
     }
 
     @Test
@@ -1252,5 +1403,72 @@ public class JsonFormUtilsTest {
 
         formattedDate = JsonFormUtils.formatDate("2970-12-02 01:12:34", false);
         assertEquals(yyyyMMddHHmmss.parse("2970-12-02 01:12:34").toString(), formattedDate.toString());
+    }
+
+    @Test
+    public void testGetFieldValueFromJsonObjShouldGetCorrectValue() {
+        assertEquals("Secondary", JsonFormUtils.getFieldValue(multiStepForm, "educ_level"));
+        assertEquals( "primary" , JsonFormUtils.getFieldValue(multiStepForm, "educ_level_2"));
+    }
+
+    @Test
+    public void testSectionFieldsShouldGetCorrectSectionMap() throws JSONException {
+        Map<String, String> sectionsMap = JsonFormUtils.sectionFields(new JSONObject(SINGLE_STEP_WITH_SECTIONS));
+        assertEquals("gps", sectionsMap.get("gps"));
+        assertNotNull("scan_respiratory_specimen_barcode", sectionsMap.get("lbl_scan_respiratory_specimen_barcode"));
+        assertNotNull("affix_respiratory_specimen_label", sectionsMap.get("lbl_affix_respiratory_specimen_label"));
+    }
+
+    @Test
+    public void testFillSubFormIdentifiersShouldAddCorrectIdentifiers() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ENTITY_ID, "entity_id");
+        jsonObject.put(VALUE, "value");
+        jsonObject.put(OPENMRS_ENTITY, PERSON_INDENTIFIER);
+        jsonObject.put(OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        Map<String, String> pids = new HashMap<>();
+        JsonFormUtils.fillSubFormIdentifiers(pids, jsonObject, "entity_id");
+        assertEquals(1, pids.size());
+        assertEquals("value", pids.get(OPENMRS_ENTITY_ID));
+    }
+
+    @Test
+    public void testFillSubFormAttributesShouldFillCorrectAttributes() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ENTITY_ID, "entity_id");
+        jsonObject.put(VALUE, "value");
+        jsonObject.put(OPENMRS_ENTITY, PERSON_ATTRIBUTE);
+        jsonObject.put(OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        Map<String, Object> patientAttributes = new HashMap<>();
+        JsonFormUtils.fillSubFormAttributes(patientAttributes, jsonObject, "entity_id");
+        assertEquals(1, patientAttributes.size());
+        assertEquals("value", patientAttributes.get(OPENMRS_ENTITY_ID));
+    }
+
+    @Test
+    public void testGetSubFormFieldValueShouldGetCorrectValue() throws JSONException {
+        JSONArray jsonArray = new JSONArray(STEP_1_FIELDS);
+        String value = JsonFormUtils.getSubFormFieldValue(jsonArray, FormEntityConstants.Person.first_name, "entity_id");
+        assertEquals("primary", value);
+    }
+
+    @Test
+    public void testCreateObservationShouldCreateCorrectObservation() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(KEY, "key");
+        Event event = new Event();
+        List values = new ArrayList<>();
+        values.add("value1");
+        values.add("value2");
+        Whitebox.invokeMethod(JsonFormUtils.class, "createObservation", event, jsonObject, values);
+        List<Obs> obsList = event.getObs();
+        assertEquals(1, obsList.size());
+        Obs obs = obsList.get(0);
+        assertEquals("formsubmissionField", obs.getFieldType());
+        assertEquals("text", obs.getFieldDataType());
+        assertEquals("key", obs.getFormSubmissionField());
+        assertEquals("key", obs.getFieldCode());
+        assertFalse(obs.isSaveObsAsArray());
+        assertEquals(values, obs.getValues());
     }
 }

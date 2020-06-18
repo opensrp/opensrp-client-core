@@ -77,6 +77,13 @@ public class ClientFormRepository extends BaseRepository {
         getWritableDatabase().replace(getClientFormTableName(), null, contentValues);
     }
 
+    public void setIsNew(boolean isNew, int formId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ID, formId);
+        contentValues.put(IS_NEW, isNew);
+        getWritableDatabase().update(getClientFormTableName(),contentValues, ID + " = ?", new String[]{String.valueOf(formId)});
+    }
+
     protected ClientForm readCursor(Cursor cursor) {
         ClientForm clientForm = new ClientForm();
         clientForm.setId(cursor.getInt(cursor.getColumnIndex(ID)));
@@ -126,6 +133,27 @@ public class ClientFormRepository extends BaseRepository {
     public ClientForm getActiveClientFormByIdentifier(String identifier) {
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
                 " WHERE " + IDENTIFIER + " =? AND " + ACTIVE + " = 1", new String[]{identifier})) {
+            if (cursor.moveToFirst()) {
+                return readCursor(cursor);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return null;
+
+    }
+
+
+    /**
+     * Get the latest ClientForms for the passed identifier. The latest ClientForm might not be
+     * active if unstable
+     *
+     * @param identifier of a the client form
+     * @return active ClientForm for the passed identifier
+     */
+    public ClientForm getLatestFormByIdentifier(String identifier) {
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
+                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC LIMIT 1", new String[]{identifier})) {
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
             }
