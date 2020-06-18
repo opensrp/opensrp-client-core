@@ -38,11 +38,10 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.COUNT;
 import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
-import static org.smartregister.AllConstants.LocationConstants.LOCATION;
 import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
 import static org.smartregister.AllConstants.LocationConstants.SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS;
-import static org.smartregister.AllConstants.LocationConstants.TEAM;
 import static org.smartregister.AllConstants.LocationConstants.UUID;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 import static org.smartregister.AllConstants.PerformanceMonitoring.ACTION;
@@ -261,7 +260,7 @@ public class LocationServiceHelper {
             locationSyncTrace.putAttribute(TYPE, STRUCTURE);
             locationSyncTrace.putAttribute(COUNT, String.valueOf(locations.size()));
             locationSyncTrace.start();
-            Response<String> response = httpAgent.postWithJsonResponse(
+            Response<String> response = getHttpAgent().postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
                             CREATE_STRUCTURE_URL),
