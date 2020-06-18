@@ -475,4 +475,15 @@ public class AllConstants {
         String TOTAL_RECORDS = "total_records";
         String SYNC_PROGRESS_DATA = "sync_progress_data";
     }
+    public interface LocationConstants {
+        String SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS = "SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS";
+        String LOCATIONS = "locations";
+        String LOCATION = "location";
+        String TEAM = "team";
+        String DISPLAY = "display";
+        String UUID = "uuid";
+        String PARENT_ID = "parent_id";
+        String LOCATION_NAME = "location_name";
+    }
+
 }
