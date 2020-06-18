@@ -281,6 +281,8 @@ public class LocationServiceHelper {
                     if (!unprocessedIds.contains(location.getId()))
                         locationRepository.markLocationsAsSynced(location.getId());
                 }
+            }
+        }
     }
     public void fetchOpenMrsLocationsByTeamIds() throws NoHttpResponseException, JSONException {
         HTTPAgent httpAgent = getHttpAgent();
