@@ -112,18 +112,10 @@ public class LocationRepositoryTest extends BaseUnitTest {
         verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
         assertEquals(2, stringArgumentCaptor.getAllValues().size());
 
-        Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
-        assertEquals(LOCATION_TABLE, iterator.next());
-        assertNull(iterator.next());
-
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
         assertEquals(6, contentValues.size());
 
-        assertEquals("3734", contentValues.getAsString("_id"));
-        assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
-        assertEquals("21", contentValues.getAsString("parent_id"));
         assertEquals(TYPE_Unsynced, contentValues.getAsString("sync_status"));
-
 
     }
 
