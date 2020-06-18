@@ -31,9 +31,11 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
+import static org.smartregister.repository.BaseRepository.TYPE_Unsynced;
 import static org.smartregister.repository.LocationRepository.LOCATION_TABLE;
 
 /**
@@ -89,15 +91,42 @@ public class LocationRepositoryTest extends BaseUnitTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(5, contentValues.size());
+        assertEquals(6, contentValues.size());
 
         assertEquals("3734", contentValues.getAsString("_id"));
         assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
         assertEquals("21", contentValues.getAsString("parent_id"));
         assertEquals(locationJson, stripTimezone(contentValues.getAsString("geojson")));
+        assertTrue(contentValues.containsKey("sync_status"));
 
 
     }
+
+    @Test
+    public void testAddOrUpdateWithSyncStatus() {
+
+        Location location = gson.fromJson(locationJson, Location.class);
+        location.setSyncStatus(TYPE_Unsynced);
+        locationRepository.addOrUpdate(location);
+
+        verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
+        assertEquals(2, stringArgumentCaptor.getAllValues().size());
+
+        Iterator<String> iterator = stringArgumentCaptor.getAllValues().iterator();
+        assertEquals(LOCATION_TABLE, iterator.next());
+        assertNull(iterator.next());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+        assertEquals(6, contentValues.size());
+
+        assertEquals("3734", contentValues.getAsString("_id"));
+        assertEquals("41587456-b7c8-4c4e-b433-23a786f742fc", contentValues.getAsString("uuid"));
+        assertEquals("21", contentValues.getAsString("parent_id"));
+        assertEquals(TYPE_Unsynced, contentValues.getAsString("sync_status"));
+
+
+    }
+
 
     @Test(expected = IllegalArgumentException.class)
     public void testAddOrUpdateShouldThrowException() {
