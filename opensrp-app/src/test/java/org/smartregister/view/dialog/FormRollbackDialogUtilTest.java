@@ -6,6 +6,7 @@ import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -22,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 22-05-2020.
  */
-public class FormRollbackDialogUtilTest extends BaseUnitTest {
+public class FormRollbackDialogUtilTest extends BaseRobolectricUnitTest {
 
     @Test
     public void selectFormShouldReturnFalseWhenCurrentCorruptedFormIsChosen() {
