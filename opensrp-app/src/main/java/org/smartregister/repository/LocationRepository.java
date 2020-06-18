@@ -229,5 +229,4 @@ public class LocationRepository extends BaseRepository {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
     }
-
 }

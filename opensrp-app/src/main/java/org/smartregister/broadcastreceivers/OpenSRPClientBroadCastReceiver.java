@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import org.smartregister.AllConstants;
+import org.smartregister.R;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.activity.SecuredActivity;
 
@@ -50,7 +51,7 @@ public class OpenSRPClientBroadCastReceiver extends BroadcastReceiver {
 //                    ((SecuredActivity) activity).showToast("Replication completed.");
                     break;
                 case AllConstants.CloudantSync.ACTION_REPLICATION_ERROR:
-                    ((SecuredActivity) activity).showToast("Replication error occurred");
+                    ((SecuredActivity) activity).showToast(context.getString(R.string.replication_error_occurred));
                     break;
                 default:
                     // Do nothing
