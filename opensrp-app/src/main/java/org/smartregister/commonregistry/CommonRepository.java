@@ -781,11 +781,13 @@ public class CommonRepository extends DrishtiRepository {
             int afftectedRows = database
                     .delete(ftsSearchTable, CommonFtsObject.idColumn + " = " + "?",
                             new String[]{caseId});
+
+            database.setTransactionSuccessful();
+            database.endTransaction();
+
             if (afftectedRows > 0) {
                 return true;
             }
-            database.setTransactionSuccessful();
-            database.endTransaction();
         } catch (Exception e) {
             Timber.e(e, "Update Search Error");
             database.endTransaction();
