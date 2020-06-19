@@ -79,14 +79,6 @@ public class LocationServiceHelper {
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
         List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction);
-        int batchFetchCount = Utils.isEmptyCollection(locationStructures) ? 0 : locationStructures.size();
-
-        while( locationStructures != null &&  batchFetchCount > 0) {
-            List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction);
-            locationStructures.addAll(batchLocationStructures);
-            batchFetchCount = Utils.isEmptyCollection(batchLocationStructures) ? 0 : batchLocationStructures.size();
-        }
-
         return locationStructures;
     }
 
@@ -121,6 +113,10 @@ public class LocationServiceHelper {
                 String maxServerVersion = getMaxServerVersion(locations);
                 String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
+
+                // retry fetch since there were items synced from the server
+                List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction);
+                locations.addAll(batchLocationStructures);
             }
             return locations;
 

@@ -59,14 +59,10 @@ public class PlanIntentServiceHelper {
     }
 
     public void syncPlans() {
-        int batchFetchCount = batchFetchPlansFromServer();
-
-        while(batchFetchCount > 0) {
-            batchFetchCount = batchFetchPlansFromServer();
-        }
+        batchFetchPlansFromServer();
     }
 
-    private int batchFetchPlansFromServer() {
+    private void batchFetchPlansFromServer() {
         int batchFetchCount = 0;
         try {
             long serverVersion = 0;
@@ -94,14 +90,16 @@ public class PlanIntentServiceHelper {
             }
             // update most recent server version
             if (!Utils.isEmptyCollection(plans)) {
-                batchFetchCount = plans.size();
                 allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
+
+                // retry fetch since there were items synced from the server
+                batchFetchPlansFromServer();
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
 
-        return batchFetchCount;
+        return ;
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {

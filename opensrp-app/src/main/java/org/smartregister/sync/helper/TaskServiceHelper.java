@@ -97,13 +97,6 @@ public class TaskServiceHelper {
         List<String> groups = getLocationIds();
 
         List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups);
-        int batchFetchCount = Utils.isEmptyCollection(tasks) ? 0 : tasks.size();
-
-        while( tasks != null &&  batchFetchCount > 0) {
-            List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups);
-            tasks.addAll(batchFetchTasks);
-            batchFetchCount = Utils.isEmptyCollection(batchFetchTasks) ? 0 : batchFetchTasks.size();
-        }
 
         return tasks;
     }
@@ -134,6 +127,9 @@ public class TaskServiceHelper {
             }
             if (!Utils.isEmptyCollection(tasks)) {
                 allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
+                // retry fetch since there were items synced from the server
+                List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions, groups);
+                tasks.addAll(batchFetchTasks);
             }
             return tasks;
         } catch (Exception e) {
