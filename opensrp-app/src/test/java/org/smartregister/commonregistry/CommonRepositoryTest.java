@@ -2,16 +2,19 @@ package org.smartregister.commonregistry;
 
 import android.content.ContentValues;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
@@ -21,6 +24,7 @@ import org.smartregister.repository.Repository;
 import org.smartregister.service.AlertService;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -552,6 +556,55 @@ public class CommonRepositoryTest extends BaseUnitTest {
         query = "SELECT object_id, phrase FROM common_search WHERE  object_id = ?";
         Mockito.when(sqliteDatabase.rawQuery(query, new String[]{"caseID"})).thenReturn(cursor2);
         Assert.assertEquals(commonRepository.populateSearchValues("caseID", CommonFtsObject.phraseColumn, "hello_world", new String[]{"hello"}), true);
+    }
+
+    @Test
+    public void deleteSearchRecordShouldReturnTrueAndCommitTransaction() {
+        String tablename = "ec_client";
+        String[] tableColumns = new String[]{};
+        commonRepository = new CommonRepository(tablename, tableColumns);
+        repository = Mockito.mock(Repository.class);
+        sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        commonRepository.updateMasterRepository(repository);
+
+        ArgumentCaptor<String[]> caseIdCaptor = ArgumentCaptor.forClass(String[].class);
+        Mockito.doReturn(2).when(sqliteDatabase).delete(Mockito.eq("ec_client_search"), Mockito.eq("object_id = ?"), caseIdCaptor.capture());
+
+        String caseId = "my-case-id";
+        Assert.assertTrue(commonRepository.deleteSearchRecord(caseId));
+        Assert.assertEquals(caseId, caseIdCaptor.getValue()[0]);
+
+        Mockito.verify(sqliteDatabase).beginTransaction();
+        Mockito.verify(sqliteDatabase).setTransactionSuccessful();
+        Mockito.verify(sqliteDatabase).endTransaction();
+    }
+
+    @Test
+    public void deleteSearchRecordShouldReturnFalseAndEndTransactionWhenExceptionOccurs() {
+        String tablename = "ec_client";
+        String[] tableColumns = new String[]{};
+        commonRepository = new CommonRepository(tablename, tableColumns);
+        repository = Mockito.mock(Repository.class);
+        sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        commonRepository.updateMasterRepository(repository);
+
+        ArgumentCaptor<String[]> caseIdCaptor = ArgumentCaptor.forClass(String[].class);
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                throw new Exception("An error occurred");
+            }
+        }).when(sqliteDatabase).delete(Mockito.eq("ec_client_search"), Mockito.eq("object_id = ?"), caseIdCaptor.capture());
+
+        String caseId = "my-case-id";
+        Assert.assertFalse(commonRepository.deleteSearchRecord(caseId));
+        Assert.assertEquals(caseId, caseIdCaptor.getValue()[0]);
+
+        Mockito.verify(sqliteDatabase).beginTransaction();
+        Mockito.verify(sqliteDatabase, Mockito.times(0)).setTransactionSuccessful();
+        Mockito.verify(sqliteDatabase).endTransaction();
     }
 
 }
