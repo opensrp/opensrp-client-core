@@ -43,7 +43,6 @@ public class TaskServiceHelper {
     public static final String UPDATE_STATUS_URL = "/rest/task/update_status";
     public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
-    protected static final int TASK_PULL_LIMIT = 1000; //this is set on the server
 
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
@@ -100,7 +99,7 @@ public class TaskServiceHelper {
         List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups);
         int batchFetchCount = tasks.size();
 
-        while( tasks != null &&  batchFetchCount >= TASK_PULL_LIMIT) {
+        while( tasks != null &&  batchFetchCount > 0) {
             List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups);
             tasks.addAll(batchFetchTasks);
             batchFetchCount = batchFetchTasks.size();

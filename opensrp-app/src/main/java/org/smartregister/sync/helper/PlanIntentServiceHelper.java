@@ -43,7 +43,6 @@ public class PlanIntentServiceHelper {
 
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
-    protected static final int PLAN_PULL_LIMIT = 1000; //this is set on the server
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -62,7 +61,7 @@ public class PlanIntentServiceHelper {
     public void syncPlans() {
         int batchFetchCount = batchFetchPlansFromServer();
 
-        while(batchFetchCount >= PLAN_PULL_LIMIT) {
+        while(batchFetchCount > 0) {
             batchFetchCount = batchFetchPlansFromServer();
         }
     }
