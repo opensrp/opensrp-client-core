@@ -29,6 +29,7 @@ import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -78,11 +79,11 @@ public class LocationServiceHelper {
     }
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
-        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction);
+        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction, new ArrayList<>());
         return locationStructures;
     }
 
-    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction) {
+    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction, List<Location> batchLocationStructures) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
@@ -115,8 +116,9 @@ public class LocationServiceHelper {
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
 
                 // retry fetch since there were items synced from the server
-                List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction);
                 locations.addAll(batchLocationStructures);
+                return  batchSyncLocationsStructures(isJurisdiction, locations);
+
             }
             return locations;
 

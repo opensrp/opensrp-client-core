@@ -63,7 +63,6 @@ public class PlanIntentServiceHelper {
     }
 
     private void batchFetchPlansFromServer() {
-        int batchFetchCount = 0;
         try {
             long serverVersion = 0;
             try {
@@ -99,7 +98,6 @@ public class PlanIntentServiceHelper {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
 
-        return ;
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {

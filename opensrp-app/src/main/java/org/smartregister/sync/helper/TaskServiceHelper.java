@@ -26,6 +26,7 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -96,12 +97,12 @@ public class TaskServiceHelper {
         Set<String> planDefinitions = getPlanDefinitionIds();
         List<String> groups = getLocationIds();
 
-        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups);
+        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups, new ArrayList<>());
 
         return tasks;
     }
 
-    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups) {
+    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups, List<Task> batchFetchedTasks) {
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -128,8 +129,8 @@ public class TaskServiceHelper {
             if (!Utils.isEmptyCollection(tasks)) {
                 allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
                 // retry fetch since there were items synced from the server
-                List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions, groups);
-                tasks.addAll(batchFetchTasks);
+                tasks.addAll(batchFetchedTasks);
+                return batchFetchTasksFromServer(planDefinitions, groups, tasks);
             }
             return tasks;
         } catch (Exception e) {
