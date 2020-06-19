@@ -172,6 +172,7 @@ public class LocationServiceHelper {
         syncLocationsStructures(true);
         List<Location> locations = syncLocationsStructures(false);
         syncCreatedStructureToServer();
+        syncUpdatedLocationsToServer();
         return locations;
     }
 
@@ -261,6 +262,37 @@ public class LocationServiceHelper {
         }
     }
 
+    public void syncUpdatedLocationsToServer() {
+        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        List<Location> locations = locationRepository.getAllUnsynchedLocation();
+        if (!locations.isEmpty()) {
+            String jsonPayload = locationGson.toJson(locations);
+            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+
+            String isJurisdictionParam = "?is_jurisdiction=true";
+            Response<String> response = httpAgent.postWithJsonResponse(
+                    MessageFormat.format("{0}{1}{2}",
+                            baseUrl,
+                            CREATE_STRUCTURE_URL,
+                            isJurisdictionParam),
+                    jsonPayload);
+            if (response.isFailure()) {
+                Timber.e("Failed to create new locations on server: %s", response.payload());
+                return;
+            }
+
+            Set<String> unprocessedIds = new HashSet<>();
+            if (StringUtils.isNotBlank(response.payload())) {
+                if (response.payload().startsWith(LOCATIONS_NOT_PROCESSED)) {
+                    unprocessedIds.addAll(Arrays.asList(response.payload().substring(LOCATIONS_NOT_PROCESSED.length()).split(",")));
+                }
+                for (Location location : locations) {
+                    if (!unprocessedIds.contains(location.getId()))
+                        locationRepository.markLocationsAsSynced(location.getId());
+                }
+            }
+        }
+    }
     public void fetchOpenMrsLocationsByTeamIds() throws NoHttpResponseException, JSONException {
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
