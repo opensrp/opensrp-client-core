@@ -97,12 +97,12 @@ public class TaskServiceHelper {
         List<String> groups = getLocationIds();
 
         List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups);
-        int batchFetchCount = tasks.size();
+        int batchFetchCount = Utils.isEmptyCollection(tasks) ? 0 : tasks.size();
 
         while( tasks != null &&  batchFetchCount > 0) {
             List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups);
             tasks.addAll(batchFetchTasks);
-            batchFetchCount = batchFetchTasks.size();
+            batchFetchCount = Utils.isEmptyCollection(batchFetchTasks) ? 0 : batchFetchTasks.size();
         }
 
         return tasks;

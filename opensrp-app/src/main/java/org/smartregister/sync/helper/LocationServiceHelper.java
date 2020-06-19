@@ -69,12 +69,12 @@ public class LocationServiceHelper {
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
         List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction);
-        int batchFetchCount = locationStructures.size();
+        int batchFetchCount = Utils.isEmptyCollection(locationStructures) ? 0 : locationStructures.size();
 
         while( locationStructures != null &&  batchFetchCount > 0) {
             List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction);
             locationStructures.addAll(batchLocationStructures);
-            batchFetchCount = batchLocationStructures.size();
+            batchFetchCount = Utils.isEmptyCollection(batchLocationStructures) ? 0 : batchLocationStructures.size();
         }
 
         return locationStructures;
