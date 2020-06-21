@@ -120,12 +120,10 @@ public class LocationServiceHelper {
                 return  batchSyncLocationsStructures(isJurisdiction, locations);
 
             }
-            return locations;
-
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
-        return null;
+        return batchLocationStructures;
     }
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue) throws Exception {

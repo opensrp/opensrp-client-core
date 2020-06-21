@@ -132,11 +132,10 @@ public class TaskServiceHelper {
                 tasks.addAll(batchFetchedTasks);
                 return batchFetchTasksFromServer(planDefinitions, groups, tasks);
             }
-            return tasks;
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
         }
-        return null;
+        return batchFetchedTasks;
     }
 
     private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion) throws Exception {
