@@ -31,6 +31,7 @@ public class LocationRepository extends BaseRepository {
     protected static final String PARENT_ID = "parent_id";
     protected static final String NAME = "name";
     protected static final String GEOJSON = "geojson";
+    protected static final String SYNC_STATUS = "sync_status";
 
     protected static final String LOCATION_TABLE = "location";
 
@@ -42,6 +43,7 @@ public class LocationRepository extends BaseRepository {
                     UUID + " VARCHAR , " +
                     PARENT_ID + " VARCHAR , " +
                     NAME + " VARCHAR , " +
+                    SYNC_STATUS + " VARCHAR DEFAULT " + BaseRepository.TYPE_Synced + ", " +
                     GEOJSON + " VARCHAR NOT NULL ) ";
 
     private static final String CREATE_LOCATION_NAME_INDEX = "CREATE INDEX "
@@ -65,6 +67,7 @@ public class LocationRepository extends BaseRepository {
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(NAME, location.getProperties().getName());
         contentValues.put(GEOJSON, gson.toJson(location));
+        contentValues.put(SYNC_STATUS, location.getSyncStatus() );
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
 
     }
@@ -229,4 +232,35 @@ public class LocationRepository extends BaseRepository {
         String geoJson = cursor.getString(cursor.getColumnIndex(GEOJSON));
         return gson.fromJson(geoJson, Location.class);
     }
+
+    public List<Location> getAllUnsynchedLocation() {
+        Cursor cursor = null;
+        List<Location> locations = new ArrayList<>();
+        try {
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =?", LOCATION_TABLE, SYNC_STATUS), new String[]{BaseRepository.TYPE_Unsynced});
+            while (cursor.moveToNext()) {
+                locations.add(readCursor(cursor));
+            }
+            cursor.close();
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+        return locations;
+    }
+
+    public void markLocationsAsSynced(String locationId) {
+        try {
+            ContentValues values = new ContentValues();
+            values.put(ID, locationId);
+            values.put(SYNC_STATUS, BaseRepository.TYPE_Synced);
+
+            getWritableDatabase().update(LOCATION_TABLE, values, ID + " = ?", new String[]{locationId});
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
