@@ -103,12 +103,10 @@ public class LocationServiceHelper {
         try {
             List<String> parentIds = locationRepository.getAllLocationIds();
 
-            locationSyncTrace.putAttribute(TEAM, team);
-            locationSyncTrace.putAttribute(ACTION, FETCH);
             if (isJurisdiction) {
-                locationSyncTrace.putAttribute(TYPE, LOCATION);
+                startTrace(FETCH, LOCATION, 0);
             } else {
-                locationSyncTrace.putAttribute(TYPE, STRUCTURE);
+                startTrace(FETCH, STRUCTURE, 0);
             }
             locationSyncTrace.start();
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
@@ -256,11 +254,7 @@ public class LocationServiceHelper {
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            locationSyncTrace.putAttribute(TEAM, team);
-            locationSyncTrace.putAttribute(ACTION, PUSH);
-            locationSyncTrace.putAttribute(TYPE, STRUCTURE);
-            locationSyncTrace.putAttribute(COUNT, String.valueOf(locations.size()));
-            locationSyncTrace.start();
+            startTrace(PUSH, STRUCTURE, locations.size());
             Response<String> response = getHttpAgent().postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -282,6 +276,15 @@ public class LocationServiceHelper {
                 }
             }
         }
+    }
+
+    private void startTrace(String action, String type, int count) {
+        locationSyncTrace.getAttributes().clear();
+        locationSyncTrace.putAttribute(TEAM, team);
+        locationSyncTrace.putAttribute(ACTION, action);
+        locationSyncTrace.putAttribute(TYPE, type);
+        locationSyncTrace.putAttribute(COUNT, String.valueOf(count));
+        locationSyncTrace.start();
     }
 
     public void syncUpdatedLocationsToServer() {
