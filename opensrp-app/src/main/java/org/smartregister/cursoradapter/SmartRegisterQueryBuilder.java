@@ -45,8 +45,11 @@ public class SmartRegisterQueryBuilder {
         Selectquery = Selectquery + " ON " + tablename + ".id = alerts.caseID";
         if (condition != null) {
             Selectquery = Selectquery + " WHERE " + condition + " AND";
+            Selectquery = Selectquery + " alerts.scheduleName = '" + AlertName + "' ";
+        } else {
+            Selectquery = Selectquery + " WHERE " + "alerts.scheduleName = '" + AlertName + "' ";
         }
-        Selectquery = Selectquery + " WHERE " + "alerts.scheduleName = '" + AlertName + "' ";
+
         Selectquery = Selectquery + "ORDER BY CASE WHEN alerts.status = 'urgent' THEN '1'\n"
                 + "WHEN alerts.status = 'upcoming' THEN '2'\n" + "WHEN alerts.status = 'normal' "
                 + "THEN '3'\n" + "WHEN alerts.status = 'expired' THEN '4'\n" + "WHEN alerts.status "
