@@ -45,6 +45,10 @@ public class LocationProperty {
 
     private transient Map<String, String> customProperties = new HashMap<>();
 
+    private String username;
+
+    private Date updatedAt;
+
     public String getUid() {
         return uid;
     }
@@ -131,5 +135,21 @@ public class LocationProperty {
 
     public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }
