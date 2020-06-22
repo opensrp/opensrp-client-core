@@ -85,13 +85,7 @@ public class PlanIntentServiceHelper {
 
             String organizationIds = allSharedPreferences.getPreference(AllConstants.ORGANIZATION_IDS);
 
-            String providerId = allSharedPreferences.fetchRegisteredANM();
-            String team = allSharedPreferences.fetchDefaultTeam(providerId);
-
-            planSyncTrace.putAttribute(TEAM, team);
-            planSyncTrace.putAttribute(ACTION, FETCH);
-
-            planSyncTrace.start();
+            startPlanTrace(FETCH);
             String plansResponse = fetchPlans(Arrays.asList(organizationIds.split(",")), serverVersion);
 
             List<PlanDefinition> plans = gson.fromJson(plansResponse, new TypeToken<List<PlanDefinition>>() {
@@ -113,6 +107,14 @@ public class PlanIntentServiceHelper {
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
+    }
+
+    private void startPlanTrace(String action) {
+        String providerId = allSharedPreferences.fetchRegisteredANM();
+        String team = allSharedPreferences.fetchDefaultTeam(providerId);
+        planSyncTrace.putAttribute(TEAM, team);
+        planSyncTrace.putAttribute(ACTION, action);
+        planSyncTrace.start();
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion) throws Exception {
