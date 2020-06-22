@@ -148,9 +148,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 complete(FetchStatus.fetchedFailed);
             }
 
-            eventSyncTrace.putAttribute(TEAM, team);
-            eventSyncTrace.putAttribute(ACTION, FETCH);
-            eventSyncTrace.start();
+            startEventTrace(FETCH, 0);
 
             String url = baseUrl + SYNC_URL;
             Response resp;
@@ -278,10 +276,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 Timber.e(e);
             }
             String jsonPayload = request.toString();
-            eventSyncTrace.putAttribute(TEAM, team);
-            eventSyncTrace.putAttribute(ACTION, PUSH);
-            eventSyncTrace.putAttribute(COUNT, String.valueOf(eventsUploadedCount));
-            eventSyncTrace.start();
+            startEventTrace(PUSH, eventsUploadedCount);
             Response<String> response = httpAgent.post(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -298,6 +293,14 @@ public class SyncIntentService extends BaseSyncIntentService {
         }
 
         return isSuccessfulPushSync;
+    }
+
+    private void startEventTrace(String action, int count) {
+        eventSyncTrace.getAttributes().clear();
+        eventSyncTrace.putAttribute(TEAM, team);
+        eventSyncTrace.putAttribute(ACTION, action);
+        eventSyncTrace.putAttribute(COUNT, String.valueOf(count));
+        eventSyncTrace.start();
     }
 
     private void sendSyncStatusBroadcastMessage(FetchStatus fetchStatus) {
