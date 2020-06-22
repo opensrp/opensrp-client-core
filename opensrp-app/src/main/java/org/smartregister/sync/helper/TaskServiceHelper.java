@@ -121,10 +121,7 @@ public class TaskServiceHelper {
         try {
             long maxServerVersion = 0L;
 
-            taskSyncTrace.putAttribute(TEAM, team);
-            taskSyncTrace.putAttribute(ACTION, FETCH);
-
-            taskSyncTrace.start();
+            startTaskTrace(FETCH, 0);
             String tasksResponse = fetchTasks(planDefinitions, groups, serverVersion);
             List<Task> tasks = taskGson.fromJson(tasksResponse, new TypeToken<List<Task>>() {
             }.getType());
@@ -248,10 +245,7 @@ public class TaskServiceHelper {
         HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         List<Task> tasks = taskRepository.getAllUnsynchedCreatedTasks();
         if (!tasks.isEmpty()) {
-            taskSyncTrace.putAttribute(TEAM, team);
-            taskSyncTrace.putAttribute(ACTION, PUSH);
-            taskSyncTrace.putAttribute(COUNT, String.valueOf(tasks));
-            taskSyncTrace.start();
+            startTaskTrace(PUSH, tasks.size());
             String jsonPayload = taskGson.toJson(tasks);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
             Response<String> response = httpAgent.postWithJsonResponse(
@@ -276,6 +270,14 @@ public class TaskServiceHelper {
             }
 
         }
+    }
+
+    private void startTaskTrace(String action, int count) {
+        taskSyncTrace.getAttributes().clear();
+        taskSyncTrace.putAttribute(TEAM, team);
+        taskSyncTrace.putAttribute(ACTION, action);
+        taskSyncTrace.putAttribute(COUNT, String.valueOf(count));
+        taskSyncTrace.start();
     }
 }
 

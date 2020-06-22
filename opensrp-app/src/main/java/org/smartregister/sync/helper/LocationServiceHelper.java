@@ -104,9 +104,9 @@ public class LocationServiceHelper {
             List<String> parentIds = locationRepository.getAllLocationIds();
 
             if (isJurisdiction) {
-                startTrace(FETCH, LOCATION, 0);
+                startLocationTrace(FETCH, LOCATION, 0);
             } else {
-                startTrace(FETCH, STRUCTURE, 0);
+                startLocationTrace(FETCH, STRUCTURE, 0);
             }
             locationSyncTrace.start();
             String featureResponse = fetchLocationsOrStructures(isJurisdiction, serverVersion, TextUtils.join(",", parentIds));
@@ -254,7 +254,7 @@ public class LocationServiceHelper {
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
-            startTrace(PUSH, STRUCTURE, locations.size());
+            startLocationTrace(PUSH, STRUCTURE, locations.size());
             Response<String> response = getHttpAgent().postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -278,7 +278,7 @@ public class LocationServiceHelper {
         }
     }
 
-    private void startTrace(String action, String type, int count) {
+    private void startLocationTrace(String action, String type, int count) {
         locationSyncTrace.getAttributes().clear();
         locationSyncTrace.putAttribute(TEAM, team);
         locationSyncTrace.putAttribute(ACTION, action);
