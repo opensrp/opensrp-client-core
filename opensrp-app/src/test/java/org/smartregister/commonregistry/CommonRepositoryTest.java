@@ -5,8 +5,10 @@ import android.content.ContentValues;
 import org.junit.Assert;
 
 import net.sqlcipher.MatrixCursor;
+import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -58,12 +60,28 @@ public class CommonRepositoryTest extends BaseUnitTest {
     @Mock
     private SQLiteDatabase sqliteDatabase;
 
+    private String tablename;
+    private String[] tableColumns;
+
 //    @Before
 //    public void setUp() {
 //
 //        initMocks(this);
 //        assertNotNull(commonRepository);
 //    }
+
+
+    @Before
+    public void setUp() throws Exception {
+
+        tablename = "ec_client";
+        tableColumns = new String[]{};
+        commonRepository = new CommonRepository(tablename, tableColumns);
+        repository = Mockito.mock(Repository.class);
+        sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
+        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        commonRepository.updateMasterRepository(repository);
+    }
 
     @Test
     public void instantiatesSuccessfullyOnConstructorCall() throws Exception {
@@ -582,14 +600,6 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
     @Test
     public void deleteSearchRecordShouldReturnFalseAndEndTransactionWhenExceptionOccurs() {
-        String tablename = "ec_client";
-        String[] tableColumns = new String[]{};
-        commonRepository = new CommonRepository(tablename, tableColumns);
-        repository = Mockito.mock(Repository.class);
-        sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
-        Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
-        commonRepository.updateMasterRepository(repository);
-
         ArgumentCaptor<String[]> caseIdCaptor = ArgumentCaptor.forClass(String[].class);
         Mockito.doAnswer(new Answer() {
             @Override
@@ -605,6 +615,54 @@ public class CommonRepositoryTest extends BaseUnitTest {
         Mockito.verify(sqliteDatabase).beginTransaction();
         Mockito.verify(sqliteDatabase, Mockito.times(0)).setTransactionSuccessful();
         Mockito.verify(sqliteDatabase).endTransaction();
+    }
+
+    @Test
+    public void searchBatchInsertsShouldReturnFalse() {
+        HashMap<String, ContentValues> searchMap = new HashMap<>();
+        ContentValues contentValues = new ContentValues();
+        searchMap.put("sample-case-id", contentValues);
+
+        Mockito.doThrow(new SQLException("Some exception")).when(sqliteDatabase).insert(Mockito.eq(tablename + "_search"), Mockito.nullable(String.class), Mockito.eq(contentValues));
+
+        Assert.assertFalse(commonRepository.searchBatchInserts(searchMap));
+        Mockito.verify(sqliteDatabase).endTransaction();
+        Mockito.verify(sqliteDatabase, Mockito.times(0)).setTransactionSuccessful();
+    }
+
+    @Test
+    public void searchBatchInsertsShouldReturnTrueAndCallSqliteDbInsert() {
+        HashMap<String, ContentValues> searchMap = new HashMap<>();
+        ContentValues contentValues = new ContentValues();
+        searchMap.put("sample-case-id", contentValues);
+
+        Assert.assertTrue(commonRepository.searchBatchInserts(searchMap));
+        Mockito.verify(sqliteDatabase).insert(Mockito.eq(tablename + "_search"), Mockito.nullable(String.class), Mockito.eq(contentValues));
+        Mockito.verify(sqliteDatabase).endTransaction();
+        Mockito.verify(sqliteDatabase).setTransactionSuccessful();
+    }
+
+    @Test
+    public void searchBatchInsertsShouldReturnTrueAndCallSqliteDbUpdate() {
+        commonRepository = Mockito.spy(commonRepository);
+        HashMap<String, ContentValues> searchMap = new HashMap<>();
+        ContentValues contentValues = new ContentValues();
+        String caseId = "sample-case-id";
+        searchMap.put(caseId, contentValues);
+
+        ArrayList<HashMap<String, String>> mapList = new ArrayList<>();
+        mapList.add(new HashMap<>());
+
+        Mockito.doReturn(mapList).when(commonRepository).rawQuery(Mockito.eq("SELECT object_id FROM " + tablename + "_search WHERE object_id = ?"), Mockito.any(String[].class));
+
+        ArgumentCaptor<String[]> caseIdArgumentCaptor = ArgumentCaptor.forClass(String[].class);
+
+        Assert.assertTrue(commonRepository.searchBatchInserts(searchMap));
+        Mockito.verify(sqliteDatabase).update(Mockito.eq(tablename + "_search"), Mockito.eq(contentValues), Mockito.eq("object_id = ?"), caseIdArgumentCaptor.capture());
+        Assert.assertEquals(caseId, caseIdArgumentCaptor.getValue()[0]);
+
+        Mockito.verify(sqliteDatabase).endTransaction();
+        Mockito.verify(sqliteDatabase).setTransactionSuccessful();
     }
 
 }
