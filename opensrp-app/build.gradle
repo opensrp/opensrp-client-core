@@ -222,7 +222,7 @@ dependencies {
         exclude group: 'com.github.johnkil.print', module: 'print'
     }
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
+    //implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
 }
 
 dependencies {
@@ -235,13 +235,13 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.9.5'
     testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
-    testImplementation('org.robolectric:robolectric:3.8') {
+    testImplementation('org.robolectric:robolectric:4.2') {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'
-        exclude group: 'com.thoughtworks.xstream', module: 'xstream'
+        //exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
-    testImplementation('org.robolectric:shadows-multidex:3.8') {
+    testImplementation('org.robolectric:shadows-multidex:4.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
@@ -251,7 +251,7 @@ dependencies {
 
     testImplementation "org.robolectric:shadows-support-v4:3.3.2"
     // PowerMock
-    def powerMockVersion = '1.7.1'
+    def powerMockVersion = '2.0.4'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
