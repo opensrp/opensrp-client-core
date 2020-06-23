@@ -749,7 +749,7 @@ public class CommonRepository extends DrishtiRepository {
                 ContentValues searchValues = searchMap.get(caseId);
                 ArrayList<HashMap<String, String>> mapList = rawQuery(
                         "SELECT " + CommonFtsObject.idColumn + " FROM " + ftsSearchTable
-                                + " WHERE  " + CommonFtsObject.idColumn + " = ?", new String[]{caseId});
+                                + " WHERE " + CommonFtsObject.idColumn + " = ?", new String[]{caseId});
                 if (!mapList.isEmpty()) {
                     int updated = database.update(ftsSearchTable, searchValues,
                             CommonFtsObject.idColumn + " = " + "" + "?", new String[]{caseId});
