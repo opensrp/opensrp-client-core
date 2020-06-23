@@ -32,8 +32,8 @@ subprojects {
 
     group = 'org.smartregister'
 
-    ext.androidToolsBuildGradle     = '3.1.4'
-    ext.androidBuildToolsVersion    = '28.0.3'
+    ext.androidToolsBuildGradle     = '4.0.0'
+    ext.androidBuildToolsVersion    = '29.0.3'
     ext.androidMinSdkVersion        = 18
     ext.androidCompileSdkVersion    = 28
     ext.androidTargetSdkVersion     = 28
