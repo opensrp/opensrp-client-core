@@ -8,13 +8,20 @@ import android.widget.LinearLayout;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.commonregistry.CommonPersonObject;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.commonregistry.CommonRepository;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,6 +50,15 @@ public class RecyclerViewPaginatedAdapterTest extends BaseUnitTest {
 
     @Mock
     private RecyclerView.ViewHolder mockViewHolder;
+
+    @Captor
+    private ArgumentCaptor<Cursor> cursorArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<CommonPersonObjectClient> personObjectClientArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<RecyclerView.ViewHolder> viewHolderArgumentCaptor;
 
     private RecyclerViewPaginatedAdapter adapter;
 
@@ -79,6 +95,40 @@ public class RecyclerViewPaginatedAdapterTest extends BaseUnitTest {
                 RecyclerViewCursorAdapter.Type.FOOTER.ordinal());
         assertNotNull(actualViewHolder);
         verify(listItemProvider).createFooterHolder(any());
+    }
+
+    @Test
+    public void testOnBindViewFootHolder() {
+        adapter.setTotalcount(20);
+        when(listItemProvider.isFooterViewHolder(mockViewHolder)).thenReturn(true);
+        adapter.onBindViewHolder(mockViewHolder, mCursor);
+        verify(listItemProvider).getFooterView(mockViewHolder, 1, 1, false, false);
+
+    }
+
+    @Test
+    public void testOnBindViewHolder() {
+        String name = "John";
+        Map<String, String> details = new HashMap<>();
+        details.put("FWHOHFNAME", name);
+        Map<String, String> columnmaps = new HashMap<>();
+        String idColumn = "baseEntityId";
+        columnmaps.put("id", idColumn);
+        String caseId = "case 1";
+        String relationId = "identifier 123";
+        String type = "bindtype";
+        CommonPersonObject personInList = new CommonPersonObject(caseId, relationId, details,type);
+        personInList.setColumnmaps(columnmaps);
+        when(commonRepository.readAllcommonforCursorAdapter(mCursor)).thenReturn(personInList);
+
+        adapter.onBindViewHolder(mockViewHolder, mCursor);
+        verify(listItemProvider).getView(cursorArgumentCaptor.capture(), personObjectClientArgumentCaptor.capture(), viewHolderArgumentCaptor.capture());
+        assertEquals(mockViewHolder, viewHolderArgumentCaptor.getValue());
+        assertEquals(mCursor, cursorArgumentCaptor.getValue());
+        assertEquals(name, personObjectClientArgumentCaptor.getValue().getName());
+        assertEquals(caseId, personObjectClientArgumentCaptor.getValue().getCaseId());
+        assertEquals(idColumn, personObjectClientArgumentCaptor.getValue().getColumnmaps().get("id"));
+
     }
 
 }
