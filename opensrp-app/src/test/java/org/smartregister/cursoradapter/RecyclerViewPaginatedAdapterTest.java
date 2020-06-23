@@ -131,4 +131,42 @@ public class RecyclerViewPaginatedAdapterTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testGetCurrentPageCountWithNoOffset() throws Exception {
+        int currentPageCount = Whitebox.invokeMethod(adapter, "getCurrentPageCount");
+        assertEquals(1, currentPageCount);
+    }
+
+    @Test
+    public void testGetCurrentPageCountWithLimitGreaterThanOffset() throws Exception {
+        adapter.setCurrentoffset(10);
+        adapter.setCurrentlimit(20);
+        int currentPageCount = Whitebox.invokeMethod(adapter, "getCurrentPageCount");
+        assertEquals(1, currentPageCount);
+    }
+
+    @Test
+    public void testGetCurrentPageCountWithOffsetEqualLimit() throws Exception {
+        adapter.setCurrentoffset(10);
+        adapter.setCurrentlimit(10);
+        int currentPageCount = Whitebox.invokeMethod(adapter, "getCurrentPageCount");
+        assertEquals(2, currentPageCount);
+    }
+
+    @Test
+    public void testGetTotalPageCountWhenTotalCountEqualsCurrentLimit() throws Exception {
+        adapter.setTotalcount(10);
+        adapter.setCurrentlimit(10);
+        int totalPageCount = Whitebox.invokeMethod(adapter, "getTotalPageCount");
+        assertEquals(1, totalPageCount);
+    }
+
+    @Test
+    public void testGetTotalPageCountWhenTotalCountNotEqualToCurrentLimit() throws Exception {
+        adapter.setTotalcount(30);
+        adapter.setCurrentlimit(10);
+        int totalPageCount = Whitebox.invokeMethod(adapter, "getTotalPageCount");
+        assertEquals(3, totalPageCount);
+    }
+
 }
