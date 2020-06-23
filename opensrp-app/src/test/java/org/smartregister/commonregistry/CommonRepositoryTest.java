@@ -28,6 +28,7 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -80,6 +81,7 @@ public class CommonRepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class);
         sqliteDatabase = Mockito.mock(SQLiteDatabase.class);
         Mockito.when(repository.getWritableDatabase()).thenReturn(sqliteDatabase);
+        Mockito.when(repository.getReadableDatabase()).thenReturn(sqliteDatabase);
         commonRepository.updateMasterRepository(repository);
     }
 
@@ -663,6 +665,40 @@ public class CommonRepositoryTest extends BaseUnitTest {
 
         Mockito.verify(sqliteDatabase).endTransaction();
         Mockito.verify(sqliteDatabase).setTransactionSuccessful();
+    }
+
+
+    @Test
+    public void findSearchIdsShouldReturnListOfIds() {
+        String query = "SELECT object_id FROM ec_client_search";
+
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"object_id"});
+        matrixCursor.addRow(new Object[]{"id-1"});
+        matrixCursor.addRow(new Object[]{"id-2"});
+        matrixCursor.addRow(new Object[]{"id-3"});
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq(query), Mockito.nullable(String[].class));
+        List<String> ids  = commonRepository.findSearchIds(query);
+        Assert.assertEquals(3, ids.size());
+        Assert.assertEquals("id-3", ids.get(2));
+
+        Assert.assertTrue(matrixCursor.isClosed());
+    }
+
+
+    @Test
+    public void countSearchIdsShouldReturnListOfIds() {
+        String query = "SELECT count(object_id) FROM ec_client_search";
+        int count = 23;
+
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"count(object_id)"});
+        matrixCursor.addRow(new Object[]{count});
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq(query), Mockito.nullable(String[].class));
+       int resultCount  = commonRepository.countSearchIds(query);
+        Assert.assertEquals(count, resultCount);
+
+        Assert.assertTrue(matrixCursor.isClosed());
     }
 
 }
