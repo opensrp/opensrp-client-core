@@ -9,6 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
+import android.widget.EditText;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +25,6 @@ import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.util.SyncUtils;
-import org.smartregister.view.activity.mock.BarcodeScanActivityMock;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
@@ -70,7 +71,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(RuntimeEnvironment.application.getPackageManager()).when(spyActivity).getPackageManager();
         Mockito.doReturn(actionBar).when(spyActivity).getSupportActionBar();
         baseLoginActivity = controller.get();
-        
+
 
         ReflectionHelpers.callInstanceMethod(Activity.class, baseLoginActivity, "performCreate", from(Bundle.class, null));
 
@@ -103,6 +104,24 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
         Assert.assertTrue(baseLoginActivity.onEditorAction(null, EditorInfo.IME_ACTION_DONE, null));
         Mockito.verify(baseLoginActivity.mLoginPresenter).attemptLogin(Mockito.anyString(), Mockito.anyString());
+    }
+
+    @Test
+    public void enableLoginButtonShouldMakeLoginBtnClickable() {
+        boolean isClickable = false;
+        baseLoginActivity.enableLoginButton(isClickable);
+        Button btn = ReflectionHelpers.getField(baseLoginActivity, "loginButton");
+        Assert.assertFalse(btn.isClickable());
+    }
+
+    @Test
+    public void setUsernameErrorShouldCallSetErrorAndShowErrorDialog() {
+        baseLoginActivity.setUsernameError(R.string.error_invalid_username);
+
+        EditText usernameEt = ReflectionHelpers.getField(baseLoginActivity, "userNameEditText");
+
+        Assert.assertEquals(RuntimeEnvironment.application.getString(R.string.error_invalid_username), usernameEt.getError());
+        Mockito.verify(baseLoginActivity).showErrorDialog(Mockito.eq(RuntimeEnvironment.application.getString(R.string.unauthorized)));
     }
 
 
