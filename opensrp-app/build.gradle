@@ -221,6 +221,8 @@ dependencies {
         exclude group: 'io.ona.rdt-capture', module: 'lib'
         exclude group: 'com.github.johnkil.print', module: 'print'
     }
+
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
 }
 
 dependencies {
