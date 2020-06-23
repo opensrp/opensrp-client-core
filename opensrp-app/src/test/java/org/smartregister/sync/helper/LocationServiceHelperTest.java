@@ -158,8 +158,10 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         ArrayList locations = new ArrayList();
         locations.add(expectedLocation);
 
-        Mockito.doReturn(new Response<>(ResponseStatus.success,
-                LocationServiceHelper.locationGson.toJson(locations)))
+        Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
+                LocationServiceHelper.locationGson.toJson(locations)),
+                new Response<>(ResponseStatus.success,             //returned on second call
+                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
         locationServiceHelper.syncLocationsStructures(true);
 
