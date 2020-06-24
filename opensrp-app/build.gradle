@@ -135,7 +135,7 @@ tasks.withType(Test) {
         // to see the exceptions of failed tests in Travis-CI console.
         exceptionFormat = 'full'
     }
-    forkEvery = 40
+    //forkEvery = 40
     maxHeapSize = "2g"
 }
 
@@ -298,7 +298,6 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
-    sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
 apply from: '../maven.gradle'
