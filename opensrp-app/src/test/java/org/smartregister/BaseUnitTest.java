@@ -18,7 +18,7 @@ import java.util.Collection;
  */
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = TestApplication.class, shadows = {FontTextViewShadow.class}, sdk = Build.VERSION_CODES.O_MR1)
+@Config(application = TestApplication.class, shadows = {FontTextViewShadow.class}, sdk = Build.VERSION_CODES.P)
 @PowerMockIgnore({"org.mockito.*",
         "org.robolectric.*",
         "android.*",

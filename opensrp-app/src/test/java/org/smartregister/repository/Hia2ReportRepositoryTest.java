@@ -8,13 +8,10 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -29,8 +26,6 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class})
 public class Hia2ReportRepositoryTest extends BaseUnitTest {
     private String baseEntityId = "baseEntityId";
     private String syncStatus = "syncStatus";

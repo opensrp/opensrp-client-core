@@ -134,6 +134,8 @@ tasks.withType(Test) {
         // to see the exceptions of failed tests in Travis-CI console.
         exceptionFormat = 'full'
     }
+    forkEvery = 40
+    maxHeapSize = "2g"
 }
 
 def filesToCopy = copySpec {
@@ -220,6 +222,9 @@ dependencies {
         exclude group: 'io.ona.rdt-capture', module: 'lib'
         exclude group: 'com.github.johnkil.print', module: 'print'
     }
+
+    //implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
+
 }
 
 dependencies {
@@ -236,8 +241,10 @@ dependencies {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'
+        exclude group: 'androidx.test'
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
+
     testImplementation('org.robolectric:shadows-multidex:4.3.1') {
         exclude group: 'com.google.guava', module: 'guava'
     }
@@ -280,7 +287,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debugUnitTest/classes", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
@@ -292,6 +299,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
+    sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
 apply from: '../maven.gradle'

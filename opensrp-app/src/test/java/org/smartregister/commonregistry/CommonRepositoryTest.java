@@ -2,29 +2,20 @@ package org.smartregister.commonregistry;
 
 import android.content.ContentValues;
 
-import org.junit.Assert;
-
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.commonregistry.shared.FakeRepository;
 import org.smartregister.repository.Repository;
-import org.smartregister.service.AlertService;
-import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,43 +24,26 @@ import java.util.List;
 /**
  * Created by onaio on 29/08/2017.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class, CommonRepository.class})
+
 public class CommonRepositoryTest extends BaseUnitTest {
 
     public static final String ADDITIONALCOLUMN = "ADDITIONALCOLUMN";
     public static final String CUSTOMRELATIONALID = "CUSTOMRELATIONALID";
 
-    @InjectMocks
+
     private CommonRepository commonRepository;
 
-    @InjectMocks
+    @Mock
     private Repository repository;
-
-    @InjectMocks
-    private FakeRepository fakerepository;
 
     @Mock
     private CommonFtsObject commonFtsObject;
-
-    @Mock
-    private AlertService alertService;
-
-    @Mock
-    private Context context;
-
     @Mock
     private SQLiteDatabase sqliteDatabase;
 
     private String tablename;
-    private String[] tableColumns;
 
-//    @Before
-//    public void setUp() {
-//
-//        initMocks(this);
-//        assertNotNull(commonRepository);
-//    }
+    private String[] tableColumns;
 
 
     @Before

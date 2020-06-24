@@ -30,6 +30,7 @@ public class NativeHomeActivityMock extends NativeHomeActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.smart_registers_home);
     }
 
     @Override
