@@ -21,6 +21,6 @@ public class MyShadowAsyncTask<Params, Progress, Result> extends ShadowAsyncTask
 
     @Implementation
     public AsyncTask<Params, Progress, Result> executeOnExecutor(Executor executor, Params... params) {
-        return super.execute(params);
+        return null;//super.execute(params);
     }
 }
