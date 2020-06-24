@@ -2,25 +2,22 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
-
-import org.junit.Assert;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.powermock.reflect.Whitebox;
+import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -28,21 +25,20 @@ import org.smartregister.TestSyncConfiguration;
 import org.smartregister.commonregistry.CommonRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.sync.mock.MockEditor;
-import org.smartregister.util.AssetHandler;
-import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.Date;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by raihan on 11/6/17.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class, AssetHandler.class, CloudantDataHandler.class, PreferenceManager.class, CoreLibrary.class})
-@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*"})
+@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*", "org.powermock.*"})
 public class ClientProcessorTest extends BaseUnitTest {
 
     @Mock
@@ -62,6 +58,7 @@ public class ClientProcessorTest extends BaseUnitTest {
     private CloudantDataHandler cloudantDataHandler;
     @Mock
     private CommonRepository cr;
+
     @Mock
     private SharedPreferences sharedPreferences;
 
@@ -69,16 +66,21 @@ public class ClientProcessorTest extends BaseUnitTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         CoreLibrary.init(context, new TestSyncConfiguration());
-        Mockito.when(context.detailsRepository()).thenReturn(detailsRepository);
+        when(context.detailsRepository()).thenReturn(detailsRepository);
 
-        PowerMockito.when(coreLibrary.context()).thenReturn(context);
-        PowerMockito.when(context.commonrepository(Mockito.anyString())).thenReturn(cr);
-        PowerMockito.when(cr.executeInsertStatement(Mockito.any(ContentValues.class), Mockito.anyString())).thenReturn(1l);
+        when(coreLibrary.context()).thenReturn(context);
+        when(context.commonrepository(Mockito.anyString())).thenReturn(cr);
+        when(cr.executeInsertStatement(Mockito.any(ContentValues.class), Mockito.anyString())).thenReturn(1l);
+        context.updateApplicationContext(RuntimeEnvironment.application);
 
-        PowerMockito.mockStatic(AssetHandler.class);
-        PowerMockito.when(AssetHandler.readFileFromAssetsFolder("ec_client_classification.json", context.applicationContext())).thenReturn(ClientData.clientClassificationJson);
-        PowerMockito.when(AssetHandler.readFileFromAssetsFolder("ec_client_fields.json", context.applicationContext())).thenReturn(ClientData.ec_client_fields_json);
-        PowerMockito.when(AssetHandler.readFileFromAssetsFolder("ec_client_alerts.json", context.applicationContext())).thenReturn(ClientData.ec_client_alerts);
+        clientProcessor = spy(new ClientProcessor(context.applicationContext()));
+
+        doReturn(ClientData.clientClassificationJson).when(clientProcessor).getFileContents("ec_client_classification.json");
+        doReturn(ClientData.ec_client_fields_json).when(clientProcessor).getFileContents("ec_client_fields.json");
+        doReturn(ClientData.ec_client_alerts).when(clientProcessor).getFileContents("ec_client_alerts.json");
+
+        Whitebox.setInternalState(clientProcessor, "mCloudantDataHandler", cloudantDataHandler);
+        Whitebox.setInternalState(clientProcessor, "preferences", sharedPreferences);
     }
 
     @Test
@@ -94,14 +96,11 @@ public class ClientProcessorTest extends BaseUnitTest {
             clientList.add(clientArray.getJSONObject(i));
         }
 
-        PowerMockito.mockStatic(CloudantDataHandler.class);
-        PowerMockito.when(CloudantDataHandler.getInstance(context.applicationContext())).thenReturn(cloudantDataHandler);
+
         PowerMockito.when(cloudantDataHandler.getUpdatedEventsAndAlerts(Mockito.any(Date.class))).thenReturn(eventList);
         PowerMockito.when(cloudantDataHandler.getClientByBaseEntityId(Mockito.anyString())).thenReturn(clientList.get(0));
 
-        clientProcessor = new ClientProcessor(context.applicationContext());
-        PowerMockito.mockStatic(PreferenceManager.class);
-        PowerMockito.when(PreferenceManager.getDefaultSharedPreferences(context.applicationContext())).thenReturn(sharedPreferences);
+
         PowerMockito.when(sharedPreferences.getLong(Mockito.anyString(), Mockito.anyLong())).thenReturn(0l);
         SharedPreferences.Editor edit = Mockito.mock(SharedPreferences.Editor.class);
         PowerMockito.when(sharedPreferences.edit()).thenReturn(edit);
@@ -124,9 +123,7 @@ public class ClientProcessorTest extends BaseUnitTest {
         for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
-        PowerMockito.mockStatic(CloudantDataHandler.class);
-        PowerMockito.when(CloudantDataHandler.getInstance(context.applicationContext())).thenReturn(cloudantDataHandler);
-        clientProcessor = new ClientProcessor(context.applicationContext());
+
         JSONArray fieldArray = fieldObject.getJSONArray("bindobjects");
         Assert.assertEquals(clientProcessor.processField(fieldArray.getJSONObject(0), eventList.get(0), clientList.get(0)), Boolean.TRUE);
 //        for(int i=0;i<fieldArray.length();i++){
@@ -141,8 +138,6 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     @Test
     public void instantiatesSuccessfullyOnConstructorCall() throws Exception {
-        PowerMockito.mockStatic(CloudantDataHandler.class);
-        PowerMockito.when(CloudantDataHandler.getInstance(Mockito.any(android.content.Context.class))).thenReturn(cloudantDataHandler);
         Assert.assertNotNull(new ClientProcessor(context.applicationContext()));
         Assert.assertNotNull(ClientProcessor.getInstance(context.applicationContext()));
 
@@ -150,7 +145,7 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     @Test
     public void ProcessEventReturnsNotNull() throws Exception {
-        clientProcessor = new ClientProcessor(context.applicationContext());
+
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
         for (int i = 0; i < eventArray.length(); i++) {
@@ -167,7 +162,7 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     @Test
     public void getClientAddressAsMapReturnsNotNull() throws Exception {
-        clientProcessor = new ClientProcessor(context.applicationContext());
+
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
         for (int i = 0; i < eventArray.length(); i++) {
@@ -184,7 +179,7 @@ public class ClientProcessorTest extends BaseUnitTest {
 
     @Test
     public void updateClientDetailsTableCallsSaveClientDetails() throws Exception {
-        clientProcessor = new ClientProcessor(context.applicationContext());
+
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
         for (int i = 0; i < eventArray.length(); i++) {
@@ -195,14 +190,14 @@ public class ClientProcessorTest extends BaseUnitTest {
         for (int i = 0; i < clientArray.length(); i++) {
             clientList.add(clientArray.getJSONObject(i));
         }
-        ClientProcessor clientProcessorspy = Mockito.spy(clientProcessor);
+        ClientProcessor clientProcessorspy = spy(clientProcessor);
         clientProcessorspy.updateClientDetailsTable(eventList.get(0), clientList.get(0));
         Mockito.verify(clientProcessorspy, Mockito.atLeastOnce()).saveClientDetails(anyString(), ArgumentMatchers.<String, String>anyMap(), anyLong());
     }
 
     @Test
     public void processCaseModelReturnsNotNUll() throws Exception {
-        clientProcessor = new ClientProcessor(context.applicationContext());
+
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         final ArrayList<JSONObject> eventList = new ArrayList<JSONObject>();
         for (int i = 0; i < eventArray.length(); i++) {
