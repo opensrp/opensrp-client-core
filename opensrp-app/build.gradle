@@ -30,7 +30,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
 jacoco {
-    toolVersion = "0.8.0"
+    toolVersion = "0.8.5"
 }
 
 android {
@@ -290,14 +290,15 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(([debugTree]))
+    classDirectories.setFrom(files([debugTree]))
     executionData.setFrom(fileTree(dir: project.buildDir, includes: [
-            'testDebugUnitTest/jacoco.exec', 'outputs/code-coverage/connected/*coverage.ec'
+            'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ]))
 }
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
+    sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
 apply from: '../maven.gradle'
