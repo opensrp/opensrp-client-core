@@ -52,8 +52,6 @@ script:
   - ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
 
 after_success:
-  - find . -iname "*.exec"
-  - ls opensrp-app/build/reports/jacoco/jacocoRootReport/merged.xml
   - ./gradlew opensrp-app:coveralls --stacktrace
 
 
