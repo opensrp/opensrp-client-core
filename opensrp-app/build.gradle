@@ -135,7 +135,6 @@ tasks.withType(Test) {
         // to see the exceptions of failed tests in Travis-CI console.
         exceptionFormat = 'full'
     }
-    //forkEvery = 40
     maxHeapSize = "2g"
 }
 
@@ -260,6 +259,7 @@ dependencies {
     testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
+
 }
 
 task clearJar(type: Delete) {
@@ -286,13 +286,13 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debugUnitTest/classes", excludes: fileFilter)
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
     classDirectories.setFrom(([debugTree]))
     executionData.setFrom(fileTree(dir: project.buildDir, includes: [
-            'jacoco.exec', 'outputs/code-coverage/connected/*coverage.ec'
+            'testDebugUnitTest/jacoco.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ]))
 }
 
