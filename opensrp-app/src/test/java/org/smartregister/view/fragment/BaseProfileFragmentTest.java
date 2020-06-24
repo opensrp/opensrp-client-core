@@ -1,9 +1,9 @@
 package org.smartregister.view.fragment;
 
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.GestureDetectorCompat;
+import com.google.android.material.appbar.AppBarLayout;
+import androidx.fragment.app.Fragment;
+import androidx.core.view.GestureDetectorCompat;
 import android.view.MotionEvent;
 import android.view.View;
 

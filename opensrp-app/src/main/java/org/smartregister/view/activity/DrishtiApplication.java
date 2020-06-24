@@ -2,8 +2,8 @@ package org.smartregister.view.activity;
 
 import android.app.Application;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.multidex.MultiDex;
+import androidx.annotation.NonNull;
+import androidx.multidex.MultiDex;
 
 import net.sqlcipher.database.SQLiteDatabase;
 

@@ -1,9 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.support.annotation.Nullable;
-
-import com.google.gson.Gson;
+import androidx.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;

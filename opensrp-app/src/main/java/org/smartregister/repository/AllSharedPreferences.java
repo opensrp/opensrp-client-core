@@ -1,7 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.SharedPreferences;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 

@@ -2,7 +2,7 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
