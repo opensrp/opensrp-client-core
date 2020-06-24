@@ -8,9 +8,9 @@ buildscript {
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
-        classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
-        classpath 'io.fabric.tools:gradle:1.30.0'
+        classpath 'org.apache.commons:commons-lang3:3.9'
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3'
+        classpath 'io.fabric.tools:gradle:1.31.2'
     }
 }
 
@@ -283,11 +283,11 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
-    sourceDirectories = files([mainSrc])
-    classDirectories = files([debugTree])
-    executionData = fileTree(dir: project.buildDir, includes: [
+    sourceDirectories.setFrom(files([mainSrc]))
+    classDirectories.setFrom(files([debugTree]))
+    executionData.setFrom(fileTree(dir: project.buildDir, includes: [
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
-    ])
+    ]))
 }
 
 coveralls {
