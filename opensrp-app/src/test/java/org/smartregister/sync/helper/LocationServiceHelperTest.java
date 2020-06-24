@@ -1,10 +1,14 @@
 package org.smartregister.sync.helper;
 
+import com.google.gson.reflect.TypeToken;
+
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -18,15 +22,21 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.ArrayList;
 import java.util.Collections;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
+import static org.smartregister.sync.helper.LocationServiceHelper.LOCATION_LAST_SYNC_DATE;
 
 public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
 
@@ -49,6 +59,14 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Mock
     private SyncConfiguration syncConfiguration;
+
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<Location> locationArgumentCaptor;
+
+    private String locationJSon = "{\"id\": \"3537\", \"type\": \"Feature\", \"geometry\": {\"type\": \"MultiPolygon\", \"coordinates\": [[[[32.64555352892119, -14.15491759447286], [32.64526263744511, -14.154844278278059], [32.64536132720689, -14.154861856643318], [32.645458459831154, -14.154886337918807], [32.64555352892119, -14.15491759447286]]]]}, \"properties\": {\"name\": \"MTI_13\", \"status\": \"Active\", \"version\": 0, \"parentId\": \"2953\", \"geographicLevel\": 2}, \"serverVersion\": 1542965231622}";
 
     @Before
     public void setUp() {
@@ -127,5 +145,40 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         locationServiceHelper.fetchLocationsByLevelAndTags();
         Mockito.verify(locationRepository, Mockito.atLeastOnce()).addOrUpdate(Mockito.any(Location.class));
         Mockito.verify(locationTagRepository, Mockito.atLeastOnce()).addOrUpdate(Mockito.any(LocationTag.class));
+    }
+
+    @Test
+    public void testSyncLocations() {
+        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(OPERATIONAL_AREAS, "MTI_13");
+        when(locationRepository.getAllLocationIds()).thenReturn(Collections.singletonList("2953"));
+
+        Location expectedLocation = LocationServiceHelper.locationGson.fromJson(locationJSon, new TypeToken<Location>() {
+        }.getType());
+        expectedLocation.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        ArrayList locations = new ArrayList();
+        locations.add(expectedLocation);
+
+        Mockito.doReturn(new Response<>(ResponseStatus.success,
+                LocationServiceHelper.locationGson.toJson(locations)))
+                .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+        locationServiceHelper.syncLocationsStructures(true);
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/sync", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals("{\"is_jurisdiction\":true,\"location_names\":[\"MTI_13\"],\"serverVersion\":0}", requestString);
+
+        verify(locationRepository).addOrUpdate(locationArgumentCaptor.capture());
+        assertEquals(expectedLocation.getId(), locationArgumentCaptor.getValue().getId());
+        assertEquals(expectedLocation.getType(), locationArgumentCaptor.getValue().getType());
+        assertEquals(BaseRepository.TYPE_Synced, locationArgumentCaptor.getValue().getSyncStatus());
+        assertEquals(expectedLocation.getServerVersion(), locationArgumentCaptor.getValue().getServerVersion());
+        assertEquals(expectedLocation.getProperties().getName(), locationArgumentCaptor.getValue().getProperties().getName());
+        assertEquals(expectedLocation.getProperties().getParentId(), locationArgumentCaptor.getValue().getProperties().getParentId());
+        assertEquals(expectedLocation.getProperties().getUid(), locationArgumentCaptor.getValue().getProperties().getUid());
+
+        String actualLocationLastSyncDate = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(LOCATION_LAST_SYNC_DATE);
+        assertEquals(expectedLocation.getServerVersion().toString(), actualLocationLastSyncDate);
+
     }
 }
