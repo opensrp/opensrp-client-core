@@ -1,8 +1,8 @@
 package org.smartregister.clientandeventmodel.mock;
 
-import org.smartregister.clientandeventmodel.Address;
-import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Gender;
+import org.smartregister.domain.Address;
+import org.smartregister.domain.Client;
 
 import java.util.Date;
 import java.util.List;

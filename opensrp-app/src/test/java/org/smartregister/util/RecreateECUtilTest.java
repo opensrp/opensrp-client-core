@@ -19,8 +19,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.clientandeventmodel.Client;
-import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.domain.tag.FormTag;
 import org.smartregister.repository.EventClientRepository;
