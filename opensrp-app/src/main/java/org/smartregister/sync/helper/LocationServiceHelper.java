@@ -106,6 +106,7 @@ public class LocationServiceHelper {
                     else {
                         structureRepository.addOrUpdate(location);
                     }
+                    location.setGeometry(null);
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
