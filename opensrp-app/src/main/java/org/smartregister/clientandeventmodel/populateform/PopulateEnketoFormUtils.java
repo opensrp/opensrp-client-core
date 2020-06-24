@@ -14,7 +14,7 @@ import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
-import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.domain.Obs;
 import org.smartregister.domain.form.FieldOverrides;
 import org.smartregister.repository.EventClientRepository;
 import org.xml.sax.InputSource;

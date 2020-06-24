@@ -3,7 +3,7 @@ package org.smartregister.cloudant.models;
 import com.cloudant.sync.datastore.DocumentRevision;
 
 import org.smartregister.clientandeventmodel.DateUtil;
-import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.domain.Obs;
 import org.smartregister.clientandeventmodel.User;
 
 import java.text.ParseException;

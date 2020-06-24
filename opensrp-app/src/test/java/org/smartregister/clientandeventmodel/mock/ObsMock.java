@@ -1,6 +1,6 @@
 package org.smartregister.clientandeventmodel.mock;
 
-import org.smartregister.clientandeventmodel.Obs;
+import org.smartregister.domain.Obs;
 
 import java.util.List;
 
