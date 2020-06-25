@@ -17,6 +17,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Jurisdiction;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -115,7 +116,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
 
         PlanDefinition planDefinition = gson.fromJson(planDefinitionJSON, PlanDefinition.class);
         String jurisdictionId = UUID.randomUUID().toString();
-        planDefinition.setJurisdiction(Collections.singletonList(planDefinition.new Jurisdiction(jurisdictionId)));
+        planDefinition.setJurisdiction(Collections.singletonList(new Jurisdiction(jurisdictionId)));
         planDefinitionRepository.addOrUpdate(planDefinition);
         verify(sqLiteDatabase).replace(stringArgumentCaptor.capture(), stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture());
 
