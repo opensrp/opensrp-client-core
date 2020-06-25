@@ -2,9 +2,9 @@ package org.smartregister.cloudant.models;
 
 import com.cloudant.sync.datastore.DocumentRevision;
 
+import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.clientandeventmodel.User;
-import org.smartregister.domain.Address;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.Map;
 /**
  * Created by koros on 3/16/16.
  */
-public class Client extends org.smartregister.domain.Client {
+public class Client extends org.smartregister.clientandeventmodel.Client {
 
     public static final String type_key = "type";
     public static final String addresses_key = "addresses";
@@ -46,7 +46,7 @@ public class Client extends org.smartregister.domain.Client {
     public Client() {
     }
 
-    public Client(org.smartregister.domain.Client client) {
+    public Client(org.smartregister.clientandeventmodel.Client client) {
 
         setAddresses(client.getAddresses());
         setAttributes(client.getAttributes());

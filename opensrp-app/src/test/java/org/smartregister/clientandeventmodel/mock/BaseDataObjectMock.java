@@ -1,7 +1,7 @@
 package org.smartregister.clientandeventmodel.mock;
 
+import org.smartregister.clientandeventmodel.BaseDataObject;
 import org.smartregister.clientandeventmodel.User;
-import org.smartregister.domain.BaseDataObject;
 
 import java.util.Date;
 
