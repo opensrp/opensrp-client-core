@@ -7,10 +7,14 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
+        classpath ("com.android.tools.build:gradle:$androidToolsBuildGradle"){
+            transitive = true
+            exclude group: 'org.apache.httpcomponents', module: 'httpmime'
+        }
         classpath 'org.apache.commons:commons-lang3:3.3.2'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
         classpath 'io.fabric.tools:gradle:1.30.0'
+        classpath 'org.apache.httpcomponents:httpmime:4.3'
     }
 }
 
@@ -30,7 +34,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
 jacoco {
-    toolVersion = "0.8.0"
+    toolVersion = "0.8.5"
 }
 
 android {
@@ -135,6 +139,7 @@ tasks.withType(Test) {
         // to see the exceptions of failed tests in Travis-CI console.
         exceptionFormat = 'full'
     }
+    maxHeapSize = "2g"
 }
 
 def filesToCopy = copySpec {
@@ -222,7 +227,7 @@ dependencies {
         exclude group: 'com.github.johnkil.print', module: 'print'
     }
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
+    //implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
 }
 
 dependencies {
@@ -235,13 +240,14 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:1.9.5'
     testAnnotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
-    testImplementation('org.robolectric:robolectric:3.8') {
+    testImplementation('org.robolectric:robolectric:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
         exclude group: 'org.apache.maven', module: 'maven-model'
         exclude group: 'com.android.support'
+        exclude group: 'androidx.test'
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
-    testImplementation('org.robolectric:shadows-multidex:3.8') {
+    testImplementation('org.robolectric:shadows-multidex:4.0') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
@@ -251,12 +257,13 @@ dependencies {
 
     testImplementation "org.robolectric:shadows-support-v4:3.3.2"
     // PowerMock
-    def powerMockVersion = '1.7.1'
+    def powerMockVersion = '2.0.4'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
     testImplementation "org.powermock:powermock-api-mockito2:$powerMockVersion"
     testImplementation("org.powermock:powermock-classloading-xstream:$powerMockVersion")
+
 }
 
 task clearJar(type: Delete) {
@@ -283,11 +290,11 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/classes/debug", excludes: fileFilter)
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))
-    classDirectories.setFrom(([debugTree]))
+    classDirectories.setFrom(files([debugTree]))
     executionData.setFrom(fileTree(dir: project.buildDir, includes: [
             'jacoco/testDebugUnitTest.exec', 'outputs/code-coverage/connected/*coverage.ec'
     ]))
@@ -295,6 +302,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
 
 coveralls {
     jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/merged.xml"
+    sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
 apply from: '../maven.gradle'
