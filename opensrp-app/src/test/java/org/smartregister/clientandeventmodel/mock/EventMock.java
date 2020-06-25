@@ -1,7 +1,7 @@
 package org.smartregister.clientandeventmodel.mock;
 
 import org.smartregister.domain.Event;
-import org.smartregister.domain.Obs;
+import org.smartregister.clientandeventmodel.Obs;
 
 import java.util.Date;
 import java.util.HashMap;

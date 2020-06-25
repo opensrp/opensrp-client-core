@@ -16,7 +16,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.domain.Address;
-import org.smartregister.domain.Obs;
+import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;

@@ -13,7 +13,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
-import org.smartregister.domain.Obs;
+import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;
