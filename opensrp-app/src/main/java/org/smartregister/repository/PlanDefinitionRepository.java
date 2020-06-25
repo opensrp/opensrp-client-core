@@ -11,6 +11,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.smartregister.domain.Jurisdiction;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
@@ -61,19 +62,19 @@ public class PlanDefinitionRepository extends BaseRepository {
     }
 
     public void addOrUpdate(PlanDefinition planDefinition) {
-        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus()))
+        if (DRAFT.equalsIgnoreCase(planDefinition.getStatus().value()))
             return;
         try {
             getWritableDatabase().beginTransaction();
             ContentValues contentValues = new ContentValues();
             contentValues.put(ID, planDefinition.getIdentifier());
 
-            contentValues.put(STATUS, planDefinition.getStatus());
+            contentValues.put(STATUS, planDefinition.getStatus().value());
 
-            for (PlanDefinition.Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
+            for (Jurisdiction jurisdiction : planDefinition.getJurisdiction()) {
                 searchRepository.addOrUpdate(planDefinition, jurisdiction.getCode());
             }
-            planDefinition.setJurisdiction(new ArrayList<PlanDefinition.Jurisdiction>());
+            planDefinition.setJurisdiction(new ArrayList<>());
             contentValues.put(JSON, gson.toJson(planDefinition));
             getWritableDatabase().replace(PLAN_DEFINITION_TABLE, null, contentValues);
 
