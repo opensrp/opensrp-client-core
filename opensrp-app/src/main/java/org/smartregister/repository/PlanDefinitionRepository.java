@@ -24,6 +24,8 @@ import java.util.TreeSet;
 
 import timber.log.Timber;
 
+import static org.smartregister.domain.PlanDefinition.PlanStatus.ACTIVE;
+
 /**
  * Created by samuelgithengi on 5/7/19.
  */
@@ -38,7 +40,6 @@ public class PlanDefinitionRepository extends BaseRepository {
     protected static final String JSON = "json";
     protected static final String NAME = "name";
     private static final String STATUS = "status";
-    protected static final String ACTIVE = "active";
     protected static final String DRAFT = "draft";
 
     private static final String PLAN_DEFINITION_TABLE = "plan_definition";
@@ -129,7 +130,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         try {
             String query = String.format("SELECT %s  FROM %s WHERE %s =?",
                     JSON, PLAN_DEFINITION_TABLE, STATUS);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.value()});
             while (cursor.moveToNext()) {
                 planDefinitions.add(gson.fromJson(cursor.getString(0), PlanDefinition.class));
             }
@@ -147,7 +148,7 @@ public class PlanDefinitionRepository extends BaseRepository {
         Set<String> ids = new HashSet<>();
         try {
             String query = String.format("SELECT %s  FROM %s WHERE %s =?", ID, PLAN_DEFINITION_TABLE, STATUS);
-            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE});
+            cursor = getReadableDatabase().rawQuery(query, new String[]{ACTIVE.value()});
             while (cursor.moveToNext()) {
                 ids.add(cursor.getString(0));
             }
