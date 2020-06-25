@@ -15,12 +15,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.Location;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.User;
@@ -40,6 +38,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.smartregister.TestUtils.getContext;
 import static org.smartregister.util.Utils.getDefaultLocale;
@@ -60,7 +59,7 @@ public class UtilsTest extends BaseUnitTest {
         SimpleDateFormat DB_DF = new SimpleDateFormat("yyyy-MM-dd");
         Date date = DB_DF.parse("2017-10-20");
         org.junit.Assert.assertNotNull(Utils.toDate("2017-10-20", true));
-        org.junit.Assert.assertNull(Utils.toDate("20171020", true));
+        assertNull(Utils.toDate("20171020", true));
         assertEquals(date, Utils.toDate("2017-10-20", true));
     }
 
@@ -397,7 +396,7 @@ public class UtilsTest extends BaseUnitTest {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -age);
         assertEquals(cal.getWeekYear() + "-" + "01" + "-" + "01", Utils.getDob(age, datePattern));
-        assertEquals("01" + "-" + "01" + "-" +  cal.getWeekYear(), Utils.getDob(age));
+        assertEquals("01" + "-" + "01" + "-" + cal.getWeekYear(), Utils.getDob(age));
     }
 
     @Test
@@ -431,12 +430,12 @@ public class UtilsTest extends BaseUnitTest {
 
     @Test
     public void testGetAppIdShouldReturnAppId() {
-        assertEquals("org.smartregister", Utils.getAppId(RuntimeEnvironment.application));
+        assertEquals("org.smartregister.test", Utils.getAppId(RuntimeEnvironment.application));
     }
 
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
-        assertEquals(BuildConfig.VERSION_NAME, Utils.getAppVersion(RuntimeEnvironment.application));
+        assertNull(Utils.getAppVersion(RuntimeEnvironment.application));
     }
 }
 
