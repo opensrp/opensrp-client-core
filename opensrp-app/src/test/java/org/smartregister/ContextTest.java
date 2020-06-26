@@ -50,7 +50,6 @@ import org.smartregister.service.UserService;
 import org.smartregister.service.ZiggyFileLoader;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.service.formsubmissionhandler.FormSubmissionRouter;
-import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
 
