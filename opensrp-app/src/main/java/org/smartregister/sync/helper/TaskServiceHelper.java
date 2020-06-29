@@ -30,6 +30,7 @@ import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -47,7 +48,6 @@ public class TaskServiceHelper extends BaseHelper {
     public static final String UPDATE_STATUS_URL = "/rest/task/update_status";
     public static final String ADD_TASK_URL = "/rest/task/add";
     public static final String SYNC_TASK_URL = "/rest/task/sync";
-    protected static final int TASK_PULL_LIMIT = 1000; //this is set on the server
 
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 
@@ -58,6 +58,8 @@ public class TaskServiceHelper extends BaseHelper {
     private boolean syncByGroupIdentifier = true;
 
     private long totalRecords;
+
+    private SyncProgress syncProgress;
 
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
@@ -103,21 +105,11 @@ public class TaskServiceHelper extends BaseHelper {
         Set<String> planDefinitions = getPlanDefinitionIds();
         List<String> groups = getLocationIds();
 
-        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups, true);
-        int batchFetchCount = tasks.size();
-
-        SyncProgress syncProgress = new SyncProgress();
+        syncProgress = new SyncProgress();
         syncProgress.setSyncEntity(SyncEntity.TASKS);
         syncProgress.setTotalRecords(totalRecords);
 
-        while( tasks != null &&  batchFetchCount >= TASK_PULL_LIMIT) {
-            List<Task> batchFetchTasks = batchFetchTasksFromServer(planDefinitions,groups, false);
-            tasks.addAll(batchFetchTasks);
-            batchFetchCount = batchFetchTasks.size();
-
-            syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
-            sendSyncProgressBroadcast(syncProgress, context);
-        }
+        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups, new ArrayList<>(), true);
 
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
         sendSyncProgressBroadcast(syncProgress, context);
@@ -125,7 +117,7 @@ public class TaskServiceHelper extends BaseHelper {
         return tasks;
     }
 
-    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups, boolean returnCount) {
+    private List<Task> batchFetchTasksFromServer(Set<String> planDefinitions, List<String> groups, List<Task> batchFetchedTasks, boolean returnCount) {
         long serverVersion = 0;
         try {
             serverVersion = Long.parseLong(allSharedPreferences.getPreference(TASK_LAST_SYNC_DATE));
@@ -151,12 +143,16 @@ public class TaskServiceHelper extends BaseHelper {
             }
             if (!Utils.isEmptyCollection(tasks)) {
                 allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, String.valueOf(getTaskMaxServerVersion(tasks, maxServerVersion)));
+                // retry fetch since there were items synced from the server
+                tasks.addAll(batchFetchedTasks);
+                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
+                sendSyncProgressBroadcast(syncProgress, context);
+                return batchFetchTasksFromServer(planDefinitions, groups, tasks, false);
             }
-            return tasks;
         } catch (Exception e) {
             Timber.e(e, "Error fetching tasks from server");
         }
-        return null;
+        return batchFetchedTasks;
     }
 
     private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount) throws Exception {

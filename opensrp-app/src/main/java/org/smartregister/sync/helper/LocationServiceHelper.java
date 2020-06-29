@@ -31,6 +31,7 @@ import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -57,7 +58,6 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
 
-    protected static final int LOCATION_PULL_LIMIT = 1000; //this is set on the server
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
     protected static LocationServiceHelper instance;
@@ -67,6 +67,7 @@ public class LocationServiceHelper extends BaseHelper {
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
     private long totalRecords;
+    private  SyncProgress syncProgress;
 
     public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
@@ -83,10 +84,7 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
-        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction, true);
-        int batchFetchCount = locationStructures.size();
-
-        SyncProgress syncProgress = new SyncProgress();
+        syncProgress = new SyncProgress();
         if (isJurisdiction) {
             syncProgress.setSyncEntity(SyncEntity.LOCATIONS);
         } else {
@@ -94,21 +92,13 @@ public class LocationServiceHelper extends BaseHelper {
         }
         syncProgress.setTotalRecords(totalRecords);
 
-        while( locationStructures != null &&  batchFetchCount >= LOCATION_PULL_LIMIT) {
-            List<Location> batchLocationStructures = batchSyncLocationsStructures(isJurisdiction, false);
-            locationStructures.addAll(batchLocationStructures);
-            batchFetchCount = batchLocationStructures.size();
-
-            syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchLocationStructures.size()));
-            sendSyncProgressBroadcast(syncProgress, context);
-
-        }
+        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction, new ArrayList<>(), true);
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locationStructures.size()));
         sendSyncProgressBroadcast(syncProgress, context);
         return locationStructures;
     }
 
-    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction, boolean returnCount) {
+    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction, List<Location> batchLocationStructures, boolean returnCount) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
@@ -131,6 +121,7 @@ public class LocationServiceHelper extends BaseHelper {
                     else {
                         structureRepository.addOrUpdate(location);
                     }
+                    location.setGeometry(null);
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
@@ -139,13 +130,18 @@ public class LocationServiceHelper extends BaseHelper {
                 String maxServerVersion = getMaxServerVersion(locations);
                 String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
-            }
-            return locations;
 
+                // retry fetch since there were items synced from the server
+                locations.addAll(batchLocationStructures);
+                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
+                sendSyncProgressBroadcast(syncProgress, context);
+                return  batchSyncLocationsStructures(isJurisdiction, locations, false);
+
+            }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
-        return null;
+        return batchLocationStructures;
     }
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue, boolean returnCount) throws Exception {

@@ -45,8 +45,8 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
     public static final String SYNC_PLANS_URL = "/rest/plans/sync";
     public static final String PLAN_LAST_SYNC_DATE = "plan_last_sync_date";
-    protected static final int PLAN_PULL_LIMIT = 1000; //this is set on the server
     private long totalRecords;
+    private SyncProgress syncProgress;
 
     public static PlanIntentServiceHelper getInstance() {
         if (instance == null) {
@@ -63,17 +63,12 @@ public class PlanIntentServiceHelper extends BaseHelper {
     }
 
     public void syncPlans() {
-        int batchFetchCount = batchFetchPlansFromServer(true);
-
-        SyncProgress syncProgress = new SyncProgress();
+        syncProgress = new SyncProgress();
         syncProgress.setSyncEntity(SyncEntity.PLANS);
         syncProgress.setTotalRecords(totalRecords);
 
-        while(batchFetchCount >= PLAN_PULL_LIMIT) {
-            batchFetchCount = batchFetchPlansFromServer(false);
-            syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
-            sendSyncProgressBroadcast(syncProgress, context);
-        }
+        int batchFetchCount = batchFetchPlansFromServer(true);
+
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
         sendSyncProgressBroadcast(syncProgress, context);
     }
@@ -108,6 +103,12 @@ public class PlanIntentServiceHelper extends BaseHelper {
             if (!Utils.isEmptyCollection(plans)) {
                 batchFetchCount = plans.size();
                 allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, String.valueOf(getPlanDefinitionMaxServerVersion(plans, maxServerVersion)));
+
+                syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, batchFetchCount));
+                sendSyncProgressBroadcast(syncProgress, context);
+
+                // retry fetch since there were items synced from the server
+                batchFetchPlansFromServer(false);
             }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
