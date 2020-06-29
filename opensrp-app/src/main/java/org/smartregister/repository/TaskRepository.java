@@ -20,6 +20,7 @@ import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.domain.db.Client;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.pathevaluator.dao.TaskDao;
 import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
@@ -41,7 +42,7 @@ import static org.smartregister.domain.Task.TaskStatus;
 /**
  * Created by samuelgithengi on 11/23/18.
  */
-public class TaskRepository extends BaseRepository {
+public class TaskRepository extends BaseRepository implements TaskDao {
 
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
@@ -606,5 +607,16 @@ public class TaskRepository extends BaseRepository {
         }
 
         return unsyncedRecordsCount;
+    }
+
+    @Override
+    public List<com.ibm.fhir.model.resource.Task> findTasksForEntity(String id, String planIdentifier) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public void saveTask(Task task) {
+        //TODO implement method
     }
 }

@@ -11,6 +11,7 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import timber.log.Timber;
 /**
  * Created by samuelgithengi on 11/23/18.
  */
-public class LocationRepository extends BaseRepository {
+public class LocationRepository extends BaseRepository implements LocationDao {
 
     protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -263,4 +264,21 @@ public class LocationRepository extends BaseRepository {
         }
     }
 
+    @Override
+    public List<com.ibm.fhir.model.resource.Location> findJurisdictionsById(String id) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<com.ibm.fhir.model.resource.Location> findLocationsById(String id) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<com.ibm.fhir.model.resource.Location> findLocationByJurisdiction(String jurisdiction) {
+        //TODO implement method
+        return null;
+    }
 }
