@@ -1,8 +1,10 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import net.sqlcipher.Cursor;
@@ -14,6 +16,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
@@ -35,6 +38,8 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED;
+import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED_EVENT;
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 import static org.smartregister.domain.Task.TaskStatus;
@@ -617,6 +622,10 @@ public class TaskRepository extends BaseRepository implements TaskDao {
 
     @Override
     public void saveTask(Task task) {
-        //TODO implement method
+        addOrUpdate(task);
+        Intent intent = new Intent();
+        Intent refreshGeoWidgetIntent = new Intent(TASK_GENERATED_EVENT);
+        refreshGeoWidgetIntent.putExtra(TASK_GENERATED, task);
+        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
     }
 }
