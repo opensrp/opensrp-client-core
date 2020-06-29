@@ -227,7 +227,7 @@ dependencies {
         exclude group: 'com.github.johnkil.print', module: 'print'
     }
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.10-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.13-SNAPSHOT'
 }
 
 dependencies {
