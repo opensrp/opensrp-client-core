@@ -75,7 +75,7 @@ public class CoreLibrary {
 
         initP2pLibrary(null);
 
-        if (syncConfiguration.runPlanEvaluationOnClientProcessing()) {
+        if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
             PathEvaluatorLibrary.init(context.getLocationRepository(), context.getEventClientRepository(), context.getTaskRepository(), context.getEventClientRepository());
         }
     }
