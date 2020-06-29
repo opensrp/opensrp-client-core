@@ -103,7 +103,7 @@ public class ClientProcessorForJava {
                     }
                 }
 
-                if (localSubmission) {
+                if (localSubmission && CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
                     processPlanEvaluation(eventClient);
                 }
             }
