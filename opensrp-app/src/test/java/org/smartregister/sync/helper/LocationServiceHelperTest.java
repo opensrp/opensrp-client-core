@@ -164,9 +164,9 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         assertFalse(expectedLocation.getGeometry() == null);
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
-                LocationServiceHelper.locationGson.toJson(locations)),
+                LocationServiceHelper.locationGson.toJson(locations)).withTotalRecords(1l),
                 new Response<>(ResponseStatus.success,             //returned on second call
-                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
+                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())).withTotalRecords(0l))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         List<Location> actualLocations = locationServiceHelper.syncLocationsStructures(true);
@@ -176,7 +176,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
         assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/sync", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
-        assertEquals("{\"is_jurisdiction\":true,\"location_names\":[\"MTI_13\"],\"serverVersion\":0}", requestString);
+        assertEquals("{\"is_jurisdiction\":true,\"return_count\":true,\"location_names\":[\"MTI_13\"],\"serverVersion\":0}", requestString);
 
         verify(locationRepository).addOrUpdate(locationArgumentCaptor.capture());
         assertEquals(expectedLocation.getId(), locationArgumentCaptor.getValue().getId());
