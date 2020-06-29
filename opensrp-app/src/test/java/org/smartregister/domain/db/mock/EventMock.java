@@ -1,7 +1,6 @@
 package org.smartregister.domain.db.mock;
 
 import org.joda.time.DateTime;
-import org.smartregister.domain.db.Event;
 import org.smartregister.domain.db.Obs;
 
 import java.util.List;

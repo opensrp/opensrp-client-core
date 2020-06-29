@@ -1,7 +1,6 @@
 package org.smartregister.domain.db.mock;
 
 import org.joda.time.DateTime;
-import org.smartregister.domain.db.BaseDataObject;
 
 /**
  * Created by kaderchowdhury on 20/11/17.

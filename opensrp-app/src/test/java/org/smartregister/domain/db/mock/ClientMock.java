@@ -1,8 +1,6 @@
 package org.smartregister.domain.db.mock;
 
 import org.joda.time.DateTime;
-import org.smartregister.domain.db.Address;
-import org.smartregister.domain.db.Client;
 
 import java.util.List;
 import java.util.Map;

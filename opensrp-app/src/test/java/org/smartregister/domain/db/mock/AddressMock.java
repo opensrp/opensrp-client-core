@@ -1,7 +1,5 @@
 package org.smartregister.domain.db.mock;
 
-import org.smartregister.domain.db.Address;
-
 import java.util.Date;
 import java.util.Map;
 
