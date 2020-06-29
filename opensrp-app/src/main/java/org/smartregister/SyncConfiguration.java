@@ -120,4 +120,9 @@ public abstract class SyncConfiguration {
     public boolean clearDataOnNewTeamLogin() {
         return false;
     }
+
+
+    public boolean runPlanEvaluationOnClientProcessing() {
+        return false;
+    }
 }
