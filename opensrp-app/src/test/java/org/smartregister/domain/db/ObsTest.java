@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Obs;
 import org.smartregister.domain.db.mock.ObsMock;
 
 import java.util.ArrayList;

@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Address;
 import org.smartregister.domain.db.mock.ClientMock;
 
 import java.util.ArrayList;

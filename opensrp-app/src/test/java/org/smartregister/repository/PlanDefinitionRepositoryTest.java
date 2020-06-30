@@ -39,10 +39,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.smartregister.domain.PlanDefinition.PlanStatus.ACTIVE;
 import static org.smartregister.domain.PlanDefinitionTest.fiPlanDefinitionJSON;
 import static org.smartregister.domain.PlanDefinitionTest.gson;
 import static org.smartregister.domain.PlanDefinitionTest.planDefinitionJSON;
-import static org.smartregister.repository.PlanDefinitionRepository.ACTIVE;
 import static org.smartregister.repository.PlanDefinitionRepository.ID;
 import static org.smartregister.repository.PlanDefinitionRepository.JSON;
 import static org.smartregister.repository.PlanDefinitionRepository.NAME;
@@ -169,7 +169,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         PlanDefinition planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition.getIdentifier());
         assertEquals(planDefinitionJSON, gson.toJson(planDefinition));
-        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
+        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE.value()});
     }
 
     @Test
@@ -177,7 +177,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         doThrow(new SQLiteException()).when(sqLiteDatabase).rawQuery(anyString(), argsCaptor.capture());
         Set<PlanDefinition> planDefinitions = planDefinitionRepository.findAllPlanDefinitions();
         assertTrue(planDefinitions.isEmpty());
-        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
+        verify(sqLiteDatabase).rawQuery("SELECT json  FROM plan_definition WHERE status =?", new String[]{ACTIVE.value()});
     }
 
 
@@ -190,7 +190,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         assertEquals(1, planDefinitions.size());
         String planDefinition = planDefinitions.iterator().next();
         assertEquals("4708ca0a-d0d6-4199-bb1b-8701803c2d02", planDefinition);
-        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
+        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE.value()});
     }
 
     @Test
@@ -198,7 +198,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         doThrow(new SQLiteException()).when(sqLiteDatabase).rawQuery(anyString(), any());
         Set<String> planDefinitions = planDefinitionRepository.findAllPlanDefinitionIds();
         assertTrue(planDefinitions.isEmpty());
-        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE});
+        verify(sqLiteDatabase).rawQuery("SELECT _id  FROM plan_definition WHERE status =?", new String[]{ACTIVE.value()});
     }
 
     @Test
