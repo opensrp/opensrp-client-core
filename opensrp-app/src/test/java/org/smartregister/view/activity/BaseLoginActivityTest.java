@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -164,7 +165,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void isAppVersionAllowedShouldReturnSyncUtilsValue() {
+    public void isAppVersionAllowedShouldReturnSyncUtilsValue() throws PackageManager.NameNotFoundException {
         SyncUtils syncUtils =  Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
         ReflectionHelpers.setField(baseLoginActivity, "syncUtils", syncUtils);
         Mockito.doReturn(false).when(syncUtils).isAppVersionAllowed();
