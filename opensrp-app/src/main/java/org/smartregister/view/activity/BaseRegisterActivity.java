@@ -33,6 +33,7 @@ import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.util.List;
+import java.util.Map;
 
 import timber.log.Timber;
 
@@ -196,8 +197,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     }
 
     @Override
-    public abstract void startFormActivity(String formName, String entityId, String metaData);
-
+    public abstract void startFormActivity(String formName, String entityId, Map<String, String> metaData);
 
     @Override
     public abstract void startFormActivity(JSONObject form);

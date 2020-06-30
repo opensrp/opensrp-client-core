@@ -17,6 +17,7 @@ import android.view.ViewTreeObserver;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.apache.commons.collections.MapUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -32,6 +33,7 @@ import org.smartregister.view.controller.NavigationController;
 import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.util.Map;
+import java.util.Optional;
 
 import timber.log.Timber;
 
@@ -162,6 +164,12 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
 
     public void startFormActivity(String formName, String entityId, String metaData) {
         launchForm(formName, entityId, metaData, FormActivity.class);
+    }
+
+    public void startFormActivity(String formName, String entityId, Map<String, String> metaData) {
+        String metaDataString = MapUtils.getString(metaData, FIELD_OVERRIDES_PARAM, "");
+
+        launchForm(formName, entityId, metaDataString, FormActivity.class);
     }
 
     public void startMicroFormActivity(String formName, String entityId, String metaData) {
