@@ -470,7 +470,7 @@ public class AllConstants {
         }
     }
 
-    public interface SYNC_PROGRESS {
+    public interface SyncProgressConstants {
         String ACTION_SYNC_PROGRESS = "action_sync_progress";
         String TOTAL_RECORDS = "total_records";
         String SYNC_PROGRESS_DATA = "sync_progress_data";

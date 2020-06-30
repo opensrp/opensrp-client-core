@@ -26,7 +26,7 @@ public class SyncProgressBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Bundle data = intent.getExtras();
         if (data != null) {
-            Serializable syncProgressDataSerializable = data.getSerializable(AllConstants.SYNC_PROGRESS.SYNC_PROGRESS_DATA);
+            Serializable syncProgressDataSerializable = data.getSerializable(AllConstants.SyncProgressConstants.SYNC_PROGRESS_DATA);
             if (syncProgressDataSerializable instanceof  SyncProgress) {
                 SyncProgress syncProgress = (SyncProgress) syncProgressDataSerializable;
                 syncProgressListener.onSyncProgress(syncProgress);

@@ -365,8 +365,8 @@ public class SyncIntentService extends BaseSyncIntentService {
         syncProgress.setTotalRecords(totalRecords);
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, fetchedRecords));
         Intent intent = new Intent();
-        intent.setAction(AllConstants.SYNC_PROGRESS.ACTION_SYNC_PROGRESS);
-        intent.putExtra(AllConstants.SYNC_PROGRESS.SYNC_PROGRESS_DATA, syncProgress);
+        intent.setAction(AllConstants.SyncProgressConstants.ACTION_SYNC_PROGRESS);
+        intent.putExtra(AllConstants.SyncProgressConstants.SYNC_PROGRESS_DATA, syncProgress);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
 

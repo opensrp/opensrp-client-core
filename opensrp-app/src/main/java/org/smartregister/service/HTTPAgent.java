@@ -24,7 +24,6 @@ import org.smartregister.util.Utils;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -260,7 +259,7 @@ public class HTTPAgent {
 
             responseString = IOUtils.toString(inputStream);
 
-            totalRecords = urlConnection.getHeaderField(AllConstants.SYNC_PROGRESS.TOTAL_RECORDS);
+            totalRecords = urlConnection.getHeaderField(AllConstants.SyncProgressConstants.TOTAL_RECORDS);
 
             Timber.d("response string: %s using url %s", responseString, urlConnection.getURL());
 
