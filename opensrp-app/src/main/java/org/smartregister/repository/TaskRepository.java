@@ -7,6 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import com.ibm.fhir.model.resource.DomainResource;
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
+import com.ibm.fhir.path.FHIRPathElementNode;
+
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -23,6 +27,7 @@ import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.pathevaluator.dao.TaskDao;
 import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
@@ -621,7 +626,18 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     }
 
     @Override
-    public void saveTask(Task task) {
+    public void saveTask(Task task, DomainResource resource) {
+        if (resource instanceof QuestionnaireResponse) {
+            FHIRPathElementNode structure = PathEvaluatorLibrary.getInstance()
+                    .evaluateElementExpression(resource,
+                            "$this.item.where(url='details' and linkId='location_id').answer");
+            if (structure != null) {
+                String structureId = structure.element().as(QuestionnaireResponse.Item.Answer.class).as(com.ibm.fhir.model.type.String.class).getValue();
+                task.setStructureId(structureId);
+            } else {
+                task.setStructureId(task.getForEntity());
+            }
+        }
         addOrUpdate(task);
         Intent intent = new Intent();
         Intent refreshGeoWidgetIntent = new Intent(TASK_GENERATED_EVENT);
