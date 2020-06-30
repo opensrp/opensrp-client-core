@@ -1798,8 +1798,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
-        Event client= getEventsByBaseEntityId(resourceId);
-        return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
+        //TODO implement method
+       return null;
     }
 
     // Definitions
