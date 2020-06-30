@@ -29,6 +29,7 @@ import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -78,6 +79,11 @@ public class LocationServiceHelper {
     }
 
     protected List<Location> syncLocationsStructures(boolean isJurisdiction) {
+        List<Location> locationStructures = batchSyncLocationsStructures(isJurisdiction, new ArrayList<>());
+        return locationStructures;
+    }
+
+    private List<Location> batchSyncLocationsStructures(boolean isJurisdiction, List<Location> batchLocationStructures) {
         long serverVersion = 0;
         String currentServerVersion = allSharedPreferences.getPreference(isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE);
         try {
@@ -100,6 +106,7 @@ public class LocationServiceHelper {
                     else {
                         structureRepository.addOrUpdate(location);
                     }
+                    location.setGeometry(null);
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
@@ -108,13 +115,16 @@ public class LocationServiceHelper {
                 String maxServerVersion = getMaxServerVersion(locations);
                 String updateKey = isJurisdiction ? LOCATION_LAST_SYNC_DATE : STRUCTURES_LAST_SYNC_DATE;
                 allSharedPreferences.savePreference(updateKey, maxServerVersion);
-            }
-            return locations;
 
+                // retry fetch since there were items synced from the server
+                locations.addAll(batchLocationStructures);
+                return  batchSyncLocationsStructures(isJurisdiction, locations);
+
+            }
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
-        return null;
+        return batchLocationStructures;
     }
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue) throws Exception {

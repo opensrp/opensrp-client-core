@@ -31,8 +31,12 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
@@ -157,11 +161,17 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         expectedLocation.setSyncStatus(BaseRepository.TYPE_Unsynced);
         ArrayList locations = new ArrayList();
         locations.add(expectedLocation);
+        assertFalse(expectedLocation.getGeometry() == null);
 
-        Mockito.doReturn(new Response<>(ResponseStatus.success,
-                LocationServiceHelper.locationGson.toJson(locations)))
+        Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
+                LocationServiceHelper.locationGson.toJson(locations)),
+                new Response<>(ResponseStatus.success,             //returned on second call
+                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
-        locationServiceHelper.syncLocationsStructures(true);
+
+        List<Location> actualLocations = locationServiceHelper.syncLocationsStructures(true);
+        assertNotNull(actualLocations);
+        Location actualLocation = actualLocations.get(0);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
         assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/sync", syncUrl);
@@ -176,6 +186,15 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         assertEquals(expectedLocation.getProperties().getName(), locationArgumentCaptor.getValue().getProperties().getName());
         assertEquals(expectedLocation.getProperties().getParentId(), locationArgumentCaptor.getValue().getProperties().getParentId());
         assertEquals(expectedLocation.getProperties().getUid(), locationArgumentCaptor.getValue().getProperties().getUid());
+
+        assertEquals(expectedLocation.getId(), actualLocation.getId());
+        assertEquals(expectedLocation.getType(), actualLocation.getType());
+        assertEquals(BaseRepository.TYPE_Synced, actualLocation.getSyncStatus());
+        assertEquals(expectedLocation.getServerVersion(), actualLocation.getServerVersion());
+        assertEquals(expectedLocation.getProperties().getName(), actualLocation.getProperties().getName());
+        assertEquals(expectedLocation.getProperties().getParentId(), actualLocation.getProperties().getParentId());
+        assertEquals(expectedLocation.getProperties().getUid(), actualLocation.getProperties().getUid());
+        assertTrue(actualLocation.getGeometry() == null);
 
         String actualLocationLastSyncDate = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(LOCATION_LAST_SYNC_DATE);
         assertEquals(expectedLocation.getServerVersion().toString(), actualLocationLastSyncDate);
