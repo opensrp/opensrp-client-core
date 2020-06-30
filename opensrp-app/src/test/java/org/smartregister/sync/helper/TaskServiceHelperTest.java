@@ -1,22 +1,37 @@
 package org.smartregister.sync.helper;
 
-import android.content.Context;
-
+import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
-import org.robolectric.RuntimeEnvironment;
-import org.smartregister.BaseUnitTest;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.powermock.reflect.Whitebox;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.repository.TaskRepository;
+
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by Richard Kareko on 6/23/20.
  */
 
-class TaskServiceHelperTest extends BaseUnitTest {
+public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Mock
     private TaskRepository taskRepository;
 
-    private Context context = RuntimeEnvironment.application;
+    private TaskServiceHelper taskServiceHelper = Mockito.spy(TaskServiceHelper.getInstance());
 
-    private TaskServiceHelper taskServiceHelper;
+    @Before
+    public void setUp(){
+        MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(taskServiceHelper, "taskRepository", taskRepository);
+    }
+
+    @Test
+    public void testSyncTasks() {
+        taskServiceHelper.syncTasks();
+        verify(taskServiceHelper).syncCreatedTaskToServer();
+        verify(taskServiceHelper).syncTaskStatusToServer();
+    }
 }
