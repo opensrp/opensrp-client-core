@@ -87,7 +87,7 @@ public class DrishtiApplicationTest {
 
         @Override
         public void logoutCurrentUser() {
-
+            // Implement and do nothing
         }
 
         @Override
