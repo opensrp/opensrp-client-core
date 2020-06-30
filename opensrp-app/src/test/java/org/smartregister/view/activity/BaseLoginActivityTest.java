@@ -167,7 +167,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
     public void isAppVersionAllowedShouldReturnSyncUtilsValue() {
         SyncUtils syncUtils =  Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
         ReflectionHelpers.setField(baseLoginActivity, "syncUtils", syncUtils);
-        Mockito.doReturn(false).when(baseLoginActivity).isAppVersionAllowed();
+        Mockito.doReturn(false).when(syncUtils).isAppVersionAllowed();
 
         Assert.assertFalse(baseLoginActivity.isAppVersionAllowed());
     }
