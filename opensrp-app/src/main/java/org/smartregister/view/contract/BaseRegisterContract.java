@@ -6,6 +6,7 @@ import org.json.JSONObject;
 import org.smartregister.domain.FetchStatus;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by keyamn on 27/06/2018.
