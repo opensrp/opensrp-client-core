@@ -16,9 +16,9 @@ import org.smartregister.converters.EventConverter;
 import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Event;
+import org.smartregister.domain.Obs;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.domain.Obs;
 import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.ClientField;
@@ -29,6 +29,7 @@ import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
 import org.smartregister.pathevaluator.plan.PlanEvaluator;
 import org.smartregister.repository.DetailsRepository;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.util.AssetHandler;
 
 import java.lang.reflect.Field;
@@ -58,6 +59,8 @@ public class ClientProcessorForJava {
     private String[] openmrsGenIds = {};
     private Map<String, Object> jsonMap = new HashMap<>();
     private Context mContext;
+
+    private AppExecutors appExecutors = new AppExecutors();
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
@@ -116,15 +119,16 @@ public class ClientProcessorForJava {
      * @param eventClient
      */
     public void processPlanEvaluation(EventClient eventClient) {
+        appExecutors.diskIO().execute(() -> {
+            String planIdentifier = eventClient.getEvent().getDetails().get("planIdentifier");
 
-        String planIdentifier = eventClient.getEvent().getDetails().get("planIdentifier");
-
-        if (StringUtils.isNotBlank(planIdentifier)) {
-            PlanDefinition plan = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionById(planIdentifier);
-            PlanEvaluator planEvaluator = new PlanEvaluator(eventClient.getEvent().getProviderId());
-            QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
-            planEvaluator.evaluatePlan(plan, questionnaireResponse);
-        }
+            if (StringUtils.isNotBlank(planIdentifier)) {
+                PlanDefinition plan = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionById(planIdentifier);
+                PlanEvaluator planEvaluator = new PlanEvaluator(eventClient.getEvent().getProviderId());
+                QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
+                planEvaluator.evaluatePlan(plan, questionnaireResponse);
+            }
+        });
     }
 
     /**
