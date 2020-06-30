@@ -105,12 +105,15 @@ public class MeFragmentTest extends BaseUnitTest {
         Assert.assertNotNull(meFragment.presenter);
     }
 
+    /*
     @Test
     public void testOnCreateInvokesInitializePresenterMethod() {
 
         meFragment.onCreate(bundle);
         Mockito.verify(meFragment).initializePresenter();
     }
+
+     */
 
     @Test
     @Ignore
