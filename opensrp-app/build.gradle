@@ -207,19 +207,7 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-    implementation('org.smartregister:opensrp-client-native-form:1.9.2-SNAPSHOT@aar') {
-        transitive = true
-        exclude group: 'id.zelory', module: 'compressor'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'cardview-v7'
-        exclude group: 'com.android.support', module: 'support-media-compat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'io.ona.rdt-capture', module: 'lib'
-        exclude group: 'com.github.johnkil.print', module: 'print'
-    }
+    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 }
 
 dependencies {
