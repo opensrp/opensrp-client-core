@@ -11,20 +11,17 @@ import org.smartregister.clientandeventmodel.processor.model.Event;
 
 import java.util.Map;
 
-/**
- * Created by Raihan Ahmed on 4/15/15.
- */
-public class EventRepository extends SQLiteOpenHelper {
+public class ForeignEventRepository  extends SQLiteOpenHelper {
     public static final String ID_COLUMN = "_id";
     public static final String Relational_ID = "baseEntityId";
     public static final String obsDETAILS_COLUMN = "obsdetails";
     public static final String attributeDETAILS_COLUMN = "attributedetails";
-    public String TABLE_NAME = "common";
+    public String TABLE_NAME = "foreign_event";
     public String[] additionalcolumns;
     private String common_SQL =
             "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT," + "details VARCHAR)";
 
-    public EventRepository(Context context, String tablename, String[] columns) {
+    public ForeignEventRepository(Context context, String tablename, String[] columns) {
         super(context, "test_convert", null, 1);
         additionalcolumns = columns;
         TABLE_NAME = tablename;
@@ -74,5 +71,4 @@ public class EventRepository extends SQLiteOpenHelper {
     public void insertValues(ContentValues values) {
         getWritableDatabase().insert("Event", null, values);
     }
-
 }
