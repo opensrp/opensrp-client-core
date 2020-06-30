@@ -2,11 +2,15 @@ package org.smartregister.view.activity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -19,7 +23,9 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.Shadows;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowDialog;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
@@ -46,7 +52,6 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() {
         org.mockito.MockitoAnnotations.initMocks(this);
-        Intent intent = new Intent(RuntimeEnvironment.application, BaseLoginActivityImpl.class);
         controller = Robolectric.buildActivity(BaseLoginActivityImpl.class);
         BaseLoginActivityImpl spyActivity = Mockito.spy((BaseLoginActivityImpl) ReflectionHelpers.getField(controller, "component"));
         ReflectionHelpers.setField(controller, "component", spyActivity);
@@ -124,6 +129,59 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Mockito.verify(baseLoginActivity).showErrorDialog(Mockito.eq(RuntimeEnvironment.application.getString(R.string.unauthorized)));
     }
 
+    @Test
+    public void onCreateOptionsShouldReturnTrueAndPopulateMenu() {
+        Menu menu = Mockito.mock(Menu.class);
+
+        Assert.assertTrue(baseLoginActivity.onCreateOptionsMenu(menu));
+        Mockito.verify(menu).add(Mockito.eq("Settings"));
+    }
+
+    @Test
+    public void onOptionsItemSelectedShouldReturnTrueAndCallStartActivityWhenSettingsIsClicked() {
+        MenuItem menuItem = Mockito.mock(MenuItem.class);
+        Mockito.doReturn("Settings").when(menuItem).getTitle();
+
+        Assert.assertTrue(baseLoginActivity.onOptionsItemSelected(menuItem));
+        Intent intent = Shadows.shadowOf(baseLoginActivity).peekNextStartedActivity();
+        Assert.assertEquals(SettingsActivity.class.getName(), intent.getComponent().getClassName());
+    }
+
+    @Test
+    public void onDestroyShouldCallPresenterOnDestroy() {
+        baseLoginActivity.onDestroy();
+        Mockito.verify(baseLoginActivity.mLoginPresenter).onDestroy(Mockito.eq(false));
+    }
+
+    @Test
+    public void setPasswordErrorShouldCallSetErrorAndShowErrorDialog() {
+        baseLoginActivity.setPasswordError(R.string.error_invalid_password);
+
+        EditText passwordEditText = ReflectionHelpers.getField(baseLoginActivity, "passwordEditText");
+
+        Assert.assertEquals(RuntimeEnvironment.application.getString(R.string.error_invalid_password), passwordEditText.getError());
+        Mockito.verify(baseLoginActivity).showErrorDialog(Mockito.eq(RuntimeEnvironment.application.getString(R.string.unauthorized)));
+    }
+
+    @Test
+    public void isAppVersionAllowedShouldReturnSyncUtilsValue() {
+        SyncUtils syncUtils =  Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
+        ReflectionHelpers.setField(baseLoginActivity, "syncUtils", syncUtils);
+        Mockito.doReturn(false).when(baseLoginActivity).isAppVersionAllowed();
+
+        Assert.assertFalse(baseLoginActivity.isAppVersionAllowed());
+    }
+
+    @Test
+    public void showClearDataDialog() {
+        baseLoginActivity.showClearDataDialog(Mockito.mock(DialogInterface.OnClickListener.class));
+
+        AlertDialog alertDialog = (AlertDialog) ShadowDialog.getLatestDialog();
+        Object alertDialogController = ReflectionHelpers.getField(alertDialog, "mAlert");
+        Assert.assertNotNull(alertDialog);
+        Assert.assertEquals("Do you want to clear data to login with a different team/location", ReflectionHelpers.getField(alertDialogController, "mTitle"));
+        Assert.assertFalse(ReflectionHelpers.getField(alertDialog, "mCancelable"));
+    }
 
     static class BaseLoginActivityImpl extends BaseLoginActivity {
 
