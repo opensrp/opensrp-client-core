@@ -21,6 +21,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.converters.ClientConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
@@ -1761,8 +1762,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<Patient> findClientById(String id) {
-        //TODO implement method
-        return null;
+       Client client= fetchClientByBaseEntityId(id);
+        return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
     }
 
     @Override
@@ -1797,8 +1798,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
-        //TODO implement method
-        return null;
+        Event client= getEventsByBaseEntityId(resourceId);
+        return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
     }
 
     // Definitions
