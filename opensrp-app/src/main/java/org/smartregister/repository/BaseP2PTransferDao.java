@@ -15,6 +15,8 @@ public abstract class BaseP2PTransferDao {
     protected DataType profilePic = new DataType("Profile Pic", DataType.Type.MEDIA, 3);
     protected DataType structure = new DataType("Structure", DataType.Type.NON_MEDIA, 4);
     protected DataType task = new DataType("Task", DataType.Type.NON_MEDIA, 5);
+    protected DataType foreignEvent = new DataType("ForeignEvent", DataType.Type.NON_MEDIA, 2);
+    protected DataType foreignClient = new DataType("ForeignClient", DataType.Type.NON_MEDIA, 2);
 
     protected TreeSet<DataType> dataTypes;
 
@@ -26,5 +28,7 @@ public abstract class BaseP2PTransferDao {
         dataTypes.add(profilePic);
         dataTypes.add(structure);
         dataTypes.add(task);
+        dataTypes.add(foreignEvent);
+        dataTypes.add(foreignClient);
     }
 }

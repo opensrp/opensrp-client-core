@@ -34,6 +34,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
         StructureRepository structureRepository = CoreLibrary.getInstance().context().getStructureRepository();
         TaskRepository taskRepository = CoreLibrary.getInstance().context().getTaskRepository();
+        ForeignEventClientRepository foreignEventClientRepository = CoreLibrary.getInstance().context().getForeignEventClientRepository();
 
         int eventsMaxRowId = eventClientRepository.getMaxRowId(EventClientRepository.Table.event);
         long maxTableRowId = 0;
@@ -68,6 +69,12 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         } else if (dataType.getName().equals(task.getName())) {
             Timber.e("Received %s tasks", String.valueOf(jsonArray.length()));
             taskRepository.batchInsertTasks(jsonArray);
+        } else if (dataType.getName().equals(foreignClient.getName())) {
+            Timber.e("The data type provided does not exist");
+            foreignEventClientRepository.batchInsertClients(jsonArray);
+        } else if (dataType.getName().equals(foreignEvent.getName())) {
+            Timber.e("The data type provided does not exist");
+            foreignEventClientRepository.batchInsertEvents(jsonArray, 0);
         } else {
             Timber.e("The data type provided does not exist");
             return maxTableRowId;
