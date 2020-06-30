@@ -45,17 +45,17 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
 
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
-
+        //mock do nothing
     }
 
     @Override
     public void startFormActivity(JSONObject form) {
-
+        //mock do nothing
     }
 
     @Override
     protected void onActivityResultExtended(int requestCode, int resultCode, Intent data) {
-
+        //mock do nothing
     }
 
     @Override
@@ -65,7 +65,7 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
 
     @Override
     public void startRegistration() {
-
+        //mock do nothing
     }
 
     public static class BaseRegisterFragmentMock extends BaseRegisterFragment {
@@ -84,12 +84,12 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
 
         @Override
         public void setUniqueID(String qrCode) {
-
+            //mock do nothing
         }
 
         @Override
         public void setAdvancedSearchFormData(HashMap<String, String> advancedSearchFormData) {
-
+            //mock do nothing
         }
 
         @Override
@@ -104,17 +104,17 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
 
         @Override
         protected void startRegistration() {
-
+            //mock do nothing
         }
 
         @Override
         protected void onViewClicked(View view) {
-
+            //mock do nothing
         }
 
         @Override
         public void showNotFoundPopup(String opensrpId) {
-
+            //mock do nothing
         }
     }
 }
