@@ -2,6 +2,7 @@ package org.smartregister.view.activity;
 
 import android.support.design.widget.BottomNavigationView;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -9,6 +10,7 @@ import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.shadows.ShadowToast;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -111,5 +113,33 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
         activity = controller.visible().get();
         activity.onBackPressed();
         verify(mPager, atLeastOnce()).setCurrentItem(BASE_REG_POSITION, false);
+    }
+
+    @Test
+    public void testDisplaySyncNotification() {
+        activity.displaySyncNotification();
+        //TODO uncomment after migtrating to Roelectric 4.x
+        // assertEquals(ShadowSnackbar.getTextOfLatestSnackbar(), activity.getString(R.string.manual_sync_triggered));
+    }
+
+    @Test
+    public void testDisplayToast() {
+        activity.displayShortToast(R.string.manual_sync_triggered);
+        assertEquals(Toast.LENGTH_SHORT, ShadowToast.getLatestToast().getDuration());
+        assertEquals(activity.getString(R.string.manual_sync_triggered), ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testDisplayToastWithString() {
+        activity.displayToast("Message");
+        assertEquals(Toast.LENGTH_LONG, ShadowToast.getLatestToast().getDuration());
+        assertEquals("Message", ShadowToast.getTextOfLatestToast());
+    }
+
+    @Test
+    public void testDisplayShortToast() {
+        activity.displayShortToast(R.string.manual_sync_triggered);
+        assertEquals(Toast.LENGTH_SHORT, ShadowToast.getLatestToast().getDuration());
+        assertEquals(activity.getString(R.string.manual_sync_triggered), ShadowToast.getTextOfLatestToast());
     }
 }
