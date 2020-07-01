@@ -21,7 +21,7 @@ import timber.log.Timber;
 /**
  * Created by Ephraim Kigamba - ekigamba@ona.io on 10/04/2019
  */
-
+// TODO
 public class P2PReceiverTransferDao extends BaseP2PTransferDao implements ReceiverTransferDao {
 
     @Override
@@ -34,9 +34,10 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
         StructureRepository structureRepository = CoreLibrary.getInstance().context().getStructureRepository();
         TaskRepository taskRepository = CoreLibrary.getInstance().context().getTaskRepository();
-        ForeignEventClientRepository foreignEventClientRepository = CoreLibrary.getInstance().context().getForeignEventClientRepository();
+        EventClientRepository foreignEventClientRepository = CoreLibrary.getInstance().context().getForeignEventClientRepository();
 
-        int eventsMaxRowId = eventClientRepository.getMaxRowId(EventClientRepository.Table.event);
+        int eventsMaxRowId = eventClientRepository.getMaxRowId(eventClientRepository.getEventTable());
+        int foreignEventsMaxRowId = foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
         long maxTableRowId = 0;
 
         // Retrieve the max
@@ -70,10 +71,10 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
             Timber.e("Received %s tasks", String.valueOf(jsonArray.length()));
             taskRepository.batchInsertTasks(jsonArray);
         } else if (dataType.getName().equals(foreignClient.getName())) {
-            Timber.e("The data type provided does not exist");
+            Timber.e("Received %s foreign clients", String.valueOf(jsonArray.length()));
             foreignEventClientRepository.batchInsertClients(jsonArray);
         } else if (dataType.getName().equals(foreignEvent.getName())) {
-            Timber.e("The data type provided does not exist");
+            Timber.e("Received %s foreign events", String.valueOf(jsonArray.length()));
             foreignEventClientRepository.batchInsertEvents(jsonArray, 0);
         } else {
             Timber.e("The data type provided does not exist");
@@ -83,6 +84,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
         if (!allSharedPreferences.isPeerToPeerUnprocessedEvents()) {
             allSharedPreferences.setLastPeerToPeerSyncProcessedEvent(eventsMaxRowId);
+            allSharedPreferences.setLastPeerToPeerSyncForeignProcessedEvent(foreignEventsMaxRowId);
         }
 
         return maxTableRowId;

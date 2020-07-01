@@ -38,6 +38,7 @@ public class AllSharedPreferences {
     private static final String TRANSACTIONS_KILLED_FLAG = "TRANSACTIONS_KILLED_FLAG";
     private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
     private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
+    private static final String PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -302,6 +303,14 @@ public class AllSharedPreferences {
 
     public void setLastPeerToPeerSyncProcessedEvent(int lastEventRowId) {
         preferences.edit().putInt(PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD, lastEventRowId).commit();
+    }
+
+    public int getLastPeerToPeerSyncForeignProcessedEvent() {
+        return preferences.getInt(PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD, -1);
+    }
+
+    public void setLastPeerToPeerSyncForeignProcessedEvent(int lastEventRowId) {
+        preferences.edit().putInt(PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD, lastEventRowId).commit();
     }
 
     public boolean isPeerToPeerUnprocessedEvents() {

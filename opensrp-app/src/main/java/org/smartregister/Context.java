@@ -28,7 +28,6 @@ import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
 import org.smartregister.repository.EventClientRepository;
-import org.smartregister.repository.ForeignEventClientRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.repository.FormsVersionRepository;
 import org.smartregister.repository.ImageRepository;
@@ -208,7 +207,7 @@ public class Context {
     private Map<String, String> customHumanReadableConceptResponse;
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
-    private ForeignEventClientRepository foreignEventClientRepository;
+    private EventClientRepository foreignEventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
     private CampaignRepository campaignRepository;
     private TaskRepository taskRepository;
@@ -1129,9 +1128,9 @@ public class Context {
         return taskRepository;
     }
 
-    public ForeignEventClientRepository getForeignEventClientRepository() {
+    public EventClientRepository getForeignEventClientRepository() {
         if (foreignEventClientRepository == null) {
-            foreignEventClientRepository = new ForeignEventClientRepository();
+            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient, EventClientRepository.Table.foreignEvent);
         }
         return foreignEventClientRepository;
     }
