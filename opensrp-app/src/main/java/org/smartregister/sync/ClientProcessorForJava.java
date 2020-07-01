@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
+import org.smartregister.converters.ClientConverter;
 import org.smartregister.converters.EventConverter;
 import org.smartregister.domain.Address;
 import org.smartregister.domain.Client;
@@ -60,10 +61,11 @@ public class ClientProcessorForJava {
     private Map<String, Object> jsonMap = new HashMap<>();
     private Context mContext;
 
-    private AppExecutors appExecutors = new AppExecutors();
+    private AppExecutors appExecutors;
 
     public ClientProcessorForJava(Context context) {
         mContext = context;
+        appExecutors = new AppExecutors();
     }
 
     public static ClientProcessorForJava getInstance(Context context) {
@@ -126,6 +128,9 @@ public class ClientProcessorForJava {
                 PlanDefinition plan = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionById(planIdentifier);
                 PlanEvaluator planEvaluator = new PlanEvaluator(eventClient.getEvent().getProviderId());
                 QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
+                if (eventClient.getClient() != null) {
+                    questionnaireResponse = questionnaireResponse.toBuilder().contained(ClientConverter.convertClientToPatientResource(eventClient.getClient())).build();
+                }
                 planEvaluator.evaluatePlan(plan, questionnaireResponse);
             }
         });
