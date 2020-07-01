@@ -106,7 +106,7 @@ public class PlanDefinitionRepositoryTest extends BaseUnitTest {
         assertEquals(jurisdictionCount + 1, contentValuesArgumentCaptor.getAllValues().size());
         assertEquals(planDefinition.getIdentifier(), contentValuesArgumentCaptor.getAllValues().get(0).get(PLAN_ID));
         assertEquals(planDefinition.getName(), contentValuesArgumentCaptor.getAllValues().get(0).get(NAME));
-        assertEquals(planDefinition.getStatus(), contentValuesArgumentCaptor.getAllValues().get(0).get(STATUS));
+        assertEquals(planDefinition.getStatus().value(), contentValuesArgumentCaptor.getAllValues().get(0).get(STATUS));
     }
 
 
