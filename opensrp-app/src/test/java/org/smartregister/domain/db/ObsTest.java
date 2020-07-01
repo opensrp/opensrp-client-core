@@ -1,7 +1,5 @@
 package org.smartregister.domain.db;
 
-import junit.framework.Assert;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
@@ -14,6 +12,7 @@ import java.util.List;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by kaderchowdhury on 21/11/17.
@@ -45,7 +44,7 @@ public class ObsTest extends BaseUnitTest {
 
     @Test
     public void assertConstructorNotNull() {
-        Assert.assertNotNull(ob);
+        assertNotNull(ob);
     }
 
 
@@ -56,7 +55,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFieldType() {
         ob.setFieldType(fieldType);
-        Assert.assertEquals(getFieldType(), fieldType);
+        assertEquals(getFieldType(), fieldType);
     }
 
 
@@ -67,7 +66,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFieldDataType() {
         ob.setFieldDataType(fieldDataType);
-        Assert.assertEquals(getFieldDataType(), fieldDataType);
+        assertEquals(getFieldDataType(), fieldDataType);
     }
 
 
@@ -78,7 +77,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFieldCode() {
         ob.setFieldCode(fieldCode);
-        Assert.assertEquals(getFieldCode(), fieldCode);
+        assertEquals(getFieldCode(), fieldCode);
     }
 
 
@@ -89,7 +88,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setParentCode() {
         ob.setParentCode(parentCode);
-        Assert.assertEquals(getParentCode(), parentCode);
+        assertEquals(getParentCode(), parentCode);
     }
 
 
@@ -101,7 +100,7 @@ public class ObsTest extends BaseUnitTest {
     public void setValue() {
         Object value = new Object();
         ob.setValue(value);
-        Assert.assertEquals(getValue(), value);
+        assertEquals(value.toString(),getValue());
     }
 
 
@@ -112,7 +111,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setValues() {
         ob.setValues(values);
-        Assert.assertEquals(getValues(), values);
+        assertEquals(getValues(), values);
     }
 
 
@@ -123,7 +122,7 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setComments() {
         ob.setComments(comments);
-        Assert.assertEquals(getComments(), comments);
+        assertEquals(getComments(), comments);
     }
 
 
@@ -134,54 +133,54 @@ public class ObsTest extends BaseUnitTest {
     @Test
     public void setFormSubmissionField() {
         ob.setFormSubmissionField(formSubmissionField);
-        Assert.assertEquals(getFormSubmissionField(), formSubmissionField);
+        assertEquals(getFormSubmissionField(), formSubmissionField);
     }
 
     @Test
     public void withFieldType() {
-        Assert.assertNotNull(ob.withFieldType(fieldType));
+        assertNotNull(ob.withFieldType(fieldType));
     }
 
     @Test
     public void withFieldDataType() {
-        Assert.assertNotNull(ob.withFieldDataType(fieldDataType));
+        assertNotNull(ob.withFieldDataType(fieldDataType));
     }
 
     @Test
     public void withFieldCode() {
-        Assert.assertNotNull(ob.withFieldCode(fieldCode));
+        assertNotNull(ob.withFieldCode(fieldCode));
     }
 
     @Test
     public void withParentCode() {
-        Assert.assertNotNull(ob.withParentCode(parentCode));
+        assertNotNull(ob.withParentCode(parentCode));
     }
 
     @Test
     public void withValue() {
         Object value = new Object();
-        Assert.assertNotNull(ob.withValue(value));
+        assertNotNull(ob.withValue(value));
     }
 
     @Test
     public void withValues() {
-        Assert.assertNotNull(ob.withValues(values));
+        assertNotNull(ob.withValues(values));
     }
 
     @Test
     public void addToValueList() {
         Object value = new Object();
-        Assert.assertNotNull(ob.addToValueList(value));
+        assertNotNull(ob.addToValueList(value));
     }
 
     @Test
     public void withComments() {
-        Assert.assertNotNull(ob.withComments(comments));
+        assertNotNull(ob.withComments(comments));
     }
 
     @Test
     public void withFormSubmissionField() {
-        Assert.assertNotNull(ob.withFormSubmissionField(formSubmissionField));
+        assertNotNull(ob.withFormSubmissionField(formSubmissionField));
     }
 
     @Test
