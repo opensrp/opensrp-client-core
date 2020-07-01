@@ -9,12 +9,12 @@ buildscript {
     dependencies {
         classpath ("com.android.tools.build:gradle:$androidToolsBuildGradle"){
             transitive = true
-            //exclude group: 'org.apache.httpcomponents', module: 'httpmime'
+            exclude group: 'org.apache.httpcomponents', module: 'httpmime'
         }
         classpath 'org.apache.commons:commons-lang3:3.3.2'
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
         classpath 'io.fabric.tools:gradle:1.30.0'
-        //classpath 'org.apache.httpcomponents:httpmime:4.3'
+        classpath 'org.apache.httpcomponents:httpmime:4.3'
     }
 }
 
@@ -25,6 +25,7 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'https://dl.bintray.com/ibm-watson-health/ibm-fhir-server-releases'}
     }
 }
 
@@ -227,7 +228,9 @@ dependencies {
         exclude group: 'com.github.johnkil.print', module: 'print'
     }
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.10-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.13-SNAPSHOT'
+
+    implementation 'xerces:xercesImpl:2.12.0'
 }
 
 dependencies {

@@ -1,7 +1,7 @@
 package org.smartregister.domain.db.mock;
 
-import org.smartregister.domain.db.Address;
-import org.smartregister.domain.db.BaseEntity;
+import org.smartregister.domain.Address;
+import org.smartregister.domain.BaseEntity;
 
 import java.util.List;
 import java.util.Map;
