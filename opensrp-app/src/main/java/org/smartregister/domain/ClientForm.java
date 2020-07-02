@@ -1,5 +1,7 @@
 package org.smartregister.domain;
 
+import org.smartregister.client.utils.contract.ClientFormContract;
+
 import java.util.Date;
 
 /**
@@ -7,7 +9,8 @@ import java.util.Date;
  *
  * @author cozej4 https://github.com/cozej4
  */
-public class ClientForm {
+public class ClientForm implements ClientFormContract.Model {
+
     private int id;
 
     private String version;
