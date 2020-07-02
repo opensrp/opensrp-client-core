@@ -18,7 +18,6 @@ import org.smartregister.adapter.ServiceLocationsAdapter;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
