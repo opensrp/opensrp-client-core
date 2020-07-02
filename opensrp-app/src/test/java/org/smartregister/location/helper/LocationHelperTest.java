@@ -227,7 +227,7 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(spiedLocationHelper, "allCampaigns", campaignIds);
         ReflectionHelpers.setField(spiedLocationHelper, "allOperationalArea", operationalArea);
 
-        ArrayList<String> locations = spiedLocationHelper.locationsFromHierarchy(true, null);
+        List<String> locations = spiedLocationHelper.locationsFromHierarchy(true, null);
 
         Mockito.verify(allSharedPreferences).savePreference(Mockito.eq(AllConstants.CAMPAIGNS), Mockito.eq("campaign-1,campaign-2,campaign-3"));
         Mockito.verify(allSharedPreferences).savePreference(Mockito.eq(AllConstants.OPERATIONAL_AREAS), Mockito.eq("operational-area-1,operational-area-2,operational-area-3"));
