@@ -6,11 +6,11 @@ import org.smartregister.sync.helper.LocationServiceHelper;
 
 import timber.log.Timber;
 
-public class SyncLocationsByLevelAndTagsIntentService extends BaseSyncIntentService {
+public class SyncLocationsByTeamIdsIntentService extends BaseSyncIntentService {
 
-    private static final String TAG = "SyncLocationsByLevelAndTagsIntentService";
+    private static final String TAG = "SyncLocationsByTeamIdsIntentService";
 
-    public SyncLocationsByLevelAndTagsIntentService() {
+    public SyncLocationsByTeamIdsIntentService() {
         super(TAG);
     }
 
@@ -20,9 +20,10 @@ public class SyncLocationsByLevelAndTagsIntentService extends BaseSyncIntentServ
         LocationServiceHelper locationServiceHelper = LocationServiceHelper.getInstance();
 
         try {
-            locationServiceHelper.fetchLocationsByLevelAndTags();
-        }catch (Exception e){
+            locationServiceHelper.fetchOpenMrsLocationsByTeamIds();
+        } catch (Exception e) {
             Timber.e(e);
         }
+
     }
 }

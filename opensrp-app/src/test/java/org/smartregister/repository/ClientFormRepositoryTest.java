@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
 import static org.smartregister.repository.ClientFormRepository.ACTIVE;
 import static org.smartregister.repository.ClientFormRepository.CLIENT_FORM_TABLE;
 import static org.smartregister.repository.ClientFormRepository.CREATED_AT;
@@ -119,6 +120,65 @@ public class ClientFormRepositoryTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testGetLatestFormByIdentifier() {
+        String identifier = "en/child/enrollment.json";
+        clientFormRepository.getLatestFormByIdentifier(identifier);
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals("SELECT * FROM " + CLIENT_FORM_TABLE +
+                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC LIMIT 1", stringArgumentCaptor.getValue());
+        assertEquals(1, argsCaptor.getValue().length);
+        assertEquals(identifier, argsCaptor.getValue()[0]);
+
+    }
+
+    @Test
+    public void testSetIsNewShouldCallDatabaseUpdateWithCorrectValues() {
+        ArgumentCaptor<ContentValues> argumentCaptor = ArgumentCaptor.forClass(ContentValues.class);
+        ArgumentCaptor<String[]> stringArgumentCaptor = ArgumentCaptor.forClass(String[].class);
+        clientFormRepository.setIsNew(false, 56);
+
+        verify(sqLiteDatabase).update(eq("client_form"), argumentCaptor.capture(), eq("id = ?"), stringArgumentCaptor.capture());
+
+        ContentValues contentValues = argumentCaptor.getValue();
+        assertEquals(false, contentValues.getAsBoolean(ClientFormRepository.IS_NEW));
+        assertEquals(56, (int) contentValues.getAsInteger(ClientFormRepository.ID));
+
+        String[] whereArgs = stringArgumentCaptor.getValue();
+        assertEquals("56", whereArgs[0]);
+    }
+
+    @Test
+    public void testReadCursorShouldReturnValidObject() {
+        int formId = 78;
+        String version = "0.0.4";
+        String identifier = "child_registration.json";
+        String module = null;
+        String json = "{}";
+        String jurisdiction = null;
+        String label = "Child Registration";
+        boolean isNew = true;
+        boolean isActive = true;
+
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{ClientFormRepository.ID, VERSION
+                , IDENTIFIER, ClientFormRepository.MODULE, ClientFormRepository.JSON
+                , ClientFormRepository.JURISDICTION, ClientFormRepository.LABEL
+                , ClientFormRepository.IS_NEW, ACTIVE, CREATED_AT});
+        matrixCursor.addRow(new Object[]{formId, version, identifier, module, json, jurisdiction, label, isNew ? 1 : 0, isActive ? 1 : 0, ""});
+        matrixCursor.moveToFirst();
+        ClientForm clientForm = clientFormRepository.readCursor(matrixCursor);
+
+        assertEquals(formId, clientForm.getId());
+        assertEquals(version, clientForm.getVersion());
+        assertEquals(identifier, clientForm.getIdentifier());
+        assertEquals(module, clientForm.getModule());
+        assertEquals(json, clientForm.getJson());
+        assertEquals(jurisdiction, clientForm.getJurisdiction());
+        assertEquals(label, clientForm.getLabel());
+        assertEquals(isActive, clientForm.isActive());
+        assertEquals(isNew, clientForm.isNew());
+    }
 
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(ClientFormRepository.COLUMNS);

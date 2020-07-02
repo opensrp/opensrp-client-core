@@ -749,7 +749,7 @@ public class CommonRepository extends DrishtiRepository {
                 ContentValues searchValues = searchMap.get(caseId);
                 ArrayList<HashMap<String, String>> mapList = rawQuery(
                         "SELECT " + CommonFtsObject.idColumn + " FROM " + ftsSearchTable
-                                + " WHERE  " + CommonFtsObject.idColumn + " = ?", new String[]{caseId});
+                                + " WHERE " + CommonFtsObject.idColumn + " = ?", new String[]{caseId});
                 if (!mapList.isEmpty()) {
                     int updated = database.update(ftsSearchTable, searchValues,
                             CommonFtsObject.idColumn + " = " + "" + "?", new String[]{caseId});
@@ -781,11 +781,13 @@ public class CommonRepository extends DrishtiRepository {
             int afftectedRows = database
                     .delete(ftsSearchTable, CommonFtsObject.idColumn + " = " + "?",
                             new String[]{caseId});
+
+            database.setTransactionSuccessful();
+            database.endTransaction();
+
             if (afftectedRows > 0) {
                 return true;
             }
-            database.setTransactionSuccessful();
-            database.endTransaction();
         } catch (Exception e) {
             Timber.e(e, "Update Search Error");
             database.endTransaction();

@@ -11,10 +11,7 @@ public class TreeNode<K, T> {
     private K parent;
 
     public TreeNode(K id, String label, T node, K parent) {
-        this.id = id;
-        this.label = label;
-        this.node = node;
-        this.parent = parent;
+        this(id, label, node, parent, null);
     }
 
     public TreeNode(K id, String label, T node, K parent, LinkedHashMap<K, TreeNode<K, T>> children) {

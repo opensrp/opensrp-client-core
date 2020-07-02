@@ -130,6 +130,10 @@ android {
 
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
+    testLogging {
+        // to see the exceptions of failed tests in Travis-CI console.
+        exceptionFormat = 'full'
+    }
 }
 
 def filesToCopy = copySpec {
@@ -156,7 +160,7 @@ configurations.all {
 
 dependencies {
     implementation 'net.zetetic:android-database-sqlcipher:4.1.3'
-    implementation 'com.android.support:multidex:1.0.0'
+    implementation 'com.android.support:multidex:1.0.3'
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
     implementation 'com.android.support:appcompat-v7:28.0.0'
     implementation 'com.android.support:support-v4:28.0.0'
@@ -203,7 +207,7 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-    implementation('org.smartregister:opensrp-client-native-form:1.8.6-SNAPSHOT@aar') {
+    implementation('org.smartregister:opensrp-client-native-form:1.9.2-SNAPSHOT@aar') {
         transitive = true
         exclude group: 'id.zelory', module: 'compressor'
         exclude group: 'com.android.support', module: 'recyclerview-v7'

@@ -39,4 +39,9 @@ public class TestApplication extends DrishtiApplication {
     public void setContext(Context context) {
         this.context = context;
     }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
 }

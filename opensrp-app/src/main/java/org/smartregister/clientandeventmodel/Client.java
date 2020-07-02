@@ -38,6 +38,12 @@ public class Client extends BaseEntity {
     private String clientType;
 
     @JsonProperty
+    private String locationId;
+
+    @JsonProperty
+    private String teamId;
+
+    @JsonProperty
     private String syncStatus;
 
     protected Client() {
@@ -195,6 +201,22 @@ public class Client extends BaseEntity {
 
     public void setRelationships(Map<String, List<String>> relationships) {
         this.relationships = relationships;
+    }
+
+    public String getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(String locationId) {
+        this.locationId = locationId;
+    }
+
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
     }
 
     public String getClientType() {
