@@ -143,7 +143,7 @@ public class HTTPAgentTest {
     private static final String TEST_USER_INFO_ENDPOINT = "https://keycloak.my-server.com/auth/userinfo";
     private static final String TEST_IMAGE_FILE_PATH = "file://usr/sdcard/dev0/data/org.smartregister.core/localimage.jpg";
     protected static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
-    protected static final String TEST_ANM_ID = "demo";
+    protected static final String TEST_ACCOUNT_TYPE = "org.smartregister.my-health-app";
 
     private final String SAMPLE_TEST_TOKEN = "sample-test-token";
     private final String SAMPLE_REFRESH_TOKEN = "sample-refresh-token";
@@ -169,11 +169,14 @@ public class HTTPAgentTest {
         PowerMockito.mockStatic(CoreLibrary.class);
         PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
         Mockito.doReturn(accountManager).when(coreLibrary).getAccountManager();
+        Mockito.doReturn(TEST_ACCOUNT_TYPE).when(accountAuthenticatorXml).getAccountType();
+        Mockito.doReturn(TEST_USERNAME).when(accountAuthenticatorXml).getAccountName();
         Mockito.doReturn(accountAuthenticatorXml).when(coreLibrary).getAccountAuthenticatorXml();
 
         Mockito.doReturn(accountManager).when(coreLibrary).getAccountManager();
         Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
         Mockito.doReturn(1).when(syncConfiguration).getMaxAuthenticationRetries();
+        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
 
         Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
 
@@ -1104,7 +1107,7 @@ public class HTTPAgentTest {
 
         ProfileImage profileImage = new ProfileImage();
         profileImage.setFilepath(TEST_IMAGE_FILE_PATH);
-        profileImage.setAnmId(TEST_ANM_ID);
+        profileImage.setAnmId(TEST_USERNAME);
         profileImage.setEntityID(TEST_BASE_ENTITY_ID);
         profileImage.setContenttype("png");
         profileImage.setFilecategory("coverpic");
