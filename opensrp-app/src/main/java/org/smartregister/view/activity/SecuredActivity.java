@@ -33,7 +33,6 @@ import org.smartregister.view.controller.NavigationController;
 import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.util.Map;
-import java.util.Optional;
 
 import timber.log.Timber;
 
