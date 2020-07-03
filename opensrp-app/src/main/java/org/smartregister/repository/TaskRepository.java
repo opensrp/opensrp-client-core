@@ -635,7 +635,7 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     }
 
     @Override
-    public boolean checkIfTaskExists(String s, String s1, String s2) {
-        return false;
+    public boolean checkIfTaskExists(String baseEntityId, String jurisdiction,String planIdentifier, String code) {
+        return !getTasksByEntityAndCode(planIdentifier,jurisdiction,baseEntityId,code).isEmpty();
     }
 }
