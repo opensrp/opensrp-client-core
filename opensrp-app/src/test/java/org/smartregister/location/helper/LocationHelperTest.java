@@ -30,6 +30,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
 
 public class LocationHelperTest extends BaseRobolectricUnitTest {
 
@@ -142,7 +143,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals("718b2864-7d6a-44c8-b5b6-bb375f82654e,2c3a0ebd-f79d-4128-a6d3-5dfbffbd01c8", locationIds);
     }
 
-
     @Test
     public void testLocationsFromHierarchyWhenAllowedLevelsContainsReveal() {
         ReflectionHelpers.setStaticField(LocationHelper.class, "instance", null);
@@ -237,7 +237,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals(0, formLocationsList.size());
     }
 
-
     @Test
     public void testGenerateLocationHierarchyTreeWithMapShouldReturnListWithOtherFormLocationOnly() {
         locationHelper = Mockito.spy(locationHelper);
@@ -258,7 +257,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals("", formLocation.level);
     }
 
-
     @Test
     public void testGenerateLocationHierarchyTreeWithMapAndOtherOptionFalseShouldReturnEmptyList() {
         locationHelper = Mockito.spy(locationHelper);
@@ -272,7 +270,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         List<FormLocation> formLocationsList = locationHelper.generateLocationHierarchyTree(false, allowedLevels, map);
         assertEquals(0, formLocationsList.size());
     }
-
 
     @Test
     public void testGenerateLocationHierarchyTreeWithMapShouldReturnListWithZambiaFormLocation() {
@@ -374,4 +371,75 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals(firstOne.name, formLocationList.get(0).name);
         assertEquals(lastOne.name, formLocationList.get(1).name);
     }
+
+    @Test
+    public void testGetOpenMrsLocationHierarchyWithEmptyLocationIdShouldReturnEmptyList() {
+        locationHelper = Mockito.spy(locationHelper);
+        List<String> hierarchy = locationHelper.getOpenMrsLocationHierarchy("", false);
+        assertEquals(0, hierarchy.size());
+    }
+
+    @Test
+    public void testGetOpenMrsLocationHierarchyWithLocationIdAndAllowedLevelsFlagShouldReturnListOfLocationNames() {
+        locationHelper = Mockito.spy(locationHelper);
+
+        ArrayList<String> allowedLevels = new ArrayList<>();
+        allowedLevels.add("District");
+        allowedLevels.add("Facility");
+        allowedLevels.add("Commune");
+
+        AllSharedPreferences spiedAllSharedPreferences = Mockito.spy((AllSharedPreferences) ReflectionHelpers.getField(locationHelper, "allSharedPreferences"));
+        ReflectionHelpers.setField(locationHelper, "allSharedPreferences", spiedAllSharedPreferences);
+
+        Mockito.doReturn("Mabebe").when(spiedAllSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn("11").when(spiedAllSharedPreferences).fetchDefaultLocalityId("Mabebe");
+
+        ANMLocationController anmLocationController = Mockito.spy(CoreLibrary.getInstance().context().anmLocationController());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "anmLocationController", anmLocationController);
+
+        String locationTree = "{\"locationsHierarchy\":{\"map\":{\"1\":{\"id\":\"1\",\"label\":\"Kiamb\",\"node\":{\"locationId\":\"1\",\"name\":\"Kiamb\",\"tags\":[\"District\"],\"voided\":false},\"children\":{\"11\":{\"id\":\"11\",\"label\":\"Mabebe\",\"node\":{\"locationId\":\"11\",\"name\":\"Mabebe\",\"parentLocation\":{\"locationId\":\"1\",\"voided\":false},\"tags\":[\"Commune\"],\"voided\":false},\"children\":{\"111\":{\"id\":\"111\",\"label\":\"Omshindi\",\"node\":{\"locationId\":\"111\",\"name\":\"Omshindi\",\"parentLocation\":{\"locationId\":\"11\",\"voided\":false},\"tags\":[\"District\"],\"voided\":false},\"parent\":\"11\"}},\"parent\":\"1\"}}}},\"parentChildren\":{\"1\":[\"11\"],\"11\":[\"111\"]}}}";
+        Mockito.doReturn(locationTree).when(anmLocationController).get();
+
+        List<String> hierarchy = locationHelper.getOpenMrsLocationHierarchy("1", false);
+
+        assertEquals(1, hierarchy.size());
+        assertEquals(true, hierarchy.contains("Kiamb"));
+    }
+
+    @Test
+    public void testGetAllowedLevelsReturnsListOfLevelNames() {
+        ReflectionHelpers.setStaticField(LocationHelper.class, "instance", null);
+
+        ArrayList<String> allowedLevels = new ArrayList<>();
+        allowedLevels.add("District");
+        allowedLevels.add("Commune");
+        allowedLevels.add("Facility");
+
+        LocationHelper.init(allowedLevels, "Facility");
+        locationHelper = LocationHelper.getInstance();
+
+        List<String> actualAllowedLevels = locationHelper.getAllowedLevels();
+
+        assertNotNull(actualAllowedLevels);
+        assertEquals(3, actualAllowedLevels.size());
+        assertEquals(true, actualAllowedLevels.contains("Facility"));
+    }
+
+    @Test
+    public void testGetDefaultLocationLevelReturnsLocationLevelName() {
+        ReflectionHelpers.setStaticField(LocationHelper.class, "instance", null);
+
+        ArrayList<String> allowedLevels = new ArrayList<>();
+        allowedLevels.add("District");
+        allowedLevels.add("Commune");
+        allowedLevels.add("Facility");
+
+        LocationHelper.init(allowedLevels, "Facility");
+        locationHelper = LocationHelper.getInstance();
+
+        String defaultLocationLevel = locationHelper.getDefaultLocationLevel();
+
+        assertEquals("Facility", defaultLocationLevel);
+    }
+
 }
