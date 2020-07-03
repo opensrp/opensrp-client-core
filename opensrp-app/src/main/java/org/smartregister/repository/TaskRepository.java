@@ -20,10 +20,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
+import org.smartregister.converters.TaskConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
@@ -39,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
@@ -209,14 +212,11 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         return null;
     }
 
-    public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
+    private Set<Task> getTasks(String query, String[] params) {
         Cursor cursor = null;
         Set<Task> taskSet = new HashSet<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
-                    , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
+            cursor = getReadableDatabase().rawQuery(query, params);
             while (cursor.moveToNext()) {
                 Task task = readCursor(cursor);
                 taskSet.add(task);
@@ -230,6 +230,20 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         return taskSet;
     }
 
+    public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
+        return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
+                TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
+                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
+    }
+
+    public Set<Task> getTasksByPlanAndEntity(String planId, String forEntity) {
+        return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s  NOT IN (%s)",
+                TASK_TABLE, PLAN_ID, FOR, STATUS,
+                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                , ArrayUtils.addAll(new String[]{planId, forEntity}, INACTIVE_TASK_STATUS));
+    }
+
     /**
      * Gets tasks for an entity using plan and task status
      *
@@ -239,22 +253,9 @@ public class TaskRepository extends BaseRepository implements TaskDao {
      * @return the set of tasks matching the above params
      */
     public Set<Task> getTasksByEntityAndStatus(String planId, String forEntity, TaskStatus taskStatus) {
-        Cursor cursor = null;
-        Set<Task> taskSet = new HashSet<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
-                    TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
-            while (cursor.moveToNext()) {
-                Task task = readCursor(cursor);
-                taskSet.add(task);
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return taskSet;
+
+        return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
+                TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
     }
 
     //Do not make private - used in deriving classes
@@ -336,20 +337,7 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        Cursor cursor = null;
-        List<Task> tasks = new ArrayList<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
-            while (cursor.moveToNext()) {
-                tasks.add(readCursor(cursor));
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return tasks;
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
@@ -620,8 +608,10 @@ public class TaskRepository extends BaseRepository implements TaskDao {
 
     @Override
     public List<com.ibm.fhir.model.resource.Task> findTasksForEntity(String id, String planIdentifier) {
-        //TODO implement method
-        return null;
+        return getTasksByPlanAndEntity(planIdentifier, id)
+                .stream()
+                .map(TaskConverter::convertTasktoFihrResource)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -639,8 +629,8 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         }
         addOrUpdate(task);
         Intent intent = new Intent();
-        Intent refreshGeoWidgetIntent = new Intent(TASK_GENERATED_EVENT);
-        refreshGeoWidgetIntent.putExtra(TASK_GENERATED, task);
+        Intent taskGeneratedIntent = new Intent(TASK_GENERATED_EVENT);
+        taskGeneratedIntent.putExtra(TASK_GENERATED, task);
         LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
     }
 }
