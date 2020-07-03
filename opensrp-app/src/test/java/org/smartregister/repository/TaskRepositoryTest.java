@@ -25,10 +25,10 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
-import org.smartregister.domain.db.Client;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 

@@ -1,8 +1,8 @@
 package org.smartregister.domain.jsonmapping;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.smartregister.domain.db.Address;
-import org.smartregister.domain.db.BaseDataObject;
+import org.smartregister.domain.BaseDataObject;
+import org.smartregister.domain.Address;
 
 import java.util.HashMap;
 import java.util.HashSet;

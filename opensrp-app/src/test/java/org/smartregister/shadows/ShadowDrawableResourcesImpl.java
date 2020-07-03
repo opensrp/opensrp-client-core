@@ -11,10 +11,10 @@ import org.robolectric.shadows.ShadowResourcesImpl;
 
 import static android.os.Build.VERSION_CODES.N;
 
-@Implements(className = "android.content.res.ResourcesImpl", inheritImplementationMethods = true, isInAndroidSdk = false, minSdk = N)
+@Implements(className = "android.content.res.ResourcesImpl", isInAndroidSdk = false, minSdk = N)
 public class ShadowDrawableResourcesImpl extends ShadowResourcesImpl {
 
-    @Implementation
+    /*@Implementation
     @Override
     public Drawable loadDrawable(Resources wrapper, TypedValue value, int id, Resources.Theme theme, boolean useCache) throws Resources.NotFoundException {
         try {
@@ -32,5 +32,5 @@ public class ShadowDrawableResourcesImpl extends ShadowResourcesImpl {
         } catch (Exception e) {
             return new VectorDrawable();
         }
-    }
+    }*/
 }
