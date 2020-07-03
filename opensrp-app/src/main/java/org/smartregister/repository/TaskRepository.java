@@ -633,4 +633,9 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         taskGeneratedIntent.putExtra(TASK_GENERATED, task);
         LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
     }
+
+    @Override
+    public boolean checkIfTaskExists(String s, String s1, String s2) {
+        return false;
+    }
 }

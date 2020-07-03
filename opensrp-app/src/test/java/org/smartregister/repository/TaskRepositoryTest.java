@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.ibm.fhir.model.type.code.TaskStatus;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -32,6 +33,9 @@ import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -101,7 +105,9 @@ public class TaskRepositoryTest extends BaseUnitTest {
     private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .serializeNulls().create();
 
-    private static DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HHmm");
+    private static final String datePattern = "yyyy-MM-dd'T'HHmm";
+    private static DateTimeFormatter formatter = DateTimeFormat.forPattern(datePattern);
+    private static java.time.format.DateTimeFormatter javaTimeFormater = java.time.format.DateTimeFormatter.ofPattern(datePattern);
 
     @Before
     public void setUp() {
@@ -494,6 +500,69 @@ public class TaskRepositoryTest extends BaseUnitTest {
         verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
         verify(sqLiteDatabase, never()).setTransactionSuccessful();
         verify(sqLiteDatabase).endTransaction();
+
+    }
+
+    @Test
+    public void testGetTasksByPlanAndEntity() {
+        String query = "SELECT * FROM task WHERE plan_id=? AND for =? AND status  NOT IN (?,?)";
+        when(sqLiteDatabase.rawQuery(query,
+                new String[]{"IRS_2018_S1", "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", CANCELLED.name(), ARCHIVED.name()})).thenReturn(getCursor());
+        Set<Task> allTasks = taskRepository.getTasksByPlanAndEntity("IRS_2018_S1", "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc");
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+
+        assertEquals(query, stringArgumentCaptor.getValue());
+
+        assertEquals("IRS_2018_S1", argsCaptor.getValue()[0]);
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", argsCaptor.getValue()[1]);
+        assertEquals(CANCELLED.name(), argsCaptor.getValue()[2]);
+        assertEquals(ARCHIVED.name(), argsCaptor.getValue()[3]);
+
+        assertEquals(1, allTasks.size());
+        Task task = allTasks.iterator().next();
+
+        assertEquals("tsk11231jh22", task.getIdentifier());
+        assertEquals("2018_IRS-3734", task.getGroupIdentifier());
+        assertEquals(READY, task.getStatus());
+        assertEquals("Not Visited", task.getBusinessStatus());
+        assertEquals(3, task.getPriority());
+        assertEquals("IRS", task.getCode());
+        assertEquals("Spray House", task.getDescription());
+        assertEquals("IRS Visit", task.getFocus());
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", task.getForEntity());
+        assertEquals("2018-11-10T2200", task.getExecutionStartDate().toString(formatter));
+        assertNull(task.getExecutionEndDate());
+        assertEquals("2018-10-31T0700", task.getAuthoredOn().toString(formatter));
+        assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
+        assertEquals("demouser", task.getOwner());
+
+    }
+
+    @Test
+    public void testFindTasksForEntity() throws ParseException {
+        String query = "SELECT * FROM task WHERE plan_id=? AND for =? AND status  NOT IN (?,?)";
+        String[] params = new String[]{"IRS_2018_S1", "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", CANCELLED.name(), ARCHIVED.name()};
+        when(sqLiteDatabase.rawQuery(query, params)).thenReturn(getCursor());
+
+        List<com.ibm.fhir.model.resource.Task> allTasks = taskRepository.findTasksForEntity("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", "IRS_2018_S1");
+        verify(sqLiteDatabase).rawQuery(query, params);
+
+        assertEquals(1, allTasks.size());
+        com.ibm.fhir.model.resource.Task task = allTasks.iterator().next();
+
+        assertEquals("tsk11231jh22", task.getIdentifier().get(0).getValue().getValue());
+        assertEquals("2018_IRS-3734", task.getGroupIdentifier().getValue().getValue());
+        assertEquals(TaskStatus.READY, task.getStatus());
+        assertEquals("Not Visited", task.getBusinessStatus().getText().getValue());
+        assertEquals("IRS", task.getCode().getText().getValue());
+        assertEquals("Spray House", task.getDescription().getValue());
+        assertEquals("IRS Visit", task.getFocus().getReference().getValue());
+        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", task.getFor().getReference().getValue());
+        assertEquals("2018-11-10T2200", javaTimeFormater.format(task.getExecutionPeriod().getStart().getValue()));
+        assertNull(task.getExecutionPeriod().getEnd());
+        assertEquals("2018-10-31T0700", javaTimeFormater.format(task.getAuthoredOn().getValue()));
+        assertEquals("2018-10-31T0700", javaTimeFormater.format(task.getLastModified().getValue()));
+        assertEquals("demouser", task.getOwner().getReference().getValue());
 
     }
 
