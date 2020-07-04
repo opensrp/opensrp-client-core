@@ -49,7 +49,6 @@ import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED;
 import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED_EVENT;
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
-import static org.smartregister.domain.Task.TaskStatus;
 
 /**
  * Created by samuelgithengi on 11/23/18.
@@ -635,7 +634,7 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     }
 
     @Override
-    public boolean checkIfTaskExists(String baseEntityId, String jurisdiction,String planIdentifier, String code) {
-        return !getTasksByEntityAndCode(planIdentifier,jurisdiction,baseEntityId,code).isEmpty();
+    public boolean checkIfTaskExists(String baseEntityId, String jurisdiction, String planIdentifier, String code) {
+        return !getTasksByEntityAndCode(planIdentifier, jurisdiction, baseEntityId, code).isEmpty();
     }
 }
