@@ -52,7 +52,7 @@ script:
   - ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
 
 after_success:
-  - ./gradlew coveralls --stacktrace
+  - ./gradlew opensrp-app:coveralls --stacktrace
 
 
 after_failure:

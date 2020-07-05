@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.smartregister.client.utils.contract.ClientFormContract;
 import org.smartregister.domain.ClientForm;
 
 import java.text.ParseException;
@@ -20,7 +21,7 @@ import timber.log.Timber;
  *
  * @author cozej4 https://github.com/cozej4
  */
-public class ClientFormRepository extends BaseRepository {
+public class ClientFormRepository extends BaseRepository implements ClientFormContract.Dao {
 
     protected static final String ID = "id";
     protected static final String VERSION = "version";
@@ -62,7 +63,8 @@ public class ClientFormRepository extends BaseRepository {
         return CLIENT_FORM_TABLE;
     }
 
-    public void addOrUpdate(ClientForm clientForm) {
+    @Override
+    public void addOrUpdate(ClientFormContract.Model clientForm) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, clientForm.getId());
         contentValues.put(VERSION, clientForm.getVersion());
@@ -77,6 +79,7 @@ public class ClientFormRepository extends BaseRepository {
         getWritableDatabase().replace(getClientFormTableName(), null, contentValues);
     }
 
+    @Override
     public void setIsNew(boolean isNew, int formId) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(ID, formId);
@@ -110,8 +113,9 @@ public class ClientFormRepository extends BaseRepository {
      * @param identifier of a the client form
      * @return a list of ClientForms for the passed identifier
      */
-    public List<ClientForm> getClientFormByIdentifier(String identifier) {
-        List<ClientForm> clientForms = new ArrayList<>();
+    @Override
+    public List<ClientFormContract.Model> getClientFormByIdentifier(String identifier) {
+        List<ClientFormContract.Model> clientForms = new ArrayList<>();
         try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
                 " WHERE " + IDENTIFIER + " =? ORDER BY " + CREATED_AT + " DESC", new String[]{identifier})) {
             while (cursor.moveToNext()) {
@@ -143,15 +147,42 @@ public class ClientFormRepository extends BaseRepository {
 
     }
 
+    /**
+     * Get the latest ClientForms for the passed identifier. The latest ClientForm might not be
+     * active if unstable
+     *
+     * @param identifier of a the client form
+     * @return active ClientForm for the passed identifier
+     */
+    @Override
+    public ClientForm getLatestFormByIdentifier(String identifier) {
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getClientFormTableName() +
+                " WHERE " + IDENTIFIER + " = ? ORDER BY " + CREATED_AT + " DESC LIMIT 1", new String[]{identifier})) {
+            if (cursor.moveToFirst()) {
+                return readCursor(cursor);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return null;
+
+    }
+
 
     /**
      * Delete client form by id
      *
      * @param clientFormId
      */
+    @Override
     public void delete(int clientFormId) {
         SQLiteDatabase database = getWritableDatabase();
         database.delete(CLIENT_FORM_TABLE, ID + "= ?", new String[]{String.valueOf(clientFormId)});
+    }
+
+    @Override
+    public ClientFormContract.Model createNewClientFormModel() {
+        return new ClientForm();
     }
 
 }

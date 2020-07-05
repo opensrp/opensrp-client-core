@@ -190,4 +190,35 @@ public class SmartRegisterQueryBuilderTest extends BaseUnitTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
+    @Test
+    public void testQueryForRegisterSortBasedOnRegisterAndAlert() {
+        String expectedQuery = "Select event.id as _id , createdAt , baseEntityId FROM event LEFT JOIN alerts  ON event.id = alerts.caseID WHERE status IS NULL AND alerts.scheduleName = 'first_alert' ORDER BY CASE WHEN alerts.status = 'urgent' THEN '1'\n" +
+                "WHEN alerts.status = 'upcoming' THEN '2'\n" +
+                "WHEN alerts.status = 'normal' THEN '3'\n" +
+                "WHEN alerts.status = 'expired' THEN '4'\n" +
+                "WHEN alerts.status is Null THEN '5'\n" +
+                "Else alerts.status END ASC";
+        String tableName = "event";
+        String[] columns = {"createdAt", "baseEntityId"};
+        String condition = "status IS NULL";
+        String alertName = "first_alert";
+        String actualQuery = smartRegisterQueryBuilder.queryForRegisterSortBasedOnRegisterAndAlert(tableName, columns, condition, alertName);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    public void testQueryForRegisterSortBasedOnRegisterAndAlertWithNullcondition() {
+        String expectedQuery = "Select event.id as _id , createdAt , baseEntityId FROM event LEFT JOIN alerts  ON event.id = alerts.caseID WHERE alerts.scheduleName = 'first_alert' ORDER BY CASE WHEN alerts.status = 'urgent' THEN '1'\n" +
+                "WHEN alerts.status = 'upcoming' THEN '2'\n" +
+                "WHEN alerts.status = 'normal' THEN '3'\n" +
+                "WHEN alerts.status = 'expired' THEN '4'\n" +
+                "WHEN alerts.status is Null THEN '5'\n" +
+                "Else alerts.status END ASC";
+        String tableName = "event";
+        String[] columns = {"createdAt", "baseEntityId"};
+        String alertName = "first_alert";
+        String actualQuery = smartRegisterQueryBuilder.queryForRegisterSortBasedOnRegisterAndAlert(tableName, columns,null, alertName);
+        assertEquals(expectedQuery, actualQuery);
+    }
+
 }

@@ -15,17 +15,18 @@ import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Address;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -37,10 +38,15 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMdd;
 import static org.smartregister.clientandeventmodel.DateUtil.yyyyMMddHHmmss;
+import static org.smartregister.util.JsonFormUtils.ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.KEY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY;
 import static org.smartregister.util.JsonFormUtils.OPENMRS_ENTITY_ID;
+import static org.smartregister.util.JsonFormUtils.PERSON_ATTRIBUTE;
+import static org.smartregister.util.JsonFormUtils.PERSON_INDENTIFIER;
 import static org.smartregister.util.JsonFormUtils.SAVE_ALL_CHECKBOX_OBS_AS_ARRAY;
 import static org.smartregister.util.JsonFormUtils.SAVE_OBS_AS_ARRAY;
+import static org.smartregister.util.JsonFormUtils.VALUE;
 import static org.smartregister.util.JsonFormUtils.dd_MM_yyyy;
 
 /**
@@ -210,8 +216,9 @@ public class JsonFormUtilsTest {
             "    \"label_text_style\": \"bold\"\n" +
             "  },\n" +
             "   {\n" +
-            "    \"openmrs_entity\": \"other_entity\",\n" +
-            "    \"openmrs_entity_id\": \"other_entity_id\",\n" +
+            "    \"openmrs_entity\": \"person\",\n" +
+            "    \"openmrs_entity_id\": \"first_name\",\n" +
+            "    \"entity_id\": \"entity_id\",\n" +
             "    \"options\": [\n" +
             "      {\n" +
             "        \"openmrs_entity\": \"entity\",\n" +
@@ -1410,5 +1417,58 @@ public class JsonFormUtilsTest {
         assertEquals("gps", sectionsMap.get("gps"));
         assertNotNull("scan_respiratory_specimen_barcode", sectionsMap.get("lbl_scan_respiratory_specimen_barcode"));
         assertNotNull("affix_respiratory_specimen_label", sectionsMap.get("lbl_affix_respiratory_specimen_label"));
+    }
+
+    @Test
+    public void testFillSubFormIdentifiersShouldAddCorrectIdentifiers() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ENTITY_ID, "entity_id");
+        jsonObject.put(VALUE, "value");
+        jsonObject.put(OPENMRS_ENTITY, PERSON_INDENTIFIER);
+        jsonObject.put(OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        Map<String, String> pids = new HashMap<>();
+        JsonFormUtils.fillSubFormIdentifiers(pids, jsonObject, "entity_id");
+        assertEquals(1, pids.size());
+        assertEquals("value", pids.get(OPENMRS_ENTITY_ID));
+    }
+
+    @Test
+    public void testFillSubFormAttributesShouldFillCorrectAttributes() throws JSONException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(ENTITY_ID, "entity_id");
+        jsonObject.put(VALUE, "value");
+        jsonObject.put(OPENMRS_ENTITY, PERSON_ATTRIBUTE);
+        jsonObject.put(OPENMRS_ENTITY_ID, "openmrs_entity_id");
+        Map<String, Object> patientAttributes = new HashMap<>();
+        JsonFormUtils.fillSubFormAttributes(patientAttributes, jsonObject, "entity_id");
+        assertEquals(1, patientAttributes.size());
+        assertEquals("value", patientAttributes.get(OPENMRS_ENTITY_ID));
+    }
+
+    @Test
+    public void testGetSubFormFieldValueShouldGetCorrectValue() throws JSONException {
+        JSONArray jsonArray = new JSONArray(STEP_1_FIELDS);
+        String value = JsonFormUtils.getSubFormFieldValue(jsonArray, FormEntityConstants.Person.first_name, "entity_id");
+        assertEquals("primary", value);
+    }
+
+    @Test
+    public void testCreateObservationShouldCreateCorrectObservation() throws Exception {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(KEY, "key");
+        Event event = new Event();
+        List values = new ArrayList<>();
+        values.add("value1");
+        values.add("value2");
+        Whitebox.invokeMethod(JsonFormUtils.class, "createObservation", event, jsonObject, values);
+        List<Obs> obsList = event.getObs();
+        assertEquals(1, obsList.size());
+        Obs obs = obsList.get(0);
+        assertEquals("formsubmissionField", obs.getFieldType());
+        assertEquals("text", obs.getFieldDataType());
+        assertEquals("key", obs.getFormSubmissionField());
+        assertEquals("key", obs.getFieldCode());
+        assertFalse(obs.isSaveObsAsArray());
+        assertEquals(values, obs.getValues());
     }
 }
