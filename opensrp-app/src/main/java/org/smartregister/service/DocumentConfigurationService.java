@@ -11,6 +11,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.client.utils.contract.ClientFormContract;
 import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.Manifest;
 import org.smartregister.domain.Response;
@@ -179,7 +180,7 @@ public class DocumentConfigurationService {
         clientFormRepository.addOrUpdate(clientForm);
 
         //deleting the third oldest client Form from the repository
-        List<ClientForm> clientFormList = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+        List<ClientFormContract.Model> clientFormList = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
         if (clientFormList.size() > 2) {
             clientFormRepository.delete(clientFormList.get(2).getId());
         }

@@ -44,12 +44,14 @@ public class ClientProcessor {
     private static ClientProcessor instance;
     Context mContext;
     private CloudantDataHandler mCloudantDataHandler;
+    private SharedPreferences preferences;
 
     public ClientProcessor(Context context) {
         mContext = context;
 
         try {
             mCloudantDataHandler = CloudantDataHandler.getInstance(context);
+            preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -65,9 +67,7 @@ public class ClientProcessor {
     }
 
     public synchronized void processClient() throws Exception {
-        CloudantDataHandler handler = CloudantDataHandler.getInstance(mContext);
 
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(preferences);
         long lastSyncTimeStamp = allSharedPreferences.fetchLastSyncDate(0);
         Date lastSyncDate = new Date(lastSyncTimeStamp);
@@ -75,7 +75,7 @@ public class ClientProcessor {
         String clientAlertsStr = getFileContents("ec_client_alerts.json");
 
         //this seems to be easy for now cloudant json to events model is crazy
-        List<JSONObject> eventsAndAlerts = handler.getUpdatedEventsAndAlerts(lastSyncDate);
+        List<JSONObject> eventsAndAlerts = mCloudantDataHandler.getUpdatedEventsAndAlerts(lastSyncDate);
         if (!eventsAndAlerts.isEmpty()) {
             for (JSONObject eventOrAlert : eventsAndAlerts) {
                 String type = eventOrAlert.has("type") ? eventOrAlert.getString("type") : null;

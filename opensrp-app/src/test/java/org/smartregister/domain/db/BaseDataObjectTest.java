@@ -4,9 +4,17 @@ import junit.framework.Assert;
 
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.BaseDataObject;
+import org.smartregister.domain.User;
 import org.smartregister.domain.db.mock.BaseDataObjectMock;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by kaderchowdhury on 20/11/17.
@@ -14,22 +22,24 @@ import org.smartregister.domain.db.mock.BaseDataObjectMock;
 
 public class BaseDataObjectTest extends BaseUnitTest {
 
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
+
     private BaseDataObjectMock baseDataObject;
+
+    @Mock
+    private User user;
 
     @Before
     public void setUp() {
         baseDataObject = new BaseDataObjectMock();
     }
 
-    public String getCreator() {
-        return baseDataObject.getCreator();
-    }
 
     @Test
     public void assertSetCreator() {
-        String creator = "creator;";
-        baseDataObject.setCreator(creator);
-        Assert.assertEquals(getCreator(), creator);
+        baseDataObject.setCreator(this.user);
+        assertEquals(baseDataObject.getCreator(), user);
     }
 
 
@@ -41,19 +51,14 @@ public class BaseDataObjectTest extends BaseUnitTest {
     public void assertSetDateCreated() {
         DateTime dateCreated = new DateTime(0l);
         baseDataObject.setDateCreated(dateCreated);
-        Assert.assertEquals(getDateCreated(), dateCreated);
+        assertEquals(getDateCreated(), dateCreated);
     }
 
-
-    public String getEditor() {
-        return baseDataObject.getEditor();
-    }
 
     @Test
     public void assertSetEditor() {
-        String editor = "editor";
-        baseDataObject.setEditor(editor);
-        Assert.assertEquals(getEditor(), editor);
+        baseDataObject.setEditor(user);
+        assertEquals(baseDataObject.getEditor(), user);
     }
 
 
@@ -93,15 +98,10 @@ public class BaseDataObjectTest extends BaseUnitTest {
     }
 
 
-    public String getVoider() {
-        return baseDataObject.getVoider();
-    }
-
     @Test
     public void assertSetVoider() {
-        String voider = "voder";
-        baseDataObject.setVoider(voider);
-        Assert.assertEquals(getVoider(), voider);
+        baseDataObject.setVoider(user);
+        assertEquals(baseDataObject.getVoider(), user);
     }
 
 
@@ -129,18 +129,13 @@ public class BaseDataObjectTest extends BaseUnitTest {
     }
 
 
-    public BaseDataObject withCreator(String creator) {
-        return baseDataObject.withCreator(creator);
-    }
-
-
     public BaseDataObject withDateCreated(DateTime dateCreated) {
         return baseDataObject.withDateCreated(dateCreated);
     }
 
 
     public BaseDataObject withEditor(String editor) {
-        return baseDataObject.withEditor(editor);
+        return baseDataObject.withEditor(user);
     }
 
 
@@ -159,30 +154,16 @@ public class BaseDataObjectTest extends BaseUnitTest {
     }
 
 
-    public BaseDataObject withVoider(String voider) {
-        return baseDataObject.withVoider(voider);
-    }
-
-
-    public BaseDataObject withVoidReason(String voidReason) {
-        return baseDataObject.withVoidReason(voidReason);
-    }
-
-
-    public BaseDataObject withServerVersion(long serverVersion) {
-        return baseDataObject.withServerVersion(serverVersion);
-    }
-
     @Test
     public void assertBaseObjectNotNull() {
-        Assert.assertNotNull(withCreator(""));
+        Assert.assertNotNull(baseDataObject.withCreator(user));
         Assert.assertNotNull(withDateCreated(new DateTime(0l)));
         Assert.assertNotNull(withDateEdited(new DateTime(0l)));
         Assert.assertNotNull(withDateVoided(new DateTime(0l)));
         Assert.assertNotNull(withEditor(""));
-        Assert.assertNotNull(withServerVersion(0l));
-        Assert.assertNotNull(withVoider(""));
+        Assert.assertNotNull(baseDataObject.withServerVersion(0l));
+        Assert.assertNotNull(baseDataObject.withVoider(user));
         Assert.assertNotNull(withVoided(Boolean.TRUE));
-        Assert.assertNotNull(withVoidReason(""));
+        Assert.assertNotNull(baseDataObject.withVoidReason(""));
     }
 }

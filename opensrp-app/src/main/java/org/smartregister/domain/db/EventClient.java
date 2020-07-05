@@ -1,5 +1,8 @@
 package org.smartregister.domain.db;
 
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Client;
+
 public class EventClient {
 
     private Event event;
