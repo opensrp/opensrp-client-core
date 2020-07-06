@@ -10,10 +10,14 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.ReceiverTransferDao;
+import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.OpenSRPImageLoader;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 
 import timber.log.Timber;
@@ -23,6 +27,8 @@ import timber.log.Timber;
  */
 // TODO
 public class P2PReceiverTransferDao extends BaseP2PTransferDao implements ReceiverTransferDao {
+
+    private List<String> classifiables = Arrays.asList("Client", "Event", "ForeignEvent", "ForeignClient");
 
     @Override
     public TreeSet<DataType> getDataTypes() {
@@ -40,10 +46,20 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         int foreignEventsMaxRowId = foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
         long maxTableRowId = 0;
 
-        // Retrieve the max
+        P2PClassifier<JSONObject> classifier = DrishtiApplication.getInstance().getP2PClassifier();
+        JSONArray homeData = new JSONArray();
+        JSONArray foreignData = new JSONArray();
+
+        // Retrieve the max and classify
         try {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+                if (classifier != null && classifiables.contains(dataType.getName()) && classifier.isForeign(jsonObject, dataType)) {
+                    foreignData.put(jsonObject);
+                } else {
+                    homeData.put(jsonObject);
+                }
 
                 long rowId = jsonObject.getLong(AllConstants.ROWID);
                 jsonObject.remove(AllConstants.ROWID);
@@ -59,11 +75,29 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         }
 
         if (dataType.getName().equals(event.getName())) {
-            Timber.e("Received %s events", String.valueOf(jsonArray.length()));
-            eventClientRepository.batchInsertEvents(jsonArray, 0);
+
+            Timber.e("Received %s total events", String.valueOf(jsonArray.length()));
+
+            Timber.e("  %s resident events", String.valueOf(homeData.length()));
+            if (homeData.length() > 0)
+                eventClientRepository.batchInsertEvents(homeData, 0);
+
+            Timber.e("  %s foreign events", String.valueOf(foreignData.length()));
+            if (foreignData.length() > 0)
+                foreignEventClientRepository.batchInsertEvents(foreignData, 0);
+
         } else if (dataType.getName().equals(client.getName())) {
+
             Timber.e("Received %s clients", String.valueOf(jsonArray.length()));
-            eventClientRepository.batchInsertClients(jsonArray);
+
+            Timber.e("  %s resident clients", String.valueOf(homeData.length()));
+            if (homeData.length() > 0)
+                eventClientRepository.batchInsertClients(homeData);
+
+            Timber.e("  %s foreign clients", String.valueOf(foreignData.length()));
+            if (foreignData.length() > 0)
+                foreignEventClientRepository.batchInsertClients(foreignData);
+
         } else if (dataType.getName().equals(structure.getName())) {
             Timber.e("Received %s structures", String.valueOf(jsonArray.length()));
             structureRepository.batchInsertStructures(jsonArray);
@@ -71,11 +105,29 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
             Timber.e("Received %s tasks", String.valueOf(jsonArray.length()));
             taskRepository.batchInsertTasks(jsonArray);
         } else if (dataType.getName().equals(foreignClient.getName())) {
+
             Timber.e("Received %s foreign clients", String.valueOf(jsonArray.length()));
-            foreignEventClientRepository.batchInsertClients(jsonArray);
+
+            Timber.e("  %s resident clients", String.valueOf(homeData.length()));
+            if (homeData.length() > 0)
+                eventClientRepository.batchInsertClients(homeData);
+
+            Timber.e("  %s foreign clients", String.valueOf(foreignData.length()));
+            if (foreignData.length() > 0)
+                foreignEventClientRepository.batchInsertClients(foreignData);
+
         } else if (dataType.getName().equals(foreignEvent.getName())) {
+
             Timber.e("Received %s foreign events", String.valueOf(jsonArray.length()));
-            foreignEventClientRepository.batchInsertEvents(jsonArray, 0);
+
+            Timber.e("  %s resident events", String.valueOf(homeData.length()));
+            if (homeData.length() > 0)
+                eventClientRepository.batchInsertEvents(homeData, 0);
+
+            Timber.e("  %s foreign events", String.valueOf(foreignData.length()));
+            if (foreignData.length() > 0)
+                foreignEventClientRepository.batchInsertEvents(foreignData, 0);
+
         } else {
             Timber.e("The data type provided does not exist");
             return maxTableRowId;

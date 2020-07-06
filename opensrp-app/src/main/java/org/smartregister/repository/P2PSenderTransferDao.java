@@ -3,6 +3,7 @@ package org.smartregister.repository;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -11,6 +12,8 @@ import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.p2p.sync.data.MultiMediaData;
+import org.smartregister.sync.P2PClassifier;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
 import java.util.HashMap;
@@ -37,8 +40,15 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
             return CoreLibrary.getInstance().context()
                     .getEventClientRepository().getEvents(l, i);
         } else if (dataType.getName().equals(client.getName())) {
-            return CoreLibrary.getInstance().context()
-                    .getEventClientRepository().getClients(l, i);
+
+            if(DrishtiApplication.getInstance().getP2PClassifier() == null){
+                return CoreLibrary.getInstance().context()
+                        .getEventClientRepository().getClients(l, i);
+            }else{
+                return CoreLibrary.getInstance().context()
+                        .getEventClientRepository().getClientsWithLastLocationID(l, i);
+            }
+
         } else if (dataType.getName().equals(structure.getName())) {
             return CoreLibrary.getInstance().context()
                     .getStructureRepository().getStructures(l, i);

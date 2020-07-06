@@ -1,5 +1,6 @@
 package org.smartregister.repository;
 
+import org.smartregister.AllConstants;
 import org.smartregister.p2p.model.DataType;
 
 import java.util.TreeSet;
@@ -10,13 +11,13 @@ import java.util.TreeSet;
 
 public abstract class BaseP2PTransferDao {
 
-    protected DataType client = new DataType("Client", DataType.Type.NON_MEDIA, 1);
-    protected DataType event = new DataType("Event", DataType.Type.NON_MEDIA, 2);
-    protected DataType profilePic = new DataType("Profile Pic", DataType.Type.MEDIA, 3);
-    protected DataType structure = new DataType("Structure", DataType.Type.NON_MEDIA, 4);
-    protected DataType task = new DataType("Task", DataType.Type.NON_MEDIA, 5);
-    protected DataType foreignEvent = new DataType("ForeignEvent", DataType.Type.NON_MEDIA, 2);
-    protected DataType foreignClient = new DataType("ForeignClient", DataType.Type.NON_MEDIA, 2);
+    protected DataType client = new DataType(AllConstants.P2PDataTypes.CLIENT, DataType.Type.NON_MEDIA, 1);
+    protected DataType event = new DataType(AllConstants.P2PDataTypes.EVENT, DataType.Type.NON_MEDIA, 2);
+    protected DataType profilePic = new DataType(AllConstants.P2PDataTypes.PROFILE_PIC, DataType.Type.MEDIA, 3);
+    protected DataType structure = new DataType(AllConstants.P2PDataTypes.STRUCTURE, DataType.Type.NON_MEDIA, 4);
+    protected DataType task = new DataType(AllConstants.P2PDataTypes.TASK, DataType.Type.NON_MEDIA, 5);
+    protected DataType foreignEvent = new DataType(AllConstants.P2PDataTypes.FOREIGN_EVENT, DataType.Type.NON_MEDIA, 2);
+    protected DataType foreignClient = new DataType(AllConstants.P2PDataTypes.FOREIGN_CLIENT, DataType.Type.NON_MEDIA, 2);
 
     protected TreeSet<DataType> dataTypes;
 

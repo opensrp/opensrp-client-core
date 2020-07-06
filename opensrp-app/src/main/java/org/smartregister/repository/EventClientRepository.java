@@ -1430,6 +1430,66 @@ public class EventClientRepository extends BaseRepository {
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
      * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
+     *
+     * Also adds a locationID to the client by selecting the last location id from the events table
+     */
+    //TODO incomplete method
+    @Nullable
+    public JsonData getClientsWithLastLocationID(long lastRowId, int limit) {
+        JsonData jsonData = null;
+        JSONArray jsonArray = new JSONArray();
+        long maxRowId = 0;
+
+        String query = "SELECT "
+                + event_column.json
+                + ","
+                + event_column.syncStatus
+                + ","
+                + ROWID
+                + " FROM "
+                + clientTable.name()
+                + " WHERE "
+                + ROWID
+                + " > ? "
+                + " ORDER BY " + ROWID + " ASC LIMIT ?";
+        Cursor cursor = null;
+
+        try {
+            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+
+            while (cursor.moveToNext()) {
+                long rowId = cursor.getLong(2);
+                JSONObject eventObject = getEventObject(cursor, rowId);
+                if (eventObject == null) continue;
+
+                jsonArray.put(eventObject);
+
+                if (rowId > maxRowId) {
+                    maxRowId = rowId;
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+
+            if (jsonArray.length() > 0) {
+                jsonData = new JsonData(jsonArray, maxRowId);
+            }
+        }
+
+        return jsonData;
+    }
+
+    /**
+     * Fetches {@link Client}s whose rowid > #lastRowId up to the #limit provided.
+     *
+     * @param lastRowId
+     * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
+     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * This enables this method to be called again for the consequent batches
      */
     @Nullable
     public JsonData getClients(long lastRowId, int limit) {
