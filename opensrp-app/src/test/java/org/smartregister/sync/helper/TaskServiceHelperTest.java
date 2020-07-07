@@ -42,10 +42,10 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     private TaskRepository taskRepository;
 
     @Mock
-    PlanDefinitionRepository planDefinitionRepository;
+    private PlanDefinitionRepository planDefinitionRepository;
 
     @Mock
-    LocationRepository locationRepository;
+    private  LocationRepository locationRepository;
 
     @Mock
     private HTTPAgent httpAgent;
@@ -130,4 +130,5 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         assertEquals(expectedTask.getPlanIdentifier(), actualTask.getPlanIdentifier());
 
     }
+
 }
