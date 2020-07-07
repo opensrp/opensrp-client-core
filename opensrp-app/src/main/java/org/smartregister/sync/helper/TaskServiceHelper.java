@@ -156,7 +156,8 @@ public class TaskServiceHelper extends BaseHelper {
     }
 
     private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
+
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
 
@@ -220,7 +221,7 @@ public class TaskServiceHelper extends BaseHelper {
     }
 
     public void syncTaskStatusToServer() {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         List<TaskUpdate> updates = taskRepository.getUnSyncedTaskStatus();
         if (!updates.isEmpty()) {
             String jsonPayload = new Gson().toJson(updates);
@@ -282,5 +283,9 @@ public class TaskServiceHelper extends BaseHelper {
         }
     }
 
+    @VisibleForTesting
+    protected HTTPAgent getHttpAgent() {
+        return CoreLibrary.getInstance().context().getHttpAgent();
+    }
 }
 
