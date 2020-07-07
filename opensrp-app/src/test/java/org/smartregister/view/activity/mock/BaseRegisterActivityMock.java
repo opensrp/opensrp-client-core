@@ -76,7 +76,7 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
 
     @Override
     public void onPointerCaptureChanged(boolean hasCapture) {
-
+        //mock do nothing
     }
 
     public static class BaseRegisterFragmentMock extends BaseRegisterFragment {
