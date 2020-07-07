@@ -132,7 +132,7 @@ public abstract class SyncConfiguration {
      * @return true/false -- {@link Boolean}
      */
     public boolean hasGlobalSettings() {
-        return false;
+        return true;
     }
 
     /**
