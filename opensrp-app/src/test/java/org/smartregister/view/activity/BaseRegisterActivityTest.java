@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
@@ -38,6 +39,7 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -244,10 +246,40 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
         activity = spy(activity);
         when(activity.findFragmentByPosition(0)).thenReturn(fragment);
         AppExecutors appExecutors = new AppExecutors(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor());
-        Whitebox.setInternalState(activity,"appExecutors",appExecutors);
+        Whitebox.setInternalState(activity, "appExecutors", appExecutors);
         appExecutors.diskIO().execute(() -> {
             activity.refreshList(FetchStatus.fetched);
         });
         verify(fragment, timeout(ASYNC_TIMEOUT)).refreshListView();
     }
+
+
+    @Test
+    public void testOnResumeSelectsClientsIfNotSelected() {
+        BottomNavigationView bottomNavigationView = activity.bottomNavigationView;
+        bottomNavigationView.setSelectedItemId(R.id.action_search);
+        activity.onResume();
+        assertEquals(R.id.action_clients, bottomNavigationView.getSelectedItemId());
+    }
+
+
+    @Test
+    public void testShowProgressDialog() {
+        activity.showProgressDialog(R.string.form_back_confirm_dialog_message);
+        ProgressDialog progressDialog = Whitebox.getInternalState(activity, "progressDialog");
+        assertTrue(progressDialog.isShowing());
+    }
+
+
+
+    @Test
+    public void testHideProgressDialog() {
+        activity.showProgressDialog(R.string.form_back_confirm_dialog_message);
+        ProgressDialog progressDialog = Whitebox.getInternalState(activity, "progressDialog");
+        assertTrue(progressDialog.isShowing());
+
+        activity.hideProgressDialog();
+        assertFalse(progressDialog.isShowing());
+    }
+
 }
