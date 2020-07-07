@@ -261,7 +261,7 @@ public class LocationServiceHelper extends BaseHelper {
         List<Location> locations = structureRepository.getAllUnsynchedCreatedStructures();
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
-            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            String baseUrl = getFormattedBaseUrl();
             Response<String> response = getHttpAgent().postWithJsonResponse(
                     MessageFormat.format("{0}/{1}",
                             baseUrl,
@@ -286,11 +286,11 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void syncUpdatedLocationsToServer() {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         List<Location> locations = locationRepository.getAllUnsynchedLocation();
         if (!locations.isEmpty()) {
             String jsonPayload = locationGson.toJson(locations);
-            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            String baseUrl = getFormattedBaseUrl();
 
             String isJurisdictionParam = "?is_jurisdiction=true";
             Response<String> response = httpAgent.postWithJsonResponse(

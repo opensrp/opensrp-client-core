@@ -26,6 +26,7 @@ import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.Repository;
+import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -59,6 +60,9 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
     private LocationTagRepository locationTagRepository;
 
     @Mock
+    private StructureRepository structureRepository;
+
+    @Mock
     private HTTPAgent httpAgent;
 
     @Mock
@@ -72,6 +76,8 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
 
     private String locationJSon = "{\"id\": \"3537\", \"type\": \"Feature\", \"geometry\": {\"type\": \"MultiPolygon\", \"coordinates\": [[[[32.64555352892119, -14.15491759447286], [32.64526263744511, -14.154844278278059], [32.64536132720689, -14.154861856643318], [32.645458459831154, -14.154886337918807], [32.64555352892119, -14.15491759447286]]]]}, \"properties\": {\"name\": \"MTI_13\", \"status\": \"Active\", \"version\": 0, \"parentId\": \"2953\", \"geographicLevel\": 2}, \"serverVersion\": 1542965231622}";
 
+    private String structureJSon = "{\"geometry\":{\"coordinates\":[28.351322951711495,-15.419607299156059],\"type\":\"Point\"},\"id\":\"3c35325e-4a34-4730-b67d-c824d6e783ba\",\"properties\":{\"effectiveStartDate\":\"2019-06-11T1129\",\"geographicLevel\":0,\"parentId\":\"3951\",\"status\":\"Pending Review\",\"type\":\"Mosquito Collection Point\",\"uid\":\"f8e27dee-81d7-4a5e-997c-b9d670a676f7\",\"version\":0},\"serverVersion\":1560245526899,\"syncStatus\":\"Unsynced\",\"type\":\"Feature\"}";
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -79,6 +85,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
         Whitebox.setInternalState(locationServiceHelper, "locationTagRepository", locationTagRepository);
         Whitebox.setInternalState(locationServiceHelper, "locationRepository", locationRepository);
+        Whitebox.setInternalState(locationServiceHelper, "structureRepository", structureRepository);
         Whitebox.setInternalState(locationServiceHelper, "allSharedPreferences", allSharedPreferences);
         Mockito.doReturn("anm").when(allSharedPreferences).fetchRegisteredANM();
         Mockito.doReturn("fb7ed5db-138d-4e6f-94d8-bc443b58dadb").when(allSharedPreferences).fetchDefaultLocalityId("anm");
@@ -200,4 +207,59 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         assertEquals(expectedLocation.getServerVersion().toString(), actualLocationLastSyncDate);
 
     }
+
+    @Test
+    public void testFetchLocationsStructures() {
+        locationServiceHelper.fetchLocationsStructures();
+        verify(locationServiceHelper).syncLocationsStructures(true);
+        verify(locationServiceHelper).syncLocationsStructures(false);
+        verify(locationServiceHelper).syncCreatedStructureToServer();
+        verify(locationServiceHelper).syncCreatedStructureToServer();
+
+    }
+
+    @Test
+    public void testSyncCreatedStructureToServer() {
+        Location expectedStructure = LocationServiceHelper.locationGson.fromJson(structureJSon, new TypeToken<Location>() {
+        }.getType());
+        expectedStructure.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        List<Location> structures = Collections.singletonList(expectedStructure);
+        when(structureRepository.getAllUnsynchedCreatedStructures()).thenReturn(structures);
+        Mockito.doReturn("https://sample-stage.smartregister.org/opensrp").when(locationServiceHelper).getFormattedBaseUrl();
+        Mockito.doReturn(new Response<>(ResponseStatus.success,
+                        LocationServiceHelper.locationGson.toJson(structures)))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        locationServiceHelper.syncCreatedStructureToServer();
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/location/add", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals(LocationServiceHelper.locationGson.toJson(structures), requestString);
+        verify(structureRepository).markStructuresAsSynced(expectedStructure.getId());
+
+    }
+
+    @Test
+    public void testSyncUpdatedLocationsToServer() {
+        Location expectedLocation = LocationServiceHelper.locationGson.fromJson(locationJSon, new TypeToken<Location>() {
+        }.getType());
+        expectedLocation.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        List<Location> locations = Collections.singletonList(expectedLocation);
+        when(locationRepository.getAllUnsynchedLocation()).thenReturn(locations);
+        Mockito.doReturn("https://sample-stage.smartregister.org/opensrp").when(locationServiceHelper).getFormattedBaseUrl();
+        Mockito.doReturn(new Response<>(ResponseStatus.success,
+                LocationServiceHelper.locationGson.toJson(locations)))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        locationServiceHelper.syncUpdatedLocationsToServer();
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/location/add?is_jurisdiction=true", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals(LocationServiceHelper.locationGson.toJson(locations), requestString);
+        verify(locationRepository).markLocationsAsSynced(expectedLocation.getId());
+
+    }
+
 }

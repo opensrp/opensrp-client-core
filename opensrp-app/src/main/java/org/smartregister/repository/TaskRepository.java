@@ -1,9 +1,14 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
+
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
+import com.ibm.fhir.path.FHIRPathElementNode;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -14,12 +19,15 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.smartregister.CoreLibrary;
+import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
-import org.smartregister.domain.db.Client;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.pathevaluator.PathEvaluatorLibrary;
+import org.smartregister.pathevaluator.dao.TaskDao;
 import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
@@ -34,6 +42,8 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED;
+import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED_EVENT;
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
 import static org.smartregister.domain.Task.TaskStatus;
@@ -41,7 +51,7 @@ import static org.smartregister.domain.Task.TaskStatus;
 /**
  * Created by samuelgithengi on 11/23/18.
  */
-public class TaskRepository extends BaseRepository {
+public class TaskRepository extends BaseRepository implements TaskDao {
 
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
@@ -606,5 +616,31 @@ public class TaskRepository extends BaseRepository {
         }
 
         return unsyncedRecordsCount;
+    }
+
+    @Override
+    public List<com.ibm.fhir.model.resource.Task> findTasksForEntity(String id, String planIdentifier) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public void saveTask(Task task, QuestionnaireResponse questionnaireResponse) {
+        if (questionnaireResponse != null) {
+            FHIRPathElementNode structure = PathEvaluatorLibrary.getInstance()
+                    .evaluateElementExpression(questionnaireResponse,
+                            "$this.item.where(url='details' and linkId='location_id').answer");
+            if (structure != null) {
+                String structureId = structure.element().as(QuestionnaireResponse.Item.Answer.class).as(com.ibm.fhir.model.type.String.class).getValue();
+                task.setStructureId(structureId);
+            } else {
+                task.setStructureId(task.getForEntity());
+            }
+        }
+        addOrUpdate(task);
+        Intent intent = new Intent();
+        Intent refreshGeoWidgetIntent = new Intent(TASK_GENERATED_EVENT);
+        refreshGeoWidgetIntent.putExtra(TASK_GENERATED, task);
+        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
     }
 }

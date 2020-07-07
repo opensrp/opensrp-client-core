@@ -10,19 +10,15 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.joda.time.LocalDate;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.domain.Alert;
 import org.smartregister.domain.AlertStatus;
 import org.smartregister.service.AlertService;
-import org.smartregister.view.activity.DrishtiApplication;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -30,8 +26,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
 /**
  * Created by onaio on 29/08/2017.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DrishtiApplication.class, AlertRepository.class})
+
 public class AlertRepositoryTest extends BaseUnitTest {
 
     public static final String ADDITIONALCOLUMN = "ADDITIONALCOLUMN";
