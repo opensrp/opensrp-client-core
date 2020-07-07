@@ -206,22 +206,38 @@ dependencies {
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
     implementation 'org.smartregister:opensrp-plan-evaluator:0.0.19-SNAPSHOT'
+    implementation('ch.acra:acra:4.5.0') {
+        exclude group: 'org.json', module: 'json'
+    }
+
+    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
+    implementation 'com.mcxiaoke.volley:library:1.0.19'
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
+
+    implementation 'com.cloudant:cloudant-http:2.7.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    implementation('com.android.support:design:28.0.0') {
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
+
+    implementation 'com.evernote:android-job:1.2.6'
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+
+    implementation('org.smartregister:android-p2p-sync:0.3.6-SNAPSHOT') {
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'android.arch.core', module: 'runtime'
+    }
+
+    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
+
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.13-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
-    implementation('org.smartregister:opensrp-client-native-form:1.9.2-SNAPSHOT@aar') {
-        transitive = true
-        exclude group: 'id.zelory', module: 'compressor'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'cardview-v7'
-        exclude group: 'com.android.support', module: 'support-media-compat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'io.ona.rdt-capture', module: 'lib'
-        exclude group: 'com.github.johnkil.print', module: 'print'
-        exclude group: 'com.android.support', module: 'multidex'
-    }
 }
 
 dependencies {
@@ -229,7 +245,6 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     androidTestImplementation 'junit:junit:4.12'
 
-    testImplementation 'com.android.support:multidex:1.0.0'
     testImplementation group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
     testImplementation 'org.apache.maven:maven-ant-tasks:2.1.3'
     testImplementation 'org.mockito:mockito-core:1.9.5'
