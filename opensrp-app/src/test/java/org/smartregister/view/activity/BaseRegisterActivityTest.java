@@ -1,7 +1,10 @@
 package org.smartregister.view.activity;
 
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
+import android.support.design.widget.SnackbarContentLayout;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.junit.Before;
@@ -10,12 +13,14 @@ import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowToast;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
+import org.smartregister.shadows.ShadowSnackBar;
 import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
@@ -116,16 +121,20 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
     }
 
     @Test
+    @Config(shadows = {ShadowSnackBar.class})
     public void testDisplaySyncNotification() {
         activity.displaySyncNotification();
-        //TODO uncomment after migtrating to Roelectric 4.x
-        // assertEquals(ShadowSnackbar.getTextOfLatestSnackbar(), activity.getString(R.string.manual_sync_triggered));
+        Snackbar snackbar = ShadowSnackBar.getLatestSnackbar();
+        Snackbar.SnackbarLayout layout = (Snackbar.SnackbarLayout) snackbar.getView();
+        assertEquals(((TextView) ((SnackbarContentLayout) layout.getChildAt(0)).getChildAt(0)).getText(), activity.getString(R.string.manual_sync_triggered));
+        assertEquals(Snackbar.LENGTH_LONG, snackbar.getDuration());
+        assertTrue( snackbar.isShown());
     }
 
     @Test
     public void testDisplayToast() {
-        activity.displayShortToast(R.string.manual_sync_triggered);
-        assertEquals(Toast.LENGTH_SHORT, ShadowToast.getLatestToast().getDuration());
+        activity.displayToast(R.string.manual_sync_triggered);
+        assertEquals(Toast.LENGTH_LONG, ShadowToast.getLatestToast().getDuration());
         assertEquals(activity.getString(R.string.manual_sync_triggered), ShadowToast.getTextOfLatestToast());
     }
 
