@@ -3,6 +3,8 @@ package org.smartregister.util;
 import android.content.res.AssetManager;
 import android.util.Xml;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,6 +18,8 @@ import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -204,6 +208,29 @@ public class FormUtilsTest extends BaseUnitTest {
         is.close();
         fileContents = new String(buffer, "UTF-8");
         return fileContents;
+    }
+
+    @Test
+    public void getFormJsonShouldReturnCorrectFormWithSameLength() {
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(context_).getResources();
+        Mockito.doReturn(RuntimeEnvironment.application.getApplicationContext()).when(context_).getApplicationContext();
+        Assert.assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
+    }
+
+    @Test
+    public void getIndexForFormNameShouldReturnCorrectIndex() {
+        String[] formNames = new String[] {"Birth Reg", "Immunisation Reg", "Death Form"};
+        Assert.assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
+    }
+
+    @Test
+    public void getJsonFieldFromArrayShouldReturnObjectWithCorrectNameProperty() throws JSONException {
+        JSONArray jsonArray = new JSONArray("[{\"name\":\"first_name\",\"type\":\"edit_text\",\"value\":\"John\"},{\"name\":\"last_name\",\"type\":\"edit_text\",\"value\":\"Doe\"}]");
+
+        JSONObject resultJson = ReflectionHelpers.callInstanceMethod(formUtils, "getJsonFieldFromArray"
+                , ReflectionHelpers.ClassParameter.from(String.class, "last_name")
+                , ReflectionHelpers.ClassParameter.from(JSONArray.class, jsonArray));
+        Assert.assertEquals("Doe", resultJson.getString("value"));
     }
 
 }
