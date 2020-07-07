@@ -40,9 +40,6 @@ public class SecurityHelperTest {
     @Mock
     private SecretKey secretKey;
 
-    @Mock
-    private PBEKeySpec keySpec;
-
     private char[] TEST_PASSWORD;
 
     private static final String TEST_DATA = "Some Random Test Data";
