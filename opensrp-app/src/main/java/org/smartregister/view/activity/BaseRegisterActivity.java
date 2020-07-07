@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -64,7 +63,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public static int LIBRARY_POSITION;
     public static int ME_POSITION;
 
-    private AppExecutors  appExecutors= new AppExecutors();
+    private AppExecutors appExecutors = new AppExecutors();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -325,7 +324,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
             if (Looper.myLooper() == Looper.getMainLooper()) {
                 mPager.setCurrentItem(position, false);
             } else {
-                runOnUiThread(new Runnable() {
+                appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
                         mPager.setCurrentItem(position, false);

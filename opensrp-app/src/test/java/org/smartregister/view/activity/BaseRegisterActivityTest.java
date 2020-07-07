@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Handler;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.SnackbarContentLayout;
@@ -22,7 +23,6 @@ import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
 import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowToast;
-import org.robolectric.shadows.multidex.Shadows;
 import org.smartregister.AllConstants;
 import org.smartregister.AllConstants.BARCODE;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -80,6 +80,8 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
 
     @Mock
     private Barcode barcode;
+
+    private AppExecutors appExecutors = new AppExecutors(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor());
 
     @Before
     public void setUp() {
@@ -251,7 +253,6 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
     public void refreshListOnWorkerThreadInvokesFragmentRefresh() {
         activity = spy(activity);
         when(activity.findFragmentByPosition(0)).thenReturn(fragment);
-        AppExecutors appExecutors = new AppExecutors(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor());
         Whitebox.setInternalState(activity, "appExecutors", appExecutors);
         appExecutors.diskIO().execute(() -> {
             activity.refreshList(FetchStatus.fetched);
@@ -320,13 +321,13 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
     public void testOnRequestPermissionsResultShowsToast() {
         activity.onRequestPermissionsResult(PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE, null, new int[]{PackageManager.PERMISSION_DENIED});
         assertEquals(Toast.LENGTH_LONG, ShadowToast.getLatestToast().getDuration());
-        assertEquals(activity.getString(R.string.allow_camera_management) , ShadowToast.getTextOfLatestToast());
+        assertEquals(activity.getString(R.string.allow_camera_management), ShadowToast.getTextOfLatestToast());
     }
 
     @Test
     public void testUpdateInitialsText() {
         activity.updateInitialsText("SG");
-        assertEquals("SG",activity.userInitials);
+        assertEquals("SG", activity.userInitials);
     }
 
     @Test
@@ -334,5 +335,22 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
         Whitebox.setInternalState(activity, "mBaseFragment", fragment);
         activity.setSearchTerm("Doe");
         verify(fragment).setSearchTerm("Doe");
+    }
+
+    @Test
+    public void testSwitchToFragment() {
+        Whitebox.setInternalState(activity, "mPager", mPager);
+        activity.switchToFragment(2);
+        verify(mPager).setCurrentItem(2, false);
+    }
+
+    @Test
+    public void testSwitchToFragmentOnWorkerThread() {
+        Whitebox.setInternalState(activity, "mPager", mPager);
+        Whitebox.setInternalState(activity, "appExecutors", appExecutors);
+        appExecutors.diskIO().execute(() -> {
+            activity.switchToFragment(2);
+        });
+        verify(mPager, timeout(ASYNC_TIMEOUT)).setCurrentItem(2, false);
     }
 }
