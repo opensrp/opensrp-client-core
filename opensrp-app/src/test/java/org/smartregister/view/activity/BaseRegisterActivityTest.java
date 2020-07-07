@@ -3,6 +3,7 @@ package org.smartregister.view.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.SnackbarContentLayout;
@@ -19,7 +20,9 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.android.controller.ActivityController;
 import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowActivity;
 import org.robolectric.shadows.ShadowToast;
+import org.robolectric.shadows.multidex.Shadows;
 import org.smartregister.AllConstants;
 import org.smartregister.AllConstants.BARCODE;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -28,8 +31,10 @@ import org.smartregister.R;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
+import org.smartregister.shadows.ShadowContextCompat;
 import org.smartregister.shadows.ShadowSnackBar;
 import org.smartregister.util.AppExecutors;
+import org.smartregister.util.PermissionUtils;
 import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
@@ -52,6 +57,7 @@ import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.robolectric.Shadows.shadowOf;
 import static org.smartregister.view.activity.BaseRegisterActivity.BASE_REG_POSITION;
 
 /**
@@ -271,7 +277,6 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
     }
 
 
-
     @Test
     public void testHideProgressDialog() {
         activity.showProgressDialog(R.string.form_back_confirm_dialog_message);
@@ -282,4 +287,39 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
         assertFalse(progressDialog.isShowing());
     }
 
+    @Test
+    public void testStop() {
+        activity.onStop();
+        verify(activity.presenter).unregisterViewConfiguration(null);
+    }
+
+
+    @Test
+    public void testGetContext() {
+        assertEquals(activity, activity.getContext());
+    }
+
+    @Config(shadows = {ShadowContextCompat.class})
+    @Test
+    public void startQrCodeScannerStartsBarCodeActivity() {
+        activity.startQrCodeScanner();
+        ShadowActivity.IntentForResult startedIntent = shadowOf(activity).getNextStartedActivityForResult();
+        assertEquals(BarcodeScanActivity.class, shadowOf(startedIntent.intent).getIntentClass());
+        assertEquals(AllConstants.BARCODE.BARCODE_REQUEST_CODE, startedIntent.requestCode);
+    }
+
+    @Test
+    public void testOnRequestPermissionsResultStartsBarcodeActivity() {
+        activity.onRequestPermissionsResult(PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE, null, new int[]{PackageManager.PERMISSION_GRANTED});
+        ShadowActivity.IntentForResult startedIntent = shadowOf(activity).getNextStartedActivityForResult();
+        assertEquals(BarcodeScanActivity.class, shadowOf(startedIntent.intent).getIntentClass());
+        assertEquals(AllConstants.BARCODE.BARCODE_REQUEST_CODE, startedIntent.requestCode);
+    }
+
+    @Test
+    public void testOnRequestPermissionsResultShowsToast() {
+        activity.onRequestPermissionsResult(PermissionUtils.CAMERA_PERMISSION_REQUEST_CODE, null, new int[]{PackageManager.PERMISSION_DENIED});
+        assertEquals(Toast.LENGTH_LONG, ShadowToast.getLatestToast().getDuration());
+        assertEquals(activity.getString(R.string.allow_camera_management) , ShadowToast.getTextOfLatestToast());
+    }
 }
