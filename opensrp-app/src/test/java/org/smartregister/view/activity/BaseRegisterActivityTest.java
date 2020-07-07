@@ -24,15 +24,18 @@ import org.smartregister.AllConstants.BARCODE;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.service.ZiggyService;
 import org.smartregister.shadows.ShadowSnackBar;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
 import java.util.UUID;
+import java.util.concurrent.Executors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -43,6 +46,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -219,11 +223,31 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
     @Test
     public void testOnActivityResultInvokesOnActivityResultExtended() {
         Whitebox.setInternalState(activity, "mBaseFragment", fragment);
-        activity=spy(activity);
+        activity = spy(activity);
         activity.onActivityResult(AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE, Activity.RESULT_OK, null);
-        verify(fragment,never()).onQRCodeSucessfullyScanned(anyString());
-        verify(fragment,never()).setSearchTerm(anyString());
+        verify(fragment, never()).onQRCodeSucessfullyScanned(anyString());
+        verify(fragment, never()).setSearchTerm(anyString());
         verify(activity).onActivityResultExtended(AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE, Activity.RESULT_OK, null);
 
+    }
+
+    @Test
+    public void refreshListInvokesFragmentRefresh() {
+        activity = spy(activity);
+        when(activity.findFragmentByPosition(0)).thenReturn(fragment);
+        activity.refreshList(FetchStatus.fetched);
+        verify(fragment).refreshListView();
+    }
+
+    @Test
+    public void refreshListOnWorkerThreadInvokesFragmentRefresh() {
+        activity = spy(activity);
+        when(activity.findFragmentByPosition(0)).thenReturn(fragment);
+        AppExecutors appExecutors = new AppExecutors(Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor(), Executors.newSingleThreadExecutor());
+        Whitebox.setInternalState(activity,"appExecutors",appExecutors);
+        appExecutors.diskIO().execute(() -> {
+            activity.refreshList(FetchStatus.fetched);
+        });
+        verify(fragment, timeout(ASYNC_TIMEOUT)).refreshListView();
     }
 }

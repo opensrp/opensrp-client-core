@@ -26,6 +26,7 @@ import org.smartregister.domain.FetchStatus;
 import org.smartregister.helper.BottomNavigationHelper;
 import org.smartregister.listener.BottomNavigationListener;
 import org.smartregister.provider.SmartRegisterClientsProvider;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -62,6 +63,8 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
     public static int SORT_FILTER_POSITION;
     public static int LIBRARY_POSITION;
     public static int ME_POSITION;
+
+    private AppExecutors  appExecutors= new AppExecutors();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -226,8 +229,7 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
                 registerFragment.refreshListView();
             }
         } else {
-            Handler handler = new Handler(Looper.getMainLooper());
-            handler.post(new Runnable() {
+            appExecutors.mainThread().execute(new Runnable() {
                 @Override
                 public void run() {
                     BaseRegisterFragment registerFragment = (BaseRegisterFragment) findFragmentByPosition(0);
