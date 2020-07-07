@@ -198,7 +198,7 @@ public class TaskServiceHelper {
     }
 
     public void syncTaskStatusToServer() {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         List<TaskUpdate> updates = taskRepository.getUnSyncedTaskStatus();
         if (!updates.isEmpty()) {
             String jsonPayload = new Gson().toJson(updates);

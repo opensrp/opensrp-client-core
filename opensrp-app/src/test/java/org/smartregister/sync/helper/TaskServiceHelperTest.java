@@ -16,6 +16,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.TaskUpdate;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -23,6 +24,7 @@ import org.smartregister.repository.TaskRepository;
 import org.smartregister.service.HTTPAgent;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -60,6 +62,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     private String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": 3, \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionEndDate\": \"2020-04-02T00:00:00.000+02:00\", \"executionStartDate\": \"2020-03-26T00:00:00.000+02:00\"}";
 
+    private String planId = "eb3cd7e1-c849-5230-8d49-943218018f9f";
     @Before
     public void setUp(){
         MockitoAnnotations.initMocks(this);
@@ -80,7 +83,6 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testFetchTasksFromServer() {
-        String planId = "eb3cd7e1-c849-5230-8d49-943218018f9f";
         Set<String> planIdSet = new HashSet<>();
         planIdSet.add(planId);
         when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
@@ -129,6 +131,29 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         assertEquals(expectedTask.getForEntity(), actualTask.getForEntity());
         assertEquals(expectedTask.getPlanIdentifier(), actualTask.getPlanIdentifier());
 
+    }
+
+    @Test
+    public void testSyncTaskStatusToServer() {
+
+        TaskUpdate taskUpdate = new TaskUpdate();
+        taskUpdate.setIdentifier(planId);
+        taskUpdate.setBusinessStatus("Not Visited");
+        taskUpdate.setStatus("Cancelled");
+
+        when(taskRepository.getUnSyncedTaskStatus()).thenReturn(Collections.singletonList(taskUpdate));
+
+        Mockito.doReturn(new Response<>(ResponseStatus.success,
+                "{task_ids : [\"eb3cd7e1-c849-5230-8d49-943218018f9f\"]}"))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        taskServiceHelper.syncTaskStatusToServer();
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/update_status", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals("[{\"identifier\":\"eb3cd7e1-c849-5230-8d49-943218018f9f\",\"status\":\"Cancelled\",\"businessStatus\":\"Not Visited\"}]", requestString);
+        verify(taskRepository).markTaskAsSynced(taskUpdate.getIdentifier());
     }
 
 }
