@@ -1,0 +1,553 @@
+{
+  "count": "3",
+  "encounter_type": "Test",
+  "entity_id": "",
+  "relational_id": "",
+  "validate_on_submit": true,
+  "show_errors_on_submit": true,
+  "metadata": {
+    "start": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "start",
+      "openmrs_entity_id": "163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "end": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "end",
+      "openmrs_entity_id": "163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "today": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "encounter",
+      "openmrs_entity_id": "encounter_date"
+    },
+    "deviceid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "deviceid",
+      "openmrs_entity_id": "163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "subscriberid": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "subscriberid",
+      "openmrs_entity_id": "163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "simserial": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "simserial",
+      "openmrs_entity_id": "163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "phonenumber": {
+      "openmrs_entity_parent": "",
+      "openmrs_entity": "concept",
+      "openmrs_data_type": "phonenumber",
+      "openmrs_entity_id": "163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+    },
+    "encounter_location": "",
+    "look_up": {
+      "entity_id": "",
+      "value": ""
+    }
+  },
+  "step1": {
+    "title": "Basic Form One",
+    "next": "step2",
+    "fields": [
+      {
+        "key": "user_image",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "choose_image",
+        "uploadButtonText": "Take a photo of the child"
+      },
+      {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "finger_print",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "finger_print_option": "register",
+        "uploadButtonText": "Take finger print",
+        "image_file": "",
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
+      },
+      {
+        "key": "finger_print",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "finger_print",
+        "project_id": "tZqJnw0ajK04LMYdZzyw",
+        "user_id": "test_user",
+        "module_id": "mpower",
+        "gu_id": "id",
+        "finger_print_option": "verify",
+        "uploadButtonText": "Verify finger print",
+        "image_file": ""
+      },
+      {
+        "key": "user_first_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "User First name",
+        "edit_type": "name",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the first name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "user_last_name",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "User Last name",
+        "edit_type": "name",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the last name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        },
+        "relevance": {
+          "step1:user_first_name": {
+            "type": "string",
+            "ex": "equalTo(., \"test\")"
+          }
+        }
+      },
+      {
+        "key": "user_qr_code",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "barcode",
+        "barcode_type": "qrcode",
+        "hint": "User ID",
+        "scanButtonText": "Scan QR Code",
+        "v_numeric": {
+          "value": "true",
+          "err": "Please enter a valid ID"
+        },
+        "v_required": {
+          "value": false,
+          "err": "Please enter the user ID"
+        }
+      },
+      {
+        "key": "user_age",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "edit_text",
+        "hint": "User age",
+        "edit_type": "name",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the last name"
+        },
+        "v_regex": {
+          "value": "[A-Za-z\\s\\.\\-]*",
+          "err": "Please enter a valid name"
+        }
+      },
+      {
+        "key": "user_gps",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "text",
+        "type": "gps"
+      },
+      {
+        "key": "user_calculation_one",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "concept",
+        "openmrs_entity_id": "165260AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+        "type": "hidden"
+      }
+    ]
+  },
+  "step2": {
+    "title": "Basic Form Two",
+    "next": "step3",
+    "fields": [
+      {
+        "key": "user_select",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "Do you want to select anything",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "label_info_text": "You can select every thing you want.",
+        "label_info_title": "User selection",
+        "options": [
+          {
+            "key": "yes",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "Yes"
+          },
+          {
+            "key": "no",
+            "openmrs_entity_parent": "",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "text": "No"
+          }
+        ]
+      },
+      {
+        "key": "user_normal_edit_text",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "normal_edit_text",
+        "hint": "User Text ",
+        "edit_text_style": "bordered",
+        "v_required": {
+          "value": true,
+          "err": "Please enter the user ID"
+        }
+      },
+      {
+        "key": "user_normal_edit_number",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "normal_edit_text",
+        "hint": "User number",
+        "edit_text_style": "bordered",
+        "edit_type": "number",
+        "v_required": {
+          "value": true,
+          "err": "Please enter the user ID"
+        }
+      },
+      {
+        "key": "user_toaster_problem",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "User problem toaster",
+        "toaster_info_text": "Procedure:\n- This shows the user the problems.\n- Problem toaster.",
+        "toaster_type": "problem"
+      },
+      {
+        "key": "user_toaster_warning",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "User warning toaster",
+        "toaster_info_text": "Procedure:\n- This shows the user the warning.\n- Warning toaster.",
+        "toaster_type": "warning"
+      },
+      {
+        "key": "user_toaster_positive",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "User positive toaster",
+        "toaster_info_text": "Procedure:\n- This shows the user the positive.\n- Positive toaster.",
+        "toaster_type": "positive"
+      },
+      {
+        "key": "user_toaster_info",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "toaster_notes",
+        "text": "User Info toaster",
+        "toaster_info_text": "Procedure:\n- This shows the user the info.\n- Info toaster.",
+        "toaster_type": "info"
+      }
+    ]
+  },
+  "step3": {
+    "title": "Basic Form Threes",
+    "fields": [
+      {
+        "key": "user_date",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "date_picker",
+        "hint": "User DOB",
+        "expanded": false,
+        "duration": {
+          "label": "Age"
+        },
+        "default": "12-12-2015",
+        "min_date": "today-5y",
+        "max_date": "today",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the date of birth"
+        }
+      },
+      {
+        "key": "user_time",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "time_picker",
+        "hint": "Birth Time",
+        "expanded": false,
+        "duration": {
+          "label": "Birth Time"
+        },
+        "v_required": {
+          "value": true,
+          "err": "Please enter the time of birth"
+        }
+      },
+      {
+        "key": "user_spinner",
+        "openmrs_entity": "openmrs_entity",
+        "openmrs_entity_id": "openmrs_entity_id",
+        "openmrs_entity_parent": "openmrs_entity_parent",
+        "type": "spinner",
+        "hint": "User Spinners",
+        "values": [
+          "User Option One",
+          "User Option Two"
+        ],
+        "keys": [
+          "user_option_one",
+          "user_option_two"
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please enter the sex"
+        },
+        "openmrs_choice_ids": {
+          "user_one": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "user_two": "1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        },
+        "value": "user_one"
+      },
+      {
+        "key": "response_spinner_with_options",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Response Spinners",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "openmrs_entity_parent": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "openmrs_entity": "openmrs_entity",
+            "openmrs_entity_id": "openmrs_entity_id",
+            "openmrs_entity_parent": "openmrs_entity_parent"
+          },
+          {
+            "key": "maybe",
+            "text": "Maybe",
+            "openmrs_entity": "openmrs_entity_2",
+            "openmrs_entity_id": "openmrs_entity_id_2",
+            "openmrs_entity_parent": "openmrs_entity_parent_2"
+          }
+        ],
+        "value": "maybe",
+        "v_required": {
+          "value": "true",
+          "err": "Please enter response"
+        }
+      },
+      {
+        "key": "response_spinner_with_options",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "spinner",
+        "hint": "Response Spinners",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          },
+          {
+            "key": "maybe",
+            "text": "Maybe",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": "true",
+          "err": "Please enter response"
+        },
+        "openmrs_choice_ids": {
+          "user_one": "1107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+          "user_two": "1713AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20dp"
+      },
+      {
+        "key": "user_form_labels",
+        "type": "label",
+        "label_text_style": "bold",
+        "text": "Number of labels",
+        "text_color": "#000000",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "user_form",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "numbers_selector",
+        "number_of_selectors": "5",
+        "start_number": "1",
+        "max_value": "15",
+        "text_size": "16px",
+        "text_color": "#000000",
+        "selected_text_color": "#ffffff",
+        "v_required": {
+          "value": true
+        }
+      },
+      {
+        "key": "spacer",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "spacer",
+        "type": "spacer",
+        "spacer_height": "20dp"
+      },
+      {
+        "key": "user_sub_form",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "type": "native_radio",
+        "label": "User sub forms?",
+        "label_text_style": "bold",
+        "text_color": "#000000",
+        "extra_rel": true,
+        "has_extra_rel": "yes",
+        "options": [
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": "",
+            "specify_info": "User sub specify...",
+            "specify_widget": "normal_edit_text",
+            "specify_info_color": "#8C8C8C",
+            "secondary_suffix": "bpm",
+            "content_form": "user_native_sub_form"
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_entity": "",
+            "openmrs_entity_id": ""
+          }
+        ],
+        "v_required": {
+          "value": true,
+          "err": "Please specify user native form."
+        }
+      },
+      {
+        "key": "user_check_box",
+        "openmrs_entity_parent": "",
+        "openmrs_entity": "",
+        "openmrs_entity_id": "",
+        "openmrs_data_type": "select one",
+        "type": "check_box",
+        "label": "Do want to select any checkbox?",
+        "label_text_style": "bold",
+        "options": [
+          {
+            "key": "None",
+            "text": "None",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "yes",
+            "text": "Yes",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "no",
+            "text": "No",
+            "value": false,
+            "openmrs_choice_id": ""
+          },
+          {
+            "key": "other",
+            "text": "Other",
+            "value": false,
+            "openmrs_choice_id": ""
+          }
+        ],
+        "v_required": {
+          "value": "false"
+        },
+        "value": "[yes]"
+      }
+    ]
+  }
+}
