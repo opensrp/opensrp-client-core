@@ -322,4 +322,17 @@ public class BaseRegisterActivityTest extends BaseRobolectricUnitTest {
         assertEquals(Toast.LENGTH_LONG, ShadowToast.getLatestToast().getDuration());
         assertEquals(activity.getString(R.string.allow_camera_management) , ShadowToast.getTextOfLatestToast());
     }
+
+    @Test
+    public void testUpdateInitialsText() {
+        activity.updateInitialsText("SG");
+        assertEquals("SG",activity.userInitials);
+    }
+
+    @Test
+    public void testSetSearchTerm() {
+        Whitebox.setInternalState(activity, "mBaseFragment", fragment);
+        activity.setSearchTerm("Doe");
+        verify(fragment).setSearchTerm("Doe");
+    }
 }
