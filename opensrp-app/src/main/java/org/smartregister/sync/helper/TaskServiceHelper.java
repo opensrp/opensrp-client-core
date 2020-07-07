@@ -260,7 +260,8 @@ public class TaskServiceHelper {
         }
     }
 
-    public HTTPAgent getHttpAgent() {
+    @VisibleForTesting
+    protected HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
     }
 
