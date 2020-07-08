@@ -583,17 +583,17 @@ public class FormUtils {
      * Iterate through the provided array and retrieve a json object whose name attribute matches
      * the name supplied
      *
-     * @param fieldName
+     * @param nameValue
      * @param array
      * @return
      */
-    private JSONObject getJsonFieldFromArray(String fieldName, JSONArray array) {
+    private JSONObject getJsonFieldFromArray(String nameValue, JSONArray array) {
         try {
             if (array != null) {
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject field = array.getJSONObject(i);
                     String name = field.has("name") ? field.getString("name") : null;
-                    if (name.equals(fieldName)) {
+                    if (nameValue.equals(name)) {
                         return field;
                     }
                 }
