@@ -131,7 +131,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
     public void fetchLocationsByLevelAndTags() throws Exception {
         Mockito.doReturn(new Response<>(ResponseStatus.success,
                 "[{\"locationId\":\"b949c2b5-d5f6-4a1b-ad03-e82e7abbd47c\",\"name\":\"Ebrahim Haji - Unified\"," +
-                "\"parentLocation\":{\"locationId\":\"620e3393-38aa-4797-85c4-3427cc882e00\",\"name\":\"Ilala MC - Unified\"," +
+                        "\"parentLocation\":{\"locationId\":\"620e3393-38aa-4797-85c4-3427cc882e00\",\"name\":\"Ilala MC - Unified\"," +
                         "\"voided\":false},\"tags\":[\"Facility\"],\"voided\":false},{\"locationId\":\"bcf5a36d-fb53-4de9-9813-01f1d480e3fe\"," +
                         "\"name\":\"Madona - Unified\",\"parentLocation\":{\"locationId\":\"620e3393-38aa-4797-85c4-3427cc882e00\"," +
                         "\"name\":\"Ilala MC - Unified\",\"voided\":false},\"tags\":[\"Facility\"],\"voided\":false}]"))
@@ -171,7 +171,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         assertFalse(expectedLocation.getGeometry() == null);
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
-                LocationServiceHelper.locationGson.toJson(locations)),
+                        LocationServiceHelper.locationGson.toJson(locations)),
                 new Response<>(ResponseStatus.success,             //returned on second call
                         LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
@@ -227,7 +227,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         when(structureRepository.getAllUnsynchedCreatedStructures()).thenReturn(structures);
         Mockito.doReturn("https://sample-stage.smartregister.org/opensrp").when(locationServiceHelper).getFormattedBaseUrl();
         Mockito.doReturn(new Response<>(ResponseStatus.success,
-                        LocationServiceHelper.locationGson.toJson(structures)))
+                LocationServiceHelper.locationGson.toJson(structures)))
                 .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         locationServiceHelper.syncCreatedStructureToServer();

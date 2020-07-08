@@ -42,13 +42,15 @@ public class ServerSettingsHelper {
 
     public static List<ServerSetting> fetchServerSettingsByTypeKey(String typeKey) {
         try {
-
             Gson gson = new Gson();
-
             Setting serverSetting = CoreLibrary.getInstance().context().allSettings().getSetting(typeKey);
 
             JSONObject settingObject = serverSetting != null ? new JSONObject(serverSetting.getValue()) : null;
-            JSONArray settingArray = settingObject.getJSONArray(AllConstants.SETTINGS);
+            JSONArray settingArray = new JSONArray();
+
+            if (serverSetting != null && settingObject.has(AllConstants.SETTINGS)) {
+                settingArray = settingObject.getJSONArray(AllConstants.SETTINGS);
+            }
 
             return gson.fromJson(settingArray.toString(), SERVER_SETTING_TYPE); // contains the whole reviews list
 
