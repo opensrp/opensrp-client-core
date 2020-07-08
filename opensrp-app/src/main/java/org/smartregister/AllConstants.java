@@ -121,6 +121,7 @@ public class AllConstants {
     public static final String ROWID = "rowid";
     public static final String MULTI_SELECT_LIST = "multi_select_list";
     public static final String JSON_FILE_EXTENSION = ".json";
+    public static final String RESOLVE = "resolve";
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
