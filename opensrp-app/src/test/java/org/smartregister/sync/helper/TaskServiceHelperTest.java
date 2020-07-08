@@ -99,9 +99,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         tasks.add(expectedTask);
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
-                        LocationServiceHelper.locationGson.toJson(tasks)),
+                        TaskServiceHelper.taskGson.toJson(tasks)).withTotalRecords(1L),
                 new Response<>(ResponseStatus.success,             //returned on second call
-                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
+                        TaskServiceHelper.taskGson.toJson(new ArrayList<>())).withTotalRecords(0l))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         List<Task> actualTasks = taskServiceHelper.fetchTasksFromServer();
@@ -112,7 +112,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
         assertEquals("https://sample-stage.smartregister.org/opensrp/rest/task/sync", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
-        assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"group\":[\"3952\"],\"serverVersion\":0}", requestString);
+        assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"group\":[\"3952\"],\"serverVersion\":0,\"return_count\":true}", requestString);
 
         verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
         assertEquals(expectedTask.getIdentifier(), taskArgumentCaptor.getValue().getIdentifier());
