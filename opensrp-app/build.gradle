@@ -209,9 +209,13 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.15-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.16-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 }
