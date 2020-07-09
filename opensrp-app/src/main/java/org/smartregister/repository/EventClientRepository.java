@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.converters.ClientConverter;
+import org.smartregister.converters.EventConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
@@ -43,6 +44,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
@@ -1769,6 +1771,46 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         }
     }
 
+    private List<Client> fetchClients(String query, String[] params) {
+        Cursor cursor = null;
+        List<Client> clients = new ArrayList<>();
+        try {
+            cursor = getWritableDatabase().rawQuery(query, params);
+            while (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+                clients.add(convert(jsonString, Client.class));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return clients;
+    }
+
+    private List<Event> fetchEvents(String query, String[] params) {
+        Cursor cursor = null;
+        List<Event> events = new ArrayList<>();
+        try {
+            cursor = getWritableDatabase().rawQuery(query, params);
+            while (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+                events.add(convert(jsonString, Event.class));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return events;
+    }
+
     @Override
     public List<Patient> findClientById(String id) {
         Client client = fetchClientByBaseEntityId(id);
@@ -1777,26 +1819,38 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<Patient> findFamilyByJurisdiction(String jurisdiction) {
-        //TODO implement method
-        return null;
+        return fetchClients(String.format("select %s from %s where %s =? and %s =?", client_column.json,
+                Table.client.name(), client_column.locationId, client_column.clientType), new String[]{jurisdiction, AllConstants.FAMILY})
+                .stream()
+                .map(ClientConverter::convertClientToPatientResource)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Patient> findFamilyByResidence(String structureId) {
-        //TODO implement method
-        return null;
+        return fetchClients(String.format("select %s from %s where %s =? and %s =?", client_column.json,
+                Table.client.name(), client_column.residence, client_column.clientType), new String[]{structureId, AllConstants.FAMILY})
+                .stream()
+                .map(ClientConverter::convertClientToPatientResource)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Patient> findFamilyMemberyByJurisdiction(String jurisdiction) {
-        //TODO implement method
-        return null;
+        return fetchClients(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", client_column.json,
+                Table.client.name(), client_column.locationId, client_column.clientType, client_column.clientType), new String[]{jurisdiction, AllConstants.FAMILY})
+                .stream()
+                .map(ClientConverter::convertClientToPatientResource)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Patient> findFamilyMemberByResidence(String structureId) {
-        //TODO implement method
-        return null;
+        return fetchClients(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", client_column.json,
+                Table.client.name(), client_column.residence, client_column.clientType, client_column.clientType), new String[]{structureId, AllConstants.FAMILY})
+                .stream()
+                .map(ClientConverter::convertClientToPatientResource)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -1807,8 +1861,11 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
-        //TODO implement method
-        return null;
+        return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", event_column.json,
+                Table.client.name(), event_column.baseEntityId, event_column.planId), new String[]{resourceId, planIdentifier})
+                .stream()
+                .map(EventConverter::convertEventToEncounterResource)
+                .collect(Collectors.toList());
     }
 
     // Definitions
