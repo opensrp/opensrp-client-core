@@ -1476,6 +1476,13 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             values.put(client_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(client_column.syncStatus.name(), syncStatus);
             values.put(client_column.baseEntityId.name(), baseEntityId);
+
+            values.put(client_column.locationId.name(), jsonObject.optString(AllConstants.LOCATION_ID));
+            values.put(client_column.clientType.name(), jsonObject.optString(AllConstants.CLIENT_TYPE));
+            JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
+            if (attributes != null) {
+                values.put(client_column.residence.name(), attributes.optString(AllConstants.RESIDENCE));
+            }
             populateAdditionalColumns(values, client_column.values(), jsonObject);
             long affected;
             if (checkIfExists(Table.client, baseEntityId)) {

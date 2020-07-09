@@ -21,6 +21,10 @@ public class AllConstants {
 
     public static final String DETAILS = "details";
     public static final String PLAN_IDENTIFIER = "planIdentifier";
+    public static final String LOCATION_ID = "locationId";
+    public static final String RESIDENCE = "residence";
+    public static final String CLIENT_TYPE = "clientType";
+    public static final String ATTRIBUTES = "attributes";
 
 
     // Maximum time difference between server and client time in milliseconds
