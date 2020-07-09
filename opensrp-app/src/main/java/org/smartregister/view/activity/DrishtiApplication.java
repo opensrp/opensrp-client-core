@@ -1,9 +1,14 @@
 package org.smartregister.view.activity;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
+import android.arch.persistence.room.RoomDatabase;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.multidex.MultiDex;
+import android.text.SpannableStringBuilder;
+
+import com.commonsware.cwac.saferoom.SafeHelperFactory;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -12,6 +17,7 @@ import org.smartregister.BuildConfig;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.dao.AppDatabase;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientProcessorForJava;
@@ -37,6 +43,8 @@ public abstract class DrishtiApplication extends Application {
     protected Repository repository;
     private String password;
     private String username;
+
+    private AppDatabase appDatabase;
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
         return (X) mInstance;
@@ -153,5 +161,13 @@ public abstract class DrishtiApplication extends Application {
 
     public Context getContext() {
         return context;
+    }
+
+    public AppDatabase getAppDatabase() {
+        if (appDatabase == null) {
+            SafeHelperFactory safeHelperFactory = SafeHelperFactory.fromUser(new SpannableStringBuilder(DrishtiApplication.getInstance().getPassword()));
+            appDatabase = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, AllConstants.DATABASE_NAME).openHelperFactory(safeHelperFactory).build();
+        }
+        return appDatabase;
     }
 }

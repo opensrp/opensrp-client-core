@@ -26,6 +26,7 @@ public class AllConstants {
     public static final String CLIENT_TYPE = "clientType";
     public static final String ATTRIBUTES = "attributes";
     public static final String FAMILY = "Family";
+    public static final String RELATIONSHIPS = "relationships";
 
 
     // Maximum time difference between server and client time in milliseconds

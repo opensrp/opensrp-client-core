@@ -24,6 +24,7 @@ import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.converters.ClientConverter;
 import org.smartregister.converters.EventConverter;
 import org.smartregister.domain.Client;
+import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.Event;
@@ -34,6 +35,7 @@ import org.smartregister.pathevaluator.dao.EventDao;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -42,8 +44,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import timber.log.Timber;
@@ -1486,6 +1491,23 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 values.put(client_column.residence.name(), attributes.optString(AllConstants.RESIDENCE));
             }
             populateAdditionalColumns(values, client_column.values(), jsonObject);
+            JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
+            Set<ClientRelationship> clientRelationships = new HashSet<>();
+            if (relationShips != null) {
+                Iterator<String> keys = relationShips.keys();
+                while (keys.hasNext()) {
+                    String relationshipName = keys.next();
+                    JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
+                    if (relationalIds != null) {
+                        clientRelationships.add(ClientRelationship.builder()
+                                .baseEntityId(baseEntityId)
+                                .relationship(relationshipName)
+                                .relationalId(relationalIds.getString(0))
+                                .build());
+                    }
+                }
+            }
+            DrishtiApplication.getInstance().getAppDatabase().clientRelationshipDao().insertAll(clientRelationships.toArray(new ClientRelationship[0]));
             long affected;
             if (checkIfExists(Table.client, baseEntityId)) {
                 values.put(ROWID, getMaxRowId(Table.client) + 1);
