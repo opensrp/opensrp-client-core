@@ -164,7 +164,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
                 if (jsonObject.has(EVENT_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
-                else if(jsonObject.has(_ID))
+                else if (jsonObject.has(_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
             } else {
                 return false;
@@ -1509,7 +1509,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             values.put(event_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(event_column.baseEntityId.name(), baseEntityId);
             values.put(event_column.syncStatus.name(), syncStatus);
-
+            JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
+            if (details != null)
+                values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER, null));
             if (jsonObject.has(EVENT_ID)) {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             } else if (jsonObject.has(_ID)) {
@@ -1762,7 +1764,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<Patient> findClientById(String id) {
-       Client client= fetchClientByBaseEntityId(id);
+        Client client = fetchClientByBaseEntityId(id);
         return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
     }
 
@@ -1799,7 +1801,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
         //TODO implement method
-       return null;
+        return null;
     }
 
     // Definitions
