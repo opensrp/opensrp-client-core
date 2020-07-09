@@ -1823,7 +1823,10 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         syncStatus(ColumnAttribute.Type.text, false, true),
         validationStatus(ColumnAttribute.Type.text, false, true),
         json(ColumnAttribute.Type.text, false, false),
-        updatedAt(ColumnAttribute.Type.date, false, true);
+        updatedAt(ColumnAttribute.Type.date, false, true),
+        locationId(ColumnAttribute.Type.text, false, true),
+        clientType(ColumnAttribute.Type.text, false, true),
+        residence(ColumnAttribute.Type.text, false, true);
 
         client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
@@ -1849,7 +1852,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         eventType(ColumnAttribute.Type.text, false, true),
         formSubmissionId(ColumnAttribute.Type.text, false, true),
         updatedAt(ColumnAttribute.Type.date, false, true),
-        serverVersion(ColumnAttribute.Type.longnum, false, true);
+        serverVersion(ColumnAttribute.Type.longnum, false, true),
+        planId(ColumnAttribute.Type.text, false, true);
 
         event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
