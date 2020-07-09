@@ -160,6 +160,14 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 statement.bindString(columnOrder.get(client_column.syncStatus.name()), syncStatus);
                 statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
                 statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
+
+                statement.bindString(columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
+                statement.bindString(columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
+                JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
+                if (attributes != null) {
+                    statement.bindString(columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
+                }
+                saveRelationShips(jsonObject.getString(client_column.baseEntityId.name()), jsonObject);
             } else if (table.equals(Table.event)) {
                 columns = Arrays.asList(event_column.values());
                 String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
@@ -173,6 +181,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
                 else if (jsonObject.has(_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
+                JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
+                if (details != null)
+                    statement.bindString(columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER, null));
             } else {
                 return false;
             }
@@ -367,7 +378,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         return batchInsertEvents(array, serverVersion, getWritableDatabase());
     }
 
-    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase sqLiteDatabase) {
+    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase
+            sqLiteDatabase) {
         if (array == null || array.length() == 0) {
             return false;
         }
@@ -605,7 +617,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 new String[]{String.valueOf(startServerVersion), String.valueOf(lastServerVersion)});
     }
 
-    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(long lastProcessedRowId) {
+    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(
+            long lastProcessedRowId) {
         List<EventClient> list = new ArrayList<>();
         Cursor cursor = null;
         int maxRowId = 0;
@@ -1303,7 +1316,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
     }
 
 
-    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String syncStatus, List<String> baseEntityIds) {
+    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String
+                                                                           syncStatus, List<String> baseEntityIds) {
         List<EventClient> list = new ArrayList<>();
         if (Utils.isEmptyCollection(baseEntityIds))
             return list;
@@ -1476,6 +1490,28 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         addorUpdateClient(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
     }
 
+
+    private void saveRelationShips(String baseEntityId, JSONObject jsonObject) {
+        JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
+        Set<ClientRelationship> clientRelationships = new HashSet<>();
+        if (relationShips != null) {
+            Iterator<String> keys = relationShips.keys();
+            while (keys.hasNext()) {
+                String relationshipName = keys.next();
+                JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
+                if (relationalIds != null && relationalIds.length() > 0) {
+
+                    clientRelationships.add(ClientRelationship.builder()
+                            .baseEntityId(baseEntityId)
+                            .relationship(relationshipName)
+                            .relationalId(relationalIds.optString(0))
+                            .build());
+                }
+            }
+        }
+        DrishtiApplication.getInstance().getAppDatabase().clientRelationshipDao().insertAll(clientRelationships.toArray(new ClientRelationship[0]));
+    }
+
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject, String syncStatus) {
         try {
             ContentValues values = new ContentValues();
@@ -1491,23 +1527,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 values.put(client_column.residence.name(), attributes.optString(AllConstants.RESIDENCE));
             }
             populateAdditionalColumns(values, client_column.values(), jsonObject);
-            JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
-            Set<ClientRelationship> clientRelationships = new HashSet<>();
-            if (relationShips != null) {
-                Iterator<String> keys = relationShips.keys();
-                while (keys.hasNext()) {
-                    String relationshipName = keys.next();
-                    JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
-                    if (relationalIds != null) {
-                        clientRelationships.add(ClientRelationship.builder()
-                                .baseEntityId(baseEntityId)
-                                .relationship(relationshipName)
-                                .relationalId(relationalIds.getString(0))
-                                .build());
-                    }
-                }
-            }
-            DrishtiApplication.getInstance().getAppDatabase().clientRelationshipDao().insertAll(clientRelationships.toArray(new ClientRelationship[0]));
+            saveRelationShips(baseEntityId, jsonObject);
             long affected;
             if (checkIfExists(Table.client, baseEntityId)) {
                 values.put(ROWID, getMaxRowId(Table.client) + 1);
@@ -1882,7 +1902,8 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
     }
 
     @Override
-    public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
+    public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String
+            planIdentifier) {
         return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", event_column.json,
                 Table.client.name(), event_column.baseEntityId, event_column.planId), new String[]{resourceId, planIdentifier})
                 .stream()
