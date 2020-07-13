@@ -25,9 +25,9 @@ import org.smartregister.converters.ClientConverter;
 import org.smartregister.converters.EventConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
-import org.smartregister.domain.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.pathevaluator.dao.ClientDao;
@@ -167,7 +167,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 if (attributes != null) {
                     statement.bindString(columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
                 }
-                saveRelationShips(jsonObject.getString(client_column.baseEntityId.name()), jsonObject);
             } else if (table.equals(Table.event)) {
                 columns = Arrays.asList(event_column.values());
                 String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
@@ -183,7 +182,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
                 JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
                 if (details != null)
-                    statement.bindString(columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER, null));
+                    statement.bindString(columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
             } else {
                 return false;
             }
@@ -303,6 +302,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             insertStatement = sqLiteDatabase.compileStatement(insertQueryWrapper.sqlQuery);
 
             updateStatement = sqLiteDatabase.compileStatement(updateQueryWrapper.sqlQuery);
+            List<JSONObject> clients = new ArrayList<>();
 
             for (int i = 0; i < array.length(); i++) {
                 try {
@@ -321,14 +321,16 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                         if (populateStatement(updateStatement, Table.client, jsonObject, updateQueryWrapper.columnOrder)) {
                             updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                             updateStatement.executeUpdateDelete();
+                            clients.add(jsonObject);
                         } else {
                             Timber.w("Unable to update client with baseEntityId: %s", baseEntityId);
                         }
 
                     } else {
-                        if (populateStatement(insertStatement, Table.client, jsonObject, insertQueryWrapper.columnOrder))
+                        if (populateStatement(insertStatement, Table.client, jsonObject, insertQueryWrapper.columnOrder)) {
                             insertStatement.executeInsert();
-                        else
+                            clients.add(jsonObject);
+                        } else
                             Timber.w("Unable to add client with baseEntityId: %s", baseEntityId);
                     }
                 } catch (JSONException e) {
@@ -337,9 +339,11 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             }
             sqLiteDatabase.setTransactionSuccessful();
             sqLiteDatabase.endTransaction();
+            saveRelationShips(clients);
             return true;
         } catch (Exception e) {
-            sqLiteDatabase.endTransaction();
+            if (sqLiteDatabase.isDbLockedByCurrentThread())
+                sqLiteDatabase.endTransaction();
             Timber.e(e);
             return false;
         } finally {
@@ -1490,26 +1494,35 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         addorUpdateClient(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
     }
 
+    private void saveRelationShips(List<JSONObject> jsonObjects) throws JSONException {
+        for (JSONObject jsonObject : jsonObjects) {
+            saveRelationShips(jsonObject.getString(client_column.baseEntityId.name()), jsonObject);
+        }
+    }
 
     private void saveRelationShips(String baseEntityId, JSONObject jsonObject) {
-        JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
-        Set<ClientRelationship> clientRelationships = new HashSet<>();
-        if (relationShips != null) {
-            Iterator<String> keys = relationShips.keys();
-            while (keys.hasNext()) {
-                String relationshipName = keys.next();
-                JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
-                if (relationalIds != null && relationalIds.length() > 0) {
+        try {
+            JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
+            Set<ClientRelationship> clientRelationships = new HashSet<>();
+            if (relationShips != null) {
+                Iterator<String> keys = relationShips.keys();
+                while (keys.hasNext()) {
+                    String relationshipName = keys.next();
+                    JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
+                    if (relationalIds != null && relationalIds.length() > 0) {
 
-                    clientRelationships.add(ClientRelationship.builder()
-                            .baseEntityId(baseEntityId)
-                            .relationship(relationshipName)
-                            .relationalId(relationalIds.optString(0))
-                            .build());
+                        clientRelationships.add(ClientRelationship.builder()
+                                .baseEntityId(baseEntityId)
+                                .relationship(relationshipName)
+                                .relationalId(relationalIds.optString(0))
+                                .build());
+                    }
                 }
             }
+            DrishtiApplication.getInstance().getAppDatabase().clientRelationshipDao().insertAll(clientRelationships.toArray(new ClientRelationship[0]));
+        } catch (Exception e) {
+            Timber.e(e, "Error saving relationship for %s", baseEntityId);
         }
-        DrishtiApplication.getInstance().getAppDatabase().clientRelationshipDao().insertAll(clientRelationships.toArray(new ClientRelationship[0]));
     }
 
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject, String syncStatus) {
@@ -1562,7 +1575,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             values.put(event_column.syncStatus.name(), syncStatus);
             JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
             if (details != null)
-                values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER, null));
+                values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER));
             if (jsonObject.has(EVENT_ID)) {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             } else if (jsonObject.has(_ID)) {
