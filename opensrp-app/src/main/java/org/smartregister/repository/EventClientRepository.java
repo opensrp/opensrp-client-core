@@ -36,7 +36,6 @@ import org.smartregister.pathevaluator.dao.EventDao;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
-import org.smartregister.view.activity.DrishtiApplication;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
@@ -303,7 +302,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             insertStatement = sqLiteDatabase.compileStatement(insertQueryWrapper.sqlQuery);
 
             updateStatement = sqLiteDatabase.compileStatement(updateQueryWrapper.sqlQuery);
-            List<JSONObject> clients = new ArrayList<>();
+            Set<ClientRelationship> clientRelationships = new HashSet<>();
 
             for (int i = 0; i < array.length(); i++) {
                 try {
@@ -322,7 +321,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                         if (populateStatement(updateStatement, Table.client, jsonObject, updateQueryWrapper.columnOrder)) {
                             updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                             updateStatement.executeUpdateDelete();
-                            clients.add(jsonObject);
+                            clientRelationships.add(getClientRelationShip(baseEntityId, jsonObject));
                         } else {
                             Timber.w("Unable to update client with baseEntityId: %s", baseEntityId);
                         }
@@ -330,7 +329,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                     } else {
                         if (populateStatement(insertStatement, Table.client, jsonObject, insertQueryWrapper.columnOrder)) {
                             insertStatement.executeInsert();
-                            clients.add(jsonObject);
+                            clientRelationships.add(getClientRelationShip(baseEntityId, jsonObject));
                         } else
                             Timber.w("Unable to add client with baseEntityId: %s", baseEntityId);
                     }
@@ -338,9 +337,11 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                     Timber.e(e, "JSONException");
                 }
             }
+            if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                CoreLibrary.getInstance().context().getClientRelationshipRepository().saveRelationship(clientRelationships.toArray(new ClientRelationship[0]));
+            }
             sqLiteDatabase.setTransactionSuccessful();
             sqLiteDatabase.endTransaction();
-            saveRelationShips(clients);
             return true;
         } catch (Exception e) {
             if (sqLiteDatabase.isDbLockedByCurrentThread())
@@ -1495,35 +1496,27 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         addorUpdateClient(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
     }
 
-    private void saveRelationShips(List<JSONObject> jsonObjects) throws JSONException {
-        for (JSONObject jsonObject : jsonObjects) {
-            saveRelationShips(jsonObject.getString(client_column.baseEntityId.name()), jsonObject);
-        }
-    }
-
-    private void saveRelationShips(String baseEntityId, JSONObject jsonObject) {
+    private ClientRelationship getClientRelationShip(String baseEntityId, JSONObject jsonObject) {
         try {
             JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
-            Set<ClientRelationship> clientRelationships = new HashSet<>();
             if (relationShips != null) {
                 Iterator<String> keys = relationShips.keys();
                 while (keys.hasNext()) {
                     String relationshipName = keys.next();
                     JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
                     if (relationalIds != null && relationalIds.length() > 0) {
-
-                        clientRelationships.add(ClientRelationship.builder()
+                        return ClientRelationship.builder()
                                 .baseEntityId(baseEntityId)
                                 .relationship(relationshipName)
                                 .relationalId(relationalIds.optString(0))
-                                .build());
+                                .build();
                     }
                 }
             }
-            CoreLibrary.getInstance().context().getClientRelationshipRepository().insertAll(clientRelationships);
         } catch (Exception e) {
             Timber.e(e, "Error saving relationship for %s", baseEntityId);
         }
+        return null;
     }
 
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject, String syncStatus) {
@@ -1541,7 +1534,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 values.put(client_column.residence.name(), attributes.optString(AllConstants.RESIDENCE));
             }
             populateAdditionalColumns(values, client_column.values(), jsonObject);
-            saveRelationShips(baseEntityId, jsonObject);
+            getClientRelationShip(baseEntityId, jsonObject);
             long affected;
             if (checkIfExists(Table.client, baseEntityId)) {
                 values.put(ROWID, getMaxRowId(Table.client) + 1);
@@ -1553,9 +1546,12 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             } else {
                 affected = getWritableDatabase().insert(Table.client.name(), null, values);
             }
-
             if (affected < 1)
                 Timber.e("Client %s not saved: %s", baseEntityId, jsonObject);
+            if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                CoreLibrary.getInstance().context().getClientRelationshipRepository().saveRelationship(getClientRelationShip(baseEntityId, jsonObject));
+            }
+
         } catch (Exception e) {
             Timber.e(e, "Error saving client %s", jsonObject);
         }
