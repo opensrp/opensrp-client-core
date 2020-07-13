@@ -190,7 +190,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             List<? extends Column> otherColumns = new ArrayList(columns);
             if (!otherColumns.isEmpty()) {
                 otherColumns.removeAll(Arrays.asList(client_column.json, client_column.updatedAt, client_column.syncStatus, client_column.validationStatus, client_column.baseEntityId,
-                        event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId));
+                        client_column.residence,client_column.locationId,client_column.clientType,
+                        event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId
+                        ,event_column.planId));
             }
 
             for (Column column : otherColumns) {

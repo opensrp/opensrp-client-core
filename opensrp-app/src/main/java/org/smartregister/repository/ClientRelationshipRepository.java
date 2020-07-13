@@ -52,11 +52,12 @@ public class ClientRelationshipRepository extends BaseRepository {
         String query = String.format("REPLACE INTO %s VALUES(?,?,?)", CLIENT_RELATIONSHIP_TABLE_NAME);
         SQLiteStatement statement = getWritableDatabase().compileStatement(query);
         for (ClientRelationship clientRelationship : clientRelationships) {
+            statement.clearBindings();
             statement.bindString(1, clientRelationship.getBaseEntityId());
             statement.bindString(2, clientRelationship.getRelationship());
             statement.bindString(3, clientRelationship.getRelationalId());
+            statement.executeInsert();
         }
-        statement.executeInsert();
     }
 
     public List<Client> findClientByRelationship(String relationShip, String relationalId) {
