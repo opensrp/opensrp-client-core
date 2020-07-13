@@ -3,7 +3,6 @@ package org.smartregister.repository;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
@@ -12,7 +11,6 @@ import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.p2p.sync.data.MultiMediaData;
-import org.smartregister.sync.P2PClassifier;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
@@ -41,10 +39,10 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
                     .getEventClientRepository().getEvents(l, i);
         } else if (dataType.getName().equals(client.getName())) {
 
-            if(DrishtiApplication.getInstance().getP2PClassifier() == null){
+            if (DrishtiApplication.getInstance().getP2PClassifier() == null) {
                 return CoreLibrary.getInstance().context()
                         .getEventClientRepository().getClients(l, i);
-            }else{
+            } else {
                 return CoreLibrary.getInstance().context()
                         .getEventClientRepository().getClientsWithLastLocationID(l, i);
             }
@@ -58,10 +56,10 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         } else if (dataType.getName().equals(foreignClient.getName())) {
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getClients(l, i);
-        }else if (dataType.getName().equals(foreignEvent.getName())) {
+        } else if (dataType.getName().equals(foreignEvent.getName())) {
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getEvents(l, i);
-        }else {
+        } else {
             Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
                     , dataType.getName());
             return null;

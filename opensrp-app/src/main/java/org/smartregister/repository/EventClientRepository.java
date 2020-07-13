@@ -23,9 +23,9 @@ import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.converters.ClientConverter;
 import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
-import org.smartregister.domain.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.pathevaluator.dao.ClientDao;
@@ -46,7 +46,6 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.JSON_FILE_EXTENSION;
 import static org.smartregister.AllConstants.ROWID;
 
 /**
@@ -69,6 +68,92 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
     public EventClientRepository(Table clientTable, Table eventTable) {
         this.clientTable = clientTable;
         this.eventTable = eventTable;
+    }
+
+    public static String getCreateTableColumn(Column col) {
+        ColumnAttribute c = col.column();
+        return "`" + col.name() + "` " + getSqliteType(c.type()) + (c.pk() ? " PRIMARY KEY " : "");
+    }
+
+    public static String removeEndingComma(String str) {
+        if (str.trim().endsWith(",")) {
+            return str.substring(0, str.lastIndexOf(","));
+        }
+        return str;
+    }
+
+    public static void createTable(SQLiteDatabase db, BaseTable table, Column[] columns) {
+        try {
+            String cl = "";
+            for (Column cc : columns) {
+                cl += getCreateTableColumn(cc) + ",";
+            }
+            cl = removeEndingComma(cl);
+            String create_tb = "CREATE TABLE " + table.name() + " ( " + cl + " )";
+
+            db.execSQL(create_tb);
+
+            createIndex(db, table, columns);
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
+    public static void createIndex(SQLiteDatabase db, BaseTable table, Column[] columns) {
+        try {
+            for (Column cc : columns) {
+                if (cc.column().index()) {
+                    String create_id = "CREATE INDEX IF NOT EXISTS "
+                            + table.name() + "_" + cc.name()
+                            + "_index ON "
+                            + table.name()
+                            + " ("
+                            + cc.name()
+                            + "); ";
+                    db.execSQL(create_id);
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+    }
+
+    public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = ?"
+                    + " AND sql is not null AND tbl_name = ?", new String[]{"index", table.name()});
+            while (cursor.moveToNext()) {
+                db.execSQL("DROP INDEX " + cursor.getString(0));
+            }
+        } catch (Exception e) {
+            Timber.e(EventClientRepository.class.getName(), "SQLException", e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+    }
+
+    public static String getSqliteType(ColumnAttribute.Type type) {
+        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.text.name())) {
+            return "varchar";
+        }
+        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.bool.name())) {
+            return "boolean";
+        }
+        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.date.name())) {
+            return "datetime";
+        }
+        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.list.name())) {
+            return "varchar";
+        }
+        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.map.name())) {
+            return "varchar";
+        }
+        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.longnum.name())) {
+            return "integer";
+        }
+        return null;
     }
 
     public Table getClientTable() {
@@ -100,7 +185,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         }
 
     }
-
 
     public Boolean checkIfExists(Table table, String baseEntityId) {
         return checkIfExists(table, baseEntityId, getWritableDatabase());
@@ -186,7 +270,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
                 if (jsonObject.has(EVENT_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
-                else if(jsonObject.has(_ID))
+                else if (jsonObject.has(_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
             } else {
                 return false;
@@ -218,7 +302,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             return false;
         }
     }
-
 
     private QueryWrapper generateInsertQuery(Table table) {
 
@@ -284,7 +367,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
         return queryWrapper;
     }
-
 
     public boolean batchInsertClients(JSONArray array) {
         return batchInsertClients(array, getWritableDatabase());
@@ -376,7 +458,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
         return rowId;
     }
-
 
     public boolean batchInsertEvents(JSONArray array, long serverVersion) {
         return batchInsertEvents(array, serverVersion, getWritableDatabase());
@@ -1317,7 +1398,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         return null;
     }
 
-
     public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String syncStatus, List<String> baseEntityIds) {
         List<EventClient> list = new ArrayList<>();
         if (Utils.isEmptyCollection(baseEntityIds))
@@ -1436,7 +1516,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
      * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
-     *
+     * <p>
      * Also adds a locationID to the client by selecting the last location id from the events table
      */
     @Nullable
@@ -1480,7 +1560,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 String locationId = eventJsonObject.getString("locationId");
                 JSONObject eventObject = getEventObject(cursor, rowId);
                 if (eventObject == null) continue;
-                eventObject.put("locationId", locationId );
+                eventObject.put("locationId", locationId);
                 jsonArray.put(eventObject);
 
                 if (rowId > maxRowId) {
@@ -1558,7 +1638,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
         return jsonData;
     }
-
 
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject) {
         addorUpdateClient(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
@@ -1726,7 +1805,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         }
     }
 
-
     public void markClientValidationStatus(String baseEntityId, boolean valid) {
         try {
             ContentValues values = new ContentValues();
@@ -1791,73 +1869,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     }
 
-    public static String getCreateTableColumn(Column col) {
-        ColumnAttribute c = col.column();
-        return "`" + col.name() + "` " + getSqliteType(c.type()) + (c.pk() ? " PRIMARY KEY " : "");
-    }
-
-    public static String removeEndingComma(String str) {
-        if (str.trim().endsWith(",")) {
-            return str.substring(0, str.lastIndexOf(","));
-        }
-        return str;
-    }
-
-    public static void createTable(SQLiteDatabase db, BaseTable table, Column[] columns) {
-        try {
-            String cl = "";
-            for (Column cc : columns) {
-                cl += getCreateTableColumn(cc) + ",";
-            }
-            cl = removeEndingComma(cl);
-            String create_tb = "CREATE TABLE " + table.name() + " ( " + cl + " )";
-
-            db.execSQL(create_tb);
-
-            createIndex(db, table, columns);
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-    }
-
-    public static void createIndex(SQLiteDatabase db, BaseTable table, Column[] columns) {
-        try {
-            for (Column cc : columns) {
-                if (cc.column().index()) {
-                    String create_id = "CREATE INDEX IF NOT EXISTS "
-                            + table.name() + "_" + cc.name()
-                            + "_index ON "
-                            + table.name()
-                            + " ("
-                            + cc.name()
-                            + "); ";
-                    db.execSQL(create_id);
-                }
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-    }
-
-    public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
-        Cursor cursor = null;
-        try {
-            cursor = db.rawQuery("SELECT name FROM sqlite_master WHERE type = ?"
-                    + " AND sql is not null AND tbl_name = ?", new String[]{"index", table.name()});
-            while (cursor.moveToNext()) {
-                db.execSQL("DROP INDEX " + cursor.getString(0));
-            }
-        } catch (Exception e) {
-            Timber.e(EventClientRepository.class.getName(), "SQLException", e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-    }
-
     @Override
     public List<Patient> findClientById(String id) {
-       Client client= fetchClientByBaseEntityId(id);
+        Client client = fetchClientByBaseEntityId(id);
         return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
     }
 
@@ -1894,91 +1908,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
         //TODO implement method
-       return null;
-    }
-
-    // Definitions
-    public enum Table implements BaseTable {
-        client(client_column.values()),
-        event(event_column.values()),
-        foreignEvent(event_column.values()),
-        foreignClient(client_column.values());
-
-        private Column[] columns;
-
-        public Column[] columns() {
-            return columns;
-        }
-
-        Table(Column[] columns) {
-            this.columns = columns;
-        }
-    }
-
-    public enum client_column implements Column {
-
-        baseEntityId(ColumnAttribute.Type.text, true, true),
-        syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.text, false, true),
-        json(ColumnAttribute.Type.text, false, false),
-        updatedAt(ColumnAttribute.Type.date, false, true);
-
-        client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
-            this.column = new ColumnAttribute(type, pk, index);
-        }
-
-        private ColumnAttribute column;
-
-        public ColumnAttribute column() {
-            return column;
-        }
-    }
-
-    public enum event_column implements Column {
-        dateCreated(ColumnAttribute.Type.date, false, true),
-        dateEdited(ColumnAttribute.Type.date, false, false),
-
-        eventId(ColumnAttribute.Type.text, true, true),
-        baseEntityId(ColumnAttribute.Type.text, false, true),
-        syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.text, false, true),
-        json(ColumnAttribute.Type.text, false, false),
-        eventDate(ColumnAttribute.Type.date, false, true),
-        eventType(ColumnAttribute.Type.text, false, true),
-        formSubmissionId(ColumnAttribute.Type.text, false, true),
-        updatedAt(ColumnAttribute.Type.date, false, true),
-        serverVersion(ColumnAttribute.Type.longnum, false, true);
-
-        event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
-            this.column = new ColumnAttribute(type, pk, index);
-        }
-
-        private ColumnAttribute column;
-
-        public ColumnAttribute column() {
-            return column;
-        }
-    }
-
-    public static String getSqliteType(ColumnAttribute.Type type) {
-        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.text.name())) {
-            return "varchar";
-        }
-        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.bool.name())) {
-            return "boolean";
-        }
-        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.date.name())) {
-            return "datetime";
-        }
-        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.list.name())) {
-            return "varchar";
-        }
-        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.map.name())) {
-            return "varchar";
-        }
-        if (type.name().equalsIgnoreCase(ColumnAttribute.Type.longnum.name())) {
-            return "integer";
-        }
         return null;
     }
 
@@ -2013,6 +1942,69 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             Timber.e(e);
         }
         return false;
+    }
+
+    // Definitions
+    public enum Table implements BaseTable {
+        client(client_column.values()),
+        event(event_column.values()),
+        foreignEvent(event_column.values()),
+        foreignClient(client_column.values());
+
+        private Column[] columns;
+
+        Table(Column[] columns) {
+            this.columns = columns;
+        }
+
+        public Column[] columns() {
+            return columns;
+        }
+    }
+
+    public enum client_column implements Column {
+
+        baseEntityId(ColumnAttribute.Type.text, true, true),
+        syncStatus(ColumnAttribute.Type.text, false, true),
+        validationStatus(ColumnAttribute.Type.text, false, true),
+        json(ColumnAttribute.Type.text, false, false),
+        updatedAt(ColumnAttribute.Type.date, false, true);
+
+        private ColumnAttribute column;
+
+        client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+            this.column = new ColumnAttribute(type, pk, index);
+        }
+
+        public ColumnAttribute column() {
+            return column;
+        }
+    }
+
+    public enum event_column implements Column {
+        dateCreated(ColumnAttribute.Type.date, false, true),
+        dateEdited(ColumnAttribute.Type.date, false, false),
+
+        eventId(ColumnAttribute.Type.text, true, true),
+        baseEntityId(ColumnAttribute.Type.text, false, true),
+        syncStatus(ColumnAttribute.Type.text, false, true),
+        validationStatus(ColumnAttribute.Type.text, false, true),
+        json(ColumnAttribute.Type.text, false, false),
+        eventDate(ColumnAttribute.Type.date, false, true),
+        eventType(ColumnAttribute.Type.text, false, true),
+        formSubmissionId(ColumnAttribute.Type.text, false, true),
+        updatedAt(ColumnAttribute.Type.date, false, true),
+        serverVersion(ColumnAttribute.Type.longnum, false, true);
+
+        private ColumnAttribute column;
+
+        event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+            this.column = new ColumnAttribute(type, pk, index);
+        }
+
+        public ColumnAttribute column() {
+            return column;
+        }
     }
 
     static class QueryWrapper {
