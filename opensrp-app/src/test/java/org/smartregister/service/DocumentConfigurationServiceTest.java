@@ -33,6 +33,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.smartregister.domain.ResponseStatus.success;
 import static org.smartregister.service.DocumentConfigurationService.FORM_VERSION;
 import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
@@ -108,7 +109,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(RuntimeEnvironment.application).when(newContext).createConfigurationContext(Mockito.nullable(Configuration.class));
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", newContext);
         String jsonObject = "{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}";
-        Mockito.when(httpAgent.fetch("http://opensrp_base_url/rest/manifest/search?app_id=org.smartregister&app_version=" + BuildConfig.VERSION_NAME)).thenReturn(
+        Mockito.when(httpAgent.fetch(anyString())).thenReturn(
                 new Response<String>(
                         success,
                         jsonObject));

@@ -8,6 +8,8 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.google.gson.reflect.TypeToken;
+import com.ibm.fhir.model.resource.Patient;
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -19,12 +21,15 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.DateUtil;
-import org.smartregister.domain.db.Client;
+import org.smartregister.converters.ClientConverter;
+import org.smartregister.domain.Client;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
-import org.smartregister.domain.db.Event;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.pathevaluator.dao.ClientDao;
+import org.smartregister.pathevaluator.dao.EventDao;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
@@ -47,7 +52,7 @@ import static org.smartregister.AllConstants.ROWID;
 /**
  * Created by keyman on 27/07/2017.
  */
-public class EventClientRepository extends BaseRepository {
+public class EventClientRepository extends BaseRepository implements ClientDao, EventDao {
 
     private static final String EVENT_ID = "id";
 
@@ -1848,6 +1853,48 @@ public class EventClientRepository extends BaseRepository {
             if (cursor != null)
                 cursor.close();
         }
+    }
+
+    @Override
+    public List<Patient> findClientById(String id) {
+       Client client= fetchClientByBaseEntityId(id);
+        return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
+    }
+
+    @Override
+    public List<Patient> findFamilyByJurisdiction(String jurisdiction) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<Patient> findFamilyByResidence(String structureId) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<Patient> findFamilyMemberyByJurisdiction(String jurisdiction) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<Patient> findFamilyMemberByResidence(String structureId) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<Patient> findClientByRelationship(String relationship, String id) {
+        //TODO implement method
+        return null;
+    }
+
+    @Override
+    public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
+        //TODO implement method
+       return null;
     }
 
     // Definitions

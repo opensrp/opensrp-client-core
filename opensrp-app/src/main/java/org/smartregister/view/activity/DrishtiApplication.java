@@ -31,7 +31,7 @@ import timber.log.Timber;
 import static org.smartregister.util.Log.logError;
 
 public abstract class DrishtiApplication extends Application {
-    private static final String TAG = "DrishtiApplication";
+
     protected static DrishtiApplication mInstance;
     private static BitmapImageCache memoryImageCache;
     private static OpenSRPImageLoader cachedImageLoader;

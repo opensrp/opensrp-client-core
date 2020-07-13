@@ -1,6 +1,7 @@
 package org.smartregister.domain.db.mock;
 
-import org.smartregister.domain.db.Address;
+import org.joda.time.DateTime;
+import org.smartregister.domain.Address;
 
 import java.util.Date;
 import java.util.Map;
@@ -14,7 +15,7 @@ public class AddressMock extends Address {
         super();
     }
 
-    public AddressMock(String addressType, Date startDate, Date endDate, Map<String, String> addressFields, String latitude, String longitude, String postalCode, String stateProvince, String country) {
+    public AddressMock(String addressType, DateTime startDate, DateTime endDate, Map<String, String> addressFields, String latitude, String longitude, String postalCode, String stateProvince, String country) {
         super(addressType, startDate, endDate, addressFields, latitude, longitude, postalCode, stateProvince, country);
     }
 
@@ -28,25 +29,6 @@ public class AddressMock extends Address {
         super.setAddressType(addressType);
     }
 
-    @Override
-    public Date getStartDate() {
-        return super.getStartDate();
-    }
-
-    @Override
-    public void setStartDate(Date startDate) {
-        super.setStartDate(startDate);
-    }
-
-    @Override
-    public Date getEndDate() {
-        return super.getEndDate();
-    }
-
-    @Override
-    public void setEndDate(Date endDate) {
-        super.setEndDate(endDate);
-    }
 
     @Override
     public Map<String, String> getAddressFields() {
@@ -216,16 +198,6 @@ public class AddressMock extends Address {
     @Override
     public Address withAddressType(String addressType) {
         return super.withAddressType(addressType);
-    }
-
-    @Override
-    public Address withStartDate(Date startDate) {
-        return super.withStartDate(startDate);
-    }
-
-    @Override
-    public Address withEndDate(Date endDate) {
-        return super.withEndDate(endDate);
     }
 
     @Override

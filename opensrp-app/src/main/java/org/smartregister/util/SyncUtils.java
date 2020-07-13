@@ -103,16 +103,22 @@ public class SyncUtils {
 
         // see if setting was synced
         AllSettings settingsRepository = opensrpContent.allSettings();
-        Setting rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+        Setting rawMinAllowedAppVersionSetting=null;
+        try {
+            rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+        }catch ( NullPointerException e ){
+            Timber.e(e);
+            return true;
+        }
         if (rawMinAllowedAppVersionSetting == null) {
-            return isAppVersionAllowed;
+            return true;
         }
 
         // if min version is already extracted
         Setting extractedMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
         if (extractedMinAllowedAppVersionSetting != null
                 && isNewerSetting(extractedMinAllowedAppVersionSetting, rawMinAllowedAppVersionSetting)) {
-            return !isOutdatedVersion(Long.valueOf(extractedMinAllowedAppVersionSetting.getValue()));
+            return !isOutdatedVersion(Long.parseLong(extractedMinAllowedAppVersionSetting.getValue()));
         }
 
         // else, attempt to extract it

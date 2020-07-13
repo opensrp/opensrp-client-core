@@ -121,6 +121,7 @@ public class AllConstants {
     public static final String ROWID = "rowid";
     public static final String MULTI_SELECT_LIST = "multi_select_list";
     public static final String JSON_FILE_EXTENSION = ".json";
+    public static final String RESOLVE = "resolve";
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
 
@@ -413,6 +414,8 @@ public class AllConstants {
         public static final String VALIDATED_RECORDS = "validated_records";
         public static final String SETTING_CONFIGURATIONS = "settingConfigurations";
         public static final String IS_REMOTE_LOGIN = "is_remote_login";
+        public static final String TASK_GENERATED_EVENT = "task_generated_event";
+        public static final String TASK_GENERATED = "task_generated";
     }
 
     public static final class REGISTER_FRAGMENT {
