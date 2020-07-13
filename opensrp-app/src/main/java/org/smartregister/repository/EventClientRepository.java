@@ -190,9 +190,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             List<? extends Column> otherColumns = new ArrayList(columns);
             if (!otherColumns.isEmpty()) {
                 otherColumns.removeAll(Arrays.asList(client_column.json, client_column.updatedAt, client_column.syncStatus, client_column.validationStatus, client_column.baseEntityId,
-                        client_column.residence,client_column.locationId,client_column.clientType,
+                        client_column.residence, client_column.locationId, client_column.clientType,
                         event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId
-                        ,event_column.planId));
+                        , event_column.planId));
             }
 
             for (Column column : otherColumns) {
@@ -1909,15 +1909,17 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     @Override
     public List<Patient> findClientByRelationship(String relationship, String id) {
-        //TODO implement method
-        return null;
+        return CoreLibrary.getInstance().context().getClientRelationshipRepository().findClientByRelationship(relationship, id)
+                .stream()
+                .map(ClientConverter::convertClientToPatientResource)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String
             planIdentifier) {
         return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", event_column.json,
-                Table.client.name(), event_column.baseEntityId, event_column.planId), new String[]{resourceId, planIdentifier})
+                Table.client.name(), event_column.baseEntityId, event_column.planId, event_column.planId), new String[]{resourceId, planIdentifier})
                 .stream()
                 .map(EventConverter::convertEventToEncounterResource)
                 .collect(Collectors.toList());
