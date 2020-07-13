@@ -41,6 +41,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.JSON_FILE_EXTENSION;
 import static org.smartregister.AllConstants.ROWID;
 
 /**
@@ -1433,12 +1434,14 @@ public class EventClientRepository extends BaseRepository {
      *
      * Also adds a locationID to the client by selecting the last location id from the events table
      */
-    //TODO incomplete method
     @Nullable
     public JsonData getClientsWithLastLocationID(long lastRowId, int limit) {
         JsonData jsonData = null;
         JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
+
+        String eventJson = "(select event.json from event where event.baseEntityId = client.baseEntityId \n" +
+                " ORDER by event.eventDate desc , event.updatedAt desc , event.dateEdited desc , event.serverVersion desc limit 1) eventJson";
 
         String query = "SELECT "
                 + event_column.json
@@ -1446,6 +1449,8 @@ public class EventClientRepository extends BaseRepository {
                 + event_column.syncStatus
                 + ","
                 + ROWID
+                + ","
+                + eventJson
                 + " FROM "
                 + clientTable.name()
                 + " WHERE "
@@ -1459,9 +1464,18 @@ public class EventClientRepository extends BaseRepository {
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(2);
+                String jsonEventStr = (cursor.getString(3));
+                if (StringUtils.isBlank(jsonEventStr)
+                        || jsonEventStr.equals("{}")) { // Skip blank/empty json string
+                    return null;
+                }
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+                JSONObject eventJsonObject = new JSONObject(jsonEventStr);
+
+                String locationId = eventJsonObject.getString("locationId");
                 JSONObject eventObject = getEventObject(cursor, rowId);
                 if (eventObject == null) continue;
-
+                eventObject.put("locationId", locationId );
                 jsonArray.put(eventObject);
 
                 if (rowId > maxRowId) {
