@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
 import org.smartregister.converters.ClientConverter;
 import org.smartregister.converters.EventConverter;
@@ -1519,7 +1520,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                     }
                 }
             }
-            DrishtiApplication.getInstance().getAppDatabase().clientRelationshipDao().insertAll(clientRelationships.toArray(new ClientRelationship[0]));
+            CoreLibrary.getInstance().context().getClientRelationshipRepository().insertAll(clientRelationships);
         } catch (Exception e) {
             Timber.e(e, "Error saving relationship for %s", baseEntityId);
         }

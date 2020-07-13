@@ -24,6 +24,7 @@ import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.ClientFormRepository;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
@@ -218,6 +219,7 @@ public class Context {
     private LocationTagRepository locationTagRepository;
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
+    private ClientRelationshipRepository clientRelationshipRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -1176,5 +1178,12 @@ public class Context {
         return clientFormRepository;
     }
 
-///////////////////////////////////////////////////////////////////////////////
+    public ClientRelationshipRepository getClientRelationshipRepository() {
+        if (clientRelationshipRepository == null) {
+            clientRelationshipRepository = new ClientRelationshipRepository();
+        }
+        return clientRelationshipRepository;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
 }
