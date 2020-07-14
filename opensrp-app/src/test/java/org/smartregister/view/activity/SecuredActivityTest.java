@@ -1,6 +1,7 @@
 package org.smartregister.view.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.MenuItem;
@@ -18,6 +19,7 @@ import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowToast;
 import org.robolectric.shadows.support.v4.ShadowLocalBroadcastManager;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -28,10 +30,13 @@ import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.event.Event;
 import org.smartregister.event.Listener;
+import org.smartregister.service.AlertService;
+import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Session;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
@@ -92,10 +97,6 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void onResume() {
-    }
-
-    @Test
     public void onOptionsItemSelectedShouldLogoutUserWhenLogoutIsClicked() {
         MenuItem menuItem = Mockito.mock(MenuItem.class);
         Mockito.doReturn(securedActivity.MENU_ITEM_LOGOUT).when(menuItem).getItemId();
@@ -137,6 +138,26 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         Assert.assertEquals(0, shadowLocalBroadcastManager.getRegisteredBroadcastReceivers().size());
     }
 
+    @Test
+    public void onActivityResultShouldUpdateAlertStatusWhenFormHasEntityIdAndAlertStatusInMetadata() {
+        Intent data = new Intent();
+        String entityId = "09808234";
+        String alertName = "bcg";
+
+        HashMap<String, String> metadata = new HashMap<>();
+        metadata.put("entityId", entityId);
+        metadata.put("alertName", alertName);
+
+        ReflectionHelpers.setField(securedActivity, "metaData", JsonFormUtils.gson.toJson(metadata));
+        AlertService alertService = Mockito.spy(CoreLibrary.getInstance().context().alertService());
+        Mockito.doNothing().when(alertService).changeAlertStatusToInProcess(entityId, alertName);
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "alertService", alertService);
+
+        securedActivity.onActivityResult(0, AllConstants.FORM_SUCCESSFULLY_SUBMITTED_RESULT_CODE, data);
+
+        Mockito.verify(alertService).changeAlertStatusToInProcess(entityId, alertName);
+    }
+
     static class SecuredActivityImpl extends SecuredActivity {
 
         @Override
@@ -148,7 +169,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
         @Override
         protected void onResumption() {
-
+            // Do nothing
         }
     }
 
