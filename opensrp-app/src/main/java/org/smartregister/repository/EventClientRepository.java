@@ -38,6 +38,7 @@ import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 
 import java.lang.reflect.Type;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,11 +162,11 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
                 statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
 
-                statement.bindString(columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
-                statement.bindString(columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
+                bindString(statement,columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
+                bindString(statement,columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
                 JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
                 if (attributes != null) {
-                    statement.bindString(columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
+                    bindString(statement,columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
                 }
             } else if (table.equals(Table.event)) {
                 columns = Arrays.asList(event_column.values());
@@ -181,8 +182,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 else if (jsonObject.has(_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
                 JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
-                if (details != null)
-                    statement.bindString(columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
+                if (details != null) {
+                    bindString(statement,columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
+                }
             } else {
                 return false;
             }
@@ -216,6 +218,13 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         }
     }
 
+
+    private void bindString(SQLiteStatement statement, int index, String value) {
+        if (StringUtils.isNotBlank(value))
+            statement.bindString(index, value);
+        else
+            statement.bindNull(index);
+    }
 
     private QueryWrapper generateInsertQuery(Table table) {
 
