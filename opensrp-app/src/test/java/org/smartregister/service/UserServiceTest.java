@@ -295,4 +295,26 @@ public class UserServiceTest extends BaseUnitTest {
         assertEquals(TimeStatus.OK, userService.validateDeviceTime(loginResponseData, 15 * 1000));
     }
 
+
+    @Test
+    public void testValidateStoredServerTimeZoneForNullServerTimeZoneReturnsError() {
+        when(allSharedPreferences.fetchServerTimeZone()).thenReturn(null);
+        assertEquals(TimeStatus.ERROR, userService.validateStoredServerTimeZone());
+    }
+
+    @Test
+    public void testValidateStoredServerTimeZoneForDifferentTimeZoneServerTimeZoneReturnsMismatch() {
+        when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        assertEquals(TimeStatus.TIMEZONE_MISMATCH, userService.validateStoredServerTimeZone());
+    }
+
+
+    @Test
+    public void testValidateStoredServerTimeZoneSameTimeTimeAndTimeZone() {
+        when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
+        assertEquals(TimeStatus.OK, userService.validateStoredServerTimeZone());
+    }
+
 }
