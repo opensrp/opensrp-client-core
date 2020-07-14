@@ -35,6 +35,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.smartregister.repository.AllSharedPreferences.ANM_IDENTIFIER_PREFERENCE_KEY;
+import static org.smartregister.sync.helper.TaskServiceHelper.TASK_LAST_SYNC_DATE;
 
 /**
  * Created by Richard Kareko on 6/23/20.
@@ -95,6 +96,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         locationIdList.add(locationId);
         when(CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
 
+        //reset task last sync date to zero since this is updated by other tests
+        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
+
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
@@ -102,9 +106,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         tasks.add(expectedTask);
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
-                        LocationServiceHelper.locationGson.toJson(tasks)),
+                        TaskServiceHelper.taskGson.toJson(tasks)),
                 new Response<>(ResponseStatus.success,             //returned on second call
-                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
+                        TaskServiceHelper.taskGson.toJson(new ArrayList<>())))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         List<Task> actualTasks = taskServiceHelper.fetchTasksFromServer();
@@ -153,13 +157,16 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         ArrayList tasks = new ArrayList();
         tasks.add(expectedTask);
 
+        //reset task last sync date to zero since this is updated by other tests
+        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
+
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
-                        LocationServiceHelper.locationGson.toJson(tasks)),
+                        TaskServiceHelper.taskGson.toJson(tasks)),
                 new Response<>(ResponseStatus.success,             //returned on second call
-                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
+                        TaskServiceHelper.taskGson.toJson(new ArrayList<>())))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
-        Whitebox.setInternalState(taskServiceHelper, "syncByGroupIdentifier", false);
+        taskServiceHelper.setSyncByGroupIdentifier(false);
 
         List<Task> actualTasks = taskServiceHelper.fetchTasksFromServer();
         assertNotNull(actualTasks);
