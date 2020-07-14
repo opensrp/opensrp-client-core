@@ -12,6 +12,7 @@ import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
+import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllEligibleCouples;
@@ -25,12 +26,15 @@ import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -194,7 +198,7 @@ public class UserServiceTest extends BaseUnitTest {
 
     @Test
     public void shouldDeleteDataAndSettingsWhenLogoutHappens() throws Exception {
-        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        SyncConfiguration syncConfiguration = mock(SyncConfiguration.class);
         Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
 
@@ -243,6 +247,17 @@ public class UserServiceTest extends BaseUnitTest {
         LinkedHashMap<String, org.smartregister.domain.jsonmapping.util.TreeNode<String, org.smartregister.domain.jsonmapping.Location>> mapLocation = locationTree.getLocationsHierarchy();
 
         assertEquals("Pakistan", mapLocation.values().iterator().next().getLabel());
+    }
+
+    @Test
+    public void testGetServerTimeZoneWithTime() {
+        loginResponseData = mock(LoginResponseData.class);
+        loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone timezone = UserService.getServerTimeZone(loginResponseData);
+        assertNotNull(timezone);
+        long millisecondsPerHour = 3600 * 1000;
+        assertEquals(3 * millisecondsPerHour, timezone.getRawOffset());
+        assertEquals("Africa/Nairobi", timezone.getID());
     }
 
 }
