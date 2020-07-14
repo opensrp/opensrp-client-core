@@ -30,7 +30,7 @@ public class ClientRelationshipRepository extends BaseRepository {
 
     private static final String RELATIONAL_ID = "relational_id";
 
-    private static final String CREATE_TABLE =
+    protected static final String CREATE_TABLE =
             "CREATE TABLE " + CLIENT_RELATIONSHIP_TABLE_NAME + " (" +
                     BASE_ENTITY_ID + " VARCHAR NOT NULL, " +
                     RELATIONSHIP + " VARCHAR NOT NULL, " +
@@ -38,7 +38,7 @@ public class ClientRelationshipRepository extends BaseRepository {
                     "PRIMARY KEY (" + BASE_ENTITY_ID + "," + RELATIONSHIP + "))";
 
 
-    private static final String CREATE_BASE_ENTITY_ID_INDEX = "CREATE INDEX "
+    protected static final String CREATE_BASE_ENTITY_ID_INDEX = "CREATE INDEX "
             + CLIENT_RELATIONSHIP_TABLE_NAME + "_base_entity_ind  ON " + CLIENT_RELATIONSHIP_TABLE_NAME + "(" + BASE_ENTITY_ID + ")";
 
 
@@ -66,7 +66,7 @@ public class ClientRelationshipRepository extends BaseRepository {
                 client_column.json.name(), CLIENT_RELATIONSHIP_TABLE_NAME, client.name(), BASE_ENTITY_ID, client_column.baseEntityId.name(), RELATIONSHIP, RELATIONAL_ID);
         try (Cursor cursor = getReadableDatabase().rawQuery(query, new String[]{relationShip, relationalId})) {
             while (cursor.moveToNext()) {
-                clientList.add(JsonFormUtils.gson.fromJson(cursor.getString(1), Client.class));
+                clientList.add(JsonFormUtils.gson.fromJson(cursor.getString(0), Client.class));
             }
         } catch (SQLException e) {
             Timber.e(e);
