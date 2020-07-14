@@ -11,6 +11,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.TimeStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
@@ -26,6 +27,7 @@ import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.TimeZone;
@@ -258,6 +260,39 @@ public class UserServiceTest extends BaseUnitTest {
         long millisecondsPerHour = 3600 * 1000;
         assertEquals(3 * millisecondsPerHour, timezone.getRawOffset());
         assertEquals("Africa/Nairobi", timezone.getID());
+    }
+
+    @Test
+    public void testValidateDeviceTimeForNullServerTimeZoneReturnsError() {
+        loginResponseData = mock(LoginResponseData.class);
+        assertEquals(TimeStatus.ERROR, userService.validateDeviceTime(loginResponseData, 3600));
+    }
+
+    @Test
+    public void testValidateDeviceTimeForDifferentTimeZoneServerTimeZoneReturnsMismatch() {
+        loginResponseData = mock(LoginResponseData.class);
+        loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        assertEquals(TimeStatus.TIMEZONE_MISMATCH, userService.validateDeviceTime(loginResponseData, 3600 * 1000));
+    }
+
+    @Test
+    public void testValidateDeviceTimeForDifferentTimeReturnsMismatch() {
+        loginResponseData = mock(LoginResponseData.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, -30);
+        loginResponseData.time = new Time(calendar.getTime(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
+        assertEquals(TimeStatus.TIME_MISMATCH, userService.validateDeviceTime(loginResponseData, 15 * 1000));
+    }
+
+    @Test
+    public void testValidateDeviceTimeSameTimeTimeAndTimeZone() {
+        loginResponseData = mock(LoginResponseData.class);
+        Calendar calendar = Calendar.getInstance();
+        loginResponseData.time = new Time(calendar.getTime(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
+        assertEquals(TimeStatus.OK, userService.validateDeviceTime(loginResponseData, 15 * 1000));
     }
 
 }
