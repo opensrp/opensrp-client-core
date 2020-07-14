@@ -37,6 +37,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -300,6 +301,7 @@ public class UserServiceTest extends BaseUnitTest {
     public void testValidateStoredServerTimeZoneForNullServerTimeZoneReturnsError() {
         when(allSharedPreferences.fetchServerTimeZone()).thenReturn(null);
         assertEquals(TimeStatus.ERROR, userService.validateStoredServerTimeZone());
+        verify(allSharedPreferences).saveForceRemoteLogin(true);
     }
 
     @Test
@@ -307,6 +309,8 @@ public class UserServiceTest extends BaseUnitTest {
         when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         assertEquals(TimeStatus.TIMEZONE_MISMATCH, userService.validateStoredServerTimeZone());
+
+        verify(allSharedPreferences).saveForceRemoteLogin(true);
     }
 
 
@@ -315,6 +319,7 @@ public class UserServiceTest extends BaseUnitTest {
         when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
         assertEquals(TimeStatus.OK, userService.validateStoredServerTimeZone());
+        verify(allSharedPreferences, never()).saveForceRemoteLogin(true);
     }
 
 }
