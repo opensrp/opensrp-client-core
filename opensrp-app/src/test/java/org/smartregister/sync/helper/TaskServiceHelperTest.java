@@ -32,7 +32,9 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.smartregister.repository.AllSharedPreferences.ANM_IDENTIFIER_PREFERENCE_KEY;
 
 /**
  * Created by Richard Kareko on 6/23/20.
@@ -68,6 +70,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(taskServiceHelper, "taskRepository", taskRepository);
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
+        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "planDefinitionRepository" , planDefinitionRepository );
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "locationRepository" , locationRepository );
         Mockito.doReturn(httpAgent).when(taskServiceHelper).getHttpAgent();
@@ -82,7 +85,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testFetchTasksFromServer() {
+    public void testFetchTasksFromServerSyncByGroupIdentifier() {
         Set<String> planIdSet = new HashSet<>();
         planIdSet.add(planId);
         when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
@@ -134,6 +137,60 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
+    public void testFetchTasksFromServerSyncByOwner() {
+        Set<String> planIdSet = new HashSet<>();
+        planIdSet.add(planId);
+        when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
+
+        String locationId = "3952";
+        List<String> locationIdList = new ArrayList<>();
+        locationIdList.add(locationId);
+        when(CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
+
+        Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
+        }.getType());
+        expectedTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        ArrayList tasks = new ArrayList();
+        tasks.add(expectedTask);
+
+        Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
+                        LocationServiceHelper.locationGson.toJson(tasks)),
+                new Response<>(ResponseStatus.success,             //returned on second call
+                        LocationServiceHelper.locationGson.toJson(new ArrayList<>())))
+                .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        Whitebox.setInternalState(taskServiceHelper, "syncByGroupIdentifier", false);
+
+        List<Task> actualTasks = taskServiceHelper.fetchTasksFromServer();
+        assertNotNull(actualTasks);
+        assertEquals(1, actualTasks.size());
+        Task actualTask = actualTasks.get(0);
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/task/sync", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"owner\":\"onatest\",\"serverVersion\":0}", requestString);
+
+        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
+        assertEquals(expectedTask.getIdentifier(), taskArgumentCaptor.getValue().getIdentifier());
+        assertEquals(expectedTask.getBusinessStatus(), taskArgumentCaptor.getValue().getBusinessStatus());
+        assertEquals(BaseRepository.TYPE_Synced, taskArgumentCaptor.getValue().getSyncStatus());
+        assertEquals(expectedTask.getServerVersion(), taskArgumentCaptor.getValue().getServerVersion());
+        assertEquals(expectedTask.getCode(), taskArgumentCaptor.getValue().getCode());
+        assertEquals(expectedTask.getForEntity(), taskArgumentCaptor.getValue().getForEntity());
+        assertEquals(expectedTask.getPlanIdentifier(), taskArgumentCaptor.getValue().getPlanIdentifier());
+
+        assertEquals(expectedTask.getIdentifier(), actualTask.getIdentifier());
+        assertEquals(expectedTask.getBusinessStatus(), actualTask.getBusinessStatus());
+        assertEquals(BaseRepository.TYPE_Synced, actualTask.getSyncStatus());
+        assertEquals(expectedTask.getServerVersion(), actualTask.getServerVersion());
+        assertEquals(expectedTask.getCode(), actualTask.getCode());
+        assertEquals(expectedTask.getForEntity(), actualTask.getForEntity());
+        assertEquals(expectedTask.getPlanIdentifier(), actualTask.getPlanIdentifier());
+
+    }
+
+    @Test
     public void testSyncTaskStatusToServer() {
 
         TaskUpdate taskUpdate = new TaskUpdate();
@@ -154,6 +211,83 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals("[{\"identifier\":\"eb3cd7e1-c849-5230-8d49-943218018f9f\",\"status\":\"Cancelled\",\"businessStatus\":\"Not Visited\"}]", requestString);
         verify(taskRepository).markTaskAsSynced(taskUpdate.getIdentifier());
+    }
+
+    @Test
+    public void testSynCreatedTaskToServerSuccessfully() {
+        Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
+        }.getType());
+        expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
+        ArrayList tasks = new ArrayList();
+        tasks.add(expectedTask);
+        String expectedJsonPayload = TaskServiceHelper.taskGson.toJson(tasks);
+
+        when(taskRepository.getAllUnsynchedCreatedTasks()).thenReturn(tasks);
+
+        Mockito.doReturn(new Response<>(ResponseStatus.success,
+                "{task_ids : [\"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\"]}"))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        taskServiceHelper.syncCreatedTaskToServer();
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/add", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals(expectedJsonPayload, requestString);
+        verify(taskRepository).getAllUnsynchedCreatedTasks();
+        verify(taskRepository).markTaskAsSynced(expectedTask.getIdentifier());
+
+    }
+
+    @Test
+    public void testSynCreatedTaskToServerWithFailure() {
+        Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
+        }.getType());
+        expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
+        ArrayList tasks = new ArrayList();
+        tasks.add(expectedTask);
+        String expectedJsonPayload = TaskServiceHelper.taskGson.toJson(tasks);
+
+        when(taskRepository.getAllUnsynchedCreatedTasks()).thenReturn(tasks);
+
+        Mockito.doReturn(new Response<>(ResponseStatus.failure,
+                ""))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        taskServiceHelper.syncCreatedTaskToServer();
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/add", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals(expectedJsonPayload, requestString);
+        verify(taskRepository).getAllUnsynchedCreatedTasks();
+        verifyNoMoreInteractions(taskRepository);
+    }
+
+    @Test
+    public void testSynCreatedTaskToServerWithTasksNotProcessedResponse() {
+        Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
+        }.getType());
+        expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
+        ArrayList tasks = new ArrayList();
+        tasks.add(expectedTask);
+        String expectedJsonPayload = TaskServiceHelper.taskGson.toJson(tasks);
+
+        when(taskRepository.getAllUnsynchedCreatedTasks()).thenReturn(tasks);
+
+        Mockito.doReturn(new Response<>(ResponseStatus.success,
+                "Tasks with identifiers not processed: c256c9d8-fe9b-4763-b5af-26585dcbe6bf"))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        taskServiceHelper.syncCreatedTaskToServer();
+
+        String syncUrl = stringArgumentCaptor.getAllValues().get(0);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/add", syncUrl);
+        String requestString = stringArgumentCaptor.getAllValues().get(1);
+        assertEquals(expectedJsonPayload, requestString);
+        verify(taskRepository).getAllUnsynchedCreatedTasks();
+        verifyNoMoreInteractions(taskRepository);
+
     }
 
 }
