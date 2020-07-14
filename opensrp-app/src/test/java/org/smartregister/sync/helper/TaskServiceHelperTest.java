@@ -86,7 +86,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testFetchTasksFromServerSyncByGroupIdentifier() {
+    public void testFetchTasksFromServer_syncByGroupIdentifier() {
         Set<String> planIdSet = new HashSet<>();
         planIdSet.add(planId);
         when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
@@ -141,7 +141,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testFetchTasksFromServerSyncByOwner() {
+    public void testFetchTasksFromServer_syncByOwner() {
         Set<String> planIdSet = new HashSet<>();
         planIdSet.add(planId);
         when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
@@ -221,7 +221,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testSynCreatedTaskToServerSuccessfully() {
+    public void testSynCreatedTaskToServer_successfully() {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
@@ -247,7 +247,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testSynCreatedTaskToServerWithFailure() {
+    public void testSynCreatedTaskToServer_withFailure() {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
@@ -272,7 +272,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testSynCreatedTaskToServerWithTasksNotProcessedResponse() {
+    public void testSynCreatedTaskToServer_withTasksNotProcessedResponse() {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
