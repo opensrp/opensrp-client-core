@@ -43,7 +43,7 @@ public class P2PReceiverTransferDaoTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
     @Mock
-    P2PClassifier<JSONObject> classifier;
+    private P2PClassifier<JSONObject> classifier;
     @Mock
     private EventClientRepository eventClientRepository;
     @Mock
@@ -102,7 +102,6 @@ public class P2PReceiverTransferDaoTest {
 
     @Test
     public void receiveJsonShouldCallEventClientRepositoryBatchInsertEvents() throws JSONException {
-        int i = 0;
         DataType dataType = new DataType(p2PReceiverTransferDao.event.getName(), DataType.Type.NON_MEDIA, 1);
         JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
