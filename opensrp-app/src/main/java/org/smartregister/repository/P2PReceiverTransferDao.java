@@ -2,6 +2,7 @@ package org.smartregister.repository;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +36,11 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         return (TreeSet<DataType>) dataTypes.clone();
     }
 
+    @VisibleForTesting
+    public P2PClassifier<JSONObject> getP2PClassifier(){
+        return DrishtiApplication.getInstance().getP2PClassifier();
+    }
+
     @Override
     public long receiveJson(@NonNull DataType dataType, @NonNull JSONArray jsonArray) {
         EventClientRepository eventClientRepository = CoreLibrary.getInstance().context().getEventClientRepository();
@@ -46,7 +52,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         int foreignEventsMaxRowId = foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
         long maxTableRowId = 0;
 
-        P2PClassifier<JSONObject> classifier = DrishtiApplication.getInstance().getP2PClassifier();
+        P2PClassifier<JSONObject> classifier = getP2PClassifier();
         JSONArray homeData = new JSONArray();
         JSONArray foreignData = new JSONArray();
 
