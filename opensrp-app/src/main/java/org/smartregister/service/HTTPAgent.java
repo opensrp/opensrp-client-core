@@ -834,6 +834,11 @@ public class HTTPAgent {
 
         String userInfoUrl = allSharedPreferences.getPreferences().getString(AccountHelper.CONFIGURATION_CONSTANTS.USERINFO_ENDPOINT_URL, "");
 
+        if (StringUtils.isBlank(userInfoUrl)) {
+
+            return verifyAuthorizationLegacy();
+        }
+
         HttpURLConnection urlConnection = null;
 
         InputStream inputStream = null;
@@ -879,7 +884,9 @@ public class HTTPAgent {
             }
 
         } catch (IOException e) {
+
             Timber.e(e);
+
         } finally {
 
             closeConnection(urlConnection);
