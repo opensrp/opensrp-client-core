@@ -1,6 +1,8 @@
 package org.smartregister.service;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -88,8 +90,21 @@ public class DocumentConfigurationService {
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
             saveReceivedManifest(receivedManifest);
+            saveManifestVersion(receivedManifest.getId());
         } else if (activeManifest == null) {
             saveReceivedManifest(receivedManifest);
+            saveManifestVersion(receivedManifest.getId());
+        }
+    }
+
+    @VisibleForTesting
+    protected void saveManifestVersion(@NonNull String manifestVersion) {
+        boolean manifestVersionSaved = CoreLibrary.getInstance()
+                .context()
+                .allSharedPreferences()
+                .saveManifestVersion(manifestVersion);
+        if (!manifestVersionSaved) {
+            Timber.e(new Exception("Saving manifest version failed"));
         }
     }
 
