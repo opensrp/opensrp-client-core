@@ -91,9 +91,11 @@ public class DocumentConfigurationService {
             manifestRepository.addOrUpdate(activeManifest);
             saveReceivedManifest(receivedManifest);
             saveManifestVersion(receivedManifest.getVersion());
+            saveFormsVersion(receivedManifest.getFormVersion());
         } else if (activeManifest == null) {
             saveReceivedManifest(receivedManifest);
             saveManifestVersion(receivedManifest.getVersion());
+            saveFormsVersion(receivedManifest.getFormVersion());
         }
     }
 
@@ -103,6 +105,17 @@ public class DocumentConfigurationService {
                 .context()
                 .allSharedPreferences()
                 .saveManifestVersion(manifestVersion);
+        if (!manifestVersionSaved) {
+            Timber.e(new Exception("Saving manifest version failed"));
+        }
+    }
+
+    @VisibleForTesting
+    protected void saveFormsVersion(@NonNull String formsVersion) {
+        boolean manifestVersionSaved = CoreLibrary.getInstance()
+                .context()
+                .allSharedPreferences()
+                .saveFormsVersion(formsVersion);
         if (!manifestVersionSaved) {
             Timber.e(new Exception("Saving manifest version failed"));
         }
