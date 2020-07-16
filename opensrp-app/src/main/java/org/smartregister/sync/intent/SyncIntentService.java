@@ -169,39 +169,45 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (returnCount) {
                 totalRecords = resp.getTotalRecords();
             }
-            int eCount;
-            JSONObject jsonObject = new JSONObject();
-            if (resp.payload() == null) {
-                eCount = 0;
-            } else {
-                jsonObject = new JSONObject((String) resp.payload());
-                eCount = fetchNumberOfEvents(jsonObject);
-                Timber.i("Parse Network Event Count: %s", eCount);
-            }
 
-            if (eCount == 0) {
-                complete(FetchStatus.nothingFetched);
-            } else if (eCount < 0) {
-                fetchFailed(count);
-            } else {
-                final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
-                long lastServerVersion = serverVersionPair.second - 1;
-                if (eCount < getEventPullLimit()) {
-                    lastServerVersion = serverVersionPair.second;
-                }
+            processFetchedEvents(resp, ecSyncUpdater, count);
 
-                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                //update sync time if all event client is save.
-                if (isSaved) {
-                    processClient(serverVersionPair);
-                    ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
-                }
-                sendSyncProgressBroadcast(eCount);
-                fetchRetry(0, false);
-            }
         } catch (Exception e) {
             Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
+        }
+    }
+
+    private void processFetchedEvents(Response resp, ECSyncHelper ecSyncUpdater, final int count) throws JSONException {
+        int eCount;
+        JSONObject jsonObject = new JSONObject();
+        if (resp.payload() == null) {
+            eCount = 0;
+        } else {
+            jsonObject = new JSONObject((String) resp.payload());
+            eCount = fetchNumberOfEvents(jsonObject);
+            Timber.i("Parse Network Event Count: %s", eCount);
+        }
+
+        if (eCount == 0) {
+            complete(FetchStatus.nothingFetched);
+        } else if (eCount < 0) {
+            fetchFailed(count);
+        } else {
+            final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
+            long lastServerVersion = serverVersionPair.second - 1;
+            if (eCount < getEventPullLimit()) {
+                lastServerVersion = serverVersionPair.second;
+            }
+
+            boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+            //update sync time if all event client is save.
+            if (isSaved) {
+                processClient(serverVersionPair);
+                ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+            }
+            sendSyncProgressBroadcast(eCount);
+            fetchRetry(0, false);
         }
     }
 
