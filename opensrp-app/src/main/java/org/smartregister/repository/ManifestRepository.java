@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,6 +27,7 @@ import timber.log.Timber;
 public class ManifestRepository extends BaseRepository {
 
     protected static final String ID = "id";
+    protected static final String VERSION = "version";
     protected static final String APP_VERSION = "app_version";
     protected static final String FORM_VERSION = "form_version";
     protected static final String IDENTIFIERS = "identifiers";
@@ -42,6 +44,7 @@ public class ManifestRepository extends BaseRepository {
     private static final String CREATE_MANIFEST_TABLE =
             "CREATE TABLE " + MANIFEST_TABLE + " (" +
                     ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    VERSION + " VARCHAR," +
                     APP_VERSION + " VARCHAR , " +
                     FORM_VERSION + " VARCHAR , " +
                     IDENTIFIERS + " VARCHAR , " +
@@ -69,26 +72,27 @@ public class ManifestRepository extends BaseRepository {
 
         if (manifest.getId() != null)
             contentValues.put(ID, manifest.getId());
+        contentValues.put(VERSION, manifest.getVersion());
         contentValues.put(APP_VERSION, manifest.getAppVersion());
         contentValues.put(FORM_VERSION, manifest.getFormVersion());
         contentValues.put(IDENTIFIERS, new Gson().toJson(manifest.getIdentifiers()));
         contentValues.put(IS_NEW, manifest.isNew());
         contentValues.put(ACTIVE, manifest.isActive());
         contentValues.put(CREATED_AT, DATE_FORMAT.format(manifest.getCreatedAt()));
+
         getWritableDatabase().replace(getManifestTableName(), null, contentValues);
     }
 
-    protected Manifest readCursor(Cursor cursor) {
+    protected Manifest readCursor(@NonNull Cursor cursor) {
         Manifest manifest = new Manifest();
         manifest.setId(cursor.getString(cursor.getColumnIndex(ID)));
+        manifest.setVersion(cursor.getString(cursor.getColumnIndex(VERSION)));
         manifest.setAppVersion(cursor.getString(cursor.getColumnIndex(APP_VERSION)));
         manifest.setFormVersion(cursor.getString(cursor.getColumnIndex(FORM_VERSION)));
         manifest.setNew(cursor.getInt(cursor.getColumnIndex(IS_NEW)) == 1);
         manifest.setActive(cursor.getInt(cursor.getColumnIndex(ACTIVE)) == 1);
-        manifest.setIdentifiers(new Gson().fromJson(
-                cursor.getString(cursor.getColumnIndex(IDENTIFIERS)),
-                new TypeToken<List<String>>() {
-                }.getType()));
+        manifest.setIdentifiers(new Gson().fromJson(cursor.getString(cursor.getColumnIndex(IDENTIFIERS)),
+                new TypeToken<List<String>>() {}.getType()));
         try {
             manifest.setCreatedAt(DATE_FORMAT.parse(cursor.getString(cursor.getColumnIndex(CREATED_AT))));
         } catch (ParseException e) {
