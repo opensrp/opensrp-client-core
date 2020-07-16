@@ -90,10 +90,10 @@ public class DocumentConfigurationService {
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
             saveReceivedManifest(receivedManifest);
-            saveManifestVersion(receivedManifest.getId());
+            saveManifestVersion(receivedManifest.getVersion());
         } else if (activeManifest == null) {
             saveReceivedManifest(receivedManifest);
-            saveManifestVersion(receivedManifest.getId());
+            saveManifestVersion(receivedManifest.getVersion());
         }
     }
 
@@ -203,6 +203,7 @@ public class DocumentConfigurationService {
 
     protected Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO) throws JSONException {
         Manifest manifest = new Manifest();
+        manifest.setVersion(manifestDTO.getIdentifier());
         manifest.setAppVersion(manifestDTO.getAppVersion());
         manifest.setCreatedAt(manifestDTO.getCreatedAt());
 
