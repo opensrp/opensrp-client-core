@@ -52,6 +52,12 @@ public class Repository extends SQLiteOpenHelper {
             database.execSQL("PRAGMA cipher_memory_security = OFF;");
             //set journal mode to TRUNCATE
             database.rawExecSQL("PRAGMA journal_mode = TRUNCATE;");
+
+            // Since we don't have control to force migrations for all client apps that use this library
+            // We will perform a column check & add the column if it doesn't exist
+            if (!DatabaseMigrationUtils.isColumnExists(database, ManifestRepository.MANIFEST_TABLE, ManifestRepository.VERSION)) {
+                database.execSQL("ALTER TABLE %s ADD %s VARCHAR", new String[]{ManifestRepository.MANIFEST_TABLE, ManifestRepository.VERSION});
+            }
         }
     };
 
