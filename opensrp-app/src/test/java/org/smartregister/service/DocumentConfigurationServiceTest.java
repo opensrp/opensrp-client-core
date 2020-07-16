@@ -117,6 +117,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
         Mockito.verify(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
         Mockito.verify(documentConfigurationService).saveManifestVersion("12");
+        Mockito.verify(documentConfigurationService).saveFormsVersion("0.0.8");
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", previousValue);
     }
 
@@ -141,6 +142,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
         Mockito.verify(manifestRepository, Mockito.times(2)).addOrUpdate(Mockito.any(Manifest.class));
         Mockito.verify(documentConfigurationService).saveManifestVersion("12");
+        Mockito.verify(documentConfigurationService).saveFormsVersion("0.0.8");
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", previousValue);
     }
 
