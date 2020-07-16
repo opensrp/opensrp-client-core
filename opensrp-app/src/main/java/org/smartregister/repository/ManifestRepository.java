@@ -63,6 +63,10 @@ public class ManifestRepository extends BaseRepository {
         database.execSQL(CREATE_MANIFEST_IS_ACTIVE_INDEX);
     }
 
+    public static void addVersionColumn(@NonNull SQLiteDatabase database) {
+        database.execSQL("ALTER TABLE %s ADD %s VARCHAR", new String[]{MANIFEST_TABLE, VERSION});
+    }
+
     protected String getManifestTableName() {
         return MANIFEST_TABLE;
     }
