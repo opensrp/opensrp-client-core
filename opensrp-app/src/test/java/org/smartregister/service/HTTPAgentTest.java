@@ -178,7 +178,8 @@ public class HTTPAgentTest {
         Mockito.doReturn(1).when(syncConfiguration).getMaxAuthenticationRetries();
         Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
 
-        Mockito.doReturn(TEST_USERNAME).when(allSharedPreferences).fetchRegisteredANM();
+        Mockito.doReturn(sharedPreferences).when(allSharedPreferences).getPreferences();
+        Mockito.doReturn(true).when(sharedPreferences).getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false);
 
         PowerMockito.mockStatic(AccountHelper.class);
         PowerMockito.when(AccountHelper.getOauthAccountByNameAndType(TEST_USERNAME, accountAuthenticatorXml.getAccountType())).thenReturn(account);
@@ -286,7 +287,62 @@ public class HTTPAgentTest {
 
 
     @Test
-    public void testOauth2authenticateCreatesUrlConnectionWithCorrectParameters() throws Exception {
+    public void testOauth2authenticateCreatesUrlConnectionWithCorrectParametersWhenKeycloakNotConfigured() throws Exception {
+
+        Mockito.doReturn(false).when(sharedPreferences).getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false);
+
+        URL url = PowerMockito.mock(URL.class);
+        Assert.assertNotNull(url);
+
+        HTTPAgent httpAgentSpy = Mockito.spy(httpAgent);
+
+        Mockito.doReturn(httpURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_TOKEN_ENDPOINT);
+        Mockito.doReturn(TEST_CLIENT_ID).when(syncConfiguration).getOauthClientId();
+        Mockito.doReturn(TEST_CLIENT_SECRET).when(syncConfiguration).getOauthClientSecret();
+
+        Mockito.doReturn(outputStream).when(httpURLConnection).getOutputStream();
+        Mockito.doReturn(inputStream).when(httpURLConnection).getInputStream();
+        Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpURLConnection).getResponseCode();
+
+        PowerMockito.mockStatic(IOUtils.class);
+        PowerMockito.when(IOUtils.toString(inputStream)).thenReturn(TOKEN_REQUEST_SERVER_RESPONSE);
+
+
+        AccountResponse accountResponse = httpAgentSpy.oauth2authenticate(TEST_USERNAME, TEST_PASSWORD, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, TEST_TOKEN_ENDPOINT);
+
+        Assert.assertNotNull(accountResponse);
+        Assert.assertEquals(200, accountResponse.getStatus());
+        Assert.assertEquals("1r9A8zi5E3r@Zz", accountResponse.getAccessToken());
+        Assert.assertEquals("bearer", accountResponse.getTokenType());
+        Assert.assertEquals("text_token", accountResponse.getRefreshToken());
+        Assert.assertEquals(Integer.valueOf("3600"), accountResponse.getExpiresIn());
+        Assert.assertEquals(Integer.valueOf("36000"), accountResponse.getRefreshExpiresIn());
+        Assert.assertEquals("read write trust", accountResponse.getScope());
+
+
+        Mockito.verify(httpURLConnection).setConnectTimeout(60000);
+        Mockito.verify(httpURLConnection).setReadTimeout(60000);
+
+        String requestParams = "&grant_type=" + AccountHelper.OAUTH.GRANT_TYPE.PASSWORD + "&username=" + TEST_USERNAME + "&password=" + String.valueOf(TEST_PASSWORD);
+        ArgumentCaptor<Integer> paramLengthCaptor = ArgumentCaptor.forClass(Integer.class);
+        Mockito.verify(httpURLConnection).setFixedLengthStreamingMode(paramLengthCaptor.capture());
+        Assert.assertEquals((Integer) requestParams.getBytes(CharEncoding.UTF_8).length, paramLengthCaptor.getValue());
+
+        Mockito.verify(httpURLConnection).setDoOutput(true);
+        Mockito.verify(httpURLConnection).setInstanceFollowRedirects(false);
+        Mockito.verify(httpURLConnection).setRequestMethod("POST");
+        Mockito.verify(httpURLConnection).setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        Mockito.verify(httpURLConnection).setRequestProperty("charset", "utf-8");
+        Mockito.verify(httpURLConnection).setRequestProperty(ArgumentMatchers.eq("Content-Length"), ArgumentMatchers.anyString());
+        Mockito.verify(httpURLConnection).setUseCaches(false);
+        final String base64Auth = BaseEncoding.base64().encode(new String(TEST_CLIENT_ID + ":" + TEST_CLIENT_SECRET).getBytes(CharEncoding.UTF_8));
+        Mockito.verify(httpURLConnection).setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
+        Mockito.verify(httpURLConnection).setInstanceFollowRedirects(false);
+
+    }
+
+    @Test
+    public void testOauth2authenticateCreatesUrlConnectionWithCorrectParametersWhenKeycloakConfigured() throws Exception {
 
         URL url = PowerMockito.mock(URL.class);
         Assert.assertNotNull(url);
@@ -321,8 +377,10 @@ public class HTTPAgentTest {
         Mockito.verify(httpURLConnection).setReadTimeout(60000);
 
         String requestParams = "&grant_type=" + AccountHelper.OAUTH.GRANT_TYPE.PASSWORD + "&username=" + TEST_USERNAME + "&password=" + String.valueOf(TEST_PASSWORD) + "&client_id=" + TEST_CLIENT_ID + "&client_secret=" + TEST_CLIENT_SECRET;
+        ArgumentCaptor<Integer> paramLengthCaptor = ArgumentCaptor.forClass(Integer.class);
+        Mockito.verify(httpURLConnection).setFixedLengthStreamingMode(paramLengthCaptor.capture());
+        Assert.assertEquals((Integer) requestParams.getBytes(CharEncoding.UTF_8).length, paramLengthCaptor.getValue());
 
-        Mockito.verify(httpURLConnection).setFixedLengthStreamingMode(requestParams.getBytes(CharEncoding.UTF_8).length);
         Mockito.verify(httpURLConnection).setDoOutput(true);
         Mockito.verify(httpURLConnection).setInstanceFollowRedirects(false);
         Mockito.verify(httpURLConnection).setRequestMethod("POST");
@@ -330,8 +388,6 @@ public class HTTPAgentTest {
         Mockito.verify(httpURLConnection).setRequestProperty("charset", "utf-8");
         Mockito.verify(httpURLConnection).setRequestProperty(ArgumentMatchers.eq("Content-Length"), ArgumentMatchers.anyString());
         Mockito.verify(httpURLConnection).setUseCaches(false);
-        final String base64Auth = BaseEncoding.base64().encode(new String(TEST_CLIENT_ID + ":" + TEST_CLIENT_SECRET).getBytes(CharEncoding.UTF_8));
-        Mockito.verify(httpURLConnection).setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
         Mockito.verify(httpURLConnection).setInstanceFollowRedirects(false);
 
     }

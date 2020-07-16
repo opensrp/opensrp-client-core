@@ -67,6 +67,12 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
             boolean isKeycloakConfigured = accountConfiguration != null;
 
+            //Persist config resources
+            SharedPreferences.Editor sharedPrefEditor = CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit();
+            sharedPrefEditor.putBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, isKeycloakConfigured);
+            sharedPrefEditor.apply();
+
+
             if (!isKeycloakConfigured) {
                 accountConfiguration = new AccountConfiguration();
                 accountConfiguration.setGrantTypesSupported(Arrays.asList(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD));
@@ -79,9 +85,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 if (!accountConfiguration.getGrantTypesSupported().contains(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD))
                     throw new AccountsException("OAuth configuration DOES NOT support the Password Grant Type");
-
-                //Persist config resources
-                SharedPreferences.Editor sharedPrefEditor = CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit();
 
                 sharedPrefEditor.putString(AccountHelper.CONFIGURATION_CONSTANTS.TOKEN_ENDPOINT_URL, accountConfiguration.getTokenEndpoint());
                 sharedPrefEditor.putString(AccountHelper.CONFIGURATION_CONSTANTS.AUTHORIZATION_ENDPOINT_URL, accountConfiguration.getAuthorizationEndpoint());
@@ -120,7 +123,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
 
                         try {
-                            JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()), response.getAccessToken());
+                            JSONArray settings = pullSetting(syncSettingsServiceHelper, loginResponse, response.getAccessToken());
 
                             JSONObject prefSettingsData = new JSONObject();
                             prefSettingsData.put(AllConstants.PREF_KEY.SETTINGS, settings);

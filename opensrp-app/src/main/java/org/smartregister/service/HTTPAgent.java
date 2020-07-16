@@ -579,8 +579,17 @@ public class HTTPAgent {
             final String base64Auth = BaseEncoding.base64().encode(new StringBuffer(clientId).append(':').append(clientSecret).toString().getBytes(CharEncoding.UTF_8));
 
             requestParamBuffer.append("&grant_type=").append(grantType);
-            requestParamBuffer.append("&client_id=").append(clientId);
-            requestParamBuffer.append("&client_secret=").append(clientSecret);
+
+            if (allSharedPreferences.getPreferences().getBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, false)) {
+
+                requestParamBuffer.append("&client_id=").append(clientId);
+                requestParamBuffer.append("&client_secret=").append(clientSecret);
+
+            } else {
+
+                urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
+
+            }
 
             byte[] postData = requestParamBuffer.toString().getBytes(CharEncoding.UTF_8);
             int postDataLength = postData.length;
@@ -592,7 +601,6 @@ public class HTTPAgent {
             urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             urlConnection.setRequestProperty("charset", "utf-8");
             urlConnection.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            urlConnection.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + base64Auth);
             urlConnection.setUseCaches(false);
 
             outputStream = urlConnection.getOutputStream();
