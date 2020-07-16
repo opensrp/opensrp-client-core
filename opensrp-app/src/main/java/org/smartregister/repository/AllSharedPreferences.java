@@ -341,6 +341,15 @@ public class AllSharedPreferences {
         return preferences.getString(MANIFEST_VERSION, null);
     }
 
+    public boolean saveFormsVersion(@NonNull String formsVersion) {
+        return preferences.edit().putString(formsVersion, formsVersion).commit();
+    }
+
+    @Nullable
+    public String fetchFormsVersion() {
+        return preferences.getString(MANIFEST_VERSION, null);
+    }
+
     @Nullable
     public SharedPreferences getPreferences() {
         return preferences;
