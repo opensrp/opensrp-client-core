@@ -38,7 +38,7 @@ public class ManifestRepository extends BaseRepository {
 
     protected static final String MANIFEST_TABLE = "manifest";
 
-    protected static final String[] COLUMNS = new String[]{ID, APP_VERSION, FORM_VERSION, IDENTIFIERS, IS_NEW, ACTIVE, CREATED_AT};
+    protected static final String[] COLUMNS = new String[]{ID, VERSION, APP_VERSION, FORM_VERSION, IDENTIFIERS, IS_NEW, ACTIVE, CREATED_AT};
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
 
     private static final String CREATE_MANIFEST_TABLE =
