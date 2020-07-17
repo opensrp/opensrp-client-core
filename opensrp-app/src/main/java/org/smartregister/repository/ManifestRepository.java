@@ -10,6 +10,7 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.smartregister.domain.Manifest;
+import org.smartregister.util.DatabaseMigrationUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -65,6 +66,10 @@ public class ManifestRepository extends BaseRepository {
 
     public static void addVersionColumn(@NonNull SQLiteDatabase database) {
         database.execSQL("ALTER TABLE %s ADD %s VARCHAR", new String[]{MANIFEST_TABLE, VERSION});
+    }
+
+    public static boolean isVersionColumnExist(@NonNull SQLiteDatabase database) {
+        return DatabaseMigrationUtils.isColumnExists(database, MANIFEST_TABLE, VERSION);
     }
 
     protected String getManifestTableName() {
