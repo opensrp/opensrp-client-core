@@ -124,6 +124,7 @@ public class AllConstants {
     public static final String RESOLVE = "resolve";
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
+    public static final String RETURN_COUNT = "return_count";
 
 
     public static class Immunizations {
@@ -472,6 +473,11 @@ public class AllConstants {
         }
     }
 
+    public interface SyncProgressConstants {
+        String ACTION_SYNC_PROGRESS = "action_sync_progress";
+        String TOTAL_RECORDS = "total_records";
+        String SYNC_PROGRESS_DATA = "sync_progress_data";
+    }
     public interface LocationConstants {
         String SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS = "SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS";
         String LOCATIONS = "locations";
