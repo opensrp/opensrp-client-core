@@ -69,13 +69,18 @@ public class SyncSettingsServiceHelper {
 
     private JSONArray getSettings() throws JSONException {
 
-        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
-        String authToken = AccountHelper.getCachedOAuthToken(sharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
+        String authToken = getAccessToken();
 
         JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue(), authToken);
         getGlobalSettings(settings, authToken);
         getExtraSettings(settings, authToken);
         return settings;
+    }
+
+    @VisibleForTesting
+    protected String getAccessToken() {
+        AccountAuthenticatorXml authenticatorXml = CoreLibrary.getInstance().getAccountAuthenticatorXml();
+        return AccountHelper.getCachedOAuthToken(sharedPreferences.fetchRegisteredANM(), authenticatorXml.getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
     }
 
     @VisibleForTesting

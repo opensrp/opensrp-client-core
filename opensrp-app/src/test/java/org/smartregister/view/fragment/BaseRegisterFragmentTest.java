@@ -18,7 +18,6 @@ import android.widget.TextView;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
@@ -270,7 +269,6 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     }
 
     @Test
-    @Ignore
     public void assertOnQRCodeSucessfullyScannedInvokessetUniqueIDWithCorrectParams() {
 
         String OPENSRP_ID = "8232-372-8L";

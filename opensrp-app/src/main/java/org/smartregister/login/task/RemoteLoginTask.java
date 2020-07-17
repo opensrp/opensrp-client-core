@@ -63,12 +63,12 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         LoginResponse loginResponse;
         try {
 
-            AccountConfiguration accountConfiguration = CoreLibrary.getInstance().context().getHttpAgent().fetchOAuthConfiguration();
+            AccountConfiguration accountConfiguration = getOpenSRPContext().getHttpAgent().fetchOAuthConfiguration();
 
             boolean isKeycloakConfigured = accountConfiguration != null;
 
             //Persist config resources
-            SharedPreferences.Editor sharedPrefEditor = CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit();
+            SharedPreferences.Editor sharedPrefEditor = getOpenSRPContext().allSharedPreferences().getPreferences().edit();
             sharedPrefEditor.putBoolean(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED, isKeycloakConfigured);
             sharedPrefEditor.apply();
 
@@ -76,7 +76,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             if (!isKeycloakConfigured) {
                 accountConfiguration = new AccountConfiguration();
                 accountConfiguration.setGrantTypesSupported(Arrays.asList(AccountHelper.OAUTH.GRANT_TYPE.PASSWORD));
-                accountConfiguration.setTokenEndpoint(CoreLibrary.getInstance().context().configuration().dristhiBaseURL() + AccountHelper.OAUTH.TOKEN_ENDPOINT);
+                accountConfiguration.setTokenEndpoint(getOpenSRPContext().configuration().dristhiBaseURL() + AccountHelper.OAUTH.TOKEN_ENDPOINT);
                 accountConfiguration.setAuthorizationEndpoint("");
                 accountConfiguration.setIssuerEndpoint("");
             }
@@ -92,7 +92,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                 sharedPrefEditor.putString(AccountHelper.CONFIGURATION_CONSTANTS.USERINFO_ENDPOINT_URL, accountConfiguration.getUserinfoEndpoint());
                 sharedPrefEditor.apply();
 
-                AccountResponse response = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
+                AccountResponse response = getOpenSRPContext().getHttpAgent().oauth2authenticate(mUsername, mPassword, AccountHelper.OAUTH.GRANT_TYPE.PASSWORD, accountConfiguration.getTokenEndpoint());
 
                 AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
 
@@ -142,7 +142,9 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
         } catch (Exception e) {
 
-            loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(e.getMessage());
+            loginResponse = CUSTOM_SERVER_RESPONSE.withMessage(getOpenSRPContext().applicationContext().getResources().getString(R.string.unknown_response));
+
+            Timber.e(e);
         }
 
         return loginResponse;

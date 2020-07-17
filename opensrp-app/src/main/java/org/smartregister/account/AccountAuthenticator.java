@@ -50,17 +50,18 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
         AccountManager accountManager = CoreLibrary.getInstance().getAccountManager();
 
         String authToken = accountManager.peekAuthToken(account, authTokenType);
-        String refreshToken = "";
+        String refreshToken;
         Timber.d("peekAuthToken " + authToken);
 
         if (TextUtils.isEmpty(authToken)) {
-            final String password = accountManager.getPassword(account);
-            if (password != null) {
+            refreshToken = accountManager.getPassword(account);
+
+            if (refreshToken != null) {
                 try {
 
                     Timber.d("Authenticate with saved credentials");
 
-                    AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticateRefreshToken(password);
+                    AccountResponse accountResponse = CoreLibrary.getInstance().context().getHttpAgent().oauth2authenticateRefreshToken(refreshToken);
                     if (accountResponse.getStatus() == HttpStatus.SC_OK) {
                         authToken = accountResponse.getAccessToken();
                         refreshToken = accountResponse.getRefreshToken();

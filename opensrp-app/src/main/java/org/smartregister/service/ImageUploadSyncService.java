@@ -43,7 +43,8 @@ public class ImageUploadSyncService extends IntentService {
                 if (response.contains("success")) {
                     imageRepo.close(profileImages.get(i).getImageid());
                 } else {
-                    Timber.e(new StringBuilder("Image Upload: could NOT upload image ID: ").append(profileImages.get(i).getImageid()).append(" PATH: ").append(profileImages.get(i).getFilepath()).toString());
+                    Timber.e("Image Upload: could NOT upload image ID: %s %s %s ", profileImages.get(i).getImageid(), " PATH: ", profileImages.get(i).getFilepath());
+
                 }
             }
         } catch (Exception e) {
