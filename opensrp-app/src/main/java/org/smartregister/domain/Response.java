@@ -8,6 +8,7 @@ import static org.smartregister.domain.ResponseStatus.failure;
 public class Response<T> {
     private ResponseStatus status;
     private T payload;
+    private Long totalRecords;
 
     public Response(ResponseStatus status, T payload) {
         this.status = status;
@@ -32,5 +33,14 @@ public class Response<T> {
 
     public boolean isTimeoutError(){
         return status.displayValue().equals(timeout.name());
+    }
+
+    public Long getTotalRecords() {
+        return totalRecords;
+    }
+
+    public Response withTotalRecords(Long totalRecords) {
+        this.totalRecords = totalRecords;
+        return this;
     }
 }
