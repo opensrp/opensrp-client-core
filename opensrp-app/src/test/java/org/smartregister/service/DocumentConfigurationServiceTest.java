@@ -101,10 +101,6 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
     @Test
     public void fetchManifestShouldSaveFetchedManifestWhenNoActiveManifestIsAvailable() throws Exception {
-        Context previousValue = CoreLibrary.getInstance().context().applicationContext();
-        Context newContext = Mockito.spy(RuntimeEnvironment.application);
-        Mockito.doReturn(RuntimeEnvironment.application).when(newContext).createConfigurationContext(Mockito.nullable(Configuration.class));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", newContext);
         String jsonObject = "{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}";
         Mockito.when(httpAgent.fetch(anyString())).thenReturn(
                 new Response<String>(
@@ -118,15 +114,10 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         Mockito.verify(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
         Mockito.verify(documentConfigurationService).saveManifestVersion("12");
         Mockito.verify(documentConfigurationService).saveFormsVersion("0.0.8");
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", previousValue);
     }
 
     @Test
     public void fetchManifestShouldSaveFetchedManifestAndDeactivatePreviousActiveManifestWhenActiveManifestIsAvailable() throws Exception {
-        Context previousValue = CoreLibrary.getInstance().context().applicationContext();
-        Context newContext = Mockito.spy(RuntimeEnvironment.application);
-        Mockito.doReturn(RuntimeEnvironment.application).when(newContext).createConfigurationContext(Mockito.nullable(Configuration.class));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", newContext);
         String jsonObject = "{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}";
         Mockito.when(httpAgent.fetch(anyString())).thenReturn(
                 new Response<String>(
@@ -143,7 +134,6 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         Mockito.verify(manifestRepository, Mockito.times(2)).addOrUpdate(Mockito.any(Manifest.class));
         Mockito.verify(documentConfigurationService).saveManifestVersion("12");
         Mockito.verify(documentConfigurationService).saveFormsVersion("0.0.8");
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", previousValue);
     }
 
     @Test
