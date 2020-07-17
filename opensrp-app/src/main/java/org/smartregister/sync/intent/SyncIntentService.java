@@ -123,11 +123,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             }
 
             final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-            String baseUrl = CoreLibrary.getInstance().context().
-                    configuration().dristhiBaseURL();
-            if (baseUrl.endsWith("/")) {
-                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
-            }
+            String baseUrl = getFormattedBaseUrl();
 
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
@@ -387,4 +383,15 @@ public class SyncIntentService extends BaseSyncIntentService {
     public Context getContext() {
         return this.context;
     }
+
+    @NonNull
+    protected String getFormattedBaseUrl() {
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+        }
+        return baseUrl;
+    }
+
 }
