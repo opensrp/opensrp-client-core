@@ -65,7 +65,7 @@ public class ManifestRepository extends BaseRepository {
     }
 
     public static void addVersionColumn(@NonNull SQLiteDatabase database) {
-        database.execSQL("ALTER TABLE %s ADD %s VARCHAR", new String[]{MANIFEST_TABLE, VERSION});
+        database.execSQL(String.format("ALTER TABLE %s ADD %s VARCHAR", MANIFEST_TABLE, VERSION));
     }
 
     public static boolean isVersionColumnExist(@NonNull SQLiteDatabase database) {

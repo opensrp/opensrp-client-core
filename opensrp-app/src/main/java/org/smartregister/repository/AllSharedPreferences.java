@@ -40,6 +40,7 @@ public class AllSharedPreferences {
     private static final String MIGRATED_TO_SQLITE_4 = "MIGRATED_TO_SQLITE_4";
     private static final String PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_PROCESSED_RECORD";
     public static final String MANIFEST_VERSION = "MANIFEST_VERSION";
+    public static final String FORMS_VERSION = "FORMS_VERSION";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -342,12 +343,12 @@ public class AllSharedPreferences {
     }
 
     public boolean saveFormsVersion(@NonNull String formsVersion) {
-        return preferences.edit().putString(formsVersion, formsVersion).commit();
+        return preferences.edit().putString(FORMS_VERSION, formsVersion).commit();
     }
 
     @Nullable
     public String fetchFormsVersion() {
-        return preferences.getString(MANIFEST_VERSION, null);
+        return preferences.getString(FORMS_VERSION, null);
     }
 
     @Nullable
