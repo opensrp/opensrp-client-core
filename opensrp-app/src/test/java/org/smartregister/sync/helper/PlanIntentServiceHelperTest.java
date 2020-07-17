@@ -35,21 +35,22 @@ import static org.mockito.Mockito.verify;
 public class PlanIntentServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Mock
-    PlanDefinitionRepository planDefinitionRepository;
+    private PlanDefinitionRepository planDefinitionRepository;
 
     @Mock
-    LocationRepository locationRepository;
+    private LocationRepository locationRepository;
 
     @Mock
-    HTTPAgent httpAgent;
+    private HTTPAgent httpAgent;
 
     @Captor
-    ArgumentCaptor<PlanDefinition> planDefinitionArgumentCaptor;
-    @Captor
-    ArgumentCaptor<SyncProgress> syncProgressArgumentCaptor;
+    private ArgumentCaptor<PlanDefinition> planDefinitionArgumentCaptor;
 
     @Captor
-    ArgumentCaptor<String> stringArgumentCaptor;
+    private ArgumentCaptor<SyncProgress> syncProgressArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
 
     private PlanIntentServiceHelper planIntentServiceHelper = Mockito.spy(PlanIntentServiceHelper.getInstance());
 
