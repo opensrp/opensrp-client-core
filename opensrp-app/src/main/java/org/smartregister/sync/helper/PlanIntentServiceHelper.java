@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -38,7 +39,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     private PlanDefinitionRepository planDefinitionRepository;
     private LocationRepository locationRepository;
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
-    private static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
+    protected static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
 
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
@@ -118,7 +119,7 @@ public class PlanIntentServiceHelper extends BaseHelper {
     }
 
     private String fetchPlans(List<String> organizationIds, long serverVersion, boolean returnCount) throws Exception {
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        HTTPAgent httpAgent = getHttpAgent();
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
@@ -161,5 +162,10 @@ public class PlanIntentServiceHelper extends BaseHelper {
             }
         }
         return maxServerVersion;
+    }
+
+    @VisibleForTesting
+    protected HTTPAgent getHttpAgent() {
+        return CoreLibrary.getInstance().context().getHttpAgent();
     }
 }
