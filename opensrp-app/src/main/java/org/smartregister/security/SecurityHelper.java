@@ -4,6 +4,8 @@ import android.os.Build;
 import android.text.Editable;
 import android.util.Base64;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 
@@ -100,15 +102,8 @@ public class SecurityHelper {
      * @return an array of bytes, a conversion from the chars array
      */
     public static byte[] toBytes(char[] chars) {
-        CharBuffer charBuffer = CharBuffer.wrap(chars);
 
-        ByteBuffer byteBuffer = CHARSET.encode(charBuffer);
-
-        byte[] bytes = Arrays.copyOfRange(byteBuffer.array(), byteBuffer.position(), byteBuffer.limit());
-
-        clearArray(byteBuffer.array());
-
-        return bytes;
+        return SQLiteDatabase.getBytes(chars);
 
     }
 
@@ -120,12 +115,7 @@ public class SecurityHelper {
      */
     public static char[] toChars(byte[] bytes) {
 
-        char[] convertedChar = new char[bytes.length];
-        for (int i = 0; i < bytes.length; i++) {
-            convertedChar[i] = (char) bytes[i];
-        }
-
-        return convertedChar;
+        return SQLiteDatabase.getChars(bytes);
     }
 
     /**

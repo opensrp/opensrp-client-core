@@ -7,6 +7,7 @@ import android.accounts.AccountManager;
 import android.accounts.NetworkErrorException;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -68,6 +69,10 @@ public class AccountAuthenticator extends AbstractAccountAuthenticator {
 
                         accountManager.setPassword(account, refreshToken);
                         accountManager.setAuthToken(account, authTokenType, authToken);
+                        
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            accountManager.notifyAccountAuthenticated(account);
+                        }
                     }
 
                 } catch (Exception e) {

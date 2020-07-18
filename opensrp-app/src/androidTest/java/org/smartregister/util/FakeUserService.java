@@ -22,7 +22,7 @@ public class FakeUserService extends UserService {
     }
 
     @Override
-    public boolean isValidLocalLogin(String userName, char[] password) {
+    public boolean isValidLocalLogin(String userName, byte[] password) {
         assertExpectedCredentials(userName, password);
         actualCalls.add("local");
         return shouldSucceedLocalLogin;

@@ -102,21 +102,21 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
 
-                    Bundle userData = getOpenSRPContext().userService().saveUserGroup(mUsername, mPassword, loginResponse.payload());
+                    Bundle userData = getOpenSRPContext().userService().saveUserCredentials(mUsername, mPassword, loginResponse.payload());
 
                     mAccountManager.addAccountExplicitly(account, response.getRefreshToken(), userData);
                     mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
                     mAccountManager.setPassword(account, response.getRefreshToken());
-                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_GROUP_ID));
-                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
-                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN, response.getRefreshToken());
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         mAccountManager.notifyAccountAuthenticated(account);
                     }
 
-                    if (getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
+                    if (getOpenSRPContext().userService().getAccountSecretKey(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
                         publishProgress(R.string.loading_client_settings);
 

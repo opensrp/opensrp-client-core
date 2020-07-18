@@ -209,7 +209,7 @@ public class UserServiceTest extends BaseUnitTest {
 
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("user X");
 
-        userService.processLoginResponseDataForUser("user X", "password Y".toCharArray(), userInfo);
+        userService.processLoginResponseDataForUser("user X",  userInfo);
 
         verify(allSettings).registerANM("user X");
     }

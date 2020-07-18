@@ -46,8 +46,8 @@ public class AccountHelper {
         public final static String AUTH_TYPE = "AUTH_TYPE";
         public final static String ACCOUNT_NAME = "ACCOUNT_NAME";
         public final static String IS_NEW_ACCOUNT = "IS_NEW_ACCOUNT";
-        public final static String ACCOUNT_GROUP_ID = "ACCOUNT_GROUP_ID";
-        public final static String ACCOUNT_PASSWORD = "ACCOUNT_PASSWORD";
+        public final static String ACCOUNT_SECRET_KEY = "ACCOUNT_SECRET_KEY";
+        public final static String ACCOUNT_REFRESH_TOKEN = "ACCOUNT_REFRESH_TOKEN";
         public final static String ACCOUNT_PASSWORD_SALT = "ACCOUNT_PASSWORD_SALT";
     }
 

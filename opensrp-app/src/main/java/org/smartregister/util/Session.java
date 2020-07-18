@@ -53,6 +53,7 @@ public class Session {
 
     public void expire() {
         SecurityHelper.clearArray(this.password);
+        this.password = null;
         setSessionExpiryTimeTo(new Date().getTime() - 1);
     }
 
