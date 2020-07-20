@@ -22,6 +22,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'org.smartregister.gradle.jarjar'
 
 android {
 
@@ -55,16 +56,7 @@ android {
     }
 
     packagingOptions {
-        exclude 'META-INF/DEPENDENCIES.txt'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/dependencies.txt'
-        exclude 'META-INF/LGPL2.1'
+        exclude 'META-INF/*'
         exclude 'LICENSE.txt'
     }
 
@@ -79,7 +71,15 @@ android {
 
 dependencies {
 
-    implementation project(':opensrp-app')
+    implementation (project(':opensrp-app')){
+        transitive=true
+        exclude group: 'com.ibm.fhir', module: 'fhir-model'
+    }
+
+    jarJar 'com.ibm.fhir:fhir-model:4.2.3'
+
+    // Repackaged jars will be placed here, adding them to classpath
+    implementation fileTree(dir: "./build/libs", include: ['*.jar'])
 
     implementation('com.google.android.material:material:1.1.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'

@@ -116,6 +116,9 @@ public class JsonFormUtils {
                 .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
 
+        client.setLocationId(formTag.locationId);
+        client.setTeamId(formTag.teamId);
+
         client.setClientApplicationVersion(formTag.appVersion);
         client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);

@@ -24,4 +24,6 @@ public abstract class BaseRobolectricUnitTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
+    public static final int ASYNC_TIMEOUT=2000;
+
 }

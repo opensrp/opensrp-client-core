@@ -1,10 +1,13 @@
 package org.smartregister.sync.helper;
 
+import androidx.annotation.VisibleForTesting;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.SyncFilter;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.Setting;
 import org.smartregister.domain.SyncStatus;
@@ -32,7 +35,7 @@ public class SyncSettingsServiceHelper {
 
         this.httpAgent = httpAgent;
         this.baseUrl = baseUrl;
-        sharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        sharedPreferences = getInstance().context().allSharedPreferences();
     }
 
 
@@ -44,9 +47,9 @@ public class SyncSettingsServiceHelper {
                 JSONArray records = response.getJSONArray(AllConstants.INTENT_KEY.VALIDATED_RECORDS);
                 Setting setting;
                 for (int i = 0; i < records.length(); i++) {
-                    setting = CoreLibrary.getInstance().context().allSettings().getSetting(records.getString(0));
+                    setting = getInstance().context().allSettings().getSetting(records.getString(0));
                     setting.setSyncStatus(SyncStatus.SYNCED.name());
-                    CoreLibrary.getInstance().context().allSettings().putSetting(setting);
+                    getInstance().context().allSettings().putSetting(setting);
                 }
             }
 
@@ -54,48 +57,64 @@ public class SyncSettingsServiceHelper {
             Timber.e(e);
         }
 
-        JSONArray settings = pullSettingsFromServer(CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterValue());
-
+        JSONArray settings = getSettings();
         if (settings != null && settings.length() > 0) {
-            settings = ServerSettingsHelper.saveSetting(settings);
+            ServerSettingsHelper.saveSetting(settings);
         }
 
         return settings == null ? 0 : settings.length();
     }
 
-    /**
-     * @param syncFilterValue the actual value to use with the filter param
-     */
-    public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
+    private JSONArray getSettings() throws JSONException {
+        JSONArray settings = pullSettingsFromServer(getInstance().getSyncConfiguration().getSettingsSyncFilterValue());
+        getGlobalSettings(settings);
+        getExtraSettings(settings);
+        return settings;
+    }
 
-        String endString = "/";
-        if (baseUrl.endsWith(endString)) {
-            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+    @VisibleForTesting
+    protected CoreLibrary getInstance() {
+        return CoreLibrary.getInstance();
+    }
+
+    // will automatically use the resolve check
+    private void getExtraSettings(JSONArray settings) throws JSONException {
+        JSONArray completeExtraSettings = new JSONArray();
+        if (getInstance().getSyncConfiguration().hasExtraSettingsSync()) {
+            List<String> syncParams = getInstance().getSyncConfiguration().getExtraSettingsParameters();
+            if (syncParams.size() > 0) {
+                for (String params : syncParams) {
+                    String url = SettingsSyncIntentService.SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + "&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
+                    JSONArray extraSettings = pullSettings(url);
+                    if (extraSettings != null) {
+                        aggregateSettings(completeExtraSettings, extraSettings);
+                    }
+                }
+
+                aggregateSettings(settings, completeExtraSettings);
+            }
+        }
+    }
+
+    private void getGlobalSettings(JSONArray settings) throws JSONException {
+        JSONArray globalSettings = new JSONArray();
+        if (getInstance().getSyncConfiguration().hasGlobalSettings()) {
+            globalSettings = pullGlobalSettingsFromServer();
         }
 
-        String url = baseUrl + SettingsSyncIntentService.SETTINGS_URL + "?" +
-                CoreLibrary.getInstance().getSyncConfiguration().getSettingsSyncFilterParam().value() + "=" +
-                syncFilterValue + "&serverVersion=" +
-                sharedPreferences.fetchLastSettingsSyncTimeStamp();
+        aggregateSettings(settings, globalSettings);
+    }
 
-        Timber.i("URL: %s", url);
-
-        if (httpAgent == null) {
-            Timber.e("%s http agent is null", url);
-            return null;
+    private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
+        if (globalSettings.length() > 0) {
+            for (int i = 0; i < globalSettings.length(); i++) {
+                JSONObject global = globalSettings.getJSONObject(i);
+                settings.put(global);
+            }
         }
-
-        Response resp = httpAgent.fetchWithCredentials(url, getUsername(), getPassword());
-
-        if (resp.isFailure()) {
-            Timber.e(" %s  not returned data ", url);
-            return null;
-        }
-        return new JSONArray((String) resp.payload());
     }
 
     private JSONObject pushSettingsToServer() throws JSONException {
-
         String endString = "/";
         if (baseUrl.endsWith(endString)) {
             baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
@@ -120,27 +139,78 @@ public class SyncSettingsServiceHelper {
         } else return null;
     }
 
+    /**
+     * Create a sync setting url that allows the users to get non adapted settings from the server
+     * Get the resolved settings from the server.
+     *
+     * @param syncFilterValue {@link String} -- the set sync filter value
+     * @return settings {@link JSONArray} -- a JSON array of all the settings
+     * @throws JSONException
+     */
+    public JSONArray pullSettingsFromServer(String syncFilterValue) throws JSONException {
+        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + getSettingsSyncFilterParam().value() + "=" + syncFilterValue + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+        return pullSettings(url);
+    }
+
+    @VisibleForTesting
+    protected SyncFilter getSettingsSyncFilterParam() {
+        return getInstance().getSyncConfiguration().getSettingsSyncFilterParam();
+    }
+
+    /**
+     * Gets settings that are not tied to team,teamid,location,provider
+     *
+     * @return settings {@link JSONArray} -- a JSON array of all the settings
+     * @throws JSONException
+     */
+    public JSONArray pullGlobalSettingsFromServer() throws JSONException {
+        String url = SettingsSyncIntentService.SETTINGS_URL + "?" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp();
+        return pullSettings(url);
+    }
+
+
     private JSONObject createSettingsConfigurationPayload() throws JSONException {
-
-
         JSONObject siteSettingsPayload = new JSONObject();
-
         JSONArray settingsArray = new JSONArray();
-
-        List<Setting> unsyncedSettings = CoreLibrary.getInstance().context().allSettings().getUnsyncedSettings();
-
+        List<Setting> unsyncedSettings = getInstance().context().allSettings().getUnsyncedSettings();
 
         for (int i = 0; i < unsyncedSettings.size(); i++) {
-
             SyncableJSONObject settingsWrapper = new SyncableJSONObject(unsyncedSettings.get(i).getValue());
-
             settingsArray.put(settingsWrapper);
         }
 
-
         siteSettingsPayload.put(AllConstants.INTENT_KEY.SETTING_CONFIGURATIONS, settingsArray);
-
         return siteSettingsPayload;
+    }
+
+    private JSONArray pullSettings(String directoryUrl) throws JSONException {
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+
+        String completeUrl = baseUrl + directoryUrl;
+
+        Timber.i("URL: %s", completeUrl);
+
+        if (httpAgent == null) {
+            Timber.e("%s http agent is null", completeUrl);
+            return null;
+        }
+
+        Response resp = getResponse(completeUrl);
+
+        if (resp == null || resp.isFailure()) {
+            Timber.e(" %s  not returned data ", completeUrl);
+            return null;
+        }
+
+        return new JSONArray((String) resp.payload());
+    }
+
+    @VisibleForTesting
+    protected Response<String> getResponse(String completeUrl) {
+        return httpAgent.fetchWithCredentials(completeUrl, getUsername(), getPassword());
     }
 
     public String getUsername() {
@@ -152,13 +222,11 @@ public class SyncSettingsServiceHelper {
     }
 
     public String getPassword() {
-        return password != null ? password : CoreLibrary.getInstance().context().allSettings().fetchANMPassword();
+        return password != null ? password : getInstance().context().allSettings().fetchANMPassword();
     }
 
     public void setPassword(String password) {
         this.password = password;
     }
-
-
 }
 

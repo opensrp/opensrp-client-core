@@ -4,17 +4,22 @@ import android.content.ContentValues;
 import android.content.Context;
 import androidx.annotation.NonNull;
 
+import com.ibm.fhir.model.resource.QuestionnaireResponse;
+
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.AllCommonsRepository;
 import org.smartregister.commonregistry.CommonRepository;
-import org.smartregister.domain.db.Address;
-import org.smartregister.domain.db.Client;
-import org.smartregister.domain.db.Event;
+import org.smartregister.converters.ClientConverter;
+import org.smartregister.converters.EventConverter;
+import org.smartregister.domain.Address;
+import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
+import org.smartregister.domain.Obs;
+import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.db.EventClient;
-import org.smartregister.domain.db.Obs;
 import org.smartregister.domain.jsonmapping.ClassificationRule;
 import org.smartregister.domain.jsonmapping.ClientClassification;
 import org.smartregister.domain.jsonmapping.ClientField;
@@ -23,7 +28,9 @@ import org.smartregister.domain.jsonmapping.ColumnType;
 import org.smartregister.domain.jsonmapping.JsonMapping;
 import org.smartregister.domain.jsonmapping.Rule;
 import org.smartregister.domain.jsonmapping.Table;
+import org.smartregister.pathevaluator.plan.PlanEvaluator;
 import org.smartregister.repository.DetailsRepository;
+import org.smartregister.util.AppExecutors;
 import org.smartregister.util.AssetHandler;
 
 import java.lang.reflect.Field;
@@ -54,8 +61,11 @@ public class ClientProcessorForJava {
     private Map<String, Object> jsonMap = new HashMap<>();
     private Context mContext;
 
+    private AppExecutors appExecutors;
+
     public ClientProcessorForJava(Context context) {
         mContext = context;
+        appExecutors = new AppExecutors();
     }
 
     public static ClientProcessorForJava getInstance(Context context) {
@@ -66,7 +76,12 @@ public class ClientProcessorForJava {
         return instance;
     }
 
+
     public synchronized void processClient(List<EventClient> eventClientList) throws Exception {
+        processClient(eventClientList, false);
+    }
+
+    public synchronized void processClient(List<EventClient> eventClientList, boolean localSubmission) throws Exception {
 
         final String EC_CLIENT_CLASSIFICATION = "ec_client_classification.json";
         ClientClassification clientClassification = assetJsonToJava(EC_CLIENT_CLASSIFICATION, ClientClassification.class);
@@ -92,8 +107,33 @@ public class ClientProcessorForJava {
                         processEvent(event, client, clientClassification);
                     }
                 }
+
+                if (localSubmission && CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                    processPlanEvaluation(eventClient);
+                }
             }
         }
+    }
+
+    /**
+     * Process plan evaluation for an event client
+     *
+     * @param eventClient
+     */
+    public void processPlanEvaluation(EventClient eventClient) {
+        appExecutors.diskIO().execute(() -> {
+            String planIdentifier = eventClient.getEvent().getDetails().get("planIdentifier");
+
+            if (StringUtils.isNotBlank(planIdentifier)) {
+                PlanDefinition plan = CoreLibrary.getInstance().context().getPlanDefinitionRepository().findPlanDefinitionById(planIdentifier);
+                PlanEvaluator planEvaluator = new PlanEvaluator(eventClient.getEvent().getProviderId());
+                QuestionnaireResponse questionnaireResponse = EventConverter.convertEventToEncounterResource(eventClient.getEvent());
+                if (eventClient.getClient() != null) {
+                    questionnaireResponse = questionnaireResponse.toBuilder().contained(ClientConverter.convertClientToPatientResource(eventClient.getClient())).build();
+                }
+                planEvaluator.evaluatePlan(plan, questionnaireResponse);
+            }
+        });
     }
 
     /**

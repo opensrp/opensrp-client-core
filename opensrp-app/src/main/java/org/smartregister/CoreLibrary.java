@@ -8,6 +8,7 @@ import android.text.TextUtils;
 
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
+import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
@@ -73,6 +74,10 @@ public class CoreLibrary {
         this.p2POptions = p2POptions;
 
         initP2pLibrary(null);
+
+        if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
+            PathEvaluatorLibrary.init(context.getLocationRepository(), context.getEventClientRepository(), context.getTaskRepository(), context.getEventClientRepository());
+        }
     }
 
     public void initP2pLibrary(@Nullable String username) {

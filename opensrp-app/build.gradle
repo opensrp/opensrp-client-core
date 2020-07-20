@@ -30,7 +30,7 @@ apply plugin: 'jacoco'
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'maven-publish'
 jacoco {
-    toolVersion = "0.8.0"
+    toolVersion = "0.8.5"
 }
 
 android {
@@ -52,6 +52,7 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
 
     buildTypes {
@@ -114,12 +115,7 @@ android {
     // avoid errors with message 'Duplicate files copied in APK ...'
     packagingOptions {
         exclude 'LICENSE.txt'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
+        exclude 'META-INF/*'
     }
     testOptions {
         unitTests {
@@ -134,7 +130,6 @@ tasks.withType(Test) {
         // to see the exceptions of failed tests in Travis-CI console.
         exceptionFormat = 'full'
     }
-    forkEvery = 40
     maxHeapSize = "2g"
 }
 
@@ -161,6 +156,7 @@ configurations.all {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.5'
     implementation 'net.zetetic:android-database-sqlcipher:4.2.0'
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'org.codehaus.jackson:jackson-core-asl:1.9.13'
@@ -196,7 +192,6 @@ dependencies {
 
     implementation('com.google.android.material:material:1.1.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'cardview-v7'
     }
 
     implementation 'com.evernote:android-job:1.2.6'
@@ -209,23 +204,13 @@ dependencies {
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-    implementation('org.smartregister:opensrp-client-native-form:1.9.2-SNAPSHOT@aar') {
-        transitive = true
-        exclude group: 'id.zelory', module: 'compressor'
-        exclude group: 'com.android.support', module: 'recyclerview-v7'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'com.android.support', module: 'cardview-v7'
-        exclude group: 'com.android.support', module: 'support-media-compat'
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'design'
-        exclude group: 'org.yaml', module: 'snakeyaml'
-        exclude group: 'io.ona.rdt-capture', module: 'lib'
-        exclude group: 'com.github.johnkil.print', module: 'print'
-    }
-
-    //implementation 'org.smartregister:opensrp-plan-evaluator:0.0.9-SNAPSHOT'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
+    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
+
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.13-SNAPSHOT'
+
+    implementation 'xerces:xercesImpl:2.12.0'
 }
 
 dependencies {
@@ -247,10 +232,6 @@ dependencies {
     }
 
     testImplementation('org.robolectric:shadows-multidex:4.3.1') {
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-
-    testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
@@ -291,7 +272,7 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest']) {
     getReports().getHtml().setDestination(file("${buildDir}/reports/jacoco/jacocoRootReport/html"))
 
     def fileFilter = ['**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*', '**/*$ViewBinder*.*']
-    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debugUnitTest/classes", excludes: fileFilter)
+    def debugTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.setFrom(files([mainSrc]))

@@ -888,4 +888,22 @@ public class Utils {
         }
     }
 
+    public static Long tryParseLong(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static int calculatePercentage(long totalCount, long partialCount){
+        if (totalCount < 1) {
+            return 100;
+        } else if (partialCount < 1) {
+            return 0;
+        } else {
+           return  Math.round(( partialCount * 100f) /  totalCount);
+        }
+    }
+
 }

@@ -2,6 +2,9 @@ package org.smartregister.service;
 
 import android.content.Context;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -11,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.client.utils.contract.ClientFormContract;
 import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.Manifest;
 import org.smartregister.domain.Response;
@@ -87,8 +91,34 @@ public class DocumentConfigurationService {
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
             saveReceivedManifest(receivedManifest);
+            saveManifestVersion(receivedManifest.getVersion());
+            saveFormsVersion(receivedManifest.getFormVersion());
         } else if (activeManifest == null) {
             saveReceivedManifest(receivedManifest);
+            saveManifestVersion(receivedManifest.getVersion());
+            saveFormsVersion(receivedManifest.getFormVersion());
+        }
+    }
+
+    @VisibleForTesting
+    protected void saveManifestVersion(@NonNull String manifestVersion) {
+        boolean manifestVersionSaved = CoreLibrary.getInstance()
+                .context()
+                .allSharedPreferences()
+                .saveManifestVersion(manifestVersion);
+        if (!manifestVersionSaved) {
+            Timber.e(new Exception("Saving manifest version failed"));
+        }
+    }
+
+    @VisibleForTesting
+    protected void saveFormsVersion(@NonNull String formsVersion) {
+        boolean manifestVersionSaved = CoreLibrary.getInstance()
+                .context()
+                .allSharedPreferences()
+                .saveFormsVersion(formsVersion);
+        if (!manifestVersionSaved) {
+            Timber.e(new Exception("Saving manifest version failed"));
         }
     }
 
@@ -179,7 +209,7 @@ public class DocumentConfigurationService {
         clientFormRepository.addOrUpdate(clientForm);
 
         //deleting the third oldest client Form from the repository
-        List<ClientForm> clientFormList = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
+        List<ClientFormContract.Model> clientFormList = clientFormRepository.getClientFormByIdentifier(clientForm.getIdentifier());
         if (clientFormList.size() > 2) {
             clientFormRepository.delete(clientFormList.get(2).getId());
         }
@@ -187,6 +217,7 @@ public class DocumentConfigurationService {
 
     protected Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO) throws JSONException {
         Manifest manifest = new Manifest();
+        manifest.setVersion(manifestDTO.getIdentifier());
         manifest.setAppVersion(manifestDTO.getAppVersion());
         manifest.setCreatedAt(manifestDTO.getCreatedAt());
 
