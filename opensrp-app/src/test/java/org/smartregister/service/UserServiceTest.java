@@ -11,7 +11,9 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.TimeStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
+import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllEligibleCouples;
@@ -25,12 +27,16 @@ import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -194,7 +200,7 @@ public class UserServiceTest extends BaseUnitTest {
 
     @Test
     public void shouldDeleteDataAndSettingsWhenLogoutHappens() throws Exception {
-        SyncConfiguration syncConfiguration = Mockito.mock(SyncConfiguration.class);
+        SyncConfiguration syncConfiguration = mock(SyncConfiguration.class);
         Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
 
@@ -243,6 +249,72 @@ public class UserServiceTest extends BaseUnitTest {
         LinkedHashMap<String, org.smartregister.domain.jsonmapping.util.TreeNode<String, org.smartregister.domain.jsonmapping.Location>> mapLocation = locationTree.getLocationsHierarchy();
 
         assertEquals("Pakistan", mapLocation.values().iterator().next().getLabel());
+    }
+
+    @Test
+    public void testGetServerTimeZoneWithTime() {
+        loginResponseData = mock(LoginResponseData.class);
+        loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone timezone = UserService.getServerTimeZone(loginResponseData);
+        assertNotNull(timezone);
+        long millisecondsPerHour = 3600 * 1000;
+        assertEquals(3 * millisecondsPerHour, timezone.getRawOffset());
+        assertEquals("Africa/Nairobi", timezone.getID());
+    }
+
+    @Test
+    public void testValidateDeviceTimeForNullServerTimeZoneReturnsError() {
+        loginResponseData = mock(LoginResponseData.class);
+        assertEquals(TimeStatus.ERROR, userService.validateDeviceTime(loginResponseData, 3600));
+    }
+
+    @Test
+    public void testValidateDeviceTimeForDifferentTimeZoneServerTimeZoneReturnsMismatch() {
+        loginResponseData = mock(LoginResponseData.class);
+        loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        assertEquals(TimeStatus.TIMEZONE_MISMATCH, userService.validateDeviceTime(loginResponseData, 3600 * 1000));
+    }
+
+    @Test
+    public void testValidateDeviceTimeForDifferentTimeReturnsMismatch() {
+        loginResponseData = mock(LoginResponseData.class);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, -30);
+        loginResponseData.time = new Time(calendar.getTime(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
+        assertEquals(TimeStatus.TIME_MISMATCH, userService.validateDeviceTime(loginResponseData, 15 * 1000));
+    }
+
+    @Test
+    public void testValidateDeviceTimeSameTimeTimeAndTimeZone() {
+        loginResponseData = mock(LoginResponseData.class);
+        Calendar calendar = Calendar.getInstance();
+        loginResponseData.time = new Time(calendar.getTime(), TimeZone.getTimeZone("Africa/Nairobi"));
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
+        assertEquals(TimeStatus.OK, userService.validateDeviceTime(loginResponseData, 15 * 1000));
+    }
+
+
+    @Test
+    public void testValidateStoredServerTimeZoneForNullServerTimeZoneReturnsError() {
+        when(allSharedPreferences.fetchServerTimeZone()).thenReturn(null);
+        assertEquals(TimeStatus.ERROR, userService.validateStoredServerTimeZone());
+    }
+
+    @Test
+    public void testValidateStoredServerTimeZoneForDifferentTimeZoneServerTimeZoneReturnsMismatch() {
+        when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+        assertEquals(TimeStatus.TIMEZONE_MISMATCH, userService.validateStoredServerTimeZone());
+    }
+
+
+    @Test
+    public void testValidateStoredServerTimeZoneSameTimeTimeAndTimeZone() {
+        when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
+        TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
+        assertEquals(TimeStatus.OK, userService.validateStoredServerTimeZone());
     }
 
 }
