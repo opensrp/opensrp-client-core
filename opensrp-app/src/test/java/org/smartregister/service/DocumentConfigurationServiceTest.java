@@ -9,6 +9,7 @@ import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,6 @@ import org.mockito.MockitoAnnotations;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.ClientForm;
@@ -31,11 +31,8 @@ import org.smartregister.repository.ManifestRepository;
 
 import java.util.List;
 
-import timber.log.Timber;
-
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.smartregister.domain.ResponseStatus.success;
-import static org.smartregister.service.DocumentConfigurationService.FORM_VERSION;
 import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
 import static org.smartregister.service.DocumentConfigurationService.MANIFEST_FORMS_VERSION;
 
@@ -103,11 +100,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void fetchManifest() throws Exception {
-        Context previousValue = CoreLibrary.getInstance().context().applicationContext();
-        Context newContext = Mockito.spy(RuntimeEnvironment.application);
-        Mockito.doReturn(RuntimeEnvironment.application).when(newContext).createConfigurationContext(Mockito.nullable(Configuration.class));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", newContext);
+    public void fetchManifestShouldSaveFetchedManifestWhenNoActiveManifestIsAvailable() throws Exception {
         String jsonObject = "{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}";
         Mockito.when(httpAgent.fetch(anyString())).thenReturn(
                 new Response<String>(
@@ -119,7 +112,28 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         documentConfigurationService.fetchManifest();
 
         Mockito.verify(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", previousValue);
+        Mockito.verify(documentConfigurationService).saveManifestVersion("12");
+        Mockito.verify(documentConfigurationService).saveFormsVersion("0.0.8");
+    }
+
+    @Test
+    public void fetchManifestShouldSaveFetchedManifestAndDeactivatePreviousActiveManifestWhenActiveManifestIsAvailable() throws Exception {
+        String jsonObject = "{\"identifier\":\"12\",\"json\":\"{\\\"forms_version\\\":\\\"0.0.8\\\",\\\"identifiers\\\":[\\\"referrals/anc_referral_form\\\",\\\"referrals/anc_referral_form-sw\\\",\\\"referrals/child_gbv_referral_form\\\",\\\"referrals/child_gbv_referral_form-sw\\\",\\\"referrals/child_referral_form\\\",\\\"referrals/child_referral_form-sw\\\",\\\"referrals/gbv_referral_form\\\",\\\"referrals/gbv_referral_form-sw\\\",\\\"referrals/hiv_referral_form\\\",\\\"referrals/hiv_referral_form-sw\\\",\\\"referrals/pnc_referral_form\\\",\\\"referrals/pnc_referral_form-sw\\\",\\\"referrals/tb_referral_form\\\",\\\"referrals/tb_referral_form-sw\\\"]}\",\"appId\":\"org.smartregister.chw\",\"appVersion\":\"0.2.0\",\"createdAt\":\"2020-04-23T16:28:19.879+03:00\",\"updatedAt\":\"2020-04-23T16:28:19.879+03:00\"}";
+        Mockito.when(httpAgent.fetch(anyString())).thenReturn(
+                new Response<String>(
+                        success,
+                        jsonObject));
+
+        Manifest manifest = new Manifest();
+        manifest.setFormVersion("0.0.1");
+        Mockito.doReturn(manifest).when(manifestRepository).getActiveManifest();
+        Mockito.doNothing().when(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
+        Mockito.doNothing().when(documentConfigurationService).syncClientForms(Mockito.any());
+        documentConfigurationService.fetchManifest();
+
+        Mockito.verify(manifestRepository, Mockito.times(2)).addOrUpdate(Mockito.any(Manifest.class));
+        Mockito.verify(documentConfigurationService).saveManifestVersion("12");
+        Mockito.verify(documentConfigurationService).saveFormsVersion("0.0.8");
     }
 
     @Test
@@ -138,5 +152,21 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
         documentConfigurationService.syncClientForms(activeManifest);
         Mockito.verify(clientFormRepository).addOrUpdate(Mockito.any(ClientForm.class));
+    }
+
+    @Test
+    public void saveManifestVersionShouldSaveVersionInSharedPreferences() {
+        Assert.assertNull(CoreLibrary.getInstance().context().allSharedPreferences().fetchManifestVersion());
+        String manifestVersion = "0.0.89";
+
+        documentConfigurationService.saveManifestVersion(manifestVersion);
+
+        Assert.assertEquals(manifestVersion, CoreLibrary.getInstance().context().allSharedPreferences().fetchManifestVersion());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit().clear().commit();
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
