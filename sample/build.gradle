@@ -21,6 +21,7 @@ repositories {
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'org.smartregister.gradle.jarjar'
 
 android {
 
@@ -69,7 +70,15 @@ android {
 
 dependencies {
 
-    implementation project(':opensrp-app')
+    implementation (project(':opensrp-app')){
+        transitive=true
+        exclude group: 'com.ibm.fhir', module: 'fhir-model'
+    }
+
+    jarJar 'com.ibm.fhir:fhir-model:4.2.3'
+
+    // Repackaged jars will be placed here, adding them to classpath
+    implementation fileTree(dir: "./build/libs", include: ['*.jar'])
 
     implementation('com.android.support:design:28.0.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
