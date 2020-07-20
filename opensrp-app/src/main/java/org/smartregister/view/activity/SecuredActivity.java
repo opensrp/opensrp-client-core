@@ -121,7 +121,7 @@ public abstract class SecuredActivity extends MultiLanguageActivity implements P
         int i = item.getItemId();
         if (i == R.id.switchLanguageMenuItem) {
             String newLanguagePreference = context().userService().switchLanguagePreference();
-            Utils.showShortToast(this, R.string.language_change_prepend_message + " " + newLanguagePreference + ". " + R.string.language_change_prepend_message + ".");
+            Utils.showShortToast(this, getString(R.string.language_change_prepend_message) + " " + newLanguagePreference + ".");
 
             return super.onOptionsItemSelected(item);
         } else if (i == MENU_ITEM_LOGOUT) {
