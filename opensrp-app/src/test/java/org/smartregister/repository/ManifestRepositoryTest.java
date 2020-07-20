@@ -56,7 +56,7 @@ public class ManifestRepositoryTest extends BaseUnitTest {
     private ArgumentCaptor<String> stringArgumentCaptor;
     @Captor
     private ArgumentCaptor<String[]> argsCaptor;
-    private String manifestJson = "{\"id\":\"1\",\"appVersion\":\"1.1.0\",\"formVersion\":\"1.0.0\",\"identifiers\":[\"en/child/enrollment.json\"],\"isNew\":true,\"active\":true,\"createdAt\":\"2020-04-09 00:00:00\"}";
+    private String manifestJson = "{\"id\":\"1\",\"version\": \"0.0.67\",\"appVersion\":\"1.1.0\",\"formVersion\":\"1.0.0\",\"identifiers\":[\"en/child/enrollment.json\"],\"isNew\":true,\"active\":true,\"createdAt\":\"2020-04-09 00:00:00\"}";
 
     @Before
     public void setUp() {
@@ -80,7 +80,7 @@ public class ManifestRepositoryTest extends BaseUnitTest {
         assertNull(iterator.next());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
-        assertEquals(7, contentValues.size());
+        assertEquals(8, contentValues.size());
 
         assertEquals("1", contentValues.getAsString(ManifestRepository.ID));
         assertEquals("1.1.0", contentValues.getAsString(APP_VERSION));
@@ -145,7 +145,7 @@ public class ManifestRepositoryTest extends BaseUnitTest {
     public MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(ManifestRepository.COLUMNS);
         Manifest manifest = gson.fromJson(manifestJson, Manifest.class);
-        cursor.addRow(new Object[]{manifest.getId(), manifest.getAppVersion(), manifest.getFormVersion(), new Gson().toJson(manifest.getIdentifiers()), manifest.isNew() ? 1 : 0, manifest.isActive() ? 1 : 0, manifest.getCreatedAt()});
+        cursor.addRow(new Object[]{manifest.getId(), manifest.getVersion(), manifest.getAppVersion(), manifest.getFormVersion(), new Gson().toJson(manifest.getIdentifiers()), manifest.isNew() ? 1 : 0, manifest.isActive() ? 1 : 0, manifest.getCreatedAt()});
         return cursor;
     }
 
