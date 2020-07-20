@@ -161,9 +161,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
-                        TaskServiceHelper.taskGson.toJson(tasks)),
+                        TaskServiceHelper.taskGson.toJson(tasks)).withTotalRecords(1L),
                 new Response<>(ResponseStatus.success,             //returned on second call
-                        TaskServiceHelper.taskGson.toJson(new ArrayList<>())))
+                        TaskServiceHelper.taskGson.toJson(new ArrayList<>())).withTotalRecords(0l))
                 .when(httpAgent).post(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
         taskServiceHelper.setSyncByGroupIdentifier(false);
@@ -176,7 +176,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
         assertEquals("https://sample-stage.smartregister.org/opensrp/rest/task/sync", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
-        assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"owner\":\"onatest\",\"serverVersion\":0}", requestString);
+        assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"owner\":\"onatest\",\"serverVersion\":0,\"return_count\":true}", requestString);
 
         verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
         assertEquals(expectedTask.getIdentifier(), taskArgumentCaptor.getValue().getIdentifier());
