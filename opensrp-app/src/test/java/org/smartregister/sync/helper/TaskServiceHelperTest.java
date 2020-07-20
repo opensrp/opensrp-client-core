@@ -121,22 +121,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"group\":[\"3952\"],\"serverVersion\":0,\"return_count\":true}", requestString);
 
-        verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
-        assertEquals(expectedTask.getIdentifier(), taskArgumentCaptor.getValue().getIdentifier());
-        assertEquals(expectedTask.getBusinessStatus(), taskArgumentCaptor.getValue().getBusinessStatus());
-        assertEquals(BaseRepository.TYPE_Synced, taskArgumentCaptor.getValue().getSyncStatus());
-        assertEquals(expectedTask.getServerVersion(), taskArgumentCaptor.getValue().getServerVersion());
-        assertEquals(expectedTask.getCode(), taskArgumentCaptor.getValue().getCode());
-        assertEquals(expectedTask.getForEntity(), taskArgumentCaptor.getValue().getForEntity());
-        assertEquals(expectedTask.getPlanIdentifier(), taskArgumentCaptor.getValue().getPlanIdentifier());
-
-        assertEquals(expectedTask.getIdentifier(), actualTask.getIdentifier());
-        assertEquals(expectedTask.getBusinessStatus(), actualTask.getBusinessStatus());
-        assertEquals(BaseRepository.TYPE_Synced, actualTask.getSyncStatus());
-        assertEquals(expectedTask.getServerVersion(), actualTask.getServerVersion());
-        assertEquals(expectedTask.getCode(), actualTask.getCode());
-        assertEquals(expectedTask.getForEntity(), actualTask.getForEntity());
-        assertEquals(expectedTask.getPlanIdentifier(), actualTask.getPlanIdentifier());
+        verifyTaskInformationFetchedFromServer(expectedTask, actualTask);
 
     }
 
@@ -177,7 +162,10 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         assertEquals("https://sample-stage.smartregister.org/opensrp/rest/task/sync", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"owner\":\"onatest\",\"serverVersion\":0,\"return_count\":true}", requestString);
+        verifyTaskInformationFetchedFromServer(expectedTask, actualTask);
+    }
 
+    private void verifyTaskInformationFetchedFromServer(Task expectedTask, Task actualTask) {
         verify(taskRepository).addOrUpdate(taskArgumentCaptor.capture());
         assertEquals(expectedTask.getIdentifier(), taskArgumentCaptor.getValue().getIdentifier());
         assertEquals(expectedTask.getBusinessStatus(), taskArgumentCaptor.getValue().getBusinessStatus());
@@ -194,7 +182,6 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         assertEquals(expectedTask.getCode(), actualTask.getCode());
         assertEquals(expectedTask.getForEntity(), actualTask.getForEntity());
         assertEquals(expectedTask.getPlanIdentifier(), actualTask.getPlanIdentifier());
-
     }
 
     @Test

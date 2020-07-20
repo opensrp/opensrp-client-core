@@ -156,7 +156,6 @@ public class TaskServiceHelper extends BaseHelper {
 
     private String fetchTasks(Set<String> plan, List<String> group, Long serverVersion, boolean returnCount) throws Exception {
         HTTPAgent httpAgent = getHttpAgent();
-
         String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
         String endString = "/";
 
