@@ -7,6 +7,7 @@ import android.util.Base64;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.nio.ByteBuffer;
@@ -30,6 +31,7 @@ public class SecurityHelper {
 
     private static final Charset CHARSET = Charset.forName(CharEncoding.UTF_8);
     public static final int ITERATION_COUNT = 200048;
+    private static final int PASSPHRASE_SIZE = 32;
 
     /**
      * This method ensures that sensitive info can be collected for the edit text in a safer way
@@ -160,4 +162,10 @@ public class SecurityHelper {
             return null;
         }
     }
+
+    public static char[] generateRandomPassphrase() {
+
+        return RandomStringUtils.randomAlphanumeric(PASSPHRASE_SIZE).toCharArray();
+    }
+
 }

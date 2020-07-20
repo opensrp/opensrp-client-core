@@ -43,6 +43,7 @@ public class AllSharedPreferences {
     private static final String PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD";
     public static final String MANIFEST_VERSION = "MANIFEST_VERSION";
     public static final String FORMS_VERSION = "FORMS_VERSION";
+    private static final String ENCRYPTED_PASSPHRASE_KEY = "ENCRYPTED_PASSPHRASE_KEY";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -346,6 +347,16 @@ public class AllSharedPreferences {
     @Nullable
     public SharedPreferences getPreferences() {
         return preferences;
+    }
+
+    public String getPassphrase(String username) {
+        return preferences.getString(ENCRYPTED_PASSPHRASE_KEY + username, null);
+    }
+
+    public void savePassphrase(String username, String passphrase) {
+        if (username != null) {
+            preferences.edit().putString(ENCRYPTED_PASSPHRASE_KEY + username, passphrase).commit();
+        }
     }
 
 }

@@ -128,7 +128,8 @@ public class AccountHelper {
      * @param authToken   token to invalidate
      */
     public static void invalidateAuthToken(String accountType, String authToken) {
-        accountManager.invalidateAuthToken(accountType, authToken);
+        if (authToken != null)
+            accountManager.invalidateAuthToken(accountType, authToken);
     }
 
 
@@ -140,7 +141,7 @@ public class AccountHelper {
      */
     public static String getCachedOAuthToken(String accountName, String accountType, String authTokenType) {
         Account account = getOauthAccountByNameAndType(accountName, accountType);
-        return accountManager.peekAuthToken(account, authTokenType);
+        return account != null ? accountManager.peekAuthToken(account, authTokenType) : null;
     }
 
     /**

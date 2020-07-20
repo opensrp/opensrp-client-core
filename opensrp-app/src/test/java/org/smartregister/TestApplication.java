@@ -40,8 +40,4 @@ public class TestApplication extends DrishtiApplication {
         this.context = context;
     }
 
-    @Override
-    public char[] getPassword() {
-        return new char[]{};
-    }
 }

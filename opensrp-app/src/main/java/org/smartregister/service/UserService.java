@@ -226,14 +226,14 @@ public class UserService {
             try {
 
                 // Compare stored password hash with provided password hash
-                storedHash = getAccountSecretKey(username);
+                storedHash = getDecryptedAccountValue(username, AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY);
 
                 passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
                 passwordHash = SecurityHelper.hashPassword(getEncryptionParamValue(username, password), passwordSalt);
 
                 if (storedHash != null && Arrays.equals(storedHash, passwordHash)) {
 
-                    return isValidDBPassword(storedHash);
+                    return isValidDBPassword(getDecryptedPreferenceValue(username));
                 }
             } catch (Exception e) {
                 Timber.e(e);
@@ -265,11 +265,11 @@ public class UserService {
         return DrishtiApplication.getInstance().getRepository().canUseThisPassword(password);
     }
 
-    public byte[] getAccountSecretKey(String userName) {
+    public byte[] getDecryptedAccountValue(String userName, String key) {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
-                return getAccountSecretKey(userName, privateKeyEntry);
+                return getDecryptedAccountValue(userName, privateKeyEntry, key);
             } catch (Exception e) {
                 Timber.e(e);
             }
@@ -277,10 +277,10 @@ public class UserService {
         return null;
     }
 
-    private byte[] getAccountSecretKey(String userName, KeyStore.PrivateKeyEntry privateKeyEntry) {
+    private byte[] getDecryptedAccountValue(String userName, KeyStore.PrivateKeyEntry privateKeyEntry, String key) {
         if (privateKeyEntry != null) {
 
-            String encryptedSecretKey = AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
+            String encryptedSecretKey = AccountHelper.getAccountManagerValue(key, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType());
 
             if (encryptedSecretKey != null) {
                 try {
@@ -288,6 +288,18 @@ public class UserService {
                 } catch (Exception e) {
                     Timber.e(e);
                 }
+            }
+        }
+        return null;
+    }
+
+    public byte[] getDecryptedPreferenceValue(String userName) {
+        if (keyStore != null && userName != null) {
+            try {
+                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
+                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(userName));
+            } catch (Exception e) {
+                Timber.e(e);
             }
         }
         return null;
@@ -305,8 +317,8 @@ public class UserService {
         if (userName.equals(pioneerUser)) {
             return true;
         } else {
-            byte[] currentUserSecretKey = getAccountSecretKey(userName);
-            byte[] pioneerUserSecretKey = getAccountSecretKey(pioneerUser);
+            byte[] currentUserSecretKey = getDecryptedPreferenceValue(userName);
+            byte[] pioneerUserSecretKey = getDecryptedPreferenceValue(pioneerUser);
 
             if (currentUserSecretKey != null && Arrays.equals(pioneerUserSecretKey, currentUserSecretKey)) {
                 return isValidDBPassword(currentUserSecretKey);
@@ -354,7 +366,7 @@ public class UserService {
 
         try {
 
-            byte[] secretKey = getAccountSecretKey(userName);
+            byte[] secretKey = getDecryptedPreferenceValue(userName);
             setupContextForLogin(secretKey);
 
             if (!allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName)) {
@@ -595,8 +607,13 @@ public class UserService {
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY, encryptedSecretKey);
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, Base64.encodeToString(passwordHash.getSalt(), Base64.DEFAULT));
 
+                    //Save encrypted passphrase
+                    if (StringUtils.isBlank(allSharedPreferences.getPassphrase(userName))) {
+                        allSharedPreferences.savePassphrase(username, encryptString(privateKeyEntry, SecurityHelper.toBytes(SecurityHelper.generateRandomPassphrase())));
+                    }
+
                     // Finally, save the pioneer user
-                    if (allSharedPreferences.fetchPioneerUser() == null) {
+                    if (StringUtils.isBlank(allSharedPreferences.fetchPioneerUser())) {
                         allSharedPreferences.savePioneerUser(username);
                     }
                 }
