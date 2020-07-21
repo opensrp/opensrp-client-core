@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.google.gson.Gson;
@@ -193,6 +194,36 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
         Assert.assertTrue(snackbar.isShown());
         Assert.assertEquals(BaseTransientBottomBar.LENGTH_INDEFINITE, snackbar.getDuration());
+    }
+
+    @Test
+    public void onStatusUpdateShouldCallShowProcessingSnackbar() {
+        Mockito.doNothing().when(securedActivity).showProcessingInProgressBottomSnackbar(Mockito.any(AppCompatActivity.class));
+
+        securedActivity.onStatusUpdate(true);
+
+        Mockito.verify(securedActivity).showProcessingInProgressBottomSnackbar(securedActivity);
+    }
+
+
+    @Test
+    public void onStatusUpdateShouldCallRemoveProcessingSnackbar() {
+        Mockito.doNothing().when(securedActivity).removeProcessingInProgressSnackbar();
+
+        securedActivity.onStatusUpdate(false);
+
+        Mockito.verify(securedActivity).removeProcessingInProgressSnackbar();
+    }
+
+    @Test
+    public void removeProcessingInProgressSnackbarShouldDismissSnackbarWhenSnackbarIsShowing() {
+        ProcessingInProgressSnackbar snackbar = Mockito.mock(ProcessingInProgressSnackbar.class);
+        ReflectionHelpers.setField(securedActivity, "processingInProgressSnackbar", snackbar);
+        Mockito.doReturn(true).when(snackbar).isShown();
+
+        securedActivity.removeProcessingInProgressSnackbar();
+
+        Mockito.verify(snackbar).dismiss();
     }
 
     static class SecuredActivityImpl extends SecuredActivity {
