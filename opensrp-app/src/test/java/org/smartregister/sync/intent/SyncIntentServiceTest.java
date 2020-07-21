@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.SyncUtils;
@@ -32,6 +34,9 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     @Mock
     private SyncUtils syncUtils;
 
+    @Mock
+    SyncConfiguration syncConfiguration;
+
     @Captor
     private ArgumentCaptor<Intent>  intentArgumentCaptor;
 
@@ -41,6 +46,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
+        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         MockitoAnnotations.initMocks(this);
         syncIntentService = new SyncIntentService();
         syncIntentService.init(context);
@@ -66,6 +72,15 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
         assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
 
+    }
+
+    @Test
+    public void testHandleSyncCallsLogoutUserIfHasValidAuthorizationIsFalse() {
+        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
+        when(syncUtils.verifyAuthorization()).thenReturn(false);
+        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
+        syncIntentService.handleSync();
+        verify(syncUtils).logoutUser();
     }
 
 }
