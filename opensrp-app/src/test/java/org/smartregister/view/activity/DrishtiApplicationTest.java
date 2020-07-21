@@ -71,7 +71,7 @@ public class DrishtiApplicationTest {
     @Test
     public void getPassword() {
         String username = "anm";
-        char[] password = "pwd".toCharArray();
+        byte[] password = "pwd".getBytes();
 
         drishtiApplication.onCreate();
 
@@ -81,7 +81,7 @@ public class DrishtiApplicationTest {
         AllSharedPreferences allSharedPreferences = Mockito.spy(drishtiApplication.getContext().userService().getAllSharedPreferences());
         ReflectionHelpers.setField(drishtiApplication.getContext().userService(), "allSharedPreferences", allSharedPreferences);
         Mockito.doReturn(username).when(allSharedPreferences).fetchRegisteredANM();
-        Mockito.doReturn(password).when(userService).getDecryptedPreferenceValue(Mockito.eq(username));
+        Mockito.doReturn(password).when(userService).getDecryptedPassphraseValue(Mockito.eq(username));
 
         Assert.assertEquals(password, drishtiApplication.getPassword());
     }

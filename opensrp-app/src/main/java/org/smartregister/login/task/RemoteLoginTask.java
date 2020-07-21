@@ -116,7 +116,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         mAccountManager.notifyAccountAuthenticated(account);
                     }
 
-                    if (getOpenSRPContext().userService().getDecryptedPreferenceValue(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
+                    if (getOpenSRPContext().userService().getDecryptedPassphraseValue(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
                         publishProgress(R.string.loading_client_settings);
 

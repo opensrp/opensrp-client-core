@@ -928,8 +928,15 @@ public class HTTPAgent {
 
                 urlConnection = initializeHttp(baseUrl, true);
 
-                Timber.i("User not authorized. User access was revoked, will log off user");
-                return false;
+                if (HttpStatus.SC_OK == urlConnection.getResponseCode()) {
+                    return true;
+
+                } else if (HttpStatus.SC_UNAUTHORIZED == urlConnection.getResponseCode()) {
+
+                    Timber.i("User not authorized. User access was revoked, will log off user");
+                    return false;
+                }
+
             } else if (statusCode != HttpStatus.SC_OK) {
                 Timber.w("Error occurred verifying authorization, User will not be logged off");
             } else {

@@ -233,7 +233,7 @@ public class UserService {
 
                 if (storedHash != null && Arrays.equals(storedHash, passwordHash)) {
 
-                    return isValidDBPassword(getDecryptedPreferenceValue(username));
+                    return isValidDBPassword(getDecryptedPassphraseValue(username));
                 }
             } catch (Exception e) {
                 Timber.e(e);
@@ -293,7 +293,7 @@ public class UserService {
         return null;
     }
 
-    public byte[] getDecryptedPreferenceValue(String userName) {
+    public byte[] getDecryptedPassphraseValue(String userName) {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
@@ -317,8 +317,8 @@ public class UserService {
         if (userName.equals(pioneerUser)) {
             return true;
         } else {
-            byte[] currentUserSecretKey = getDecryptedPreferenceValue(userName);
-            byte[] pioneerUserSecretKey = getDecryptedPreferenceValue(pioneerUser);
+            byte[] currentUserSecretKey = getDecryptedPassphraseValue(userName);
+            byte[] pioneerUserSecretKey = getDecryptedPassphraseValue(pioneerUser);
 
             if (currentUserSecretKey != null && Arrays.equals(pioneerUserSecretKey, currentUserSecretKey)) {
                 return isValidDBPassword(currentUserSecretKey);
@@ -338,20 +338,6 @@ public class UserService {
         return loginResponse;
     }
 
-    public LoginResponse isValidRemoteLogin(String userName, char[] password) {
-        String requestURL;
-
-        requestURL = configuration.dristhiBaseURL() + OPENSRP_AUTH_USER_URL_PATH;
-
-        LoginResponse loginResponse = httpAgent.urlCanBeAccessWithGivenCredentials(requestURL, userName, password);
-
-        if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
-            saveUserCredentials(userName, password, loginResponse.payload());
-        }
-
-        return loginResponse;
-    }
-
     public AllSharedPreferences getAllSharedPreferences() {
         return allSharedPreferences;
     }
@@ -366,7 +352,7 @@ public class UserService {
 
         try {
 
-            byte[] secretKey = getDecryptedPreferenceValue(userName);
+            byte[] secretKey = getDecryptedPassphraseValue(userName);
             setupContextForLogin(secretKey);
 
             if (!allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName)) {
