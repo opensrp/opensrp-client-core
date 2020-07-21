@@ -44,6 +44,7 @@ public class AllSharedPreferences {
     public static final String MANIFEST_VERSION = "MANIFEST_VERSION";
     public static final String FORMS_VERSION = "FORMS_VERSION";
     private static final String ENCRYPTED_PASSPHRASE_KEY = "ENCRYPTED_PASSPHRASE_KEY";
+    private static final String DB_ENCRYPTION_VERSION = "DB_ENCRYPTION_VERSION";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -349,14 +350,20 @@ public class AllSharedPreferences {
         return preferences;
     }
 
-    public String getPassphrase(String username) {
-        return preferences.getString(ENCRYPTED_PASSPHRASE_KEY + username, null);
+    public String getPassphrase() {
+        return preferences.getString(ENCRYPTED_PASSPHRASE_KEY, null);
     }
 
-    public void savePassphrase(String username, String passphrase) {
-        if (username != null) {
-            preferences.edit().putString(ENCRYPTED_PASSPHRASE_KEY + username, passphrase).commit();
-        }
+    public void savePassphrase(String passphrase) {
+        preferences.edit().putString(ENCRYPTED_PASSPHRASE_KEY, passphrase).commit();
+    }
+
+    public int getDBEncryptionVersion() {
+        return preferences.getInt(DB_ENCRYPTION_VERSION, 0);
+    }
+
+    public void setDBEncryptionVersion(int encryptionVersion) {
+        preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
     }
 
 }

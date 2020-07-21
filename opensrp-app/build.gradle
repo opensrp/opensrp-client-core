@@ -93,7 +93,7 @@ android {
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
-        buildConfigField "int", "ENCRYPTION_VERSION", '1'
+        buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
     }
 
     sourceSets {

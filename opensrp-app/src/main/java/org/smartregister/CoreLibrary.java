@@ -1,6 +1,8 @@
 package org.smartregister;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -8,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import org.smartregister.account.AccountAuthenticatorXml;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
@@ -15,14 +18,17 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.P2PSyncFinishCallback;
+import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
+
+import timber.log.Timber;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
  */
-public class CoreLibrary {
+public class CoreLibrary implements OnAccountsUpdateListener {
 
     private final Context context;
 
@@ -159,8 +165,10 @@ public class CoreLibrary {
     }
 
     public AccountManager getAccountManager() {
-        if (accountManager == null)
+        if (accountManager == null) {
             accountManager = AccountManager.get(context.applicationContext());
+            accountManager.addOnAccountsUpdatedListener(this, null, true);
+        }
 
         return accountManager;
     }
@@ -208,4 +216,23 @@ public class CoreLibrary {
                 .sendBroadcast(intent);
     }
 
+    @Override
+    public void onAccountsUpdated(Account[] accounts) {
+        boolean accountExists = false;
+        for (Account account : accounts) {
+            Account currentUser = AccountHelper.getOauthAccountByNameAndType(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(), authenticatorXml.getAccountType());
+            if (account.equals(currentUser)) {
+                accountExists = true;
+                break;
+            }
+        }
+
+        if (!accountExists) {
+            try {
+                (new SyncUtils(context.applicationContext())).logoutUser();
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
+    }
 }

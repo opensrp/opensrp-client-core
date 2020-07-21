@@ -8,6 +8,7 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
@@ -297,7 +298,7 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
-                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(userName));
+                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase());
             } catch (Exception e) {
                 Timber.e(e);
             }
@@ -588,20 +589,13 @@ public class UserService {
 
                     PasswordHash passwordHash = SecurityHelper.getPasswordHash(encryptionParamValue);
 
-                    // Then save the encrypted secret key
+                    // Save the encrypted secret key for local login
                     String encryptedSecretKey = encryptString(privateKeyEntry, passwordHash.getPassword());
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY, encryptedSecretKey);
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, Base64.encodeToString(passwordHash.getSalt(), Base64.DEFAULT));
 
-                    //Save encrypted passphrase
-                    if (StringUtils.isBlank(allSharedPreferences.getPassphrase(userName))) {
-                        allSharedPreferences.savePassphrase(username, encryptString(privateKeyEntry, SecurityHelper.toBytes(SecurityHelper.generateRandomPassphrase())));
-                    }
+                    updateSharedPreferences(username, privateKeyEntry);
 
-                    // Finally, save the pioneer user
-                    if (StringUtils.isBlank(allSharedPreferences.fetchPioneerUser())) {
-                        allSharedPreferences.savePioneerUser(username);
-                    }
                 }
             } catch (Exception e) {
                 Timber.e(e);
@@ -613,6 +607,30 @@ public class UserService {
         }
 
         return bundle;
+    }
+
+    private void updateSharedPreferences(String username, KeyStore.PrivateKeyEntry privateKeyEntry) throws Exception {
+
+        if (StringUtils.isBlank(allSharedPreferences.fetchPioneerUser())) {
+            allSharedPreferences.savePioneerUser(username);
+        }
+
+        if (allSharedPreferences.getDBEncryptionVersion() > 0 && BuildConfig.DB_ENCRYPTION_VERSION > allSharedPreferences.getDBEncryptionVersion()) {
+
+            processDBEncryptionVersioning(privateKeyEntry);
+
+        } else if (StringUtils.isBlank(allSharedPreferences.getPassphrase())) {
+
+            processDBEncryptionVersioning(privateKeyEntry);
+        }
+
+    }
+
+    private void processDBEncryptionVersioning(KeyStore.PrivateKeyEntry privateKeyEntry) throws Exception {
+        byte[] passphrase = SecurityHelper.toBytes(SecurityHelper.generateRandomPassphrase());
+        DrishtiApplication.getInstance().getRepository().getReadableDatabase().changePassword(SecurityHelper.toChars(passphrase));
+        allSharedPreferences.savePassphrase(encryptString(privateKeyEntry, passphrase));
+        allSharedPreferences.setDBEncryptionVersion(BuildConfig.DB_ENCRYPTION_VERSION);
     }
 
     public boolean hasARegisteredUser() {
