@@ -1,5 +1,6 @@
 package org.smartregister.service;
 
+import org.apache.commons.codec.digest.Md5Crypt;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,6 +43,7 @@ import java.util.UUID;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -359,9 +361,52 @@ public class UserServiceTest extends BaseUnitTest {
         doReturn(password).when(userService).decryptString(privateKeyEntry, password);
         when(repository.canUseThisPassword(password)).thenReturn(true);
         assertTrue(userService.isUserInValidGroup(user, password));
-        verify(repository).canUseThisPassword(password);
         verify(allSharedPreferences).fetchEncryptedPassword(user);
         verify(allSharedPreferences).fetchEncryptedGroupId(user);
+        verify(repository).canUseThisPassword(password);
+    }
+
+
+    @Test
+    public void testIsUserInValidGroup_ReturnsFalseOnError() throws Exception {
+        Whitebox.setInternalState(userService, "keyStore", keyStore);
+        Whitebox.setInternalState(keyStore, "initialized", true);
+        Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
+        String user = "johndoe";
+        when(keyStore.containsAlias(user)).thenReturn(true);
+        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
+        String password = UUID.randomUUID().toString();
+        when(allSharedPreferences.fetchEncryptedPassword(user)).thenReturn(password);
+        when(allSharedPreferences.fetchEncryptedGroupId(user)).thenReturn(password);
+        assertFalse(userService.isUserInValidGroup(user, password));
+        verify(allSharedPreferences).fetchEncryptedPassword(user);
+        verify(allSharedPreferences, never()).fetchEncryptedGroupId(user);
+        verify(repository, never()).canUseThisPassword(password);
+    }
+
+    @Test
+    public void testGetGroupId_ReturnsNullOnError() throws Exception {
+        Whitebox.setInternalState(userService, "keyStore", keyStore);
+        Whitebox.setInternalState(keyStore, "initialized", true);
+        Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
+        assertNull(userService.getGroupId("johndoe"));
+    }
+
+    @Test
+    public void testGetGroupId_ReturnsGroupId() throws Exception {
+        userService = spy(userService);
+        Whitebox.setInternalState(userService, "keyStore", keyStore);
+        Whitebox.setInternalState(keyStore, "initialized", true);
+        Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
+        String password = UUID.randomUUID().toString();
+        String user = "johndoe";
+        when(keyStore.containsAlias(user)).thenReturn(true);
+        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
+        when(allSharedPreferences.fetchEncryptedGroupId(user)).thenReturn(password);
+        doReturn("pass123").when(userService).decryptString(privateKeyEntry, password);
+        assertEquals("pass123", userService.getGroupId(user));
     }
 
 
