@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,8 +36,14 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
         session.setPassword("");
         session.start(360 * 60 * 1000);
+    }
 
-
+    @After
+    public void tearDown() throws Exception {
+        // Log out the user
+        Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
+        session.setPassword(null);
+        session.start(0);
     }
 
     @Test
