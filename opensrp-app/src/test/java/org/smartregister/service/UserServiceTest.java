@@ -1,8 +1,5 @@
 package org.smartregister.service;
 
-import android.security.keystore.KeyGenParameterSpec;
-import android.security.keystore.KeyProperties;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
@@ -33,30 +31,22 @@ import org.smartregister.util.AssetHandler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.KeyPairGeneratorSpi;
 import java.security.KeyStore;
 import java.security.KeyStoreSpi;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.Provider;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.TimeZone;
+import java.util.UUID;
 
-import static java.security.spec.RSAKeyGenParameterSpec.F4;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -360,77 +350,18 @@ public class UserServiceTest extends BaseUnitTest {
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
         String user = "johndoe";
         when(keyStore.containsAlias(user)).thenReturn(true);
-        createKeysM(user, false);
-
-        assertTrue(userService.isUserInValidGroup(user, "password"));
-    }
-
-    public void createKeysM(String alias, boolean requireAuth) {
-        try {
-
-            class TestSecurityProvider extends Provider {
-
-                public TestSecurityProvider() {
-                    super("AndroidKeyStore", 1.0, "Fake AndroidKeyStore which is used for Robolectric tests");
-                    put("KeyStore.AndroidKeyStore", "com.package.KeyStoreTest");
-                    put("KeyPairGenerator.RSA", "your.package.KeyPairGeneratorTest");
-                }
-
-
-            }
-
-            class KeyPairGeneratorTest extends KeyPairGeneratorSpi {
-
-                KeyPairGenerator testGenerator;
-
-                private static final String KEYSTORE_PROVIDER_ANDROID_KEYSTORE = "AndroidKeyStore";
-                private static final String TYPE_RSA = "RSA";
-
-                public KeyPairGeneratorTest() {
-
-                    try {
-                        testGenerator = KeyPairGenerator.getInstance(TYPE_RSA, KEYSTORE_PROVIDER_ANDROID_KEYSTORE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-
-
-                @Override
-                public void initialize(int keysize, SecureRandom random) {
-                    testGenerator.initialize(keysize);
-                }
-
-                @Override
-                public KeyPair generateKeyPair() {
-
-                    return testGenerator.genKeyPair();
-                }
-            }
-
-         //   Security.insertProviderAt(new KeyPairGeneratorTest(), 1);
-            Security.insertProviderAt(new TestSecurityProvider(), 1);
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(
-                    KeyProperties.KEY_ALGORITHM_RSA);
-            keyPairGenerator.initialize(
-                    new KeyGenParameterSpec.Builder(
-                            alias,
-                            KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                            .setAlgorithmParameterSpec(new RSAKeyGenParameterSpec(1024, F4))
-                            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                            .setDigests(KeyProperties.DIGEST_SHA256,
-                                    KeyProperties.DIGEST_SHA384,
-                                    KeyProperties.DIGEST_SHA512)
-                            // Only permit the private key to be used if the user authenticated
-                            // within the last five minutes.
-                            .setUserAuthenticationRequired(requireAuth)
-                            .build());
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
+        String password = UUID.randomUUID().toString();
+        when(allSharedPreferences.fetchEncryptedPassword(user)).thenReturn(password);
+        when(allSharedPreferences.fetchEncryptedGroupId(user)).thenReturn(password);
+        userService = spy(userService);
+        doReturn(password).when(userService).decryptString(privateKeyEntry, password);
+        when(repository.canUseThisPassword(password)).thenReturn(true);
+        assertTrue(userService.isUserInValidGroup(user, password));
+        verify(repository).canUseThisPassword(password);
+        verify(allSharedPreferences).fetchEncryptedPassword(user);
+        verify(allSharedPreferences).fetchEncryptedGroupId(user);
     }
 
 
