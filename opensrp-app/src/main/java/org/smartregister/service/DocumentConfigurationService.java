@@ -1,6 +1,8 @@
 package org.smartregister.service;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -88,8 +90,34 @@ public class DocumentConfigurationService {
             activeManifest.setNew(false);
             manifestRepository.addOrUpdate(activeManifest);
             saveReceivedManifest(receivedManifest);
+            saveManifestVersion(receivedManifest.getVersion());
+            saveFormsVersion(receivedManifest.getFormVersion());
         } else if (activeManifest == null) {
             saveReceivedManifest(receivedManifest);
+            saveManifestVersion(receivedManifest.getVersion());
+            saveFormsVersion(receivedManifest.getFormVersion());
+        }
+    }
+
+    @VisibleForTesting
+    protected void saveManifestVersion(@NonNull String manifestVersion) {
+        boolean manifestVersionSaved = CoreLibrary.getInstance()
+                .context()
+                .allSharedPreferences()
+                .saveManifestVersion(manifestVersion);
+        if (!manifestVersionSaved) {
+            Timber.e(new Exception("Saving manifest version failed"));
+        }
+    }
+
+    @VisibleForTesting
+    protected void saveFormsVersion(@NonNull String formsVersion) {
+        boolean manifestVersionSaved = CoreLibrary.getInstance()
+                .context()
+                .allSharedPreferences()
+                .saveFormsVersion(formsVersion);
+        if (!manifestVersionSaved) {
+            Timber.e(new Exception("Saving manifest version failed"));
         }
     }
 
@@ -188,6 +216,7 @@ public class DocumentConfigurationService {
 
     protected Manifest convertManifestDTOToManifest(ManifestDTO manifestDTO) throws JSONException {
         Manifest manifest = new Manifest();
+        manifest.setVersion(manifestDTO.getIdentifier());
         manifest.setAppVersion(manifestDTO.getAppVersion());
         manifest.setCreatedAt(manifestDTO.getCreatedAt());
 
