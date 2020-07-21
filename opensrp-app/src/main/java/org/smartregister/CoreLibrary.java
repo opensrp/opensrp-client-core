@@ -219,19 +219,21 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     @Override
     public void onAccountsUpdated(Account[] accounts) {
         boolean accountExists = false;
-        for (Account account : accounts) {
-            Account currentUser = AccountHelper.getOauthAccountByNameAndType(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(), authenticatorXml.getAccountType());
-            if (account.equals(currentUser)) {
-                accountExists = true;
-                break;
+        Account currentUser = AccountHelper.getOauthAccountByNameAndType(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(), authenticatorXml.getAccountType());
+        if (currentUser != null) {
+            for (Account account : accounts) {
+                if (account.equals(currentUser)) {
+                    accountExists = true;
+                    break;
+                }
             }
-        }
 
-        if (!accountExists) {
-            try {
-                (new SyncUtils(context.applicationContext())).logoutUser();
-            } catch (Exception e) {
-                Timber.e(e);
+            if (!accountExists) {
+                try {
+                    (new SyncUtils(context.applicationContext())).logoutUser();
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
             }
         }
     }

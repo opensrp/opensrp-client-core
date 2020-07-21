@@ -354,13 +354,16 @@ public class UserService {
         try {
 
             byte[] secretKey = getDecryptedPassphraseValue(userName);
-            setupContextForLogin(secretKey);
+            if (secretKey != null) {
+                setupContextForLogin(secretKey);
 
-            if (!allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName)) {
-                allSharedPreferences.updateANMUserName(userName);
-            }
+                if (!allSharedPreferences.fetchRegisteredANM().equalsIgnoreCase(userName)) {
+                    allSharedPreferences.updateANMUserName(userName);
+                }
 
-            DrishtiApplication.getInstance().getRepository().getReadableDatabase();
+                DrishtiApplication.getInstance().getRepository().getReadableDatabase();
+            } else
+                return false;
 
         } catch (Exception e) {
             Timber.e(e);
@@ -628,9 +631,9 @@ public class UserService {
 
     private void processDBEncryptionVersioning(KeyStore.PrivateKeyEntry privateKeyEntry) throws Exception {
         byte[] passphrase = SecurityHelper.toBytes(SecurityHelper.generateRandomPassphrase());
-        DrishtiApplication.getInstance().getRepository().getReadableDatabase().changePassword(SecurityHelper.toChars(passphrase));
         allSharedPreferences.savePassphrase(encryptString(privateKeyEntry, passphrase));
         allSharedPreferences.setDBEncryptionVersion(BuildConfig.DB_ENCRYPTION_VERSION);
+        DrishtiApplication.getInstance().getRepository().getReadableDatabase().changePassword(SecurityHelper.toChars(passphrase));
     }
 
     public boolean hasARegisteredUser() {
