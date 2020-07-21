@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
-import org.robolectric.shadow.api.Shadow;
 import org.robolectric.shadows.ShadowAlarmManager;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -20,8 +19,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.sync.DrishtiSyncScheduler;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.mock.LoginActivityMock;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 21-07-2020.
