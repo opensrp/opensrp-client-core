@@ -10,6 +10,7 @@ import android.view.MenuItem;
 
 import com.google.gson.Gson;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -83,6 +84,13 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
                 .start()
                 .resume();
         securedActivity = Mockito.spy(controller.get());
+    }
+    @After
+    public void tearDown() throws Exception {
+        // Revert to the previous state where the user is logged out
+        Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
+        session.setPassword(null);
+        session.start(0);
     }
 
     @Test
@@ -171,7 +179,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         metadata.put(AllConstants.FIELD_OVERRIDES_PARAM, fieldOverrideValue);
 
         ReflectionHelpers.setField(securedActivity, "metaData", new Gson().toJson(metadata));
-        ReflectionHelpers.callInstanceMethod(securedActivity, "addFieldOverridesIfExist", ReflectionHelpers.ClassParameter.from(Intent.class, intent));
+        ReflectionHelpers.callInstanceMethod(securedActivity, "addFieldOverridesIfExist", from(Intent.class, intent));
 
         Assert.assertEquals(fieldOverrideValue, intent.getStringExtra(AllConstants.FIELD_OVERRIDES_PARAM));
     }
