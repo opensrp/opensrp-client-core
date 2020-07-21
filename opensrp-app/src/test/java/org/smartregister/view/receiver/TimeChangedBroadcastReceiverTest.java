@@ -18,6 +18,11 @@ import java.util.List;
  */
 public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
 
+    @After
+    public void tearDown() throws Exception {
+        ReflectionHelpers.setStaticField(TimeChangedBroadcastReceiver.class, "singleton", null);
+    }
+
     @Test
     public void initShouldCreateSingletonAndRegisterTimeChangedReceivers() {
         // Assert that the instance does not exist
@@ -50,7 +55,7 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
 
 
     @Test
-    public void destroyShouldUnregisterTheReciever() {
+    public void destroyShouldUnregisterTheReceiverWhenSingletonIsNotNull() {
         // Assert that the instance does not exist
         Assert.assertNull(ReflectionHelpers.getStaticField(TimeChangedBroadcastReceiver.class, "singleton"));
 
