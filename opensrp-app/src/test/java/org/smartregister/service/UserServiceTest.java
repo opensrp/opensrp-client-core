@@ -409,5 +409,27 @@ public class UserServiceTest extends BaseUnitTest {
         assertEquals("pass123", userService.getGroupId(user));
     }
 
+    @Test
+    public void testIsUserInPioneerGroup_ReturnsTrueForPioneerUser() throws Exception {
+        userService = spy(userService);
+        Whitebox.setInternalState(userService, "keyStore", keyStore);
+        Whitebox.setInternalState(keyStore, "initialized", true);
+        Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
+        String password = UUID.randomUUID().toString();
+        String user = "johndoe";
+        when(keyStore.containsAlias(user)).thenReturn(true);
+        KeyStore.PrivateKeyEntry privateKeyEntry = PowerMockito.mock(KeyStore.PrivateKeyEntry.class);
+        when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
+        when(allSharedPreferences.fetchEncryptedGroupId(user)).thenReturn(password);
+        when(allSharedPreferences.fetchPioneerUser()).thenReturn(user);
+        assertTrue(userService.isUserInPioneerGroup(user));
+    }
+
+    @Test
+    public void testIsUserInPioneerGroup_ReturnsFalseForOthers() throws Exception {
+        when(allSharedPreferences.fetchPioneerUser()).thenReturn("user");
+        assertFalse(userService.isUserInPioneerGroup("john"));
+    }
+
 
 }
