@@ -170,7 +170,7 @@ public class HTTPAgentTest {
         PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
         Mockito.doReturn(accountManager).when(coreLibrary).getAccountManager();
         Mockito.doReturn(TEST_ACCOUNT_TYPE).when(accountAuthenticatorXml).getAccountType();
-        Mockito.doReturn(TEST_USERNAME).when(accountAuthenticatorXml).getAccountName();
+        Mockito.doReturn(TEST_USERNAME).when(accountAuthenticatorXml).getAccountLabel();
         Mockito.doReturn(accountAuthenticatorXml).when(coreLibrary).getAccountAuthenticatorXml();
 
         Mockito.doReturn(accountManager).when(coreLibrary).getAccountManager();

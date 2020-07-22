@@ -8,12 +8,10 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
-import org.smartregister.SyncConfiguration;
-import org.smartregister.SyncFilter;
 import org.smartregister.account.AccountHelper;
+import org.smartregister.util.CredentialsHelper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -227,14 +225,14 @@ public class UserService {
             try {
 
                 // Compare stored password hash with provided password hash
-                storedHash = getDecryptedAccountValue(username, AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY);
+                storedHash = DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
 
-                passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
-                passwordHash = SecurityHelper.hashPassword(getEncryptionParamValue(username, password), passwordSalt);
+                passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+                passwordHash = SecurityHelper.hashPassword(password, passwordSalt);
 
                 if (storedHash != null && Arrays.equals(storedHash, passwordHash)) {
 
-                    return isValidDBPassword(getDecryptedPassphraseValue(username));
+                    return isValidDBPassword(DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH));
                 }
             } catch (Exception e) {
                 Timber.e(e);
@@ -247,19 +245,6 @@ public class UserService {
         }
 
         return false;
-    }
-
-    private char[] getEncryptionParamValue(String username, char[] password) {
-
-        char[] encryptionParamValue = password;
-        SyncFilter syncFilter = CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam();
-
-        if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
-            encryptionParamValue = allSharedPreferences.fetchDefaultTeamId(username).toCharArray();
-        } else if (SyncFilter.LOCATION.equals(syncFilter) || SyncFilter.LOCATION_ID.equals(syncFilter)) {
-            encryptionParamValue = allSharedPreferences.fetchDefaultLocalityId(username).toCharArray();
-        }
-        return encryptionParamValue;
     }
 
     private boolean isValidDBPassword(byte[] password) {
@@ -298,7 +283,7 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
-                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase());
+                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name()));
             } catch (Exception e) {
                 Timber.e(e);
             }
@@ -562,8 +547,6 @@ public class UserService {
 
         if (keyStore != null && username != null) {
 
-            char[] encryptionParamValue = null;
-
             try {
 
                 KeyStore.PrivateKeyEntry privateKeyEntry = createUserKeyPair(username);
@@ -572,68 +555,37 @@ public class UserService {
                     return null;
                 }
 
-                SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
-                if (syncConfiguration.getEncryptionParam() != null) {
-                    SyncFilter syncFilter = syncConfiguration.getEncryptionParam();
-                    if (SyncFilter.TEAM.equals(syncFilter) || SyncFilter.TEAM_ID.equals(syncFilter)) {
-                        encryptionParamValue = getUserDefaultTeamId(userInfo).toCharArray();
-                    } else if (SyncFilter.LOCATION.equals(syncFilter) || SyncFilter.LOCATION_ID.equals(syncFilter)) {
-                        encryptionParamValue = getUserLocationId(userInfo).toCharArray();
-                    } else if (SyncFilter.PROVIDER.equals(syncFilter)) {
-                        encryptionParamValue = password;
-                    }
-                }
-
-                if (encryptionParamValue == null || encryptionParamValue.length < 1) {
+                PasswordHash localAuthHash = DrishtiApplication.getInstance().credentialsProvider().generateLocalAuthCredentials(password);
+                if (localAuthHash == null) {
                     return null;
                 }
 
                 if (privateKeyEntry != null) {
 
-                    PasswordHash passwordHash = SecurityHelper.getPasswordHash(encryptionParamValue);
-
                     // Save the encrypted secret key for local login
-                    String encryptedSecretKey = encryptString(privateKeyEntry, passwordHash.getPassword());
-                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY, encryptedSecretKey);
-                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, Base64.encodeToString(passwordHash.getSalt(), Base64.DEFAULT));
+                    String encryptedLocalAuthHash = encryptString(privateKeyEntry, localAuthHash.getPassword());
+                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD, encryptedLocalAuthHash);
+                    bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, Base64.encodeToString(localAuthHash.getSalt(), Base64.DEFAULT));
 
-                    updateSharedPreferences(username, privateKeyEntry);
+                    //Save db credentials
+                    byte[] passphrase = DrishtiApplication.getInstance().credentialsProvider().generateDBCredentials(SecurityHelper.toChars(localAuthHash.getPassword()), userInfo);
+                    DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
 
+                    //Save pioneer user
+                    if (StringUtils.isBlank(allSharedPreferences.fetchPioneerUser())) {
+                        allSharedPreferences.savePioneerUser(username);
+                    }
                 }
+
             } catch (Exception e) {
                 Timber.e(e);
             } finally {
 
                 SecurityHelper.clearArray(password);
-                SecurityHelper.clearArray(encryptionParamValue);
             }
         }
 
         return bundle;
-    }
-
-    private void updateSharedPreferences(String username, KeyStore.PrivateKeyEntry privateKeyEntry) throws Exception {
-
-        if (StringUtils.isBlank(allSharedPreferences.fetchPioneerUser())) {
-            allSharedPreferences.savePioneerUser(username);
-        }
-
-        if (allSharedPreferences.getDBEncryptionVersion() > 0 && BuildConfig.DB_ENCRYPTION_VERSION > allSharedPreferences.getDBEncryptionVersion()) {
-
-            processDBEncryptionVersioning(privateKeyEntry);
-
-        } else if (StringUtils.isBlank(allSharedPreferences.getPassphrase())) {
-
-            processDBEncryptionVersioning(privateKeyEntry);
-        }
-
-    }
-
-    private void processDBEncryptionVersioning(KeyStore.PrivateKeyEntry privateKeyEntry) throws Exception {
-        byte[] passphrase = SecurityHelper.toBytes(SecurityHelper.generateRandomPassphrase());
-        allSharedPreferences.savePassphrase(encryptString(privateKeyEntry, passphrase));
-        allSharedPreferences.setDBEncryptionVersion(BuildConfig.DB_ENCRYPTION_VERSION);
-        DrishtiApplication.getInstance().getRepository().getReadableDatabase().changePassword(SecurityHelper.toChars(passphrase));
     }
 
     public boolean hasARegisteredUser() {

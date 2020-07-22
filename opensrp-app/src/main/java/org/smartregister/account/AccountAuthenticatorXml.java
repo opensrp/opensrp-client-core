@@ -5,15 +5,15 @@ package org.smartregister.account;
  */
 public class AccountAuthenticatorXml {
     private String accountType;
-    private String accountName;
+    private String accountLabel;
     private int icon;
 
     public String getAccountType() {
         return accountType;
     }
 
-    public String getAccountName() {
-        return accountName;
+    public String getAccountLabel() {
+        return accountLabel;
     }
 
     public int getIcon() {
@@ -24,8 +24,8 @@ public class AccountAuthenticatorXml {
         this.accountType = accountType;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+    public void setAccountLabel(String accountLabel) {
+        this.accountLabel = accountLabel;
     }
 
     public void setIcon(int icon) {

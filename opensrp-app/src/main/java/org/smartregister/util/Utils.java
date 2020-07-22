@@ -935,7 +935,7 @@ public class Utils {
 
                         //Account Name
                         int labelId = parser.getAttributeResourceValue(namespace, "label", 0);
-                        authenticatorXml.setAccountName(context.getResources().getString(labelId));
+                        authenticatorXml.setAccountLabel(context.getResources().getString(labelId));
 
                         //Icon
                         int iconImageResourceId = parser.getAttributeResourceValue(namespace, "icon", 0);

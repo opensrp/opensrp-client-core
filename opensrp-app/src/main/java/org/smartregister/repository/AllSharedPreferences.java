@@ -350,12 +350,12 @@ public class AllSharedPreferences {
         return preferences;
     }
 
-    public String getPassphrase() {
-        return preferences.getString(ENCRYPTED_PASSPHRASE_KEY, null);
+    public String getPassphrase(String encryptionParam) {
+        return preferences.getString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).toString(), null);
     }
 
-    public void savePassphrase(String passphrase) {
-        preferences.edit().putString(ENCRYPTED_PASSPHRASE_KEY, passphrase).commit();
+    public void savePassphrase(String passphrase, String encryptionParam) {
+        preferences.edit().putString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).toString(), passphrase).commit();
     }
 
     public int getDBEncryptionVersion() {

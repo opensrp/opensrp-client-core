@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
-import org.smartregister.account.AccountHelper;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
@@ -18,7 +18,6 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.P2PSyncFinishCallback;
-import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 
 import timber.log.Timber;
@@ -218,23 +217,36 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     @Override
     public void onAccountsUpdated(Account[] accounts) {
-        boolean accountExists = false;
-        Account currentUser = AccountHelper.getOauthAccountByNameAndType(CoreLibrary.getInstance().context().allSharedPreferences().fetchRegisteredANM(), authenticatorXml.getAccountType());
-        if (currentUser != null) {
-            for (Account account : accounts) {
-                if (account.equals(currentUser)) {
-                    accountExists = true;
-                    break;
-                }
-            }
+        try {
+            String loggedInUser = context.allSharedPreferences().fetchRegisteredANM();
 
-            if (!accountExists) {
-                try {
-                    (new SyncUtils(context.applicationContext())).logoutUser();
-                } catch (Exception e) {
-                    Timber.e(e);
+            if (!StringUtils.isBlank(loggedInUser)) {
+
+                boolean accountExists = false;
+
+                for (Account account : accounts) {
+                    if (account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
+                        accountExists = true;
+                        break;
+                    }
+                }
+
+                if (!accountExists) {
+
+                    Intent intent = new Intent(context.applicationContext(), getSyncConfiguration().getAuthenticationActivity());
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addCategory(Intent.CATEGORY_HOME);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+                    context.applicationContext().startActivity(intent);
+                    context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
+                    context.userService().logoutSession();
+
                 }
             }
+        } catch (Exception e) {
+            Timber.e(e);
         }
     }
 }

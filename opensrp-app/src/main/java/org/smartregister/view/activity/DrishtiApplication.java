@@ -20,6 +20,7 @@ import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.BitmapImageCache;
 import org.smartregister.util.CrashLyticsTree;
+import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.OpenSRPImageLoader;
 
 import java.io.File;
@@ -40,6 +41,7 @@ public abstract class DrishtiApplication extends Application {
     protected Repository repository;
     private byte[] password;
     private String username;
+    private static CredentialsHelper credentialsHelper;
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
         return (X) mInstance;
@@ -117,11 +119,19 @@ public abstract class DrishtiApplication extends Application {
         return repository;
     }
 
-    public byte[] getPassword() {
-        if (password == null) {
+    public CredentialsHelper credentialsProvider() {
 
-            String username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
-            password = context.userService().getDecryptedPassphraseValue(username);
+        if (credentialsHelper == null) {
+            credentialsHelper = new CredentialsHelper(context);
+        }
+
+        return credentialsHelper;
+    }
+
+    public byte[] getPassword() {
+
+        if (password == null) {
+            password = credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
         }
 
         return password;

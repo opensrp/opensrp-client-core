@@ -107,8 +107,8 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     mAccountManager.addAccountExplicitly(account, response.getRefreshToken(), userData);
                     mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
                     mAccountManager.setPassword(account, response.getRefreshToken());
-                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_SECRET_KEY));
-                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_PASSWORD_SALT));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD));
+                    mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_NAME, userData.getString(AccountHelper.INTENT_KEY.ACCOUNT_NAME));
                     mAccountManager.setUserData(account, AccountHelper.INTENT_KEY.ACCOUNT_REFRESH_TOKEN, response.getRefreshToken());
 
