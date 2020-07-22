@@ -99,6 +99,7 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
+import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 import static org.smartregister.util.Log.logError;
 
 
@@ -898,13 +899,13 @@ public class Utils {
         }
     }
 
-    public static int calculatePercentage(long totalCount, long partialCount){
+    public static int calculatePercentage(long totalCount, long partialCount) {
         if (totalCount < 1) {
             return 100;
         } else if (partialCount < 1) {
             return 0;
         } else {
-           return  Math.round(( partialCount * 100f) /  totalCount);
+            return Math.round((partialCount * 100f) / totalCount);
         }
     }
 
@@ -949,5 +950,19 @@ public class Utils {
             Timber.e(e);
             return null;
         }
+    }
+
+    public static void logoutUser(org.smartregister.Context context, String message) {
+        Intent intent = new Intent(context.applicationContext(), CoreLibrary.getInstance().getSyncConfiguration().getAuthenticationActivity());
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (StringUtils.isNotBlank(message))
+            intent.putExtra(AllConstants.INTENT_KEY.DIALOG_MESSAGE, message);
+
+        context.applicationContext().startActivity(intent);
+        context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
+        context.userService().logoutSession();
     }
 }

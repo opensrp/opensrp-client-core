@@ -415,4 +415,5 @@
     <string name="x_years_months">%1$dس
         %2$dش</string>
 
+    <string name="account_removed">لقد تم تسجيل خروجك لأنه تم حذف حسابك من مدير الحساب</string>
 </resources>

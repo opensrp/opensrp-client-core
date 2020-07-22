@@ -18,6 +18,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.P2PSyncFinishCallback;
+import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
 
 import timber.log.Timber;
@@ -67,6 +68,15 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
+            checkPlatformMigrations();
+        }
+    }
+
+
+    private static void checkPlatformMigrations() {
+        boolean shouldMigrate = CredentialsHelper.shouldMigrate();
+        if (shouldMigrate && StringUtils.isNotBlank(instance.context().userService().getAllSharedPreferences().fetchPioneerUser())) {//Force remote login
+            Utils.logoutUser(instance.context(), instance.context().applicationContext().getString(R.string.new_db_encryption_version_migration));
         }
     }
 
@@ -217,36 +227,30 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     @Override
     public void onAccountsUpdated(Account[] accounts) {
-        try {
-            String loggedInUser = context.allSharedPreferences().fetchRegisteredANM();
+        if (context.allSharedPreferences().getDBEncryptionVersion() > 0) {
+            try {
+                String loggedInUser = context.allSharedPreferences().fetchRegisteredANM();
 
-            if (!StringUtils.isBlank(loggedInUser)) {
+                if (!StringUtils.isBlank(loggedInUser)) {
 
-                boolean accountExists = false;
+                    boolean accountExists = false;
 
-                for (Account account : accounts) {
-                    if (account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
-                        accountExists = true;
-                        break;
+                    for (Account account : accounts) {
+                        if (account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
+                            accountExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!accountExists) {
+
+                        Utils.logoutUser(context, context.applicationContext().getString(R.string.account_removed));
+
                     }
                 }
-
-                if (!accountExists) {
-
-                    Intent intent = new Intent(context.applicationContext(), getSyncConfiguration().getAuthenticationActivity());
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    intent.addCategory(Intent.CATEGORY_HOME);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                    context.applicationContext().startActivity(intent);
-                    context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
-                    context.userService().logoutSession();
-
-                }
+            } catch (Exception e) {
+                Timber.e(e);
             }
-        } catch (Exception e) {
-            Timber.e(e);
         }
     }
 }

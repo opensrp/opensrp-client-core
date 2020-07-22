@@ -163,6 +163,11 @@ public class SecurityHelper {
         }
     }
 
+    /**
+     * Generates random characters of the specified size
+     *
+     * @return a random array of alphanumeric chars
+     */
     public static char[] generateRandomPassphrase() {
 
         return RandomStringUtils.randomAlphanumeric(PASSPHRASE_SIZE).toCharArray();

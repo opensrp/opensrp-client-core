@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import org.joda.time.DateTime;
+import org.smartregister.AllConstants;
 import org.smartregister.R;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.security.SecurityHelper;
@@ -90,9 +91,12 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     protected void onResume() {
         super.onResume();
         if (getIntent() != null) {
-            String logoffReason = getIntent().getStringExtra(ACCOUNT_DISABLED);
+
+            String logoffReason = getIntent().hasExtra(ACCOUNT_DISABLED) ? getIntent().getStringExtra(ACCOUNT_DISABLED) : getIntent().getStringExtra(AllConstants.INTENT_KEY.DIALOG_MESSAGE);
+            String dialogTitle = getIntent().hasExtra(ACCOUNT_DISABLED) ? getString(R.string.account_disabled) : getIntent().getStringExtra(AllConstants.INTENT_KEY.DIALOG_TITLE);
+
             if (logoffReason != null) {
-                showErrorDialog(R.string.account_disabled, logoffReason);
+                showErrorDialog(dialogTitle, logoffReason);
             }
         }
     }
@@ -168,15 +172,14 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showErrorDialog(@StringRes int title, String message) {
+        showErrorDialog(this.getString(title), message);
+    }
+
+    public void showErrorDialog(String title, String message) {
 
         if (alertDialog == null) {
             alertDialog = new AlertDialog.Builder(this)
-                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                        }
-                    }).create();
+                    .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create();
         }
 
         alertDialog.setTitle(title);

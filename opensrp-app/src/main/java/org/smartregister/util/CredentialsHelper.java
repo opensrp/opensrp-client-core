@@ -26,9 +26,15 @@ public class CredentialsHelper {
         this.allSharedPreferences = context.allSharedPreferences();
     }
 
+    public static boolean shouldMigrate() {
+        return CoreLibrary.getInstance().context().allSharedPreferences().getDBEncryptionVersion() == 0 ||
+                (CoreLibrary.getInstance().context().allSharedPreferences().getDBEncryptionVersion() > 0 &&
+                        BuildConfig.DB_ENCRYPTION_VERSION > CoreLibrary.getInstance().context().allSharedPreferences().getDBEncryptionVersion());
+    }
+
     public byte[] getCredentials(String type) {
 
-        String username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
+        String username = allSharedPreferences.fetchRegisteredANM();
 
         if (CREDENTIALS_TYPE.DB_AUTH.equals(type)) {
 
@@ -50,7 +56,6 @@ public class CredentialsHelper {
 
             allSharedPreferences.savePassphrase(encryptedPassphrase, CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name());
             allSharedPreferences.setDBEncryptionVersion(BuildConfig.DB_ENCRYPTION_VERSION);
-
 
         } else if (CREDENTIALS_TYPE.LOCAL_AUTH.equals(type)) {
 

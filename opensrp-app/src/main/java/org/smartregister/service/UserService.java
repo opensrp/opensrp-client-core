@@ -8,10 +8,10 @@ import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
 
 import org.apache.commons.lang3.StringUtils;
+import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.account.AccountHelper;
-import org.smartregister.util.CredentialsHelper;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -29,6 +29,7 @@ import org.smartregister.sync.SaveANMLocationTask;
 import org.smartregister.sync.SaveANMTeamTask;
 import org.smartregister.sync.SaveUserInfoTask;
 import org.smartregister.util.AssetHandler;
+import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -568,13 +569,34 @@ public class UserService {
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, Base64.encodeToString(localAuthHash.getSalt(), Base64.DEFAULT));
 
                     //Save db credentials
-                    byte[] passphrase = DrishtiApplication.getInstance().credentialsProvider().generateDBCredentials(SecurityHelper.toChars(localAuthHash.getPassword()), userInfo);
-                    DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+                    if (CredentialsHelper.shouldMigrate()) {
+
+                        byte[] passphrase = DrishtiApplication.getInstance().credentialsProvider().generateDBCredentials(SecurityHelper.toChars(localAuthHash.getPassword()), userInfo);
+                        byte[] oldPassword = allSharedPreferences.getDBEncryptionVersion() == 0 ? getGroupId(username) : DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+
+                        if (oldPassword != null && !Arrays.equals(passphrase, oldPassword)) {
+                            try {
+
+                                DrishtiApplication.getInstance().getRepository().getReadableDatabase(SecurityHelper.toChars(oldPassword)).changePassword(SecurityHelper.toChars(passphrase));
+                                DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+
+                            } catch (Exception e) {
+                                Timber.e("Database encryption migration to version %s failed!!! ", BuildConfig.DB_ENCRYPTION_VERSION);
+                                Timber.e(e);
+                            }
+
+                        } else {
+
+                            DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+                        }
+                    }
 
                     //Save pioneer user
                     if (StringUtils.isBlank(allSharedPreferences.fetchPioneerUser())) {
                         allSharedPreferences.savePioneerUser(username);
                     }
+
+                    allSharedPreferences.updateANMUserName(userName);//update current logged in user
                 }
 
             } catch (Exception e) {
@@ -748,5 +770,33 @@ public class UserService {
 
     public KeyStore getKeyStore() {
         return keyStore;
+    }
+
+    @Deprecated
+    public byte[] getGroupId(String userName) {
+        if (keyStore != null && userName != null) {
+            try {
+                KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
+                return getGroupId(userName, privateKeyEntry);
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
+        return null;
+    }
+
+    @Deprecated
+    public byte[] getGroupId(String userName, KeyStore.PrivateKeyEntry privateKeyEntry) {
+        if (privateKeyEntry != null) {
+            String encryptedGroupId = allSharedPreferences.fetchEncryptedGroupId(userName);
+            if (encryptedGroupId != null) {
+                try {
+                    return decryptString(privateKeyEntry, encryptedGroupId);
+                } catch (Exception e) {
+                    Timber.e(e);
+                }
+            }
+        }
+        return null;
     }
 }

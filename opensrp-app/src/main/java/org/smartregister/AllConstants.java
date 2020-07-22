@@ -417,6 +417,8 @@ public class AllConstants {
         public static final String IS_REMOTE_LOGIN = "is_remote_login";
         public static final String TASK_GENERATED_EVENT = "task_generated_event";
         public static final String TASK_GENERATED = "task_generated";
+        public static final String DIALOG_TITLE = "dialog_title";
+        public static final String DIALOG_MESSAGE = "dialog_message";
     }
 
     public static final class REGISTER_FRAGMENT {

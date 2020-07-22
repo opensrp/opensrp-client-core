@@ -4,6 +4,7 @@ import android.text.Editable;
 import android.util.Base64;
 
 import org.apache.commons.codec.CharEncoding;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.smartregister.BaseUnitTest;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.CharacterCodingException;
@@ -32,7 +34,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Base64.class, SecretKeyFactory.class})
-public class SecurityHelperTest {
+public class SecurityHelperTest extends BaseUnitTest {
 
     @Mock
     private Editable editable;
@@ -49,7 +51,6 @@ public class SecurityHelperTest {
         MockitoAnnotations.initMocks(this);
         TEST_PASSWORD = "TEST_PASSWORD".toCharArray();
     }
-
 
     @Test
     public void testReadValueClearsEditableAfterReadingValue() {
@@ -158,5 +159,13 @@ public class SecurityHelperTest {
         Assert.assertNotNull(passwordHash);
         Assert.assertNotNull(passwordHash.getPassword());
         Assert.assertNotNull(passwordHash.getSalt());
+    }
+
+    @Test
+    public void testGenerateRandomPassphraseGeneratesAlphanumericArray() {
+        char[] value = SecurityHelper.generateRandomPassphrase();
+        Assert.assertNotNull(value);
+        Assert.assertTrue(StringUtils.isAlphanumeric(new StringBuilder().append(value).toString()));
+        Assert.assertEquals(32, value.length);
     }
 }
