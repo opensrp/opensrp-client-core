@@ -57,10 +57,10 @@ public class CredentialsHelper {
             allSharedPreferences.savePassphrase(encryptedPassphrase, CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name());
             allSharedPreferences.setDBEncryptionVersion(BuildConfig.DB_ENCRYPTION_VERSION);
 
-        } else if (CREDENTIALS_TYPE.LOCAL_AUTH.equals(type)) {
+        }/* else if (CREDENTIALS_TYPE.LOCAL_AUTH.equals(type)) {
 
             //saved in Account Manager by caller
-        }
+        }*/
 
     }
 

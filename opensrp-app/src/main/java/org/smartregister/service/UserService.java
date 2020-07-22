@@ -218,8 +218,6 @@ public class UserService {
         // Check if everything OK for local login
         if (keyStore != null && userName != null && password != null && !allSharedPreferences.fetchForceRemoteLogin(userName)) {
 
-            String username = userName.equalsIgnoreCase(allSharedPreferences.fetchRegisteredANM()) ? allSharedPreferences.fetchRegisteredANM() : userName;
-
             byte[] storedHash = null;
             byte[] passwordHash = null;
             byte[] passwordSalt = null;

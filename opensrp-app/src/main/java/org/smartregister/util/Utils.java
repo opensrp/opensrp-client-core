@@ -99,7 +99,6 @@ import java.util.Map;
 import timber.log.Timber;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
-import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 import static org.smartregister.util.Log.logError;
 
 
