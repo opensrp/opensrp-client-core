@@ -17,7 +17,6 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.smartregister.BaseUnitTest;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.CharacterCodingException;
@@ -34,7 +33,7 @@ import javax.crypto.spec.PBEKeySpec;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Base64.class, SecretKeyFactory.class})
-public class SecurityHelperTest extends BaseUnitTest {
+public class SecurityHelperTest {
 
     @Mock
     private Editable editable;

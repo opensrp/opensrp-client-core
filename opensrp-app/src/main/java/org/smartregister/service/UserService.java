@@ -220,31 +220,55 @@ public class UserService {
 
             byte[] storedHash = null;
             byte[] passwordHash = null;
-            byte[] passwordSalt = null;
             try {
 
                 // Compare stored password hash with provided password hash
-                storedHash = DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
+                storedHash = getLocalAuthenticationCredentials();
 
-                passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
-                passwordHash = SecurityHelper.hashPassword(password, passwordSalt);
+                passwordHash = generatePasswordHash(userName, password);
 
                 if (storedHash != null && Arrays.equals(storedHash, passwordHash)) {
 
-                    return isValidDBPassword(DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH));
+                    return isValidDBPassword(getDBAuthenticationCredentials());
                 }
             } catch (Exception e) {
                 Timber.e(e);
             } finally {
                 SecurityHelper.clearArray(password);
                 SecurityHelper.clearArray(passwordHash);
-                SecurityHelper.clearArray(passwordSalt);
                 SecurityHelper.clearArray(storedHash);
             }
         }
 
         return false;
     }
+
+    @VisibleForTesting
+    protected byte[] generatePasswordHash(String userName, char[] password) {
+        byte[] passwordSalt = null;
+        try {
+            passwordSalt = SecurityHelper.nullSafeBase64Decode(AccountHelper.getAccountManagerValue(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, userName, CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType()));
+            return SecurityHelper.hashPassword(password, passwordSalt);
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            SecurityHelper.clearArray(passwordSalt);
+        }
+
+        return null;
+    }
+
+
+    @VisibleForTesting
+    protected byte[] getLocalAuthenticationCredentials() {
+        return DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
+    }
+
+    @VisibleForTesting
+    protected byte[] getDBAuthenticationCredentials() {
+        return DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+    }
+
 
     private boolean isValidDBPassword(byte[] password) {
         return DrishtiApplication.getInstance().getRepository().canUseThisPassword(password);
@@ -707,7 +731,7 @@ public class UserService {
      * @throws Exception
      */
     @VisibleForTesting
-    protected byte[] decryptString(KeyStore.PrivateKeyEntry privateKeyEntry, String cipherText)throws Exception {
+    protected byte[] decryptString(KeyStore.PrivateKeyEntry privateKeyEntry, String cipherText) throws Exception {
 
         Cipher output;
         if (Build.VERSION.SDK_INT >= 23) {

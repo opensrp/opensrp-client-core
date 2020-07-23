@@ -34,7 +34,7 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
 
         // Make sure the user is logged in
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
-        session.setPassword("");
+        session.setPassword("".getBytes());
         session.start(360 * 60 * 1000);
     }
 

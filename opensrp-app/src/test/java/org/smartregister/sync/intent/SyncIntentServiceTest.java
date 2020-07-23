@@ -1,5 +1,7 @@
 package org.smartregister.sync.intent;
 
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,6 +20,8 @@ import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.SyncUtils;
+
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -76,7 +80,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testHandleSyncCallsLogoutUserIfHasValidAuthorizationIsFalse() {
+    public void testHandleSyncCallsLogoutUserIfHasValidAuthorizationIsFalse() throws AuthenticatorException, OperationCanceledException, IOException {
         Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
         when(syncUtils.verifyAuthorization()).thenReturn(false);
         when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);

@@ -149,6 +149,7 @@ public class CredentialsHelperTest extends BaseUnitTest {
     @Test
     public void generateLocalAuthCredentials() throws Exception {
 
+        Assert.assertNotNull(credentialsHelper);
         PowerMockito.mockStatic(SecurityHelper.class);
         PowerMockito.when(SecurityHelper.getPasswordHash(TEST_DUMMY_PASSWORD)).thenReturn(null);
 
