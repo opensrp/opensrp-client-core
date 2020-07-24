@@ -2,6 +2,7 @@ package org.smartregister.domain.db;
 
 import junit.framework.Assert;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.smartregister.BaseUnitTest;
@@ -21,7 +22,7 @@ public class AddressTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        address = new AddressMock("", new Date(), new Date(), new HashMap<String, String>(), "", "", "", "", "");
+        address = new AddressMock("", new DateTime(), new DateTime(), new HashMap<String, String>(), "", "", "", "", "");
     }
 
     @Test
@@ -43,25 +44,25 @@ public class AddressTest extends BaseUnitTest {
 
 
     public Date getStartDate() {
-        return address.getStartDate();
+        return address.getStartDate().toDate();
     }
 
     @Test
     public void setStartDate() {
         Date startDate = new Date(0l);
-        address.setStartDate(startDate);
+        address.setStartDate(new DateTime(startDate.getTime()));
         Assert.assertEquals(getStartDate(), startDate);
     }
 
 
     public Date getEndDate() {
-        return address.getEndDate();
+        return address.getEndDate().toDate();
     }
 
     @Test
     public void setEndDate() {
         Date endDate = new Date(0l);
-        address.setEndDate(endDate);
+        address.setEndDate(new DateTime(endDate.getTime()));
         Assert.assertEquals(getEndDate(), endDate);
     }
 
@@ -254,7 +255,7 @@ public class AddressTest extends BaseUnitTest {
         Assert.assertEquals(address.durationInDays(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInDays(), -1);
-        address.setStartDate(new Date(0l));
+        address.setStartDate(new DateTime(0l));
         address.setEndDate(null);
         Assert.assertNotNull(address.durationInDays());
     }
@@ -264,7 +265,7 @@ public class AddressTest extends BaseUnitTest {
         Assert.assertEquals(address.durationInWeeks(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInWeeks(), -1);
-        address.setStartDate(new Date(0l));
+        address.setStartDate(new DateTime(0l));
         address.setEndDate(null);
         Assert.assertNotNull(address.durationInWeeks());
     }
@@ -274,7 +275,7 @@ public class AddressTest extends BaseUnitTest {
         Assert.assertEquals(address.durationInMonths(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInMonths(), -1);
-        address.setStartDate(new Date(0l));
+        address.setStartDate(new DateTime(0l));
         address.setEndDate(null);
         Assert.assertNotNull(address.durationInMonths());
     }
@@ -284,7 +285,7 @@ public class AddressTest extends BaseUnitTest {
         Assert.assertEquals(address.durationInYears(), 0);
         address.setStartDate(null);
         Assert.assertEquals(address.durationInYears(), -1);
-        address.setStartDate(new Date(0l));
+        address.setStartDate(new DateTime(0l));
         address.setEndDate(null);
         Assert.assertNotNull(address.durationInYears());
     }
@@ -297,13 +298,13 @@ public class AddressTest extends BaseUnitTest {
 
     @Test
     public void withStartDate() {
-        Date startDate = new Date(0l);
+        DateTime startDate = new DateTime(0l);
         Assert.assertNotNull(address.withStartDate(startDate));
     }
 
     @Test
     public void withEndDate() {
-        Date endDate = new Date(0l);
+        DateTime endDate = new DateTime(0l);
         Assert.assertNotNull(address.withEndDate(endDate));
     }
 

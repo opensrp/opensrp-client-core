@@ -45,8 +45,6 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
     protected LoginResponse doInBackground(Void... params) {
         LoginResponse loginResponse = getOpenSRPContext().userService().isValidRemoteLogin(mUsername, mPassword);
         if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS) && getOpenSRPContext().userService().getGroupId(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
-
-
             publishProgress(R.string.loading_client_settings);
 
             SyncSettingsServiceHelper syncSettingsServiceHelper = new SyncSettingsServiceHelper(getOpenSRPContext().configuration().dristhiBaseURL(), getOpenSRPContext().getHttpAgent());
@@ -54,26 +52,20 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
             syncSettingsServiceHelper.setPassword(mPassword);
 
             try {
-                JSONArray settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
-
+                JSONArray settings = pullSetting(syncSettingsServiceHelper, loginResponse);
                 JSONObject data = new JSONObject();
                 data.put(AllConstants.PREF_KEY.SETTINGS, settings);
                 loginResponse.setRawData(data);
-
             } catch (JSONException e) {
                 Timber.e(e);
             }
-
         }
-
         return loginResponse;
     }
 
     @Override
     protected void onProgressUpdate(Integer... messageIdentifier) {
-
         mLoginView.updateProgressMessage(getOpenSRPContext().applicationContext().getString(messageIdentifier[0]));
-
     }
 
     @Override
@@ -93,5 +85,15 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
         return CoreLibrary.getInstance().context();
     }
 
+    protected JSONArray pullSetting(SyncSettingsServiceHelper syncSettingsServiceHelper, LoginResponse loginResponse) {
+        JSONArray settings = new JSONArray();
+        try {
+            settings = syncSettingsServiceHelper.pullSettingsFromServer(Utils.getFilterValue(loginResponse, CoreLibrary.getInstance().getSyncConfiguration().getSyncFilterParam()));
+        } catch (JSONException e) {
+            Timber.e(e);
+        }
+
+        return settings;
+    }
 }
 

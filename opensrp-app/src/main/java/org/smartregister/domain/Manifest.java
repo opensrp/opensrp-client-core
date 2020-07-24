@@ -9,7 +9,10 @@ import java.util.List;
  * @author cozej4 https://github.com/cozej4
  */
 public class Manifest {
+
     private String id;
+
+    private String version;
 
     private String appVersion;
 
@@ -77,5 +80,13 @@ public class Manifest {
 
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }

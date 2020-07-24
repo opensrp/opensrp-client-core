@@ -1,10 +1,10 @@
 package org.smartregister.util;
 
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
 import android.util.Xml;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,9 +26,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.cloudant.models.Client;
 import org.smartregister.cloudant.models.Event;
 import org.smartregister.domain.ANM;
-import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.SyncStatus;
-import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.FormDataRepository;
 import org.smartregister.service.ANMService;
@@ -40,7 +38,6 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Locale;
 
 /**
  * Created by kaderchowdhury on 14/11/17.
@@ -214,66 +211,26 @@ public class FormUtilsTest extends BaseUnitTest {
     }
 
     @Test
-    public void getFormJsonFromRepositoryOrAssets() throws Exception {
-        formUtils = new FormUtils(context_);
-
-        Resources resources = Mockito.mock(Resources.class);
-        Configuration configuration = Mockito.mock(Configuration.class);
-        ClientFormRepository clientFormRepository = Mockito.mock(ClientFormRepository.class);
-        ClientForm clientForm = new ClientForm();
-        clientForm.setJson("{\"form\":\"Sick Child Referral\",\"count\":\"1\",\"encounter_type\":\" \",\"entity_id\":\"\",\"relational_id\":\"\",\"rules_file\":\"rule/general_neat_referral_form_rules.yml\",\"metadata\":{\"start\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"start\",\"openmrs_entity_id\":\"163137AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"end\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"end\",\"openmrs_entity_id\":\"163138AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"today\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"encounter\",\"openmrs_entity_id\":\"encounter_date\"},\"deviceid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"deviceid\",\"openmrs_entity_id\":\"163149AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"subscriberid\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"subscriberid\",\"openmrs_entity_id\":\"163150AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"simserial\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"simserial\",\"openmrs_entity_id\":\"163151AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"phonenumber\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_data_type\":\"phonenumber\",\"openmrs_entity_id\":\"163152AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"encounter_location\":\"\",\"look_up\":{\"entity_id\":\"\",\"value\":\"\"}},\"steps\":[{\"title\":\"Sick child form\",\"fields\":[{\"name\":\"chw_referral_service\",\"type\":\"invisible\",\"properties\":{\"text\":\"Choose referral service\"},\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"09978\",\"openmrs_entity_parent\":\"\"},\"options\":[],\"required_status\":\"yes:Please specify referral service\"},{\"name\":\"problem\",\"type\":\"multi_choice_checkbox\",\"properties\":{\"text\":\"Pick condition/problem associated with the client.\"},\"meta_data\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"options\":[{\"name\":\"Fast_breathing_and_difficulty_with_breathing\",\"text\":\"Fast breathing and difficulty with breathing\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"142373AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Umbilical_cord_navel_bleeding\",\"text\":\"Umbilical cord/navel bleeding\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"123844AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Excessive_crying\",\"text\":\"Excessive crying\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"140944AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Convulsions\",\"text\":\"Convulsions\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"113054AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Unable_to_breastfeed_or_swallow\",\"text\":\"Unable to breastfeed or swallow\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"159861AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Neck_stiffness\",\"text\":\"Neck stiffness\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"112721AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Fever\",\"text\":\"Fever\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"140238AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Bloating\",\"text\":\"Bloating\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"147132AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Redness_around_the_umbilical_cord_foul_smelling_discharge_from_the_umbilical_cord\",\"text\":\"Redness around the umbilical cord, foul-smelling discharge from the umbilical cord\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"132407AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Bacterial_conjunctivitis\",\"text\":\"Bacterial conjunctivitis\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"148026AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Severe_anaemia\",\"text\":\"Severe anaemia\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"162044AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Severe_abdominal_pain\",\"text\":\"Severe abdominal pain\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"165271AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Pale_or_jaundiced\",\"text\":\"Pale or jaundiced\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"136443AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Cyanosis_blueness_of_lips\",\"text\":\"Cyanosis (blueness of lips)\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"143050AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Skin_rash_pustules\",\"text\":\"Skin rash / pustules\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"512AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Diarrhea\",\"text\":\"Diarrhea\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"142412AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Vomiting\",\"text\":\"Vomiting\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"122983AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Disabilities\",\"text\":\"Disabilities\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"162558AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Premature_baby\",\"text\":\"Premature baby\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"159908AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Care_of_HIV_exposed_infant\",\"text\":\"Care of HIV-exposed infant\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"164818AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Immunisation\",\"text\":\"Immunisation\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"1914AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Other_symptom\",\"text\":\"Other symptom\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}}],\"required_status\":\"yes:Please specify client's problems\"},{\"name\":\"problem_other\",\"type\":\"text_input_edit_text\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"163182AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"properties\":{\"hint\":\"Other symptoms\",\"type\":\"name\"},\"required_status\":\"true:Please specify other symptoms\",\"subjects\":\"problem:map\"},{\"name\":\"service_before_referral\",\"meta_data\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"164378AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"type\":\"multi_choice_checkbox\",\"properties\":{\"text\":\"Pre-referral management given.\"},\"options\":[{\"name\":\"ORS\",\"text\":\"ORS\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"351AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Panadol\",\"text\":\"Panadol\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"70116AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"Other_treatment\",\"text\":\"Other treatment\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}},{\"name\":\"None\",\"text\":\"None\",\"is_exclusive\":true,\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"164369AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"\"}}],\"required_status\":\"Pre-referral management field is required\"},{\"name\":\"service_before_referral_other\",\"type\":\"text_input_edit_text\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"160632AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\",\"openmrs_entity_parent\":\"164378AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"properties\":{\"hint\":\"Other Treatment\",\"type\":\"name\"},\"required_status\":\"true:Please specify other treatment given\",\"subjects\":\"service_before_referral:map\"},{\"name\":\"chw_referral_hf\",\"type\":\"spinner\",\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"chw_referral_hf\",\"openmrs_entity_parent\":\"\"},\"properties\":{\"text\":\"Choose referral facility\",\"searchable\":\"Choose referral facility\"},\"options\":[],\"required_status\":\"yes:Please specify referral facility\"},{\"name\":\"referral_appointment_date\",\"type\":\"datetime_picker\",\"properties\":{\"hint\":\"Please select the appointment date\",\"type\":\"date_picker\",\"display_format\":\"dd/MM/yyyy\"},\"meta_data\":{\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_appointment_date\",\"openmrs_entity_parent\":\"\"},\"required_status\":\"true:Please specify the appointment date\"},{\"name\":\"referral_date\",\"meta_data\":{\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"163181AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"},\"type\":\"hidden\"},{\"name\":\"referral_time\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_time\",\"type\":\"hidden\"},{\"name\":\"referral_type\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_type\",\"type\":\"hidden\"},{\"name\":\"referral_status\",\"openmrs_entity_parent\":\"\",\"openmrs_entity\":\"concept\",\"openmrs_entity_id\":\"referral_status\",\"type\":\"hidden\"}]}]}");
-
-        configuration.locale = new Locale("en");
-
-        Mockito.when( context_.getResources()).thenReturn(resources);
-        Mockito.when( resources.getConfiguration()).thenReturn(configuration);
-        Mockito.when( CoreLibrary.getInstance().context().getClientFormRepository()).thenReturn(clientFormRepository);
-        Mockito.when( clientFormRepository.getActiveClientFormByIdentifier("sick_child_referral_form")).thenReturn(clientForm);
-
-        JSONObject form = formUtils.getFormJsonFromRepositoryOrAssets("sick_child_referral_form");
-
-        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier("sick_child_referral_form");
-        Assert.assertNotNull(form);
+    public void getFormJsonShouldReturnCorrectFormWithSameLength() {
+        Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(context_).getResources();
+        Mockito.doReturn(RuntimeEnvironment.application.getApplicationContext()).when(context_).getApplicationContext();
+        Assert.assertEquals(10011, formUtils.getFormJson("test_basic_form").toString().length());
     }
 
     @Test
-    public void extractFormNameWithoutExtensionShouldReturnNameWithoutExtension() {
-        String expectedAns = "registration_form";
-
-        Assert.assertEquals(expectedAns, formUtils.extractFormNameWithoutExtension("registration_form.json"));
+    public void getIndexForFormNameShouldReturnCorrectIndex() {
+        String[] formNames = new String[] {"Birth Reg", "Immunisation Reg", "Death Form"};
+        Assert.assertEquals(1, formUtils.getIndexForFormName("Immunisation Reg", formNames));
     }
 
     @Test
-    public void getRulesFromRepositoryShouldCallRepositoryQueryingClientForm() {
-        String rulesFileIdentifier = "registration_calculation.yml";
-        ClientForm clientForm = new ClientForm();
-        clientForm.setJson("");
-        ClientFormRepository clientFormRepository = Mockito.mock(ClientFormRepository.class);
-        Mockito.doReturn(clientFormRepository).when(context).getClientFormRepository();
-        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
+    public void getJsonFieldFromArrayShouldReturnObjectWithCorrectNameProperty() throws JSONException {
+        JSONArray jsonArray = new JSONArray("[{\"name\":\"first_name\",\"type\":\"edit_text\",\"value\":\"John\"},{\"name\":\"last_name\",\"type\":\"edit_text\",\"value\":\"Doe\"}]");
 
-        Assert.assertNotNull(formUtils.getRulesFromRepository(rulesFileIdentifier));
-
-        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(rulesFileIdentifier));
+        JSONObject resultJson = ReflectionHelpers.callInstanceMethod(formUtils, "getJsonFieldFromArray"
+                , ReflectionHelpers.ClassParameter.from(String.class, "last_name")
+                , ReflectionHelpers.ClassParameter.from(JSONArray.class, jsonArray));
+        Assert.assertEquals("Doe", resultJson.getString("value"));
     }
 
-    @Test
-    public void getSubFormFromRepository() {
-        String subFormIdentifier = "some_tests";
-        ClientForm clientForm = new ClientForm();
-        clientForm.setJson("{}");
-        ClientFormRepository clientFormRepository = Mockito.mock(ClientFormRepository.class);
-        Mockito.doReturn(clientFormRepository).when(context).getClientFormRepository();
-        Mockito.doReturn(clientForm).when(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
-        ReflectionHelpers.setField(formUtils, "mContext", RuntimeEnvironment.application);
-
-        JSONObject jsonObject = formUtils.getSubFormJsonFromRepository(subFormIdentifier, null, RuntimeEnvironment.application, false);
-
-        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(subFormIdentifier));
-        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq(subFormIdentifier + ".json"));
-        Mockito.verify(clientFormRepository).getActiveClientFormByIdentifier(Mockito.eq("json.form/sub_form/" + subFormIdentifier));
-
-        Assert.assertEquals(0, jsonObject.length());
-    }
 }

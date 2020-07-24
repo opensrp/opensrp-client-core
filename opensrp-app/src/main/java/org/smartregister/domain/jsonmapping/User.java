@@ -1,7 +1,7 @@
 package org.smartregister.domain.jsonmapping;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.smartregister.domain.db.BaseEntity;
+import org.smartregister.domain.BaseEntity;
 
 import java.util.ArrayList;
 import java.util.List;

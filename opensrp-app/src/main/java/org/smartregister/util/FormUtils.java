@@ -2,16 +2,12 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Xml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.vijay.jsonwizard.utils.NativeFormLangUtils;
 
 import org.apache.commons.codec.CharEncoding;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,11 +22,9 @@ import org.smartregister.clientandeventmodel.FormEntityConverter;
 import org.smartregister.clientandeventmodel.FormField;
 import org.smartregister.clientandeventmodel.FormInstance;
 import org.smartregister.clientandeventmodel.SubFormData;
-import org.smartregister.domain.ClientForm;
 import org.smartregister.domain.SyncStatus;
 import org.smartregister.domain.form.FormSubmission;
 import org.smartregister.domain.form.SubForm;
-import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.service.intentservices.ReplicationIntentService;
 import org.smartregister.sync.CloudantDataHandler;
 import org.w3c.dom.Attr;
@@ -47,7 +41,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -590,17 +583,17 @@ public class FormUtils {
      * Iterate through the provided array and retrieve a json object whose name attribute matches
      * the name supplied
      *
-     * @param fieldName
+     * @param nameValue
      * @param array
      * @return
      */
-    private JSONObject getJsonFieldFromArray(String fieldName, JSONArray array) {
+    private JSONObject getJsonFieldFromArray(String nameValue, JSONArray array) {
         try {
             if (array != null) {
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject field = array.getJSONObject(i);
                     String name = field.has("name") ? field.getString("name") : null;
-                    if (name.equals(fieldName)) {
+                    if (nameValue.equals(name)) {
                         return field;
                     }
                 }
@@ -1128,135 +1121,6 @@ public class FormUtils {
 
     private void createNewClientDocument(org.smartregister.cloudant.models.Client client) {
         mCloudantDataHandler.createClientDocument(client);
-    }
-
-    public JSONObject getFormJsonFromRepositoryOrAssets(String formIdentity) {
-        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
-        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-
-        //Check the current locale of the app to load the correct version of the form in the desired language
-        String localeFormIdentity = formIdentity;
-        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
-            localeFormIdentity = localeFormIdentity + "-" + locale;
-        }
-
-        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
-
-        if (clientForm == null) {
-            String revisedFormName = extractFormNameWithoutExtension(localeFormIdentity);
-            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
-        }
-
-        try {
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", formIdentity);
-
-                JSONObject formJson = new JSONObject(clientForm.getJson());
-                injectFormStatus(formJson, clientForm);
-
-                return formJson;
-            }
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-        Timber.d("============%s form loaded from Assets=============", formIdentity);
-        return getFormJson(formIdentity);
-    }
-
-    @Nullable
-    public JSONObject getSubFormJsonFromRepository(String formIdentity, String subFormsLocation, Context context, boolean translateSubForm) {
-        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
-        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-
-        //Check the current locale of the app to load the correct version of the form in the desired language
-        String localeFormIdentity = formIdentity;
-        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
-            localeFormIdentity = localeFormIdentity + "-" + locale;
-        }
-
-        String dbFormName = StringUtils.isBlank(subFormsLocation) ? localeFormIdentity : subFormsLocation + "/" + localeFormIdentity;
-        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
-
-        if (clientForm == null) {
-            String revisedFormName = extractFormNameWithoutExtension(dbFormName);
-            clientForm = clientFormRepository.getActiveClientFormByIdentifier(revisedFormName);
-
-            if (clientForm == null) {
-                String finalSubFormsLocation = com.vijay.jsonwizard.utils.FormUtils.getSubFormLocation(subFormsLocation);
-                dbFormName = StringUtils.isBlank(finalSubFormsLocation) ? localeFormIdentity : finalSubFormsLocation + "/" + localeFormIdentity;
-                clientForm = clientFormRepository.getActiveClientFormByIdentifier(dbFormName);
-            }
-        }
-
-        try {
-            if (clientForm != null) {
-                Timber.d("============%s form loaded from db============", dbFormName);
-                String originalJson = clientForm.getJson();
-
-                if (translateSubForm) {
-                    originalJson = NativeFormLangUtils.getTranslatedString(originalJson, context);
-                }
-
-                return new JSONObject(originalJson);
-            }
-        } catch (JSONException e) {
-            Timber.e(e);
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public BufferedReader getRulesFromRepository(String fileName) {
-        ClientFormRepository clientFormRepository = CoreLibrary.getInstance().context().getClientFormRepository();
-        String locale = mContext.getResources().getConfiguration().locale.getLanguage();
-
-        //Check the current locale of the app to load the correct version of the form in the desired language
-        String localeFormIdentity = fileName;
-        if (!Locale.ENGLISH.getLanguage().equals(locale)) {
-            localeFormIdentity = localeFormIdentity + "-" + locale;
-        }
-
-        ClientForm clientForm = clientFormRepository.getActiveClientFormByIdentifier(localeFormIdentity);
-        if (clientForm != null) {
-            Timber.d("============%s form loaded from db============", localeFormIdentity);
-            String originalJson = clientForm.getJson();
-
-            return new BufferedReader(new StringReader(originalJson));
-        }
-
-        return null;
-    }
-
-    @NonNull
-    protected String extractFormNameWithoutExtension(String localeFormIdentity) {
-        return localeFormIdentity.endsWith(AllConstants.JSON_FILE_EXTENSION)
-                ? localeFormIdentity.substring(0, localeFormIdentity.length() - AllConstants.JSON_FILE_EXTENSION.length()) : localeFormIdentity + AllConstants.JSON_FILE_EXTENSION;
-    }
-
-    public void injectFormStatus(@NonNull JSONObject jsonObject, @NonNull ClientForm clientForm) {
-        if (clientForm.isNew()) {
-            try {
-                jsonObject.put(AllConstants.JSON.Property.IS_NEW, clientForm.isNew());
-                jsonObject.put(AllConstants.JSON.Property.CLIENT_FORM_ID, clientForm.getId());
-                jsonObject.put(AllConstants.JSON.Property.FORM_VERSION, clientForm.getVersion());
-            } catch (JSONException e) {
-                Timber.e(e);
-            }
-        }
-    }
-
-    public static int getClientFormId(@NonNull JSONObject jsonObject) {
-        try {
-            return jsonObject.getInt(AllConstants.JSON.Property.CLIENT_FORM_ID);
-        } catch (JSONException e) {
-            Timber.e(e);
-            return 0;
-        }
-    }
-
-    public static boolean isFormNew(@NonNull JSONObject jsonObject) {
-        return jsonObject.optBoolean(AllConstants.JSON.Property.IS_NEW, false);
     }
 
 }

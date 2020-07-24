@@ -57,7 +57,7 @@ public class PlanDefinitionSearchRepository extends BaseRepository {
         contentValues.put(PLAN_ID, planDefinition.getIdentifier());
         contentValues.put(JURISDICTION_ID, jurisdiction);
         contentValues.put(NAME, planDefinition.getName());
-        contentValues.put(STATUS, planDefinition.getStatus());
+        contentValues.put(STATUS, planDefinition.getStatus().value());
         contentValues.put(START, planDefinition.getEffectivePeriod().getStart().toDate().getTime());
         contentValues.put(END, planDefinition.getEffectivePeriod().getEnd().toDate().getTime());
         contentValues.put(JURISDICTION_ID, jurisdiction);

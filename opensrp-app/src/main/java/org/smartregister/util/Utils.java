@@ -32,6 +32,7 @@ import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -861,4 +862,48 @@ public class Utils {
 
         return true;
     }
+
+    @Nullable
+    public static String getAppId(@NonNull Context context) {
+        PackageInfo packageInfo = getPackageInfo(context);
+
+        return packageInfo != null? packageInfo.packageName : null;
+    }
+
+    @Nullable
+    public static String getAppVersion(@NonNull Context context) {
+        PackageInfo packageInfo = getPackageInfo(context);
+        return packageInfo != null? packageInfo.versionName : null;
+    }
+
+    @Nullable
+    private static PackageInfo getPackageInfo(@NonNull Context context) {
+
+        try {
+            PackageInfo pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return pInfo;
+        } catch (PackageManager.NameNotFoundException e) {
+            Timber.e(e);
+            return null;
+        }
+    }
+
+    public static Long tryParseLong(String value, long defaultValue) {
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
+    public static int calculatePercentage(long totalCount, long partialCount){
+        if (totalCount < 1) {
+            return 100;
+        } else if (partialCount < 1) {
+            return 0;
+        } else {
+           return  Math.round(( partialCount * 100f) /  totalCount);
+        }
+    }
+
 }

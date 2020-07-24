@@ -3,8 +3,6 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
-
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -13,7 +11,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.domain.Geometry;
 import org.smartregister.domain.Location;
-import org.smartregister.domain.db.Client;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.repository.helper.MappingHelper;
 
