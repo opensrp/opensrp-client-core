@@ -270,7 +270,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetServerTimeZone_ExtractsTimeZoneFromResponse() {
+    public void testGetServerTimeZoneForExtractsTimeZoneFromResponse() {
         loginResponseData = mock(LoginResponseData.class);
         loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
         TimeZone timezone = UserService.getServerTimeZone(loginResponseData);
@@ -281,13 +281,13 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testValidateDeviceTime_NullServerTimeZoneReturnsError() {
+    public void testValidateDeviceTimeForNullServerTimeZoneReturnsError() {
         loginResponseData = mock(LoginResponseData.class);
         assertEquals(TimeStatus.ERROR, userService.validateDeviceTime(loginResponseData, 3600));
     }
 
     @Test
-    public void testValidateDeviceTime_DifferentTimeZoneServerTimeZoneReturnsMismatch() {
+    public void testValidateDeviceTimeForDifferentTimeZoneServerTimeZoneReturnsMismatch() {
         loginResponseData = mock(LoginResponseData.class);
         loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
@@ -295,7 +295,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testValidateDeviceTime_DifferentTimeReturnsMismatch() {
+    public void testValidateDeviceTimeForDifferentTimeReturnsMismatch() {
         loginResponseData = mock(LoginResponseData.class);
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, -30);
@@ -305,7 +305,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testValidateDeviceTime_SameTimeTimeAndTimeZone() {
+    public void testValidateDeviceTimeSameTimeTimeAndTimeZone() {
         loginResponseData = mock(LoginResponseData.class);
         Calendar calendar = Calendar.getInstance();
         loginResponseData.time = new Time(calendar.getTime(), TimeZone.getTimeZone("Africa/Nairobi"));
@@ -315,14 +315,14 @@ public class UserServiceTest extends BaseUnitTest {
 
 
     @Test
-    public void testValidateStoredServerTimeZone_NullServerTimeZoneReturnsError() {
+    public void testValidateStoredServerTimeZoneForNullServerTimeZoneReturnsError() {
         when(allSharedPreferences.fetchServerTimeZone()).thenReturn(null);
         assertEquals(TimeStatus.ERROR, userService.validateStoredServerTimeZone());
         verify(allSharedPreferences).saveForceRemoteLogin(true);
     }
 
     @Test
-    public void testValidateStoredServerTimeZone_DifferentTimeZoneServerTimeZoneReturnsMismatch() {
+    public void testValidateStoredServerTimeZoneForDifferentTimeZoneServerTimeZoneReturnsMismatch() {
         when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
         assertEquals(TimeStatus.TIMEZONE_MISMATCH, userService.validateStoredServerTimeZone());
@@ -332,7 +332,7 @@ public class UserServiceTest extends BaseUnitTest {
 
 
     @Test
-    public void testValidateStoredServerTimeZone_SameTimeTimeAndTimeZone() {
+    public void testValidateStoredServerTimeZoneForSameTimeTimeAndTimeZone() {
         when(allSharedPreferences.fetchServerTimeZone()).thenReturn("Africa/Nairobi");
         TimeZone.setDefault(TimeZone.getTimeZone("Africa/Nairobi"));
         assertEquals(TimeStatus.OK, userService.validateStoredServerTimeZone());
@@ -341,12 +341,12 @@ public class UserServiceTest extends BaseUnitTest {
 
 
     @Test
-    public void testIsUserInValidGroup_NullUserAndPassword() {
+    public void testIsUserInValidGroupForNullUserAndPassword() {
         assertFalse(userService.isUserInValidGroup(null, null));
     }
 
     @Test
-    public void testIsUserInValidGroup_ValidUserAndPassword() throws Exception {
+    public void testIsUserInValidGroupForValidUserAndPassword() throws Exception {
         Whitebox.setInternalState(userService, "keyStore", keyStore);
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
@@ -368,7 +368,7 @@ public class UserServiceTest extends BaseUnitTest {
 
 
     @Test
-    public void testIsUserInValidGroup_ReturnsFalseOnError() throws Exception {
+    public void testIsUserInValidGroupShouldReturnFalseOnError() throws Exception {
         Whitebox.setInternalState(userService, "keyStore", keyStore);
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
@@ -386,7 +386,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetGroupId_ReturnsNullOnError() throws Exception {
+    public void testGetGroupIdShShouldReturnNullOnError() throws Exception {
         Whitebox.setInternalState(userService, "keyStore", keyStore);
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
@@ -394,7 +394,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetGroupId_ReturnsGroupId() throws Exception {
+    public void testGetGroupIdShouldReturnGroupId() throws Exception {
         userService = spy(userService);
         Whitebox.setInternalState(userService, "keyStore", keyStore);
         Whitebox.setInternalState(keyStore, "initialized", true);
@@ -410,7 +410,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testIsUserInPioneerGroup_ReturnsTrueForPioneerUser() throws Exception {
+    public void testIsUserInPioneerGroupShouldReturnTrueForPioneerUser() throws Exception {
         userService = spy(userService);
         Whitebox.setInternalState(userService, "keyStore", keyStore);
         Whitebox.setInternalState(keyStore, "initialized", true);
@@ -426,7 +426,7 @@ public class UserServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void testIsUserInPioneerGroup_ReturnsFalseForOthers() throws Exception {
+    public void testIsUserInPioneerGroupShouldReturnFalseForOthers() throws Exception {
         when(allSharedPreferences.fetchPioneerUser()).thenReturn("user");
         assertFalse(userService.isUserInPioneerGroup("john"));
     }
