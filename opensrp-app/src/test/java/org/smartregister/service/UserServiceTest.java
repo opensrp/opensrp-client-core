@@ -1,6 +1,5 @@
 package org.smartregister.service;
 
-import org.apache.commons.codec.digest.Md5Crypt;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -382,11 +381,11 @@ public class UserServiceTest extends BaseUnitTest {
         assertFalse(userService.isUserInValidGroup(user, password));
         verify(allSharedPreferences).fetchEncryptedPassword(user);
         verify(allSharedPreferences, never()).fetchEncryptedGroupId(user);
-        verify(repository, never()).canUseThisPassword(password);
+        verifyZeroInteractions(repository);
     }
 
     @Test
-    public void testGetGroupIdShShouldReturnNullOnError() throws Exception {
+    public void testGetGroupIdShouldReturnNullOnError() throws Exception {
         Whitebox.setInternalState(userService, "keyStore", keyStore);
         Whitebox.setInternalState(keyStore, "initialized", true);
         Whitebox.setInternalState(keyStore, "keyStoreSpi", keyStoreSpi);
