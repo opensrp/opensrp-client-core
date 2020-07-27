@@ -26,6 +26,7 @@ import org.smartregister.SyncConfiguration;
 import org.smartregister.customshadows.ShadowOpenSRPImageLoader;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.p2p.model.DataType;
+import org.smartregister.sync.P2PClassifier;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
@@ -41,7 +42,8 @@ public class P2PReceiverTransferDaoTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
-
+    @Mock
+    private P2PClassifier<JSONObject> classifier;
     @Mock
     private EventClientRepository eventClientRepository;
     @Mock
@@ -52,12 +54,11 @@ public class P2PReceiverTransferDaoTest {
     private TaskRepository taskRepository;
     @Mock
     private ImageRepository imageRepository;
-
+    @Mock
+    private EventClientRepository foreignEventClientRepository;
     @Mock
     private CoreLibrary coreLibrary;
-
     private Context context;
-
     private P2PReceiverTransferDao p2PReceiverTransferDao;
 
     @Before
@@ -69,9 +70,11 @@ public class P2PReceiverTransferDaoTest {
         Mockito.doReturn(taskRepository).when(context).getTaskRepository();
         Mockito.doReturn(imageRepository).when(context).imageRepository();
         Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();
+        Mockito.doReturn(foreignEventClientRepository).when(context).getForeignEventClientRepository();
 
         CoreLibrary.init(context, Mockito.mock(SyncConfiguration.class));
-        p2PReceiverTransferDao = new P2PReceiverTransferDao();
+        p2PReceiverTransferDao = Mockito.spy(new P2PReceiverTransferDao());
+        Mockito.doReturn(classifier).when(p2PReceiverTransferDao).getP2PClassifier();
     }
 
     @After
@@ -94,14 +97,16 @@ public class P2PReceiverTransferDaoTest {
         }
 
         long actualMaxRowId = p2PReceiverTransferDao.receiveJson(dataType, jsonArray);
-        Assert.assertEquals((count-1)*2, actualMaxRowId);
+        Assert.assertEquals((count - 1) * 2, actualMaxRowId);
     }
 
     @Test
     public void receiveJsonShouldCallEventClientRepositoryBatchInsertEvents() throws JSONException {
         DataType dataType = new DataType(p2PReceiverTransferDao.event.getName(), DataType.Type.NON_MEDIA, 1);
+        JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-
+        jsonObject.put(AllConstants.ROWID, 0);
+        jsonArray.put(jsonObject);
         p2PReceiverTransferDao.receiveJson(dataType, jsonArray);
         Mockito.verify(eventClientRepository).batchInsertEvents(Mockito.eq(jsonArray), Mockito.eq(0L));
     }
@@ -109,8 +114,10 @@ public class P2PReceiverTransferDaoTest {
     @Test
     public void receiveJsonShouldCallEventClientRepositoryBatchInsertClients() throws JSONException {
         DataType dataType = new DataType(p2PReceiverTransferDao.client.getName(), DataType.Type.NON_MEDIA, 1);
+        JSONObject jsonObject = new JSONObject();
         JSONArray jsonArray = new JSONArray();
-
+        jsonObject.put(AllConstants.ROWID, 0);
+        jsonArray.put(jsonObject);
         p2PReceiverTransferDao.receiveJson(dataType, jsonArray);
         Mockito.verify(eventClientRepository).batchInsertClients(Mockito.eq(jsonArray));
     }
