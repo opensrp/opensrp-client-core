@@ -59,7 +59,9 @@ public abstract class SecuredFragment extends Fragment {
             application.logoutCurrentUser();
             return;
         }
-        formController = new FormController((SecuredActivity) getActivity());
+        if (getActivity() instanceof SecuredActivity) {
+            formController = new FormController((SecuredActivity) getActivity());
+        }
         anmController = context().anmController();
         navigationController = new NavigationController(getActivity(), anmController);
         onCreation();
