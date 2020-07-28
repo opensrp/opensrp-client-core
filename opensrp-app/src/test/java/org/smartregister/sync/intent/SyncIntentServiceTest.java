@@ -22,6 +22,7 @@ import org.smartregister.util.SyncUtils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -65,12 +66,12 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         syncIntentService = spy(syncIntentService);
         Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
         when(syncUtils.verifyAuthorization()).thenReturn(true);
-        when(syncUtils.isAppVersionAllowed()).thenReturn(false);
+        when(syncUtils.isAppVersionAllowed()).thenReturn(true);
 
         syncIntentService.handleSync();
-        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
-        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
-        assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+        verify(syncIntentService, times(2)).sendBroadcast(intentArgumentCaptor.capture());
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(0).getAction());
+        assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getAllValues().get(0).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
 
     }
 
