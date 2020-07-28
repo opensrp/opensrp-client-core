@@ -489,4 +489,13 @@ public class AllConstants {
         String LOCATION_NAME = "location_name";
     }
 
+    public interface P2PDataTypes {
+        String CLIENT = "Client";
+        String EVENT = "Event";
+        String TASK = "Task";
+        String STRUCTURE = "Structure";
+        String PROFILE_PIC = "Profile Pic";
+        String FOREIGN_CLIENT = "ForeignClient";
+        String FOREIGN_EVENT = "ForeignEvent";
+    }
 }

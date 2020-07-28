@@ -207,6 +207,7 @@ public class Context {
     private Map<String, String> customHumanReadableConceptResponse;
     private HashMap<String, CommonRepository> MapOfCommonRepository;
     private EventClientRepository eventClientRepository;
+    private EventClientRepository foreignEventClientRepository;
     private UniqueIdRepository uniqueIdRepository;
     private CampaignRepository campaignRepository;
     private TaskRepository taskRepository;
@@ -1125,6 +1126,13 @@ public class Context {
             taskRepository = new TaskRepository(taskNotesRepository);
         }
         return taskRepository;
+    }
+
+    public EventClientRepository getForeignEventClientRepository() {
+        if (foreignEventClientRepository == null) {
+            foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient, EventClientRepository.Table.foreignEvent);
+        }
+        return foreignEventClientRepository;
     }
 
     public LocationRepository getLocationRepository() {
