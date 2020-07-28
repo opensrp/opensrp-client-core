@@ -83,4 +83,25 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         verify(syncUtils).logoutUser();
     }
 
+    @Test
+    public void testHandleSyncCallsLogOutUserIfAppVersionIsNotAllowedAnd() {
+        syncIntentService = spy(syncIntentService);
+        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
+        when(syncUtils.verifyAuthorization()).thenReturn(true);
+        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
+        syncIntentService.handleSync();
+        verify(syncUtils).logoutUser();
+    }
+
+    @Test
+    public void testHandleSyncCallsPullECFromServerIfHasValidAuthorizationAndIsAppVersionAllowed() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
+        when(syncUtils.verifyAuthorization()).thenReturn(true);
+        when(syncUtils.isAppVersionAllowed()).thenReturn(true);
+        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
+        syncIntentService.handleSync();
+        verify(syncIntentService).pullECFromServer();
+    }
+
 }
