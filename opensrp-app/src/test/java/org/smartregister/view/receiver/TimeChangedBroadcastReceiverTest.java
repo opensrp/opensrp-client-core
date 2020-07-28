@@ -1,11 +1,13 @@
 package org.smartregister.view.receiver;
 
+import android.content.Context;
 import android.content.Intent;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.shadows.ShadowApplication;
 import org.robolectric.util.ReflectionHelpers;
@@ -53,6 +55,31 @@ public class TimeChangedBroadcastReceiverTest extends BaseRobolectricUnitTest {
         // Assert that the two actions were registered to the TimeChangedBroadcastReceiver
         Assert.assertEquals(receiver, receivers.get(0).broadcastReceiver);
         Assert.assertEquals(receiver, receivers.get(1).broadcastReceiver);
+    }
+
+
+    @Test
+    public void initShouldCallDestroyWhenTheReceiverWasPreviouslyInitialised() {
+        // Remove previous receivers
+        List<ShadowApplication.Wrapper> receivers = ShadowApplication.getInstance().getRegisteredReceivers();
+        receivers.clear();
+
+        TimeChangedBroadcastReceiver.init(RuntimeEnvironment.application);
+
+        // Assert that the receivers were registered
+        Assert.assertNotNull(TimeChangedBroadcastReceiver.getInstance());
+        receivers = ShadowApplication.getInstance().getRegisteredReceivers();
+        Assert.assertEquals(2, receivers.size());
+
+        // Mock the application instance
+        Context context = Mockito.spy(RuntimeEnvironment.application);
+        TimeChangedBroadcastReceiver timeChangedBroadcastReceiver = TimeChangedBroadcastReceiver.getInstance();
+
+
+        TimeChangedBroadcastReceiver.init(context);
+
+        // Verify that destroy was called
+        Mockito.verify(context).unregisterReceiver(timeChangedBroadcastReceiver);
     }
 
 
