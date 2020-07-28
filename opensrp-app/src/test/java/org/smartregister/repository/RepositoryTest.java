@@ -12,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.repository.mock.RepositoryMock;
@@ -62,16 +61,6 @@ public class RepositoryTest extends BaseUnitTest {
         repository = Mockito.mock(Repository.class, Mockito.CALLS_REAL_METHODS);
         ReflectionHelpers.setField(repository, "context", context);
         ReflectionHelpers.setField(repository, "dbName", dbName);
-    }
-
-    @Test
-    public void constructor1() {
-//        repositoryMock = new RepositoryMock();
-//        repositoryMock.getInstance1();
-//        Session session = new Session();
-//        session.setRepositoryName(AllConstants.DATABASE_NAME);
-//        DrishtiRepository drishtiRepositories[] = {DrishtiRepositoryMock.getDrishtiRepository()};
-//        Repository repository = new Repository(ContextMock.getContext(), session, drishtiRepositories);
     }
 
     @Test
