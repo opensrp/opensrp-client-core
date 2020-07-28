@@ -35,7 +35,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     private SyncUtils syncUtils;
 
     @Mock
-    SyncConfiguration syncConfiguration;
+    private SyncConfiguration syncConfiguration;
 
     @Captor
     private ArgumentCaptor<Intent>  intentArgumentCaptor;
