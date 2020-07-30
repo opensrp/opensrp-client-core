@@ -403,4 +403,23 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
         Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
     }
+
+    @Test
+    public void getClientsWithLastLocationIDShouldReturnGenerateMaxRowIdAndIncludeRowIdAndSyncStatusInJson() throws JSONException {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", EventClientRepository.event_column.syncStatus.name(), AllConstants.ROWID, "eventJson"}, 0);
+
+        for (int i = 0; i < 30; i++) {
+            matrixCursor.addRow(new Object[]{"{\"gender\": \"male\"}", BaseRepository.TYPE_Synced, (i + 1L), "{\"baseEntityId\":\"a423f801-8f6e-421d-ac9b-a3e4a24a0d61\",\"locationId\":\"d5ff0ea1-bbc5-424d-84c2-5b084e10ef90\"}"});
+        }
+
+        Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid,(select event.json from event where event.baseEntityId = client.baseEntityId \n" +
+                " ORDER by event.eventDate desc , event.updatedAt desc , event.dateEdited desc , event.serverVersion desc limit 1) eventJson FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
+
+        JsonData jsonData = eventClientRepository.getClientsWithLastLocationID(0, 20);
+
+        Assert.assertEquals(30L, jsonData.getHighestRecordId());
+        JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
+        Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
+        Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
 }
