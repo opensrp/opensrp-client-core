@@ -20,6 +20,8 @@ import java.util.List;
 
 import timber.log.Timber;
 
+import static org.smartregister.util.JsonFormUtils.isBlankJsonArray;
+
 /**
  * Created by ndegwamartin on 14/09/2018.
  */
@@ -106,7 +108,7 @@ public class SyncSettingsServiceHelper {
     }
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
-        if (globalSettings.length() > 0) {
+        if (!isBlankJsonArray(globalSettings)) {
             for (int i = 0; i < globalSettings.length(); i++) {
                 JSONObject global = globalSettings.getJSONObject(i);
                 settings.put(global);
