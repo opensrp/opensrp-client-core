@@ -3,10 +3,12 @@ package org.smartregister.view.activity;
 import android.app.Application;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.multidex.MultiDex;
 
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.Context;
@@ -15,6 +17,7 @@ import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientProcessorForJava;
+import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.BitmapImageCache;
 import org.smartregister.util.CrashLyticsTree;
 import org.smartregister.util.OpenSRPImageLoader;
@@ -40,6 +43,11 @@ public abstract class DrishtiApplication extends Application {
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
         return (X) mInstance;
+    }
+
+    @Nullable
+    public P2PClassifier<JSONObject> getP2PClassifier(){
+        return null;
     }
 
     public static BitmapImageCache getMemoryCacheInstance() {

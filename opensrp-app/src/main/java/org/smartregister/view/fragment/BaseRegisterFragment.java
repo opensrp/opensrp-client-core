@@ -130,20 +130,24 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getLayout(), container, false);
         rootView = view;//handle to the root
-
-        Toolbar toolbar = view.findViewById(R.id.register_toolbar);
-        AppCompatActivity activity = ((AppCompatActivity) getActivity());
-
-        activity.setSupportActionBar(toolbar);
-        activity.getSupportActionBar().setTitle(activity.getIntent().getStringExtra(TOOLBAR_TITLE));
-        activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-
-        activity.getSupportActionBar().setLogo(R.drawable.round_white_background);
-        activity.getSupportActionBar().setDisplayUseLogoEnabled(false);
-        activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+        setUpActionBar();
         setupViews(view);
         return view;
+    }
+
+    protected void setUpActionBar() {
+        if (getActivity() instanceof AppCompatActivity) {
+            Toolbar toolbar = rootView.findViewById(R.id.register_toolbar);
+            AppCompatActivity activity = ((AppCompatActivity) getActivity());
+
+            activity.setSupportActionBar(toolbar);
+            activity.getSupportActionBar().setTitle(activity.getIntent().getStringExtra(TOOLBAR_TITLE));
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+            activity.getSupportActionBar().setLogo(R.drawable.round_white_background);
+            activity.getSupportActionBar().setDisplayUseLogoEnabled(false);
+            activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
     }
 
 
@@ -201,11 +205,6 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         attachSyncButton(view);
         attachTopLeftLayout(view);
         attachProgressBar(view);
-        /*// Location
-        facilitySelection = view.findViewById(R.id.facility_selection);
-        if (facilitySelection != null) {m
-            facilitySelection.init();
-        }*/
 
         // Sort and Filter
         headerTextDisplay = view.findViewById(R.id.header_text_display);

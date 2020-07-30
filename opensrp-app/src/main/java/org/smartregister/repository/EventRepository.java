@@ -24,10 +24,14 @@ public class EventRepository extends SQLiteOpenHelper {
     private String common_SQL =
             "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT," + "details VARCHAR)";
 
-    public EventRepository(Context context, String tablename, String[] columns) {
+    public EventRepository(Context context, String[] columns){
+        this(context, "common", columns);
+    }
+
+    public EventRepository(Context context, String tableName, String[] columns) {
         super(context, "test_convert", null, 1);
         additionalcolumns = columns;
-        TABLE_NAME = tablename;
+        TABLE_NAME = tableName;
         common_SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(_id INTEGER PRIMARY KEY "
                 + "AUTOINCREMENT,baseEntityId VARCHAR,";
         for (String column : columns) {
@@ -49,7 +53,6 @@ public class EventRepository extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
     }
 
     public ContentValues createValuesFor(Event common) {

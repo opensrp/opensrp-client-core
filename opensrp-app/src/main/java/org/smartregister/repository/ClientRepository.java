@@ -25,7 +25,12 @@ public class ClientRepository extends SQLiteOpenHelper {
             "CREATE TABLE common(_id INTEGER PRIMARY KEY AUTOINCREMENT," + "details VARCHAR)";
 
     public ClientRepository(Context context, String[] columns) {
+        this(context, "Clients", columns);
+    }
+
+    public ClientRepository(Context context, String tableName, String[] columns) {
         super(context, "test_convert", null, 1);
+        this.TABLE_NAME = tableName;
         additionalcolumns = columns;
         common_SQL = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + "(_id INTEGER PRIMARY KEY "
                 + "AUTOINCREMENT,baseEntityId VARCHAR,";
