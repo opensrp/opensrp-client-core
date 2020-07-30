@@ -84,7 +84,7 @@ public class SyncSettingsServiceHelper {
             List<String> syncParams = getInstance().getSyncConfiguration().getExtraSettingsParameters();
             if (syncParams.size() > 0) {
                 for (String params : syncParams) {
-                    String url = SettingsSyncIntentService.SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=" + sharedPreferences.fetchLastSettingsSyncTimeStamp() + "&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
+                    String url = SettingsSyncIntentService.SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=0&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
                     JSONArray extraSettings = pullSettings(url);
                     if (extraSettings != null) {
                         aggregateSettings(completeExtraSettings, extraSettings);
