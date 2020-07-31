@@ -27,6 +27,8 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.smartregister.R;
+import org.smartregister.account.AccountHelper;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
@@ -49,6 +51,8 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     private Button loginButton;
     private Boolean showPasswordChecked = false;
     private SyncUtils syncUtils;
+    private String authTokenType;
+    private AlertDialog alertDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         mLoginPresenter.setLanguage();
         setupViews(mLoginPresenter);
         syncUtils = new SyncUtils(this);
+
+        authTokenType = getIntent().getStringExtra(AccountHelper.INTENT_KEY.AUTH_TYPE);
+
     }
 
     @Override
@@ -161,16 +168,19 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showErrorDialog(@StringRes int title, String message) {
-        AlertDialog alertDialog = new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        dialogInterface.dismiss();
-                    }
-                })
-                .create();
+
+        if (alertDialog == null) {
+            alertDialog = new AlertDialog.Builder(this)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    }).create();
+        }
+
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
         alertDialog.show();
 
     }
@@ -197,9 +207,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     @Override
     public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
         if (actionId == R.integer.login || actionId == EditorInfo.IME_NULL || actionId == EditorInfo.IME_ACTION_DONE) {
-            String username = userNameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            mLoginPresenter.attemptLogin(username, password);
+            attemptLogin();
             return true;
         }
         return false;
@@ -208,10 +216,14 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.login_login_btn) {
-            String username = userNameEditText.getText().toString();
-            String password = passwordEditText.getText().toString();
-            mLoginPresenter.attemptLogin(username, password);
+            attemptLogin();
         }
+    }
+
+    protected void attemptLogin() {
+        String username = userNameEditText.getText().toString().trim();
+        char[] password = SecurityHelper.readValue(passwordEditText.getText());
+        mLoginPresenter.attemptLogin(username, password);
     }
 
     @Override
@@ -272,7 +284,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         } catch (PackageManager.NameNotFoundException e) {
             Timber.e(e);
         }
-        return  isAppVersionAllowed;
+        return isAppVersionAllowed;
     }
 
     @Override
@@ -286,5 +298,17 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
                 .setNegativeButton(android.R.string.cancel, onClickListener)
                 .setCancelable(false)
                 .show();
+    }
+
+    public String getAuthTokenType() {
+
+        if (authTokenType == null)
+            authTokenType = AccountHelper.TOKEN_TYPE.PROVIDER;
+
+        return authTokenType;
+    }
+
+    public boolean isNewAccount() {
+        return getIntent().getBooleanExtra(AccountHelper.INTENT_KEY.IS_NEW_ACCOUNT, false);
     }
 }

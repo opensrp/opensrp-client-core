@@ -12,6 +12,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
 import org.smartregister.R;
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.event.Listener;
@@ -19,6 +20,7 @@ import org.smartregister.job.P2pServiceJob;
 import org.smartregister.job.PullUniqueIdsServiceJob;
 import org.smartregister.job.SyncSettingsServiceJob;
 import org.smartregister.listener.OnCompleteClearDataCallback;
+import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
@@ -60,41 +62,49 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     @Override
-    public void login(WeakReference<BaseLoginContract.View> view, String userName, String password) {
-        loginWithLocalFlag(view, !getSharedPreferences().fetchForceRemoteLogin()
-                && userName.equalsIgnoreCase(getSharedPreferences().fetchRegisteredANM()), userName, password);
+    public void login(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
+
+        boolean localLogin = !getSharedPreferences().fetchForceRemoteLogin(userName);
+        loginWithLocalFlag(view, localLogin && getSharedPreferences().isRegisteredANM(userName), userName, password);
+
     }
 
-    public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, String password) {
+    public void loginWithLocalFlag(WeakReference<BaseLoginContract.View> view, boolean localLogin, String userName, char[] password) {
 
         getLoginView().hideKeyboard();
         getLoginView().enableLoginButton(false);
         if (localLogin) {
             localLogin(view, userName, password);
         } else {
-            remoteLogin(userName, password);
+            remoteLogin(userName, password, CoreLibrary.getInstance().getAccountAuthenticatorXml());
         }
 
         Timber.i("Login result finished " + DateTime.now().toString());
     }
 
-    private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, String password) {
+    private void localLogin(WeakReference<BaseLoginContract.View> view, String userName, char[] password) {
         getLoginView().enableLoginButton(true);
-        boolean isAuthenticated = getUserService().isUserInValidGroup(userName, password);
-        if (!isAuthenticated) {
 
-            getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
+        new LocalLoginTask(view.get(), userName, password, isAuthenticated -> {
 
-        } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+            if (!isAuthenticated) {
 
-            navigateToHomePage(userName, password);
+                getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.unauthorized));
 
-        } else {
-            loginWithLocalFlag(view, false, userName, password);
-        }
+            } else if (isAuthenticated && (!AllConstants.TIME_CHECK || TimeStatus.OK.equals(getUserService().validateStoredServerTimeZone()))) {
+
+                navigateToHomePage(userName, password);
+
+            } else {
+                loginWithLocalFlag(view, false, userName, password);
+            }
+
+
+        }).execute();
+
     }
 
-    private void navigateToHomePage(String userName, String password) {
+    private void navigateToHomePage(String userName, char[] password) {
 
         getUserService().localLogin(userName, password);
         getLoginView().goToHome(false);
@@ -115,19 +125,19 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }).start();
     }
 
-    private void remoteLogin(final String userName, final String password) {
+    private void remoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml) {
 
         try {
             if (getSharedPreferences().fetchBaseURL("").isEmpty() && StringUtils.isNotBlank(this.getApplicationContext().getString(R.string.opensrp_url))) {
                 getSharedPreferences().savePreference("DRISHTI_BASE_URL", getApplicationContext().getString(R.string.opensrp_url));
             }
             if (!getSharedPreferences().fetchBaseURL("").isEmpty()) {
-                tryRemoteLogin(userName, password, new Listener<LoginResponse>() {
+                tryRemoteLogin(userName, password, accountAuthenticatorXml, new Listener<LoginResponse>() {
 
                     public void onEvent(LoginResponse loginResponse) {
                         getLoginView().enableLoginButton(true);
                         if (loginResponse == LoginResponse.SUCCESS) {
-                            String username=loginResponse.payload()!=null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                            String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
                                     ? loginResponse.payload().user.getUsername() : userName;
                             if (getUserService().isUserInPioneerGroup(username)) {
                                 TimeStatus timeStatus = getUserService().validateDeviceTime(
@@ -198,16 +208,16 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
         }
     }
 
-    private void tryRemoteLogin(final String userName, final String password, final Listener<LoginResponse> afterLogincheck) {
+    private void tryRemoteLogin(final String userName, final char[] password, final AccountAuthenticatorXml accountAuthenticatorXml, final Listener<LoginResponse> afterLogincheck) {
         if (remoteLoginTask != null && !remoteLoginTask.isCancelled()) {
             remoteLoginTask.cancel(true);
         }
-        remoteLoginTask = new RemoteLoginTask(getLoginView(), userName, password, afterLogincheck);
+        remoteLoginTask = new RemoteLoginTask(getLoginView(), userName, password, accountAuthenticatorXml, afterLogincheck);
         remoteLoginTask.execute();
     }
 
-    private void remoteLoginWith(String userName, String password, LoginResponse loginResponse) {
-        getUserService().remoteLogin(userName, password, loginResponse.payload());
+    private void remoteLoginWith(String userName, char[] password, LoginResponse loginResponse) {
+        getUserService().processLoginResponseDataForUser(userName, password, loginResponse.payload());
         processServerSettings(loginResponse);
 
         scheduleJobsPeriodically();

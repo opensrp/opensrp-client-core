@@ -14,6 +14,7 @@ import org.smartregister.view.fragment.BaseRegisterFragment;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.mock;
 
@@ -44,6 +45,11 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
     }
 
     @Override
+    public void startFormActivity(String formName, String entityId, Map<String, String> metaData) {
+        // mock do nothing
+    }
+
+    @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
         //mock do nothing
     }
@@ -65,6 +71,11 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
 
     @Override
     public void startRegistration() {
+        //mock do nothing
+    }
+
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
         //mock do nothing
     }
 

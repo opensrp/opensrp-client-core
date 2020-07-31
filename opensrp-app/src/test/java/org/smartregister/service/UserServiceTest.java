@@ -120,13 +120,13 @@ public class UserServiceTest extends BaseUnitTest {
         when(httpAgent.urlCanBeAccessWithGivenCredentials(
                 httpAuthenticateUrl,
                 user,
-                password)).thenReturn(loginResponse);
+                password.toCharArray())).thenReturn(loginResponse);
 
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("user");
 
-        userService.isValidRemoteLogin(user, password);
+        userService.isValidRemoteLogin(user, password.toCharArray());
 
-        verify(httpAgent).urlCanBeAccessWithGivenCredentials(httpAuthenticateUrl, user, password);
+        verify(httpAgent).urlCanBeAccessWithGivenCredentials(httpAuthenticateUrl, user, password.toCharArray());
     }
 
     @Test
@@ -163,19 +163,19 @@ public class UserServiceTest extends BaseUnitTest {
     public void shouldConsiderALocalLoginValid() {
         // When Username Matches Registered User And Password Matches The One In DB
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
-        when(repository.canUseThisPassword("password Z")).thenReturn(true);
+        when(repository.canUseThisPassword("password Z".toCharArray())).thenReturn(true);
 
-        assertTrue(userService.isValidLocalLogin("ANM X", "password Z"));
+        assertTrue(userService.isValidLocalLogin("ANM X", "password Z".toCharArray()));
 
         verify(allSharedPreferences).fetchRegisteredANM();
-        verify(repository).canUseThisPassword("password Z");
+        verify(repository).canUseThisPassword("password Z".toCharArray());
     }
 
     @Test
     public void shouldConsiderALocalLoginInvalidWhenRegisteredUserDoesNotMatch() {
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
 
-        assertFalse(userService.isValidLocalLogin("SOME OTHER ANM", "password"));
+        assertFalse(userService.isValidLocalLogin("SOME OTHER ANM", "password".toCharArray()));
 
         verify(allSharedPreferences).fetchRegisteredANM();
         verifyZeroInteractions(repository);
@@ -184,12 +184,12 @@ public class UserServiceTest extends BaseUnitTest {
     @Test
     public void shouldConsiderALocalLoginInvalidWhenRegisteredUserMatchesButNotThePassword() {
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("ANM X");
-        when(repository.canUseThisPassword("password Z")).thenReturn(false);
+        when(repository.canUseThisPassword("password Z".toCharArray())).thenReturn(false);
 
-        assertFalse(userService.isValidLocalLogin("ANM X", "password Z"));
+        assertFalse(userService.isValidLocalLogin("ANM X", "password Z".toCharArray()));
 
         verify(allSharedPreferences).fetchRegisteredANM();
-        verify(repository).canUseThisPassword("password Z");
+        verify(repository).canUseThisPassword("password Z".toCharArray());
     }
 
     @Test
@@ -209,10 +209,9 @@ public class UserServiceTest extends BaseUnitTest {
 
         when(allSharedPreferences.fetchRegisteredANM()).thenReturn("user X");
 
-        userService.remoteLogin("user X", "password Y", userInfo);
+        userService.processLoginResponseDataForUser("user X", "password Y".toCharArray(), userInfo);
 
-        verify(allSettings).registerANM("user X", "password Y");
-        verify(session).setPassword("password Y");
+        verify(allSettings).registerANM("user X");
     }
 
     @Test
@@ -227,7 +226,7 @@ public class UserServiceTest extends BaseUnitTest {
         verify(repository).deleteRepository();
         verify(repository).deleteRepository();
         verify(allSettings).savePreviousFetchIndex("0");
-        verify(allSettings).registerANM("", "");
+        verify(allSettings).registerANM("");
     }
 
     @Test

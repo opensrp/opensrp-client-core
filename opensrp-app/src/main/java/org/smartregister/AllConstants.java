@@ -454,6 +454,7 @@ public class AllConstants {
     public static class PROPERTY {
         public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
+        public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
 
     }
 
@@ -497,5 +498,13 @@ public class AllConstants {
         String PROFILE_PIC = "Profile Pic";
         String FOREIGN_CLIENT = "ForeignClient";
         String FOREIGN_EVENT = "ForeignEvent";
+    }
+    public static class HTTP_REQUEST_HEADERS {
+        public static String AUTHORIZATION = "Authorization";
+    }
+
+    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
+        public static String BEARER = "Bearer";
+        public static String BASIC = "Basic";
     }
 }

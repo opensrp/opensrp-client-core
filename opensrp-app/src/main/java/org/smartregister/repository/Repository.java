@@ -156,7 +156,7 @@ public class Repository extends SQLiteOpenHelper {
         return getWritableDatabase(password());
     }
 
-    private boolean isDatabaseWritable(String password) {
+    private boolean isDatabaseWritable(char[] password) {
         SQLiteDatabase database = SQLiteDatabase
                 .openDatabase(databasePath.getPath(), password, null,
                         SQLiteDatabase.OPEN_READONLY, hook);
@@ -164,7 +164,7 @@ public class Repository extends SQLiteOpenHelper {
         return true;
     }
 
-    public boolean canUseThisPassword(String password) {
+    public boolean canUseThisPassword(char[] password) {
         try {
             return isDatabaseWritable(password);
         } catch (SQLiteException e) {
@@ -190,7 +190,7 @@ public class Repository extends SQLiteOpenHelper {
         }
     }
 
-    private String password() {
+    private char[] password() {
         return DrishtiApplication.getInstance().getPassword();
     }
 

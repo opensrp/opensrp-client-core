@@ -1,11 +1,13 @@
 package org.smartregister;
 
+import android.accounts.AccountManager;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
@@ -13,6 +15,7 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.P2PSyncFinishCallback;
+import org.smartregister.util.Utils;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -33,6 +36,10 @@ public class CoreLibrary {
     private String ecClientFieldsFile = "ec_client_fields.json";
 
     private P2POptions p2POptions;
+
+    private AccountManager accountManager;
+
+    private AccountAuthenticatorXml authenticatorXml;
 
     public static void init(Context context) {
         init(context, null);
@@ -151,6 +158,20 @@ public class CoreLibrary {
         return syncConfiguration;
     }
 
+    public AccountManager getAccountManager() {
+        if (accountManager == null)
+            accountManager = AccountManager.get(context.applicationContext());
+
+        return accountManager;
+    }
+
+    public AccountAuthenticatorXml getAccountAuthenticatorXml() {
+        if (authenticatorXml == null)
+            authenticatorXml = Utils.parseAuthenticatorXMLConfigData(context.applicationContext());
+
+        return authenticatorXml;
+    }
+
     public static long getBuildTimeStamp() {
         return buildTimeStamp;
     }
@@ -186,4 +207,5 @@ public class CoreLibrary {
         LocalBroadcastManager.getInstance(context.applicationContext())
                 .sendBroadcast(intent);
     }
+
 }

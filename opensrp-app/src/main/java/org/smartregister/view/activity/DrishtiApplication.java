@@ -38,7 +38,7 @@ public abstract class DrishtiApplication extends Application {
     protected Locale locale = null;
     protected Context context;
     protected Repository repository;
-    private String password;
+    private char[] password;
     private String username;
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
@@ -109,26 +109,25 @@ public abstract class DrishtiApplication extends Application {
     }
 
     public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = CoreLibrary.getInstance().context()
-                .sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
-                .toArray(new DrishtiRepository[drishtireposotorylist.size()]);
+        ArrayList<DrishtiRepository> drishtiRepositoryList = CoreLibrary.getInstance().context().sharedRepositories();
+        DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null,
-                    drishtireposotoryarray);
+            repository = new Repository(getInstance().getApplicationContext(), null, drishtiRepositoryArray);
         }
         return repository;
     }
 
-    public String getPassword() {
+    public char[] getPassword() {
         if (password == null) {
+
             String username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
             password = context.userService().getGroupId(username);
         }
+
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(char[] password) {
         this.password = password;
     }
 

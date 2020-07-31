@@ -71,7 +71,7 @@ public class DrishtiApplicationTest {
     @Test
     public void getPassword() {
         String username = "anm";
-        String password = "pwd";
+        char[] password = "pwd".toCharArray();
 
         drishtiApplication.onCreate();
 

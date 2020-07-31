@@ -10,7 +10,7 @@ import java.lang.ref.WeakReference;
 public interface BaseLoginContract {
     interface Presenter {
 
-        void attemptLogin(String username, String password);
+        void attemptLogin(String username, char[] password);
 
         View getLoginView();
 
@@ -59,20 +59,24 @@ public interface BaseLoginContract {
         boolean isAppVersionAllowed();
 
         void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener);
+
+        String getAuthTokenType();
+
+        boolean isNewAccount();
     }
 
     interface Interactor {
 
         void onDestroy(boolean isChangingConfiguration);
 
-        void login(WeakReference<View> view, String userName, String password);
+        void login(WeakReference<View> view, String userName, char[] password);
     }
 
     interface Model {
 
         boolean isEmptyUsername(String username);
 
-        boolean isPasswordValid(String password);
+        boolean isPasswordValid(char[] password);
 
         org.smartregister.Context getOpenSRPContext();
 

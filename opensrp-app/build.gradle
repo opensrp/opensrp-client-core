@@ -176,6 +176,7 @@ dependencies {
         transitive = true
     }
 
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.19-SNAPSHOT'
     implementation('ch.acra:acra:4.5.0') {
         exclude group: 'org.json', module: 'json'
     }
@@ -205,7 +206,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.19-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.13-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 }
