@@ -53,10 +53,10 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         } else if (dataType.getName().equals(task.getName())) {
             return CoreLibrary.getInstance().context()
                     .getTaskRepository().getTasks(l, i);
-        } else if (dataType.getName().equals(foreignClient.getName()) && CoreLibrary.getInstance().context().hasForeignEvents()) {
+        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().equals(foreignClient.getName())) {
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getClients(l, i);
-        } else if (dataType.getName().equals(foreignEvent.getName()) && CoreLibrary.getInstance().context().hasForeignEvents()) {
+        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().equals(foreignEvent.getName())) {
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getEvents(l, i);
         } else {
