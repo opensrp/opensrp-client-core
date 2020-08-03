@@ -24,6 +24,7 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.sync.P2PClassifier;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
@@ -229,6 +230,9 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     // PUSH TO SERVER
     private boolean pushToServer() {
+        if(CoreLibrary.getInstance().context().hasForeignEvents())
+            return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository());
+
         return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
                 pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository());
     }

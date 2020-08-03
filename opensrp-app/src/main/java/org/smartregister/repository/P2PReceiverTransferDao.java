@@ -49,7 +49,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         EventClientRepository foreignEventClientRepository = CoreLibrary.getInstance().context().getForeignEventClientRepository();
 
         int eventsMaxRowId = eventClientRepository.getMaxRowId(eventClientRepository.getEventTable());
-        int foreignEventsMaxRowId = foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
+        int foreignEventsMaxRowId = (getP2PClassifier() == null) ? 0 : foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
         long maxTableRowId = 0;
 
         P2PClassifier<JSONObject> classifier = getP2PClassifier();

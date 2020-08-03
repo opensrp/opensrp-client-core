@@ -94,6 +94,7 @@ import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.FPClients;
@@ -1133,6 +1134,10 @@ public class Context {
             foreignEventClientRepository = new EventClientRepository(EventClientRepository.Table.foreignClient, EventClientRepository.Table.foreignEvent);
         }
         return foreignEventClientRepository;
+    }
+
+    public boolean hasForeignEvents(){
+        return DrishtiApplication.getInstance().getP2PClassifier() != null;
     }
 
     public LocationRepository getLocationRepository() {
