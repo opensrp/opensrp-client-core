@@ -71,6 +71,7 @@ public class P2PReceiverTransferDaoTest {
         Mockito.doReturn(imageRepository).when(context).imageRepository();
         Mockito.doReturn(allSharedPreferences).when(context).allSharedPreferences();
         Mockito.doReturn(foreignEventClientRepository).when(context).getForeignEventClientRepository();
+        Mockito.doReturn(true).when(context).hasForeignEvents();
 
         CoreLibrary.init(context, Mockito.mock(SyncConfiguration.class));
         p2PReceiverTransferDao = Mockito.spy(new P2PReceiverTransferDao());

@@ -46,7 +46,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
     private long totalRecords;
-    private int fetchedRecords = 0 ;
+    private int fetchedRecords = 0;
 
     public SyncIntentService() {
         super("SyncIntentService");
@@ -230,7 +230,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     // PUSH TO SERVER
     private boolean pushToServer() {
         return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
-                pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository());
+                (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository()));
     }
 
     private boolean pushECToServer(EventClientRepository db) {
