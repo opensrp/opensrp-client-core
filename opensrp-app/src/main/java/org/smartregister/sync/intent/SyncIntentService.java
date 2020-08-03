@@ -229,11 +229,8 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     // PUSH TO SERVER
     private boolean pushToServer() {
-        if (!CoreLibrary.getInstance().context().hasForeignEvents())
-            return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository());
-
         return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
-                pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository());
+                (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository()));
     }
 
     private boolean pushECToServer(EventClientRepository db) {
