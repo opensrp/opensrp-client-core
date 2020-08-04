@@ -15,6 +15,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
+import org.smartregister.SyncFilter;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.SyncUtils;
@@ -47,8 +48,8 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         syncIntentService = new SyncIntentService();
         syncIntentService.init(context);
         Whitebox.setInternalState(syncIntentService, "mBase", RuntimeEnvironment.application);
@@ -116,7 +117,23 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
         // sync fetch failed broadcast sent
         assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(1).getAction());
-        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getAllValues().get(1).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));;
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getAllValues().get(1).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+
+    }
+
+    @Test
+    public void testPullEcFromServerWhenSyncFilterValueIsNull() throws PackageManager.NameNotFoundException {
+        initMocksForPullECFromServer();
+        when(syncConfiguration.getSyncFilterParam()).thenReturn(SyncFilter.LOCATION);
+        syncIntentService.handleSync();
+        verify(syncIntentService, times(2)).sendBroadcast(intentArgumentCaptor.capture());
+        // sync fetch started broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(0).getAction());
+        assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getAllValues().get(0).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+
+        // sync fetch failed broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(1).getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getAllValues().get(1).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
 
     }
 
