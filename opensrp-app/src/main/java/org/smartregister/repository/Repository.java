@@ -1,7 +1,6 @@
 package org.smartregister.repository;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
 import net.sqlcipher.database.SQLiteDatabase;
