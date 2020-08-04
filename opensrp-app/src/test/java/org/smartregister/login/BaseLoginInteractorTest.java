@@ -20,7 +20,7 @@ import java.lang.ref.WeakReference;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -64,14 +64,24 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testLocalAttemptsRemoteLoginAndErrorsWithBaseURLIsMissing() {
+    public void testLoginAttemptsRemoteLoginAndErrorsWithBaseURLIsMissing() {
         when(allSharedPreferences.fetchBaseURL("")).thenReturn("");
         interactor.login(new WeakReference<>(view), "johndoe", "pass");
         verify(view).hideKeyboard();
         verify(view).enableLoginButton(false);
         verify(allSharedPreferences).savePreference("DRISHTI_BASE_URL", activity.getString(R.string.opensrp_url));
         verify(view).enableLoginButton(true);
-        verify(view).showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+        verify(view).showErrorDialog(activity.getString(R.string.remote_login_base_url_missing_error));
+    }
+
+    @Test
+    public void testLoginAttemptsRemoteLoginAndErrorsWithGenericError() {
+        interactor.login(new WeakReference<>(view), "johndoe", "pass");
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(allSharedPreferences, never()).savePreference("DRISHTI_BASE_URL", activity.getString(R.string.opensrp_url));
+        verify(view, never()).enableLoginButton(true);
+        verify(view).showErrorDialog(activity.getString(R.string.remote_login_generic_error));
     }
 
 

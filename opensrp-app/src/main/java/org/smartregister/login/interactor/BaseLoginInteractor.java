@@ -127,7 +127,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                     public void onEvent(LoginResponse loginResponse) {
                         getLoginView().enableLoginButton(true);
                         if (loginResponse == LoginResponse.SUCCESS) {
-                            String username=loginResponse.payload()!=null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                            String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
                                     ? loginResponse.payload().user.getUsername() : userName;
                             if (getUserService().isUserInPioneerGroup(username)) {
                                 TimeStatus timeStatus = getUserService().validateDeviceTime(
@@ -190,11 +190,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 });
             } else {
                 getLoginView().enableLoginButton(true);
-                getLoginView().showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+                getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_base_url_missing_error));
             }
         } catch (Exception e) {
             Timber.e(e);
-            getLoginView().showErrorDialog("Error occurred trying to loginWithLocalFlag in. Please try again...");
+            getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
         }
     }
 
