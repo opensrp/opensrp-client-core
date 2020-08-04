@@ -26,6 +26,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.json.JsonObject;
+
 import timber.log.Timber;
 
 import static org.smartregister.util.Log.logError;
