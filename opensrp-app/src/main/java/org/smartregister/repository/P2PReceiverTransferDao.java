@@ -37,7 +37,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
     }
 
     @VisibleForTesting
-    public P2PClassifier<JSONObject> getP2PClassifier(){
+    public P2PClassifier<JSONObject> getP2PClassifier() {
         return DrishtiApplication.getInstance().getP2PClassifier();
     }
 
@@ -49,7 +49,7 @@ public class P2PReceiverTransferDao extends BaseP2PTransferDao implements Receiv
         EventClientRepository foreignEventClientRepository = CoreLibrary.getInstance().context().getForeignEventClientRepository();
 
         int eventsMaxRowId = eventClientRepository.getMaxRowId(eventClientRepository.getEventTable());
-        int foreignEventsMaxRowId = foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
+        int foreignEventsMaxRowId = !CoreLibrary.getInstance().context().hasForeignEvents() ? 0 : foreignEventClientRepository.getMaxRowId(foreignEventClientRepository.getEventTable());
         long maxTableRowId = 0;
 
         P2PClassifier<JSONObject> classifier = getP2PClassifier();
