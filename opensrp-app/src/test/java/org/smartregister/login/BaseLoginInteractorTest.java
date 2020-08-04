@@ -7,7 +7,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.smartregister.AllConstants;
@@ -26,6 +25,8 @@ import org.smartregister.shadows.LoginInteractorShadow;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
+import java.util.Date;
+import java.util.TimeZone;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -77,6 +78,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         when(view.getActivityContext()).thenReturn(activity);
         loginResponseData = new LoginResponseData();
         loginResponseData.user = new User().withUsername(user);
+        loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
     }
 
     @Test
@@ -111,7 +113,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
 
     @Test
-    public void testLoginAttemptsRemoteLoginAndErrorsIfNoInternetConnectivity() {
+    public void testLoginAttemptsRemoteLoginAndErrorsWhenNoInternetConnectivity() {
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
         when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.NO_INTERNET_CONNECTIVITY);
         when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
@@ -125,7 +127,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
 
     @Test
-    public void testLoginAttemptsRemoteLoginAndErrorsIfResponseUnknown() {
+    public void testLoginAttemptsRemoteLoginAndErrorsWhenResponseUnknown() {
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
         when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.UNKNOWN_RESPONSE);
         when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
@@ -138,7 +140,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testLoginAttemptsRemoteLoginAndErrorsIfUnauthorized() {
+    public void testLoginAttemptsRemoteLoginAndErrorsWhenUnauthorized() {
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
         when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.UNAUTHORIZED);
         when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
@@ -151,7 +153,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testLoginAttemptsRemoteLoginAndErrorsIfTimeIsWrong() {
+    public void testLoginAttemptsRemoteLoginAndErrorsWhenTimeIsWrong() {
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
         when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
         when(userService.validateDeviceTime(any(), anyLong())).thenReturn(TimeStatus.TIME_MISMATCH);
@@ -163,6 +165,22 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         verify(view).enableLoginButton(false);
         verify(view).enableLoginButton(true);
         verify(view).showErrorDialog(activity.getString(TimeStatus.TIME_MISMATCH.getMessage()));
+        verify(view, never()).goToHome(anyBoolean());
+    }
+
+    @Test
+    public void testLoginAttemptsRemoteLoginAndErrorsWhenTimeZoneIsWrong() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+        when(userService.validateDeviceTime(any(), anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
+        when(userService.isUserInPioneerGroup(user)).thenReturn(true);
+        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
+        interactor.login(new WeakReference<>(view), user, password);
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(view).enableLoginButton(true);
+        verify(view).showErrorDialog(activity.getString(TimeStatus.TIMEZONE_MISMATCH.getMessage(), TimeZone.getTimeZone("Africa/Nairobi").getDisplayName()));
         verify(view, never()).goToHome(anyBoolean());
     }
 
