@@ -105,4 +105,27 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         verify(syncIntentService).pullECFromServer();
     }
 
+    @Test
+    public void testPullEcFromServerWhenSyncFilterParamIsNull() throws PackageManager.NameNotFoundException {
+        initMocksForPullECFromServer();
+        syncIntentService.handleSync();
+        verify(syncIntentService, times(2)).sendBroadcast(intentArgumentCaptor.capture());
+        // sync fetch started broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(0).getAction());
+        assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getAllValues().get(0).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+
+        // sync fetch failed broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(1).getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getAllValues().get(1).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));;
+
+    }
+
+    private void initMocksForPullECFromServer() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
+        when(syncUtils.verifyAuthorization()).thenReturn(true);
+        when(syncUtils.isAppVersionAllowed()).thenReturn(true);
+        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
+    }
+
 }
