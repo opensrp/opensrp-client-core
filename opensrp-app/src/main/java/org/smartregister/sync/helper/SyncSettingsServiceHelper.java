@@ -14,13 +14,12 @@ import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
+import org.smartregister.util.JsonFormUtils;
 
 import java.text.MessageFormat;
 import java.util.List;
 
 import timber.log.Timber;
-
-import static org.smartregister.util.JsonFormUtils.isBlankJsonArray;
 
 /**
  * Created by ndegwamartin on 14/09/2018.
@@ -108,7 +107,7 @@ public class SyncSettingsServiceHelper {
     }
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
-        if (!isBlankJsonArray(globalSettings)) {
+        if (!JsonFormUtils.isBlankJsonArray(globalSettings)) {
             for (int i = 0; i < globalSettings.length(); i++) {
                 JSONObject global = globalSettings.getJSONObject(i);
                 settings.put(global);
