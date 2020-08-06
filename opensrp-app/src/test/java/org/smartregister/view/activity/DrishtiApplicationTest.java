@@ -2,6 +2,8 @@ package org.smartregister.view.activity;
 
 import android.os.Build;
 
+import net.sqlcipher.database.SQLiteDatabase;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.Repository;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
@@ -81,6 +84,25 @@ public class DrishtiApplicationTest {
         Mockito.doReturn(password).when(userService).getGroupId(Mockito.eq(username));
 
         Assert.assertEquals(password, drishtiApplication.getPassword());
+    }
+
+    @Test
+    public void onTerminateShouldClosePendingTransactions() {
+        drishtiApplication.onCreate();
+        Repository repository = Mockito.mock(Repository.class);
+        SQLiteDatabase sqLiteDatabase = Mockito.mock(SQLiteDatabase.class);
+        ReflectionHelpers.setField(drishtiApplication, "repository", repository);
+        /*
+        Context context = Mockito.spy(drishtiApplication.getContext());
+        ReflectionHelpers.setField(drishtiApplication, "context", context);*/
+
+        Mockito.doReturn(sqLiteDatabase).when(repository).getWritableDatabase();
+        Mockito.doReturn(true).when(sqLiteDatabase).isOpen();
+        Mockito.doReturn(true).when(sqLiteDatabase).inTransaction();
+
+        drishtiApplication.onTerminate();
+        Mockito.verify(sqLiteDatabase).endTransaction();
+        Assert.assertTrue(drishtiApplication.getContext().allSharedPreferences().fetchTransactionsKilledFlag());
     }
 
     public static class Application extends DrishtiApplication {

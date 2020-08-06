@@ -297,4 +297,10 @@ public class LocationRepository extends BaseRepository implements LocationDao {
                 .map(LocationConverter::convertPhysicalLocationToLocationResource)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<String> findChildLocationByJurisdiction(String s) {
+        // TODO implement this
+        return null;
+    }
 }

@@ -637,4 +637,21 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     public boolean checkIfTaskExists(String baseEntityId, String jurisdiction, String planIdentifier, String code) {
         return !getTasksByEntityAndCode(planIdentifier, jurisdiction, baseEntityId, code).isEmpty();
     }
+
+    @Override
+    public List<com.ibm.fhir.model.resource.Task> findAllTasksForEntity(String s) {
+        // TODO implement this
+        return null;
+    }
+
+    @Override
+    public Task getTaskByEntityId(String s) {
+        // TODO implement this
+        return null;
+    }
+
+    @Override
+    public void updateTask(Task task) {
+        // TODO implement this
+    }
 }

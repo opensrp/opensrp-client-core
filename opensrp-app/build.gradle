@@ -7,14 +7,10 @@ buildscript {
         maven { url 'https://maven.fabric.io/public' }
     }
     dependencies {
-        classpath ("com.android.tools.build:gradle:$androidToolsBuildGradle"){
-            transitive = true
-            //exclude group: 'org.apache.httpcomponents', module: 'httpmime'
-        }
+
+        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
         classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.2'
         classpath 'io.fabric.tools:gradle:1.30.0'
-        //classpath 'org.apache.httpcomponents:httpmime:4.3'
     }
 }
 
@@ -25,7 +21,6 @@ allprojects {
         google()
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
-        maven { url 'https://dl.bintray.com/ibm-watson-health/ibm-fhir-server-releases'}
     }
 }
 
@@ -204,20 +199,18 @@ dependencies {
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
 
-    implementation('org.smartregister:android-p2p-sync:0.3.6-SNAPSHOT') {
+    implementation('org.smartregister:android-p2p-sync:0.3.7-SNAPSHOT') {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'android.arch.core', module: 'runtime'
     }
 
-
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
 
-
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.17-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.20-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 
@@ -241,10 +234,6 @@ dependencies {
         exclude group: 'com.thoughtworks.xstream', module: 'xstream'
     }
     testImplementation('org.robolectric:shadows-multidex:4.0') {
-        exclude group: 'com.google.guava', module: 'guava'
-    }
-
-    testImplementation('org.robolectric:shadows-support-v4:3.3.2') {
         exclude group: 'com.google.guava', module: 'guava'
     }
 
