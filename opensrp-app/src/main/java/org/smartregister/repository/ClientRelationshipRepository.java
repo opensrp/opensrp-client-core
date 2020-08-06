@@ -30,6 +30,7 @@ public class ClientRelationshipRepository extends BaseRepository {
 
     private static final String RELATIONAL_ID = "relational_id";
 
+
     protected static final String CREATE_TABLE =
             "CREATE TABLE " + CLIENT_RELATIONSHIP_TABLE_NAME + " (" +
                     BASE_ENTITY_ID + " VARCHAR NOT NULL, " +
