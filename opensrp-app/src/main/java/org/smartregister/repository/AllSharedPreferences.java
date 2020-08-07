@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.smartregister.AllConstants.DATA_STRATEGY;
 import static org.smartregister.AllConstants.CURRENT_LOCALITY;
 import static org.smartregister.AllConstants.DEFAULT_LOCALE;
 import static org.smartregister.AllConstants.DEFAULT_LOCALITY_ID_PREFIX;
@@ -162,6 +163,14 @@ public class AllSharedPreferences {
 
     public void saveCurrentLocality(String currentLocality) {
         preferences.edit().putString(CURRENT_LOCALITY, currentLocality).commit();
+    }
+
+    public String fetchCurrentDataStrategy() {
+        return preferences.getString(DATA_STRATEGY, null);
+    }
+
+    public void saveCurrentDataStrategy(String currentDataStrategy) {
+        preferences.edit().putString(DATA_STRATEGY, currentDataStrategy).commit();
     }
 
     public String fetchLanguagePreference() {

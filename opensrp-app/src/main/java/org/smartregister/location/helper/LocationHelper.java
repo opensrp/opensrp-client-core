@@ -1,5 +1,6 @@
 package org.smartregister.location.helper;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
 
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -46,6 +48,8 @@ public class LocationHelper {
     private String defaultLocation;
 
     private List<String> ALLOWED_LEVELS;
+    private List<String> ADVANCED_DATA_CAPTURE_LEVELS;
+
     private String DEFAULT_LOCATION_LEVEL;
     private List<String> allCampaigns = new ArrayList<>();
     private List<String> allOperationalArea = new ArrayList<>();
@@ -127,7 +131,7 @@ public class LocationHelper {
         return defaultLocation;
     }
 
-    public String getOpenMrsLocationId(String locationName) {
+    public String getOpenMrsLocationId(@NonNull String locationName) {
         if (StringUtils.isBlank(locationName)) {
             return null;
         }
@@ -147,7 +151,7 @@ public class LocationHelper {
         } catch (Exception e) {
             Timber.e(e);
         }
-        return response;
+        return locationName.equals(response) ? AllConstants.ADVANCED_DATA_CAPTURE_STRATEGY_PREFIX + locationName.trim().replaceAll(" ", "-").toLowerCase(Locale.ENGLISH) : response;
     }
 
     public String getOpenMrsLocationName(String locationId) {
@@ -689,4 +693,17 @@ public class LocationHelper {
         return DEFAULT_LOCATION_LEVEL;
     }
 
+    /**
+     * Gets list of values for display in the service locations helper for alternative data capture strategies
+     */
+    public List<String> getAdvancedDataCaptureStrategies() {
+        return ADVANCED_DATA_CAPTURE_LEVELS;
+    }
+
+    /***
+     * Call this to set the Advanced data capture strategies after LocationHelper.init call
+     */
+    public void setAdvancedDataCaptureLevels(List<String> advancedDataCaptureLevels) {
+        this.ADVANCED_DATA_CAPTURE_LEVELS = advancedDataCaptureLevels;
+    }
 }

@@ -9,9 +9,9 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.adapter.ServiceLocationsAdapter;
@@ -59,21 +59,26 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         ListView locationsLV = locationPickerDialog.findViewById(R.id.locations_lv);
 
         String defaultLocation = LocationHelper.getInstance().getDefaultLocation();
-        serviceLocationsAdapter = new ServiceLocationsAdapter(context, getLocations(defaultLocation));
+        List<String> locationNames = getLocations(defaultLocation);
+
+        List<String> advancedStrategies = LocationHelper.getInstance().getAdvancedDataCaptureStrategies();
+        boolean hasAdvancedDataStrategies = advancedStrategies != null && advancedStrategies.size() > 0;
+        if (hasAdvancedDataStrategies) {
+            locationNames.addAll(advancedStrategies);
+        }
+
+        serviceLocationsAdapter = new ServiceLocationsAdapter(context, locationNames);
         locationsLV.setAdapter(serviceLocationsAdapter);
-        locationsLV.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(serviceLocationsAdapter
+        locationsLV.setOnItemClickListener((parent, view, position, id) -> {
+            CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(serviceLocationsAdapter.getLocationAt(position));
+            CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentDataStrategy(hasAdvancedDataStrategies &&
+                    advancedStrategies.contains(serviceLocationsAdapter.getLocationAt(position)) ? AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED : AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
+            LocationPickerView.this.setText(LocationHelper.getInstance().getOpenMrsReadableName(serviceLocationsAdapter.getLocationAt(position)));
+            if (onLocationChangeListener != null) {
+                onLocationChangeListener.onLocationChange(serviceLocationsAdapter
                         .getLocationAt(position));
-                LocationPickerView.this.setText(LocationHelper.getInstance().getOpenMrsReadableName(
-                        serviceLocationsAdapter.getLocationAt(position)));
-                if (onLocationChangeListener != null) {
-                    onLocationChangeListener.onLocationChange(serviceLocationsAdapter
-                            .getLocationAt(position));
-                }
-                locationPickerDialog.dismiss();
             }
+            locationPickerDialog.dismiss();
         });
         this.setText(LocationHelper.getInstance().getOpenMrsReadableName(getSelectedItem()));
 
@@ -86,6 +91,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         if (TextUtils.isEmpty(selectedLocation) || !serviceLocationsAdapter.getLocationNames().contains(selectedLocation)) {
             selectedLocation = LocationHelper.getInstance().getDefaultLocation();
             CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(selectedLocation);
+            CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentDataStrategy(AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
         }
         return selectedLocation;
     }
