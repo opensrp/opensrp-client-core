@@ -48,8 +48,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private RemoteLoginTask remoteLoginTask;
 
+    private ResetAppHelper resetAppHelper;
+
     public BaseLoginInteractor(BaseLoginContract.Presenter loginPresenter) {
         this.mLoginPresenter = loginPresenter;
+        resetAppHelper = new ResetAppHelper(DrishtiApplication.getInstance());
     }
 
     @Override
@@ -155,7 +158,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
                                             if (which == DialogInterface.BUTTON_POSITIVE) {
-                                                ResetAppHelper resetAppHelper = new ResetAppHelper(DrishtiApplication.getInstance());
                                                 resetAppHelper.startResetProcess(getLoginView().getAppCompatActivity(), new OnCompleteClearDataCallback() {
                                                     @Override
                                                     public void onComplete() {
@@ -173,7 +175,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                             }
                         } else {
                             if (loginResponse == null) {
-                                getLoginView().showErrorDialog("Sorry, your loginWithLocalFlag failed. Please try again");
+                                getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
                             } else {
                                 if (loginResponse == NO_INTERNET_CONNECTIVITY) {
                                     getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
