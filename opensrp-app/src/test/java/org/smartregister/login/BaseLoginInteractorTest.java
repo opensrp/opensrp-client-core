@@ -3,6 +3,7 @@ package org.smartregister.login;
 import android.app.Activity;
 import android.support.v7.app.AppCompatActivity;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -68,8 +69,11 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     private String user = "johndoe";
     private String password = "qwerty";
 
+    private UserService contextUserService;
+
     @Before
     public void setUp() {
+        contextUserService = CoreLibrary.getInstance().context().userService();
         when(presenter.getOpenSRPContext()).thenReturn(context);
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(context.userService()).thenReturn(userService);
@@ -79,6 +83,11 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         loginResponseData = new LoginResponseData();
         loginResponseData.user = new User().withUsername(user);
         loginResponseData.time = new Time(new Date(), TimeZone.getTimeZone("Africa/Nairobi"));
+    }
+
+    @After
+    public void tearDown() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", contextUserService);
     }
 
     @Test
