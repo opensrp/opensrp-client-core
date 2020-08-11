@@ -8,8 +8,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
+import org.robolectric.annotation.Config;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
@@ -23,6 +26,8 @@ import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.LoginInteractorShadow;
+import org.smartregister.shadows.ShadowNetworkUtils;
+import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
@@ -191,6 +196,22 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         verify(view).enableLoginButton(true);
         verify(view).showErrorDialog(activity.getString(TimeStatus.TIMEZONE_MISMATCH.getMessage(), TimeZone.getTimeZone("Africa/Nairobi").getDisplayName()));
         verify(view, never()).goToHome(anyBoolean());
+    }
+
+    @Test
+    @Config(shadows = {ShadowNetworkUtils.class})
+    public void testLoginAttemptsRemoteLoginAndNavigatesToHome() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+        when(userService.validateDeviceTime(any(), anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
+        when(userService.isUserInPioneerGroup(user)).thenReturn(true);
+        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+        interactor.login(new WeakReference<>(view), user, password);
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(view).enableLoginButton(true);
+        verify(userService).remoteLogin(user, password, loginResponseData);
+        verify(view).goToHome(true);
     }
 
 
