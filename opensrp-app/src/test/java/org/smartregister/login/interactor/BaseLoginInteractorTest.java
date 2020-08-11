@@ -1,6 +1,5 @@
-package org.smartregister.login;
+package org.smartregister.login.interactor;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 
@@ -11,8 +10,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
@@ -34,13 +31,13 @@ import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.LoginInteractorShadow;
 import org.smartregister.shadows.ShadowNetworkUtils;
-import org.smartregister.util.NetworkUtils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 import java.util.Date;
 import java.util.TimeZone;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,11 +45,9 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -368,6 +363,13 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         verify(view, never()).goToHome(anyBoolean());
         verify(userService, never()).localLogin(user, password);
         verify(interactor).loginWithLocalFlag(any(), eq(false), eq(user), eq(password));
+    }
+
+
+    @Test
+    public void testGetFlexValueShouldReturnCorrectFlex() {
+        assertEquals(5, interactor.getFlexValue(2));
+        assertEquals(20, interactor.getFlexValue(60));
     }
 
 
