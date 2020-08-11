@@ -236,6 +236,22 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     }
 
     @Test
+    public void testLoginAttemptsRemoteLoginAndErrorsWithErrorFromEnum() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE);
+        when(userService.validateDeviceTime(any(), anyLong())).thenReturn(TimeStatus.TIMEZONE_MISMATCH);
+        when(userService.isUserInPioneerGroup(user)).thenReturn(true);
+        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
+        interactor.login(new WeakReference<>(view), user, password);
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(view).enableLoginButton(true);
+        verify(view).showErrorDialog(LoginResponse.SUCCESS_WITH_EMPTY_RESPONSE.message());
+        verify(view, never()).goToHome(anyBoolean());
+    }
+
+    @Test
     @Config(shadows = {ShadowNetworkUtils.class})
     public void testLoginAttemptsRemoteLoginAndNavigatesToHome() {
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
