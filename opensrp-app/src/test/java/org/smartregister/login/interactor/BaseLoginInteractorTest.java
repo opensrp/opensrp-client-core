@@ -3,6 +3,9 @@ package org.smartregister.login.interactor;
 import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,12 +23,14 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.Setting;
 import org.smartregister.domain.TimeStatus;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.Time;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.listener.OnCompleteClearDataCallback;
 import org.smartregister.multitenant.ResetAppHelper;
+import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.UserService;
@@ -92,6 +97,12 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Mock
     private UniqueIdRepository uniqueIdRepository;
+
+    @Mock
+    private AllSettings allSettings;
+
+    @Captor
+    private ArgumentCaptor<Setting> settingCaptor;
 
     private AppCompatActivity activity;
 
@@ -370,6 +381,20 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     public void testGetFlexValueShouldReturnCorrectFlex() {
         assertEquals(5, interactor.getFlexValue(2));
         assertEquals(20, interactor.getFlexValue(60));
+    }
+
+    @Test
+    public void testProcessServerSettingsShouldSaveSettings() throws JSONException {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "allSettings", allSettings);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(AllConstants.PREF_KEY.SETTINGS, new JSONArray("[{\"identifier\":\"login\",\"serverVersion\":1212121}]"));
+        LoginResponse loginResponse = LoginResponse.SUCCESS.withPayload(loginResponseData);
+        loginResponse.setRawData(jsonObject);
+        interactor.processServerSettings(loginResponse);
+        verify(allSettings).put(AllSharedPreferences.LAST_SETTINGS_SYNC_TIMESTAMP, "1212121");
+        verify(allSettings).putSetting(settingCaptor.capture());
+        assertEquals("login", settingCaptor.getValue().getKey());
+        assertEquals("1212121", settingCaptor.getValue().getVersion());
     }
 
 
