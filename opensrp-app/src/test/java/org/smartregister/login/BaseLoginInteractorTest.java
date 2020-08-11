@@ -48,6 +48,7 @@ import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
@@ -351,6 +352,22 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         verify(view).goToHome(false);
         verify(userService).localLogin(user, password);
         verify(uniqueIdRepository, timeout(ASYNC_TIMEOUT)).releaseReservedIds();
+    }
+
+    @Test
+    public void testLocalLoginShouldInitiateRemoteLoginIfTimeCheckEnabled() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "uniqueIdRepository", uniqueIdRepository);
+        when(allSharedPreferences.fetchForceRemoteLogin()).thenReturn(false);
+        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(user);
+        when(userService.isUserInValidGroup(user, password)).thenReturn(true);
+        Whitebox.setInternalState(AllConstants.class, "TIME_CHECK", true);
+        when(userService.validateDeviceTime(any(), anyLong())).thenReturn(TimeStatus.TIME_MISMATCH);
+        interactor = spy(interactor);
+        interactor.login(new WeakReference<>(view), user, password);
+        verify(view, never()).goToHome(anyBoolean());
+        verify(userService, never()).localLogin(user, password);
+        verify(interactor).loginWithLocalFlag(any(), eq(false), eq(user), eq(password));
     }
 
 
