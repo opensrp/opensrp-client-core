@@ -229,5 +229,17 @@ public class SyncSettingsServiceHelper {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setHttpAgent(HTTPAgent httpAgent) {
+        this.httpAgent = httpAgent;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public void setSharedPreferences(AllSharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
+    }
 }
 
