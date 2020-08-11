@@ -12,13 +12,14 @@ import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 import org.smartregister.shadows.ShadowJobManager;
+import org.smartregister.shadows.ShadowSQLiteDatabase;
 
 /**
  * Created by onaio on 29/08/2017.
  */
 
 @RunWith(RobolectricTestRunner.class)
-@Config(application = TestApplication.class, shadows = {FontTextViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowAppDatabase.class, ShadowJobManager.class}, sdk = Build.VERSION_CODES.O_MR1)
+@Config(application = TestApplication.class, shadows = {FontTextViewShadow.class, ShadowDrawableResourcesImpl.class, ShadowAppDatabase.class, ShadowJobManager.class, ShadowSQLiteDatabase.class}, sdk = Build.VERSION_CODES.O_MR1)
 public abstract class BaseRobolectricUnitTest {
 
     @Rule
