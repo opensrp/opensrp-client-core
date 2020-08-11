@@ -30,6 +30,7 @@ import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.listener.OnCompleteClearDataCallback;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.UserService;
 import org.smartregister.shadows.LoginInteractorShadow;
 import org.smartregister.shadows.ShadowNetworkUtils;
@@ -45,9 +46,11 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -90,6 +93,9 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Captor
     private ArgumentCaptor<OnCompleteClearDataCallback> onCompleteClearDataCaptor;
+
+    @Mock
+    private UniqueIdRepository uniqueIdRepository;
 
     private AppCompatActivity activity;
 
@@ -312,6 +318,39 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         verify(view).showErrorDialog(activity.getString(R.string.unauthorized_group));
 
 
+    }
+
+
+    @Test
+    public void testLocalLoginShouldShowErrorWhenNotAuthenticated() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        when(allSharedPreferences.fetchForceRemoteLogin()).thenReturn(false);
+        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(user);
+        when(userService.isUserInValidGroup(user, password)).thenReturn(false);
+        interactor.login(new WeakReference<>(view), user, password);
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(view).enableLoginButton(true);
+        verify(view).showErrorDialog(activity.getString(R.string.unauthorized));
+        verify(view, never()).goToHome(anyBoolean());
+    }
+
+    @Test
+    @Config(shadows = {ShadowNetworkUtils.class})
+    public void testLocalLoginShouldShowNavigateToHomeAndReleaseIds() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "uniqueIdRepository", uniqueIdRepository);
+        when(allSharedPreferences.fetchForceRemoteLogin()).thenReturn(false);
+        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(user);
+        when(userService.isUserInValidGroup(user, password)).thenReturn(true);
+        interactor.login(new WeakReference<>(view), user, password);
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(view).enableLoginButton(true);
+        verify(view, never()).showErrorDialog(anyString());
+        verify(view).goToHome(false);
+        verify(userService).localLogin(user, password);
+        verify(uniqueIdRepository, timeout(ASYNC_TIMEOUT)).releaseReservedIds();
     }
 
 
