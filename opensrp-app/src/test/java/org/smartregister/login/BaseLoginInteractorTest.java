@@ -277,4 +277,26 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
     }
 
 
+    @Test
+    public void testLoginWithLocalFlagShouldFailsForDifferentTeam() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
+        Whitebox.setInternalState(interactor, "resetAppHelper", resetAppHelper);
+        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
+        when(syncConfiguration.clearDataOnNewTeamLogin()).thenReturn(false);
+        when(view.getAppCompatActivity()).thenReturn(activity);
+        when(userService.isValidRemoteLogin(user, password)).thenReturn(LoginResponse.SUCCESS.withPayload(loginResponseData));
+        when(userService.isUserInPioneerGroup(user)).thenReturn(false);
+        when(allSharedPreferences.fetchBaseURL("")).thenReturn(activity.getString(R.string.opensrp_url));
+        interactor.loginWithLocalFlag(new WeakReference<>(view), false, user, password);
+        verify(view).hideKeyboard();
+        verify(view).enableLoginButton(false);
+        verify(view).enableLoginButton(true);
+        verify(view, never()).goToHome(true);
+        verify(view, never()).showClearDataDialog(dialogCaptor.capture());
+        verify(view).showErrorDialog(activity.getString(R.string.unauthorized_group));
+
+
+    }
+
+
 }
