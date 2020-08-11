@@ -385,6 +385,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testProcessServerSettingsShouldSaveSettings() throws JSONException {
+        AllSettings allSettingsContext = CoreLibrary.getInstance().context().allSettings();
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "allSettings", allSettings);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(AllConstants.PREF_KEY.SETTINGS, new JSONArray("[{\"identifier\":\"login\",\"serverVersion\":1212121}]"));
@@ -395,6 +396,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         verify(allSettings).putSetting(settingCaptor.capture());
         assertEquals("login", settingCaptor.getValue().getKey());
         assertEquals("1212121", settingCaptor.getValue().getVersion());
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "allSettings", allSettingsContext);
     }
 
 
