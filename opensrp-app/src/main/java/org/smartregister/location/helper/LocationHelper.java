@@ -57,6 +57,16 @@ public class LocationHelper {
 
     private LocationHelper(List<String> allowedLevels, String defaultLocationLevel) {
 
+        locationHelperCore(allowedLevels, defaultLocationLevel);
+    }
+
+    private LocationHelper(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
+
+        locationHelperCore(allowedLevels, defaultLocationLevel);
+        this.ADVANCED_DATA_CAPTURE_LEVELS = advancedDataCaptureStrategies;
+    }
+
+    private void locationHelperCore(List<String> allowedLevels, String defaultLocationLevel) {
         childAndParentLocationIds = new HashMap<>();
         setParentAndChildLocationIds(getDefaultLocation());
         this.ALLOWED_LEVELS = allowedLevels;
@@ -66,6 +76,13 @@ public class LocationHelper {
     public static void init(List<String> allowedLevels, String defaultLocationLevel) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
             instance = new LocationHelper(allowedLevels, defaultLocationLevel);
+
+        }
+    }
+    public static void init(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
+        if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
+            instance = new LocationHelper(allowedLevels, defaultLocationLevel, advancedDataCaptureStrategies);
+
         }
     }
 
@@ -676,7 +693,6 @@ public class LocationHelper {
         return null;
     }
 
-
     private LinkedHashMap<String, TreeNode<String, Location>> childMap
             (TreeNode<String, Location> treeNode) {
         if (treeNode.getChildren() != null) {
@@ -698,12 +714,5 @@ public class LocationHelper {
      */
     public List<String> getAdvancedDataCaptureStrategies() {
         return ADVANCED_DATA_CAPTURE_LEVELS;
-    }
-
-    /***
-     * Call this to set the Advanced data capture strategies after LocationHelper.init call
-     */
-    public void setAdvancedDataCaptureLevels(List<String> advancedDataCaptureLevels) {
-        this.ADVANCED_DATA_CAPTURE_LEVELS = advancedDataCaptureLevels;
     }
 }

@@ -18,8 +18,11 @@ import org.smartregister.adapter.ServiceLocationsAdapter;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -59,13 +62,17 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         ListView locationsLV = locationPickerDialog.findViewById(R.id.locations_lv);
 
         String defaultLocation = LocationHelper.getInstance().getDefaultLocation();
+
         List<String> locationNames = getLocations(defaultLocation);
+
+        Set<String> uniqueLocations = new HashSet<>(locationNames);
 
         List<String> advancedStrategies = LocationHelper.getInstance().getAdvancedDataCaptureStrategies();
         boolean hasAdvancedDataStrategies = advancedStrategies != null && advancedStrategies.size() > 0;
         if (hasAdvancedDataStrategies) {
-            locationNames.addAll(advancedStrategies);
+            uniqueLocations.addAll(advancedStrategies);
         }
+        locationNames = new ArrayList<String>(uniqueLocations);
 
         serviceLocationsAdapter = new ServiceLocationsAdapter(context, locationNames);
         locationsLV.setAdapter(serviceLocationsAdapter);
@@ -75,8 +82,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
                     advancedStrategies.contains(serviceLocationsAdapter.getLocationAt(position)) ? AllConstants.DATA_CAPTURE_STRATEGY.ADVANCED : AllConstants.DATA_CAPTURE_STRATEGY.NORMAL);
             LocationPickerView.this.setText(LocationHelper.getInstance().getOpenMrsReadableName(serviceLocationsAdapter.getLocationAt(position)));
             if (onLocationChangeListener != null) {
-                onLocationChangeListener.onLocationChange(serviceLocationsAdapter
-                        .getLocationAt(position));
+                onLocationChangeListener.onLocationChange(serviceLocationsAdapter.getLocationAt(position));
             }
             locationPickerDialog.dismiss();
         });
