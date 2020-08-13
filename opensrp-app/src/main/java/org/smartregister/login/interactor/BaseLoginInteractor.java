@@ -48,8 +48,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
 
     private RemoteLoginTask remoteLoginTask;
 
+    private ResetAppHelper resetAppHelper;
+
     public BaseLoginInteractor(BaseLoginContract.Presenter loginPresenter) {
         this.mLoginPresenter = loginPresenter;
+        resetAppHelper = new ResetAppHelper(DrishtiApplication.getInstance());
     }
 
     @Override
@@ -127,7 +130,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                     public void onEvent(LoginResponse loginResponse) {
                         getLoginView().enableLoginButton(true);
                         if (loginResponse == LoginResponse.SUCCESS) {
-                            String username=loginResponse.payload()!=null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
+                            String username = loginResponse.payload() != null && loginResponse.payload().user != null && StringUtils.isNotBlank(loginResponse.payload().user.getUsername())
                                     ? loginResponse.payload().user.getUsername() : userName;
                             if (getUserService().isUserInPioneerGroup(username)) {
                                 TimeStatus timeStatus = getUserService().validateDeviceTime(
@@ -155,7 +158,6 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.dismiss();
                                             if (which == DialogInterface.BUTTON_POSITIVE) {
-                                                ResetAppHelper resetAppHelper = new ResetAppHelper(DrishtiApplication.getInstance());
                                                 resetAppHelper.startResetProcess(getLoginView().getAppCompatActivity(), new OnCompleteClearDataCallback() {
                                                     @Override
                                                     public void onComplete() {
@@ -173,7 +175,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                             }
                         } else {
                             if (loginResponse == null) {
-                                getLoginView().showErrorDialog("Sorry, your loginWithLocalFlag failed. Please try again");
+                                getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
                             } else {
                                 if (loginResponse == NO_INTERNET_CONNECTIVITY) {
                                     getLoginView().showErrorDialog(getApplicationContext().getResources().getString(R.string.no_internet_connectivity));
@@ -190,11 +192,11 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                 });
             } else {
                 getLoginView().enableLoginButton(true);
-                getLoginView().showErrorDialog("OpenSRP Base URL is missing. Please add it in Setting and try again");
+                getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_base_url_missing_error));
             }
         } catch (Exception e) {
             Timber.e(e);
-            getLoginView().showErrorDialog("Error occurred trying to loginWithLocalFlag in. Please try again...");
+            getLoginView().showErrorDialog(getApplicationContext().getString(R.string.remote_login_generic_error));
         }
     }
 
