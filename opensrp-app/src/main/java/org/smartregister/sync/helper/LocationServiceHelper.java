@@ -67,7 +67,7 @@ public class LocationServiceHelper extends BaseHelper {
     private LocationTagRepository locationTagRepository;
     private StructureRepository structureRepository;
     private long totalRecords;
-    private  SyncProgress syncProgress;
+    private SyncProgress syncProgress;
 
     public LocationServiceHelper(LocationRepository locationRepository, LocationTagRepository locationTagRepository, StructureRepository structureRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
@@ -135,7 +135,7 @@ public class LocationServiceHelper extends BaseHelper {
                 locations.addAll(batchLocationStructures);
                 syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, locations.size()));
                 sendSyncProgressBroadcast(syncProgress, context);
-                return  batchSyncLocationsStructures(isJurisdiction, locations, false);
+                return batchSyncLocationsStructures(isJurisdiction, locations, false);
 
             }
         } catch (Exception e) {
@@ -145,7 +145,6 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     private String fetchLocationsOrStructures(boolean isJurisdiction, Long serverVersion, String locationFilterValue, boolean returnCount) throws Exception {
-
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
@@ -200,7 +199,6 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchLocationsByLevelAndTags() throws Exception {
-
         HTTPAgent httpAgent = getHttpAgent();
 
         if (httpAgent == null) {
@@ -241,7 +239,6 @@ public class LocationServiceHelper extends BaseHelper {
             location.setProperties(property);
 
             locationRepository.addOrUpdate(location);
-
 
             for (String tagName : openMrsLocation.getTags()) {
                 LocationTag locationTag = new LocationTag();
@@ -316,6 +313,7 @@ public class LocationServiceHelper extends BaseHelper {
             }
         }
     }
+
     public void fetchOpenMrsLocationsByTeamIds() throws NoHttpResponseException, JSONException {
         HTTPAgent httpAgent = getHttpAgent();
         if (httpAgent == null) {
@@ -380,5 +378,44 @@ public class LocationServiceHelper extends BaseHelper {
         return baseUrl;
     }
 
-}
+    public void fetchAllLocations() {
+        try {
+            HTTPAgent httpAgent = getHttpAgent();
+            if (httpAgent == null) {
+                throw new IllegalArgumentException(LOCATION_STRUCTURE_URL + " http agent is null");
+            }
 
+            String baseUrl = getFormattedBaseUrl();
+
+            JSONObject request = new JSONObject();
+            request.put("is_jurisdiction", true);
+            request.put("serverVersion", 0);
+
+            Response resp = httpAgent.post(
+                    MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
+                    request.toString());
+
+            if (resp.isFailure()) {
+                throw new NoHttpResponseException(LOCATION_STRUCTURE_URL + " not returned data");
+            }
+
+            List<Location> locations = locationGson.fromJson(
+                    resp.payload().toString(),
+                    new TypeToken<List<Location>>() {
+                    }.getType()
+            );
+
+            for (Location location : locations) {
+                try {
+                    location.setSyncStatus(BaseRepository.TYPE_Synced);
+
+                    locationRepository.addOrUpdate(location);
+                } catch (Exception e) {
+                    Timber.e(e, "EXCEPTION %s", e.toString());
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "EXCEPTION %s", e.toString());
+        }
+    }
+}
