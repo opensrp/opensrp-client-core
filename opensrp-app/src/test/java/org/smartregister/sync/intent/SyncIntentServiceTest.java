@@ -97,43 +97,33 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testHandleSyncCallsPullECFromServerIfHasValidAuthorizationAndIsAppVersionAllowed() throws PackageManager.NameNotFoundException {
-        syncIntentService = spy(syncIntentService);
-        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
-        when(syncUtils.verifyAuthorization()).thenReturn(true);
-        when(syncUtils.isAppVersionAllowed()).thenReturn(true);
-        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
+        initMocksForPullECFromServer();
         syncIntentService.handleSync();
         verify(syncIntentService).pullECFromServer();
     }
 
     @Test
     public void testPullEcFromServerWhenSyncFilterParamIsNull() throws PackageManager.NameNotFoundException {
-        initMocksForPullECFromServer();
-        syncIntentService.handleSync();
-        verify(syncIntentService, times(2)).sendBroadcast(intentArgumentCaptor.capture());
-        // sync fetch started broadcast sent
-        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(0).getAction());
-        assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getAllValues().get(0).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+        syncIntentService = spy(syncIntentService);
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
 
         // sync fetch failed broadcast sent
-        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(1).getAction());
-        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getAllValues().get(1).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
 
     }
 
     @Test
     public void testPullEcFromServerWhenSyncFilterValueIsNull() throws PackageManager.NameNotFoundException {
-        initMocksForPullECFromServer();
+        syncIntentService = spy(syncIntentService);
         when(syncConfiguration.getSyncFilterParam()).thenReturn(SyncFilter.LOCATION);
-        syncIntentService.handleSync();
-        verify(syncIntentService, times(2)).sendBroadcast(intentArgumentCaptor.capture());
-        // sync fetch started broadcast sent
-        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(0).getAction());
-        assertEquals(FetchStatus.fetchStarted, intentArgumentCaptor.getAllValues().get(0).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
 
         // sync fetch failed broadcast sent
-        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getAllValues().get(1).getAction());
-        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getAllValues().get(1).getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
 
     }
 
