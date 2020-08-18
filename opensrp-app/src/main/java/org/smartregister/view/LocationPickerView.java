@@ -72,7 +72,7 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         if (hasAdvancedDataStrategies) {
             uniqueLocations.addAll(advancedStrategies);
         }
-        locationNames = new ArrayList<String>(uniqueLocations);
+        locationNames = new ArrayList<>(uniqueLocations);
 
         serviceLocationsAdapter = new ServiceLocationsAdapter(context, locationNames);
         locationsLV.setAdapter(serviceLocationsAdapter);
