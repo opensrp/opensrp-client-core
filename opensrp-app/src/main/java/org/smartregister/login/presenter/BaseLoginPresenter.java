@@ -155,6 +155,10 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
 
     }
 
+    public void setLoginView(WeakReference<BaseLoginContract.View> mLoginView) {
+        this.mLoginView = mLoginView;
+    }
+
     public String getJsonViewFromPreference(String viewKey) {
         return getDefaultSharedPreferences(getLoginView().getActivityContext()).getString(viewKey, null);
     }
