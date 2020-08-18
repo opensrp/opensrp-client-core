@@ -130,6 +130,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
+                return;
             }
 
             String url = baseUrl + SYNC_URL;

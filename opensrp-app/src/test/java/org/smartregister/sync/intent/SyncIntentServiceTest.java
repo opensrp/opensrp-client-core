@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
@@ -22,6 +23,7 @@ import org.smartregister.util.SyncUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,6 +52,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
+        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
         syncIntentService = new SyncIntentService();
         syncIntentService.init(context);
         Whitebox.setInternalState(syncIntentService, "mBase", RuntimeEnvironment.application);
@@ -118,6 +121,24 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     public void testPullEcFromServerWhenSyncFilterValueIsNull() throws PackageManager.NameNotFoundException {
         syncIntentService = spy(syncIntentService);
         when(syncConfiguration.getSyncFilterParam()).thenReturn(SyncFilter.LOCATION);
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+
+        // sync fetch failed broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+
+    }
+
+    @Test
+    public void testPullEcFromServerWhenHttpAgentIsNull() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+
+        Whitebox.setInternalState(syncIntentService, "httpAgent", (Object[]) null);
+        assertNull(Whitebox.getInternalState(syncIntentService, "httpAgent"));
+
+        when(syncConfiguration.getSyncFilterParam()).thenReturn(SyncFilter.LOCATION);
+        when(syncConfiguration.getSyncFilterValue()).thenReturn("location-1");
         syncIntentService.pullECFromServer();
         verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
 
