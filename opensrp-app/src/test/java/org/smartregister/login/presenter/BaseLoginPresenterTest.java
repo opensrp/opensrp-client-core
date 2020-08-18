@@ -1,8 +1,7 @@
 package org.smartregister.login.presenter;
 
+import android.content.res.Configuration;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -14,18 +13,16 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.login.model.BaseLoginModel;
-import org.smartregister.view.activity.BaseLoginActivityTest;
 import org.smartregister.view.activity.BaseLoginActivityTest.BaseLoginActivityImpl;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -122,5 +119,19 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
 
         RelativeLayout view = loginView.getActivityContext().findViewById(R.id.login_layout);
         assertEquals(0, view.getMinimumHeight());
+    }
+
+    @Test
+    public void testSetLanguage() {
+        presenter.setLanguage();
+        Configuration config = activity.getResources().getConfiguration();
+        assertEquals(1, config.getLocales().size());
+        assertEquals("en", config.getLocales().get(0).getLanguage());
+    }
+
+    @Test
+    public void testGetJsonViewFromPreference() {
+        CoreLibrary.getInstance().context().allSharedPreferences().savePreference("asdsa", "232");
+        assertEquals("232", presenter.getJsonViewFromPreference("asdsa"));
     }
 }
