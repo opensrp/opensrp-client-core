@@ -5,6 +5,7 @@ import org.mockito.Mockito;
 import org.robolectric.annotation.Implementation;
 import org.robolectric.annotation.Implements;
 import org.robolectric.annotation.RealObject;
+import org.robolectric.shadow.api.Shadow;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.AllSharedPreferences;
@@ -22,6 +23,8 @@ public class ShadowSyncSettingsServiceHelper {
     @RealObject
     private SyncSettingsServiceHelper realObject;
 
+    public static int processIntent;
+
     @Implementation
     public SyncSettingsServiceHelper __constructor__(String baseUrl, HTTPAgent httpAgent) {
 
@@ -29,10 +32,6 @@ public class ShadowSyncSettingsServiceHelper {
         ReflectionHelpers.setField(realObject, "baseUrl", baseUrl);
         AllSharedPreferences sharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
         ReflectionHelpers.setField(realObject, "sharedPreferences", sharedPreferences);
-
-        /*realObject.setBaseUrl(baseUrl);
-        realObject.setHttpAgent(httpAgent);
-        realObject.setSharedPreferences(sharedPreferences);*/
 
         realObject = Mockito.spy(realObject);
         instance = realObject;
@@ -42,6 +41,12 @@ public class ShadowSyncSettingsServiceHelper {
 
     public static SyncSettingsServiceHelper getLastInstance() {
         return instance;
+    }
+
+    @Implementation
+    public int processIntent() throws JSONException {
+        processIntent++;
+        return Shadow.directlyOn(instance, SyncSettingsServiceHelper.class).processIntent();
     }
 
 }

@@ -42,7 +42,7 @@ public class SettingsSyncedCheckTest extends BaseRobolectricUnitTest {
 
         settingsSyncedCheck.performPreResetAppOperations(DrishtiApplication.getInstance());
 
-        Mockito.verify(ShadowSyncSettingsServiceHelper.getLastInstance()).processIntent();
+        Assert.assertEquals(1, ShadowSyncSettingsServiceHelper.processIntent);
     }
 
     @Test
