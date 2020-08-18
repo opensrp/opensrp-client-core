@@ -1,6 +1,11 @@
 package org.smartregister.login.presenter;
 
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -13,12 +18,16 @@ import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
 import org.smartregister.login.model.BaseLoginModel;
+import org.smartregister.view.activity.BaseLoginActivityTest;
+import org.smartregister.view.activity.BaseLoginActivityTest.BaseLoginActivityImpl;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
@@ -40,6 +49,8 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
     private BaseLoginContract.Interactor loginInteractor;
     @Spy
     private BaseLoginContract.Model loginModel = new BaseLoginModel();
+    @Mock
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListener;
 
     private AppCompatActivity activity;
 
@@ -48,7 +59,7 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
         presenter.setLoginModel(loginModel);
         presenter.setLoginInteractor(loginInteractor);
         presenter.setLoginView(new WeakReference<>(loginView));
-        activity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
+        activity = Robolectric.buildActivity(BaseLoginActivityImpl.class).create().get();
         when(loginView.getActivityContext()).thenReturn(activity);
     }
 
@@ -95,5 +106,21 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
         verify(loginView, never()).setUsernameError(R.string.error_field_required);
         verify(loginView, never()).enableLoginButton(true);
         verify(loginInteractor).login(any(), eq("john"), eq("doe"));
+    }
+
+    @Test
+    public void testIsUserLoggedOutShouldReturnModelValue() {
+        assertTrue(presenter.isUserLoggedOut());
+        verify(loginModel).isUserLoggedOut();
+    }
+
+    @Test
+    public void testPositionViewsAndCanvasGlobalLayoutListenerProcessor() {
+        presenter.positionViews();
+        final ScrollView canvasSV = loginView.getActivityContext().findViewById(R.id.canvasSV);
+        presenter.canvasGlobalLayoutListenerProcessor(canvasSV, layoutListener);
+
+        RelativeLayout view = loginView.getActivityContext().findViewById(R.id.login_layout);
+        assertEquals(0, view.getMinimumHeight());
     }
 }
