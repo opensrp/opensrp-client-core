@@ -200,6 +200,27 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     }
 
+    @Test
+    public void testPullEcFromServerWithTimeoutError() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+
+        initMocksForPullECFromServerUsingPOST();
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        responseStatus.setDisplayValue(ResponseErrorStatus.timeout.name());
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+
+        // sync fetch failed broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        FetchStatus actualFetchStatus = (FetchStatus) intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS);
+        assertEquals(FetchStatus.fetchedFailed, actualFetchStatus);
+        assertEquals("timeout", actualFetchStatus.displayValue());
+
+    }
+
     private void initMocksForPullECFromServerUsingPOST() {
         Whitebox.setInternalState(syncIntentService, "httpAgent", httpAgent);
         when(syncConfiguration.isSyncUsingPost()).thenReturn(true);
