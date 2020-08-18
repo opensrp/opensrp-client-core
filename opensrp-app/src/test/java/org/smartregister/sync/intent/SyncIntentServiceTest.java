@@ -15,6 +15,7 @@ import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
+import org.smartregister.SyncFilter;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.SyncUtils;
@@ -47,8 +48,8 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         MockitoAnnotations.initMocks(this);
+        Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         syncIntentService = new SyncIntentService();
         syncIntentService.init(context);
         Whitebox.setInternalState(syncIntentService, "mBase", RuntimeEnvironment.application);
@@ -82,6 +83,56 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
         syncIntentService.handleSync();
         verify(syncUtils).logoutUser();
+    }
+
+    @Test
+    public void testHandleSyncCallsLogOutUserIfAppVersionIsNotAllowedAnd() {
+        syncIntentService = spy(syncIntentService);
+        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
+        when(syncUtils.verifyAuthorization()).thenReturn(true);
+        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
+        syncIntentService.handleSync();
+        verify(syncUtils).logoutUser();
+    }
+
+    @Test
+    public void testHandleSyncCallsPullECFromServerIfHasValidAuthorizationAndIsAppVersionAllowed() throws PackageManager.NameNotFoundException {
+        initMocksForPullECFromServer();
+        syncIntentService.handleSync();
+        verify(syncIntentService).pullECFromServer();
+    }
+
+    @Test
+    public void testPullEcFromServerWhenSyncFilterParamIsNull() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+
+        // sync fetch failed broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+
+    }
+
+    @Test
+    public void testPullEcFromServerWhenSyncFilterValueIsNull() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+        when(syncConfiguration.getSyncFilterParam()).thenReturn(SyncFilter.LOCATION);
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+
+        // sync fetch failed broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        assertEquals(FetchStatus.fetchedFailed, intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS));
+
+    }
+
+    private void initMocksForPullECFromServer() throws PackageManager.NameNotFoundException {
+        syncIntentService = spy(syncIntentService);
+        Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
+        when(syncUtils.verifyAuthorization()).thenReturn(true);
+        when(syncUtils.isAppVersionAllowed()).thenReturn(true);
+        when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
     }
 
 }
