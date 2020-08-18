@@ -6,14 +6,20 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.TestApplication;
 import org.smartregister.TestP2pApplication;
+import org.smartregister.domain.SyncStatus;
 import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.p2p.sync.data.MultiMediaData;
 import org.smartregister.sync.P2PClassifier;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.TreeSet;
 
 /**
@@ -213,5 +219,45 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         Mockito.verify(foreignEventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize);
         Mockito.verify(eventClientRepository, Mockito.never()).getEvents(lastRecordId, batchSize);
         Mockito.verify(eventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize);
+    }
+
+
+    @Test
+    public void getMultiMediaDataShouldCallImageRepositoryAndReturnMultiMediaDataWhenDataTypeIsProfielPic() throws IOException {
+        ((TestApplication) TestApplication.getInstance()).setP2PClassifier(Mockito.mock(P2PClassifier.class));
+        ImageRepository imageRepository = Mockito.spy(CoreLibrary.getInstance().context().imageRepository());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "imageRepository", imageRepository);
+
+        int lastRecordId = 789;
+        String anmId = "90293-fsdawecSD";
+        String imagePath = "profile-pig.png";
+
+        // Create the image
+        new File(imagePath).createNewFile();
+
+        HashMap<String, Object> imageDetails = new HashMap<>();
+        imageDetails.put(ImageRepository.filepath_COLUMN, imagePath);
+        imageDetails.put(ImageRepository.syncStatus_COLUMN, SyncStatus.SYNCED.value());
+        imageDetails.put(AllConstants.ROWID, 87L);
+        imageDetails.put(ImageRepository.filecategory_COLUMN, "profile-pic-male");
+        imageDetails.put(ImageRepository.anm_ID_COLUMN, anmId);
+        imageDetails.put(ImageRepository.entityID_COLUMN, "entity-id");
+
+        Mockito.doReturn(imageDetails).when(imageRepository).getImage(lastRecordId);
+
+        // Call the method under test
+        MultiMediaData actualJsonData = p2PSenderTransferDao.getMultiMediaData(p2PSenderTransferDao.profilePic, lastRecordId);
+
+        // Verify that the repository was called
+        Mockito.verify(imageRepository).getImage(lastRecordId);
+        Assert.assertEquals("entity-id", actualJsonData.getMediaDetails().get(ImageRepository.entityID_COLUMN));
+        Assert.assertEquals(anmId, actualJsonData.getMediaDetails().get(ImageRepository.anm_ID_COLUMN));
+        Assert.assertEquals("profile-pic-male", actualJsonData.getMediaDetails().get(ImageRepository.filecategory_COLUMN));
+        Assert.assertEquals(SyncStatus.SYNCED.value(), actualJsonData.getMediaDetails().get(ImageRepository.syncStatus_COLUMN));
+        Assert.assertEquals(String.valueOf(87L), actualJsonData.getMediaDetails().get(AllConstants.ROWID));
+        Assert.assertEquals(87L, actualJsonData.getRecordId());
+        Assert.assertNotNull(actualJsonData.getFile());
+
+        Mockito.verify(imageRepository).getImage(lastRecordId);
     }
 }
