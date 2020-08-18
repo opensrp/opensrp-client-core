@@ -14,7 +14,6 @@ import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.login.model.BaseLoginModel;
 import org.smartregister.view.activity.BaseLoginActivityTest.BaseLoginActivityImpl;
@@ -22,6 +21,7 @@ import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -131,7 +131,7 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testGetJsonViewFromPreference() {
-        CoreLibrary.getInstance().context().allSharedPreferences().savePreference("asdsa", "232");
+        getDefaultSharedPreferences(loginView.getActivityContext()).edit().putString("asdsa", "232").commit();
         assertEquals("232", presenter.getJsonViewFromPreference("asdsa"));
     }
 }
