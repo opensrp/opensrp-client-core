@@ -7,7 +7,6 @@ import org.smartregister.repository.Repository;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.view.activity.DrishtiApplication;
 
-
 import static org.mockito.Mockito.mock;
 
 /**
@@ -45,11 +44,6 @@ public class TestApplication extends DrishtiApplication {
 
     public void setContext(Context context) {
         this.context = context;
-    }
-
-    @Override
-    public byte[] getPassword() {
-        return new byte[];
     }
 
     @Nullable

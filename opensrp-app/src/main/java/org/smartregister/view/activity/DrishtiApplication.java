@@ -128,7 +128,7 @@ public abstract class DrishtiApplication extends Application {
         return credentialsHelper;
     }
 
-    public byte[] getPassword() {
+    public final byte[] getPassword() {
 
         if (password == null) {
             password = credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
