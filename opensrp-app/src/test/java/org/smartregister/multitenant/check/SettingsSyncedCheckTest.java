@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.DristhiConfiguration;
@@ -34,6 +35,7 @@ public class SettingsSyncedCheckTest extends BaseRobolectricUnitTest {
         Mockito.verify(settingsSyncedCheck).isSettingsSynced(DrishtiApplication.getInstance());
     }
 
+    @Config(shadows = {ShadowSyncSettingsServiceHelper.class})
     @Test
     public void performPreResetAppOperations() throws PreResetAppOperationException, JSONException {
         DristhiConfiguration dristhiConfiguration = Mockito.spy(DrishtiApplication.getInstance().getContext().configuration());
