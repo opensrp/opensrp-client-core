@@ -343,6 +343,8 @@
     <string name="sync_failed">Sync Failed</string>
     <string name="sync_complete">Sync Complete</string>
     <string name="manual_sync_triggered">Manual Sync Triggered&#8230;</string>
+    <string name="remote_login_generic_error">Error occurred during Login in with server. Please try again...</string>
+    <string name="remote_login_base_url_missing_error">OpenSRP Base URL is missing. Please add it in Setting and try again</string>
 
     <!-- base register -->
     <string name="filter">Filter</string>

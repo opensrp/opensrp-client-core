@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
@@ -157,9 +158,8 @@ public class Repository extends SQLiteOpenHelper {
         return getWritableDatabase(password());
     }
 
-    private boolean isDatabaseWritable(byte[] password) {
-
-
+    @VisibleForTesting
+    protected boolean isDatabaseWritable(byte[] password) {
         SQLiteDatabase database = SQLiteDatabase
                 .openDatabase(databasePath.getPath(), password, null,
                         SQLiteDatabase.OPEN_READONLY, hook, new OpenSRPDatabaseErrorHandler());
