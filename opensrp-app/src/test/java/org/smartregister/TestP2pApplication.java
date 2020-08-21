@@ -1,6 +1,9 @@
 package org.smartregister;
 
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.repository.AllSharedPreferences;
+
+import javassist.tools.reflect.Reflection;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
@@ -17,6 +20,7 @@ public class TestP2pApplication extends TestApplication {
 
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
         allSharedPreferences.updateANMUserName("demo");
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
         CoreLibrary.init(context, null, 1588062490000l, new P2POptions(true));
 
 

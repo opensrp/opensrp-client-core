@@ -25,6 +25,7 @@ import java.util.TreeSet;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 04-08-2020.
  */
+@Config(application = TestP2pApplication.class)
 public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
 
     private P2PSenderTransferDao p2PSenderTransferDao;
