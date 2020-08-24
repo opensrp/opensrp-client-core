@@ -28,9 +28,8 @@ import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.P2POptions;
 import org.smartregister.R;
-import org.smartregister.TestApplication;
+import org.smartregister.TestP2pApplication;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.event.Event;
@@ -50,7 +49,7 @@ import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 14-07-2020.
  */
-@Config(application = SecuredActivityTest.TestP2pApplication.class)
+@Config(application = TestP2pApplication.class)
 public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
     private SecuredActivity securedActivity;
@@ -249,17 +248,4 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         }
     }
 
-    static class TestP2pApplication extends TestApplication {
-
-        @Override
-        public void onCreate() {
-            mInstance = this;
-            context = Context.getInstance();
-            context.updateApplicationContext(getApplicationContext());
-
-            CoreLibrary.init(context, null, 1588062490000l, new P2POptions(true));
-
-            setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat
-        }
-    }
 }
