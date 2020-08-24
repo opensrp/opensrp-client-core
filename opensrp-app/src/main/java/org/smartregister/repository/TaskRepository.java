@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.util.Consumer;
 import android.text.TextUtils;
 
 import com.ibm.fhir.model.resource.QuestionnaireResponse;
@@ -195,6 +196,34 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         }
         return tasks;
     }
+
+    /**
+     * Accepts a stream of tasks
+     *
+     * @param planId
+     * @param groupId
+     * @param consumer
+     */
+    public void readTasks(String planId, String groupId, String code, Consumer<Task> consumer) {
+        Cursor cursor = null;
+        try {
+            String[] params = new String[]{planId, groupId, code};
+            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =? AND %s NOT IN (%s)",
+                    TASK_TABLE, PLAN_ID, GROUP_ID, CODE, STATUS,
+                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?"))),
+                    ArrayUtils.addAll(params, INACTIVE_TASK_STATUS));
+            while (cursor.moveToNext()) {
+                Task task = readCursor(cursor);
+                consumer.accept(task);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null)
+                cursor.close();
+        }
+    }
+
 
 
     public Task getTaskByIdentifier(String identifier) {

@@ -125,12 +125,12 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public void add(CommonPersonObject common) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.insert(TABLE_NAME, null, createValuesFor(common));
     }
 
     public void updateDetails(String caseId, Map<String, String> details) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
 
         CommonPersonObject common = findByCaseID(caseId);
         if (common == null) {
@@ -143,7 +143,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public void mergeDetails(String caseId, Map<String, String> details) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
 
         CommonPersonObject common = findByCaseID(caseId);
         if (common == null) {
@@ -158,7 +158,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public List<CommonPersonObject> allcommon() {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database
@@ -172,7 +172,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public List<CommonPersonObject> findByCaseIDs(String... caseIds) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
@@ -187,7 +187,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public List<CommonPersonObject> findByRelationalIDs(String... caseIds) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
@@ -202,7 +202,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public List<CommonPersonObject> findByRelational_IDs(String... caseIds) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database.rawQuery(
@@ -218,7 +218,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public CommonPersonObject findByCaseID(String caseId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database
@@ -239,7 +239,7 @@ public class CommonRepository extends DrishtiRepository {
     public CommonPersonObject findByBaseEntityId(String baseEntityId) {
         Cursor cursor = null;
         try {
-            cursor = masterRepository.getReadableDatabase().query(TABLE_NAME, common_TABLE_COLUMNS,
+            cursor = masterRepository().getReadableDatabase().query(TABLE_NAME, common_TABLE_COLUMNS,
                     BASE_ENTITY_ID_COLUMN + " = ? " + "COLLATE NOCASE ", new String[]{baseEntityId},
                     null, null, null, null);
             List<CommonPersonObject> commons = readAllcommon(cursor);
@@ -258,7 +258,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public CommonPersonObject findHHByGOBHHID(String caseId) {
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = null;
         try {
             cursor = database
@@ -277,13 +277,13 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public long count() {
-        return longForQuery(masterRepository.getReadableDatabase(),
+        return longForQuery(masterRepository().getReadableDatabase(),
                 "SELECT COUNT(1) FROM " + TABLE_NAME, new String[0]);
     }
 
     public void close(String caseId) {
 //        ContentValues values = new ContentValues();
-//        masterRepository.getWritableDatabase().update(EC_TABLE_NAME, values, ID_COLUMN + " =
+//        masterRepository().getWritableDatabase().update(EC_TABLE_NAME, values, ID_COLUMN + " =
 // ?", new String[]{caseId});
     }
 
@@ -340,13 +340,13 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public void updateColumn(String tableName, ContentValues contentValues, String caseId) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         database.update(tableName, contentValues, ID_COLUMN + " = ?", new String[]{caseId});
     }
 
     public List<CommonPersonObject> customQuery(String sql, String[] selections, String tableName) {
 
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(sql, selections);
         // database.
         return readAllcommonForField(cursor, tableName);
@@ -382,7 +382,7 @@ public class CommonRepository extends DrishtiRepository {
     public List<CommonPersonObject> customQueryForCompleteRow(String sql, String[] selections,
                                                               String tableName) {
 
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(sql, selections);
         // database.
         return readAllcommonFor(cursor, tableName);
@@ -421,7 +421,7 @@ public class CommonRepository extends DrishtiRepository {
 
     public Cursor rawCustomQueryForAdapter(String query) {
         Timber.i(query);
-        SQLiteDatabase database = masterRepository.getReadableDatabase();
+        SQLiteDatabase database = masterRepository().getReadableDatabase();
         Cursor cursor = database.rawQuery(query, null);
         return cursor;
     }
@@ -458,7 +458,7 @@ public class CommonRepository extends DrishtiRepository {
      * Insert the a new record to the database and returns its id
      **/
     public Long executeInsertStatement(ContentValues values, String tableName) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
         String baseEntityId = values.getAsString("base_entity_id");
         values = addMissingContentValuesForRecordId(baseEntityId, tableName, values);
         //hack the id above is not set to be autogenerated so we'll reuse the base entity id
@@ -471,7 +471,7 @@ public class CommonRepository extends DrishtiRepository {
     private ContentValues addMissingContentValuesForRecordId(String baseEntityId, String
             tableName, ContentValues cv) {
         Map<String, String> dbValues = new HashMap<String, String>();
-        SQLiteDatabase db = masterRepository.getWritableDatabase();
+        SQLiteDatabase db = masterRepository().getWritableDatabase();
         String query =
                 "SELECT  * FROM " + tableName + " WHERE base_entity_id = ?";
         Cursor cursor = db.rawQuery(query, new String[]{baseEntityId});
@@ -509,7 +509,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public Cursor queryTable(String query) {
-        SQLiteDatabase db = masterRepository.getWritableDatabase();
+        SQLiteDatabase db = masterRepository().getWritableDatabase();
         Cursor cursor = db.rawQuery(query, null);
         return cursor;
     }
@@ -521,7 +521,7 @@ public class CommonRepository extends DrishtiRepository {
      */
     public void closeCase(String baseEntityId, String tableName) {
         try {
-            SQLiteDatabase db = masterRepository.getWritableDatabase();
+            SQLiteDatabase db = masterRepository().getWritableDatabase();
             ContentValues cv = new ContentValues();
             cv.put(IS_CLOSED_COLUMN, 1);
             db.update(tableName, cv, BASE_ENTITY_ID_COLUMN + "=?", new String[]{baseEntityId});
@@ -537,7 +537,7 @@ public class CommonRepository extends DrishtiRepository {
      */
     public boolean deleteCase(String baseEntityId, String tableName) {
         try {
-            SQLiteDatabase db = masterRepository.getWritableDatabase();
+            SQLiteDatabase db = masterRepository().getWritableDatabase();
             int afftectedRows = db
                     .delete(tableName, BASE_ENTITY_ID_COLUMN + " = ? COLLATE NOCASE" + " ",
                             new String[]{baseEntityId});
@@ -554,7 +554,7 @@ public class CommonRepository extends DrishtiRepository {
         ArrayList<HashMap<String, String>> maplist = new ArrayList<HashMap<String, String>>();
         Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
             cursor = database.rawQuery(sql, selectionArgs);
             if (cursor != null && cursor.getCount() > 0 && cursor.moveToFirst()) {
                 // looping through all rows and adding to list
@@ -661,7 +661,7 @@ public class CommonRepository extends DrishtiRepository {
 
     public boolean populateSearchValues(String caseId, String field, String value, String[]
             listToRemove) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
 
         CommonPersonObject commonPersonObject = findByCaseID(caseId);
         if (commonPersonObject == null) {
@@ -740,7 +740,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public boolean searchBatchInserts(Map<String, ContentValues> searchMap) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
 
         database.beginTransaction();
         String ftsSearchTable = CommonFtsObject.searchTableName(TABLE_NAME);
@@ -772,7 +772,7 @@ public class CommonRepository extends DrishtiRepository {
     }
 
     public boolean deleteSearchRecord(String caseId) {
-        SQLiteDatabase database = masterRepository.getWritableDatabase();
+        SQLiteDatabase database = masterRepository().getWritableDatabase();
 
         database.beginTransaction();
         String ftsSearchTable = CommonFtsObject.searchTableName(TABLE_NAME);
@@ -801,7 +801,7 @@ public class CommonRepository extends DrishtiRepository {
         List<String> ids = new ArrayList<String>();
         Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
 
             Timber.i(query);
             cursor = database.rawQuery(query, null);
@@ -828,7 +828,7 @@ public class CommonRepository extends DrishtiRepository {
         int count = 0;
         Cursor cursor = null;
         try {
-            SQLiteDatabase database = masterRepository.getReadableDatabase();
+            SQLiteDatabase database = masterRepository().getReadableDatabase();
 
             Timber.i(query);
             cursor = database.rawQuery(query, null);
@@ -911,7 +911,7 @@ public class CommonRepository extends DrishtiRepository {
 
     private boolean isFieldExist(String tableName, String fieldName) {
         boolean isExist = false;
-        SQLiteDatabase db = masterRepository.getWritableDatabase();
+        SQLiteDatabase db = masterRepository().getWritableDatabase();
         Cursor cursor = db.rawQuery("PRAGMA table_info(" + tableName + ")", null);
         int index = cursor.getColumnIndex("name");
         if (cursor.moveToFirst()) {
