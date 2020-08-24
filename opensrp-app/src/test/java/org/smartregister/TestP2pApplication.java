@@ -3,8 +3,6 @@ package org.smartregister;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.repository.AllSharedPreferences;
 
-import javassist.tools.reflect.Reflection;
-
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
