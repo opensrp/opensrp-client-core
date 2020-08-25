@@ -21,7 +21,7 @@ public class TestApplication extends DrishtiApplication {
         mInstance = this;
         context = Context.getInstance();
         context.updateApplicationContext(getApplicationContext());
-        CoreLibrary.init(context, null, 1588062490000l);
+        CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
 
         setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat
     }
