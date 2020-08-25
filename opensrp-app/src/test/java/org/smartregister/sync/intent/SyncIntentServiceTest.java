@@ -222,11 +222,12 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testPullEcFromServerWithFetchFailureCallsFetchFailed() throws PackageManager.NameNotFoundException {
+    public void testPullEcFromServerWithFetchFailureCallsFetchFailed() {
 
         initMocksForPullECFromServerUsingPOST();
         syncIntentService = spy(syncIntentService);
         ResponseStatus responseStatus = ResponseStatus.failure;
+        responseStatus.setDisplayValue(null);
         Mockito.doReturn(new Response<>(responseStatus, null))
                 .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
 
