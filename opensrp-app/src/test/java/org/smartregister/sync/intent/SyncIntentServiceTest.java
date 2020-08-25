@@ -266,6 +266,25 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     }
 
+    @Test
+    public void testSuccessfulPullEcFromServerWithNullPayloadSendsNothingFetchedBroadcast() {
+
+        initMocksForPullECFromServerUsingPOST();
+        syncIntentService = spy(syncIntentService);
+        ResponseStatus responseStatus = ResponseStatus.success;
+        Mockito.doReturn(new Response<>(responseStatus, null).withTotalRecords(0l))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        syncIntentService.pullECFromServer();
+
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+        // sync complete broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        FetchStatus actualFetchStatus = (FetchStatus) intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS);
+        assertEquals(FetchStatus.nothingFetched, actualFetchStatus);
+
+    }
+
     private void initMocksForPullECFromServerUsingPOST() {
         Whitebox.setInternalState(syncIntentService, "httpAgent", httpAgent);
         when(syncConfiguration.isSyncUsingPost()).thenReturn(true);
