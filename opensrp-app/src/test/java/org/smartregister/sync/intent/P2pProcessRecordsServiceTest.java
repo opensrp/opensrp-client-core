@@ -10,6 +10,7 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.TestP2pApplication;
 import org.smartregister.domain.FetchStatus;
@@ -57,6 +58,7 @@ public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "eventClientRepository", null);
         ReflectionHelpers.setStaticField(ClientProcessorForJava.class, "instance", null);
+        ReflectionHelpers.setStaticField(Context.class, "context", null);
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 
