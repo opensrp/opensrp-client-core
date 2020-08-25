@@ -235,6 +235,37 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     }
 
+    @Test
+    public void testFetchFailedWithCountLessThanMaxSyncRetryCallsFetchRetry() {
+        when(syncConfiguration.getSyncMaxRetries()).thenReturn(1);
+        initMocksForPullECFromServerUsingPOST();
+        syncIntentService = spy(syncIntentService);
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+        syncIntentService.fetchFailed(0);
+        verify(syncIntentService).fetchFailed(1);
+
+    }
+
+    @Test
+    public void testFetchFailedWithCountEqualToMaxSyncRetryCallsComplete() {
+        syncIntentService = spy(syncIntentService);
+        when(syncConfiguration.getSyncMaxRetries()).thenReturn(1);
+        syncIntentService.fetchFailed(1);
+        verify(syncIntentService).complete(FetchStatus.fetchedFailed);
+
+    }
+
+    @Test
+    public void testFetchFailedWithCountGreaterThanMaxSyncRetryCallsComplete() {
+        syncIntentService = spy(syncIntentService);
+        when(syncConfiguration.getSyncMaxRetries()).thenReturn(1);
+        syncIntentService.fetchFailed(2);
+        verify(syncIntentService).complete(FetchStatus.fetchedFailed);
+
+    }
+
     private void initMocksForPullECFromServerUsingPOST() {
         Whitebox.setInternalState(syncIntentService, "httpAgent", httpAgent);
         when(syncConfiguration.isSyncUsingPost()).thenReturn(true);
