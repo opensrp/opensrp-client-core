@@ -221,6 +221,20 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     }
 
+    @Test
+    public void testPullEcFromServerWithFetchFailureCallsFetchFailed() throws PackageManager.NameNotFoundException {
+
+        initMocksForPullECFromServerUsingPOST();
+        syncIntentService = spy(syncIntentService);
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).fetchFailed(0);
+
+    }
+
     private void initMocksForPullECFromServerUsingPOST() {
         Whitebox.setInternalState(syncIntentService, "httpAgent", httpAgent);
         when(syncConfiguration.isSyncUsingPost()).thenReturn(true);
