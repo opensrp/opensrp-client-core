@@ -39,11 +39,13 @@ public class ConnectivityChangeReceiverTest extends BaseRobolectricUnitTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown(){
         // Log out the user
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
         session.setPassword(null);
         session.start(0);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+
     }
 
     @Test

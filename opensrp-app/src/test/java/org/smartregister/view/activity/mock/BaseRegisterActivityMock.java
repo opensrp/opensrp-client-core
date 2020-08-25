@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 
 import org.json.JSONObject;
+import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -27,6 +28,11 @@ public class BaseRegisterActivityMock extends BaseRegisterActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppThemeNoActionBarAndTitle);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected Context context(){
+        return mock(Context.class);
     }
 
     @Override

@@ -199,6 +199,7 @@ public class UserServiceTest extends BaseUnitTest {
         SyncConfiguration syncConfiguration = mock(SyncConfiguration.class);
         Mockito.doReturn(false).when(syncConfiguration).clearDataOnNewTeamLogin();
         ReflectionHelpers.setField(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
+        Whitebox.setInternalState(drishtiApplication, "password", password);
 
         userService.logout();
 
@@ -357,7 +358,7 @@ public class UserServiceTest extends BaseUnitTest {
         when(keyStore.getEntry(user, null)).thenReturn(privateKeyEntry);
         String password = UUID.randomUUID().toString();
         assertFalse(userService.isUserInValidGroup(user, password.toCharArray()));
-        // verify(allSharedPreferences, never()).fetchEncryptedGroupId(user);
+        verify(allSharedPreferences, never()).fetchEncryptedGroupId(user);
         verifyZeroInteractions(repository);
     }
 

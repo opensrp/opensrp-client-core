@@ -227,23 +227,10 @@ dependencies {
     implementation 'com.evernote:android-job:1.2.6'
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
     implementation 'de.hdodenhof:circleimageview:2.2.0'
-
-    implementation('org.smartregister:android-p2p-sync:0.3.6-SNAPSHOT') {
-        exclude group: 'com.android.support', module: 'support-v4'
-        exclude group: 'com.android.support', module: 'appcompat-v7'
-        exclude group: 'android.arch.core', module: 'runtime'
-    }
-
-    implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
-
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.19-SNAPSHOT'
-
     implementation 'xerces:xercesImpl:2.12.0'
-}
-
-dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     androidTestImplementation 'junit:junit:4.12'
 
     testImplementation group: 'com.google.android', name: 'android-test', version: '4.1.1.4'

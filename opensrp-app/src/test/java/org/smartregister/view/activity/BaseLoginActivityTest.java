@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -63,6 +64,11 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
                 .start()
                 .resume();
         baseLoginActivity = Mockito.spy(controller.get());
+    }
+
+    @After
+    public void tearDown() {
+        resetCoreLibrary();
     }
 
     @Test

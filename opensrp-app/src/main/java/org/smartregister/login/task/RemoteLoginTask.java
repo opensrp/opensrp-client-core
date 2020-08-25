@@ -134,6 +134,12 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         }
 
                     }
+                } else {
+                    if (response.getAccountError() != null && response.getAccountError().getError() != null) {
+                        return LoginResponse.valueOf(response.getAccountError().getError());
+                    } else if (loginResponse == null) {
+                        return null;
+                    }
                 }
 
             } else {

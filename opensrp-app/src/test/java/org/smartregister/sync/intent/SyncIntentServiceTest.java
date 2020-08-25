@@ -104,7 +104,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testHandleSyncCallsLogOutUserIfAppVersionIsNotAllowedAnd() {
+    public void testHandleSyncCallsLogOutUserIfAppVersionIsNotAllowedAnd() throws AuthenticatorException, OperationCanceledException, IOException {
         syncIntentService = spy(syncIntentService);
         Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
         when(syncUtils.verifyAuthorization()).thenReturn(true);
