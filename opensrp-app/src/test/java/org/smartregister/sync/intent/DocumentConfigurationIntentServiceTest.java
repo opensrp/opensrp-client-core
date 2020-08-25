@@ -1,14 +1,15 @@
 package org.smartregister.sync.intent;
 
-import org.junit.After;
+import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-
-import static org.junit.Assert.*;
+import org.smartregister.exception.NoHttpResponseException;
+import org.smartregister.service.DocumentConfigurationService;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 25-08-2020.
@@ -19,13 +20,9 @@ public class DocumentConfigurationIntentServiceTest extends BaseRobolectricUnitT
 
     @Before
     public void setUp() throws Exception {
-        documentConfigurationIntentService = Robolectric.buildIntentService(DocumentConfigurationIntentService.class)
+        documentConfigurationIntentService = Mockito.spy(Robolectric.buildIntentService(DocumentConfigurationIntentService.class)
                 .create()
-                .get();
-    }
-
-    @After
-    public void tearDown() throws Exception {
+                .get());
     }
 
     @Test
@@ -45,6 +42,13 @@ public class DocumentConfigurationIntentServiceTest extends BaseRobolectricUnitT
     }
 
     @Test
-    public void onHandleIntent() {
+    public void onHandleIntentShouldCallDocumentConfigurationServiceFetchManifest() throws JSONException, NoHttpResponseException {
+        DocumentConfigurationService documentConfigurationService = Mockito.mock(DocumentConfigurationService.class);
+        Mockito.doReturn(documentConfigurationService).when(documentConfigurationIntentService).getDocumentConfigurationService();
+
+        documentConfigurationIntentService.onHandleIntent(null);
+
+        Mockito.verify(documentConfigurationService).fetchManifest();
+        Mockito.verify(documentConfigurationIntentService).getDocumentConfigurationService();
     }
 }
