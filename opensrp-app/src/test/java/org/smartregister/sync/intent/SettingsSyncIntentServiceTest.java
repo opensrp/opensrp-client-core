@@ -3,18 +3,15 @@ package org.smartregister.sync.intent;
 import android.content.Intent;
 
 import org.json.JSONException;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 25-08-2020.
@@ -30,13 +27,11 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
                 .get();
     }
 
-    @After
-    public void tearDown() throws Exception {
-    }
-
     @Ignore
     @Test
     public void onHandleIntent() {
+        // TODO: Implement this in the next round of tests
+        Assert.assertEquals(2, 1 + 1);
     }
 
     @Test
@@ -63,10 +58,14 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
     @Ignore
     @Test
     public void onCreate() {
+        // TODO: Implement this in the next round of tests
+        Assert.assertEquals(2, 1 + 1);
     }
 
     @Ignore
     @Test
     public void onDestroy() {
+        // TODO: Implement this in the next round of tests
+        Assert.assertEquals(2, 1 + 1);
     }
 }
