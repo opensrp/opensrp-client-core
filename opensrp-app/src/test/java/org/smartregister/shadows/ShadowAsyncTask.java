@@ -17,29 +17,29 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 @Implements(AsyncTask.class)
-public class ShadowAsyncTask<Params, Progress, Result> {
+public class ShadowAsyncTask<P, X, R> {
 
     @RealObject
-    private AsyncTask<Params, Progress, Result> realAsyncTask;
+    private AsyncTask<P, X, R> realAsyncTask;
 
-    private final FutureTask<Result> future;
+    private final FutureTask<R> future;
     private final BackgroundWorker worker;
     private AsyncTask.Status status = AsyncTask.Status.PENDING;
 
     public ShadowAsyncTask() {
         worker = new BackgroundWorker();
-        future = new FutureTask<Result>(worker) {
+        future = new FutureTask<R>(worker) {
             @Override
             protected void done() {
                 status = AsyncTask.Status.FINISHED;
                 try {
-                    final Result result = get();
+                    final R r = get();
 
                     try {
                         ShadowApplication.getInstance().getForegroundThreadScheduler().post(new Runnable() {
                             @Override
                             public void run() {
-                                getBridge().onPostExecute(result);
+                                getBridge().onPostExecute(r);
                             }
                         });
                     } catch (Throwable t) {
@@ -75,17 +75,17 @@ public class ShadowAsyncTask<Params, Progress, Result> {
     }
 
     @Implementation
-    public Result get() throws InterruptedException, ExecutionException {
+    public R get() throws InterruptedException, ExecutionException {
         return future.get();
     }
 
     @Implementation
-    public Result get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+    public R get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         return future.get(timeout, unit);
     }
 
     @Implementation
-    public AsyncTask<Params, Progress, Result> execute(final Params... params) {
+    public AsyncTask<P, X, R> execute(final P... params) {
         status = AsyncTask.Status.RUNNING;
         getBridge().onPreExecute();
 
@@ -102,7 +102,7 @@ public class ShadowAsyncTask<Params, Progress, Result> {
     }
 
     @Implementation
-    public AsyncTask<Params, Progress, Result> executeOnExecutor(Executor executor, Params... params) {
+    public AsyncTask<P, X, R> executeOnExecutor(Executor executor, P... params) {
         status = AsyncTask.Status.RUNNING;
         getBridge().onPreExecute();
 
@@ -123,7 +123,7 @@ public class ShadowAsyncTask<Params, Progress, Result> {
     }
 
     @Implementation
-    public void publishProgress(final Progress... values) {
+    public void publishProgress(final X... values) {
         ShadowApplication.getInstance().getForegroundThreadScheduler().post(new Runnable() {
             @Override
             public void run() {
@@ -132,15 +132,15 @@ public class ShadowAsyncTask<Params, Progress, Result> {
         });
     }
 
-    private ShadowAsyncTaskBridge<Params, Progress, Result> getBridge() {
+    private ShadowAsyncTaskBridge<P, X, R> getBridge() {
         return new ShadowAsyncTaskBridge<>(realAsyncTask);
     }
 
-    private final class BackgroundWorker implements Callable<Result> {
-        Params[] params;
+    private final class BackgroundWorker implements Callable<R> {
+        private P[] params;
 
         @Override
-        public Result call() throws Exception {
+        public R call() throws Exception {
             return getBridge().doInBackground(params);
         }
     }

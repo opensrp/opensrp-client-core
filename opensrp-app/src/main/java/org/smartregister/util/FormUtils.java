@@ -2,8 +2,6 @@ package org.smartregister.util;
 
 import android.content.Context;
 import android.content.Intent;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.util.Xml;
 
 import com.google.gson.Gson;
