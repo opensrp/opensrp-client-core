@@ -536,8 +536,8 @@ public class JsonFormUtils {
         }
 
         e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
-                "", keyValPairs, values, new ArrayList<>(), null, formSubmissionField,
-                jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)));
+                "", values, new ArrayList<>(), null, formSubmissionField,
+                jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)).withKeyValPairs(keyValPairs));
     }
 
 

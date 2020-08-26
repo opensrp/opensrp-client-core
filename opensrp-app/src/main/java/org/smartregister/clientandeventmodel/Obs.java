@@ -53,14 +53,6 @@ public class Obs {
         setSaveObsAsArray(saveObsAsArray);
     }
 
-    public Obs(String fieldType, String fieldDataType, String fieldCode, String parentCode,
-               Map<String, Object> keyValPairs, List<Object> values, List<Object> humanReadableValues,
-               String comments, String formSubmissionField, boolean saveObsAsArray) {
-        this(fieldType, fieldDataType, fieldCode, parentCode, values, humanReadableValues, comments,
-                formSubmissionField, saveObsAsArray);
-        setKeyValPairs(keyValPairs);
-    }
-
     public String getFieldType() {
         return fieldType;
     }
