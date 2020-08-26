@@ -223,13 +223,13 @@ public class UserService {
             try {
 
                 // Compare stored password hash with provided password hash
-                storedHash = getLocalAuthenticationCredentials();
+                storedHash = getLocalAuthenticationCredentials(userName);
 
                 passwordHash = generatePasswordHash(userName, password);
 
                 if (storedHash != null && Arrays.equals(storedHash, passwordHash)) {
 
-                    return isValidDBPassword(getDBAuthenticationCredentials());
+                    return isValidDBPassword(getDBAuthenticationCredentials(userName));
                 }
             } catch (Exception e) {
                 Timber.e(e);
@@ -260,13 +260,13 @@ public class UserService {
 
 
     @VisibleForTesting
-    protected byte[] getLocalAuthenticationCredentials() {
-        return DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
+    protected byte[] getLocalAuthenticationCredentials(String username) {
+        return DrishtiApplication.getInstance().credentialsProvider().getCredentials(username, CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
     }
 
     @VisibleForTesting
-    protected byte[] getDBAuthenticationCredentials() {
-        return DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+    protected byte[] getDBAuthenticationCredentials(String username) {
+        return DrishtiApplication.getInstance().credentialsProvider().getCredentials(username, CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
     }
 
 
@@ -594,7 +594,7 @@ public class UserService {
                     if (CredentialsHelper.shouldMigrate()) {
 
                         byte[] passphrase = DrishtiApplication.getInstance().credentialsProvider().generateDBCredentials(SecurityHelper.toChars(localAuthHash.getPassword()), userInfo);
-                        byte[] oldPassword = allSharedPreferences.getDBEncryptionVersion() == 0 ? getGroupId(username) : DrishtiApplication.getInstance().credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+                        byte[] oldPassword = allSharedPreferences.getDBEncryptionVersion() == 0 ? getGroupId(username) : DrishtiApplication.getInstance().credentialsProvider().getCredentials(username, CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
 
                         if (oldPassword != null && !Arrays.equals(passphrase, oldPassword)) {
                             try {

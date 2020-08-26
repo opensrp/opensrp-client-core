@@ -94,7 +94,7 @@ public class CredentialsHelperTest extends BaseUnitTest {
     @Test
     public void testGetCredentialsInvokesGetDecryptedPassphraseValueWithCorrectValuesForDBAuth() {
 
-        credentialsHelper.getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+        credentialsHelper.getCredentials(TEST_USERNAME, CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
         ArgumentCaptor<String> usernameArgCaptor = ArgumentCaptor.forClass(String.class);
 
         Mockito.verify(userService, Mockito.times(1)).getDecryptedPassphraseValue(usernameArgCaptor.capture());
@@ -104,7 +104,7 @@ public class CredentialsHelperTest extends BaseUnitTest {
     @Test
     public void testGetCredentialsInvokesGetDecryptedPassphraseValueWithCorrectValuesForLocalAuth() {
 
-        credentialsHelper.getCredentials(CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
+        credentialsHelper.getCredentials(TEST_USERNAME, CredentialsHelper.CREDENTIALS_TYPE.LOCAL_AUTH);
 
         ArgumentCaptor<String> usernameArgCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> keyArgCaptor = ArgumentCaptor.forClass(String.class);

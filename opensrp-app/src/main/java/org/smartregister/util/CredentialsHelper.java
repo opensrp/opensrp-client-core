@@ -32,9 +32,7 @@ public class CredentialsHelper {
                         BuildConfig.DB_ENCRYPTION_VERSION > CoreLibrary.getInstance().context().allSharedPreferences().getDBEncryptionVersion());
     }
 
-    public byte[] getCredentials(String type) {
-
-        String username = allSharedPreferences.fetchRegisteredANM();
+    public byte[] getCredentials(String username, String type) {
 
         if (CREDENTIALS_TYPE.DB_AUTH.equals(type)) {
 

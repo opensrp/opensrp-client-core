@@ -339,8 +339,8 @@ public class UserServiceTest extends BaseUnitTest {
         when(repository.canUseThisPassword(password)).thenReturn(true);
 
         doReturn(password).when(userService).generatePasswordHash(userName, SecurityHelper.toChars(password));
-        doReturn(password).when(userService).getLocalAuthenticationCredentials();
-        doReturn(password).when(userService).getDBAuthenticationCredentials();
+        doReturn(password).when(userService).getLocalAuthenticationCredentials(userName);
+        doReturn(password).when(userService).getDBAuthenticationCredentials(userName);
 
         assertTrue(userService.isUserInValidGroup(userName, SecurityHelper.toChars(password)));
         verify(repository).canUseThisPassword(password);

@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -75,7 +76,7 @@ public class DrishtiApplicationTest {
 
         Assert.assertNull(ReflectionHelpers.getField(drishtiApplication, "password"));
         CredentialsHelper credentialsProvider = Mockito.spy(new CredentialsHelper(Mockito.mock(Context.class)));
-        Mockito.doReturn(password).when(credentialsProvider).getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+        Mockito.doReturn(password).when(credentialsProvider).getCredentials(ArgumentMatchers.anyString(), CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
 
         ReflectionHelpers.setField(drishtiApplication, "credentialsHelper", credentialsProvider);
 

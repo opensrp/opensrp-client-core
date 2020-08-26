@@ -48,7 +48,7 @@ public abstract class DrishtiApplication extends Application {
     }
 
     @Nullable
-    public P2PClassifier<JSONObject> getP2PClassifier(){
+    public P2PClassifier<JSONObject> getP2PClassifier() {
         return null;
     }
 
@@ -131,7 +131,7 @@ public abstract class DrishtiApplication extends Application {
     public final byte[] getPassword() {
 
         if (password == null) {
-            password = credentialsProvider().getCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+            password = credentialsProvider().getCredentials(getUsername(), CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
         }
 
         return password;
