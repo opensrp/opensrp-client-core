@@ -1196,11 +1196,11 @@ public class JsonFormUtils {
         return null;
     }
 
-    private static boolean isBlankJsonArray(JSONArray jsonArray) {
+    public static boolean isBlankJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
     }
 
-    private static boolean isBlankJsonObject(JSONObject jsonObject) {
+    public static boolean isBlankJsonObject(JSONObject jsonObject) {
         return jsonObject == null || jsonObject.length() == 0;
     }
 }

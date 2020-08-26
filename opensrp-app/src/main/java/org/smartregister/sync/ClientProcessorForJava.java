@@ -359,7 +359,8 @@ public class ClientProcessorForJava {
                 // save the values to db
                 executeInsertStatement(contentValues, clientType);
 
-                updateFTSsearch(clientType, baseEntityId, contentValues);
+                String entityId=contentValues.getAsString("base_entity_id");
+                updateFTSsearch(clientType, entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);

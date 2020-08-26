@@ -94,7 +94,7 @@ public class AllConstants {
 
     public static final String LAST_SYNC_TIMESTAMP = "LAST_SYNC_TIMESTAMP";
     public static final String LAST_CHECK_TIMESTAMP = "LAST_SYNC_CHECK_TIMESTAMP";
-    public static final boolean TIME_CHECK = false;
+    public static final Boolean TIME_CHECK = false;
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
@@ -489,4 +489,13 @@ public class AllConstants {
         String LOCATION_NAME = "location_name";
     }
 
+    public interface P2PDataTypes {
+        String CLIENT = "Client";
+        String EVENT = "Event";
+        String TASK = "Task";
+        String STRUCTURE = "Structure";
+        String PROFILE_PIC = "Profile Pic";
+        String FOREIGN_CLIENT = "ForeignClient";
+        String FOREIGN_EVENT = "ForeignEvent";
+    }
 }

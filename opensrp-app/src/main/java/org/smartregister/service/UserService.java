@@ -3,6 +3,7 @@ package org.smartregister.service;
 import android.annotation.TargetApi;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
+import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
 
 import org.apache.commons.lang3.StringUtils;
@@ -364,7 +365,7 @@ public class UserService {
     }
 
     public void remoteLogin(String userName, String password, LoginResponseData userInfo) {
-         String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
+        String username = userInfo.user != null && StringUtils.isNotBlank(userInfo.user.getUsername())
                 ? userInfo.user.getUsername() : userName;
         boolean loginSuccessful = loginWith(username, password);
         saveAnmLocation(getUserLocation(userInfo));
@@ -685,7 +686,8 @@ public class UserService {
      * @return Plain text derived from the cipher text
      * @throws Exception
      */
-    private String decryptString(KeyStore.PrivateKeyEntry privateKeyEntry, String cipherText)
+    @VisibleForTesting
+    protected String decryptString(KeyStore.PrivateKeyEntry privateKeyEntry, String cipherText)
             throws Exception {
 
         Cipher output;

@@ -14,6 +14,7 @@ import org.smartregister.domain.SyncStatus;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.intent.SettingsSyncIntentService;
+import org.smartregister.util.JsonFormUtils;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -106,7 +107,7 @@ public class SyncSettingsServiceHelper {
     }
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
-        if (globalSettings.length() > 0) {
+        if (!JsonFormUtils.isBlankJsonArray(globalSettings)) {
             for (int i = 0; i < globalSettings.length(); i++) {
                 JSONObject global = globalSettings.getJSONObject(i);
                 settings.put(global);
@@ -227,6 +228,18 @@ public class SyncSettingsServiceHelper {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setHttpAgent(HTTPAgent httpAgent) {
+        this.httpAgent = httpAgent;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    public void setSharedPreferences(AllSharedPreferences sharedPreferences) {
+        this.sharedPreferences = sharedPreferences;
     }
 }
 

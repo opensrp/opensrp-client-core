@@ -198,7 +198,7 @@ dependencies {
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
-    implementation('org.smartregister:android-p2p-sync:0.3.6-SNAPSHOT') {
+    implementation('org.smartregister:android-p2p-sync:0.3.7-SNAPSHOT') {
         exclude group: 'com.android.support', module: 'support-v4'
         exclude group: 'com.android.support', module: 'appcompat-v7'
         exclude group: 'android.arch.core', module: 'runtime'
@@ -208,7 +208,7 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-client-utils:0.0.2-SNAPSHOT'
 
-    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.13-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-plan-evaluator:0.0.19-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
 }

@@ -644,4 +644,27 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         refreshGeoWidgetIntent.putExtra(TASK_GENERATED, task);
         LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
     }
+
+    @Override
+    public boolean checkIfTaskExists(String s, String s1, String s2) {
+        // TODO implement this
+        return false;
+    }
+
+    @Override
+    public List<com.ibm.fhir.model.resource.Task> findAllTasksForEntity(String s) {
+        // TODO implement this
+        return null;
+    }
+
+    @Override
+    public Task getTaskByEntityId(String s) {
+        // TODO implement this
+        return null;
+    }
+
+    @Override
+    public void updateTask(Task task) {
+        // TODO implement this
+    }
 }

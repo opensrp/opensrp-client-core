@@ -11,6 +11,7 @@ import org.smartregister.p2p.model.DataType;
 import org.smartregister.p2p.model.dao.SenderTransferDao;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.p2p.sync.data.MultiMediaData;
+import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
 import java.util.HashMap;
@@ -32,19 +33,32 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
 
     @Nullable
     @Override
-    public JsonData getJsonData(@NonNull DataType dataType, long l, int i) {
+    public JsonData getJsonData(@NonNull DataType dataType, long lastRecordId, int batchSize) {
         if (dataType.getName().equals(event.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getEventClientRepository().getEvents(l, i);
+                    .getEventClientRepository().getEvents(lastRecordId, batchSize);
         } else if (dataType.getName().equals(client.getName())) {
-            return CoreLibrary.getInstance().context()
-                    .getEventClientRepository().getClients(l, i);
+
+            if (DrishtiApplication.getInstance().getP2PClassifier() == null) {
+                return CoreLibrary.getInstance().context()
+                        .getEventClientRepository().getClients(lastRecordId, batchSize);
+            } else {
+                return CoreLibrary.getInstance().context()
+                        .getEventClientRepository().getClientsWithLastLocationID(lastRecordId, batchSize);
+            }
+
         } else if (dataType.getName().equals(structure.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getStructureRepository().getStructures(l, i);
+                    .getStructureRepository().getStructures(lastRecordId, batchSize);
         } else if (dataType.getName().equals(task.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getTaskRepository().getTasks(l, i);
+                    .getTaskRepository().getTasks(lastRecordId, batchSize);
+        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().equals(foreignClient.getName())) {
+            return CoreLibrary.getInstance().context()
+                    .getForeignEventClientRepository().getClients(lastRecordId, batchSize);
+        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().equals(foreignEvent.getName())) {
+            return CoreLibrary.getInstance().context()
+                    .getForeignEventClientRepository().getEvents(lastRecordId, batchSize);
         } else {
             Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
                     , dataType.getName());
@@ -54,10 +68,10 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
 
     @Nullable
     @Override
-    public MultiMediaData getMultiMediaData(@NonNull DataType dataType, long l) {
+    public MultiMediaData getMultiMediaData(@NonNull DataType dataType, long lastRecordId) {
         if (dataType.getName().equalsIgnoreCase(profilePic.getName())) {
             HashMap<String, Object> imageDetails = CoreLibrary.getInstance().context()
-                    .imageRepository().getImage(l);
+                    .imageRepository().getImage(lastRecordId);
 
             if (imageDetails != null) {
                 File inputFile = new File((String) imageDetails.get(ImageRepository.filepath_COLUMN));

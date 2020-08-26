@@ -439,7 +439,7 @@ public abstract class RecyclerViewFragment extends
 
             }
         } catch (Exception e) {
-            Timber.e( e);
+            Timber.e(e);
         }
 
         return query;
@@ -479,10 +479,10 @@ public abstract class RecyclerViewFragment extends
             String query = "";
             if (isValidFilterForFts(commonRepository())) {
                 String sql = sqb.countQueryFts(tablename, joinTable, mainCondition, filters);
-                Timber.i( query);
+                Timber.i(query);
 
                 clientAdapter.setTotalcount(commonRepository().countSearchIds(sql));
-                Timber.v("total count here %d",clientAdapter.getTotalcount());
+                Timber.v("total count here %d", clientAdapter.getTotalcount());
 
 
             } else {
@@ -494,10 +494,12 @@ public abstract class RecyclerViewFragment extends
                 c = commonRepository().rawCustomQueryForAdapter(query);
                 c.moveToFirst();
                 clientAdapter.setTotalcount(c.getInt(0));
-                Timber.v("total count here %d",  clientAdapter.getTotalcount());
+                Timber.v("total count here %d", clientAdapter.getTotalcount());
             }
 
-            clientAdapter.setCurrentlimit(20);
+            if (clientAdapter.getCurrentlimit() == 0) {
+                clientAdapter.setCurrentlimit(20);
+            }
             clientAdapter.setCurrentoffset(0);
 
 
@@ -537,9 +539,9 @@ public abstract class RecyclerViewFragment extends
                         String query = "";
                         // Select register query
 
-                        if(ArrayUtils.isNotEmpty(joinTables)){
+                        if (ArrayUtils.isNotEmpty(joinTables)) {
                             query = filterandSortJoinArrayQuery();
-                        }else{
+                        } else {
                             query = filterandSortQuery();
                         }
                         return commonRepository().rawCustomQueryForAdapter(query);

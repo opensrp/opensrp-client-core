@@ -46,13 +46,13 @@ public class SyncIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
     private long totalRecords;
-    private int fetchedRecords = 0 ;
+    private int fetchedRecords = 0;
 
     public SyncIntentService() {
         super("SyncIntentService");
     }
 
-    public SyncIntentService(String name){
+    public SyncIntentService(String name) {
         super(name);
     }
 
@@ -130,6 +130,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
+                return;
             }
 
             String url = baseUrl + SYNC_URL;
@@ -156,6 +157,7 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (resp.isTimeoutError()) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                 complete(FetchStatus.fetchedFailed);
+                return;
             }
 
             if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
@@ -229,13 +231,14 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     // PUSH TO SERVER
     private boolean pushToServer() {
-        return pushECToServer();
+        return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
+                (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository()));
     }
 
-    private boolean pushECToServer() {
+    private boolean pushECToServer(EventClientRepository db) {
         boolean isSuccessfulPushSync = true;
 
-        EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
+        // push foreign events to server
         int totalEventCount = db.getUnSyncedEventsCount();
         int eventsUploadedCount = 0;
 
@@ -307,9 +310,9 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     }
 
-    protected void updateProgress(@IntRange(from=0) int progress, @IntRange(from=1) int total) {
+    protected void updateProgress(@IntRange(from = 0) int progress, @IntRange(from = 1) int total) {
         FetchStatus uploadProgressStatus = FetchStatus.fetchProgress;
-        uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress *100)/total));
+        uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress * 100) / total));
         sendSyncStatusBroadcastMessage(uploadProgressStatus);
     }
 

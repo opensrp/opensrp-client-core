@@ -3,9 +3,14 @@ package org.smartregister.view.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.BaseTransientBottomBar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.google.gson.Gson;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -23,9 +28,8 @@ import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.P2POptions;
 import org.smartregister.R;
-import org.smartregister.TestApplication;
+import org.smartregister.TestP2pApplication;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.event.Event;
@@ -33,6 +37,7 @@ import org.smartregister.event.Listener;
 import org.smartregister.service.AlertService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Session;
+import org.smartregister.view.customcontrols.ProcessingInProgressSnackbar;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -44,7 +49,7 @@ import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 14-07-2020.
  */
-@Config(application = SecuredActivityTest.TestP2pApplication.class)
+@Config(application = TestP2pApplication.class)
 public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
     private SecuredActivity securedActivity;
@@ -78,6 +83,13 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
                 .start()
                 .resume();
         securedActivity = Mockito.spy(controller.get());
+    }
+    @After
+    public void tearDown() throws Exception {
+        // Revert to the previous state where the user is logged out
+        Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
+        session.setPassword(null);
+        session.start(0);
     }
 
     @Test
@@ -158,6 +170,69 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         Mockito.verify(alertService).changeAlertStatusToInProcess(entityId, alertName);
     }
 
+    @Test
+    public void addFieldOverridesShouldPopulateIntentWithFieldOverridesWhenMetadataIsAvailable() {
+        Intent intent = new Intent();
+        HashMap<String, String> metadata = new HashMap<>();
+        String fieldOverrideValue = "some other field override";
+        metadata.put(AllConstants.FIELD_OVERRIDES_PARAM, fieldOverrideValue);
+
+        ReflectionHelpers.setField(securedActivity, "metaData", new Gson().toJson(metadata));
+        ReflectionHelpers.callInstanceMethod(securedActivity, "addFieldOverridesIfExist", from(Intent.class, intent));
+
+        Assert.assertEquals(fieldOverrideValue, intent.getStringExtra(AllConstants.FIELD_OVERRIDES_PARAM));
+    }
+
+    @Test
+    public void showProcessingInProgressSnackbarShouldCallShowSnackbarIfAlreadyCreated() {
+        ProcessingInProgressSnackbar snackbar = Mockito.mock(ProcessingInProgressSnackbar.class);
+        ReflectionHelpers.setField(securedActivity, "processingInProgressSnackbar", snackbar);
+
+        securedActivity.showProcessingInProgressSnackbar(securedActivity, 0);
+
+        Mockito.verify(snackbar).show();
+    }
+
+    @Test
+    public void showProcessingInProgressSnackbarWhenGivenMarginShouldCreateAndShowSnackbar() {
+        securedActivity.showProcessingInProgressSnackbar(securedActivity, 0);
+
+        ProcessingInProgressSnackbar snackbar = ReflectionHelpers.getField(securedActivity, "processingInProgressSnackbar");
+
+        Assert.assertTrue(snackbar.isShown());
+        Assert.assertEquals(BaseTransientBottomBar.LENGTH_INDEFINITE, snackbar.getDuration());
+    }
+
+    @Test
+    public void onStatusUpdateShouldCallShowProcessingSnackbar() {
+        Mockito.doNothing().when(securedActivity).showProcessingInProgressBottomSnackbar(Mockito.any(AppCompatActivity.class));
+
+        securedActivity.onStatusUpdate(true);
+
+        Mockito.verify(securedActivity).showProcessingInProgressBottomSnackbar(securedActivity);
+    }
+
+
+    @Test
+    public void onStatusUpdateShouldCallRemoveProcessingSnackbar() {
+        Mockito.doNothing().when(securedActivity).removeProcessingInProgressSnackbar();
+
+        securedActivity.onStatusUpdate(false);
+
+        Mockito.verify(securedActivity).removeProcessingInProgressSnackbar();
+    }
+
+    @Test
+    public void removeProcessingInProgressSnackbarShouldDismissSnackbarWhenSnackbarIsShowing() {
+        ProcessingInProgressSnackbar snackbar = Mockito.mock(ProcessingInProgressSnackbar.class);
+        ReflectionHelpers.setField(securedActivity, "processingInProgressSnackbar", snackbar);
+        Mockito.doReturn(true).when(snackbar).isShown();
+
+        securedActivity.removeProcessingInProgressSnackbar();
+
+        Mockito.verify(snackbar).dismiss();
+    }
+
     static class SecuredActivityImpl extends SecuredActivity {
 
         @Override
@@ -173,17 +248,4 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         }
     }
 
-    static class TestP2pApplication extends TestApplication {
-
-        @Override
-        public void onCreate() {
-            mInstance = this;
-            context = Context.getInstance();
-            context.updateApplicationContext(getApplicationContext());
-
-            CoreLibrary.init(context, null, 1588062490000l, new P2POptions(true));
-
-            setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat
-        }
-    }
 }

@@ -185,7 +185,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Assert.assertFalse(ReflectionHelpers.getField(alertDialog, "mCancelable"));
     }
 
-    static class BaseLoginActivityImpl extends BaseLoginActivity {
+    public static class BaseLoginActivityImpl extends BaseLoginActivity {
 
         @Override
         protected int getContentView() {
