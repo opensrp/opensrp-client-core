@@ -211,6 +211,12 @@ dependencies {
     implementation 'org.smartregister:opensrp-plan-evaluator:0.0.19-SNAPSHOT'
 
     implementation 'xerces:xercesImpl:2.12.0'
+
+    def workVersion = "2.4.0"
+    implementation "androidx.work:work-runtime:$workVersion"
+    implementation "androidx.work:work-rxjava2:$workVersion"
+    implementation "androidx.work:work-gcm:$workVersion"
+    androidTestImplementation "androidx.work:work-testing:$workVersion"
 }
 
 dependencies {
