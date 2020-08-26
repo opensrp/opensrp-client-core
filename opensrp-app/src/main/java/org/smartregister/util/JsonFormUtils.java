@@ -410,31 +410,33 @@ public class JsonFormUtils {
         if (StringUtils.isBlank(value)) { return; }
 
         String type = getString(jsonObject, AllConstants.TYPE);
-        String entity =  getString(jsonObject, OPENMRS_ENTITY);
         if (AllConstants.CHECK_BOX.equals(type)) {
             try {
                 List<Object> optionValues = new ArrayList<>();
+                Map<String, Object> optionKeyVals = new HashMap<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         boolean optionValue = option.optBoolean(VALUE);
-                        entity = getString(jsonObject, OPENMRS_ENTITY);
-                        if (optionValue) {
+                        if (!optionValue) {
+                            continue;
+                        }
+                        if (CONCEPT.equals(getString(jsonObject, OPENMRS_ENTITY))) {
+                            // For options with concepts create an observation for each
                             option.put(AllConstants.TYPE, type);
                             option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                             option.put(KEY, jsonObject.getString(KEY));
-                            if (CONCEPT.equals(entity)) {
-                                // For options with concepts create an observation for each
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
-                            } else {
-                                optionValues.add(option.optString(AllConstants.TEXT));
-                            }
+                            createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
+                        } else {
+                            String optionText = option.optString(AllConstants.TEXT);
+                            optionValues.add(optionText);
+                            optionKeyVals.put(option.optString(KEY), optionText);
                         }
                     }
                     if (!optionValues.isEmpty()) {
                         // For options without concepts combine the values into one observation
-                        createObservation(e, jsonObject, optionValues);
+                        createObservation(e, jsonObject, optionKeyVals, optionValues);
                     }
                 }
             } catch (JSONException e1) {
@@ -519,13 +521,14 @@ public class JsonFormUtils {
     }
 
     /**
-     * This method creates an observation with single or multiple values combined
+     * This method creates an observation with single or multiple keys and values combined
      *
-     * @param e          The event that the observation is added to
+     * @param e The event that the observation is added to
      * @param jsonObject The JSONObject representing the checkbox values
-     * @param vall       A list of option values to be added to the observation
+     * @param keyValPairs A list of option keys to be added to the observation
+     * @param values A list of option values to be added to the observation
      */
-    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
+    private static void createObservation(Event e, JSONObject jsonObject, Map<String, Object> keyValPairs, List<Object> values) {
         String formSubmissionField = jsonObject.optString(KEY);
         String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {
@@ -533,7 +536,7 @@ public class JsonFormUtils {
         }
 
         e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
-                "", vall, new ArrayList<>(), null, formSubmissionField,
+                "", keyValPairs, values, new ArrayList<>(), null, formSubmissionField,
                 jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)));
     }
 
