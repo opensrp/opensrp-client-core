@@ -373,6 +373,5 @@ public class AllSharedPreferences {
     public void setDBEncryptionVersion(int encryptionVersion) {
         preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
     }
-
 }
 

@@ -76,7 +76,7 @@ public class DrishtiApplicationTest {
 
         Assert.assertNull(ReflectionHelpers.getField(drishtiApplication, "password"));
         CredentialsHelper credentialsProvider = Mockito.spy(new CredentialsHelper(Mockito.mock(Context.class)));
-        Mockito.doReturn(password).when(credentialsProvider).getCredentials(ArgumentMatchers.anyString(), CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+        Mockito.doReturn(password).when(credentialsProvider).getCredentials(ArgumentMatchers.anyString(), ArgumentMatchers.eq(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH));
 
         ReflectionHelpers.setField(drishtiApplication, "credentialsHelper", credentialsProvider);
 

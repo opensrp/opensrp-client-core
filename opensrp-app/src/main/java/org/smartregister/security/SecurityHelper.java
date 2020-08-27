@@ -41,8 +41,6 @@ public class SecurityHelper {
         char[] chars = new char[editable.length()];
         editable.getChars(0, editable.length(), chars, 0);
 
-        editable.clear();
-
         return chars;
     }
 

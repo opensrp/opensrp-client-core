@@ -129,6 +129,10 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
         loginButton.setOnClickListener(this);
     }
 
+    public EditText getPasswordEditText() {
+        return passwordEditText;
+    }
+
     private void initializeProgressDialog() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setCancelable(false);
@@ -252,6 +256,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     public void resetPaswordError() {
         passwordEditText.setError(null);
     }
+
 
     @Override
     public Activity getActivityContext() {

@@ -618,7 +618,6 @@ public class UserService {
                         allSharedPreferences.savePioneerUser(username);
                     }
 
-                    allSharedPreferences.updateANMUserName(userName);//update current logged in user
                 }
 
             } catch (Exception e) {
