@@ -28,6 +28,8 @@ public interface BaseLoginContract {
         org.smartregister.Context getOpenSRPContext();
 
         boolean isServerSettingsSet();
+
+        char[] getPassword();
     }
 
     interface View {

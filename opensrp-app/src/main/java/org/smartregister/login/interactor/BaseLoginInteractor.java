@@ -23,7 +23,6 @@ import org.smartregister.login.task.LocalLoginTask;
 import org.smartregister.login.task.RemoteLoginTask;
 import org.smartregister.multitenant.ResetAppHelper;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.security.SecurityHelper;
 import org.smartregister.service.UserService;
 import org.smartregister.sync.helper.ServerSettingsHelper;
 import org.smartregister.util.NetworkUtils;
@@ -163,7 +162,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
                                     dialog.dismiss();
 
                                     if (which == DialogInterface.BUTTON_POSITIVE) {
-                                        resetAppHelper.startResetProcess(getLoginView().getAppCompatActivity(), () -> login(new WeakReference<>(getLoginView()), userName, SecurityHelper.readValue(getLoginView().getPasswordEditText().getText())));
+                                        resetAppHelper.startResetProcess(getLoginView().getAppCompatActivity(), () -> login(new WeakReference<>(getLoginView()), userName, mLoginPresenter.getPassword()));
                                     }
                                 });
                             } else {

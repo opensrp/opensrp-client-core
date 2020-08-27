@@ -155,6 +155,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
         when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
         when(context.userService()).thenReturn(userService);
         when(presenter.getLoginView()).thenReturn(view);
+        when(presenter.getPassword()).thenReturn(qwertyPassword);
 
         activity = Robolectric.buildActivity(AppCompatActivity.class).create().get();
 

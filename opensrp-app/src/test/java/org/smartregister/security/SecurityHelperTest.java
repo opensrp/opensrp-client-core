@@ -64,7 +64,6 @@ public class SecurityHelperTest {
         ArgumentCaptor<Integer> lastArgCaptor = ArgumentCaptor.forClass(Integer.class);
 
         Mockito.verify(editable).getChars(firstArgCaptor.capture(), lengthCaptor.capture(), charsCaptor.capture(), lastArgCaptor.capture());
-        Mockito.verify(editable).clear();
 
         Assert.assertEquals(2, lengthCaptor.getValue().intValue());
         Assert.assertEquals(0, firstArgCaptor.getValue().intValue());

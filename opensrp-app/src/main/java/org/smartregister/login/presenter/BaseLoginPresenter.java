@@ -11,6 +11,7 @@ import android.widget.ScrollView;
 import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.lang.ref.WeakReference;
@@ -135,6 +136,11 @@ public abstract class BaseLoginPresenter implements BaseLoginContract.Presenter 
         Configuration configuration = resources.getConfiguration();
         configuration.locale = new Locale(preferredLocale);
         resources.updateConfiguration(configuration, displayMetrics);
+    }
+
+    @Override
+    public char[] getPassword() {
+        return SecurityHelper.readValue(getLoginView().getPasswordEditText().getText());
     }
 
     @Override
