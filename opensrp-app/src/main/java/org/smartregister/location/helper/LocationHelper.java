@@ -490,7 +490,12 @@ public class LocationHelper {
             formLocation.name = getOpenMrsReadableName(name);
             formLocation.key = idKey ? node.getLocationId() : name;
 
-            Set<String> levels =  node.getTags() == null ? new HashSet<>(allowedLevels) : node.getTags();
+            Set<String> levels =  node.getTags();
+            if(levels == null){
+                levels = new HashSet<>();
+                levels.add("");
+            }
+
             formLocation.level = isLocationTagsShownEnabled() && levels != null && !levels.isEmpty() ? levels.iterator().next() : "";
 
 
