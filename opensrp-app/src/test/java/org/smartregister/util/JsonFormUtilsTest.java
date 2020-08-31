@@ -593,7 +593,6 @@ public class JsonFormUtilsTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         formjson = new JSONObject(formresultJson);
-
     }
 
     @Test
@@ -1458,9 +1457,10 @@ public class JsonFormUtilsTest {
         jsonObject.put(KEY, "key");
         Event event = new Event();
         List values = new ArrayList<>();
+        Map<String, Object> keyValPairs = new HashMap<>();
         values.add("value1");
         values.add("value2");
-        Whitebox.invokeMethod(JsonFormUtils.class, "createObservation", event, jsonObject, values);
+        Whitebox.invokeMethod(JsonFormUtils.class, "createObservation", event, jsonObject, keyValPairs, values);
         List<Obs> obsList = event.getObs();
         assertEquals(1, obsList.size());
         Obs obs = obsList.get(0);
@@ -1470,5 +1470,6 @@ public class JsonFormUtilsTest {
         assertEquals("key", obs.getFieldCode());
         assertFalse(obs.isSaveObsAsArray());
         assertEquals(values, obs.getValues());
+        assertEquals(keyValPairs, obs.getKeyValPairs());
     }
 }
