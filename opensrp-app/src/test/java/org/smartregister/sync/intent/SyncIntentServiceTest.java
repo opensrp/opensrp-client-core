@@ -59,6 +59,43 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     private SyncIntentService syncIntentService;
 
+    private String eventSyncPayload = "{\n" +
+            "  \"events\": [\n" +
+            "    {\n" +
+            "      \"type\": \"Event\",\n" +
+            "      \"dateCreated\": \"2020-08-13T13:24:43.048+02:00\",\n" +
+            "      \"serverVersion\": 1597318034276,\n" +
+            "      \"clientApplicationVersion\": 21,\n" +
+            "      \"clientDatabaseVersion\": 8,\n" +
+            "      \"identifiers\": {},\n" +
+            "      \"baseEntityId\": \"eb2eab25-9744-44e4-bd84-c69079156ce2\",\n" +
+            "      \"locationId\": \"e3a1eac5-61e3-4e6d-b8b2-cbe9417a6ebd\",\n" +
+            "      \"eventDate\": \"2020-08-13T06:00:00.000+02:00\",\n" +
+            "      \"eventType\": \"Register_Structure\",\n" +
+            "      \"formSubmissionId\": \"d9d621b7-3cf1-437b-ae48-6f1a229cec7e\",\n" +
+            "      \"providerId\": \"namibia1\"\n" +
+            "    },\n" +
+            "    {\n" +
+            "      \"type\": \"Event\",\n" +
+            "      \"dateCreated\": \"2020-08-13T13:24:43.090+02:00\",\n" +
+            "      \"serverVersion\": 1597318034277,\n" +
+            "      \"clientApplicationVersion\": 21,\n" +
+            "      \"clientDatabaseVersion\": 8,\n" +
+            "      \"identifiers\": {},\n" +
+            "      \"baseEntityId\": \"eb2eab25-9744-44e4-bd84-c69079156ce2\",\n" +
+            "      \"locationId\": \"e3a1eac5-61e3-4e6d-b8b2-cbe9417a6ebd\",\n" +
+            "      \"eventDate\": \"2020-08-13T06:00:00.000+02:00\",\n" +
+            "      \"eventType\": \"Spray\",\n" +
+            "      \"formSubmissionId\": \"e63db3c8-7bbf-4186-ad43-f03b1e847e15\",\n" +
+            "      \"providerId\": \"namibia1\"\n" +
+            "    }\n" +
+            "    ],\n" +
+            "  \"clients\": [],\n" +
+            "  \"no_of_events\": 2,\n" +
+            "  \"total_records\": 2\n" +
+            "}";
+
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
@@ -278,6 +315,26 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
 
         syncIntentService.pullECFromServer();
 
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+        // sync complete broadcast sent
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        FetchStatus actualFetchStatus = (FetchStatus) intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS);
+        assertEquals(FetchStatus.nothingFetched, actualFetchStatus);
+
+    }
+
+    @Test
+    public void testSuccessfulPullEcSendsSyncProgressAndSyncStatusBroadcasts() {
+
+        initMocksForPullECFromServerUsingPOST();
+        syncIntentService = spy(syncIntentService);
+        ResponseStatus responseStatus = ResponseStatus.success;
+        Mockito.doReturn(new Response<>(responseStatus, eventSyncPayload).withTotalRecords(2l),
+                new Response<>(responseStatus, null).withTotalRecords(0l))
+                .when(httpAgent).postWithJsonResponse(stringArgumentCaptor.capture(), stringArgumentCaptor.capture());
+
+        syncIntentService.pullECFromServer();
+        verify(syncIntentService).sendSyncProgressBroadcast(2);
         verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
         // sync complete broadcast sent
         assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
