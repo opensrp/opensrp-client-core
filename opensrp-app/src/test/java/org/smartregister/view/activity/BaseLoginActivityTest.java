@@ -10,6 +10,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
@@ -58,6 +60,12 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         BaseLoginActivityImpl spyActivity = Mockito.spy((BaseLoginActivityImpl) ReflectionHelpers.getField(controller, "component"));
         ReflectionHelpers.setField(controller, "component", spyActivity);
 
+        AppCompatDelegate delegate = AppCompatDelegate.create(RuntimeEnvironment.application, spyActivity, spyActivity);
+        Mockito.doReturn(delegate).when(spyActivity).getDelegate();
+
+        ActionBar actionBar = Mockito.mock(ActionBar.class);
+        Mockito.doReturn(actionBar).when(spyActivity).getSupportActionBar();
+
         Mockito.doReturn(RuntimeEnvironment.application.getPackageManager()).when(spyActivity).getPackageManager();
 
         controller.create()
@@ -74,6 +82,9 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
         BaseLoginActivityImpl spyActivity = Mockito.spy((BaseLoginActivityImpl) ReflectionHelpers.getField(controller, "component"));
         ReflectionHelpers.setField(controller, "component", spyActivity);
+
+        AppCompatDelegate delegate = AppCompatDelegate.create(RuntimeEnvironment.application, spyActivity, spyActivity);
+        Mockito.doReturn(delegate).when(spyActivity).getDelegate();
 
         Mockito.doReturn(RuntimeEnvironment.application.getPackageManager()).when(spyActivity).getPackageManager();
         Mockito.doReturn(actionBar).when(spyActivity).getSupportActionBar();
