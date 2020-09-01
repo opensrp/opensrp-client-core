@@ -1,5 +1,7 @@
 package org.smartregister.sync.intent;
 
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -32,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -185,7 +188,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testHandleSyncCallsLogoutUserIfHasValidAuthorizationIsFalse() {
+    public void testHandleSyncCallsLogoutUserIfHasValidAuthorizationIsFalse() throws AuthenticatorException, OperationCanceledException, IOException {
         Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
         when(syncUtils.verifyAuthorization()).thenReturn(false);
         when(syncConfiguration.disableSyncToServerIfUserIsDisabled()).thenReturn(true);
@@ -194,7 +197,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testHandleSyncCallsLogOutUserIfAppVersionIsNotAllowedAnd() {
+    public void testHandleSyncCallsLogOutUserIfAppVersionIsNotAllowedAnd() throws AuthenticatorException, OperationCanceledException, IOException {
         syncIntentService = spy(syncIntentService);
         Whitebox.setInternalState(syncIntentService, "syncUtils", syncUtils);
         when(syncUtils.verifyAuthorization()).thenReturn(true);

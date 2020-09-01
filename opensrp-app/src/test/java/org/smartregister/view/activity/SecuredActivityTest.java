@@ -49,8 +49,9 @@ import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 14-07-2020.
  */
+
 @Config(application = TestP2pApplication.class)
-public class SecuredActivityTest  extends BaseRobolectricUnitTest {
+public class SecuredActivityTest extends BaseRobolectricUnitTest {
 
     private SecuredActivity securedActivity;
 
@@ -69,7 +70,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
         // Make sure the user is logged in
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
-        session.setPassword("");
+        session.setPassword("".getBytes());
         session.start(360 * 60 * 1000);
 
         org.mockito.MockitoAnnotations.initMocks(this);
@@ -84,6 +85,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
                 .resume();
         securedActivity = Mockito.spy(controller.get());
     }
+
     @After
     public void tearDown() throws Exception {
         // Revert to the previous state where the user is logged out
@@ -94,7 +96,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
     @Test
     public void onCreateShouldCallOnCreationAndAddLogoutListener() {
-        List<WeakReference<Listener<Boolean>>> listeners =  ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
+        List<WeakReference<Listener<Boolean>>> listeners = ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
         listeners.clear();
 
         controller = Robolectric.buildActivity(SecuredActivityImpl.class);
@@ -104,7 +106,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         ReflectionHelpers.callInstanceMethod(Activity.class, securedActivity, "performCreate", from(Bundle.class, null));
 
         Mockito.verify(securedActivity).onCreation();
-        listeners =  ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
+        listeners = ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
         Assert.assertEquals(1, listeners.size());
     }
 

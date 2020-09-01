@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
@@ -16,13 +17,12 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.customshadows.FontTextViewShadow;
-import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.Repository;
-import org.smartregister.service.UserService;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
 import org.smartregister.shadows.ShadowJobManager;
 import org.smartregister.shadows.ShadowSQLiteDatabase;
+import org.smartregister.util.CredentialsHelper;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 30-06-2020.
@@ -70,18 +70,15 @@ public class DrishtiApplicationTest {
 
     @Test
     public void getPassword() {
-        String username = "anm";
-        String password = "pwd";
+        byte[] password = "pwd".getBytes();
 
         drishtiApplication.onCreate();
 
         Assert.assertNull(ReflectionHelpers.getField(drishtiApplication, "password"));
-        UserService userService = Mockito.spy(drishtiApplication.getContext().userService());
-        ReflectionHelpers.setField(drishtiApplication.getContext(), "userService", userService);
-        AllSharedPreferences allSharedPreferences = Mockito.spy(drishtiApplication.getContext().userService().getAllSharedPreferences());
-        ReflectionHelpers.setField(drishtiApplication.getContext().userService(), "allSharedPreferences", allSharedPreferences);
-        Mockito.doReturn(username).when(allSharedPreferences).fetchRegisteredANM();
-        Mockito.doReturn(password).when(userService).getGroupId(Mockito.eq(username));
+        CredentialsHelper credentialsProvider = Mockito.spy(new CredentialsHelper(Mockito.mock(Context.class)));
+        Mockito.doReturn(password).when(credentialsProvider).getCredentials(ArgumentMatchers.anyString(), ArgumentMatchers.eq(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH));
+
+        ReflectionHelpers.setField(drishtiApplication, "credentialsHelper", credentialsProvider);
 
         Assert.assertEquals(password, drishtiApplication.getPassword());
     }
