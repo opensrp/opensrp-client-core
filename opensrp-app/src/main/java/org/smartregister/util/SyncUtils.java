@@ -9,7 +9,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -91,10 +92,10 @@ public class SyncUtils {
 
         // see if setting was synced
         AllSettings settingsRepository = opensrpContent.allSettings();
-        Setting rawMinAllowedAppVersionSetting=null;
+        Setting rawMinAllowedAppVersionSetting = null;
         try {
             rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
-        }catch ( NullPointerException e ){
+        } catch (NullPointerException e) {
             Timber.e(e);
             return true;
         }

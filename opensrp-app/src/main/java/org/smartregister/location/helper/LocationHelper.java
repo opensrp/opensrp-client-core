@@ -1,7 +1,8 @@
 package org.smartregister.location.helper;
 
-import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
+
+import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
