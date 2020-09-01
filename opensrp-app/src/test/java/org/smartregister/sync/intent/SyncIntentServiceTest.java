@@ -406,7 +406,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         syncIntentService = spy(syncIntentService);
         Map<String, Object> pendingEvents = new HashMap<>();
         List<JSONObject> clients = new ArrayList<>();
-        JSONObject client = new JSONObject(eventJson);
+        JSONObject client = new JSONObject(clientJson);
         clients.add(client);
         List<JSONObject> events = new ArrayList<>();
         JSONObject event = new JSONObject(eventJson);
