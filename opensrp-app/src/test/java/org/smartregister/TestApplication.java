@@ -46,11 +46,6 @@ public class TestApplication extends DrishtiApplication {
         this.context = context;
     }
 
-    @Override
-    public String getPassword() {
-        return "";
-    }
-
     @Nullable
     @Override
     public P2PClassifier<JSONObject> getP2PClassifier() {

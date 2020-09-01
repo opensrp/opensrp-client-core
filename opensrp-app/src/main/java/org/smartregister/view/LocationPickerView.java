@@ -18,8 +18,8 @@ import org.smartregister.adapter.ServiceLocationsAdapter;
 import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.view.customcontrols.CustomFontTextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Jason Rogena - jrogena@ona.io
@@ -94,8 +94,8 @@ public class LocationPickerView extends CustomFontTextView implements View.OnCli
         this.onLocationChangeListener = onLocationChangeListener;
     }
 
-    private ArrayList<String> getLocations(String defaultLocation) {
-        ArrayList<String> locations = LocationHelper.getInstance().locationNamesFromHierarchy(defaultLocation);
+    private List<String> getLocations(String defaultLocation) {
+        List<String> locations = LocationHelper.getInstance().locationNamesFromHierarchy(defaultLocation);
 
         if (locations.contains(defaultLocation)) {
             locations.remove(defaultLocation);

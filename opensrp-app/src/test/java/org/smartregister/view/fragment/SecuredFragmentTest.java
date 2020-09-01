@@ -181,23 +181,6 @@ public class SecuredFragmentTest extends BaseUnitTest {
     }
 
     @Test
-    public void assertLogoutUserNavigatesToLoginPage() {
-
-        Mockito.doNothing().when(securedFragment).startActivity(ArgumentMatchers.any(Intent.class));
-        Mockito.doNothing().when(userService).logout();
-
-        securedFragment.logoutUser();
-
-        Mockito.verify(securedFragment).startActivity(intentArgumentCaptor.capture());
-        Intent navigationIntent = intentArgumentCaptor.getValue();
-
-        Assert.assertNotNull(navigationIntent);
-
-        Assert.assertEquals("org.smartregister.view.activity.LoginActivity", navigationIntent.getComponent().getClassName());
-
-    }
-
-    @Test
     public void assertStartFormActivityInvokesNavigationToFormActivity() {
 
         Mockito.doNothing().when(securedFragment).startActivityForResult(ArgumentMatchers.any(Intent.class), ArgumentMatchers.anyInt());

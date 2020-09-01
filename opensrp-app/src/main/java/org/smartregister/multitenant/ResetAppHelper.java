@@ -127,14 +127,11 @@ public class ResetAppHelper {
                         Timber.w("User %s has completely reset the app", application.getUsername());
                         performResetOperations();
                         appExecutors.mainThread()
-                                .execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        dismissDialog();
+                                .execute(() -> {
+                                    dismissDialog();
 
-                                        if (onCompleteClearDataCallback != null) {
-                                            onCompleteClearDataCallback.onComplete();
-                                        }
+                                    if (onCompleteClearDataCallback != null) {
+                                        onCompleteClearDataCallback.onComplete();
                                     }
                                 });
 
@@ -207,9 +204,9 @@ public class ResetAppHelper {
 
     @Nullable
     public PreResetAppCheck removePreResetAppCheck(@NonNull String checkName) {
-        for (PreResetAppCheck preResetAppCheck: preResetAppChecks) {
+        for (PreResetAppCheck preResetAppCheck : preResetAppChecks) {
             if (checkName.equals(preResetAppCheck.getUniqueName())) {
-                if(removePreResetAppCheck(preResetAppCheck)) {
+                if (removePreResetAppCheck(preResetAppCheck)) {
                     return preResetAppCheck;
                 }
 

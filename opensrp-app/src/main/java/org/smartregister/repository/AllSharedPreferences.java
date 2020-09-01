@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.smartregister.AllConstants.CURRENT_LOCALITY;
 import static org.smartregister.AllConstants.DEFAULT_LOCALE;
@@ -15,7 +17,6 @@ import static org.smartregister.AllConstants.DEFAULT_TEAM_ID_PREFIX;
 import static org.smartregister.AllConstants.DEFAULT_TEAM_PREFIX;
 import static org.smartregister.AllConstants.DRISHTI_BASE_URL;
 import static org.smartregister.AllConstants.ENCRYPTED_GROUP_ID_PREFIX;
-import static org.smartregister.AllConstants.ENCRYPTED_PASSWORD_PREFIX;
 import static org.smartregister.AllConstants.FORCE_REMOTE_LOGIN;
 import static org.smartregister.AllConstants.IS_SYNC_INITIAL_KEY;
 import static org.smartregister.AllConstants.IS_SYNC_IN_PROGRESS_PREFERENCE_KEY;
@@ -28,6 +29,7 @@ import static org.smartregister.util.Log.logInfo;
 
 public class AllSharedPreferences {
     public static final String ANM_IDENTIFIER_PREFERENCE_KEY = "anmIdentifier";
+    public static final String ANM_IDENTIFIER_SET_PREFERENCE_KEY = "anmIdentifierSet";
     private static final String HOST = "HOST";
     private static final String PORT = "PORT";
     private static final String LAST_SYNC_DATE = "LAST_SYNC_DATE";
@@ -41,6 +43,8 @@ public class AllSharedPreferences {
     private static final String PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD = "PEER_TO_PEER_SYNC_LAST_FOREIGN_PROCESSED_RECORD";
     public static final String MANIFEST_VERSION = "MANIFEST_VERSION";
     public static final String FORMS_VERSION = "FORMS_VERSION";
+    private static final String ENCRYPTED_PASSPHRASE_KEY = "ENCRYPTED_PASSPHRASE_KEY";
+    private static final String DB_ENCRYPTION_VERSION = "DB_ENCRYPTION_VERSION";
     private SharedPreferences preferences;
 
     public AllSharedPreferences(SharedPreferences preferences) {
@@ -50,18 +54,26 @@ public class AllSharedPreferences {
 
     public void updateANMUserName(String userName) {
         preferences.edit().putString(ANM_IDENTIFIER_PREFERENCE_KEY, userName).commit();
+
+        Set<String> anmIdentifiers = new HashSet<>(preferences.getStringSet(ANM_IDENTIFIER_SET_PREFERENCE_KEY, new HashSet<>()));
+        anmIdentifiers.add(userName);
+        preferences.edit().putStringSet(ANM_IDENTIFIER_SET_PREFERENCE_KEY, anmIdentifiers).commit();
     }
 
     public String fetchRegisteredANM() {
         return preferences.getString(ANM_IDENTIFIER_PREFERENCE_KEY, "").trim();
     }
 
-    public boolean fetchForceRemoteLogin() {
-        return preferences.getBoolean(FORCE_REMOTE_LOGIN, true);
+    public boolean isRegisteredANM(String userName) {
+        return preferences.getStringSet(ANM_IDENTIFIER_SET_PREFERENCE_KEY, new HashSet<>()).contains(userName);
     }
 
-    public void saveForceRemoteLogin(boolean forceRemoteLogin) {
-        preferences.edit().putBoolean(FORCE_REMOTE_LOGIN, forceRemoteLogin).commit();
+    public boolean fetchForceRemoteLogin(String username) {
+        return preferences.getBoolean(new StringBuffer(FORCE_REMOTE_LOGIN).append('_').append(username).toString(), true);
+    }
+
+    public void saveForceRemoteLogin(boolean forceRemoteLogin, String username) {
+        preferences.edit().putBoolean(new StringBuffer(FORCE_REMOTE_LOGIN).append('_').append(username).toString(), forceRemoteLogin).commit();
     }
 
     public String fetchServerTimeZone() {
@@ -72,17 +84,11 @@ public class AllSharedPreferences {
         preferences.edit().putString(SERVER_TIMEZONE, serverTimeZone).commit();
     }
 
-    public String fetchEncryptedPassword(String username) {
+    public String fetchEncryptedGroupId(String username) {
         if (username != null) {
-            return preferences.getString(ENCRYPTED_PASSWORD_PREFIX + username, null);
+            return preferences.getString(ENCRYPTED_GROUP_ID_PREFIX + username, null);
         }
         return null;
-    }
-
-    public void saveEncryptedPassword(String username, String password) {
-        if (username != null) {
-            preferences.edit().putString(ENCRYPTED_PASSWORD_PREFIX + username, password).commit();
-        }
     }
 
     public String fetchPioneerUser() {
@@ -155,19 +161,6 @@ public class AllSharedPreferences {
 
     public void saveCurrentLocality(String currentLocality) {
         preferences.edit().putString(CURRENT_LOCALITY, currentLocality).commit();
-    }
-
-    public String fetchEncryptedGroupId(String username) {
-        if (username != null) {
-            return preferences.getString(ENCRYPTED_GROUP_ID_PREFIX + username, null);
-        }
-        return null;
-    }
-
-    public void saveEncryptedGroupId(String username, String groupId) {
-        if (username != null) {
-            preferences.edit().putString(ENCRYPTED_GROUP_ID_PREFIX + username, groupId).commit();
-        }
     }
 
     public String fetchLanguagePreference() {
@@ -362,6 +355,22 @@ public class AllSharedPreferences {
     @Nullable
     public SharedPreferences getPreferences() {
         return preferences;
+    }
+
+    public String getPassphrase(String encryptionParam) {
+        return preferences.getString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).toString(), null);
+    }
+
+    public void savePassphrase(String passphrase, String encryptionParam) {
+        preferences.edit().putString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).toString(), passphrase).commit();
+    }
+
+    public int getDBEncryptionVersion() {
+        return preferences.getInt(DB_ENCRYPTION_VERSION, 0);
+    }
+
+    public void setDBEncryptionVersion(int encryptionVersion) {
+        preferences.edit().putInt(DB_ENCRYPTION_VERSION, encryptionVersion).commit();
     }
 }
 

@@ -14,8 +14,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.repository.mock.RepositoryMock;
-import org.smartregister.util.Session;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.io.File;
@@ -29,38 +28,40 @@ public class RepositoryTest extends BaseUnitTest {
     @Rule
     public PowerMockRule rule = new PowerMockRule();
 
-    private RepositoryMock repositoryMock;
-
     @Mock
     private DrishtiApplication drishtiApplication;
 
     private Repository repository;
+
     @Mock
     private android.content.Context context;
+
     @Mock
-    private Session session;
-    @Mock
-    private DrishtiRepository drishtiRepository;
+    private SQLiteDatabase database;
 
     private String dbName;
-    private String password;
+    private char[] password;
 
     @Before
     public void setUp() {
         dbName = "drishti.db";
-        password = "Android7832!";
+        password = "Android7832!".toCharArray();
 
         MockitoAnnotations.initMocks(this);
         PowerMockito.mockStatic(DrishtiApplication.class);
         PowerMockito.when(DrishtiApplication.getInstance()).thenReturn(drishtiApplication);
         PowerMockito.when(drishtiApplication.getApplicationContext()).thenReturn(context);
-        Mockito.doReturn(password).when(drishtiApplication).getPassword();
+
+        ReflectionHelpers.setField(drishtiApplication, "password", SecurityHelper.toBytes(password));
         PowerMockito.when(context.getDir("opensrp", android.content.Context.MODE_PRIVATE)).thenReturn(new File("/"));
 
 
-        repository = Mockito.mock(Repository.class, Mockito.CALLS_REAL_METHODS);
+        repository = Mockito.spy(Mockito.mock(Repository.class, Mockito.CALLS_REAL_METHODS));
         ReflectionHelpers.setField(repository, "context", context);
         ReflectionHelpers.setField(repository, "dbName", dbName);
+
+        Mockito.doReturn(true).when(database).isOpen();
+        ReflectionHelpers.setField(repository, "mDatabase", database);
     }
 
     @Test
@@ -69,7 +70,7 @@ public class RepositoryTest extends BaseUnitTest {
 
         repository.getReadableDatabase();
 
-        Mockito.verify(repository).getReadableDatabase(password);
+        Mockito.verify(repository).getReadableDatabase(SecurityHelper.toBytes(password));
     }
 
     @Test(expected = RuntimeException.class)
@@ -83,9 +84,10 @@ public class RepositoryTest extends BaseUnitTest {
     public void getWritableDatabaseShouldCallGetWritableDbAndPassword() {
         Mockito.doReturn(null).when(repository).getWritableDatabase(password);
 
+
         repository.getWritableDatabase();
 
-        Mockito.verify(repository).getWritableDatabase(password);
+        Mockito.verify(repository).getWritableDatabase(SecurityHelper.toBytes(password));
     }
 
     @Test(expected = RuntimeException.class)

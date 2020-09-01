@@ -51,6 +51,7 @@ import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 14-07-2020.
  */
+
 @Config(application = TestP2pApplication.class)
 public class SecuredActivityTest extends BaseRobolectricUnitTest {
 
@@ -71,7 +72,7 @@ public class SecuredActivityTest extends BaseRobolectricUnitTest {
 
         // Make sure the user is logged in
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
-        session.setPassword("");
+        session.setPassword("".getBytes());
         session.start(360 * 60 * 1000);
 
         org.mockito.MockitoAnnotations.initMocks(this);
