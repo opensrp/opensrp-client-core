@@ -12,6 +12,7 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.commonregistry.CommonFtsObject;
+import org.smartregister.security.SecurityHelper;
 import org.smartregister.util.Session;
 
 import java.io.File;
@@ -135,7 +136,7 @@ public class RepositoryRobolectricTest extends BaseRobolectricUnitTest {
     @Test
     public void canUseThisPasswordShouldCallIsDatabaseWritableAndReturnTrue() {
         Repository repository = Mockito.mock(Repository.class, Mockito.CALLS_REAL_METHODS);
-        String password = "mypwd";
+        byte[] password = SecurityHelper.toBytes("mypwd".toCharArray());
 
         Mockito.doReturn(true).when(repository).isDatabaseWritable(password);
         Assert.assertTrue(repository.canUseThisPassword(password));

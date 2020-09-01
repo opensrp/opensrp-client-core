@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -65,6 +66,11 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         baseLoginActivity = Mockito.spy(controller.get());
     }
 
+    @After
+    public void tearDown() {
+        resetCoreLibrary();
+    }
+
     @Test
     public void onCreateShouldCallSetupOperations() {
         // Setup again for
@@ -99,7 +105,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(R.id.login_login_btn).when(view).getId();
 
         baseLoginActivity.onClick(view);
-        Mockito.verify(baseLoginActivity.mLoginPresenter).attemptLogin(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(baseLoginActivity.mLoginPresenter).attemptLogin(Mockito.anyString(), Mockito.any(char[].class));
     }
 
 
@@ -109,7 +115,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Mockito.doReturn(R.id.login_login_btn).when(view).getId();
 
         Assert.assertTrue(baseLoginActivity.onEditorAction(null, EditorInfo.IME_ACTION_DONE, null));
-        Mockito.verify(baseLoginActivity.mLoginPresenter).attemptLogin(Mockito.anyString(), Mockito.anyString());
+        Mockito.verify(baseLoginActivity.mLoginPresenter).attemptLogin(Mockito.anyString(), Mockito.any(char[].class));
     }
 
     @Test
@@ -166,7 +172,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isAppVersionAllowedShouldReturnSyncUtilsValue() throws PackageManager.NameNotFoundException {
-        SyncUtils syncUtils =  Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
+        SyncUtils syncUtils = Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
         ReflectionHelpers.setField(baseLoginActivity, "syncUtils", syncUtils);
         Mockito.doReturn(false).when(syncUtils).isAppVersionAllowed();
 

@@ -6,6 +6,7 @@ import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Answers;
@@ -13,7 +14,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.login.model.BaseLoginModel;
 import org.smartregister.view.activity.BaseLoginActivityTest.BaseLoginActivityImpl;
@@ -60,6 +63,11 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
         when(loginView.getActivityContext()).thenReturn(activity);
     }
 
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+    }
+
     @Test
     public void testOnDestroyShouldCleanUp() {
         presenter.onDestroy(false);
@@ -77,7 +85,7 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
     @Test
     public void testAttemptLoginShouldErrorIfAppIsOutdated() {
         when(loginView.isAppVersionAllowed()).thenReturn(false);
-        presenter.attemptLogin("john", "doe");
+        presenter.attemptLogin("john", "doe".toCharArray());
         verify(loginView).showErrorDialog(activity.getString(R.string.outdated_app));
         verify(loginView).isAppVersionAllowed();
         verify(loginView).getActivityContext();
@@ -88,7 +96,7 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
     @Test
     public void testAttemptLoginShouldNotInvokeLoginAndDisplaysErrors() {
         when(loginView.isAppVersionAllowed()).thenReturn(true);
-        presenter.attemptLogin("", "");
+        presenter.attemptLogin("", "".toCharArray());
         verify(loginView).setPasswordError(R.string.error_invalid_password);
         verify(loginView).setUsernameError(R.string.error_field_required);
         verify(loginView).enableLoginButton(true);
@@ -98,11 +106,11 @@ public class BaseLoginPresenterTest extends BaseRobolectricUnitTest {
     @Test
     public void testAttemptLoginShouldInvokeLogin() {
         when(loginView.isAppVersionAllowed()).thenReturn(true);
-        presenter.attemptLogin("john", "doe");
+        presenter.attemptLogin("john", "doe".toCharArray());
         verify(loginView, never()).setPasswordError(R.string.error_invalid_password);
         verify(loginView, never()).setUsernameError(R.string.error_field_required);
         verify(loginView, never()).enableLoginButton(true);
-        verify(loginInteractor).login(any(), eq("john"), eq("doe"));
+        verify(loginInteractor).login(any(), eq("john"), eq("doe".toCharArray()));
     }
 
     @Test
