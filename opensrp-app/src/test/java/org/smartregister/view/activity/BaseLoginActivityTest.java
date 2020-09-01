@@ -7,11 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,12 +14,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.powermock.reflect.Whitebox;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.Shadows;
@@ -178,7 +177,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
     @Test
     public void isAppVersionAllowedShouldReturnSyncUtilsValue() throws PackageManager.NameNotFoundException {
-        SyncUtils syncUtils =  Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
+        SyncUtils syncUtils = Mockito.spy((SyncUtils) ReflectionHelpers.getField(baseLoginActivity, "syncUtils"));
         ReflectionHelpers.setField(baseLoginActivity, "syncUtils", syncUtils);
         Mockito.doReturn(false).when(syncUtils).isAppVersionAllowed();
 
