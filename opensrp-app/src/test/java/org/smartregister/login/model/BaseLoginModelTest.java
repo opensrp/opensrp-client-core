@@ -1,8 +1,10 @@
 package org.smartregister.login.model;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -30,6 +32,11 @@ public class BaseLoginModelTest extends BaseRobolectricUnitTest {
         loginModel = new BaseLoginModel();
     }
 
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+    }
+
     @Test
     public void testGetOpenSRPContextShouldReturnContext() {
         assertNotNull(loginModel.getOpenSRPContext());
@@ -39,8 +46,8 @@ public class BaseLoginModelTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testIsPasswordValidReturnsCorrectResult() {
-        assertFalse(loginModel.isPasswordValid(""));
-        assertTrue(loginModel.isPasswordValid("qwerty120"));
+        assertFalse(loginModel.isPasswordValid("".toCharArray()));
+        assertTrue(loginModel.isPasswordValid("qwerty120".toCharArray()));
 
 
     }

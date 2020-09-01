@@ -417,6 +417,8 @@ public class AllConstants {
         public static final String IS_REMOTE_LOGIN = "is_remote_login";
         public static final String TASK_GENERATED_EVENT = "task_generated_event";
         public static final String TASK_GENERATED = "task_generated";
+        public static final String DIALOG_TITLE = "dialog_title";
+        public static final String DIALOG_MESSAGE = "dialog_message";
     }
 
     public static final class REGISTER_FRAGMENT {
@@ -454,6 +456,7 @@ public class AllConstants {
     public static class PROPERTY {
         public static final String SYSTEM_TOASTER_CENTERED = "system.toaster.centered";
         public static final String DISABLE_LOCATION_PICKER_VIEW = "disable.location.picker.view";
+        public static final String LOCATION_PICKER_TAG_SHOWN = "location.picker.tag.shown";
 
     }
 
@@ -497,5 +500,13 @@ public class AllConstants {
         String PROFILE_PIC = "Profile Pic";
         String FOREIGN_CLIENT = "ForeignClient";
         String FOREIGN_EVENT = "ForeignEvent";
+    }
+    public static class HTTP_REQUEST_HEADERS {
+        public static String AUTHORIZATION = "Authorization";
+    }
+
+    public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
+        public static String BEARER = "Bearer";
+        public static String BASIC = "Basic";
     }
 }

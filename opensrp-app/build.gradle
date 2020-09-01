@@ -93,6 +93,7 @@ android {
         versionName project.VERSION_NAME
         testInstrumentationRunner "android.test.InstrumentationTestRunner"
         buildConfigField "long", "BUILD_TIMESTAMP", System.currentTimeMillis() + "L"
+        buildConfigField "int", "DB_ENCRYPTION_VERSION", '1'
     }
 
     sourceSets {
@@ -207,12 +208,30 @@ dependencies {
 
     implementation 'org.smartregister:opensrp-plan-evaluator:0.1.0-SNAPSHOT'
 
-    implementation 'xerces:xercesImpl:2.12.0'
-}
+    implementation('ch.acra:acra:4.5.0') {
+        exclude group: 'org.json', module: 'json'
+    }
 
-dependencies {
+    implementation 'com.github.ybq:Android-SpinKit:1.2.0'
+    implementation 'com.mcxiaoke.volley:library:1.0.19'
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
+    annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
+
+    implementation 'com.cloudant:cloudant-http:2.7.0'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
+
+    implementation('com.android.support:design:28.0.0') {
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
+
+    implementation 'com.evernote:android-job:1.2.6'
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'xerces:xercesImpl:2.12.0'
+
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+
     androidTestImplementation 'junit:junit:4.12'
 
     testImplementation group: 'com.google.android', name: 'android-test', version: '4.1.1.4'
