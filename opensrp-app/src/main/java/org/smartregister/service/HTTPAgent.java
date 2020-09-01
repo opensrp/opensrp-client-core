@@ -114,6 +114,10 @@ public class HTTPAgent {
 
     /**
      * This method initializes httpurlconnection
+     *
+     * @param requestURLPath This is the url to open http connection to.
+     * @param setOauthToken  A boolean to flag whether to set the OAuth2 bearer access token in the Authorization header of request.
+     * @return HttpURLConnection Http connection to the OpenSRP server.
      */
     private HttpURLConnection initializeHttp(String requestURLPath, boolean setOauthToken) throws IOException {
 
