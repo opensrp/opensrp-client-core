@@ -68,5 +68,4 @@ public class ClientDaoImpl extends EventClientRepository implements ClientDao {
                 .collect(Collectors.toList());
     }
 
-
 }

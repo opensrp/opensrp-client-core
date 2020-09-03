@@ -62,19 +62,20 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     }
 
     @Override
-    public List<com.ibm.fhir.model.resource.Task> findAllTasksForEntity(String s) {
-        // TODO implement this
-        return null;
+    public List<com.ibm.fhir.model.resource.Task> findAllTasksForEntity(String entityId) {
+        return getTasksByEntity(entityId)
+                .stream()
+                .map(TaskConverter::convertTasktoFihrResource)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public org.smartregister.domain.Task getTaskByEntityId(String s) {
-        // TODO implement this
-        return null;
+    public org.smartregister.domain.Task getTaskByEntityId(String taskId) {
+        return getTaskByIdentifier(taskId);
     }
 
     @Override
     public void updateTask(org.smartregister.domain.Task task) {
-        // TODO implement this
+        addOrUpdate(task);
     }
 }

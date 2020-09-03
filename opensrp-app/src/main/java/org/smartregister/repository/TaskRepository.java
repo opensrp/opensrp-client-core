@@ -231,6 +231,13 @@ public class TaskRepository extends BaseRepository {
                 , ArrayUtils.addAll(new String[]{planId, forEntity}, INACTIVE_TASK_STATUS));
     }
 
+    public Set<Task> getTasksByEntity(String forEntity) {
+        return getTasks(String.format("SELECT * FROM %s WHERE %s =? AND %s  NOT IN (%s)",
+                TASK_TABLE, FOR, STATUS,
+                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                , ArrayUtils.addAll(new String[]{forEntity}, INACTIVE_TASK_STATUS));
+    }
+
     /**
      * Gets tasks for an entity using plan and task status
      *

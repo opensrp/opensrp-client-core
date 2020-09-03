@@ -38,8 +38,7 @@ public class LocationDaoImpl extends LocationRepository implements LocationDao {
     }
 
     @Override
-    public List<String> findChildLocationByJurisdiction(String s) {
-        // TODO implement this
-        return null;
+    public List<String> findChildLocationByJurisdiction(String jurisdictionId) {
+        throw new UnsupportedOperationException("This is not supported on android apps");
     }
 }
