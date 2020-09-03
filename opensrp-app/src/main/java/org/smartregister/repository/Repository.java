@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteDatabaseHook;
@@ -12,6 +13,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.exception.DatabaseMigrationException;
+import org.smartregister.repository.helper.OpenSRPDatabaseErrorHandler;
 import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.Session;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -156,15 +158,16 @@ public class Repository extends SQLiteOpenHelper {
         return getWritableDatabase(password());
     }
 
-    private boolean isDatabaseWritable(String password) {
+    @VisibleForTesting
+    protected boolean isDatabaseWritable(byte[] password) {
         SQLiteDatabase database = SQLiteDatabase
                 .openDatabase(databasePath.getPath(), password, null,
-                        SQLiteDatabase.OPEN_READONLY, hook);
+                        SQLiteDatabase.OPEN_READONLY, hook, new OpenSRPDatabaseErrorHandler());
         database.close();
         return true;
     }
 
-    public boolean canUseThisPassword(String password) {
+    public boolean canUseThisPassword(byte[] password) {
         try {
             return isDatabaseWritable(password);
         } catch (SQLiteException e) {
@@ -190,7 +193,7 @@ public class Repository extends SQLiteOpenHelper {
         }
     }
 
-    private String password() {
+    private byte[] password() {
         return DrishtiApplication.getInstance().getPassword();
     }
 

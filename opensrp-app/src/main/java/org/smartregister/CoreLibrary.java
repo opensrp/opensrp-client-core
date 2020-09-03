@@ -1,11 +1,16 @@
 package org.smartregister;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
@@ -13,13 +18,17 @@ import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
 import org.smartregister.sync.P2PSyncFinishCallback;
+import org.smartregister.util.CredentialsHelper;
+import org.smartregister.util.Utils;
+
+import timber.log.Timber;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
  */
-public class CoreLibrary {
+public class CoreLibrary implements OnAccountsUpdateListener {
 
     private final Context context;
 
@@ -33,6 +42,10 @@ public class CoreLibrary {
     private String ecClientFieldsFile = "ec_client_fields.json";
 
     private P2POptions p2POptions;
+
+    private AccountManager accountManager;
+
+    private AccountAuthenticatorXml authenticatorXml;
 
     public static void init(Context context) {
         init(context, null);
@@ -55,6 +68,15 @@ public class CoreLibrary {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
+            checkPlatformMigrations();
+        }
+    }
+
+
+    private static void checkPlatformMigrations() {
+        boolean shouldMigrate = CredentialsHelper.shouldMigrate();
+        if (shouldMigrate && StringUtils.isNotBlank(instance.context().userService().getAllSharedPreferences().fetchPioneerUser())) {//Force remote login
+            Utils.logoutUser(instance.context(), instance.context().applicationContext().getString(R.string.new_db_encryption_version_migration));
         }
     }
 
@@ -150,6 +172,22 @@ public class CoreLibrary {
         return syncConfiguration;
     }
 
+    public AccountManager getAccountManager() {
+        if (accountManager == null) {
+            accountManager = AccountManager.get(context.applicationContext());
+            accountManager.addOnAccountsUpdatedListener(this, null, true);
+        }
+
+        return accountManager;
+    }
+
+    public AccountAuthenticatorXml getAccountAuthenticatorXml() {
+        if (authenticatorXml == null)
+            authenticatorXml = Utils.parseAuthenticatorXMLConfigData(context.applicationContext());
+
+        return authenticatorXml;
+    }
+
     public static long getBuildTimeStamp() {
         return buildTimeStamp;
     }
@@ -184,5 +222,34 @@ public class CoreLibrary {
 
         LocalBroadcastManager.getInstance(context.applicationContext())
                 .sendBroadcast(intent);
+    }
+
+    @Override
+    public void onAccountsUpdated(Account[] accounts) {
+        if (context.allSharedPreferences().getDBEncryptionVersion() > 0) {
+            try {
+                String loggedInUser = context.allSharedPreferences().fetchRegisteredANM();
+
+                if (!StringUtils.isBlank(loggedInUser)) {
+
+                    boolean accountExists = false;
+
+                    for (Account account : accounts) {
+                        if (account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
+                            accountExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!accountExists) {
+
+                        Utils.logoutUser(context, context.applicationContext().getString(R.string.account_removed));
+
+                    }
+                }
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
     }
 }

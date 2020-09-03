@@ -28,9 +28,8 @@ import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.P2POptions;
 import org.smartregister.R;
-import org.smartregister.TestApplication;
+import org.smartregister.TestP2pApplication;
 import org.smartregister.broadcastreceivers.OpenSRPClientBroadCastReceiver;
 import org.smartregister.commonregistry.CommonRepositoryInformationHolder;
 import org.smartregister.event.Event;
@@ -50,8 +49,9 @@ import static org.robolectric.util.ReflectionHelpers.ClassParameter.from;
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 14-07-2020.
  */
-@Config(application = SecuredActivityTest.TestP2pApplication.class)
-public class SecuredActivityTest  extends BaseRobolectricUnitTest {
+
+@Config(application = TestP2pApplication.class)
+public class SecuredActivityTest extends BaseRobolectricUnitTest {
 
     private SecuredActivity securedActivity;
 
@@ -70,7 +70,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
         // Make sure the user is logged in
         Session session = ReflectionHelpers.getField(CoreLibrary.getInstance().context().userService(), "session");
-        session.setPassword("");
+        session.setPassword("".getBytes());
         session.start(360 * 60 * 1000);
 
         org.mockito.MockitoAnnotations.initMocks(this);
@@ -85,6 +85,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
                 .resume();
         securedActivity = Mockito.spy(controller.get());
     }
+
     @After
     public void tearDown() throws Exception {
         // Revert to the previous state where the user is logged out
@@ -95,7 +96,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
 
     @Test
     public void onCreateShouldCallOnCreationAndAddLogoutListener() {
-        List<WeakReference<Listener<Boolean>>> listeners =  ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
+        List<WeakReference<Listener<Boolean>>> listeners = ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
         listeners.clear();
 
         controller = Robolectric.buildActivity(SecuredActivityImpl.class);
@@ -105,7 +106,7 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         ReflectionHelpers.callInstanceMethod(Activity.class, securedActivity, "performCreate", from(Bundle.class, null));
 
         Mockito.verify(securedActivity).onCreation();
-        listeners =  ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
+        listeners = ReflectionHelpers.getField(Event.ON_LOGOUT, "listeners");
         Assert.assertEquals(1, listeners.size());
     }
 
@@ -249,17 +250,4 @@ public class SecuredActivityTest  extends BaseRobolectricUnitTest {
         }
     }
 
-    static class TestP2pApplication extends TestApplication {
-
-        @Override
-        public void onCreate() {
-            mInstance = this;
-            context = Context.getInstance();
-            context.updateApplicationContext(getApplicationContext());
-
-            CoreLibrary.init(context, null, 1588062490000l, new P2POptions(true));
-
-            setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat
-        }
-    }
 }

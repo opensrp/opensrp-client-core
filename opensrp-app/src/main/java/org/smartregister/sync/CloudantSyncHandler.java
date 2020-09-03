@@ -358,8 +358,8 @@ public class CloudantSyncHandler {
 
             String authEncoded = getAuthorization();
             if (authEncoded != null) {
-                String basicAuth = "Basic " + authEncoded;
-                conn.setRequestProperty("Authorization", basicAuth);
+                String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + authEncoded;
+                conn.setRequestProperty(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             }
 
             OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
@@ -392,8 +392,8 @@ public class CloudantSyncHandler {
 
             String authEncoded = getAuthorization();
             if (authEncoded != null) {
-                String basicAuth = "Basic " + authEncoded;
-                get.setHeader("Authorization", basicAuth);
+                String basicAuth = AllConstants.HTTP_REQUEST_AUTH_TOKEN_TYPE.BASIC + " " + authEncoded;
+                get.setHeader(AllConstants.HTTP_REQUEST_HEADERS.AUTHORIZATION, basicAuth);
             }
 
             HttpResponse response = httpclient.execute(get);

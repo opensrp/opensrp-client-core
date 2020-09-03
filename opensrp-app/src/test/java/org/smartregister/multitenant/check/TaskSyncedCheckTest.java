@@ -1,5 +1,6 @@
 package org.smartregister.multitenant.check;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -22,6 +23,13 @@ public class TaskSyncedCheckTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() throws Exception {
         taskSyncedCheck = Mockito.spy(new TaskSyncedCheck());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        // This fixes an issue where TaskServiceHelperTest fails due to the TaskServiceHelper being initialised and state
+        // changed from this tests onwards
+        ReflectionHelpers.setStaticField(TaskServiceHelper.class, "instance", null);
     }
 
     @Test
