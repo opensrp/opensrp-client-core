@@ -24,13 +24,13 @@ public class LocationDaoImpl extends LocationRepository implements LocationDao {
     }
 
     @Override
-    public List<com.ibm.fhir.model.resource.Location> findLocationsById(String id) {
+    public List<Location> findLocationsById(String id) {
         PhysicalLocation location = getLocationById(id, StructureRepository.STRUCTURE_TABLE);
         return Collections.singletonList(LocationConverter.convertPhysicalLocationToLocationResource(location));
     }
 
     @Override
-    public List<com.ibm.fhir.model.resource.Location> findLocationByJurisdiction(String jurisdiction) {
+    public List<Location> findLocationByJurisdiction(String jurisdiction) {
         return getLocationsByParentId(jurisdiction, StructureRepository.STRUCTURE_TABLE)
                 .stream()
                 .map(LocationConverter::convertPhysicalLocationToLocationResource)

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ibm.fhir.model.type.code.TaskStatus;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -33,9 +32,6 @@ import org.smartregister.domain.TaskUpdate;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -98,16 +94,16 @@ public class TaskRepositoryTest extends BaseUnitTest {
     @Captor
     private ArgumentCaptor<Task> taskArgumentCaptor;
 
-    private String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0,\"structureId\":\"structure._id.33efadf1-feda-4861-a979-ff4f7cec9ea7\",\"reasonReference\":\"fad051d9-0ff6-424a-8a44-4b90883e2841\"}";
-    private String structureJson = "{\"id\": \"170230\", \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [32.59610261651737, -14.171511296715634]}, \"properties\": {\"status\": \"Active\", \"version\": 0, \"parentId\": \"3429\", \"geographicLevel\": 4}, \"serverVersion\": 1542970626353}";
-    private String clientJson = "{\"firstName\":\"Khumpai\",\"lastName\":\"Family\",\"birthdate\":\"1970-01-01T05:00:00.000+03:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"gender\":\"Male\",\"relationships\":{\"family_head\":[\"7d97182f-d623-4553-8651-5a29d2fe3f0b\"],\"primary_caregiver\":[\"7d97182f-d623-4553-8651-5a29d2fe3f0b\"]},\"baseEntityId\":\"71ad460c-bf76-414e-9be1-0d1b2cb1bce8\",\"identifiers\":{\"opensrp_id\":\"11096120_family\"},\"addresses\":[{\"addressType\":\"\",\"cityVillage\":\"Tha Luang\"}],\"attributes\":{\"residence\":\"da765947-5e4d-49f7-9eb8-2d2d00681f65\"},\"dateCreated\":\"2019-05-12T17:22:31.023+03:00\",\"serverVersion\":1557670950986,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":2,\"type\":\"Client\",\"id\":\"9b67a82d-dac7-40c0-85aa-e5976339a6b6\",\"revision\":\"v1\"}";
+    private static String taskJson = "{\"identifier\":\"tsk11231jh22\",\"planIdentifier\":\"IRS_2018_S1\",\"groupIdentifier\":\"2018_IRS-3734\",\"status\":\"Ready\",\"businessStatus\":\"Not Visited\",\"priority\":3,\"code\":\"IRS\",\"description\":\"Spray House\",\"focus\":\"IRS Visit\",\"for\":\"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc\",\"executionStartDate\":\"2018-11-10T2200\",\"executionEndDate\":null,\"authoredOn\":\"2018-10-31T0700\",\"lastModified\":\"2018-10-31T0700\",\"owner\":\"demouser\",\"note\":[{\"authorString\":\"demouser\",\"time\":\"2018-01-01T0800\",\"text\":\"This should be assigned to patrick.\"}],\"serverVersion\":0,\"structureId\":\"structure._id.33efadf1-feda-4861-a979-ff4f7cec9ea7\",\"reasonReference\":\"fad051d9-0ff6-424a-8a44-4b90883e2841\"}";
+    private static String structureJson = "{\"id\": \"170230\", \"type\": \"Feature\", \"geometry\": {\"type\": \"Point\", \"coordinates\": [32.59610261651737, -14.171511296715634]}, \"properties\": {\"status\": \"Active\", \"version\": 0, \"parentId\": \"3429\", \"geographicLevel\": 4}, \"serverVersion\": 1542970626353}";
+    private static String clientJson = "{\"firstName\":\"Khumpai\",\"lastName\":\"Family\",\"birthdate\":\"1970-01-01T05:00:00.000+03:00\",\"birthdateApprox\":false,\"deathdateApprox\":false,\"gender\":\"Male\",\"relationships\":{\"family_head\":[\"7d97182f-d623-4553-8651-5a29d2fe3f0b\"],\"primary_caregiver\":[\"7d97182f-d623-4553-8651-5a29d2fe3f0b\"]},\"baseEntityId\":\"71ad460c-bf76-414e-9be1-0d1b2cb1bce8\",\"identifiers\":{\"opensrp_id\":\"11096120_family\"},\"addresses\":[{\"addressType\":\"\",\"cityVillage\":\"Tha Luang\"}],\"attributes\":{\"residence\":\"da765947-5e4d-49f7-9eb8-2d2d00681f65\"},\"dateCreated\":\"2019-05-12T17:22:31.023+03:00\",\"serverVersion\":1557670950986,\"clientApplicationVersion\":2,\"clientDatabaseVersion\":2,\"type\":\"Client\",\"id\":\"9b67a82d-dac7-40c0-85aa-e5976339a6b6\",\"revision\":\"v1\"}";
 
     private static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd'T'HHmm"))
             .serializeNulls().create();
 
     private static final String datePattern = "yyyy-MM-dd'T'HHmm";
     private static DateTimeFormatter formatter = DateTimeFormat.forPattern(datePattern);
-    private static java.time.format.DateTimeFormatter javaTimeFormater = java.time.format.DateTimeFormatter.ofPattern(datePattern);
+    public static java.time.format.DateTimeFormatter javaTimeFormater = java.time.format.DateTimeFormatter.ofPattern(datePattern);
 
     @Before
     public void setUp() {
@@ -252,7 +248,7 @@ public class TaskRepositoryTest extends BaseUnitTest {
     }
 
 
-    public MatrixCursor getCursor() {
+    public static MatrixCursor getCursor() {
         MatrixCursor cursor = new MatrixCursor(TaskRepository.COLUMNS);
         Task task = gson.fromJson(taskJson, Task.class);
 
@@ -535,34 +531,6 @@ public class TaskRepositoryTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", task.getAuthoredOn().toString(formatter));
         assertEquals("2018-10-31T0700", task.getLastModified().toString(formatter));
         assertEquals("demouser", task.getOwner());
-
-    }
-
-    @Test
-    public void testFindTasksForEntity() throws ParseException {
-        String query = "SELECT * FROM task WHERE plan_id=? AND for =? AND status  NOT IN (?,?)";
-        String[] params = new String[]{"IRS_2018_S1", "location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", CANCELLED.name(), ARCHIVED.name()};
-        when(sqLiteDatabase.rawQuery(query, params)).thenReturn(getCursor());
-
-        List<com.ibm.fhir.model.resource.Task> allTasks = taskRepository.findTasksForEntity("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", "IRS_2018_S1");
-        verify(sqLiteDatabase).rawQuery(query, params);
-
-        assertEquals(1, allTasks.size());
-        com.ibm.fhir.model.resource.Task task = allTasks.iterator().next();
-
-        assertEquals("tsk11231jh22", task.getIdentifier().get(0).getValue().getValue());
-        assertEquals("2018_IRS-3734", task.getGroupIdentifier().getValue().getValue());
-        assertEquals(TaskStatus.READY, task.getStatus());
-        assertEquals("Not Visited", task.getBusinessStatus().getText().getValue());
-        assertEquals("IRS", task.getCode().getText().getValue());
-        assertEquals("Spray House", task.getDescription().getValue());
-        assertEquals("IRS Visit", task.getFocus().getReference().getValue());
-        assertEquals("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", task.getFor().getReference().getValue());
-        assertEquals("2018-11-10T2200", javaTimeFormater.format(task.getExecutionPeriod().getStart().getValue()));
-        assertNull(task.getExecutionPeriod().getEnd());
-        assertEquals("2018-10-31T0700", javaTimeFormater.format(task.getAuthoredOn().getValue()));
-        assertEquals("2018-10-31T0700", javaTimeFormater.format(task.getLastModified().getValue()));
-        assertEquals("demouser", task.getOwner().getReference().getValue());
 
     }
 

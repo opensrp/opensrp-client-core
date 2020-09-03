@@ -62,7 +62,7 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     }
 
     @Override
-    public List<com.ibm.fhir.model.resource.Task> findAllTasksForEntity(String entityId) {
+    public List<Task> findAllTasksForEntity(String entityId) {
         return getTasksByEntity(entityId)
                 .stream()
                 .map(TaskConverter::convertTasktoFihrResource)

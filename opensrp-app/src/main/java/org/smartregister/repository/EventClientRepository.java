@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.google.gson.reflect.TypeToken;
+import com.ibm.fhir.model.resource.Patient;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -20,6 +21,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.converters.ClientConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
@@ -43,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
@@ -2005,11 +2008,10 @@ public class EventClientRepository extends BaseRepository {
         clientType(ColumnAttribute.Type.text, false, true),
         residence(ColumnAttribute.Type.text, false, true);
 
+        private ColumnAttribute column;
         client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
-
-        private ColumnAttribute column;
 
         public ColumnAttribute column() {
             return column;

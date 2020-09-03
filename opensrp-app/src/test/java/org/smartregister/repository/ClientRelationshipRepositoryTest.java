@@ -31,14 +31,14 @@ public class ClientRelationshipRepositoryTest extends BaseRobolectricUnitTest {
     private SQLiteDatabase database;
 
     @Test
-    public void testCreateTable_CreatesTableAndIndex() {
+    public void testCreateTableShouldCreateTableAndIndex() {
         ClientRelationshipRepository.createTable(database);
         verify(database).execSQL(ClientRelationshipRepository.CREATE_TABLE);
         verify(database).execSQL(ClientRelationshipRepository.CREATE_BASE_ENTITY_ID_INDEX);
     }
 
     @Test
-    public void findClientByRelationship_ReturnsClients() throws JSONException {
+    public void findClientByRelationshipShouldReturnClients() throws JSONException {
         ClientRelationshipRepository repository = spy(new ClientRelationshipRepository());
         when(repository.getReadableDatabase()).thenReturn(database);
         when(database.rawQuery(anyString(), any())).thenReturn(getClients());
