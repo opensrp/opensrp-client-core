@@ -42,6 +42,8 @@ public class AllConstants {
     public static final String PIONEER_USER = "pioneerUser";
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
+    public static final String DATA_STRATEGY = "data_strategy";
+    public static final String ADVANCED_DATA_CAPTURE_STRATEGY_PREFIX = "ADCS_";
     public static final String ENGLISH_LOCALE = "en";
     public static final String KANNADA_LOCALE = "kn";
     public static final String DEFAULT_LOCALE = ENGLISH_LOCALE;
@@ -517,5 +519,10 @@ public class AllConstants {
     public static class HTTP_REQUEST_AUTH_TOKEN_TYPE {
         public static String BEARER = "Bearer";
         public static String BASIC = "Basic";
+    }
+
+    public static class DATA_CAPTURE_STRATEGY {
+        public static String ADVANCED = "Advanced";
+        public static String NORMAL = "Normal";
     }
 }
