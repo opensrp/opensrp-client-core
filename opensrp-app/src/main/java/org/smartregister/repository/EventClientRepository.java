@@ -8,8 +8,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.google.gson.reflect.TypeToken;
-import com.ibm.fhir.model.resource.Patient;
-import com.ibm.fhir.model.resource.QuestionnaireResponse;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -22,8 +20,6 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
-import org.smartregister.converters.ClientConverter;
-import org.smartregister.converters.EventConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
@@ -31,14 +27,11 @@ import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
-import org.smartregister.pathevaluator.dao.ClientDao;
-import org.smartregister.pathevaluator.dao.EventDao;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 
 import java.lang.reflect.Type;
-import java.sql.Statement;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -50,7 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
@@ -59,7 +51,7 @@ import static org.smartregister.AllConstants.ROWID;
 /**
  * Created by keyman on 27/07/2017.
  */
-public class EventClientRepository extends BaseRepository implements ClientDao, EventDao {
+public class EventClientRepository extends BaseRepository {
 
     private static final String EVENT_ID = "id";
 
@@ -1944,7 +1936,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     }
 
-    private List<Client> fetchClients(String query, String[] params) {
+    protected List<Client> fetchClients(String query, String[] params) {
         Cursor cursor = null;
         List<Client> clients = new ArrayList<>();
         try {
@@ -1964,7 +1956,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         return clients;
     }
 
-    private List<Event> fetchEvents(String query, String[] params) {
+    protected List<Event> fetchEvents(String query, String[] params) {
         Cursor cursor = null;
         List<Event> events = new ArrayList<>();
         try {
@@ -1982,66 +1974,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             }
         }
         return events;
-    }
-
-    @Override
-    public List<Patient> findClientById(String id) {
-        Client client = fetchClientByBaseEntityId(id);
-        return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
-    }
-
-    @Override
-    public List<Patient> findFamilyByJurisdiction(String jurisdiction) {
-        return fetchClients(String.format("select %s from %s where %s =? and %s =?", client_column.json,
-                clientTable.name(), client_column.locationId, client_column.clientType), new String[]{jurisdiction, AllConstants.FAMILY})
-                .stream()
-                .map(ClientConverter::convertClientToPatientResource)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Patient> findFamilyByResidence(String structureId) {
-        return fetchClients(String.format("select %s from %s where %s =? and %s =?", client_column.json,
-                clientTable.name(), client_column.residence, client_column.clientType), new String[]{structureId, AllConstants.FAMILY})
-                .stream()
-                .map(ClientConverter::convertClientToPatientResource)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Patient> findFamilyMemberyByJurisdiction(String jurisdiction) {
-        return fetchClients(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", client_column.json,
-                clientTable.name(), client_column.locationId, client_column.clientType, client_column.clientType), new String[]{jurisdiction, AllConstants.FAMILY})
-                .stream()
-                .map(ClientConverter::convertClientToPatientResource)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Patient> findFamilyMemberByResidence(String structureId) {
-        return fetchClients(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", client_column.json,
-                clientTable.name(), client_column.residence, client_column.clientType, client_column.clientType), new String[]{structureId, AllConstants.FAMILY})
-                .stream()
-                .map(ClientConverter::convertClientToPatientResource)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Patient> findClientByRelationship(String relationship, String id) {
-        return CoreLibrary.getInstance().context().getClientRelationshipRepository().findClientByRelationship(relationship, id)
-                .stream()
-                .map(ClientConverter::convertClientToPatientResource)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String
-            planIdentifier) {
-        return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", event_column.json,
-                clientTable.name(), event_column.baseEntityId, event_column.planId, event_column.planId), new String[]{resourceId, planIdentifier})
-                .stream()
-                .map(EventConverter::convertEventToEncounterResource)
-                .collect(Collectors.toList());
     }
 
     // Definitions

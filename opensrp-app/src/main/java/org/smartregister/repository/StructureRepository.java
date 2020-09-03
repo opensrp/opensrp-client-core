@@ -29,7 +29,7 @@ import timber.log.Timber;
  */
 public class StructureRepository extends LocationRepository {
 
-    protected static String STRUCTURE_TABLE = "structure";
+    public static String STRUCTURE_TABLE = "structure";
     private static final String SYNC_STATUS = "sync_status";
 
     private static final String LATITUDE = "latitude";

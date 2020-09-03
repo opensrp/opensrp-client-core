@@ -17,6 +17,11 @@ import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
+import org.smartregister.repository.TaskNotesRepository;
+import org.smartregister.repository.dao.ClientDaoImpl;
+import org.smartregister.repository.dao.EventDaoImpl;
+import org.smartregister.repository.dao.LocationDaoImpl;
+import org.smartregister.repository.dao.TaskDaoImpl;
 import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
@@ -97,7 +102,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
         initP2pLibrary(null);
         if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
-            PathEvaluatorLibrary.init(context.getLocationRepository(), context.getEventClientRepository(), context.getTaskRepository(), context.getEventClientRepository());
+            PathEvaluatorLibrary.init(new LocationDaoImpl(), new ClientDaoImpl(), new TaskDaoImpl(new TaskNotesRepository()), new EventDaoImpl());
         }
     }
 
