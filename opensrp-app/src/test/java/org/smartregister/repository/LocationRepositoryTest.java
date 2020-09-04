@@ -18,17 +18,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +33,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
@@ -242,22 +237,8 @@ public class LocationRepositoryTest extends BaseUnitTest {
 
     @Test
     public void testGetLocationsByTagName() {
-        List<LocationTag> locationTags = new ArrayList<>();
-        LocationTag tag = new LocationTag();
-        tag.setId(1L);
-        tag.setLocationId("3734");
-        tag.setName("Test Facility 1");
-        locationTags.add(tag);
-
-        CoreLibrary coreLibrary = mock(CoreLibrary.class);
-        Context context = mock(Context.class);
-        LocationTagRepository locationTagRepository = mock(LocationTagRepository.class);
-
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-        when(coreLibrary.context()).thenReturn(context);
-        when(context.getLocationTagRepository()).thenReturn(locationTagRepository);
-        when(locationTagRepository.getLocationTagsByTagName("Facility")).thenReturn(locationTags);
-        when(sqLiteDatabase.rawQuery("SELECT * FROM location WHERE _id IN (?)", new String[]{"3734"})).thenReturn(getCursor());
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location_tag WHERE name =?", new String[]{"Facility"})).thenReturn(getLocationTagsCursor());
+        when(sqLiteDatabase.rawQuery("SELECT * FROM location WHERE _id IN (?)", new String[]{"1"})).thenReturn(getCursor());
 
         List<Location> tags = locationRepository.getLocationsByTagName("Facility");
         assertNotNull(tags);
@@ -269,6 +250,14 @@ public class LocationRepositoryTest extends BaseUnitTest {
         Location location = gson.fromJson(locationJson, Location.class);
         cursor.addRow(new Object[]{location.getId(), location.getProperties().getUid(),
                 location.getProperties().getParentId(), location.getProperties().getName(), locationJson});
+        return cursor;
+    }
+
+    public MatrixCursor getLocationTagsCursor() {
+        String locationTagJson = "{\"name\":\"Facility\",\"locationId\":\"1\"}";
+        MatrixCursor cursor = new MatrixCursor(LocationTagRepository.COLUMNS);
+        LocationTag locationTag = gson.fromJson(locationTagJson, LocationTag.class);
+        cursor.addRow(new Object[]{locationTag.getName(), locationTag.getLocationId()});
         return cursor;
     }
 }

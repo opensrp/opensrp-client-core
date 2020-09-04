@@ -9,7 +9,6 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.CoreLibrary;
 import org.smartregister.converters.LocationConverter;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
@@ -308,9 +307,8 @@ public class LocationRepository extends BaseRepository implements LocationDao {
      * @return List of locations
      */
     public List<Location> getLocationsByTagName(String tagName) {
-        List<LocationTag> locationTags = CoreLibrary.getInstance().context()
-                .getLocationTagRepository()
-                .getLocationTagsByTagName(tagName);
+        LocationTagRepository locationTagRepository = new LocationTagRepository();
+        List<LocationTag> locationTags = locationTagRepository.getLocationTagsByTagName(tagName);
 
         List<String> locationIds = locationTags.stream()
                 .map(LocationTag::getLocationId)
