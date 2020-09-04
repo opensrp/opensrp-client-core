@@ -20,6 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
+import org.smartregister.converters.TaskConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
@@ -618,10 +619,23 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         return unsyncedRecordsCount;
     }
 
+    @Nullable
     @Override
     public List<com.ibm.fhir.model.resource.Task> findTasksForEntity(String id, String planIdentifier) {
-        //TODO implement method
-        return null;
+        ArrayList<com.ibm.fhir.model.resource.Task> tasks = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
+                " WHERE " + PLAN_ID + " = ? AND " + FOR + " = ? ", new String[]{planIdentifier, id})) {
+            while (cursor.moveToNext()) {
+                com.ibm.fhir.model.resource.Task task = TaskConverter.convertTasktoFihrResource(readCursor(cursor));
+                tasks.add(task);
+            }
+
+            return tasks;
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+
+        return tasks;
     }
 
     @Override
@@ -658,7 +672,16 @@ public class TaskRepository extends BaseRepository implements TaskDao {
 
     @Override
     public Task getTaskByEntityId(String s) {
-        // TODO implement this
+        ArrayList<com.ibm.fhir.model.resource.Task> tasks = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT * FROM " + TASK_TABLE +
+                " WHERE " + FOR + " = ? ", new String[]{s})) {
+            while (cursor.moveToNext()) {
+                return readCursor(cursor);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+
         return null;
     }
 
