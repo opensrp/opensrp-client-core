@@ -136,12 +136,26 @@ public class TaskRepository extends BaseRepository implements TaskDao {
             contentValues.put(ROWID, ++maxRowId);
         }
 
+        fillContentValues(task, contentValues);
+
+        getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+
+        if (task.getNotes() != null) {
+            for (Note note : task.getNotes())
+                taskNotesRepository.addOrUpdate(note, task.getIdentifier());
+        }
+
+    }
+
+    private void fillContentValues(@NonNull Task task, @NonNull ContentValues contentValues) {
         contentValues.put(ID, task.getIdentifier());
         contentValues.put(PLAN_ID, task.getPlanIdentifier());
         contentValues.put(GROUP_ID, task.getGroupIdentifier());
+
         if (task.getStatus() != null) {
             contentValues.put(STATUS, task.getStatus().name());
         }
+
         contentValues.put(BUSINESS_STATUS, task.getBusinessStatus());
         contentValues.put(PRIORITY, task.getPriority());
         contentValues.put(CODE, task.getCode());
@@ -159,14 +173,6 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         contentValues.put(REASON_REFERENCE, task.getReasonReference());
         contentValues.put(LOCATION, task.getLocation());
         contentValues.put(REQUESTER, task.getRequester());
-
-        getWritableDatabase().replace(TASK_TABLE, null, contentValues);
-
-        if (task.getNotes() != null) {
-            for (Note note : task.getNotes())
-                taskNotesRepository.addOrUpdate(note, task.getIdentifier());
-        }
-
     }
 
     public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
@@ -687,6 +693,26 @@ public class TaskRepository extends BaseRepository implements TaskDao {
 
     @Override
     public void updateTask(Task task) {
-        // TODO implement this
+        if (StringUtils.isBlank(task.getIdentifier())) {
+            throw new IllegalArgumentException("identifier must be specified");
+        }
+        ContentValues contentValues = new ContentValues();
+
+        Task existingTask = getTaskByIdentifier(task.getIdentifier());
+        if (existingTask != null) {
+            if (existingTask.getLastModified().isAfter(task.getLastModified())) {
+                return;
+            }
+            int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
+            contentValues.put(ROWID, ++maxRowId);
+
+            fillContentValues(task, contentValues);
+            getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+
+            if (task.getNotes() != null) {
+                for (Note note : task.getNotes())
+                    taskNotesRepository.addOrUpdate(note, task.getIdentifier());
+            }
+        }
     }
 }
