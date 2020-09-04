@@ -492,4 +492,25 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
         assertEquals("Facility", defaultLocationLevel);
     }
 
+    @Test
+    public void testGetAdvancedDataCaptureStrategies() {
+        ReflectionHelpers.setStaticField(LocationHelper.class, "instance", null);
+        String advancedDataStrategyType = "Mobile Clinic";
+        ArrayList<String> allowedLevels = new ArrayList<>();
+        allowedLevels.add("County");
+        allowedLevels.add("Ward");
+        allowedLevels.add("Facility");
+
+        ArrayList<String> advancedDataStrategy = new ArrayList<>();
+        advancedDataStrategy.add(advancedDataStrategyType);
+
+        LocationHelper.init(allowedLevels, "Facility", advancedDataStrategy);
+        locationHelper = LocationHelper.getInstance();
+
+        List<String> defaultLocationLevel = locationHelper.getAdvancedDataCaptureStrategies();
+
+        assertEquals(1, defaultLocationLevel.size());
+        assertEquals(advancedDataStrategyType, defaultLocationLevel.get(0));
+    }
+
 }

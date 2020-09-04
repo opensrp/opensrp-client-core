@@ -263,7 +263,7 @@ dependencies {
     }
 
     // PowerMock
-    def powerMockVersion = '2.0.4'
+    def powerMockVersion = '2.0.7'
     testImplementation "org.powermock:powermock-module-junit4:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-junit4-rule:$powerMockVersion"
     testImplementation "org.powermock:powermock-module-javaagent:$powerMockVersion"
