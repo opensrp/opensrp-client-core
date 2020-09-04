@@ -408,12 +408,19 @@ public class LocationServiceHelper extends BaseHelper {
                     }.getType()
             );
 
-
             for (Location location : locations) {
                 try {
                     location.setSyncStatus(BaseRepository.TYPE_Synced);
 
                     locationRepository.addOrUpdate(location);
+
+                    for (LocationTag tag : location.getLocationTags()) {
+                        LocationTag locationTag = new LocationTag();
+                        locationTag.setLocationId(location.getId());
+                        locationTag.setName(tag.getName());
+
+                        locationTagRepository.addOrUpdate(locationTag);
+                    }
                 } catch (Exception e) {
                     Timber.e(e, "EXCEPTION %s", e.toString());
                 }
