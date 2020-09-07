@@ -11,6 +11,9 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.LocationTag;
+import org.smartregister.domain.PhysicalLocation;
+import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
@@ -69,7 +72,6 @@ public class LocationRepository extends BaseRepository {
         contentValues.put(GEOJSON, gson.toJson(location));
         contentValues.put(SYNC_STATUS, location.getSyncStatus());
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
-
     }
 
     public List<Location> getAllLocations() {
@@ -130,7 +132,6 @@ public class LocationRepository extends BaseRepository {
 
     }
 
-
     public Location getLocationByUUId(String uuid) {
         Cursor cursor = null;
         try {
@@ -148,7 +149,6 @@ public class LocationRepository extends BaseRepository {
         return null;
 
     }
-
 
     public List<Location> getLocationsByParentId(String parentId) {
         return getLocationsByParentId(parentId, getLocationTableName());
@@ -172,7 +172,6 @@ public class LocationRepository extends BaseRepository {
         }
         return locations;
     }
-
 
     public Location getLocationByName(String name) {
         Cursor cursor = null;
@@ -235,7 +234,6 @@ public class LocationRepository extends BaseRepository {
                 cursor.close();
         }
         return locations;
-
     }
 
     protected Location readCursor(Cursor cursor) {
@@ -272,4 +270,22 @@ public class LocationRepository extends BaseRepository {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Get a List of locations that match provided tag name
+     *
+     * @param tagName Tag name
+     * @return List of locations
+     */
+    public List<Location> getLocationsByTagName(String tagName) {
+        LocationTagRepository locationTagRepository = new LocationTagRepository();
+        List<LocationTag> locationTags = locationTagRepository.getLocationTagsByTagName(tagName);
+
+        List<String> locationIds = locationTags.stream()
+                .map(LocationTag::getLocationId)
+                .collect(Collectors.toList());
+
+        return getLocationsByIds(locationIds);
+    }
+
 }
