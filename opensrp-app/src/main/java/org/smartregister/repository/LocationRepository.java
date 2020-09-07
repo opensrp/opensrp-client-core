@@ -18,6 +18,7 @@ import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
