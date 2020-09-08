@@ -103,6 +103,17 @@ public class AllSharedPreferencesTest extends TestCase {
     }
 
     @Test
+    public void assertfetchCurrentDataStrategy() {
+        Assert.assertEquals(allSharedPreferences.fetchCurrentDataStrategy(), str);
+    }
+
+    @Test
+    public void assertsaveCurrentDataStrategy() {
+        allSharedPreferences.saveCurrentDataStrategy("Mobile Clinic");
+        Mockito.verify(preferences, Mockito.times(1)).edit();
+    }
+
+    @Test
     public void assertsaveLanguagePreference() {
         allSharedPreferences.saveLanguagePreference("EN");
         Mockito.verify(preferences, Mockito.times(1)).edit();

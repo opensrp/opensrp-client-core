@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.converters.LocationConverter;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
@@ -74,7 +75,6 @@ public class LocationRepository extends BaseRepository implements LocationDao {
         contentValues.put(GEOJSON, gson.toJson(location));
         contentValues.put(SYNC_STATUS, location.getSyncStatus());
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
-
     }
 
     public List<Location> getAllLocations() {
@@ -135,7 +135,6 @@ public class LocationRepository extends BaseRepository implements LocationDao {
 
     }
 
-
     public Location getLocationByUUId(String uuid) {
         Cursor cursor = null;
         try {
@@ -153,7 +152,6 @@ public class LocationRepository extends BaseRepository implements LocationDao {
         return null;
 
     }
-
 
     public List<Location> getLocationsByParentId(String parentId) {
         return getLocationsByParentId(parentId, getLocationTableName());
@@ -177,7 +175,6 @@ public class LocationRepository extends BaseRepository implements LocationDao {
         }
         return locations;
     }
-
 
     public Location getLocationByName(String name) {
         Cursor cursor = null;
@@ -240,7 +237,6 @@ public class LocationRepository extends BaseRepository implements LocationDao {
                 cursor.close();
         }
         return locations;
-
     }
 
     protected Location readCursor(Cursor cursor) {
@@ -286,7 +282,7 @@ public class LocationRepository extends BaseRepository implements LocationDao {
 
     @Override
     public List<com.ibm.fhir.model.resource.Location> findLocationsById(String id) {
-        PhysicalLocation location = getLocationById(id,StructureRepository.STRUCTURE_TABLE);
+        PhysicalLocation location = getLocationById(id, StructureRepository.STRUCTURE_TABLE);
         return Collections.singletonList(LocationConverter.convertPhysicalLocationToLocationResource(location));
     }
 
@@ -302,5 +298,22 @@ public class LocationRepository extends BaseRepository implements LocationDao {
     public List<String> findChildLocationByJurisdiction(String s) {
         // TODO implement this
         return null;
+    }
+
+    /**
+     * Get a List of locations that match provided tag name
+     *
+     * @param tagName Tag name
+     * @return List of locations
+     */
+    public List<Location> getLocationsByTagName(String tagName) {
+        LocationTagRepository locationTagRepository = new LocationTagRepository();
+        List<LocationTag> locationTags = locationTagRepository.getLocationTagsByTagName(tagName);
+
+        List<String> locationIds = locationTags.stream()
+                .map(LocationTag::getLocationId)
+                .collect(Collectors.toList());
+
+        return getLocationsByIds(locationIds);
     }
 }
