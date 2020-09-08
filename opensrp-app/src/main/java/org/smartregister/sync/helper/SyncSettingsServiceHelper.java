@@ -222,16 +222,4 @@ public class SyncSettingsServiceHelper {
     protected Response<String> getResponse(String completeUrl, String accessToken) {
         return httpAgent.fetchWithCredentials(completeUrl, accessToken);
     }
-
-    public void setHttpAgent(HTTPAgent httpAgent) {
-        this.httpAgent = httpAgent;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public void setSharedPreferences(AllSharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
-    }
 }
