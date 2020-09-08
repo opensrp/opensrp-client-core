@@ -121,11 +121,27 @@ public class EventClientRepository extends BaseRepository {
         }
     }
 
+    /**
+     * add columns to event and client tables to support Plan evaluation engine
+     *
+     * @param db          the database being upgraded
+     * @param eventTable  event table columns are being added to
+     * @param clientTable event client columns are being added to
+     */
+    public static void createAdditionalColumns(SQLiteDatabase db, String eventTable, String clientTable) {
+        DatabaseMigrationUtils.addColumnIfNotExists(db, eventTable, event_column.planId.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.locationId.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.clientType.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.residence.name(), VARCHAR);
+    }
+
+    /**
+     * add columns to event and client tables to support Plan evaluation engine
+     *
+     * @param db the database being upgraded
+     */
     public static void createAdditionalColumns(SQLiteDatabase db) {
-        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), event_column.planId.name(), VARCHAR);
-        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.client.name(), client_column.locationId.name(), VARCHAR);
-        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.client.name(), client_column.clientType.name(), VARCHAR);
-        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.client.name(), client_column.residence.name(), VARCHAR);
+        createAdditionalColumns(db, Table.event.name(), Table.client.name());
     }
 
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
