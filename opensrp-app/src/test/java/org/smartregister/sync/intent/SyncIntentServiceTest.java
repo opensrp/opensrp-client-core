@@ -39,6 +39,7 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -456,6 +457,26 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         String syncUrl = stringArgumentCaptor.getValue();
         assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/sync?locationId=location-1&serverVersion=0&limit=250", syncUrl);
 
+    }
+
+    @Test
+    public void testOnHandleIntentCallsHandleSync() {
+        Intent intent = mock(Intent.class);
+        syncIntentService = spy(syncIntentService);
+        syncIntentService.onHandleIntent(intent);
+
+        verify(syncIntentService).handleSync();
+    }
+
+    @Test
+    public void testUpdateProgress() {
+        syncIntentService = spy(syncIntentService);
+        syncIntentService.updateProgress(70, 100);
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        FetchStatus actualFetchStatus = (FetchStatus) intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS);
+        assertEquals(FetchStatus.fetchProgress, actualFetchStatus);
+        assertEquals("Sync upload progress 70%", actualFetchStatus.displayValue());
     }
 
     private void initMocksForPullECFromServerUsingPOST() {
