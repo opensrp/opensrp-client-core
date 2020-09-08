@@ -30,11 +30,11 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.SyncUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -439,6 +439,22 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         assertEquals("https://sample-stage.smartregister.org/opensrp//rest/event/add", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedRequest.toString(), requestString);
+
+    }
+
+    @Test
+    public void testPullEcFromServerUsingGETUsesCorrectURLAndParams() {
+
+        initMocksForPullECFromServerUsingPOST();
+        when(syncConfiguration.isSyncUsingPost()).thenReturn(false);
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        responseStatus.setDisplayValue(ResponseErrorStatus.malformed_url.name());
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).fetch(stringArgumentCaptor.capture());
+
+        syncIntentService.pullECFromServer();
+        String syncUrl = stringArgumentCaptor.getValue();
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/sync?locationId=location-1&serverVersion=0&limit=250", syncUrl);
 
     }
 
