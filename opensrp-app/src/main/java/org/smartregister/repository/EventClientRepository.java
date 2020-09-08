@@ -133,6 +133,8 @@ public class EventClientRepository extends BaseRepository {
         DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.locationId.name(), VARCHAR);
         DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.clientType.name(), VARCHAR);
         DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.residence.name(), VARCHAR);
+        DatabaseMigrationUtils.addIndexIfNotExists(db, clientTable, client_column.residence.name());
+        DatabaseMigrationUtils.addIndexIfNotExists(db, clientTable, client_column.locationId.name());
     }
 
     /**

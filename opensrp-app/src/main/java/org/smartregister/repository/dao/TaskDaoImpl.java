@@ -73,11 +73,6 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     }
 
     @Override
-    public org.smartregister.domain.Task getTaskByIdentifier(String taskIdentifier) {
-        return getTaskByIdentifier(taskIdentifier);
-    }
-
-    @Override
     public void updateTask(org.smartregister.domain.Task task) {
         addOrUpdate(task, true);
     }
