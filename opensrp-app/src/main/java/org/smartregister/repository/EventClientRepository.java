@@ -28,6 +28,7 @@ import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
+import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 
@@ -56,6 +57,8 @@ public class EventClientRepository extends BaseRepository {
     private static final String EVENT_ID = "id";
 
     private static final String _ID = "_id";
+
+    private static final String VARCHAR = "VARCHAR";
 
     protected Table clientTable;
     protected Table eventTable;
@@ -116,6 +119,13 @@ public class EventClientRepository extends BaseRepository {
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    public static void createAdditionalColumns(SQLiteDatabase db) {
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), event_column.planId.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.client.name(), client_column.locationId.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.client.name(), client_column.clientType.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.client.name(), client_column.residence.name(), VARCHAR);
     }
 
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
@@ -2006,6 +2016,7 @@ public class EventClientRepository extends BaseRepository {
         residence(ColumnAttribute.Type.text, false, true);
 
         private ColumnAttribute column;
+
         client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
@@ -2032,6 +2043,7 @@ public class EventClientRepository extends BaseRepository {
         planId(ColumnAttribute.Type.text, false, true);
 
         private ColumnAttribute column;
+
         event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
             this.column = new ColumnAttribute(type, pk, index);
         }
