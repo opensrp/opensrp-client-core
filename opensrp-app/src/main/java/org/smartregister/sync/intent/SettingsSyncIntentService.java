@@ -63,10 +63,5 @@ public class SettingsSyncIntentService extends BaseSyncIntentService {
         syncSettingsServiceHelper = new SyncSettingsServiceHelper(context.configuration().dristhiBaseURL(), context.getHttpAgent());
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-    }
-
 }
 
