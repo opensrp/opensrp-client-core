@@ -20,7 +20,7 @@ public class EventDaoImpl extends EventClientRepository implements EventDao {
     @Override
     public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String
             planIdentifier) {
-        return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s !=? )", event_column.json,
+        return fetchEvents(String.format("select %s from %s where %s =? and (%s is null or %s =? )", event_column.json,
                 eventTable.name(), event_column.baseEntityId, event_column.planId, event_column.planId), new String[]{resourceId, planIdentifier})
                 .stream()
                 .map(this::convert)

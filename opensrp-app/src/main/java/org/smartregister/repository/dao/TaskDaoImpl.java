@@ -24,6 +24,9 @@ import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED_EVENT;
  * Created by samuelgithengi on 9/3/20.
  */
 public class TaskDaoImpl extends TaskRepository implements TaskDao {
+
+    private static final String GET_STRUCTURE_FROM_QUESTIONNAIRE = "$this.item.where(url='details' and linkId='location_id').answer";
+
     public TaskDaoImpl(TaskNotesRepository taskNotesRepository) {
         super(taskNotesRepository);
     }
@@ -41,7 +44,7 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
         if (questionnaireResponse != null) {
             FHIRPathElementNode structure = PathEvaluatorLibrary.getInstance()
                     .evaluateElementExpression(questionnaireResponse,
-                            "$this.item.where(url='details' and linkId='location_id').answer");
+                            GET_STRUCTURE_FROM_QUESTIONNAIRE);
             if (structure != null) {
                 String structureId = structure.element().as(QuestionnaireResponse.Item.Answer.class).as(com.ibm.fhir.model.type.String.class).getValue();
                 task.setStructureId(structureId);
@@ -70,8 +73,8 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     }
 
     @Override
-    public org.smartregister.domain.Task getTaskByEntityId(String taskId) {
-        return getTaskByIdentifier(taskId);
+    public org.smartregister.domain.Task getTaskByIdentifier(String taskIdentifier) {
+        return getTaskByIdentifier(taskIdentifier);
     }
 
     @Override

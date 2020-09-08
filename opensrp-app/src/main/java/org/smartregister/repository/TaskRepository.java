@@ -110,7 +110,12 @@ public class TaskRepository extends BaseRepository {
         database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
+
     public void addOrUpdate(Task task) {
+        addOrUpdate(task, false);
+    }
+
+    public void addOrUpdate(Task task, boolean updateOnly) {
         if (StringUtils.isBlank(task.getIdentifier())) {
             throw new IllegalArgumentException("identifier must be specified");
         }
@@ -149,7 +154,11 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(LOCATION, task.getLocation());
         contentValues.put(REQUESTER, task.getRequester());
 
-        getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+        if (updateOnly) {
+            getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
+        } else {
+            getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+        }
 
         if (task.getNotes() != null) {
             for (Note note : task.getNotes())
