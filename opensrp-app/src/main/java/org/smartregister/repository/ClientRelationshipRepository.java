@@ -32,14 +32,14 @@ public class ClientRelationshipRepository extends BaseRepository {
 
 
     protected static final String CREATE_TABLE =
-            "CREATE TABLE " + CLIENT_RELATIONSHIP_TABLE_NAME + " (" +
+            "CREATE TABLE IF NOT EXISTS " + CLIENT_RELATIONSHIP_TABLE_NAME + " (" +
                     BASE_ENTITY_ID + " VARCHAR NOT NULL, " +
                     RELATIONSHIP + " VARCHAR NOT NULL, " +
                     RELATIONAL_ID + " VARCHAR NOT NULL," +
                     "PRIMARY KEY (" + BASE_ENTITY_ID + "," + RELATIONSHIP + "))";
 
 
-    protected static final String CREATE_BASE_ENTITY_ID_INDEX = "CREATE INDEX "
+    protected static final String CREATE_BASE_ENTITY_ID_INDEX = "CREATE INDEX IF NOT EXISTS "
             + CLIENT_RELATIONSHIP_TABLE_NAME + "_base_entity_ind  ON " + CLIENT_RELATIONSHIP_TABLE_NAME + "(" + BASE_ENTITY_ID + ")";
 
 
