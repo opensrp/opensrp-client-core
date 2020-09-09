@@ -50,7 +50,7 @@ public class EventDaoImplTest extends BaseUnitTest {
 
     @Test
     public void testFindEventsByEntityIdAndPlan() throws Exception {
-        String query = "select json from event where baseEntityId =? and (planId is null or planId !=? )";
+        String query = "select json from event where baseEntityId =? and (planId is null or planId =? )";
         String[] params = new String[]{"location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", "IRS_2018_S1"};
         when(sqLiteDatabase.rawQuery(query, params)).thenReturn(EventClientRepositoryTest.getEventCursor());
         List<QuestionnaireResponse> questionnaireResponses = eventDao.findEventsByEntityIdAndPlan("location.properties.uid:41587456-b7c8-4c4e-b433-23a786f742fc", "IRS_2018_S1");
