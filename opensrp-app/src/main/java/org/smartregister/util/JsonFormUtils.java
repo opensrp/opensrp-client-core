@@ -204,8 +204,8 @@ public class JsonFormUtils {
     }
 
     /**
-     *  Global setting for all checkboxes in a form,
-     *  allowing saving of checkbox values as a json array string
+     * Global setting for all checkboxes in a form,
+     * allowing saving of checkbox values as a json array string
      *
      * @param metadata
      * @param jsonObject
@@ -252,7 +252,9 @@ public class JsonFormUtils {
     }
 
     private static void createFormMetadataObs(JSONObject metadata, Event event) {
-        if (metadata == null) { return; }
+        if (metadata == null) {
+            return;
+        }
 
         Iterator<?> keys = metadata.keys();
         while (keys.hasNext()) {
@@ -407,26 +409,39 @@ public class JsonFormUtils {
 
     public static void addObservation(Event e, JSONObject jsonObject) {
         String value = getString(jsonObject, VALUE);
-        if (StringUtils.isBlank(value)) { return; }
+        if (StringUtils.isBlank(value)) {
+            return;
+        }
 
         String type = getString(jsonObject, AllConstants.TYPE);
         if (AllConstants.CHECK_BOX.equals(type)) {
             try {
                 List<Object> optionValues = new ArrayList<>();
+                List<Object> optionEntityIds = new ArrayList<>();
                 Map<String, Object> optionKeyVals = new HashMap<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    boolean shouldBeCombined = jsonObject.optBoolean(AllConstants.COMBINE_CHECKBOX_OPTION_VALUES);
+                    String entity = getString(jsonObject, OPENMRS_ENTITY);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         boolean optionValue = option.optBoolean(VALUE);
                         if (!optionValue) {
                             continue;
                         }
-                        if (CONCEPT.equals(getString(jsonObject, OPENMRS_ENTITY))) {
+                        if (CONCEPT.equals(entity)) {
+                            String optionKey = option.optString(KEY);
+                            String openmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
                             // For options with concepts create an observation for each
                             option.put(AllConstants.TYPE, type);
                             option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
                             option.put(KEY, jsonObject.getString(KEY));
+
+                            if (shouldBeCombined) {
+                                optionValues.add(optionKey);
+                                optionEntityIds.add(openmrsEntityId);
+                                continue;
+                            }
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                         } else {
                             String optionText = option.optString(AllConstants.TEXT);
@@ -435,8 +450,13 @@ public class JsonFormUtils {
                         }
                     }
                     if (!optionValues.isEmpty()) {
-                        // For options without concepts combine the values into one observation
-                        createObservation(e, jsonObject, optionKeyVals, optionValues);
+                        if (CONCEPT.equals(entity) && shouldBeCombined) {
+                            e.addObs(new Obs(CONCEPT, AllConstants.CHECK_BOX, jsonObject.optString(OPENMRS_ENTITY_ID), jsonObject.optString(OPENMRS_ENTITY_PARENT), optionEntityIds, optionValues, null,
+                                    jsonObject.optString(KEY)));
+                        } else {
+                            // For options without concepts combine the values into one observation
+                            createObservation(e, jsonObject, optionKeyVals, optionValues);
+                        }
                     }
                 }
             } catch (JSONException e1) {
@@ -523,10 +543,10 @@ public class JsonFormUtils {
     /**
      * This method creates an observation with single or multiple keys and values combined
      *
-     * @param e The event that the observation is added to
-     * @param jsonObject The JSONObject representing the checkbox values
+     * @param e           The event that the observation is added to
+     * @param jsonObject  The JSONObject representing the checkbox values
      * @param keyValPairs A list of option keys to be added to the observation
-     * @param values A list of option values to be added to the observation
+     * @param values      A list of option values to be added to the observation
      */
     private static void createObservation(Event e, JSONObject jsonObject, Map<String, Object> keyValPairs, List<Object> values) {
         String formSubmissionField = jsonObject.optString(KEY);
@@ -594,7 +614,7 @@ public class JsonFormUtils {
         String fingerprintOption = getString(jsonObject, FINGERPRINT_OPTION);
 
         if (key.equals(FINGERPRINT_KEY)
-                && fingerprintOption.equals(FINGERPRINT_OPTION_REGISTER)){
+                && fingerprintOption.equals(FINGERPRINT_OPTION_REGISTER)) {
 
             pids.put(SIMPRINTS_GUID, value);
 
