@@ -44,6 +44,18 @@ public class DatabaseMigrationUtils {
         return false;
     }
 
+    public static boolean addColumnIfNotExists(SQLiteDatabase db, String table, String column, String dataType) {
+        if (!isColumnExists(db, table, column)) {
+            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s", table, column, dataType));
+        }
+        return false;
+    }
+
+    public static boolean addIndexIfNotExists(SQLiteDatabase db, String table, String columm) {
+        db.execSQL(String.format("CREATE INDEX IF NOT EXISTS  %s_%s_idx  ON %s(%s)", table, columm,table, columm));
+        return false;
+    }
+
     public static void addFieldsToFTSTable(SQLiteDatabase database, CommonFtsObject commonFtsObject, String originalTableName, List<String> newlyAddedFields) {
 
         Set<String> searchColumns = new LinkedHashSet<>();
