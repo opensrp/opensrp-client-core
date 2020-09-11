@@ -9,7 +9,6 @@ import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.apache.commons.lang3.StringUtils;
-import org.smartregister.converters.LocationConverter;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
@@ -18,7 +17,6 @@ import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +25,7 @@ import timber.log.Timber;
 /**
  * Created by samuelgithengi on 11/23/18.
  */
-public class LocationRepository extends BaseRepository implements LocationDao {
+public class LocationRepository extends BaseRepository {
 
     protected static Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -274,32 +272,6 @@ public class LocationRepository extends BaseRepository implements LocationDao {
         }
     }
 
-    @Override
-    public List<com.ibm.fhir.model.resource.Location> findJurisdictionsById(String id) {
-        PhysicalLocation location = getLocationById(id);
-        return Collections.singletonList(LocationConverter.convertPhysicalLocationToLocationResource(location));
-    }
-
-    @Override
-    public List<com.ibm.fhir.model.resource.Location> findLocationsById(String id) {
-        PhysicalLocation location = getLocationById(id, StructureRepository.STRUCTURE_TABLE);
-        return Collections.singletonList(LocationConverter.convertPhysicalLocationToLocationResource(location));
-    }
-
-    @Override
-    public List<com.ibm.fhir.model.resource.Location> findLocationByJurisdiction(String jurisdiction) {
-        return getLocationsByParentId(jurisdiction, StructureRepository.STRUCTURE_TABLE)
-                .stream()
-                .map(LocationConverter::convertPhysicalLocationToLocationResource)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<String> findChildLocationByJurisdiction(String s) {
-        // TODO implement this
-        return null;
-    }
-
     /**
      * Get a List of locations that match provided tag name
      *
@@ -316,4 +288,5 @@ public class LocationRepository extends BaseRepository implements LocationDao {
 
         return getLocationsByIds(locationIds);
     }
+
 }

@@ -8,8 +8,6 @@ import android.text.TextUtils;
 import android.util.Pair;
 
 import com.google.gson.reflect.TypeToken;
-import com.ibm.fhir.model.resource.Patient;
-import com.ibm.fhir.model.resource.QuestionnaireResponse;
 
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
@@ -20,17 +18,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
-import org.smartregister.converters.ClientConverter;
 import org.smartregister.domain.Client;
+import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
 import org.smartregister.domain.db.Column;
 import org.smartregister.domain.db.ColumnAttribute;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.p2p.sync.data.JsonData;
-import org.smartregister.pathevaluator.dao.ClientDao;
-import org.smartregister.pathevaluator.dao.EventDao;
 import org.smartregister.sync.intent.P2pProcessRecordsService;
+import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.util.Utils;
 
@@ -41,8 +39,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -51,11 +52,13 @@ import static org.smartregister.AllConstants.ROWID;
 /**
  * Created by keyman on 27/07/2017.
  */
-public class EventClientRepository extends BaseRepository implements ClientDao, EventDao {
+public class EventClientRepository extends BaseRepository {
 
     private static final String EVENT_ID = "id";
 
     private static final String _ID = "_id";
+
+    private static final String VARCHAR = "VARCHAR";
 
     protected Table clientTable;
     protected Table eventTable;
@@ -116,6 +119,31 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    /**
+     * add columns to event and client tables to support Plan evaluation engine
+     *
+     * @param db          the database being upgraded
+     * @param eventTable  event table columns are being added to
+     * @param clientTable event client columns are being added to
+     */
+    public static void createAdditionalColumns(SQLiteDatabase db, String eventTable, String clientTable) {
+        DatabaseMigrationUtils.addColumnIfNotExists(db, eventTable, event_column.planId.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.locationId.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.clientType.name(), VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(db, clientTable, client_column.residence.name(), VARCHAR);
+        DatabaseMigrationUtils.addIndexIfNotExists(db, clientTable, client_column.residence.name());
+        DatabaseMigrationUtils.addIndexIfNotExists(db, clientTable, client_column.locationId.name());
+    }
+
+    /**
+     * add columns to event and client tables to support Plan evaluation engine
+     *
+     * @param db the database being upgraded
+     */
+    public static void createAdditionalColumns(SQLiteDatabase db) {
+        createAdditionalColumns(db, Table.event.name(), Table.client.name());
     }
 
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
@@ -185,6 +213,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         }
 
     }
+
 
     public Boolean checkIfExists(Table table, String baseEntityId) {
         return checkIfExists(table, baseEntityId, getWritableDatabase());
@@ -259,6 +288,13 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                 statement.bindString(columnOrder.get(client_column.syncStatus.name()), syncStatus);
                 statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
                 statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
+
+                bindString(statement, columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
+                bindString(statement, columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
+                JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
+                if (attributes != null) {
+                    bindString(statement, columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
+                }
             } else if (table.equals(eventTable)) {
                 columns = Arrays.asList(event_column.values());
                 String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
@@ -272,6 +308,10 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
                 else if (jsonObject.has(_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
+                JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
+                if (details != null) {
+                    bindString(statement, columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
+                }
             } else {
                 return false;
             }
@@ -279,7 +319,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             List<? extends Column> otherColumns = new ArrayList(columns);
             if (!otherColumns.isEmpty()) {
                 otherColumns.removeAll(Arrays.asList(client_column.json, client_column.updatedAt, client_column.syncStatus, client_column.validationStatus, client_column.baseEntityId,
-                        event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId));
+                        client_column.residence, client_column.locationId, client_column.clientType,
+                        event_column.json, event_column.updatedAt, event_column.syncStatus, event_column.validationStatus, event_column.baseEntityId, event_column.eventId
+                        , event_column.planId));
             }
 
             for (Column column : otherColumns) {
@@ -301,6 +343,14 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             Timber.e(e);
             return false;
         }
+    }
+
+
+    private void bindString(SQLiteStatement statement, int index, String value) {
+        if (StringUtils.isNotBlank(value))
+            statement.bindString(index, value);
+        else
+            statement.bindNull(index);
     }
 
     private QueryWrapper generateInsertQuery(Table table) {
@@ -389,6 +439,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             insertStatement = sqLiteDatabase.compileStatement(insertQueryWrapper.sqlQuery);
 
             updateStatement = sqLiteDatabase.compileStatement(updateQueryWrapper.sqlQuery);
+            Set<ClientRelationship> clientRelationships = new HashSet<>();
 
             for (int i = 0; i < array.length(); i++) {
                 try {
@@ -407,25 +458,31 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
                         if (populateStatement(updateStatement, clientTable, jsonObject, updateQueryWrapper.columnOrder)) {
                             updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                             updateStatement.executeUpdateDelete();
+                            clientRelationships.add(getClientRelationShip(baseEntityId, jsonObject));
                         } else {
                             Timber.w("Unable to update client with baseEntityId: %s", baseEntityId);
                         }
 
                     } else {
-                        if (populateStatement(insertStatement, clientTable, jsonObject, insertQueryWrapper.columnOrder))
+                        if (populateStatement(insertStatement, clientTable, jsonObject, insertQueryWrapper.columnOrder)) {
                             insertStatement.executeInsert();
-                        else
+                            clientRelationships.add(getClientRelationShip(baseEntityId, jsonObject));
+                        } else
                             Timber.w("Unable to add client with baseEntityId: %s", baseEntityId);
                     }
                 } catch (JSONException e) {
                     Timber.e(e, "JSONException");
                 }
             }
+            if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                CoreLibrary.getInstance().context().getClientRelationshipRepository().saveRelationship(clientRelationships.toArray(new ClientRelationship[0]));
+            }
             sqLiteDatabase.setTransactionSuccessful();
             sqLiteDatabase.endTransaction();
             return true;
         } catch (Exception e) {
-            sqLiteDatabase.endTransaction();
+            if (sqLiteDatabase.isDbLockedByCurrentThread())
+                sqLiteDatabase.endTransaction();
             Timber.e(e);
             return false;
         } finally {
@@ -1639,8 +1696,32 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         return jsonData;
     }
 
+
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject) {
         addorUpdateClient(baseEntityId, jsonObject, BaseRepository.TYPE_Unsynced);
+    }
+
+    private ClientRelationship getClientRelationShip(String baseEntityId, JSONObject jsonObject) {
+        try {
+            JSONObject relationShips = jsonObject.optJSONObject(AllConstants.RELATIONSHIPS);
+            if (relationShips != null) {
+                Iterator<String> keys = relationShips.keys();
+                while (keys.hasNext()) {
+                    String relationshipName = keys.next();
+                    JSONArray relationalIds = relationShips.optJSONArray(relationshipName);
+                    if (relationalIds != null && relationalIds.length() > 0) {
+                        return ClientRelationship.builder()
+                                .baseEntityId(baseEntityId)
+                                .relationship(relationshipName)
+                                .relationalId(relationalIds.optString(0))
+                                .build();
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e, "Error saving relationship for %s", baseEntityId);
+        }
+        return null;
     }
 
     public void addorUpdateClient(String baseEntityId, JSONObject jsonObject, String syncStatus) {
@@ -1650,7 +1731,15 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             values.put(client_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(client_column.syncStatus.name(), syncStatus);
             values.put(client_column.baseEntityId.name(), baseEntityId);
+
+            values.put(client_column.locationId.name(), jsonObject.optString(AllConstants.LOCATION_ID));
+            values.put(client_column.clientType.name(), jsonObject.optString(AllConstants.CLIENT_TYPE));
+            JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
+            if (attributes != null) {
+                values.put(client_column.residence.name(), attributes.optString(AllConstants.RESIDENCE));
+            }
             populateAdditionalColumns(values, client_column.values(), jsonObject);
+            getClientRelationShip(baseEntityId, jsonObject);
             long affected;
             if (checkIfExists(clientTable, baseEntityId)) {
                 values.put(ROWID, getMaxRowId(clientTable) + 1);
@@ -1662,9 +1751,12 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             } else {
                 affected = getWritableDatabase().insert(clientTable.name(), null, values);
             }
-
             if (affected < 1)
                 Timber.e("Client %s not saved: %s", baseEntityId, jsonObject);
+            if (CoreLibrary.getInstance().getSyncConfiguration().runPlanEvaluationOnClientProcessing()) {
+                CoreLibrary.getInstance().context().getClientRelationshipRepository().saveRelationship(getClientRelationShip(baseEntityId, jsonObject));
+            }
+
         } catch (Exception e) {
             Timber.e(e, "Error saving client %s", jsonObject);
         }
@@ -1683,7 +1775,9 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             values.put(event_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(event_column.baseEntityId.name(), baseEntityId);
             values.put(event_column.syncStatus.name(), syncStatus);
-
+            JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
+            if (details != null)
+                values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER));
             if (jsonObject.has(EVENT_ID)) {
                 values.put(event_column.eventId.name(), jsonObject.getString(EVENT_ID));
             } else if (jsonObject.has(_ID)) {
@@ -1805,6 +1899,7 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
         }
     }
 
+
     public void markClientValidationStatus(String baseEntityId, boolean valid) {
         try {
             ContentValues values = new ContentValues();
@@ -1869,46 +1964,111 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
 
     }
 
-    @Override
-    public List<Patient> findClientById(String id) {
-        Client client = fetchClientByBaseEntityId(id);
-        return Collections.singletonList(ClientConverter.convertClientToPatientResource(client));
+    protected List<Client> fetchClients(String query, String[] params) {
+        Cursor cursor = null;
+        List<Client> clients = new ArrayList<>();
+        try {
+            cursor = getWritableDatabase().rawQuery(query, params);
+            while (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+                clients.add(convert(jsonString, Client.class));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return clients;
     }
 
-    @Override
-    public List<Patient> findFamilyByJurisdiction(String jurisdiction) {
-        //TODO implement method
-        return null;
+    protected List<Event> fetchEvents(String query, String[] params) {
+        Cursor cursor = null;
+        List<Event> events = new ArrayList<>();
+        try {
+            cursor = getWritableDatabase().rawQuery(query, params);
+            while (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+                events.add(convert(jsonString, Event.class));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return events;
     }
 
-    @Override
-    public List<Patient> findFamilyByResidence(String structureId) {
-        //TODO implement method
-        return null;
+    // Definitions
+    public enum Table implements BaseTable {
+        client(client_column.values()),
+        event(event_column.values()),
+        foreignEvent(event_column.values()),
+        foreignClient(client_column.values());
+
+        private Column[] columns;
+
+        public Column[] columns() {
+            return columns;
+        }
+
+        Table(Column[] columns) {
+            this.columns = columns;
+        }
     }
 
-    @Override
-    public List<Patient> findFamilyMemberyByJurisdiction(String jurisdiction) {
-        //TODO implement method
-        return null;
+    public enum client_column implements Column {
+
+        baseEntityId(ColumnAttribute.Type.text, true, true),
+        syncStatus(ColumnAttribute.Type.text, false, true),
+        validationStatus(ColumnAttribute.Type.text, false, true),
+        json(ColumnAttribute.Type.text, false, false),
+        updatedAt(ColumnAttribute.Type.date, false, true),
+        locationId(ColumnAttribute.Type.text, false, true),
+        clientType(ColumnAttribute.Type.text, false, true),
+        residence(ColumnAttribute.Type.text, false, true);
+
+        private ColumnAttribute column;
+
+        client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+            this.column = new ColumnAttribute(type, pk, index);
+        }
+
+        public ColumnAttribute column() {
+            return column;
+        }
     }
 
-    @Override
-    public List<Patient> findFamilyMemberByResidence(String structureId) {
-        //TODO implement method
-        return null;
-    }
+    public enum event_column implements Column {
+        dateCreated(ColumnAttribute.Type.date, false, true),
+        dateEdited(ColumnAttribute.Type.date, false, false),
 
-    @Override
-    public List<Patient> findClientByRelationship(String relationship, String id) {
-        //TODO implement method
-        return null;
-    }
+        eventId(ColumnAttribute.Type.text, true, true),
+        baseEntityId(ColumnAttribute.Type.text, false, true),
+        syncStatus(ColumnAttribute.Type.text, false, true),
+        validationStatus(ColumnAttribute.Type.text, false, true),
+        json(ColumnAttribute.Type.text, false, false),
+        eventDate(ColumnAttribute.Type.date, false, true),
+        eventType(ColumnAttribute.Type.text, false, true),
+        formSubmissionId(ColumnAttribute.Type.text, false, true),
+        updatedAt(ColumnAttribute.Type.date, false, true),
+        serverVersion(ColumnAttribute.Type.longnum, false, true),
+        planId(ColumnAttribute.Type.text, false, true);
 
-    @Override
-    public List<QuestionnaireResponse> findEventsByEntityIdAndPlan(String resourceId, String planIdentifier) {
-        //TODO implement method
-        return null;
+        private ColumnAttribute column;
+
+        event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
+            this.column = new ColumnAttribute(type, pk, index);
+        }
+
+        public ColumnAttribute column() {
+            return column;
+        }
     }
 
     public boolean deleteClient(String baseEntityId) {
@@ -1942,69 +2102,6 @@ public class EventClientRepository extends BaseRepository implements ClientDao, 
             Timber.e(e);
         }
         return false;
-    }
-
-    // Definitions
-    public enum Table implements BaseTable {
-        client(client_column.values()),
-        event(event_column.values()),
-        foreignEvent(event_column.values()),
-        foreignClient(client_column.values());
-
-        private Column[] columns;
-
-        Table(Column[] columns) {
-            this.columns = columns;
-        }
-
-        public Column[] columns() {
-            return columns;
-        }
-    }
-
-    public enum client_column implements Column {
-
-        baseEntityId(ColumnAttribute.Type.text, true, true),
-        syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.text, false, true),
-        json(ColumnAttribute.Type.text, false, false),
-        updatedAt(ColumnAttribute.Type.date, false, true);
-
-        private ColumnAttribute column;
-
-        client_column(ColumnAttribute.Type type, boolean pk, boolean index) {
-            this.column = new ColumnAttribute(type, pk, index);
-        }
-
-        public ColumnAttribute column() {
-            return column;
-        }
-    }
-
-    public enum event_column implements Column {
-        dateCreated(ColumnAttribute.Type.date, false, true),
-        dateEdited(ColumnAttribute.Type.date, false, false),
-
-        eventId(ColumnAttribute.Type.text, true, true),
-        baseEntityId(ColumnAttribute.Type.text, false, true),
-        syncStatus(ColumnAttribute.Type.text, false, true),
-        validationStatus(ColumnAttribute.Type.text, false, true),
-        json(ColumnAttribute.Type.text, false, false),
-        eventDate(ColumnAttribute.Type.date, false, true),
-        eventType(ColumnAttribute.Type.text, false, true),
-        formSubmissionId(ColumnAttribute.Type.text, false, true),
-        updatedAt(ColumnAttribute.Type.date, false, true),
-        serverVersion(ColumnAttribute.Type.longnum, false, true);
-
-        private ColumnAttribute column;
-
-        event_column(ColumnAttribute.Type type, boolean pk, boolean index) {
-            this.column = new ColumnAttribute(type, pk, index);
-        }
-
-        public ColumnAttribute column() {
-            return column;
-        }
     }
 
     static class QueryWrapper {
