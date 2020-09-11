@@ -421,6 +421,9 @@ public class JsonFormUtils {
                 Map<String, Object> optionKeyVals = new HashMap<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    String fieldsOpenmrsEntityId = jsonObject.optString(OPENMRS_ENTITY_ID);
+                    String fieldOpenmrsEntityParent = jsonObject.optString(OPENMRS_ENTITY_PARENT);
+                    String fieldKey = jsonObject.optString(KEY);
                     boolean shouldBeCombined = jsonObject.optBoolean(AllConstants.COMBINE_CHECKBOX_OPTION_VALUES);
                     String entity = getString(jsonObject, OPENMRS_ENTITY);
                     for (int i = 0; i < options.length(); i++) {
@@ -431,15 +434,15 @@ public class JsonFormUtils {
                         }
                         if (CONCEPT.equals(entity)) {
                             String optionKey = option.optString(KEY);
-                            String openmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
+                            String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
                             // For options with concepts create an observation for each
                             option.put(AllConstants.TYPE, type);
-                            option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
+                            option.put(AllConstants.PARENT_ENTITY_ID, fieldsOpenmrsEntityId);
                             option.put(KEY, jsonObject.getString(KEY));
 
                             if (shouldBeCombined) {
                                 optionValues.add(optionKey);
-                                optionEntityIds.add(openmrsEntityId);
+                                optionEntityIds.add(optionsOpenmrsEntityId);
                                 continue;
                             }
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
@@ -451,8 +454,8 @@ public class JsonFormUtils {
                     }
                     if (!optionValues.isEmpty()) {
                         if (CONCEPT.equals(entity) && shouldBeCombined) {
-                            e.addObs(new Obs(CONCEPT, AllConstants.CHECK_BOX, jsonObject.optString(OPENMRS_ENTITY_ID), jsonObject.optString(OPENMRS_ENTITY_PARENT), optionEntityIds, optionValues, null,
-                                    jsonObject.optString(KEY)));
+                            e.addObs(new Obs(CONCEPT, AllConstants.CHECK_BOX, fieldsOpenmrsEntityId, fieldOpenmrsEntityParent, optionEntityIds, optionValues, null,
+                                    fieldKey));
                         } else {
                             // For options without concepts combine the values into one observation
                             createObservation(e, jsonObject, optionKeyVals, optionValues);
