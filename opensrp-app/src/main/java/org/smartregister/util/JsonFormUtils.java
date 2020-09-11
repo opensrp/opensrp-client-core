@@ -436,7 +436,7 @@ public class JsonFormUtils {
                             // For options with concepts create an observation for each
                             option.put(AllConstants.TYPE, type);
                             option.put(AllConstants.PARENT_ENTITY_ID, fieldsOpenmrsEntityId);
-                            option.put(KEY, jsonObject.getString(KEY));
+                            option.put(KEY, fieldKey);
 
                             if (shouldBeCombined) {
                                 String optionKey = option.optString(KEY);
