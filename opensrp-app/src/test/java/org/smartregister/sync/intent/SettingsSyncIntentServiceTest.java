@@ -39,7 +39,7 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void onHandleIntent() {
+    public void onHandleIntentShouldScheduleJobRequestAndInvokeProcessSettingsWhenGivenNullIntent() {
         settingsSyncIntentService = Mockito.spy(settingsSyncIntentService);
         settingsSyncIntentService.onHandleIntent(null);
 
