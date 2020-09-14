@@ -11,7 +11,7 @@ import org.robolectric.annotation.Config;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
-import org.smartregister.shadows.ShadowJobManager;
+import com.evernote.android.job.ShadowJobManager;
 import org.smartregister.shadows.ShadowSQLiteDatabase;
 
 /**
