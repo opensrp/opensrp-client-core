@@ -1,7 +1,9 @@
 package org.smartregister.sync.intent;
 
 import android.content.Intent;
+import android.support.annotation.VisibleForTesting;
 
+import org.jetbrains.annotations.NotNull;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.repository.ClientFormRepository;
@@ -44,10 +46,16 @@ public class DocumentConfigurationIntentService extends BaseSyncIntentService {
         super.onHandleIntent(intent);
 
         try {
-            DocumentConfigurationService documentConfigurationService = new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration);
+            DocumentConfigurationService documentConfigurationService = getDocumentConfigurationService();
             documentConfigurationService.fetchManifest();
         } catch (Exception e) {
             Timber.e(e);
         }
+    }
+
+    @VisibleForTesting
+    @NotNull
+    protected DocumentConfigurationService getDocumentConfigurationService() {
+        return new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration);
     }
 }
