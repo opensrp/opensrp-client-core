@@ -19,7 +19,7 @@ public class TestP2pApplication extends TestApplication {
         AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(context.applicationContext()));
         allSharedPreferences.updateANMUserName("demo");
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
-        CoreLibrary.init(context, null, 1588062490000l, new P2POptions(true));
+        CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l, new P2POptions(true));
 
 
         setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat

@@ -19,6 +19,15 @@ public class AllConstants {
     public static final String SETTINGS = "settings";
     public static final String SERVER_VERSION = "serverVersion";
 
+    public static final String DETAILS = "details";
+    public static final String PLAN_IDENTIFIER = "planIdentifier";
+    public static final String LOCATION_ID = "locationId";
+    public static final String RESIDENCE = "residence";
+    public static final String CLIENT_TYPE = "clientType";
+    public static final String ATTRIBUTES = "attributes";
+    public static final String FAMILY = "Family";
+    public static final String RELATIONSHIPS = "relationships";
+
 
     // Maximum time difference between server and client time in milliseconds
     public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
@@ -127,6 +136,7 @@ public class AllConstants {
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
 
     public static class Immunizations {

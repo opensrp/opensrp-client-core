@@ -156,7 +156,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     }
 
-    public MatrixCursor getEventCursor() throws Exception {
+    public static MatrixCursor getEventCursor() throws Exception {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", "timestamp"});
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for (int i = 0; i < eventArray.length(); i++) {

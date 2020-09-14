@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -79,6 +78,7 @@ public class LocationHelper {
 
         }
     }
+
     public static void init(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
             instance = new LocationHelper(allowedLevels, defaultLocationLevel, advancedDataCaptureStrategies);
@@ -168,7 +168,7 @@ public class LocationHelper {
         } catch (Exception e) {
             Timber.e(e);
         }
-        return locationName.equals(response) ? AllConstants.ADVANCED_DATA_CAPTURE_STRATEGY_PREFIX + locationName.trim().replaceAll(" ", "-").toLowerCase(Locale.ENGLISH) : response;
+        return response;
     }
 
     public String getOpenMrsLocationName(String locationId) {
