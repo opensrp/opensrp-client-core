@@ -433,18 +433,18 @@ public class JsonFormUtils {
                             continue;
                         }
                         if (CONCEPT.equals(entity)) {
+                            String optionKey = option.optString(KEY);
+                            String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
+                            if (shouldBeCombined) {
+                                optionValues.add(optionKey);
+                                optionEntityIds.add(optionsOpenmrsEntityId);
+                                continue;
+                            }
                             // For options with concepts create an observation for each
                             option.put(AllConstants.TYPE, type);
                             option.put(AllConstants.PARENT_ENTITY_ID, fieldsOpenmrsEntityId);
                             option.put(KEY, fieldKey);
 
-                            if (shouldBeCombined) {
-                                String optionKey = option.optString(KEY);
-                                String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
-                                optionValues.add(optionKey);
-                                optionEntityIds.add(optionsOpenmrsEntityId);
-                                continue;
-                            }
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                         } else {
                             String optionText = option.optString(AllConstants.TEXT);
