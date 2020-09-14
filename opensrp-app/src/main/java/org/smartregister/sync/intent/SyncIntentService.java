@@ -162,6 +162,7 @@ public class SyncIntentService extends BaseSyncIntentService {
 
             if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
+                return;
             }
 
             if (returnCount) {
