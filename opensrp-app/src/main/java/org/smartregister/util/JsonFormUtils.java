@@ -433,9 +433,10 @@ public class JsonFormUtils {
                             continue;
                         }
                         if (CONCEPT.equals(entity)) {
-                            String optionKey = option.optString(KEY);
-                            String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
+
                             if (shouldBeCombined) {
+                                String optionKey = option.optString(KEY);
+                                String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
                                 optionValues.add(optionKey);
                                 optionEntityIds.add(optionsOpenmrsEntityId);
                                 continue;
