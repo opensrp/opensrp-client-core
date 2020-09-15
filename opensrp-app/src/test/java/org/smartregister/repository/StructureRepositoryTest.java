@@ -13,7 +13,6 @@ import net.sqlcipher.database.SQLiteException;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -339,17 +338,17 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
         // Verify method calls & assert values
         ArgumentCaptor<ContentValues> contentValuesArgumentCaptor = ArgumentCaptor.forClass(ContentValues.class);
-        Mockito.verify(sqLiteDatabase).replace(Mockito.anyString(), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
+        verify(sqLiteDatabase).replace(Mockito.anyString(), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
 
-        Assert.assertEquals(lat, contentValues.getAsFloat(StructureRepository.LATITUDE), 0);
-        Assert.assertEquals(lon, contentValues.getAsFloat(StructureRepository.LONGITUDE), 0);
-        Assert.assertEquals(locationId, contentValues.getAsString(StructureRepository.ID));
-        Assert.assertEquals(locationUuid, contentValues.getAsString(StructureRepository.UUID));
-        Assert.assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
-        Assert.assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
-        Assert.assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
+        assertEquals(lat, contentValues.getAsFloat(StructureRepository.LATITUDE), 0);
+        assertEquals(lon, contentValues.getAsFloat(StructureRepository.LONGITUDE), 0);
+        assertEquals(locationId, contentValues.getAsString(StructureRepository.ID));
+        assertEquals(locationUuid, contentValues.getAsString(StructureRepository.UUID));
+        assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
+        assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
+        assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
     }
 
 
@@ -402,17 +401,17 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
         // Verify method calls and assert values
         ArgumentCaptor<ContentValues> contentValuesArgumentCaptor = ArgumentCaptor.forClass(ContentValues.class);
-        Mockito.verify(sqLiteDatabase).replace(Mockito.anyString(), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
+        verify(sqLiteDatabase).replace(Mockito.anyString(), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
 
         ContentValues contentValues = contentValuesArgumentCaptor.getValue();
 
-        Assert.assertEquals(2f, contentValues.getAsFloat(StructureRepository.LATITUDE), 0);
-        Assert.assertEquals(20f, contentValues.getAsFloat(StructureRepository.LONGITUDE), 0);
-        Assert.assertEquals(locationId, contentValues.getAsString(StructureRepository.ID));
-        Assert.assertEquals(locationUuid, contentValues.getAsString(StructureRepository.UUID));
-        Assert.assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
-        Assert.assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
-        Assert.assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
+        assertEquals(2f, contentValues.getAsFloat(StructureRepository.LATITUDE), 0);
+        assertEquals(20f, contentValues.getAsFloat(StructureRepository.LONGITUDE), 0);
+        assertEquals(locationId, contentValues.getAsString(StructureRepository.ID));
+        assertEquals(locationUuid, contentValues.getAsString(StructureRepository.UUID));
+        assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
+        assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
+        assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
     }
 
     public MatrixCursor getCursor() {
