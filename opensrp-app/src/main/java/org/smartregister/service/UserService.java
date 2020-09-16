@@ -536,7 +536,7 @@ public class UserService {
             allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
     }
 
-    public void saveJurisdictionIds(List<String> jurisdictionIds) {
+    public void saveJurisdictionIds(Set<String> jurisdictionIds) {
         if (jurisdictionIds != null && !jurisdictionIds.isEmpty())
             allSharedPreferences.savePreference(JURISDICTION_IDS, android.text.TextUtils.join(",", jurisdictionIds));
     }

@@ -24,6 +24,7 @@ import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -70,7 +71,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
             if (StringUtils.isNotBlank(assignment)) {
                 UserAssignmentDTO currentUserAssignment = new Gson().fromJson(assignment, UserAssignmentDTO.class);
                 Set<Long> existingOrganizations = userService.fetchOrganizations();
-                Set<String> existingJurisdictions = userService.fetchJurisdictionIds();
+                Set<String> existingJurisdictions = new HashSet<>(locationRepository.getAllLocationIds());
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
                 UserAssignmentDTO removedAssignments = getRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
@@ -106,6 +107,9 @@ public class ValidateAssignmentHelper extends BaseHelper {
         if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
             locationRepository.deleteLocations(removedAssignments.getJurisdictions());
             removeLocationsFromHierarchy(removedAssignments.getJurisdictions());
+            Set<String> prefsIds = userService.fetchJurisdictionIds();
+            prefsIds.removeAll(removedAssignments.getJurisdictions());
+            userService.saveJurisdictionIds(prefsIds);
         }
 
         Intent intent = new Intent();
