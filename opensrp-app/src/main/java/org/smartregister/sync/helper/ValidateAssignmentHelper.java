@@ -28,6 +28,8 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.account.AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED;
+
 /**
  * Created by samuelgithengi on 9/16/20.
  */
@@ -53,7 +55,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     public void validateUserAssignment() {
-        boolean keycloakConfigured = Boolean.parseBoolean(CoreLibrary.getInstance().context().allSharedPreferences().getPreference(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED));
+        boolean keycloakConfigured = CoreLibrary.getInstance().context().allSharedPreferences().getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
         if (!keycloakConfigured) {
             return;
         }
