@@ -120,15 +120,6 @@ public class LocationHelper {
                         locations.addAll(foundLocations);
                     }
                 }
-
-                if (ALLOWED_LEVELS.contains("reveal")) {
-                    if (allCampaigns != null && !allCampaigns.isEmpty()) {
-                        allSharedPreferences.savePreference(CAMPAIGNS, android.text.TextUtils.join(",", allCampaigns));
-                    }
-                    if (allOperationalArea != null && !allOperationalArea.isEmpty()) {
-                        allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", allOperationalArea));
-                    }
-                }
             }
         } catch (Exception e) {
             Timber.e(e);

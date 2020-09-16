@@ -185,59 +185,6 @@ public class LocationHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void testLocationsFromHierarchyWhenAllowedLevelsContainsReveal() {
-        ReflectionHelpers.setStaticField(LocationHelper.class, "instance", null);
-        ArrayList<String> allowedLevels = new ArrayList<>();
-        allowedLevels.add("Rural Health Centre");
-        allowedLevels.add("Operational Area");
-        allowedLevels.add("Canton");
-        allowedLevels.add("Village");
-        allowedLevels.add("reveal");
-
-        LocationHelper.init(allowedLevels, "Rural Health Centre");
-        locationHelper = LocationHelper.getInstance();
-
-        AllSettings allSettings = Mockito.spy(CoreLibrary.getInstance().context().allSettings());
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSettings", allSettings);
-        SettingsRepository settingsRepository = ReflectionHelpers.getField(allSettings, "settingsRepository");
-        settingsRepository.updateMasterRepository(repository);
-
-        AllSharedPreferences allSharedPreferences = Mockito.spy(CoreLibrary.getInstance().context().allSharedPreferences());
-        ReflectionHelpers.setField(locationHelper, "allSharedPreferences", allSharedPreferences);
-        ANMLocationController anmLocationController = Mockito.spy(CoreLibrary.getInstance().context().anmLocationController());
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "anmLocationController", anmLocationController);
-
-        Mockito.doReturn("NL1").when(allSharedPreferences).fetchRegisteredANM();
-        Mockito.doReturn("97809856-5c31-5a4e-abb2-efe152a0b715").when(allSharedPreferences).fetchDefaultTeamId(Mockito.nullable(String.class));
-        Mockito.doReturn(anmLocation1)
-                .when(anmLocationController).get();
-
-        LocationHelper spiedLocationHelper = Mockito.spy(locationHelper);
-        ReflectionHelpers.setStaticField(LocationHelper.class, "instance", spiedLocationHelper);
-
-        List<String> campaignIds = new ArrayList<>();
-        campaignIds.add("campaign-1");
-        campaignIds.add("campaign-2");
-        campaignIds.add("campaign-3");
-
-        List<String> operationalArea = new ArrayList<>();
-        operationalArea.add("operational-area-1");
-        operationalArea.add("operational-area-2");
-        operationalArea.add("operational-area-3");
-
-        ReflectionHelpers.setField(spiedLocationHelper, "allCampaigns", campaignIds);
-        ReflectionHelpers.setField(spiedLocationHelper, "allOperationalArea", operationalArea);
-
-        List<String> locations = spiedLocationHelper.locationsFromHierarchy(true, null);
-
-        Mockito.verify(allSharedPreferences).savePreference(Mockito.eq(AllConstants.CAMPAIGNS), Mockito.eq("campaign-1,campaign-2,campaign-3"));
-        Mockito.verify(allSharedPreferences).savePreference(Mockito.eq(AllConstants.OPERATIONAL_AREAS), Mockito.eq("operational-area-1,operational-area-2,operational-area-3"));
-        assertEquals(2, locations.size());
-        assertEquals("ed7c4a07-6e02-4784-ae9a-9cd41cfef390", locations.get(0));
-        assertEquals("1b0ba804-54c3-40ef-820b-a8eaffa5d054", locations.get(1));
-    }
-
-    @Test
     public void testGenerateDefaultLocationHierarchy() {
         ArrayList<String> allowedLevels = new ArrayList<>();
         allowedLevels.add("District");
