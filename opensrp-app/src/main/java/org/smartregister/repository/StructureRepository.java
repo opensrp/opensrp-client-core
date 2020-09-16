@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
@@ -16,6 +17,7 @@ import org.smartregister.repository.helper.MappingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.smartregister.AllConstants.ROWID;
 
@@ -54,6 +56,11 @@ public class StructureRepository extends LocationRepository {
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
         database.execSQL(CREATE_LOCATION_PARENT_INDEX);
+    }
+
+    @Override
+    public void deleteLocations(@NonNull Set<String> locationIdentifiers) {
+        throw new UnsupportedOperationException("deleteLocations not supported for Structures");
     }
 
     @Override

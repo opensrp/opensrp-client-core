@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import org.smartregister.domain.Jurisdiction;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
+import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,6 +86,15 @@ public class PlanDefinitionRepository extends BaseRepository {
             getWritableDatabase().endTransaction();
         }
 
+    }
+
+    /**
+     * Deletes plans which a user no longer has access to
+     *
+     * @param planIdentifiers the set of plan identifiers to delete
+     */
+    public void deletePlans(@NonNull Set<String> planIdentifiers) {
+        getWritableDatabase().delete(PLAN_DEFINITION_TABLE, String.format("%s=?", ID), planIdentifiers.toArray(new String[]{}));
     }
 
     public PlanDefinition findPlanDefinitionById(String identifier) {

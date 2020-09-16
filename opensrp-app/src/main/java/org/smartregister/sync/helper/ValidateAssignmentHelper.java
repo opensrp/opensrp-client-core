@@ -89,10 +89,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     private void processRemovedAssignments(UserAssignmentDTO removedAssignments) {
         if (!Utils.isEmptyCollection(removedAssignments.getPlans())) {
-            for (PlanDefinition plan : planDefinitionRepository.findPlanDefinitionByIds(removedAssignments.getPlans())) {
-                plan.setStatus(PlanDefinition.PlanStatus.RETIRED);
-                planDefinitionRepository.addOrUpdate(plan);
-            }
+            planDefinitionRepository.deletePlans(removedAssignments.getPlans());
         }
 
         if (!Utils.isEmptyCollection(removedAssignments.getOrganizationIds())) {
@@ -101,10 +98,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
             userService.saveOrganizations(new ArrayList<>(ids));
         }
         if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
-            for (Location location : locationRepository.getLocationsByIds(new ArrayList<>(removedAssignments.getJurisdictions()))) {
-                location.getProperties().setStatus(LocationProperty.PropertyStatus.INACTIVE);
-                locationRepository.addOrUpdate(location);
-            }
+            locationRepository.deleteLocations(removedAssignments.getJurisdictions());
         }
 
         Intent intent = new Intent();
