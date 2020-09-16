@@ -39,6 +39,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
 import static org.smartregister.AllConstants.LocationConstants.LOCATION;
 import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
@@ -161,6 +162,9 @@ public class LocationServiceHelper extends BaseHelper {
         if (isJurisdiction) {
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
             request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
+
+            String preferenceLocationIds = allSharedPreferences.getPreference(JURISDICTION_IDS);
+            request.put("location_ids", new JSONArray(Arrays.asList(preferenceLocationIds.split(","))));
         } else {
             request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
