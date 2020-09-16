@@ -164,7 +164,9 @@ public class LocationServiceHelper extends BaseHelper {
             request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
 
             String preferenceLocationIds = allSharedPreferences.getPreference(JURISDICTION_IDS);
-            request.put("location_ids", new JSONArray(Arrays.asList(preferenceLocationIds.split(","))));
+            if (StringUtils.isNotBlank(preferenceLocationIds)) {
+                request.put("location_ids", new JSONArray(Arrays.asList(preferenceLocationIds.split(","))));
+            }
         } else {
             request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
