@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.account.AccountHelper;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.PlanDefinition;
@@ -52,6 +53,10 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     public void validateUserAssignment() {
+        boolean keycloakConfigured = Boolean.parseBoolean(CoreLibrary.getInstance().context().allSharedPreferences().getPreference(AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED));
+        if (!keycloakConfigured) {
+            return;
+        }
         try {
             String assignment = getUserAssignment();
             if (StringUtils.isNotBlank(assignment)) {
