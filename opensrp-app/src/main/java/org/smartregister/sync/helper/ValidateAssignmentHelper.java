@@ -7,14 +7,14 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
-import org.smartregister.account.AccountHelper;
-import org.smartregister.domain.Location;
-import org.smartregister.domain.LocationProperty;
-import org.smartregister.domain.PlanDefinition;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.jsonmapping.Location;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
+import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
@@ -24,6 +24,7 @@ import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -39,6 +40,8 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     public static final String ACTION_ASSIGNMENT_REMOVED = "action_assignment_removed";
 
+    private static final Gson gson = new Gson();
+
     private SyncUtils syncUtils;
 
     private UserService userService;
@@ -47,11 +50,14 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     private LocationRepository locationRepository;
 
+    private AllSettings settingsRepository;
+
     public ValidateAssignmentHelper(SyncUtils syncUtils) {
         this.syncUtils = syncUtils;
         userService = CoreLibrary.getInstance().context().userService();
         planDefinitionRepository = CoreLibrary.getInstance().context().getPlanDefinitionRepository();
         locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
+        settingsRepository = CoreLibrary.getInstance().context().allSettings();
     }
 
     public void validateUserAssignment() {
@@ -99,6 +105,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         }
         if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
             locationRepository.deleteLocations(removedAssignments.getJurisdictions());
+            removeLocationsFromHierarchy(removedAssignments.getJurisdictions());
         }
 
         Intent intent = new Intent();
@@ -108,10 +115,16 @@ public class ValidateAssignmentHelper extends BaseHelper {
         CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
     }
 
+    private void removeLocationsFromHierarchy(Set<String> removedAssignments) {
+        LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
+        removedAssignments.stream().map(locationTree::findLocation).filter(Objects::nonNull).forEach(locationTree::deleteLocation);
+        settingsRepository.saveANMLocation(gson.toJson(locationTree));
+    }
+
     private UserAssignmentDTO getRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) {
         existingJurisdictions.removeAll(currentUserAssignment.getJurisdictions());
         existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
-        existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
+        existingPlans.removeAll(currentUserAssignment.getPlans());
         return UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
 
     }

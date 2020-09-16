@@ -56,4 +56,8 @@ public class LocationTree {
     public LinkedHashMap<String, TreeNode<String, Location>> getLocationsHierarchy() {
         return locationsHierarchy.getTree();
     }
+
+    public void deleteLocation(Location location) {
+        locationsHierarchy.deleteNode(location.getId());
+    }
 }

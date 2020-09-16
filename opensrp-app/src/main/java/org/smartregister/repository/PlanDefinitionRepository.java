@@ -10,6 +10,7 @@ import com.google.gson.GsonBuilder;
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.smartregister.domain.Jurisdiction;
@@ -26,6 +27,7 @@ import java.util.TreeSet;
 
 import timber.log.Timber;
 
+import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.smartregister.domain.PlanDefinition.PlanStatus.ACTIVE;
 
 /**
@@ -94,7 +96,9 @@ public class PlanDefinitionRepository extends BaseRepository {
      * @param planIdentifiers the set of plan identifiers to delete
      */
     public void deletePlans(@NonNull Set<String> planIdentifiers) {
-        getWritableDatabase().delete(PLAN_DEFINITION_TABLE, String.format("%s=?", ID), planIdentifiers.toArray(new String[]{}));
+        getWritableDatabase().delete(PLAN_DEFINITION_TABLE,
+                String.format("%s IN (%s)", ID, StringUtils.repeat("?", ",", planIdentifiers.size())),
+                planIdentifiers.toArray(new String[]{}));
     }
 
     public PlanDefinition findPlanDefinitionById(String identifier) {

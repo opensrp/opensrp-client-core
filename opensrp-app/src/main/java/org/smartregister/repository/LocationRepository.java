@@ -83,7 +83,9 @@ public class LocationRepository extends BaseRepository {
      * @param locationIdentifiers the set of jurisdiction identifiers to delete
      */
     public void deleteLocations(@NonNull Set<String> locationIdentifiers) {
-        getWritableDatabase().delete(LOCATION_TABLE, String.format("%s=?", ID), locationIdentifiers.toArray(new String[]{}));
+        getWritableDatabase().delete(LOCATION_TABLE,
+                String.format("%s IN (%s)", ID, StringUtils.repeat("?", ",", locationIdentifiers.size())),
+                locationIdentifiers.toArray(new String[]{}));
     }
 
     public List<Location> getAllLocations() {
