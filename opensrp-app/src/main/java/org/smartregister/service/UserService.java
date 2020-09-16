@@ -12,6 +12,7 @@ import org.smartregister.BuildConfig;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.account.AccountHelper;
+import org.smartregister.domain.Location;
 import org.smartregister.domain.LoginResponse;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.TimeStatus;
@@ -49,9 +50,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -537,12 +541,26 @@ public class UserService {
             allSharedPreferences.savePreference(JURISDICTION_IDS, android.text.TextUtils.join(",", jurisdictionIds));
     }
 
+    public Set<String> fetchJurisdictionIds() {
+        String jurisdictionIds = allSharedPreferences.getPreference(JURISDICTION_IDS);
+        return Arrays.stream(StringUtils.split(jurisdictionIds, ",")).collect(Collectors.toSet());
+    }
+
     public void saveOrganizations(TeamMember teamMember) {
         if (teamMember != null && teamMember.team != null) {
             List<Long> organizations = teamMember.team.organizationIds;
             if (organizations != null && !organizations.isEmpty())
-                allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+                saveOrganizations(organizations);
         }
+    }
+
+    public void saveOrganizations(List<Long> organizations) {
+        allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+    }
+
+    public Set<Long> fetchOrganizations() {
+        String organizationIds = allSharedPreferences.getPreference(ORGANIZATION_IDS);
+        return Arrays.stream(StringUtils.split(organizationIds, ",")).map(Long::parseLong).collect(Collectors.toSet());
     }
 
     public void saveUserInfo(User user) {
