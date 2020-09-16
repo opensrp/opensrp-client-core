@@ -62,6 +62,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
@@ -394,6 +395,7 @@ public class UserService {
         saveDefaultTeamId(username, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
         saveJurisdictions(userInfo.jurisdictions);
+        saveJurisdictionIds(userInfo.jurisdictionIds);
         saveOrganizations(getUserTeam(userInfo));
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
@@ -528,6 +530,11 @@ public class UserService {
     public void saveJurisdictions(List<String> jurisdictions) {
         if (jurisdictions != null && !jurisdictions.isEmpty())
             allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
+    }
+
+    public void saveJurisdictionIds(List<String> jurisdictionIds) {
+        if (jurisdictionIds != null && !jurisdictionIds.isEmpty())
+            allSharedPreferences.savePreference(JURISDICTION_IDS, android.text.TextUtils.join(",", jurisdictionIds));
     }
 
     public void saveOrganizations(TeamMember teamMember) {

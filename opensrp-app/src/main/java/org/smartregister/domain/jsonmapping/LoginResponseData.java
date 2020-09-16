@@ -15,4 +15,5 @@ public class LoginResponseData {
     public LocationTree locations;
     public TeamMember team;
     public List<String> jurisdictions;
+    public List<String> jurisdictionIds;
 }
