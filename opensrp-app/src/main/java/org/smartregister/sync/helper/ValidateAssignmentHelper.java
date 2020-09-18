@@ -79,6 +79,11 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 processRemovedAssignments(removedAssignments);
                 if (newAssignments) {
                     processNewAssignments();
+                } else {
+                    Intent intent = new Intent();
+                    intent.setAction(ACTION_ASSIGNMENT_REMOVED);
+                    intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, removedAssignments);
+                    CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
                 }
             }
         } catch (NoHttpResponseException e) {
@@ -113,11 +118,6 @@ public class ValidateAssignmentHelper extends BaseHelper {
             userService.saveJurisdictionIds(prefsIds);
         }
 
-        Intent intent = new Intent();
-        intent.setAction(ACTION_ASSIGNMENT_REMOVED);
-        intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, removedAssignments);
-
-        CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
     }
 
     @VisibleForTesting
