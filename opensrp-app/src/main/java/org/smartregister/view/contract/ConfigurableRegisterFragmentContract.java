@@ -9,7 +9,7 @@ import java.util.Set;
 
 public interface ConfigurableRegisterFragmentContract {
 
-    interface View extends BaseRegisterFragmentContract.View {
+    interface View {
 
         void initializeAdapter(Set<IView> visibleColumns);
 
@@ -17,7 +17,7 @@ public interface ConfigurableRegisterFragmentContract {
 
     }
 
-    interface Presenter extends BaseRegisterFragmentContract.Presenter {
+    interface Presenter {
 
         void updateSortAndFilter(List<IField> filterList, IField sortField);
 

@@ -4,7 +4,7 @@ import android.content.Context;
 
 public interface BaseRegisterFragmentContract {
 
-    interface View {
+    interface View extends ConfigurableRegisterFragmentContract.View {
 
         void initializeQueryParams(String tableName, String countSelect, String mainSelect);
 
@@ -29,7 +29,7 @@ public interface BaseRegisterFragmentContract {
         void setTotalPatients();
     }
 
-    interface Presenter {
+    interface Presenter extends ConfigurableRegisterFragmentContract.Presenter {
 
         void processViewConfigurations();
 
@@ -38,6 +38,10 @@ public interface BaseRegisterFragmentContract {
         void startSync();
 
         void searchGlobally(String uniqueId);
+
+    }
+
+    interface Model extends ConfigurableRegisterFragmentContract.Model {
 
     }
 

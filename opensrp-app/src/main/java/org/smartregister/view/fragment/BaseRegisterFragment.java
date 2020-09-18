@@ -35,9 +35,12 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
+import org.smartregister.view.contract.ConfigurableRegisterFragmentContract;
+import org.smartregister.view.contract.IView;
 import org.smartregister.view.dialog.DialogOption;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import timber.log.Timber;
 
@@ -476,6 +479,16 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
         }
     }
 
+    @Override
+    public void initializeAdapter(Set<IView> visibleColumns) {
+        // Do nothing
+    }
+
+    @Override
+    public ConfigurableRegisterFragmentContract.Presenter presenter() {
+        initializePresenter();
+        return presenter;
+    }
 
     ////////////////////////////////////////////////////////////////
     // Inner classes

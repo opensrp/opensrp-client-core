@@ -5,14 +5,15 @@ package org.smartregister.view.contract;
  */
 public interface IBaseConfiguration {
 
-    public String getLanguage();
+    String getLanguage();
 
-    public void setLanguage(String language);
-    public String getApplicationName();
+    void setLanguage(String language);
 
-    public void setApplicationName(String applicationName);
+    String getApplicationName();
 
-    public boolean isEnableJsonViews();
+    void setApplicationName(String applicationName);
 
-    public void setEnableJsonViews(boolean enableJsonViews);
+    boolean isEnableJsonViews();
+
+    void setEnableJsonViews(boolean enableJsonViews);
 }

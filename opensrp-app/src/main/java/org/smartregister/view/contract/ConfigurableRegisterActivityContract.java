@@ -8,7 +8,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.domain.tag.FormTag;
-import org.smartregister.opensrp.configurable.register.and.profiles.pojo.RegisterParams;
 
 import java.util.List;
 
