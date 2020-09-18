@@ -10,6 +10,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.util.SyncUtils;
 
@@ -18,8 +19,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.smartregister.sync.helper.ValidateAssignmentHelper.gson;
 
 /**
  * Created by samuelgithengi on 9/18/20.
@@ -55,5 +58,8 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         validateAssignmentHelper.removeLocationsFromHierarchy(locations);
         verify(settingsRepository).saveANMLocation(stringArgumentCaptor.capture());
         assertNotEquals(locationHieararchy, stringArgumentCaptor.getValue());
+        LocationTree locationTree = gson.fromJson(stringArgumentCaptor.getValue(),LocationTree.class);
+        assertNull(locationTree.findLocation("853934ee-d1a6-4b69-9191-59047edbc9a8"));
+        assertNull(locationTree.findLocation("4ed8f536-5c08-4203-8a90-a7e13becb01d"));
     }
 }

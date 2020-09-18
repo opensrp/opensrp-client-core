@@ -42,7 +42,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     public static final String ACTION_ASSIGNMENT_REMOVED = "action_assignment_removed";
 
-    private static final Gson gson = new Gson();
+    public static final Gson gson = new Gson();
 
     private SyncUtils syncUtils;
 
