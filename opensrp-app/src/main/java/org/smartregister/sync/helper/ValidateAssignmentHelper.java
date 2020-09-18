@@ -123,7 +123,9 @@ public class ValidateAssignmentHelper extends BaseHelper {
     @VisibleForTesting
     protected void removeLocationsFromHierarchy(Set<String> removedAssignments) {
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-        removedAssignments.stream().map(locationTree::findLocation).filter(Objects::nonNull).forEach(locationTree::deleteLocation);
+        for (String removedAssignment : removedAssignments) {
+            locationTree.deleteLocation(removedAssignment);
+        }
         settingsRepository.saveANMLocation(gson.toJson(locationTree));
     }
 

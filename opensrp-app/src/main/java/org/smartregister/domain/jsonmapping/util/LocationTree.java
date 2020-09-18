@@ -57,7 +57,7 @@ public class LocationTree {
         return locationsHierarchy.getTree();
     }
 
-    public void deleteLocation(Location location) {
-        locationsHierarchy.deleteNode(location.getId());
+    public void deleteLocation(String locationId) {
+        locationsHierarchy.deleteNode(locationId);
     }
 }

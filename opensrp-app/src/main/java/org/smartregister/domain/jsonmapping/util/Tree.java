@@ -118,19 +118,14 @@ public class Tree<K, T> {
      * @param id the id of the node to remove
      */
     public void deleteNode(K id) {
-        map.remove(id);
-        removeParentChildren(id);
-    }
-
-    public void removeParentChildren(K id) {
-        LinkedHashSet<K> node = parentChildren.remove(id);
-        if (node != null) {
-            for (K child : node) {
-                removeParentChildren(child);
-            }
+        TreeNode<K, T> node = getNode(id);
+        removeNode(id);
+        parentChildren.remove(id);
+        LinkedHashSet<K> parent = parentChildren.get(node.getParent());
+        if (parent != null) {
+            parent.remove(id);
         }
     }
-
 
     public boolean hasNode(K id) {
         return getNode(id) != null;
