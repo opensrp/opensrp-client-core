@@ -31,6 +31,10 @@ import java.util.Set;
 import timber.log.Timber;
 
 import static org.smartregister.account.AccountHelper.CONFIGURATION_CONSTANTS.IS_KEYCLOAK_CONFIGURED;
+import static org.smartregister.sync.helper.LocationServiceHelper.LOCATION_LAST_SYNC_DATE;
+import static org.smartregister.sync.helper.LocationServiceHelper.STRUCTURES_LAST_SYNC_DATE;
+import static org.smartregister.sync.helper.PlanIntentServiceHelper.PLAN_LAST_SYNC_DATE;
+import static org.smartregister.sync.helper.TaskServiceHelper.TASK_LAST_SYNC_DATE;
 
 /**
  * Created by samuelgithengi on 9/16/20.
@@ -80,7 +84,8 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 UserAssignmentDTO removedAssignments = getRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
                 processRemovedAssignments(removedAssignments);
                 if (newAssignments) {
-                    logoff(R.string.account_assignment_changed_logged_off);
+                    logoff(R.string.account_new_assignment_logged_off);
+                    resetSync();
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(ACTION_ASSIGNMENT_REMOVED);
@@ -91,6 +96,15 @@ public class ValidateAssignmentHelper extends BaseHelper {
         } catch (NoHttpResponseException e) {
             Timber.e(e);
         }
+    }
+
+    private void resetSync() {
+        allSharedPreferences.savePreference(LOCATION_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(STRUCTURES_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(STRUCTURES_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
+        allSharedPreferences.saveLastSyncDate(0);
     }
 
     private void logoff(@StringRes int message) {
@@ -132,7 +146,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         CoreLibrary.getInstance().context().anmLocationController().evict();
         String defaultLocationUuid = allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM());
         if (StringUtils.isNotBlank(defaultLocationUuid) && removedAssignments.contains(defaultLocationUuid)) {
-            logoff(R.string.account_assignment_changed_logged_off);
+            logoff(R.string.account_new_assignment_logged_off);
         }
     }
 
