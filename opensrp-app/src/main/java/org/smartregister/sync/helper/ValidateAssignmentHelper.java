@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Intent;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 
@@ -119,7 +120,8 @@ public class ValidateAssignmentHelper extends BaseHelper {
         CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
     }
 
-    private void removeLocationsFromHierarchy(Set<String> removedAssignments) {
+    @VisibleForTesting
+    protected void removeLocationsFromHierarchy(Set<String> removedAssignments) {
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
         removedAssignments.stream().map(locationTree::findLocation).filter(Objects::nonNull).forEach(locationTree::deleteLocation);
         settingsRepository.saveANMLocation(gson.toJson(locationTree));
