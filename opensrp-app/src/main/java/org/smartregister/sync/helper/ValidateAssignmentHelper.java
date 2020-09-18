@@ -127,6 +127,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
             locationTree.deleteLocation(removedAssignment);
         }
         settingsRepository.saveANMLocation(gson.toJson(locationTree));
+        CoreLibrary.getInstance().context().anmLocationController().evict();
     }
 
     private UserAssignmentDTO getRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) {
