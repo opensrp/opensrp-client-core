@@ -2,7 +2,6 @@ package org.smartregister.view.contract;
 
 import org.json.JSONArray;
 import org.smartregister.domain.Response;
-import org.smartregister.view.contract.BaseRegisterFragmentContract;
 
 import java.util.List;
 import java.util.Set;
