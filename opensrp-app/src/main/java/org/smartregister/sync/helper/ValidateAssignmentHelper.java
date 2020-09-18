@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Intent;
+import android.support.annotation.StringRes;
 import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
@@ -9,13 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
-import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
-import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSettings;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
@@ -26,7 +26,6 @@ import org.smartregister.util.Utils;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -54,12 +53,15 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     private AllSettings settingsRepository;
 
+    private AllSharedPreferences allSharedPreferences;
+
     public ValidateAssignmentHelper(SyncUtils syncUtils) {
         this.syncUtils = syncUtils;
         userService = CoreLibrary.getInstance().context().userService();
         planDefinitionRepository = CoreLibrary.getInstance().context().getPlanDefinitionRepository();
         locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
         settingsRepository = CoreLibrary.getInstance().context().allSettings();
+        allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 
     public void validateUserAssignment() {
@@ -78,7 +80,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 UserAssignmentDTO removedAssignments = getRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
                 processRemovedAssignments(removedAssignments);
                 if (newAssignments) {
-                    processNewAssignments();
+                    logoff(R.string.account_assignment_changed_logged_off);
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(ACTION_ASSIGNMENT_REMOVED);
@@ -91,9 +93,9 @@ public class ValidateAssignmentHelper extends BaseHelper {
         }
     }
 
-    private void processNewAssignments() {
+    private void logoff(@StringRes int message) {
         try {
-            syncUtils.logoutUser(R.string.account_assignment_changed_logged_off);
+            syncUtils.logoutUser(message);
         } catch (Exception e) {
             Timber.e(e);
         }
@@ -128,6 +130,10 @@ public class ValidateAssignmentHelper extends BaseHelper {
         }
         settingsRepository.saveANMLocation(gson.toJson(locationTree));
         CoreLibrary.getInstance().context().anmLocationController().evict();
+        String defaultLocationUuid = allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM());
+        if (StringUtils.isNotBlank(defaultLocationUuid) && removedAssignments.contains(defaultLocationUuid)) {
+            logoff(R.string.account_assignment_changed_logged_off);
+        }
     }
 
     private UserAssignmentDTO getRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) {
