@@ -13,7 +13,6 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.exception.NoHttpResponseException;
-import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
@@ -44,6 +43,8 @@ public class ValidateAssignmentHelper extends BaseHelper {
     private static final String USER_ASSIGNMENT_URL = "/rest/organization/user-assignment";
 
     public static final String ACTION_ASSIGNMENT_REMOVED = "action_assignment_removed";
+
+    public static final String ASSIGNMENTS_REMOVED = "assignments_removed";
 
     public static final Gson gson = new Gson();
 
@@ -89,7 +90,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 } else {
                     Intent intent = new Intent();
                     intent.setAction(ACTION_ASSIGNMENT_REMOVED);
-                    intent.putExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS, removedAssignments);
+                    intent.putExtra(ASSIGNMENTS_REMOVED, removedAssignments);
                     CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
                 }
             }
