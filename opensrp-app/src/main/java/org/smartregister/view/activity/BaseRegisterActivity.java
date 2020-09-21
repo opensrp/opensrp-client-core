@@ -29,6 +29,7 @@ import org.smartregister.util.AppExecutors;
 import org.smartregister.util.PermissionUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
+import org.smartregister.view.contract.ConfigurableRegisterActivityContract;
 import org.smartregister.view.fragment.BaseRegisterFragment;
 import org.smartregister.view.viewpager.OpenSRPViewPager;
 
@@ -41,7 +42,7 @@ import timber.log.Timber;
  * Created by keyman on 26/06/2018.
  */
 
-public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {
+public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View, ConfigurableRegisterActivityContract.View {
 
     protected OpenSRPViewPager mPager;
 
@@ -353,5 +354,11 @@ public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterAct
 
     public void setSearchTerm(String searchTerm) {
         mBaseFragment.setSearchTerm(searchTerm);
+    }
+
+    @Override
+    public ConfigurableRegisterActivityContract.Presenter presenter() {
+        initializePresenter();
+        return presenter;
     }
 }
