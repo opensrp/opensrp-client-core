@@ -122,10 +122,13 @@ public class Tree<K, T> {
         removeNode(id);
         parentChildren.remove(id);
         LinkedHashSet<K> parent = parentChildren.get(node.getParent());
-        if (parent != null) {
+        if (parent != null && parent.size() == 1) {
+            deleteNode(node.getParent());
+        } else {
             parent.remove(id);
         }
     }
+
 
     public boolean hasNode(K id) {
         return getNode(id) != null;

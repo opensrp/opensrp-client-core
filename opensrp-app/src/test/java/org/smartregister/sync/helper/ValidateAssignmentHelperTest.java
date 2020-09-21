@@ -67,7 +67,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
 
     @Test
-    public void testRemoveLocationsFromHierarchyShouldRemoveParentLocationIfChildIsRemoved() {
+    public void testRemoveLocationsFromHierarchyShouldRemoveParentLocationIfOnlyChildIsRemoved() {
         Set<String> locations = Collections.singleton("67c5e0a4-132f-457b-b573-9abf5ec95c75");
         validateAssignmentHelper.removeLocationsFromHierarchy(locations);
         verify(settingsRepository).saveANMLocation(stringArgumentCaptor.capture());
