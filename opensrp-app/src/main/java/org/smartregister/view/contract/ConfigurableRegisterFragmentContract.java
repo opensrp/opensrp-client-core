@@ -18,13 +18,13 @@ public interface ConfigurableRegisterFragmentContract {
 
     interface Presenter {
 
-        void updateSortAndFilter(List<IField> filterList, IField sortField);
+        default void updateSortAndFilter(List<IField> filterList, IField sortField) {}
 
-        String getMainCondition();
+        default String getMainCondition() { return null; }
 
-        String getDefaultSortQuery();
+        default String getDefaultSortQuery() { return null; }
 
-        String getQueryTable();
+        default String getQueryTable()  {return null; }
     }
 
     interface Model {
