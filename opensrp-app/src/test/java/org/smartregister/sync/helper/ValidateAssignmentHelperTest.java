@@ -15,6 +15,7 @@ import org.smartregister.repository.AllSettings;
 import org.smartregister.util.SyncUtils;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -62,5 +63,18 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         assertFalse(locationTree.hasLocation("853934ee-d1a6-4b69-9191-59047edbc9a8"));
         assertFalse(locationTree.hasLocation("4ed8f536-5c08-4203-8a90-a7e13becb01d"));
         assertFalse(locationTree.hasLocation("67c5e0a4-132f-457b-b573-9abf5ec95c75"));
+    }
+
+
+    @Test
+    public void testRemoveLocationsFromHierarchyShouldRemoveParentLocationIfChildIsRemoved() {
+        Set<String> locations = Collections.singleton("67c5e0a4-132f-457b-b573-9abf5ec95c75");
+        validateAssignmentHelper.removeLocationsFromHierarchy(locations);
+        verify(settingsRepository).saveANMLocation(stringArgumentCaptor.capture());
+        assertNotEquals(locationHieararchy, stringArgumentCaptor.getValue());
+        LocationTree locationTree = gson.fromJson(stringArgumentCaptor.getValue(), LocationTree.class);
+
+        assertFalse(locationTree.hasLocation("67c5e0a4-132f-457b-b573-9abf5ec95c75"));
+        assertFalse(locationTree.hasLocation("4ed8f536-5c08-4203-8a90-a7e13becb01d"));//parent is removed
     }
 }
