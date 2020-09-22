@@ -1644,18 +1644,18 @@ public class EventClientRepository extends BaseRepository {
      *
      * @param lastRowId the last row Id queries
      * @param limit the number of rows to the pulled
-     * @param locations an optional location filters
+     * @param locationId an optional locationId filter for getting the data
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
      * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getClients(long lastRowId, int limit, String[] locations) {
+    public JsonData getClients(long lastRowId, int limit,  @Nullable  String locationId) {
         JsonData jsonData = null;
         JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
 
-        String locationFilter = locations != null ? String.format(" %s IN (%s) AND ", client_column.residence.name(), StringUtils.repeat("?", locations.length)) : "";
+        String locationFilter = locationId != null ? String.format(" %s IN (%s) AND ", client_column.residence.name(), StringUtils.repeat("?", locationId.length)) : "";
         String query = "SELECT "
                 + client_column.json
                 + ","
@@ -1673,9 +1673,9 @@ public class EventClientRepository extends BaseRepository {
 
         try {
             Object[] params;
-            if (locations == null) params = new Object[]{lastRowId, limit};
+            if (locationId == null) params = new Object[]{lastRowId, limit};
             else {
-                params = Arrays.copyOf(locations,locations.length+2);
+                params = Arrays.copyOf(locationId, locationId.length+2);
                 params[params.length-2]=lastRowId;
                 params[params.length-1]=limit;
             }

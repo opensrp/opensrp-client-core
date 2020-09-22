@@ -3,6 +3,7 @@ package org.smartregister.repository;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.P2POptions;
@@ -29,36 +30,49 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
     @Nullable
     @Override
     public TreeSet<DataType> getDataTypes() {
-        return (TreeSet<DataType>) dataTypes.clone();
+        TreeSet<DataType> dataTypeTreeSet = new TreeSet<>();
+        int start = dataTypes.size() + 1;
+        P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
+        if (p2POptions != null && !ArrayUtils.isEmpty(p2POptions.getLocationsFilter())) {
+            for (String location : p2POptions.getLocationsFilter()) {
+                for (DataType dataType : dataTypes) {
+                    dataTypeTreeSet.add(new DataType(dataType.getName() + ":" + location, dataType.getType(), start + dataTypeTreeSet.size()));
+                }
+            }
+        }
+        TreeSet<DataType> dataTypesClone = new TreeSet<>(dataTypes);
+        dataTypesClone.addAll(dataTypeTreeSet);
+        return dataTypesClone;
     }
 
     @Nullable
     @Override
     public JsonData getJsonData(@NonNull DataType dataType, long lastRecordId, int batchSize) {
-        if (dataType.getName().equals(event.getName())) {
+        String[] dataTypeParams = dataType.getName().split(":");
+        String locationId = dataTypeParams.length == 1 ? null : dataTypeParams[1];
+        if (dataType.getName().startsWith(event.getName())) {
             return CoreLibrary.getInstance().context()
                     .getEventClientRepository().getEvents(lastRecordId, batchSize);
-        } else if (dataType.getName().equals(client.getName())) {
+        } else if (dataType.getName().startsWith(client.getName())) {
 
             if (DrishtiApplication.getInstance().getP2PClassifier() == null) {
-                P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
                 return CoreLibrary.getInstance().context()
-                        .getEventClientRepository().getClients(lastRecordId, batchSize, p2POptions != null ? p2POptions.getLocationFilter() : null);
+                        .getEventClientRepository().getClients(lastRecordId, batchSize, locationId);
             } else {
                 return CoreLibrary.getInstance().context()
                         .getEventClientRepository().getClientsWithLastLocationID(lastRecordId, batchSize);
             }
 
-        } else if (dataType.getName().equals(structure.getName())) {
+        } else if (dataType.getName().startsWith(structure.getName())) {
             return CoreLibrary.getInstance().context()
                     .getStructureRepository().getStructures(lastRecordId, batchSize);
-        } else if (dataType.getName().equals(task.getName())) {
+        } else if (dataType.getName().startsWith(task.getName())) {
             return CoreLibrary.getInstance().context()
                     .getTaskRepository().getTasks(lastRecordId, batchSize);
-        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().equals(foreignClient.getName())) {
+        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().startsWith(foreignClient.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getForeignEventClientRepository().getClients(lastRecordId, batchSize);
-        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().equals(foreignEvent.getName())) {
+                    .getForeignEventClientRepository().getClients(lastRecordId, batchSize, locationId);
+        } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().startsWith(foreignEvent.getName())) {
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getEvents(lastRecordId, batchSize);
         } else {
