@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.P2POptions;
 import org.smartregister.R;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.p2p.model.DataType;
@@ -40,8 +41,9 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         } else if (dataType.getName().equals(client.getName())) {
 
             if (DrishtiApplication.getInstance().getP2PClassifier() == null) {
+                P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
                 return CoreLibrary.getInstance().context()
-                        .getEventClientRepository().getClients(lastRecordId, batchSize);
+                        .getEventClientRepository().getClients(lastRecordId, batchSize, p2POptions != null ? p2POptions.getLocationFilter() : null);
             } else {
                 return CoreLibrary.getInstance().context()
                         .getEventClientRepository().getClientsWithLastLocationID(lastRecordId, batchSize);

@@ -1642,33 +1642,44 @@ public class EventClientRepository extends BaseRepository {
     /**
      * Fetches {@link Client}s whose rowid > #lastRowId up to the #limit provided.
      *
-     * @param lastRowId
+     * @param lastRowId the last row Id queries
+     * @param limit the number of rows to the pulled
+     * @param locations an optional location filters
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
      * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getClients(long lastRowId, int limit) {
+    public JsonData getClients(long lastRowId, int limit, String[] locations) {
         JsonData jsonData = null;
         JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
 
+        String locationFilter = locations != null ? String.format(" %s IN (%s) AND ", client_column.residence.name(), StringUtils.repeat("?", locations.length)) : "";
         String query = "SELECT "
-                + event_column.json
+                + client_column.json
                 + ","
-                + event_column.syncStatus
+                + client_column.syncStatus
                 + ","
                 + ROWID
                 + " FROM "
                 + clientTable.name()
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
         Cursor cursor = null;
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            Object[] params;
+            if (locations == null) params = new Object[]{lastRowId, limit};
+            else {
+                params = Arrays.copyOf(locations,locations.length+2);
+                params[params.length-2]=lastRowId;
+                params[params.length-1]=limit;
+            }
+            cursor = getWritableDatabase().rawQuery(query, params);
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(2);

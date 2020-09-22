@@ -21,6 +21,7 @@ public class P2POptions {
     private SyncFinishedCallback syncFinishedCallback;
     @Nullable
     private RecalledIdentifier recalledIdentifier;
+    private String[] locationFilter;
 
     private boolean enableP2PLibrary;
     private int batchSize = AllConstants.PeerToPeer.P2P_LIBRARY_DEFAULT_BATCH_SIZE;
@@ -80,5 +81,13 @@ public class P2POptions {
 
     public void setRecalledIdentifier(@Nullable RecalledIdentifier recalledIdentifier) {
         this.recalledIdentifier = recalledIdentifier;
+    }
+
+    public String[] getLocationFilter() {
+        return locationFilter;
+    }
+
+    public void setLocationFilter(String[] locationFilter) {
+        this.locationFilter = locationFilter;
     }
 }
