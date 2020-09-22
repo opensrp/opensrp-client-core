@@ -39,10 +39,10 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
                     dataTypeTreeSet.add(new DataType(dataType.getName() + ":" + location, dataType.getType(), start + dataTypeTreeSet.size()));
                 }
             }
+            return dataTypeTreeSet;
+        } else {
+            return new TreeSet<>(dataTypes);
         }
-        TreeSet<DataType> dataTypesClone = new TreeSet<>(dataTypes);
-        dataTypesClone.addAll(dataTypeTreeSet);
-        return dataTypesClone;
     }
 
     @Nullable
@@ -52,7 +52,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         String locationId = dataTypeParams.length == 1 ? null : dataTypeParams[1];
         if (dataType.getName().startsWith(event.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getEventClientRepository().getEvents(lastRecordId, batchSize,locationId);
+                    .getEventClientRepository().getEvents(lastRecordId, batchSize, locationId);
         } else if (dataType.getName().startsWith(client.getName())) {
 
             if (DrishtiApplication.getInstance().getP2PClassifier() == null) {
