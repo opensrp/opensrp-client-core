@@ -25,6 +25,7 @@ import org.smartregister.service.HTTPAgent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by Vincent Karuri on 22/09/2020
@@ -55,18 +56,18 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
 
         validateIntentService.onHandleIntent(new Intent());
 
-        Mockito.verify(eventClientRepository).markClientValidationStatus("client_id1", false);
-        Mockito.verify(eventClientRepository).markClientValidationStatus("client_id2", true);
+        Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(0), false);
+        Mockito.verify(eventClientRepository).markClientValidationStatus(getClientIds().get(1), true);
 
-        Mockito.verify(eventClientRepository).markEventValidationStatus("event_id1", false);
-        Mockito.verify(eventClientRepository).markEventValidationStatus("event_id2", true);
+        Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(0), false);
+        Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(1), true);
     }
 
     private void mockMethods() throws JSONException {
         Mockito.doReturn(eventClientRepository).when(openSRPContext).getEventClientRepository();
-        Mockito.doReturn(new ArrayList(Arrays.asList("client_id1", "client_id2"))).when(eventClientRepository)
+        Mockito.doReturn(getClientIds()).when(eventClientRepository)
                 .getUnValidatedClientBaseEntityIds(ArgumentMatchers.anyInt());
-        Mockito.doReturn(new ArrayList(Arrays.asList("event_id1", "event_id2"))).when(eventClientRepository)
+        Mockito.doReturn(getEventIds()).when(eventClientRepository)
                 .getUnValidatedEventFormSubmissionIds(ArgumentMatchers.anyInt());
 
         DristhiConfiguration dristhiConfiguration = Mockito.mock(DristhiConfiguration.class);
@@ -82,5 +83,13 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
 
         Response<String> response = new Response(ResponseStatus.success, results.toString());
         Mockito.doReturn(response).when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+    }
+
+    private List<String> getEventIds() {
+        return new ArrayList(Arrays.asList("event_id1", "event_id2"));
+    }
+
+    private List<String> getClientIds() {
+        return new ArrayList(Arrays.asList("client_id1", "client_id2"));
     }
 }
