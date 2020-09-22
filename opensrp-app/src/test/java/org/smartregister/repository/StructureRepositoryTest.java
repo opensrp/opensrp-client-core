@@ -20,8 +20,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.domain.Geometry;
@@ -375,7 +377,6 @@ public class StructureRepositoryTest extends BaseUnitTest {
         assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
     }
 
-
     @Test
     public void testAddOrUpdateShouldGenerateContentValuesWithCenterPointLatLngWhenGivenPolygonStructure() {
         Location location = new Location();
@@ -436,6 +437,35 @@ public class StructureRepositoryTest extends BaseUnitTest {
         assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
         assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
         assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
+    }
+
+    @Test
+    public void testGetUnsyncedStructuresCountShouldReturnCountInCursor() {
+        MatrixCursor matrixCursor = new MatrixCursor(new String[]{"count(*)"});
+        matrixCursor.addRow(new Object[]{7});
+        Mockito.doReturn(matrixCursor).when(sqLiteDatabase).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), Mockito.any(String[].class));
+
+        // Call the method under test
+        int count = structureRepository.getUnsyncedStructuresCount();
+
+        // Assert and verify
+        assertEquals(7, count);
+    }
+
+    @Test
+    public void testGetUnsyncedStructuresCountShouldReturn0WhenExceptionOccurs() {
+        Mockito.doAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                throw new SQLiteException("Invalid SQlite operation!");
+            }
+        }).when(sqLiteDatabase).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), Mockito.any(String[].class));
+
+        // Call the method under test
+        int count = structureRepository.getUnsyncedStructuresCount();
+
+        // Assert and verify
+        assertEquals(0, count);
     }
 
     public MatrixCursor getCursor() {
