@@ -27,6 +27,8 @@ import timber.log.Timber;
 
 public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTransferDao {
 
+    private static final String SEPARATOR = "-";
+
     private P2POptions p2POptions;
 
     public P2PSenderTransferDao() {
@@ -42,7 +44,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         if (locationFilterEnabled()) {
             for (String location : p2POptions.getLocationsFilter()) {
                 for (DataType dataType : dataTypes) {
-                    dataTypeTreeSet.add(new DataType(dataType.getName() + ":" + location, dataType.getType(), dataTypeTreeSet.size()));
+                    dataTypeTreeSet.add(new DataType(dataType.getName() + SEPARATOR + location, dataType.getType(), dataTypeTreeSet.size()));
                 }
             }
             return dataTypeTreeSet;
@@ -52,7 +54,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
     }
 
     private boolean locationFilterEnabled() {
-        return p2POptions != null && !ArrayUtils.isEmpty(p2POptions.getLocationsFilter())
+        return p2POptions != null && !ArrayUtils.isEmpty(p2POptions.getLocationsFilter());
     }
 
     @Nullable
@@ -60,7 +62,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
     public JsonData getJsonData(@NonNull DataType dataType, long lastRecordId, int batchSize) {
         String locationId = null;
         if (locationFilterEnabled()) {
-            String[] dataTypeParams = dataType.getName().split(":");
+            String[] dataTypeParams = dataType.getName().split(SEPARATOR);
             locationId = dataTypeParams.length == 1 ? null : dataTypeParams[1];
         }
         if (dataType.getName().startsWith(event.getName())) {
