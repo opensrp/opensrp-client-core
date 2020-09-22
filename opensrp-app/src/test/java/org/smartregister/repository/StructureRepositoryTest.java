@@ -492,7 +492,7 @@ public class StructureRepositoryTest extends BaseUnitTest {
         // Assert and verify
         assertEquals(7, count);
         ArgumentCaptor<String[]> argumentCaptor = ArgumentCaptor.forClass(String[].class);
-        Mockito.verify(sqLiteDatabase, times(1)).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), argumentCaptor.capture());
+        verify(sqLiteDatabase, times(1)).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), argumentCaptor.capture());
         assertEquals(BaseRepository.TYPE_Created, argumentCaptor.getValue()[0]);
     }
 
@@ -511,7 +511,7 @@ public class StructureRepositoryTest extends BaseUnitTest {
         // Assert and verify
         assertEquals(0, count);
         ArgumentCaptor<String[]> argumentCaptor = ArgumentCaptor.forClass(String[].class);
-        Mockito.verify(sqLiteDatabase, times(1)).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), argumentCaptor.capture());
+        verify(sqLiteDatabase, times(1)).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), argumentCaptor.capture());
         assertEquals(BaseRepository.TYPE_Created, argumentCaptor.getValue()[0]);
     }
 

@@ -3,13 +3,10 @@ package org.smartregister.util;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
-import org.apache.commons.validator.Arg;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.smartregister.BaseRobolectricUnitTest;
 
 /**
@@ -29,7 +26,7 @@ public class P2PUtilTest extends BaseRobolectricUnitTest {
         int maxRowId = P2PUtil.getMaxRowId(tableName, db);
 
         Assert.assertEquals(56, maxRowId);
-        Mockito.verify(db, Mockito.times(1)).rawQuery(Mockito.eq("SELECT max(rowid) AS max_row_id FROM structure"), Mockito.nullable(String[].class));;
+        Mockito.verify(db, Mockito.times(1)).rawQuery(Mockito.eq("SELECT max(rowid) AS max_row_id FROM structure"), Mockito.nullable(String[].class));
     }
 
     @Test
@@ -47,7 +44,7 @@ public class P2PUtilTest extends BaseRobolectricUnitTest {
 
         Assert.assertTrue(recordExists);
         Assert.assertEquals(entityId, argumentCaptor.getValue()[0]);
-        Mockito.verify(db, Mockito.times(1)).rawQuery(Mockito.eq("SELECT _id FROM structure WHERE _id =?"), Mockito.nullable(String[].class));;
+        Mockito.verify(db, Mockito.times(1)).rawQuery(Mockito.eq("SELECT _id FROM structure WHERE _id =?"), Mockito.nullable(String[].class));
     }
 
     @Test
@@ -64,6 +61,6 @@ public class P2PUtilTest extends BaseRobolectricUnitTest {
 
         Assert.assertFalse(recordExists);
         Assert.assertEquals(entityId, argumentCaptor.getValue()[0]);
-        Mockito.verify(db, Mockito.times(1)).rawQuery(Mockito.eq("SELECT _id FROM structure WHERE _id =?"), Mockito.nullable(String[].class));;
+        Mockito.verify(db, Mockito.times(1)).rawQuery(Mockito.eq("SELECT _id FROM structure WHERE _id =?"), Mockito.nullable(String[].class));
     }
 }
