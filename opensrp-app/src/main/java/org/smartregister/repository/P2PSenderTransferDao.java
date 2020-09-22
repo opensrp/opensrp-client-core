@@ -27,16 +27,22 @@ import timber.log.Timber;
 
 public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTransferDao {
 
+    private P2POptions p2POptions;
+
+    public P2PSenderTransferDao() {
+        super();
+        this.p2POptions = CoreLibrary.getInstance().getP2POptions();
+    }
+
     @Nullable
     @Override
     public TreeSet<DataType> getDataTypes() {
         TreeSet<DataType> dataTypeTreeSet = new TreeSet<>();
-        int start = dataTypes.size() + 1;
-        P2POptions p2POptions = CoreLibrary.getInstance().getP2POptions();
-        if (p2POptions != null && !ArrayUtils.isEmpty(p2POptions.getLocationsFilter())) {
+
+        if (locationFilterEnabled()) {
             for (String location : p2POptions.getLocationsFilter()) {
                 for (DataType dataType : dataTypes) {
-                    dataTypeTreeSet.add(new DataType(dataType.getName() + ":" + location, dataType.getType(), start + dataTypeTreeSet.size()));
+                    dataTypeTreeSet.add(new DataType(dataType.getName() + ":" + location, dataType.getType(), dataTypeTreeSet.size()));
                 }
             }
             return dataTypeTreeSet;
@@ -45,11 +51,18 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         }
     }
 
+    private boolean locationFilterEnabled() {
+        return p2POptions != null && !ArrayUtils.isEmpty(p2POptions.getLocationsFilter())
+    }
+
     @Nullable
     @Override
     public JsonData getJsonData(@NonNull DataType dataType, long lastRecordId, int batchSize) {
-        String[] dataTypeParams = dataType.getName().split(":");
-        String locationId = dataTypeParams.length == 1 ? null : dataTypeParams[1];
+        String locationId = null;
+        if (locationFilterEnabled()) {
+            String[] dataTypeParams = dataType.getName().split(":");
+            locationId = dataTypeParams.length == 1 ? null : dataTypeParams[1];
+        }
         if (dataType.getName().startsWith(event.getName())) {
             return CoreLibrary.getInstance().context()
                     .getEventClientRepository().getEvents(lastRecordId, batchSize, locationId);
