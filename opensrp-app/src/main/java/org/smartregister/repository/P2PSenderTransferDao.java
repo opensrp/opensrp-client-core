@@ -52,7 +52,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         String locationId = dataTypeParams.length == 1 ? null : dataTypeParams[1];
         if (dataType.getName().startsWith(event.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getEventClientRepository().getEvents(lastRecordId, batchSize);
+                    .getEventClientRepository().getEvents(lastRecordId, batchSize,locationId);
         } else if (dataType.getName().startsWith(client.getName())) {
 
             if (DrishtiApplication.getInstance().getP2PClassifier() == null) {
@@ -74,7 +74,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
                     .getForeignEventClientRepository().getClients(lastRecordId, batchSize, locationId);
         } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().startsWith(foreignEvent.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getForeignEventClientRepository().getEvents(lastRecordId, batchSize);
+                    .getForeignEventClientRepository().getEvents(lastRecordId, batchSize, locationId);
         } else {
             Timber.e(P2PLibrary.getInstance().getContext().getString(R.string.log_data_type_provided_does_not_exist_in_the_sender)
                     , dataType.getName());
