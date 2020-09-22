@@ -235,7 +235,24 @@ public class StructureRepositoryTest extends BaseUnitTest {
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
         assertEquals(sql, stringArgumentCaptor.getValue());
         assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+        assertEquals(1, actualStructures.size());
 
+    }
+    @Test
+    public void testGetAllUnsynchedCreatedStructuresShouldReturnEmptyListWhenSQLiteExceptionIsThrown() {
+        String sql = "SELECT *  FROM structure WHERE sync_status =?";
+        when(sqLiteDatabase.rawQuery(anyString(), any())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                throw new SQLiteException("Invalid SQLite Exception!");
+            }
+        });
+
+        List<Location> actualStructures = structureRepository.getAllUnsynchedCreatedStructures();
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), argsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(BaseRepository.TYPE_Created, argsCaptor.getValue()[0]);
+        assertEquals(0, actualStructures.size());
     }
 
     @Test
@@ -258,6 +275,30 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
         assertEquals(expectedStructure.getId(), structure.getId());
         assertEquals(expectedStructure.getType(), structure.getType());
+        assertEquals(1, actualStructureData.getJsonArray().length());
+    }
+
+
+    @Test
+    public void testGetStructuresShouldReturnNullWhenSQLiteExceptionIsThrown() throws Exception {
+        String sql = "SELECT rowid,* FROM structure WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?";
+        long lastRowId = 1l;
+        int limit = 10;
+        when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenAnswer(new Answer<Object>() {
+            @Override
+            public Object answer(InvocationOnMock invocation) throws Throwable {
+                throw new SQLiteException("Invalid SQLite Exception!");
+            }
+        });
+
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit);
+
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(lastRowId, objectArgsCaptor.getValue()[0]);
+        assertEquals(limit, objectArgsCaptor.getValue()[1]);
+
+        assertNull(actualStructureData);
     }
 
     @Test
@@ -450,10 +491,13 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
         // Assert and verify
         assertEquals(7, count);
+        ArgumentCaptor<String[]> argumentCaptor = ArgumentCaptor.forClass(String[].class);
+        Mockito.verify(sqLiteDatabase, times(1)).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), argumentCaptor.capture());
+        assertEquals(BaseRepository.TYPE_Created, argumentCaptor.getValue()[0]);
     }
 
     @Test
-    public void testGetUnsyncedStructuresCountShouldReturn0WhenExceptionOccurs() {
+    public void testGetUnsyncedStructuresCountShouldReturnZeroCountWhenExceptionOccurs() {
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -466,6 +510,9 @@ public class StructureRepositoryTest extends BaseUnitTest {
 
         // Assert and verify
         assertEquals(0, count);
+        ArgumentCaptor<String[]> argumentCaptor = ArgumentCaptor.forClass(String[].class);
+        Mockito.verify(sqLiteDatabase, times(1)).rawQuery(Mockito.eq("SELECT count(*) FROM structure WHERE sync_status = ?"), argumentCaptor.capture());
+        assertEquals(BaseRepository.TYPE_Created, argumentCaptor.getValue()[0]);
     }
 
     public MatrixCursor getCursor() {
