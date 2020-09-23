@@ -232,19 +232,43 @@ public class StructureRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetStructures() throws Exception {
+    public void testGetStructuresWithNullStructureId() throws Exception {
         Location expectedStructure = gson.fromJson(locationJson, Location.class);
         String sql = "SELECT rowid,* FROM structure WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?";
         long lastRowId = 1l;
         int limit = 10;
         when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenReturn(getCursor());
 
-        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit);
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit, null);
 
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
         assertEquals(sql, stringArgumentCaptor.getValue());
         assertEquals(lastRowId, objectArgsCaptor.getValue()[0]);
         assertEquals(limit, objectArgsCaptor.getValue()[1]);
+
+        JSONObject structureJsonObject = actualStructureData.getJsonArray().getJSONObject(0);
+        Location structure = gson.fromJson(String.valueOf(structureJsonObject), Location.class);
+
+        assertEquals(expectedStructure.getId(), structure.getId());
+        assertEquals(expectedStructure.getType(), structure.getType());
+    }
+
+    @Test
+    public void testGetStructuresWithStructureId() throws Exception {
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        String sql = "SELECT rowid,* FROM structure WHERE  parent_id =? AND rowid > ?  ORDER BY rowid ASC LIMIT ?";
+        long lastRowId = 1l;
+        int limit = 10;
+        String locationId= java.util.UUID.randomUUID().toString();
+        when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenReturn(getCursor());
+
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit, locationId);
+
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(locationId, objectArgsCaptor.getValue()[0]);
+        assertEquals(lastRowId, objectArgsCaptor.getValue()[1]);
+        assertEquals(limit, objectArgsCaptor.getValue()[2]);
 
         JSONObject structureJsonObject = actualStructureData.getJsonArray().getJSONObject(0);
         Location structure = gson.fromJson(String.valueOf(structureJsonObject), Location.class);
