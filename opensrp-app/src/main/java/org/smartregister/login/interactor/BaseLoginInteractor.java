@@ -230,7 +230,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     public UserService getUserService() {
-        return mLoginPresenter.getOpenSRPContext().userService();
+        return CoreLibrary.getInstance().context().userService();
     }
 
     /**
