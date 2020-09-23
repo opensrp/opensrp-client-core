@@ -30,7 +30,6 @@ import org.smartregister.view.activity.DrishtiApplication;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -46,7 +45,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.smartregister.domain.LocationTest.stripTimezone;
-import static org.smartregister.repository.LocationRepository.UUID;
 import static org.smartregister.repository.StructureRepository.STRUCTURE_TABLE;
 
 /**
