@@ -315,6 +315,7 @@ public class EventClientRepository extends BaseRepository {
                 statement.bindString(columnOrder.get(event_column.syncStatus.name()), syncStatus);
                 statement.bindString(columnOrder.get(event_column.validationStatus.name()), BaseRepository.TYPE_Valid);
                 statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
+                statement.bindString(columnOrder.get(event_column.locationId.name()), jsonObject.optString(event_column.locationId.name()));
                 if (jsonObject.has(EVENT_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
                 else if (jsonObject.has(_ID))
@@ -1799,6 +1800,7 @@ public class EventClientRepository extends BaseRepository {
             values.put(event_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(event_column.baseEntityId.name(), baseEntityId);
             values.put(event_column.syncStatus.name(), syncStatus);
+            values.put(event_column.locationId.name(), jsonObject.optString(event_column.locationId.name()));
             JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
             if (details != null)
                 values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER));
