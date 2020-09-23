@@ -30,6 +30,8 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
 
     private P2PSenderTransferDao p2PSenderTransferDao;
 
+    private String locationId=null;
+
     @Before
     public void setUp() throws Exception {
         p2PSenderTransferDao = new P2PSenderTransferDao();
@@ -123,14 +125,14 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         int batchSize = 100;
 
         JsonData jsonData = Mockito.mock(JsonData.class);
-        Mockito.doReturn(jsonData).when(structureRepository).getStructures(lastRecordId, batchSize);
+        Mockito.doReturn(jsonData).when(structureRepository).getStructures(lastRecordId, batchSize, locationId);
 
         // Call the method under test
         JsonData actualJsonData = p2PSenderTransferDao.getJsonData(p2PSenderTransferDao.structure, lastRecordId, batchSize);
 
 
         // Verify that the repository was called
-        Mockito.verify(structureRepository).getStructures(lastRecordId, batchSize);
+        Mockito.verify(structureRepository).getStructures(lastRecordId, batchSize, locationId);
         Assert.assertEquals(jsonData, actualJsonData);
     }
 
@@ -143,13 +145,13 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         int batchSize = 100;
 
         JsonData jsonData = Mockito.mock(JsonData.class);
-        Mockito.doReturn(jsonData).when(taskRepository).getTasks(lastRecordId, batchSize);
+        Mockito.doReturn(jsonData).when(taskRepository).getTasks(lastRecordId, batchSize, locationId);
 
         // Call the method under test
         JsonData actualJsonData = p2PSenderTransferDao.getJsonData(p2PSenderTransferDao.task, lastRecordId, batchSize);
 
         // Verify that the repository was called
-        Mockito.verify(taskRepository).getTasks(lastRecordId, batchSize);
+        Mockito.verify(taskRepository).getTasks(lastRecordId, batchSize, locationId);
         Assert.assertEquals(jsonData, actualJsonData);
     }
 

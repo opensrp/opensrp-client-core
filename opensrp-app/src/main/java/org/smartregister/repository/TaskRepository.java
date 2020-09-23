@@ -502,23 +502,25 @@ public class TaskRepository extends BaseRepository {
     }
 
     /**
-     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     * Fetches {@link Task}s whose rowid > #lastRowId up to the #limit provided.
      *
      * @param lastRowId
+     * @param jurisdictionId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * of {@link Task}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getTasks(long lastRowId, int limit) {
+    public JsonData getTasks(long lastRowId, int limit, String jurisdictionId) {
         JsonData jsonData = null;
         long maxRowId = 0;
-
+        String locationFilter = jurisdictionId != null ? String.format(" %s =? AND ", GROUP_ID) : "";
         String query = "SELECT "
                 + ROWID
                 + ",* FROM "
                 + TASK_TABLE
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
@@ -527,7 +529,7 @@ public class TaskRepository extends BaseRepository {
         JSONArray jsonArray = new JSONArray();
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            cursor = getWritableDatabase().rawQuery(query, jurisdictionId != null ? new Object[]{jurisdictionId, lastRowId, limit} : new Object[]{lastRowId, limit});
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
