@@ -126,7 +126,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                 }
 
                 if (p2POptions.getSenderTransferDao() == null) {
-                    p2POptions.setSenderTransferDao(new P2PSenderTransferDao(p2POptions));
+                    p2POptions.setSenderTransferDao(new P2PSenderTransferDao());
                 }
 
                 if (p2POptions.getSyncFinishedCallback() == null) {

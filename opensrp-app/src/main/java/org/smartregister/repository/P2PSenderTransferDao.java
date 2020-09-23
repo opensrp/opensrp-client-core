@@ -29,24 +29,13 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
 
     private static final String SEPARATOR = "-";
 
-    private P2POptions p2POptions;
-
-    public P2PSenderTransferDao() {
-        this(null);
-    }
-
-    public P2PSenderTransferDao(P2POptions p2POptions) {
-        super();
-        this.p2POptions = p2POptions;
-    }
-
     @Nullable
     @Override
     public TreeSet<DataType> getDataTypes() {
         TreeSet<DataType> dataTypeTreeSet = new TreeSet<>();
 
         if (locationFilterEnabled()) {
-            for (String location : p2POptions.getLocationsFilter()) {
+            for (String location : getP2POptions().getLocationsFilter()) {
                 for (DataType dataType : dataTypes) {
                     dataTypeTreeSet.add(new DataType(dataType.getName() + SEPARATOR + location, dataType.getType(), dataTypeTreeSet.size()));
                 }
@@ -58,7 +47,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
     }
 
     private boolean locationFilterEnabled() {
-        return p2POptions != null && !ArrayUtils.isEmpty(p2POptions.getLocationsFilter());
+        return getP2POptions() != null && !ArrayUtils.isEmpty(getP2POptions().getLocationsFilter());
     }
 
     @Nullable
@@ -142,4 +131,7 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
         }
     }
 
+    public P2POptions getP2POptions() {
+        return CoreLibrary.getInstance().getP2POptions();
+    }
 }

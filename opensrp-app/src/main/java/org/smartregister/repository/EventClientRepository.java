@@ -152,9 +152,9 @@ public class EventClientRepository extends BaseRepository {
      * @param db the database being upgraded
      */
     public static void addEventLocationId(SQLiteDatabase db) {
-        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), client_column.locationId.name(), VARCHAR);
-        DatabaseMigrationUtils.addIndexIfNotExists(db, Table.event.name(), client_column.locationId.name());
-        db.execSQL(String.format("UPDATE %s set %s = %s WHERE %s >0", Table.event.name(), event_column.locationId.name(), "substr(json,instr(json, '\"locationId\":')+14,36)", "instr(json, '\"locationId\":')"), );
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), event_column.locationId.name(), VARCHAR);
+        DatabaseMigrationUtils.addIndexIfNotExists(db, Table.event.name(), event_column.locationId.name());
+        db.execSQL(String.format("UPDATE %s set %s = %s WHERE %s >0", Table.event.name(), event_column.locationId.name(), "substr(json,instr(json, '\"locationId\":')+14,36)", "instr(json, '\"locationId\":')"));
     }
 
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {

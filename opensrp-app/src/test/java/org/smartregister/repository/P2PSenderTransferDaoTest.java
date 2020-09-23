@@ -37,8 +37,7 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() throws Exception {
-        P2POptions p2POptions = new P2POptions(true);
-        p2PSenderTransferDao = new P2PSenderTransferDao(p2POptions);
+        p2PSenderTransferDao = new P2PSenderTransferDao();
     }
 
     @Test
