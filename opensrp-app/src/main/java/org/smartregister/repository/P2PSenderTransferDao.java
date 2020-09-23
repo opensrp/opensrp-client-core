@@ -32,8 +32,12 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
     private P2POptions p2POptions;
 
     public P2PSenderTransferDao() {
+        this(null);
+    }
+
+    public P2PSenderTransferDao(P2POptions p2POptions) {
         super();
-        this.p2POptions = CoreLibrary.getInstance().getP2POptions();
+        this.p2POptions = p2POptions;
     }
 
     @Nullable
@@ -80,10 +84,10 @@ public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTr
 
         } else if (dataType.getName().startsWith(structure.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getStructureRepository().getStructures(lastRecordId, batchSize,locationId);
+                    .getStructureRepository().getStructures(lastRecordId, batchSize, locationId);
         } else if (dataType.getName().startsWith(task.getName())) {
             return CoreLibrary.getInstance().context()
-                    .getTaskRepository().getTasks(lastRecordId, batchSize,locationId);
+                    .getTaskRepository().getTasks(lastRecordId, batchSize, locationId);
         } else if (CoreLibrary.getInstance().context().hasForeignEvents() && dataType.getName().startsWith(foreignClient.getName())) {
             return CoreLibrary.getInstance().context()
                     .getForeignEventClientRepository().getClients(lastRecordId, batchSize, locationId);

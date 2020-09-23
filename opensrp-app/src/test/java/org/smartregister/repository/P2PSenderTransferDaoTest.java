@@ -4,11 +4,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.P2POptions;
 import org.smartregister.TestApplication;
 import org.smartregister.TestP2pApplication;
 import org.smartregister.domain.SyncStatus;
@@ -30,11 +33,12 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
 
     private P2PSenderTransferDao p2PSenderTransferDao;
 
-    private String locationId=null;
+    private String locationId = null;
 
     @Before
     public void setUp() throws Exception {
-        p2PSenderTransferDao = new P2PSenderTransferDao();
+        P2POptions p2POptions = new P2POptions(true);
+        p2PSenderTransferDao = new P2PSenderTransferDao(p2POptions);
     }
 
     @Test
@@ -83,14 +87,14 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         int batchSize = 100;
 
         JsonData jsonData = Mockito.mock(JsonData.class);
-        Mockito.doReturn(jsonData).when(eventClientRepository).getClients(lastRecordId, batchSize,null);
+        Mockito.doReturn(jsonData).when(eventClientRepository).getClients(lastRecordId, batchSize, null);
 
         // Call the method under test
         JsonData actualJsonData = p2PSenderTransferDao.getJsonData(p2PSenderTransferDao.client, lastRecordId, batchSize);
 
 
         // Verify that the repository was called
-        Mockito.verify(eventClientRepository).getClients(lastRecordId, batchSize,null);
+        Mockito.verify(eventClientRepository).getClients(lastRecordId, batchSize, null);
         Assert.assertEquals(jsonData, actualJsonData);
     }
 
@@ -165,13 +169,13 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         int batchSize = 100;
 
         JsonData jsonData = Mockito.mock(JsonData.class);
-        Mockito.doReturn(jsonData).when(foreignEventClientRepository).getClients(lastRecordId, batchSize,null);
+        Mockito.doReturn(jsonData).when(foreignEventClientRepository).getClients(lastRecordId, batchSize, null);
 
         // Call the method under test
         JsonData actualJsonData = p2PSenderTransferDao.getJsonData(p2PSenderTransferDao.foreignClient, lastRecordId, batchSize);
 
         // Verify that the repository was called
-        Mockito.verify(foreignEventClientRepository).getClients(lastRecordId, batchSize,null);
+        Mockito.verify(foreignEventClientRepository).getClients(lastRecordId, batchSize, null);
         Assert.assertEquals(jsonData, actualJsonData);
     }
 
@@ -219,9 +223,9 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
 
         // Verify that the repository was called
         Mockito.verify(foreignEventClientRepository, Mockito.never()).getEvents(lastRecordId, batchSize, null);
-        Mockito.verify(foreignEventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize,null);
+        Mockito.verify(foreignEventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize, null);
         Mockito.verify(eventClientRepository, Mockito.never()).getEvents(lastRecordId, batchSize, null);
-        Mockito.verify(eventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize,null);
+        Mockito.verify(eventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize, null);
     }
 
 
