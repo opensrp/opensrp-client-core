@@ -146,6 +146,17 @@ public class EventClientRepository extends BaseRepository {
         createAdditionalColumns(db, Table.event.name(), Table.client.name());
     }
 
+    /**
+     * add locationId  column on event table
+     *
+     * @param db the database being upgraded
+     */
+    public static void addEventLocationId(SQLiteDatabase db) {
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), client_column.locationId.name(), VARCHAR);
+        DatabaseMigrationUtils.addIndexIfNotExists(db, Table.event.name(), client_column.locationId.name());
+
+    }
+
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
         Cursor cursor = null;
         try {
@@ -1504,8 +1515,7 @@ public class EventClientRepository extends BaseRepository {
         JsonData jsonData = null;
         JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
-        //TODO extract locationId on event table for easy lookup
-        String locationFilter = locationId != null ? String.format(" %s =? AND ", client_column.locationId.name()) : "";
+        String locationFilter = locationId != null ? String.format(" %s =? AND ", event_column.locationId.name()) : "";
 
         String query = "SELECT "
                 + event_column.json
@@ -2072,7 +2082,8 @@ public class EventClientRepository extends BaseRepository {
         formSubmissionId(ColumnAttribute.Type.text, false, true),
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true),
-        planId(ColumnAttribute.Type.text, false, true);
+        planId(ColumnAttribute.Type.text, false, true),
+        locationId(ColumnAttribute.Type.text, false, true);
 
         private ColumnAttribute column;
 
