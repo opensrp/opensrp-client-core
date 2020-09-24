@@ -1,5 +1,7 @@
 package org.smartregister.sync.helper;
 
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.support.annotation.StringRes;
 import android.support.annotation.VisibleForTesting;
@@ -23,6 +25,7 @@ import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.controller.ANMLocationController;
 
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -100,7 +103,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                     CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
                 }
             }
-        } catch (NoHttpResponseException e) {
+        } catch (Exception e) {
             Timber.e(e);
         }
     }
@@ -113,16 +116,12 @@ public class ValidateAssignmentHelper extends BaseHelper {
         allSharedPreferences.saveLastSyncDate(0);
     }
 
-    private void logoff(@StringRes int message) {
-        try {
-            syncUtils.logoutUser(message);
-        } catch (Exception e) {
-            Timber.e(e);
-        }
+    private void logoff(@StringRes int message) throws AuthenticatorException, OperationCanceledException, IOException {
+        syncUtils.logoutUser(message);
     }
 
 
-    private UserAssignmentDTO processRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) {
+    private UserAssignmentDTO processRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) throws AuthenticatorException, OperationCanceledException, IOException {
         Set<Long> ids = new HashSet<>(existingOrganizations);
         Set<String> prefsIds = new HashSet<>(existingJurisdictions);
         existingJurisdictions.removeAll(currentUserAssignment.getJurisdictions());
@@ -154,7 +153,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     @VisibleForTesting
-    protected void removeLocationsFromHierarchy(Set<String> removedAssignments) {
+    protected void removeLocationsFromHierarchy(Set<String> removedAssignments) throws AuthenticatorException, OperationCanceledException, IOException {
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
         for (String removedAssignment : removedAssignments) {
             locationTree.deleteLocation(removedAssignment);

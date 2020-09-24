@@ -1,8 +1,5 @@
 package org.smartregister.sync.helper;
 
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,7 +18,6 @@ import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.dto.UserAssignmentDTO;
-import org.smartregister.receiver.ValidateAssignmentReceiver;
 import org.smartregister.repository.AllSettings;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.LocationRepository;
@@ -31,7 +27,6 @@ import org.smartregister.service.UserService;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.view.controller.ANMLocationController;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -117,8 +112,9 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
                 .build();
     }
 
+
     @Test
-    public void testRemoveLocationsFromHierarchyShouldRemoveLocations() {
+    public void testRemoveLocationsFromHierarchyShouldRemoveLocations() throws Exception {
         Set<String> locations = new HashSet<>(Arrays.asList("853934ee-d1a6-4b69-9191-59047edbc9a8", "4ed8f536-5c08-4203-8a90-a7e13becb01d"));
         validateAssignmentHelper.removeLocationsFromHierarchy(locations);
         verify(settingsRepository).saveANMLocation(stringArgumentCaptor.capture());
@@ -132,7 +128,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
 
     @Test
-    public void testRemoveLocationsFromHierarchyShouldRemoveParentLocationIfOnlyChildIsRemoved() {
+    public void testRemoveLocationsFromHierarchyShouldRemoveParentLocationIfOnlyChildIsRemoved() throws Exception {
         Set<String> locations = Collections.singleton("67c5e0a4-132f-457b-b573-9abf5ec95c75");
         validateAssignmentHelper.removeLocationsFromHierarchy(locations);
         verify(settingsRepository).saveANMLocation(stringArgumentCaptor.capture());
@@ -153,7 +149,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
 
     @Test
-    public void testValidateUserAssignmentShouldLogoffAndResetSync() throws AuthenticatorException, OperationCanceledException, IOException {
+    public void testValidateUserAssignmentShouldLogoffAndResetSync() throws Exception {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
         when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
@@ -168,9 +164,8 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
     }
 
-
     @Test
-    public void testValidateUserAssignmentShouldClearRemovedAssignments() throws AuthenticatorException, OperationCanceledException, IOException {
+    public void testValidateUserAssignmentShouldClearRemovedAssignments() throws Exception {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
         when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
