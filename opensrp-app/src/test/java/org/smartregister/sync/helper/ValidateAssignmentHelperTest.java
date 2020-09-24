@@ -160,6 +160,20 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldDoNothingIfKeycloakIsNotEnabled() {
         validateAssignmentHelper.validateUserAssignment();
         verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(locationRepository);
+
+    }
+
+    @Test
+    public void testValidateUserAssignmentShouldDoNothingIfAPICallReturnsAnError() {
+        when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
+        when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.failure, null));
+        validateAssignmentHelper.validateUserAssignment();
+        verify(httpAgent).fetch(anyString());
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(locationRepository);
 
     }
 
@@ -170,6 +184,12 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
         when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
         validateAssignmentHelper.validateUserAssignment();
+
+        verify(httpAgent).fetch(anyString());
+        verify(planDefinitionRepository).findAllPlanDefinitionIds();
+        verify(locationRepository).getAllLocationIds();
+        verify(userService).fetchOrganizations();
+
         verify(syncUtils).logoutUser(R.string.account_new_assignment_logged_off);
 
         verify(allSharedPreferences).savePreference(LOCATION_LAST_SYNC_DATE, "0");
@@ -177,6 +197,10 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         verify(allSharedPreferences).savePreference(PLAN_LAST_SYNC_DATE, "0");
         verify(allSharedPreferences).savePreference(TASK_LAST_SYNC_DATE, "0");
         verify(allSharedPreferences).saveLastSyncDate(0);
+
+        verifyNoMoreInteractions(planDefinitionRepository);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(locationRepository);
 
     }
 
@@ -194,10 +218,14 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         when(settingsRepository.fetchANMLocation()).thenReturn(locationHierarchy);
 
         validateAssignmentHelper.validateUserAssignment();
-        verify(syncUtils, never()).logoutUser(R.string.account_new_assignment_logged_off);
 
         verify(allSharedPreferences, never()).savePreference(anyString(), eq("0"));
         verify(allSharedPreferences, never()).saveLastSyncDate(0);
+
+        verify(httpAgent).fetch(anyString());
+        verify(planDefinitionRepository).findAllPlanDefinitionIds();
+        verify(locationRepository).getAllLocationIds();
+        verify(userService).fetchOrganizations();
 
         verify(planDefinitionRepository).deletePlans(Collections.singleton("plan12"));
         verify(userService).saveOrganizations(new ArrayList<>(userAssignment.getOrganizationIds()));
