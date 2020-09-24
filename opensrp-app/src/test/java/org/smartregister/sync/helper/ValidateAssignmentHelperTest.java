@@ -37,6 +37,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -177,11 +178,18 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.failure, null));
         validateAssignmentHelper.validateUserAssignment();
-        verify(httpAgent).fetch(anyString());
+        verify(httpAgent).fetch("http://27.147.129.50:9979/rest/organization/user-assignment");
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(locationRepository);
 
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetUserAssignmentAgentShouldReturnErrorIfAgentIsNull() throws Exception {
+        assertNotNull(Whitebox.getInternalState(validateAssignmentHelper, "httpAgent"));
+        Whitebox.setInternalState(validateAssignmentHelper, "httpAgent", (HTTPAgent) null);
+        Whitebox.invokeMethod(validateAssignmentHelper, "getUserAssignment");
     }
 
 
