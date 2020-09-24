@@ -28,7 +28,6 @@ public class ValidateAssignmentReceiver extends BroadcastReceiver {
         if (instance != null) {
             destroy(context);
         }
-
         instance = new ValidateAssignmentReceiver();
         context.registerReceiver(instance,
                 new IntentFilter(ValidateAssignmentHelper.ACTION_ASSIGNMENT_REMOVED));
@@ -38,6 +37,7 @@ public class ValidateAssignmentReceiver extends BroadcastReceiver {
         try {
             if (instance != null) {
                 context.unregisterReceiver(instance);
+                instance = null;
             }
         } catch (IllegalArgumentException e) {
             Timber.e(e);
