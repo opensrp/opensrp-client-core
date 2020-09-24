@@ -1,6 +1,5 @@
 package org.smartregister.sync.helper;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -12,8 +11,6 @@ import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.CoreLibrary;
-import org.smartregister.DristhiConfiguration;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
@@ -38,11 +35,12 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -77,9 +75,6 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     private ANMLocationController anmLocationController;
 
     @Mock
-    private DristhiConfiguration configuration;
-
-    @Mock
     private HTTPAgent httpAgent;
 
     @Mock
@@ -99,13 +94,12 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
     @Before
     public void setUp() {
-        validateAssignmentHelper = new ValidateAssignmentHelper(syncUtils);
+        validateAssignmentHelper = spy(new ValidateAssignmentHelper(syncUtils));
         Whitebox.setInternalState(validateAssignmentHelper, "settingsRepository", settingsRepository);
         Whitebox.setInternalState(validateAssignmentHelper, "anmLocationController", anmLocationController);
         Whitebox.setInternalState(validateAssignmentHelper, "userService", userService);
         Whitebox.setInternalState(validateAssignmentHelper, "allSharedPreferences", allSharedPreferences);
         Whitebox.setInternalState(validateAssignmentHelper, "httpAgent", httpAgent);
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "configuration", configuration);
         Whitebox.setInternalState(validateAssignmentHelper, "locationRepository", locationRepository);
         Whitebox.setInternalState(validateAssignmentHelper, "planDefinitionRepository", planDefinitionRepository);
         when(settingsRepository.fetchANMLocation()).thenReturn(locationHierarchy);
@@ -114,12 +108,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
                 .organizationIds(Collections.singleton(1234L))
                 .plans(Collections.singleton("plan1"))
                 .build();
-        when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
-    }
-
-    @After
-    public void tearDown() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "configuration", (DristhiConfiguration) null);
+        doReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url)).when(validateAssignmentHelper).getFormattedBaseUrl();
     }
 
 
@@ -167,7 +156,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
     @Test
     public void testValidateUserAssignmentShouldDoNothingIfKeycloakIsNotEnabled() {
-        assertFalse(validateAssignmentHelper.validateUserAssignment());
+        validateAssignmentHelper.validateUserAssignment();
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(locationRepository);
@@ -178,10 +167,9 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldDoNothingIfAPICallReturnsAnError() {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.failure, null));
-        assertFalse(validateAssignmentHelper.validateUserAssignment());
+        validateAssignmentHelper.validateUserAssignment();
         verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
 
-        verify(configuration).dristhiBaseURL();
         verify(httpAgent).fetch("http://27.147.129.50:9979/rest/organization/user-assignment");
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(userService);
@@ -201,10 +189,9 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldLogoffAndResetSync() throws Exception {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
-        boolean validated = validateAssignmentHelper.validateUserAssignment();
+       validateAssignmentHelper.validateUserAssignment();
 
         verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
-        verify(configuration).dristhiBaseURL();
         verify(httpAgent).fetch(anyString());
         verify(planDefinitionRepository).findAllPlanDefinitionIds();
         verify(locationRepository).getAllLocationIds();
@@ -221,7 +208,6 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         verifyNoMoreInteractions(planDefinitionRepository);
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(locationRepository);
-        assertTrue(validated);
 
     }
 
@@ -237,13 +223,12 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         when(planDefinitionRepository.findAllPlanDefinitionIds()).thenReturn(new HashSet<>(Arrays.asList("plan1", "plan12")));
         when(settingsRepository.fetchANMLocation()).thenReturn(locationHierarchy);
 
-        boolean validated = validateAssignmentHelper.validateUserAssignment();
+         validateAssignmentHelper.validateUserAssignment();
 
         verify(allSharedPreferences, never()).savePreference(anyString(), eq("0"));
         verify(allSharedPreferences, never()).saveLastSyncDate(0);
 
         verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
-        verify(configuration).dristhiBaseURL();
         verify(httpAgent).fetch(anyString());
         verify(planDefinitionRepository).findAllPlanDefinitionIds();
         verify(locationRepository).getAllLocationIds();
@@ -254,7 +239,6 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
         verify(locationRepository).deleteLocations(Collections.singleton("b4d3fbde-3686-4472-b3c4-7e28ba455168"));
         verify(userService).saveJurisdictionIds(userAssignment.getJurisdictions());
-        assertTrue(validated);
 
     }
 }

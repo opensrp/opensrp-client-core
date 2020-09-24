@@ -79,10 +79,10 @@ public class ValidateAssignmentHelper extends BaseHelper {
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
     }
 
-    public boolean validateUserAssignment() {
+    public void validateUserAssignment() {
         boolean keycloakConfigured = allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
         if (!keycloakConfigured) {
-            return false;
+            return;
         }
         try {
             String assignment = getUserAssignment();
@@ -102,12 +102,10 @@ public class ValidateAssignmentHelper extends BaseHelper {
                     intent.putExtra(ASSIGNMENTS_REMOVED, removedAssignments);
                     CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
                 }
-                return true;
             }
         } catch (Exception e) {
             Timber.e(e);
         }
-        return false;
     }
 
     private void resetSync() {
@@ -174,20 +172,14 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     private String getUserAssignment() throws NoHttpResponseException {
-
         if (httpAgent == null) {
             throw new IllegalArgumentException(USER_ASSIGNMENT_URL + " http agent is null");
         }
-
         String baseUrl = getFormattedBaseUrl();
-
-
-        Response resp = httpAgent.fetch(MessageFormat.format("{0}{1}", baseUrl, USER_ASSIGNMENT_URL));
-
+        Response<String> resp = httpAgent.fetch(MessageFormat.format("{0}{1}", baseUrl, USER_ASSIGNMENT_URL));
         if (resp.isFailure()) {
             throw new NoHttpResponseException(USER_ASSIGNMENT_URL + " not returned data");
         }
-
-        return resp.payload().toString();
+        return resp.payload();
     }
 }
