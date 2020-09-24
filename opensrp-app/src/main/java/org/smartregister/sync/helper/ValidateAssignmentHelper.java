@@ -79,10 +79,10 @@ public class ValidateAssignmentHelper extends BaseHelper {
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
     }
 
-    public void validateUserAssignment() {
+    public boolean validateUserAssignment() {
         boolean keycloakConfigured = allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
         if (!keycloakConfigured) {
-            return;
+            return false;
         }
         try {
             String assignment = getUserAssignment();
@@ -102,10 +102,12 @@ public class ValidateAssignmentHelper extends BaseHelper {
                     intent.putExtra(ASSIGNMENTS_REMOVED, removedAssignments);
                     CoreLibrary.getInstance().context().applicationContext().sendBroadcast(intent);
                 }
+                return true;
             }
         } catch (Exception e) {
             Timber.e(e);
         }
+        return false;
     }
 
     private void resetSync() {

@@ -38,6 +38,7 @@ import java.util.Set;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.nullable;
@@ -166,7 +167,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
     @Test
     public void testValidateUserAssignmentShouldDoNothingIfKeycloakIsNotEnabled() {
-        validateAssignmentHelper.validateUserAssignment();
+        assertFalse(validateAssignmentHelper.validateUserAssignment());
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(locationRepository);
@@ -177,7 +178,10 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldDoNothingIfAPICallReturnsAnError() {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.failure, null));
-        validateAssignmentHelper.validateUserAssignment();
+        assertFalse(validateAssignmentHelper.validateUserAssignment());
+        verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
+
+        verify(configuration).dristhiBaseURL();
         verify(httpAgent).fetch("http://27.147.129.50:9979/rest/organization/user-assignment");
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(userService);
@@ -197,8 +201,10 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldLogoffAndResetSync() throws Exception {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
-        validateAssignmentHelper.validateUserAssignment();
+        boolean validated = validateAssignmentHelper.validateUserAssignment();
 
+        verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
+        verify(configuration).dristhiBaseURL();
         verify(httpAgent).fetch(anyString());
         verify(planDefinitionRepository).findAllPlanDefinitionIds();
         verify(locationRepository).getAllLocationIds();
@@ -215,6 +221,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         verifyNoMoreInteractions(planDefinitionRepository);
         verifyNoMoreInteractions(userService);
         verifyNoMoreInteractions(locationRepository);
+        assertTrue(validated);
 
     }
 
@@ -230,11 +237,13 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         when(planDefinitionRepository.findAllPlanDefinitionIds()).thenReturn(new HashSet<>(Arrays.asList("plan1", "plan12")));
         when(settingsRepository.fetchANMLocation()).thenReturn(locationHierarchy);
 
-        validateAssignmentHelper.validateUserAssignment();
+        boolean validated = validateAssignmentHelper.validateUserAssignment();
 
         verify(allSharedPreferences, never()).savePreference(anyString(), eq("0"));
         verify(allSharedPreferences, never()).saveLastSyncDate(0);
 
+        verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
+        verify(configuration).dristhiBaseURL();
         verify(httpAgent).fetch(anyString());
         verify(planDefinitionRepository).findAllPlanDefinitionIds();
         verify(locationRepository).getAllLocationIds();
@@ -245,6 +254,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
         verify(locationRepository).deleteLocations(Collections.singleton("b4d3fbde-3686-4472-b3c4-7e28ba455168"));
         verify(userService).saveJurisdictionIds(userAssignment.getJurisdictions());
+        assertTrue(validated);
 
     }
 }

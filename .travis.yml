@@ -49,7 +49,7 @@ before_script:
   - chmod +x gradlew
 
 script:
-  - ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport  --stacktrace
+  - ./gradlew opensrp-app:clean :opensrp-app:testDebug --tests="org.smartregister.sync.helper.ValidateAssignmentHelperTest" --stacktrace
 
 after_success:
   - ./gradlew opensrp-app:coveralls --stacktrace
