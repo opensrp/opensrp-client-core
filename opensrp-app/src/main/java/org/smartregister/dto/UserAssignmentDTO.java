@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@Builder(toBuilder = true)
 public class UserAssignmentDTO implements Serializable {
 
     private Set<Long> organizationIds;
@@ -22,4 +22,6 @@ public class UserAssignmentDTO implements Serializable {
     private Set<String> jurisdictions;
 
     private Set<String> plans;
+
+    private boolean isRemoved;
 }

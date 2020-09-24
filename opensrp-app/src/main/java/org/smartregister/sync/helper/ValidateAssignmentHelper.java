@@ -63,6 +63,8 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     private final ANMLocationController anmLocationController;
 
+    private final HTTPAgent httpAgent;
+
     public ValidateAssignmentHelper(SyncUtils syncUtils) {
         this.syncUtils = syncUtils;
         userService = CoreLibrary.getInstance().context().userService();
@@ -71,27 +73,27 @@ public class ValidateAssignmentHelper extends BaseHelper {
         settingsRepository = CoreLibrary.getInstance().context().allSettings();
         allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
         anmLocationController = CoreLibrary.getInstance().context().anmLocationController();
+        httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
     }
 
     public void validateUserAssignment() {
-        boolean keycloakConfigured = CoreLibrary.getInstance().context().allSharedPreferences().getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
+        boolean keycloakConfigured = allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
         if (!keycloakConfigured) {
             return;
         }
         try {
             String assignment = getUserAssignment();
             if (StringUtils.isNotBlank(assignment)) {
-                UserAssignmentDTO currentUserAssignment = new Gson().fromJson(assignment, UserAssignmentDTO.class);
+                UserAssignmentDTO currentUserAssignment = gson.fromJson(assignment, UserAssignmentDTO.class);
                 Set<Long> existingOrganizations = userService.fetchOrganizations();
                 Set<String> existingJurisdictions = new HashSet<>(locationRepository.getAllLocationIds());
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
-                UserAssignmentDTO removedAssignments = getRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
-                processRemovedAssignments(removedAssignments);
+                UserAssignmentDTO removedAssignments = processRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
                 if (newAssignments) {
                     logoff(R.string.account_new_assignment_logged_off);
                     resetSync();
-                } else {
+                } else if (removedAssignments.isRemoved()) {
                     Intent intent = new Intent();
                     intent.setAction(ACTION_ASSIGNMENT_REMOVED);
                     intent.putExtra(ASSIGNMENTS_REMOVED, removedAssignments);
@@ -105,7 +107,6 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     private void resetSync() {
         allSharedPreferences.savePreference(LOCATION_LAST_SYNC_DATE, "0");
-        allSharedPreferences.savePreference(STRUCTURES_LAST_SYNC_DATE, "0");
         allSharedPreferences.savePreference(STRUCTURES_LAST_SYNC_DATE, "0");
         allSharedPreferences.savePreference(PLAN_LAST_SYNC_DATE, "0");
         allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
@@ -121,23 +122,34 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
 
-    private void processRemovedAssignments(UserAssignmentDTO removedAssignments) {
+    private UserAssignmentDTO processRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) {
+        Set<Long> ids = new HashSet<>(existingOrganizations);
+        Set<String> prefsIds = new HashSet<>(existingJurisdictions);
+        existingJurisdictions.removeAll(currentUserAssignment.getJurisdictions());
+        existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
+        existingPlans.removeAll(currentUserAssignment.getPlans());
+
+        boolean removed = false;
+        UserAssignmentDTO removedAssignments = UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
+
         if (!Utils.isEmptyCollection(removedAssignments.getPlans())) {
             planDefinitionRepository.deletePlans(removedAssignments.getPlans());
+            removed = true;
         }
 
         if (!Utils.isEmptyCollection(removedAssignments.getOrganizationIds())) {
-            Set<Long> ids = userService.fetchOrganizations();
             ids.removeAll(removedAssignments.getOrganizationIds());
             userService.saveOrganizations(new ArrayList<>(ids));
+            removed = true;
         }
         if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
             locationRepository.deleteLocations(removedAssignments.getJurisdictions());
             removeLocationsFromHierarchy(removedAssignments.getJurisdictions());
-            Set<String> prefsIds = userService.fetchJurisdictionIds();
             prefsIds.removeAll(removedAssignments.getJurisdictions());
             userService.saveJurisdictionIds(prefsIds);
+            removed = true;
         }
+        return removedAssignments.toBuilder().isRemoved(removed).build();
 
     }
 
@@ -155,13 +167,6 @@ public class ValidateAssignmentHelper extends BaseHelper {
         }
     }
 
-    private UserAssignmentDTO getRemovedAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions, Set<String> existingPlans) {
-        existingJurisdictions.removeAll(currentUserAssignment.getJurisdictions());
-        existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
-        existingPlans.removeAll(currentUserAssignment.getPlans());
-        return UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
-
-    }
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
         return !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds()) || !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
@@ -169,7 +174,6 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     private String getUserAssignment() throws NoHttpResponseException {
 
-        HTTPAgent httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         if (httpAgent == null) {
             throw new IllegalArgumentException(USER_ASSIGNMENT_URL + " http agent is null");
         }
