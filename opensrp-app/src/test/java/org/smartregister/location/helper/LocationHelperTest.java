@@ -14,7 +14,6 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
-import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.form.FormLocation;

@@ -17,7 +17,6 @@ import org.smartregister.domain.Jurisdiction;
 import org.smartregister.domain.PlanDefinition;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
-import org.smartregister.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,7 +26,6 @@ import java.util.TreeSet;
 
 import timber.log.Timber;
 
-import static org.apache.commons.lang3.StringUtils.repeat;
 import static org.smartregister.domain.PlanDefinition.PlanStatus.ACTIVE;
 
 /**
