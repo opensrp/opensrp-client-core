@@ -21,6 +21,7 @@ import org.smartregister.service.HTTPAgent;
 import org.smartregister.service.UserService;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
+import org.smartregister.view.controller.ANMLocationController;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -48,17 +49,19 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
     public static final Gson gson = new Gson();
 
-    private SyncUtils syncUtils;
+    private final SyncUtils syncUtils;
 
-    private UserService userService;
+    private final UserService userService;
 
-    private PlanDefinitionRepository planDefinitionRepository;
+    private final PlanDefinitionRepository planDefinitionRepository;
 
-    private LocationRepository locationRepository;
+    private final LocationRepository locationRepository;
 
-    private AllSettings settingsRepository;
+    private final AllSettings settingsRepository;
 
-    private AllSharedPreferences allSharedPreferences;
+    private final AllSharedPreferences allSharedPreferences;
+
+    private final ANMLocationController anmLocationController;
 
     public ValidateAssignmentHelper(SyncUtils syncUtils) {
         this.syncUtils = syncUtils;
@@ -67,6 +70,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         locationRepository = CoreLibrary.getInstance().context().getLocationRepository();
         settingsRepository = CoreLibrary.getInstance().context().allSettings();
         allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+        anmLocationController = CoreLibrary.getInstance().context().anmLocationController();
     }
 
     public void validateUserAssignment() {
@@ -144,7 +148,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
             locationTree.deleteLocation(removedAssignment);
         }
         settingsRepository.saveANMLocation(gson.toJson(locationTree));
-        CoreLibrary.getInstance().context().anmLocationController().evict();
+        anmLocationController.evict();
         String defaultLocationUuid = allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM());
         if (StringUtils.isNotBlank(defaultLocationUuid) && removedAssignments.contains(defaultLocationUuid)) {
             logoff(R.string.account_new_assignment_logged_off);
