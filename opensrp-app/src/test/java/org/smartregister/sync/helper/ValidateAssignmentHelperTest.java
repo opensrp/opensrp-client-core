@@ -1,5 +1,6 @@
 package org.smartregister.sync.helper;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -102,7 +103,7 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         Whitebox.setInternalState(validateAssignmentHelper, "userService", userService);
         Whitebox.setInternalState(validateAssignmentHelper, "allSharedPreferences", allSharedPreferences);
         Whitebox.setInternalState(validateAssignmentHelper, "httpAgent", httpAgent);
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), configuration, configuration);
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "configuration", configuration);
         Whitebox.setInternalState(validateAssignmentHelper, "locationRepository", locationRepository);
         Whitebox.setInternalState(validateAssignmentHelper, "planDefinitionRepository", planDefinitionRepository);
         when(settingsRepository.fetchANMLocation()).thenReturn(locationHierarchy);
@@ -111,6 +112,12 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
                 .organizationIds(Collections.singleton(1234L))
                 .plans(Collections.singleton("plan1"))
                 .build();
+        when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
+    }
+
+    @After
+    public void tearDown() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "configuration", (DristhiConfiguration) null);
     }
 
 
@@ -182,7 +189,6 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldLogoffAndResetSync() throws Exception {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
-        when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
         validateAssignmentHelper.validateUserAssignment();
 
         verify(httpAgent).fetch(anyString());
@@ -208,7 +214,6 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
     public void testValidateUserAssignmentShouldClearRemovedAssignments() throws Exception {
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
-        when(configuration.dristhiBaseURL()).thenReturn(RuntimeEnvironment.application.getString(R.string.opensrp_url));
         Set<Long> organizations = new HashSet<>(Arrays.asList(1234L, 1235L));
         List<String> jurisdictions = Arrays.asList("67c5e0a4-132f-457b-b573-9abf5ec95c75", "b4d3fbde-3686-4472-b3c4-7e28ba455168");
         when(userService.fetchOrganizations()).thenReturn(organizations);
