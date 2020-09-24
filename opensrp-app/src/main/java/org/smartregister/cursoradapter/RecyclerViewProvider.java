@@ -16,6 +16,7 @@ import org.smartregister.view.viewholder.OnClickFormLauncher;
  * Created by keyman on 09/07/18.
  */
 public interface RecyclerViewProvider<V extends RecyclerView.ViewHolder> {
+
     void getView(Cursor cursor, SmartRegisterClient client, V viewHolder);
 
     void getFooterView(RecyclerView.ViewHolder viewHolder, int currentPageCount, int totalCount, boolean hasNextPage, boolean hasPreviousPage);

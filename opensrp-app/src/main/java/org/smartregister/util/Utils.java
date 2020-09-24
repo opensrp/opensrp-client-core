@@ -964,4 +964,18 @@ public class Utils {
         context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
         context.userService().logoutSession();
     }
+
+
+    @NonNull
+    public static String getClientAge(String dobString, String translatedYearInitial) {
+        String age = dobString;
+        if (dobString.contains(translatedYearInitial)) {
+            String extractedYear = dobString.substring(0, dobString.indexOf(translatedYearInitial));
+            int year = dobString.contains(translatedYearInitial) ? Integer.parseInt(extractedYear) : 0;
+            if (year >= 5) {
+                age = extractedYear;
+            }
+        }
+        return age;
+    }
 }

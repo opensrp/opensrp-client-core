@@ -526,4 +526,11 @@ public class AllConstants {
         public static String ADVANCED = "Advanced";
         public static String NORMAL = "Normal";
     }
+
+    public interface Table {
+
+        interface Column {
+
+        }
+    }
 }

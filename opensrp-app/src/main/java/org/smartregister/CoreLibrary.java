@@ -12,6 +12,7 @@ import android.text.TextUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
+import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.p2p.P2PLibrary;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
@@ -25,6 +26,8 @@ import org.smartregister.repository.dao.TaskDaoImpl;
 import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
+
+import java.util.HashMap;
 
 import timber.log.Timber;
 
@@ -51,6 +54,8 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     private AccountManager accountManager;
 
     private AccountAuthenticatorXml authenticatorXml;
+
+    private HashMap<String, ModuleConfiguration> moduleConfigurations;
 
     public static void init(Context context) {
         init(context, null);
@@ -256,5 +261,25 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                 Timber.e(e);
             }
         }
+    }
+
+    public boolean addModuleConfiguration(@NonNull String moduleName, @NonNull ModuleConfiguration moduleConfiguration) {
+        this.moduleConfigurations.put(moduleName, moduleConfiguration);
+        return true;
+    }
+
+    public boolean removeModuleConfiguration(@NonNull String moduleName) {
+        return this.moduleConfigurations.remove(moduleName) != null;
+    }
+
+    @NonNull
+    public ModuleConfiguration getConfiguration(@NonNull String moduleName) {
+        ModuleConfiguration moduleConfiguration = this.moduleConfigurations.get(moduleName);
+
+        if (moduleConfiguration == null) {
+            throw new IllegalStateException("The module configuration for " + moduleName + " could not be found! Kindly make sure that this is configured correctly through CoreLibrary.getInstance().addModuleConfiguration()");
+        }
+        return moduleConfiguration;
+
     }
 }
