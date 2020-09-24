@@ -38,6 +38,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.nullable;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -138,6 +139,21 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         assertFalse(locationTree.hasLocation("67c5e0a4-132f-457b-b573-9abf5ec95c75"));
         assertFalse(locationTree.hasLocation("4ed8f536-5c08-4203-8a90-a7e13becb01d"));//parent is removed
         verify(anmLocationController).evict();
+    }
+
+    @Test
+    public void testRemoveLocationsFromHierarchyShouldLogoffIfDefaultLocationIsRemoved() throws Exception {
+        when(allSharedPreferences.fetchDefaultLocalityId(nullable(String.class))).thenReturn("67c5e0a4-132f-457b-b573-9abf5ec95c75");
+        Set<String> locations = Collections.singleton("67c5e0a4-132f-457b-b573-9abf5ec95c75");
+        validateAssignmentHelper.removeLocationsFromHierarchy(locations);
+        verify(settingsRepository).saveANMLocation(stringArgumentCaptor.capture());
+        assertNotEquals(locationHierarchy, stringArgumentCaptor.getValue());
+        LocationTree locationTree = gson.fromJson(stringArgumentCaptor.getValue(), LocationTree.class);
+
+        assertFalse(locationTree.hasLocation("67c5e0a4-132f-457b-b573-9abf5ec95c75"));
+        assertFalse(locationTree.hasLocation("4ed8f536-5c08-4203-8a90-a7e13becb01d"));//parent is removed
+        verify(anmLocationController).evict();
+        verify(syncUtils).logoutUser(R.string.default_location_revoked_logged_off);
     }
 
     @Test

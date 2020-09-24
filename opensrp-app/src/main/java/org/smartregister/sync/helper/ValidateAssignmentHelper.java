@@ -162,7 +162,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         anmLocationController.evict();
         String defaultLocationUuid = allSharedPreferences.fetchDefaultLocalityId(allSharedPreferences.fetchRegisteredANM());
         if (StringUtils.isNotBlank(defaultLocationUuid) && removedAssignments.contains(defaultLocationUuid)) {
-            logoff(R.string.account_new_assignment_logged_off);
+            logoff(R.string.default_location_revoked_logged_off);
         }
     }
 
