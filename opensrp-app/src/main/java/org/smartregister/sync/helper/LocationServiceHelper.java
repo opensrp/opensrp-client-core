@@ -58,6 +58,7 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
+    private static final String LOCATION_IDS = "location_ids";
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -165,7 +166,7 @@ public class LocationServiceHelper extends BaseHelper {
 
             String preferenceLocationIds = allSharedPreferences.getPreference(JURISDICTION_IDS);
             if (StringUtils.isNotBlank(preferenceLocationIds)) {
-                request.put("location_ids", new JSONArray(Arrays.asList(preferenceLocationIds.split(","))));
+                request.put(LOCATION_IDS, new JSONArray(Arrays.asList(preferenceLocationIds.split(","))));
             }
         } else {
             request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));

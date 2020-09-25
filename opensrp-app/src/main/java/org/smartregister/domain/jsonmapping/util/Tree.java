@@ -124,7 +124,7 @@ public class Tree<K, T> {
         LinkedHashSet<K> parent = parentChildren.get(node.getParent());
         if (parent != null && parent.size() == 1) {
             deleteNode(node.getParent());
-        } else {
+        } else if (parent != null) {
             parent.remove(id);
         }
     }
