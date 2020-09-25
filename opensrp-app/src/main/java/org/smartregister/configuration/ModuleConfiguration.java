@@ -4,9 +4,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
- * This is the object used to configure any configurations added to OPD. We mostly use objects that are
+ * This is the object used to configure any configurations added to a module. We mostly use objects that are
  * instantiated using {@link org.smartregister.util.ConfigurationInstancesHelper} which means
  * that the constructors of any of the classes should not have any parameters
  * <p>
@@ -52,10 +53,25 @@ public class ModuleConfiguration {
         return builder.registerQueryProvider;
     }
 
+    @NonNull
+    public ConfigurableViewsLibrary getConfigurableViewsLibrary() {
+        return builder.configurableViewsLibrary;
+    }
+
 
     @Nullable
-    public ModuleFormProcessor getFormProcessingClass(String eventType) {
+    public Class<? extends ModuleFormProcessor> getFormProcessingClass(String eventType) {
         return builder.formProcessingMap.get(eventType);
+    }
+
+    @NonNull
+    public Class<? extends ModuleFormProcessor> getFormProcessorClass() {
+        return builder.moduleFormProcessorClass;
+    }
+
+    @NonNull
+    public String getRegisterTitle() {
+        return builder.registerTitle;
     }
 
     public int getMaxCheckInDurationInMinutes() {
@@ -77,16 +93,24 @@ public class ModuleConfiguration {
         @NonNull
         private Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider;
 
+        // TODO: FIX THIS
+        @Nullable
+        private Class<? extends ModuleFormProcessor> moduleFormProcessorClass;
+
         @NonNull
-        private HashMap<String, ModuleFormProcessor> formProcessingMap = new HashMap<>();
+        private HashMap<String, Class<? extends ModuleFormProcessor>> formProcessingMap = new HashMap<>();
 
         private boolean isBottomNavigationEnabled;
 
         private ModuleMetadata opdMetadata;
         private int maxCheckInDurationInMinutes = 24 * 60;
+        private ConfigurableViewsLibrary configurableViewsLibrary;
+        private String registerTitle;
 
-        public Builder(@NonNull Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider) {
+        public Builder(@NonNull String registerTitle, @NonNull Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider, @NonNull ConfigurableViewsLibrary configurableViewsLibrary) {
             this.registerQueryProvider = registerQueryProvider;
+            this.configurableViewsLibrary = configurableViewsLibrary;
+            this.registerTitle = registerTitle;
         }
 
         public Builder setRegisterProviderMetadata(@Nullable Class<? extends RegisterProviderMetadata> registerProviderMetadata) {
@@ -114,8 +138,13 @@ public class ModuleConfiguration {
             return this;
         }
 
-        public Builder addModuleFormProcessingClass(String eventType, ModuleFormProcessor opdFormProcessor) {
+        public Builder addModuleFormProcessingClass(String eventType, Class<? extends ModuleFormProcessor> opdFormProcessor) {
             this.formProcessingMap.put(eventType, opdFormProcessor);
+            return this;
+        }
+
+        public Builder setModuleFormProcessorClass(@Nullable Class<? extends ModuleFormProcessor> moduleFormProcessorClass) {
+            this.moduleFormProcessorClass = moduleFormProcessorClass;
             return this;
         }
 
@@ -123,6 +152,13 @@ public class ModuleConfiguration {
             return new ModuleConfiguration(this);
         }
 
+    }
+
+    public interface ConfigurableViewsLibrary {
+
+        void registerViewConfigurations(List<String> viewIdentifiers);
+
+        void unregisterViewConfigurations(List<String> viewIdentifiers);
     }
 
 }

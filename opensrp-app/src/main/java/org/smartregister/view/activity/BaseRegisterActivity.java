@@ -42,7 +42,7 @@ import timber.log.Timber;
  * Created by keyman on 26/06/2018.
  */
 
-public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View, ConfigurableRegisterActivityContract.View {
+public abstract class BaseRegisterActivity extends SecuredNativeSmartRegisterActivity implements BaseRegisterContract.View {
 
     protected OpenSRPViewPager mPager;
 

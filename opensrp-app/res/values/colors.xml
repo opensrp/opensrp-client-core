@@ -62,5 +62,7 @@
     <color name="white">#FFFFFF</color>
 
     <color name="translucent_yellow">#CCEDCA00</color>
+    <color name="brown">#C15F26</color>
+    <color name="chw_primary">@color/customAppThemeBlue</color>
 
 </resources>

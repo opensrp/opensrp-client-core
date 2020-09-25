@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center_horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:text="@string/no_matching_record_found_on_this_device"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="46dp">
+
+        <Button
+            android:id="@+id/cancel_no_match_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="@null"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text="@string/cancel"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="#999999" />
+
+        <Button
+            android:id="@+id/go_to_advanced_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/brown"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>

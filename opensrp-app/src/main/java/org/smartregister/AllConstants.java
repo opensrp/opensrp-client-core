@@ -485,6 +485,7 @@ public class AllConstants {
             String IS_NEW = "is_new";
             String FORM_VERSION = "form_version";
             String CLIENT_FORM_ID = "client_form_id";
+            String ENCOUNTER_TYPE = "encounter_type";
         }
     }
 
@@ -527,10 +528,15 @@ public class AllConstants {
         public static String NORMAL = "Normal";
     }
 
-    public interface Table {
+    public interface RequestCode {
+        int START_JSON_FORM = 2244;
+    }
 
-        interface Column {
+    public interface IntentExtra {
 
+        interface JsonForm {
+            String JSON = "json";
+            String FORM = "form";
         }
     }
 }

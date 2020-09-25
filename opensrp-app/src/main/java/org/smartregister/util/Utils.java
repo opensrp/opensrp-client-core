@@ -37,6 +37,7 @@ import android.support.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -977,5 +978,9 @@ public class Utils {
             }
         }
         return age;
+    }
+
+    public static float convertDpToPixel(float dp, @NonNull Context context) {
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 }

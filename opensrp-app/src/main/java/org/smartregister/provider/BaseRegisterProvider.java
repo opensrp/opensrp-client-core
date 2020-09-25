@@ -41,7 +41,7 @@ import java.util.Map;
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 24-09-2020
  */
 
-public abstract class BaseRegisterProvider extends ConfigurableComponentImpl implements RecyclerViewProvider<BaseRegisterViewHolder>, ConfigurableComponent {
+public class BaseRegisterProvider extends ConfigurableComponentImpl implements RecyclerViewProvider<BaseRegisterViewHolder>, ConfigurableComponent {
 
     private final LayoutInflater inflater;
     private View.OnClickListener onClickListener;

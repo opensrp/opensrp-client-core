@@ -442,4 +442,8 @@
     <string name="care_giver_initials">CG</string>
     <string name="opd_str_page_info">Page {0} of {1}</string>
     <string name="abbrv_years">y</string>
+
+
+    <string name="cancel">Cancel</string>
+    <string name="no_matching_record_found_on_this_device">No matching record found on this device.</string>
 </resources>
