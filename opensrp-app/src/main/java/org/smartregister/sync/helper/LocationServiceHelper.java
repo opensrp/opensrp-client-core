@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Location;
@@ -39,6 +40,7 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.LocationConstants.DISPLAY;
 import static org.smartregister.AllConstants.LocationConstants.LOCATION;
 import static org.smartregister.AllConstants.LocationConstants.LOCATIONS;
@@ -57,6 +59,11 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
+    private static final String LOCATION_IDS = "location_ids";
+    private static final String IS_JURISDICTION = "is_jurisdiction";
+    private static final String LOCATION_NAMES = "location_names";
+    private static final String PARENT_ID = "parent_id";
+
 
     public static Gson locationGson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HHmm")
             .registerTypeAdapter(LocationProperty.class, new PropertiesConverter()).create();
@@ -153,18 +160,23 @@ public class LocationServiceHelper extends BaseHelper {
 
         String baseUrl = getFormattedBaseUrl();
 
-        Response resp;
+        Response<String> resp;
 
         JSONObject request = new JSONObject();
-        request.put("is_jurisdiction", isJurisdiction);
+        request.put(IS_JURISDICTION, isJurisdiction);
         request.put(RETURN_COUNT, returnCount);
         if (isJurisdiction) {
             String preferenceLocationNames = allSharedPreferences.getPreference(OPERATIONAL_AREAS);
-            request.put("location_names", new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
+            request.put(LOCATION_NAMES, new JSONArray(Arrays.asList(preferenceLocationNames.split(","))));
+
+            String preferenceLocationIds = allSharedPreferences.getPreference(JURISDICTION_IDS);
+            if (StringUtils.isNotBlank(preferenceLocationIds)) {
+                request.put(LOCATION_IDS, new JSONArray(Arrays.asList(preferenceLocationIds.split(","))));
+            }
         } else {
-            request.put("parent_id", new JSONArray(Arrays.asList(locationFilterValue.split(","))));
+            request.put(PARENT_ID, new JSONArray(Arrays.asList(locationFilterValue.split(","))));
         }
-        request.put("serverVersion", serverVersion);
+        request.put(AllConstants.SERVER_VERSION, serverVersion);
 
         resp = httpAgent.post(MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
                 request.toString());
@@ -177,7 +189,7 @@ public class LocationServiceHelper extends BaseHelper {
             totalRecords = resp.getTotalRecords();
         }
 
-        return resp.payload().toString();
+        return resp.payload();
     }
 
     private String getMaxServerVersion(List<Location> locations) {
@@ -216,7 +228,7 @@ public class LocationServiceHelper extends BaseHelper {
         requestPayload.put("locationTopLevel", configs.getTopAllowedLocationLevel());
         requestPayload.put("locationTagsQueried", new JSONArray(new Gson().toJson(configs.getSynchronizedLocationTags())));
 
-        Response resp = httpAgent.post(
+        Response<String> resp = httpAgent.post(
                 MessageFormat.format("{0}{1}",
                         baseUrl,
                         COMMON_LOCATIONS_SERVICE_URL),
@@ -227,7 +239,7 @@ public class LocationServiceHelper extends BaseHelper {
         }
 
         List<org.smartregister.domain.jsonmapping.Location> receivedOpenMrsLocations =
-                new Gson().fromJson(resp.payload().toString(),
+                new Gson().fromJson(resp.payload(),
                         new TypeToken<List<org.smartregister.domain.jsonmapping.Location>>() {
                         }.getType());
 
@@ -292,7 +304,7 @@ public class LocationServiceHelper extends BaseHelper {
             String jsonPayload = locationGson.toJson(locations);
             String baseUrl = getFormattedBaseUrl();
 
-            String isJurisdictionParam = "?is_jurisdiction=true";
+            String isJurisdictionParam = "?" + IS_JURISDICTION + "=true";
             Response<String> response = httpAgent.postWithJsonResponse(
                     MessageFormat.format("{0}{1}{2}",
                             baseUrl,
@@ -391,10 +403,10 @@ public class LocationServiceHelper extends BaseHelper {
             String baseUrl = getFormattedBaseUrl();
 
             JSONObject request = new JSONObject();
-            request.put("is_jurisdiction", true);
-            request.put("serverVersion", 0);
+            request.put(IS_JURISDICTION, true);
+            request.put(AllConstants.SERVER_VERSION, 0);
 
-            Response resp = httpAgent.post(
+            Response<String> resp = httpAgent.post(
                     MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
                     request.toString());
 
@@ -403,7 +415,7 @@ public class LocationServiceHelper extends BaseHelper {
             }
 
             List<Location> locations = locationGson.fromJson(
-                    resp.payload().toString(),
+                    resp.payload(),
                     new TypeToken<List<Location>>() {
                     }.getType()
             );

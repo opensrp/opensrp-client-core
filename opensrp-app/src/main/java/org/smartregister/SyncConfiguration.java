@@ -166,7 +166,6 @@ public abstract class SyncConfiguration {
         return false;
     }
 
-
     public boolean runPlanEvaluationOnClientProcessing() {
         return false;
     }
@@ -184,4 +183,5 @@ public abstract class SyncConfiguration {
     }
 
     public abstract Class<? extends BaseLoginActivity> getAuthenticationActivity();
+
 }
