@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -53,10 +54,14 @@ public class SyncUtils {
     }
 
     public void logoutUser() throws AuthenticatorException, OperationCanceledException, IOException {
+        logoutUser(R.string.account_disabled_logged_off);
+    }
+
+    public void logoutUser(@StringRes  int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
         opensrpContent.userService().forceRemoteLogin(opensrpContent.allSharedPreferences().fetchRegisteredANM());
 
-        Intent logoutUserIntent = getLogoutUserIntent();
+        Intent logoutUserIntent = getLogoutUserIntent(logoutMessage);
 
         AccountManagerFuture<Bundle> reAuthenticateFuture = AccountHelper.reAuthenticateUserAfterSessionExpired(opensrpContent.allSharedPreferences().fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
         Intent accountAuthenticatorIntent = reAuthenticateFuture.getResult().getParcelable(AccountManager.KEY_INTENT);
@@ -68,7 +73,7 @@ public class SyncUtils {
     }
 
     @NonNull
-    private Intent getLogoutUserIntent() {
+    private Intent getLogoutUserIntent(@StringRes int logoutMessage) {
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setPackage(context.getPackageName());
@@ -80,7 +85,7 @@ public class SyncUtils {
             intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(ACCOUNT_DISABLED, context.getString(R.string.account_disabled_logged_off));
+            intent.putExtra(ACCOUNT_DISABLED, context.getString(logoutMessage));
         }
 
         return intent;

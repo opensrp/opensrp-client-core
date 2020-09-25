@@ -25,6 +25,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
+import org.smartregister.sync.helper.ValidateAssignmentHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
@@ -45,6 +46,8 @@ public class SyncIntentService extends BaseSyncIntentService {
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
+
+    private ValidateAssignmentHelper validateAssignmentHelper;
     private long totalRecords;
     private int fetchedRecords = 0;
 
@@ -60,6 +63,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         this.context = context;
         httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
         syncUtils = new SyncUtils(getBaseContext());
+        validateAssignmentHelper = new ValidateAssignmentHelper(syncUtils);
     }
 
     @Override
@@ -307,6 +311,8 @@ public class SyncIntentService extends BaseSyncIntentService {
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
             ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
+            validateAssignmentHelper.validateUserAssignment();
+
         }
 
     }
