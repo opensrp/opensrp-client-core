@@ -119,6 +119,8 @@ public class Tree<K, T> {
      */
     public void deleteNode(K id) {
         TreeNode<K, T> node = getNode(id);
+        if (node == null)
+            return;
         removeNode(id);
         parentChildren.remove(id);
         LinkedHashSet<K> parent = parentChildren.get(node.getParent());
