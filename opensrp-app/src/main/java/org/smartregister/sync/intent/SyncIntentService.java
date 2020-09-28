@@ -42,7 +42,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
-    private static final String ADD_URL = "/rest/event/add";
+    private static final String ADD_URL = "rest/event/add";
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
