@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
-import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.dto.UserAssignmentDTO;
@@ -30,6 +29,7 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -129,6 +129,15 @@ public class ValidateAssignmentHelper extends BaseHelper {
         existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
         existingPlans.removeAll(currentUserAssignment.getPlans());
 
+        List<String> existingHigherLevelJurisdictions = new ArrayList<>();
+        LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
+        for (String location : existingJurisdictions) {
+            if (locationTree.hasLocation(location)) {
+                existingHigherLevelJurisdictions.add(location);
+            }
+        }
+        existingJurisdictions.removeAll(existingHigherLevelJurisdictions);
+
         boolean removed = false;
         UserAssignmentDTO removedAssignments = UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
 
@@ -144,7 +153,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         }
         if (!Utils.isEmptyCollection(removedAssignments.getJurisdictions())) {
             locationRepository.deleteLocations(removedAssignments.getJurisdictions());
-            removeLocationsFromHierarchy(removedAssignments.getJurisdictions());
+            removeLocationsFromHierarchy(locationTree, removedAssignments.getJurisdictions());
             prefsIds.removeAll(removedAssignments.getJurisdictions());
             userService.saveJurisdictionIds(prefsIds);
             removed = true;
@@ -154,8 +163,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     @VisibleForTesting
-    protected void removeLocationsFromHierarchy(Set<String> removedAssignments) throws AuthenticatorException, OperationCanceledException, IOException {
-        LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
+    protected void removeLocationsFromHierarchy(LocationTree locationTree, Set<String> removedAssignments) throws AuthenticatorException, OperationCanceledException, IOException {
         for (String removedAssignment : removedAssignments) {
             locationTree.deleteLocation(removedAssignment);
         }
@@ -169,23 +177,22 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
-        boolean hasNewOrganizations = existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds());
-        if (hasNewOrganizations && existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions())) {
-            return false;
-        } else if (!hasNewOrganizations) {
+        boolean hasNewOrganizations = !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds());
+        if (hasNewOrganizations) {
             return true;
+        } else if (existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions())) {
+            return false;
         } else {
             LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-            HashSet<String> existing = new HashSet<>(existingJurisdictions);
-            existing.removeAll(currentUserAssignment.getJurisdictions());
-            for (String location : existing) {
+            Set<String> newJurisdictions = new HashSet<>(currentUserAssignment.getJurisdictions());
+            newJurisdictions.removeAll(existingJurisdictions);
+            for (String location : newJurisdictions) {
                 if (!locationTree.hasLocation(location)) {
-                    return false;
+                    return true;
                 }
             }
-
         }
-        return true;
+        return false;
     }
 
     private String getUserAssignment() throws NoHttpResponseException {
