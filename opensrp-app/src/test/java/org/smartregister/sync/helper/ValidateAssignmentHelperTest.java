@@ -224,7 +224,8 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         when(locationRepository.getAllLocationIds()).thenReturn(new ArrayList<>(jurisdictions));
         when(userService.fetchJurisdictionIds()).thenReturn(new HashSet<>(jurisdictions));
         when(planDefinitionRepository.findAllPlanDefinitionIds()).thenReturn(new HashSet<>(Arrays.asList("plan1", "plan12")));
-        when(settingsRepository.fetchANMLocation()).thenReturn(locationHierarchy);
+        locationTree.deleteLocation("b4d3fbde-3686-4472-b3c4-7e28ba455168");
+        when(settingsRepository.fetchANMLocation()).thenReturn(gson.toJson(locationTree));
 
         validateAssignmentHelper.validateUserAssignment();
 
