@@ -15,6 +15,7 @@ import org.smartregister.domain.db.EventClient;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.contract.ConfigurableRegisterActivityContract;
 import org.smartregister.view.contract.RegisterParams;
+import org.smartregister.view.interactor.BaseConfigurableRegisterActivityInteractor;
 
 import java.lang.ref.WeakReference;
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
     @NonNull
     @Override
     public ConfigurableRegisterActivityContract.Interactor createInteractor() {
-        return new BaseOpdRegisterActivityInteractor();
+        return new BaseConfigurableRegisterActivityInteractor();
     }
 
     public void setModel(BaseRegisterContract.Model model) {
@@ -95,34 +96,6 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
     }
 
     @Override
-    public void saveVisitOrDiagnosisForm(@NonNull String eventType, @Nullable Intent data) {
-        String jsonString = null;
-        if (data != null) {
-            jsonString = data.getStringExtra(OpdConstants.JSON_FORM_EXTRA.JSON);
-        }
-
-        if (jsonString == null) {
-            return;
-        }
-
-        if (eventType.equals(OpdConstants.EventType.CHECK_IN)) {
-            try {
-                Event opdVisitEvent = OpdLibrary.getInstance().processOpdCheckInForm(eventType, jsonString, data);
-                interactor.saveEvents(Collections.singletonList(opdVisitEvent), this);
-            } catch (JSONException e) {
-                Timber.e(e);
-            }
-        } else if (eventType.equals(OpdConstants.EventType.DIAGNOSIS_AND_TREAT)) {
-            try {
-                List<Event> opdDiagnosisAndTreatment = OpdLibrary.getInstance().processOpdDiagnosisAndTreatmentForm(jsonString, data);
-                interactor.saveEvents(opdDiagnosisAndTreatment, this);
-            } catch (JSONException e) {
-                Timber.e(e);
-            }
-        }
-    }
-
-    @Override
     public void onEventSaved() {
         if (getView() != null) {
             getView().refreshList(FetchStatus.fetched);
@@ -146,28 +119,17 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
         form = null;
         try {
             form = model.getFormAsJson(formName, entityId, locationId, getInjectedFields(formName, entityId));
-            if (formName.equals(OpdConstants.Form.OPD_DIAGNOSIS_AND_TREAT)) {
+            // TODO: FIX THIS
+            /*if (formName.equals(OpdConstants.Form.OPD_DIAGNOSIS_AND_TREAT)) {
                 interactor.fetchSavedDiagnosisAndTreatmentForm(entityId, entityTable, this);
                 return;
-            }
+            }*/
+
 
         } catch (JSONException e) {
             Timber.e(e);
         }
         startFormActivity(entityId, entityTable, form);
-    }
-
-    @Override
-    public void onFetchedSavedDiagnosisAndTreatmentForm(@Nullable OpdDiagnosisAndTreatmentForm diagnosisAndTreatmentForm, @NonNull String caseId, @Nullable String entityTable) {
-        try {
-            if (diagnosisAndTreatmentForm != null) {
-                form = new JSONObject(diagnosisAndTreatmentForm.getForm());
-            }
-
-            startFormActivity(caseId, entityTable, form);
-        } catch (JSONException ex) {
-            Timber.e(ex);
-        }
     }
 
     private void startFormActivity(@NonNull String entityId, @Nullable String entityTable, @Nullable JSONObject form) {

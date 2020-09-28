@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.text.TextUtils;
@@ -25,6 +26,7 @@ import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.util.ConfigurationInstancesHelper;
 import org.smartregister.util.RegisterViewConstants;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.BaseConfigurableRegisterActivity;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.NoMatchDialogFragment;
@@ -49,8 +51,10 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     private ModuleRegisterQueryProviderContract opdRegisterQueryProvider;
     private ModuleConfiguration moduleConfiguration;
 
-    public BaseConfigurableRegisterFragment(@NonNull ModuleConfiguration moduleConfiguration) {
-        super();
+    public BaseConfigurableRegisterFragment() {
+    }
+
+    public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
         opdRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
         this.moduleConfiguration = moduleConfiguration;
     }
@@ -176,7 +180,9 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     }
 
     @Override
-    abstract protected void startRegistration();
+    protected void startRegistration() {
+        // TODO: Implement this
+    }
 
     @Override
     protected void onViewClicked(View view) {
@@ -207,7 +213,9 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         }
     }
 
-    abstract protected void performPatientAction(@NonNull CommonPersonObjectClient commonPersonObjectClient);
+    protected void performPatientAction(@NonNull CommonPersonObjectClient commonPersonObjectClient) {
+        // TODO: FINISH THIS
+    }
 
     @Override
     public void onSyncInProgress(FetchStatus fetchStatus) {
@@ -252,7 +260,16 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         }
     }
 
-    abstract protected void goToClientDetailActivity(@NonNull CommonPersonObjectClient commonPersonObjectClient);
+    protected void goToClientDetailActivity(@NonNull CommonPersonObjectClient commonPersonObjectClient) {
+        FragmentActivity activity = getActivity();
+        if (activity instanceof BaseConfigurableRegisterActivity) {
+            ConfigurationInstancesHelper.newInstance(
+            ((BaseConfigurableRegisterActivity) activity)
+                    .getModuleConfiguration()
+                    .getActivityStarter())
+                    .startProfileActivity(getActivity(), commonPersonObjectClient);
+        }
+    }
 
     protected void toggleFilterSelection(@Nullable View filterSection) {
         if (filterSection != null) {

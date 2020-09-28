@@ -82,6 +82,11 @@ public class ModuleConfiguration {
         return builder.isBottomNavigationEnabled;
     }
 
+    @NonNull
+    public Class<? extends ActivityStarter> getActivityStarter() {
+        return builder.activityStarter;
+    }
+
     public static class Builder {
 
         @Nullable
@@ -100,6 +105,9 @@ public class ModuleConfiguration {
         @NonNull
         private HashMap<String, Class<? extends ModuleFormProcessor>> formProcessingMap = new HashMap<>();
 
+        @NonNull
+        private Class<? extends ActivityStarter> activityStarter;
+
         private boolean isBottomNavigationEnabled;
 
         private ModuleMetadata opdMetadata;
@@ -107,10 +115,11 @@ public class ModuleConfiguration {
         private ConfigurableViewsLibrary configurableViewsLibrary;
         private String registerTitle;
 
-        public Builder(@NonNull String registerTitle, @NonNull Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider, @NonNull ConfigurableViewsLibrary configurableViewsLibrary) {
+        public Builder(@NonNull String registerTitle, @NonNull Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider, @NonNull ConfigurableViewsLibrary configurableViewsLibrary, @NonNull Class<? extends ActivityStarter> activityStarter) {
             this.registerQueryProvider = registerQueryProvider;
             this.configurableViewsLibrary = configurableViewsLibrary;
             this.registerTitle = registerTitle;
+            this.activityStarter = activityStarter;
         }
 
         public Builder setRegisterProviderMetadata(@Nullable Class<? extends RegisterProviderMetadata> registerProviderMetadata) {

@@ -26,7 +26,7 @@ public interface ConfigurableRegisterActivityContract {
 
     interface Presenter {
 
-         default void saveLanguage(String language) {}
+        default void saveLanguage(String language) {}
 
         default void startForm(String formName, String entityId, String metadata, String currentLocationId) {}
 
@@ -71,6 +71,8 @@ public interface ConfigurableRegisterActivityContract {
 
         void saveRegistration(@Nullable final List<EventClient> clientList, final String jsonString, @NonNull RegisterParams registerParams, final ConfigurableRegisterActivityContract.InteractorCallBack callBack);
 
+        void saveEvents(@NonNull List<Event> events, @NonNull InteractorCallBack callBack);
+
     }
 
     interface InteractorCallBack {
@@ -80,5 +82,7 @@ public interface ConfigurableRegisterActivityContract {
         void onNoUniqueId();
 
         void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable List<EventClient> clientList);
+
+        void onEventSaved();
     }
 }
