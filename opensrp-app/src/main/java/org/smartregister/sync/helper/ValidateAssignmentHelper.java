@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.domain.PhysicalLocation;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.dto.UserAssignmentDTO;
@@ -168,7 +169,23 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
-        return !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds()) || !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
+        boolean hasNewOrganizations = existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds());
+        if (hasNewOrganizations && existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions())) {
+            return false;
+        } else if (!hasNewOrganizations) {
+            return true;
+        } else {
+            LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
+            HashSet<String> existing = new HashSet<>(existingJurisdictions);
+            existing.removeAll(currentUserAssignment.getJurisdictions());
+            for (String location : existing) {
+                if (!locationTree.hasLocation(location)) {
+                    return false;
+                }
+            }
+
+        }
+        return true;
     }
 
     private String getUserAssignment() throws NoHttpResponseException {
