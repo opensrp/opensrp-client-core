@@ -120,7 +120,13 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     private void logoff(@StringRes int message) throws AuthenticatorException, OperationCanceledException, IOException {
-        syncUtils.logoutUser(message);
+        //skip logoff if user is already logged off
+        if (!userService.hasSessionExpired()) {
+            Timber.i("Logging out user");
+            syncUtils.logoutUser(message);
+        } else {
+            Timber.i("User already logged out");
+        }
     }
 
 
@@ -137,7 +143,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 .map(locationTree::findChildLocations)//find child locations for current assigned jurisdictions
                 .filter(Objects::nonNull)//skip null child locations
                 .flatMap(Collection::stream)//collect child locations for current higher assigned jurisdictions to one collection
-                .flatMap(l -> l.getChildren() != null ? l.getChildren().values().stream() : Stream.empty())// traverse hierarchy and find child locations recursively using DFS
+                .flatMap(l -> l.getChildren() != null ? l.getChildren().values().stream() : Stream.empty())// traverse hierarchy and find child locations recursively using BFS
                 .forEach(l -> existingJurisdictions.remove(l.getId()));//remove child locations assigned at higher levels
 
         boolean removed = false;
