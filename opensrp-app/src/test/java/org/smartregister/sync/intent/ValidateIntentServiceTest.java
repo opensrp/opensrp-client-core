@@ -5,6 +5,7 @@ import android.content.Intent;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
@@ -61,6 +62,13 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
 
         Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(0), false);
         Mockito.verify(eventClientRepository).markEventValidationStatus(getEventIds().get(1), true);
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setField(validateIntentService, "context", null);
+        ReflectionHelpers.setField(validateIntentService, "httpAgent", null);
+        ReflectionHelpers.setField(validateIntentService, "openSRPContext", null);
     }
 
     private void mockMethods() throws JSONException {
