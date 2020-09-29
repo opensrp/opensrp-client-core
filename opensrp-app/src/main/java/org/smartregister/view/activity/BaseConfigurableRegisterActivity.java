@@ -40,14 +40,14 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     protected String moduleName;
     protected ModuleConfiguration moduleConfiguration;
-    private static final String MODULE_NAME = "module-name";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
         extractModuleName();
         fetchModuleConfiguration();
+
+        super.onCreate(savedInstanceState);
+
     }
 
     private void fetchModuleConfiguration() {
@@ -66,8 +66,8 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     private void extractModuleName() {
         Intent intent = getIntent();
-        if (intent.getExtras() != null && intent.hasExtra(MODULE_NAME)) {
-            moduleName = intent.getStringExtra(MODULE_NAME);
+        if (intent.getExtras() != null && intent.hasExtra(AllConstants.IntentExtra.MODULE_NAME)) {
+            moduleName = intent.getStringExtra(AllConstants.IntentExtra.MODULE_NAME);
         } else {
             throw new IllegalStateException("Module name was not passed to the activity! Kindly use ModuleLibrary.getInstance().startRegisterActivity() to start the activity");
         }

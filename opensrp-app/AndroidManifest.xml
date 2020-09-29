@@ -114,6 +114,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" />
 
+        <activity
+            android:name=".view.activity.BaseConfigurableRegisterActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppThemeNoActionBarAndTitle" />
+
         <receiver
             android:name=".view.receiver.SyncBroadcastReceiver"
             android:exported="false" />

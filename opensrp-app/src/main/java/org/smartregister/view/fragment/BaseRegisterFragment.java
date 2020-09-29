@@ -132,6 +132,7 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(getLayout(), container, false);
+        initializePresenter();
         rootView = view;//handle to the root
         setUpActionBar();
         setupViews(view);

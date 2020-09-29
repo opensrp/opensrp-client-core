@@ -534,6 +534,8 @@ public class AllConstants {
 
     public interface IntentExtra {
 
+        String MODULE_NAME = "module-name";
+
         interface JsonForm {
             String JSON = "json";
             String FORM = "form";

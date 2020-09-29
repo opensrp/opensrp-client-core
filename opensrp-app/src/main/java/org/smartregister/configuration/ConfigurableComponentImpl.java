@@ -1,5 +1,7 @@
 package org.smartregister.configuration;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 24-09-2020.
  */
@@ -8,7 +10,7 @@ public class ConfigurableComponentImpl implements ConfigurableComponent {
     public String moduleName;
 
     @Override
-    public void setModuleName() {
+    public void setModuleName(@NonNull String moduleName) {
         this.moduleName = moduleName;
     }
 

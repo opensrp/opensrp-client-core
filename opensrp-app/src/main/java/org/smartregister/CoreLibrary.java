@@ -26,6 +26,7 @@ import org.smartregister.repository.dao.TaskDaoImpl;
 import org.smartregister.sync.P2PSyncFinishCallback;
 import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.BaseConfigurableRegisterActivity;
 
 import java.util.HashMap;
 
@@ -55,7 +56,9 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     private AccountAuthenticatorXml authenticatorXml;
 
-    private HashMap<String, ModuleConfiguration> moduleConfigurations;
+    private HashMap<String, ModuleConfiguration> moduleConfigurations = new HashMap<>();
+    private String defaultModule;
+    private String currentModule;
 
     private int databaseVersion;
     private int applicationVersion;
@@ -272,7 +275,15 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     }
 
     public boolean addModuleConfiguration(@NonNull String moduleName, @NonNull ModuleConfiguration moduleConfiguration) {
+        return addModuleConfiguration(false, moduleName, moduleConfiguration);
+    }
+
+    public boolean addModuleConfiguration(boolean isDefaultModule, @NonNull String moduleName, @NonNull ModuleConfiguration moduleConfiguration) {
         this.moduleConfigurations.put(moduleName, moduleConfiguration);
+        if (isDefaultModule) {
+            this.defaultModule = moduleName;
+        }
+
         return true;
     }
 
@@ -289,6 +300,18 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
         return moduleConfiguration;
 
+    }
+
+    @NonNull
+    public String getCurrentModule() {
+        return currentModule != null ? currentModule : defaultModule;
+    }
+
+    @NonNull
+    public void startRegisterActivity(@NonNull android.content.Context context) {
+        Intent intent = new Intent(context, BaseConfigurableRegisterActivity.class);
+        intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, getCurrentModule());
+        context.startActivity(intent);
     }
 
     public int getDatabaseVersion() {

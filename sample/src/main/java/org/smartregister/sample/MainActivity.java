@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.smartregister.CoreLibrary;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.DateUtil;
@@ -43,6 +44,9 @@ public class MainActivity extends MultiLanguageActivity {
         setSupportActionBar(toolbar);
 
         setTitle(R.string.app_name);
+
+        CoreLibrary.getInstance()
+                .startRegisterActivity(this);
 
         Activity activity = this;
         tvw = (TextView) findViewById(R.id.textView1);

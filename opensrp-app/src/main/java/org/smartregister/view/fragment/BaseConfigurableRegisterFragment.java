@@ -145,7 +145,9 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
             return;
         }
 
-        presenter = new OpdRegisterFragmentPresenter(getModuleConfiguration(), this, new OpdRegisterFragmentModel());
+        if (presenter == null) {
+            presenter = new OpdRegisterFragmentPresenter(getModuleConfiguration(), this, new OpdRegisterFragmentModel());
+        }
     }
 
     @Override
@@ -317,6 +319,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     @Override
     public void initializeAdapter() {
         BaseRegisterProvider childRegisterProvider = new BaseRegisterProvider(getActivity(), registerActionHandler, paginationViewHandler);
+        //childRegisterProvider.setModuleName("custom-family");
         clientAdapter = new RecyclerViewPaginatedAdapter(null, childRegisterProvider, context().commonrepository(this.tablename));
         clientAdapter.setCurrentlimit(20);
         clientsView.setAdapter(clientAdapter);

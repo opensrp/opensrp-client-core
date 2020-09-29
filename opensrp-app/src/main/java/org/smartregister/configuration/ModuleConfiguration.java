@@ -26,7 +26,7 @@ public class ModuleConfiguration {
 
     private void setDefaults() {
         if (builder.registerProviderMetadata == null) {
-            builder.registerProviderMetadata = RegisterProviderMetadata.class;
+            builder.registerProviderMetadata = BaseRegisterProviderMetadata.class;
         }/*
         if (!builder.opdFormProcessingMap.containsKey(OpdConstants.EventType.DIAGNOSIS_AND_TREAT)) {
             builder.opdFormProcessingMap.put(OpdConstants.EventType.DIAGNOSIS_AND_TREAT, new OpdDiagnoseAndTreatFormProcessor());
