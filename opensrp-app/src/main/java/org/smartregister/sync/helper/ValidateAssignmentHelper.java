@@ -12,9 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
-import org.smartregister.domain.jsonmapping.Location;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
-import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSettings;
@@ -32,7 +30,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -133,17 +131,14 @@ public class ValidateAssignmentHelper extends BaseHelper {
         existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
         existingPlans.removeAll(currentUserAssignment.getPlans());
 
-        List<String> existingJurisdictionsAssignedAtHigherLevel = new ArrayList<>();
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-        for (String location : currentUserAssignment.getJurisdictions()) {
-            Collection<TreeNode<String, Location>> childLocations = locationTree.findChildLocations(location);
-            if (childLocations != null) {
-                childLocations.stream()
-                        .flatMap(l -> l.getChildren() != null ? l.getChildren().values().stream() : Stream.empty())
-                        .forEach(l -> existingJurisdictionsAssignedAtHigherLevel.add(l.getId()));
-            }
-        }
-        existingJurisdictions.removeAll(existingJurisdictionsAssignedAtHigherLevel);
+
+        currentUserAssignment.getJurisdictions().stream()
+                .map(locationTree::findChildLocations)//find child locations for current assigned jurisdictions
+                .filter(Objects::nonNull)//skip null child locations
+                .flatMap(Collection::stream)//collect child locations for current higher assigned jurisdictions to one collection
+                .flatMap(l -> l.getChildren() != null ? l.getChildren().values().stream() : Stream.empty())// traverse hierarchy and find child locations recursively using DFS
+                .forEach(l -> existingJurisdictions.remove(l.getId()));//remove child locations assigned at higher levels
 
         boolean removed = false;
         UserAssignmentDTO removedAssignments = UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
