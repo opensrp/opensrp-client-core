@@ -97,6 +97,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
             if (logoffReason != null) {
                 showErrorDialog(dialogTitle, logoffReason);
+                getIntent().removeExtra(ACCOUNT_DISABLED);
             }
         }
     }
