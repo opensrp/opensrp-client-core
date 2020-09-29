@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.db.EventClient;
@@ -103,9 +104,12 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
         }
     }
 
-    @Override
+    // TODO: FIX THIS
     public HashMap<String, String> getInjectedFields(@NonNull String formName, @NonNull String entityId) {
-        return OpdUtils.getInjectableFields(formName, entityId);
+        // TODO: FIX THIS
+
+        //return OpdUtils.getInjectableFields(formName, entityId);
+        return null;
     }
 
     @Override
@@ -135,8 +139,8 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
     private void startFormActivity(@NonNull String entityId, @Nullable String entityTable, @Nullable JSONObject form) {
         if (getView() != null && form != null) {
             HashMap<String, String> intentKeys = new HashMap<>();
-            intentKeys.put(OpdConstants.IntentKey.BASE_ENTITY_ID, entityId);
-            intentKeys.put(OpdConstants.IntentKey.ENTITY_TABLE, entityTable);
+            intentKeys.put(AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID, entityId);
+            intentKeys.put(AllConstants.IntentExtra.JsonForm.ENTITY_TABLE, entityTable);
 
             getView().startFormActivity(form, intentKeys);
         }

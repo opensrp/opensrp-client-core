@@ -1,20 +1,10 @@
 package org.smartregister.util;
 
-import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
-import android.text.TextUtils;
 
-import com.google.common.reflect.TypeToken;
-import com.vijay.jsonwizard.constants.JsonFormConstants;
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.commons.lang3.tuple.Triple;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+/*import android.graphics.Bitmap;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.clientandeventmodel.FormEntityConstants;
@@ -41,6 +31,17 @@ import java.util.List;
 import java.util.UUID;
 
 import timber.log.Timber;
+import android.text.TextUtils;
+
+import com.google.common.reflect.TypeToken;
+import com.vijay.jsonwizard.constants.JsonFormConstants;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.commons.lang3.tuple.Triple;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.json.JSONArray;*/
 
 public class OpdJsonFormUtils extends JsonFormUtils {
 
@@ -56,6 +57,7 @@ public class OpdJsonFormUtils extends JsonFormUtils {
     public static final String HOME_ADDRESS = "home_address";
     public static final String PERSON_IDENTIFIER = "person_identifier";
 
+    /*
     public static JSONObject getFormAsJson(@NonNull JSONObject form, @NonNull String formName, @NonNull String id, @NonNull String currentLocationId) throws JSONException {
         return getFormAsJson(form, formName, id, currentLocationId, null);
     }
@@ -170,8 +172,8 @@ public class OpdJsonFormUtils extends JsonFormUtils {
                 }
             }
         }
-    }
-
+    }*/
+/*
     private static void addLocationTree(@NonNull String widgetKey, @NonNull JSONObject
             widget, @NonNull String updateString, @NonNull String treeType) {
         try {
@@ -181,13 +183,13 @@ public class OpdJsonFormUtils extends JsonFormUtils {
         } catch (JSONException e) {
             Timber.e(e, "JsonFormUtils --> addLocationTree");
         }
-    }
-
+    }*/
+/*
     private static void addLocationTreeDefault(@NonNull String widgetKey, @NonNull JSONObject
             widget, @NonNull String updateString) {
         addLocationTree(widgetKey, widget, updateString, JsonFormConstants.DEFAULT);
-    }
-
+    }*/
+/*
     public static Event tagSyncMetadata(@NonNull Event event) {
         AllSharedPreferences allSharedPreferences = OpdUtils.getAllSharedPreferences();
         String providerId = allSharedPreferences.fetchRegisteredANM();
@@ -394,8 +396,8 @@ public class OpdJsonFormUtils extends JsonFormUtils {
             }
         }
 
-    }
-
+    }*/
+/*
     public static JSONArray fields(@NonNull JSONObject jsonForm, @NonNull String step) {
         try {
 
@@ -410,8 +412,8 @@ public class OpdJsonFormUtils extends JsonFormUtils {
             Timber.e(e, "OpdJsonFormUtils --> fields");
         }
         return null;
-    }
-
+    }*/
+/*
     public static FormTag formTag(@NonNull AllSharedPreferences allSharedPreferences) {
         FormTag formTag = new FormTag();
         formTag.providerId = allSharedPreferences.fetchRegisteredANM();
@@ -433,8 +435,8 @@ public class OpdJsonFormUtils extends JsonFormUtils {
 
         return getFieldValue(fields, key);
 
-    }
-
+    }*/
+/*
     public static OpdEventClient processOpdDetailsForm(@NonNull String jsonString, @NonNull FormTag formTag) {
         try {
             Triple<Boolean, JSONObject, JSONArray> registrationFormParams = validateParameters(jsonString);
@@ -477,5 +479,5 @@ public class OpdJsonFormUtils extends JsonFormUtils {
             Timber.e(e);
             return null;
         }
-    }
+    }*/
 }

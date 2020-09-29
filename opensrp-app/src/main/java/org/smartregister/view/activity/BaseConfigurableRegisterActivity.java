@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
+import org.smartregister.R;
 import org.smartregister.client.utils.domain.Form;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
@@ -96,7 +97,9 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     @Override
     protected BaseRegisterFragment getRegisterFragment() {
-        return new BaseConfigurableRegisterFragment(getModuleConfiguration());
+        BaseConfigurableRegisterFragment baseConfigurableRegisterFragment = new BaseConfigurableRegisterFragment();
+        baseConfigurableRegisterFragment.setModuleConfiguration(getModuleConfiguration());
+        return baseConfigurableRegisterFragment;
     }
 
 
@@ -172,7 +175,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     @Override
     public void switchToBaseFragment() {
         // TODO: FIX THIS
-        Intent intent = new Intent(this, BaseOpdRegisterActivity.class);
+        Intent intent = new Intent(this, BaseConfigurableRegisterActivity.class);
         startActivity(intent);
         finish();
     }
@@ -190,7 +193,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     @Override
     public void startFormActivity(String formName, String entityId, String metaData) {
         if (mBaseFragment instanceof BaseConfigurableRegisterFragment) {
-            String locationId = OpdUtils.context().allSharedPreferences().getPreference(AllConstants.CURRENT_LOCATION_ID);
+            String locationId = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(AllConstants.CURRENT_LOCATION_ID);
             presenter().startForm(formName, entityId, metaData, locationId, null, null);
         }
     }
@@ -198,7 +201,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     @Override
     public void startFormActivity(String formName, String entityId, String metaData, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
         if (mBaseFragment instanceof BaseConfigurableRegisterFragment) {
-            String locationId = OpdUtils.context().allSharedPreferences().getPreference(AllConstants.CURRENT_LOCATION_ID);
+            String locationId = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(AllConstants.CURRENT_LOCATION_ID);
             presenter().startForm(formName, entityId, metaData, locationId, injectedFieldValues, entityTable);
         } else {
             displayToast(getString(R.string.error_unable_to_start_form));
@@ -214,7 +217,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
             form.setWizard(false);
             form.setName("");
 
-            String encounterType = jsonForm.optString(OpdJsonFormUtils.ENCOUNTER_TYPE);
+            /*String encounterType = jsonForm.optString(OpdJsonFormUtils.ENCOUNTER_TYPE);
 
             if (encounterType.equals(OpdConstants.EventType.DIAGNOSIS_AND_TREAT)) {
                 form.setName(OpdConstants.EventType.DIAGNOSIS_AND_TREAT);
@@ -233,8 +236,8 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
                 for (String intentKey : parcelableData.keySet()) {
                     intent.putExtra(intentKey, parcelableData.get(intentKey));
                 }
-            }
-            startActivityForResult(intent, OpdJsonFormUtils.REQUEST_CODE_GET_JSON);
+            }*/
+            startActivityForResult(intent, AllConstants.RequestCode.START_JSON_FORM);
 
 
         } else {

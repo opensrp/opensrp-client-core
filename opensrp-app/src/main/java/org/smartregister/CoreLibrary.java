@@ -57,26 +57,34 @@ public class CoreLibrary implements OnAccountsUpdateListener {
 
     private HashMap<String, ModuleConfiguration> moduleConfigurations;
 
+    private int databaseVersion;
+    private int applicationVersion;
+
     public static void init(Context context) {
         init(context, null);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
+            instance = new CoreLibrary(context, syncConfiguration, null, -1, -1);
         }
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
+            instance = new CoreLibrary(context, syncConfiguration, null, -1, -1);
             buildTimeStamp = buildTimestamp;
         }
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options) {
+        init(context, syncConfiguration, buildTimestamp, options, -1, -1);
+    }
+
+
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options, int databaseVersion, int applicationVersion) {
         if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, options);
+            instance = new CoreLibrary(context, syncConfiguration, options, databaseVersion, applicationVersion);
             buildTimeStamp = buildTimestamp;
             checkPlatformMigrations();
         }
@@ -100,7 +108,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         return instance;
     }
 
-    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions) {
+    protected CoreLibrary(Context contextArg, SyncConfiguration syncConfiguration, @Nullable P2POptions p2POptions, int databaseVersion, int applicationVersion) {
         context = contextArg;
         this.syncConfiguration = syncConfiguration;
         this.p2POptions = p2POptions;
@@ -162,13 +170,13 @@ public class CoreLibrary implements OnAccountsUpdateListener {
      */
     public static void reset(Context context) {
         if (context != null) {
-            instance = new CoreLibrary(context, null, null);
+            instance = new CoreLibrary(context, null, null, -1, -1);
         }
     }
 
     public static void reset(Context context, SyncConfiguration syncConfiguration) {
         if (context != null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
+            instance = new CoreLibrary(context, syncConfiguration, null, -1, -1);
         }
     }
 
@@ -281,5 +289,13 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
         return moduleConfiguration;
 
+    }
+
+    public int getDatabaseVersion() {
+        return databaseVersion;
+    }
+
+    public int getApplicationVersion() {
+        return applicationVersion;
     }
 }

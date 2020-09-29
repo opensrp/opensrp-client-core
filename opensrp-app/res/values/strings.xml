@@ -446,4 +446,5 @@
 
     <string name="cancel">Cancel</string>
     <string name="no_matching_record_found_on_this_device">No matching record found on this device.</string>
+    <string name="error_unable_to_start_form">Unable to start form</string>
 </resources>

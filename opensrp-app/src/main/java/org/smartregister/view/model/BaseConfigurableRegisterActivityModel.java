@@ -64,7 +64,12 @@ public class BaseConfigurableRegisterActivityModel implements BaseRegisterContra
     @Nullable
     @Override
     public HashMap<Client, List<Event>> processRegistration(String jsonString, FormTag formTag) {
-        return ConfigurationInstancesHelper.newInstance(getModuleConfiguration().getFormProcessorClass()).extractEventClient(jsonString, null, formTag);
+        try {
+            return ConfigurationInstancesHelper.newInstance(getModuleConfiguration().getFormProcessorClass()).extractEventClient(jsonString, null, formTag);
+        } catch (JSONException e) {
+            Timber.e(e);
+            return null;
+        }
     }
 
     @Nullable

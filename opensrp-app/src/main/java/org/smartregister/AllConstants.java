@@ -537,6 +537,8 @@ public class AllConstants {
         interface JsonForm {
             String JSON = "json";
             String FORM = "form";
+            String BASE_ENTITY_ID = "base-entity-id";
+            String ENTITY_TABLE = "entity_table";
         }
     }
 }
