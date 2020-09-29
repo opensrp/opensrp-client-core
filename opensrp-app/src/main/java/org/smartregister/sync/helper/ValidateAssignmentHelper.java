@@ -13,7 +13,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.jsonmapping.util.LocationTree;
-import org.smartregister.domain.jsonmapping.util.TreeNode;
 import org.smartregister.dto.UserAssignmentDTO;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSettings;
@@ -29,13 +28,8 @@ import org.smartregister.view.controller.ANMLocationController;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import timber.log.Timber;
 
@@ -141,16 +135,6 @@ public class ValidateAssignmentHelper extends BaseHelper {
         existingPlans.removeAll(currentUserAssignment.getPlans());
 
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-
-        if (!existingJurisdictions.isEmpty()) {
-            currentUserAssignment.getJurisdictions().stream()
-                    .map(locationTree::findChildLocations)//find child locations for current assigned jurisdictions
-                    .filter(Objects::nonNull)//skip null child locations
-                    .flatMap(Collection::stream)//collect child locations for current higher assigned jurisdictions to one collection
-                    .flatMap(l -> l.getChildren() != null ? l.getChildren().values().stream() : Stream.empty())// traverse hierarchy and find child locations recursively using BFS
-                    .forEach(l -> existingJurisdictions.remove(l.getId()));//remove child locations assigned at higher levels
-
-        }
         boolean removed = false;
         UserAssignmentDTO removedAssignments = UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
 
@@ -190,23 +174,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
-        boolean hasNewOrganizations = !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds());
-        if (hasNewOrganizations) {
-            return true;
-        } else if (existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions())) {
-            return false;
-        } else {
-            LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-            Set<String> newJurisdictions = new HashSet<>(currentUserAssignment.getJurisdictions());
-            newJurisdictions.removeAll(existingJurisdictions);
-            return newJurisdictions
-                    .stream()
-                    .flatMap(l -> locationTree.hasChildLocations(l) ? locationTree.findChildLocations(l).stream() : Stream.empty())
-                    .filter(l -> l != null && l.getChildren() == null)
-                    .map(TreeNode::getId)
-                    .findAny()
-                    .isPresent();
-        }
+        return !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds()) || !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
     }
 
     private String getUserAssignment() throws NoHttpResponseException {
