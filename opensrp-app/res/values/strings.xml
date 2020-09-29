@@ -387,6 +387,8 @@
 
     <string name="account_disabled">Account Disabled</string>
     <string name="account_disabled_logged_off">You have been logged off as your account has been disabled. Please contact your administrator.</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+    <string name="default_location_revoked_logged_off">You have been logged off as access to your default location has been revoked</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">Please enter a valid url.</string>

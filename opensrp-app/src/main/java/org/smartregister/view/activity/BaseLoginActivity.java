@@ -193,10 +193,12 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showProgress(final boolean show) {
-        if (show) {
-            progressDialog.show();
-        } else {
-            progressDialog.dismiss();
+        if (!isFinishing()) {
+            if (show) {
+                progressDialog.show();
+            } else {
+                progressDialog.dismiss();
+            }
         }
     }
 
@@ -270,7 +272,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public void updateProgressMessage(String message) {
-        progressDialog.setTitle(message);
+        if (!isFinishing()) {
+            progressDialog.setTitle(message);
+        }
     }
 
     protected void renderBuildInfo() {

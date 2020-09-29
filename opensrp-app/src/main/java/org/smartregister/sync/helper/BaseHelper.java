@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.SyncProgress;
 
 /**
@@ -19,4 +20,14 @@ public class BaseHelper {
         intent.putExtra(AllConstants.SyncProgressConstants.SYNC_PROGRESS_DATA, syncProgress);
         LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
     }
+
+    public String getFormattedBaseUrl() {
+        String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+        String endString = "/";
+        if (baseUrl.endsWith(endString)) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(endString));
+        }
+        return baseUrl;
+    }
+
 }

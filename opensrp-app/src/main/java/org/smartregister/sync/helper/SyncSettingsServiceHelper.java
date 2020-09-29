@@ -116,7 +116,7 @@ public class SyncSettingsServiceHelper {
     }
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
-        if (!JsonFormUtils.isBlankJsonArray(globalSettings)) {
+        if (!JsonFormUtils.isBlankJsonArray(globalSettings) && settings != null) {
             for (int i = 0; i < globalSettings.length(); i++) {
                 JSONObject global = globalSettings.getJSONObject(i);
                 settings.put(global);
