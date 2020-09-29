@@ -2,6 +2,7 @@ package org.smartregister.domain.jsonmapping.util;
 
 import org.smartregister.domain.jsonmapping.Location;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -47,6 +48,16 @@ public class LocationTree {
 
     public boolean hasLocation(String locationId) {
         return locationsHierarchy.hasNode(locationId);
+    }
+
+    public boolean hasChildLocations(String locationId) {
+        Collection<TreeNode<String, Location>> treeNodes = findChildLocations(locationId);
+        return treeNodes != null && !treeNodes.isEmpty();
+    }
+
+    public Collection<TreeNode<String, Location>> findChildLocations(String locationId) {
+        TreeNode<String, Location> node = locationsHierarchy.getNode(locationId);
+        return node != null && node.getChildren() != null ? node.getChildren().values() : null;
     }
 
     public boolean hasChildLocation(String locationId, String childLocationId) {
