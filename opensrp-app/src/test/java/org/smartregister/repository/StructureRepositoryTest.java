@@ -291,7 +291,7 @@ public class StructureRepositoryTest extends BaseUnitTest {
             }
         });
 
-        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit);
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit, null);
 
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
         assertEquals(sql, stringArgumentCaptor.getValue());
