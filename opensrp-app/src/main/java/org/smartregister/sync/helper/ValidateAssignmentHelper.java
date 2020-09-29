@@ -135,9 +135,12 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
         List<String> existingJurisdictionsAssignedAtHigherLevel = new ArrayList<>();
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-        for (String location : existingJurisdictions) {
-            if (locationTree.hasLocation(location)) {
-                existingJurisdictionsAssignedAtHigherLevel.add(location);
+        for (String location : currentUserAssignment.getJurisdictions()) {
+            Collection<TreeNode<String, Location>> childLocations = locationTree.findChildLocations(location);
+            if (childLocations != null) {
+                childLocations.stream()
+                        .flatMap(l -> l.getChildren() != null ? l.getChildren().values().stream() : Stream.empty())
+                        .forEach(l -> existingJurisdictionsAssignedAtHigherLevel.add(l.getId()));
             }
         }
         existingJurisdictions.removeAll(existingJurisdictionsAssignedAtHigherLevel);
