@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -118,7 +117,13 @@ public class ValidateAssignmentHelper extends BaseHelper {
     }
 
     private void logoff(@StringRes int message) throws AuthenticatorException, OperationCanceledException, IOException {
-        syncUtils.logoutUser(message);
+        //skip logoff if user is already logged off
+        if (!userService.hasSessionExpired()) {
+            Timber.i("Logging out user");
+            syncUtils.logoutUser(message);
+        } else {
+            Timber.i("User already logged out");
+        }
     }
 
 
@@ -129,15 +134,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
         existingOrganizations.removeAll(currentUserAssignment.getOrganizationIds());
         existingPlans.removeAll(currentUserAssignment.getPlans());
 
-        List<String> existingHigherLevelJurisdictions = new ArrayList<>();
         LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-        for (String location : existingJurisdictions) {
-            if (locationTree.hasLocation(location)) {
-                existingHigherLevelJurisdictions.add(location);
-            }
-        }
-        existingJurisdictions.removeAll(existingHigherLevelJurisdictions);
-
         boolean removed = false;
         UserAssignmentDTO removedAssignments = UserAssignmentDTO.builder().jurisdictions(existingJurisdictions).organizationIds(existingOrganizations).plans(existingPlans).build();
 
@@ -177,22 +174,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
-        boolean hasNewOrganizations = !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds());
-        if (hasNewOrganizations) {
-            return true;
-        } else if (existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions())) {
-            return false;
-        } else {
-            LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
-            Set<String> newJurisdictions = new HashSet<>(currentUserAssignment.getJurisdictions());
-            newJurisdictions.removeAll(existingJurisdictions);
-            for (String location : newJurisdictions) {
-                if (!locationTree.hasLocation(location)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds()) || !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
     }
 
     private String getUserAssignment() throws NoHttpResponseException {

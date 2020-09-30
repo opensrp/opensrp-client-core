@@ -97,6 +97,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
             if (logoffReason != null) {
                 showErrorDialog(dialogTitle, logoffReason);
+                getIntent().removeExtra(ACCOUNT_DISABLED);
             }
         }
     }
@@ -180,7 +181,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showErrorDialog(String title, String message) {
-
+        if (isDestroyed() || isFinishing()) {
+            return;
+        }
         if (alertDialog == null) {
             alertDialog = new AlertDialog.Builder(this)
                     .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create();
