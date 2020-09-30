@@ -52,7 +52,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     private void fetchModuleConfiguration() {
         moduleConfiguration = CoreLibrary.getInstance()
-                .getConfiguration(getModuleName());
+                .getModuleConfiguration(getModuleName());
     }
 
     public String getModuleName() {
@@ -129,7 +129,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public void startFormActivity(JSONObject jsonForm) {
-        Intent intent = new Intent(this, getModuleConfiguration().getModuleMetadata().getFormActivity());
+        Intent intent = new Intent(this, getModuleConfiguration().getJsonFormActivity());
         // TODO: Add metadata & inject form values
 
         intent.putExtra(AllConstants.IntentExtra.JsonForm.JSON, jsonForm.toString());
@@ -181,11 +181,6 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     }
 
     @Override
-    public BaseRegisterContract.Presenter presenter() {
-        return (BaseRegisterContract.Presenter) presenter;
-    }
-
-    @Override
     public void startRegistration() {
         //do nothing
     }
@@ -194,6 +189,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     public void startFormActivity(String formName, String entityId, String metaData) {
         if (mBaseFragment instanceof BaseConfigurableRegisterFragment) {
             String locationId = CoreLibrary.getInstance().context().allSharedPreferences().getPreference(AllConstants.CURRENT_LOCATION_ID);
+            // TODO: Finish this part adding
             presenter().startForm(formName, entityId, metaData, locationId, null, null);
         }
     }
@@ -212,7 +208,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     public void startFormActivity(@NonNull JSONObject jsonForm, @Nullable HashMap<String, String> parcelableData) {
         ModuleMetadata opdMetadata = getModuleConfiguration().getModuleMetadata();
         if (opdMetadata != null) {
-            Intent intent = new Intent(this, opdMetadata.getFormActivity());
+            Intent intent = new Intent(this, getModuleConfiguration().getJsonFormActivity());
             Form form = new Form();
             form.setWizard(false);
             form.setName("");
@@ -222,7 +218,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
             if (encounterType.equals(OpdConstants.EventType.DIAGNOSIS_AND_TREAT)) {
                 form.setName(OpdConstants.EventType.DIAGNOSIS_AND_TREAT);
                 form.setWizard(true);
-            }
+            }*/
 
             form.setHideSaveLabel(true);
             form.setPreviousLabel("");
@@ -230,16 +226,16 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
             form.setHideNextButton(false);
             form.setHidePreviousButton(false);
 
-            intent.putExtra(OpdConstants.JSON_FORM_EXTRA.JSON, jsonForm.toString());
-            intent.putExtra(JsonFormConstants.JSON_FORM_KEY.FORM, form);
+            intent.putExtra(AllConstants.IntentExtra.JsonForm.JSON, jsonForm.toString());
+            intent.putExtra(AllConstants.IntentExtra.JsonForm.FORM, form);
+            intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, getModuleName());
+
             if (parcelableData != null) {
                 for (String intentKey : parcelableData.keySet()) {
                     intent.putExtra(intentKey, parcelableData.get(intentKey));
                 }
-            }*/
+            }
             startActivityForResult(intent, AllConstants.RequestCode.START_JSON_FORM);
-
-
         } else {
             Timber.e(new Exception(), "FormActivity cannot be started because OpdMetadata is NULL");
         }

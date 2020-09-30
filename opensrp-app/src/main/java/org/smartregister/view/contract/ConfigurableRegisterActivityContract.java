@@ -69,7 +69,12 @@ public interface ConfigurableRegisterActivityContract {
 
         void getNextUniqueId(Triple<String, String, String> triple, ConfigurableRegisterActivityContract.InteractorCallBack callBack);
 
-        void saveRegistration(@Nullable final List<EventClient> clientList, final String jsonString, @NonNull RegisterParams registerParams, final ConfigurableRegisterActivityContract.InteractorCallBack callBack);
+        // TODO: FIX THIS. This should be the method with the functionality and not the above. We can change this to throw an exception instead
+        default void getNextUniqueId(Triple<String, String, String> triple, ConfigurableRegisterActivityContract.InteractorCallBack callBack, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
+            getNextUniqueId(triple, callBack);
+        }
+
+        void saveRegistration(@Nullable HashMap<Client, List<Event>> clientList, final String jsonString, @NonNull RegisterParams registerParams, final ConfigurableRegisterActivityContract.InteractorCallBack callBack);
 
         void saveEvents(@NonNull List<Event> events, @NonNull InteractorCallBack callBack);
 
@@ -78,6 +83,11 @@ public interface ConfigurableRegisterActivityContract {
     interface InteractorCallBack {
 
         void onUniqueIdFetched(Triple<String, String, String> triple, String entityId);
+
+        // TODO: FIX THIS. This should be the method with the functionality and not the above. We can change this to throw an exception instead
+        default void onUniqueIdFetched(Triple<String, String, String> triple, String entityId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
+            onUniqueIdFetched(triple, entityId);
+        }
 
         void onNoUniqueId();
 

@@ -9,19 +9,18 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.commonregistry.CommonFtsObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.configuration.ActivityStarter;
-import org.smartregister.configuration.LocationTagsConfiguration;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
-import org.smartregister.configuration.RegisterProviderMetadata;
 import org.smartregister.domain.jsonmapping.LoginResponseData;
 import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.domain.jsonmapping.util.Team;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
+import org.smartregister.location.helper.LocationHelper;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.Repository;
-import org.smartregister.sample.configuration.OpdRegisterQueryBuilder;
+import org.smartregister.sample.SampleAppFormActivity;
+import org.smartregister.sample.configuration.FormProcessor;
 import org.smartregister.sample.configuration.RegisterQueryProvider;
 import org.smartregister.sample.repository.SampleRepository;
 import org.smartregister.view.activity.BaseProfileActivity;
@@ -32,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import timber.log.Timber;
@@ -106,7 +106,15 @@ public class SampleApplication extends DrishtiApplication {
         SyncStatusBroadcastReceiver.init(this);
 
         createCustomLibrary();
+        LocationTagsConfiguration locationTagsConfiguration = new LocationTagsConfiguration();
+        LocationHelper.init(locationTagsConfiguration.getAllowedLevels(), locationTagsConfiguration.getDefaultLocationLevel());
 
+        addLoggedInState();
+
+        getRepository();
+    }
+
+    private void addLoggedInState() {
         //Auto login by default
         context.session().start(context.session().lengthInMilliseconds());
         context.configuration().getDrishtiApplication().setPassword("dsd".getBytes());
@@ -114,6 +122,7 @@ public class SampleApplication extends DrishtiApplication {
 
         context.allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, CoreLibrary.getInstance().context().getAppProperties().getProperty(AllConstants.DRISHTI_BASE_URL));
 
+        // Save credentials
         LoginResponseData loginResponseData = new LoginResponseData();
         loginResponseData.user = new User("base-entity-id", "demo", "dsd".toCharArray(), "my-salt");
         loginResponseData.team = new TeamMember();
@@ -130,7 +139,32 @@ public class SampleApplication extends DrishtiApplication {
 
         context.userService().saveUserCredentials("demo", "dsd".toCharArray(), loginResponseData);
 
-        getRepository();
+        // Add unique ids
+        sampleUniqueIds();
+    }
+
+    private void sampleUniqueIds() {
+        List<String> ids = generateIds(20);
+        CoreLibrary.getInstance().context().getUniqueIdRepository().bulkInsertOpenmrsIds(ids);
+    }
+
+
+    private List<String> generateIds(int size) {
+        List<String> ids = new ArrayList<>();
+        Random r = new Random();
+
+        for (int i = 10; i < size; i++) {
+            Integer randomInt = r.nextInt(10000) + 1;
+            ids.add(formatSampleId(randomInt.toString()));
+        }
+
+        return ids;
+    }
+
+    private String formatSampleId(String openmrsId) {
+        int lastIndex = openmrsId.length() - 1;
+        String tail = openmrsId.substring(lastIndex);
+        return openmrsId.substring(0, lastIndex) + "-" + tail;
     }
 
     @Override
@@ -140,14 +174,16 @@ public class SampleApplication extends DrishtiApplication {
 
     private void createCustomLibrary() {
         ModuleConfiguration customLibraryConfiguration = new ModuleConfiguration.Builder("ONA Library", RegisterQueryProvider.class, new ConfigViewsLib(), ActivityStarter.class)
-                .setModuleMetadata(new ModuleMetadata("registration.json"
+                .setModuleMetadata(new ModuleMetadata("opd_registration"
                         , "ec_client"
-                        , "CLIENT REGISTRATION"
-                        , "UPDATE CLIENT REGISTRATION",
+                        , "Opd Registration"
+                        , "UPDATE OPD REGISTRATION",
                         new LocationTagsConfiguration(),
                         "custom-family",
                         FormActivity.class, BaseProfileActivity.class, false, ""
                         ))
+                .setModuleFormProcessorClass(FormProcessor.class)
+                .setJsonFormActivity(SampleAppFormActivity.class)
                 .build();
 
         CoreLibrary.getInstance()
@@ -190,7 +226,7 @@ public class SampleApplication extends DrishtiApplication {
         @NonNull
         @Override
         public ArrayList<String> getAllowedLevels() {
-            return new ArrayList<String>(Arrays.asList("County", "Town", "MOH Jhpiego Facility Name", "Village"));
+            return new ArrayList<String>(Arrays.asList("Country","County", "Town","Region","District","Ward" , "Health Facility", "Village", "Village Sublocations"));
         }
 
         @NonNull

@@ -49,8 +49,8 @@ public class MainActivity extends MultiLanguageActivity {
                 .startRegisterActivity(this);
 
         Activity activity = this;
-        tvw = (TextView) findViewById(R.id.textView1);
-        picker = (DatePicker) findViewById(R.id.datePicker1);
+        tvw = findViewById(R.id.textView1);
+        picker = findViewById(R.id.datePicker1);
 
         picker.setMinDate(new LocalDate().minusYears(2).toDate().getTime());
 
@@ -58,7 +58,7 @@ public class MainActivity extends MultiLanguageActivity {
 
         picker.updateDate(2019, 5, 22);
 
-        btnGet = (Button) findViewById(R.id.button1);
+        btnGet = findViewById(R.id.button1);
         btnGet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

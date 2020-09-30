@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
+import org.smartregister.configuration.ModuleMetadata;
 import org.smartregister.configuration.ModuleRegisterQueryProviderContract;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
@@ -184,6 +185,12 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     @Override
     protected void startRegistration() {
         // TODO: Implement this
+
+        ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
+        // TODO: ADD RxJava for entityId
+        if (getActivity() instanceof  BaseConfigurableRegisterActivity && moduleMetadata != null) {
+            ((BaseConfigurableRegisterActivity) getActivity()).startFormActivity(moduleMetadata.getRegistrationFormName(), null, (String) null);
+        }
     }
 
     @Override

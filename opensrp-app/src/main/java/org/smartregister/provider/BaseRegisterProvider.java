@@ -62,7 +62,7 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
 
         // Get the configuration
         ModuleConfiguration moduleConfiguration = CoreLibrary.getInstance()
-                .getConfiguration(CoreLibrary.getInstance().getCurrentModule());
+                .getModuleConfiguration(CoreLibrary.getInstance().getCurrentModuleName());
 
         this.registerProviderMetadata = ConfigurationInstancesHelper
                 .newInstance(moduleConfiguration.getRegisterProviderMetadata());

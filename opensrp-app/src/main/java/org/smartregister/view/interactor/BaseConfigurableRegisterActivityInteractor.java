@@ -2,13 +2,17 @@ package org.smartregister.view.interactor;
 
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
+import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.domain.UniqueId;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.UniqueIdRepository;
@@ -23,6 +27,7 @@ import org.smartregister.view.contract.RegisterParams;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import timber.log.Timber;
@@ -46,7 +51,30 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
 
     @Override
     public void getNextUniqueId(final Triple<String, String, String> triple, final ConfigurableRegisterActivityContract.InteractorCallBack callBack) {
+        getNextUniqueId(triple, callBack, null, null);
+    }
+
+    @Override
+    public void getNextUniqueId(Triple<String, String, String> triple, ConfigurableRegisterActivityContract.InteractorCallBack callBack, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
         // Do nothing for now, this will be handled by the class that extends this
+        appExecutors.diskIO()
+                .execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        UniqueId uniqueId = getUniqueIdRepository().getNextUniqueId();
+                        final String entityId = uniqueId != null ? uniqueId.getOpenmrsId() : "";
+                        appExecutors.mainThread().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (StringUtils.isBlank(entityId)) {
+                                    callBack.onNoUniqueId();
+                                } else {
+                                    callBack.onUniqueIdFetched(triple, entityId, injectedFieldValues, entityTable);
+                                }
+                            }
+                        });
+                    }
+                });
     }
 
     @Override
@@ -55,8 +83,21 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
     }
 
     @Override
-    public void saveRegistration(List<EventClient> opdEventClientList, String jsonString, RegisterParams registerParams, ConfigurableRegisterActivityContract.InteractorCallBack callBack) {
-        // Do nothing for now, this will be handled by the class that extends this
+    public void saveRegistration(HashMap<Client, List<Event>> opdEventClientList, String jsonString, RegisterParams registerParams, ConfigurableRegisterActivityContract.InteractorCallBack callBack) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                saveRegistration(opdEventClientList, jsonString, registerParams);
+                appExecutors.mainThread().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        callBack.onRegistrationSaved(registerParams.isEditMode());
+                    }
+                });
+            }
+        };
+
+        appExecutors.diskIO().execute(runnable);
     }
 
     @Override
@@ -116,6 +157,50 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
     @NonNull
     public UniqueIdRepository getUniqueIdRepository() {
         return CoreLibrary.getInstance().context().getUniqueIdRepository();
+    }
+
+
+
+    private void saveRegistration(@NonNull HashMap<Client, List<Event>> opdEventClientList, @NonNull String jsonString,
+                                  @NonNull RegisterParams params) {
+        try {
+            List<String> currentFormSubmissionIds = new ArrayList<>();
+
+            for (int i = 0; i < opdEventClientList.size(); i++) {
+                try {
+
+                    OpdEventClient opdEventClient = opdEventClients.get(i);
+                    Client baseClient = opdEventClient.getClient();
+                    Event baseEvent = opdEventClient.getEvent();
+
+                    if (baseClient != null) {
+                        JSONObject clientJson = new JSONObject(OpdJsonFormUtils.gson.toJson(baseClient));
+                        if (params.isEditMode()) {
+                            try {
+                                OpdJsonFormUtils.mergeAndSaveClient(baseClient);
+                            } catch (Exception e) {
+                                Timber.e(e, "OpdRegisterInteractor --> mergeAndSaveClient");
+                            }
+                        } else {
+                            getSyncHelper().addClient(baseClient.getBaseEntityId(), clientJson);
+                        }
+                    }
+
+                    addEvent(params, currentFormSubmissionIds, baseEvent);
+                    updateOpenSRPId(jsonString, params, baseClient);
+                    addImageLocation(jsonString, i, baseClient, baseEvent);
+                } catch (Exception e) {
+                    Timber.e(e, "OpdRegisterInteractor --> saveRegistration loop");
+                }
+            }
+
+            long lastSyncTimeStamp = getAllSharedPreferences().fetchLastUpdatedAtDate(0);
+            Date lastSyncDate = new Date(lastSyncTimeStamp);
+            getClientProcessorForJava().processClient(getSyncHelper().getEvents(currentFormSubmissionIds));
+            getAllSharedPreferences().saveLastUpdatedAtDate(lastSyncDate.getTime());
+        } catch (Exception e) {
+            Timber.e(e, "OpdRegisterInteractor --> saveRegistration");
+        }
     }
 
 }

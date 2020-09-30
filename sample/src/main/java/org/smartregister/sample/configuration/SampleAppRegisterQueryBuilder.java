@@ -9,7 +9,7 @@ import org.smartregister.pojo.InnerJoinObject;
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-09-16
  */
 
-public class OpdRegisterQueryBuilder extends SmartRegisterQueryBuilder {
+public class SampleAppRegisterQueryBuilder extends SmartRegisterQueryBuilder {
 
     public String SelectInitiateMainTableCounts(String tableName) {
         String selectQuery = "SELECT COUNT(*) as sub_count";

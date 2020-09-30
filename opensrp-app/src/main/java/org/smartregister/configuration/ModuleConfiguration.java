@@ -3,6 +3,8 @@ package org.smartregister.configuration;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import org.smartregister.client.utils.contract.ClientFormContract;
+
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,6 +72,11 @@ public class ModuleConfiguration {
     }
 
     @NonNull
+    public Class<? extends ClientFormContract.View> getJsonFormActivity() {
+        return builder.jsonFormActivity;
+    }
+
+    @NonNull
     public String getRegisterTitle() {
         return builder.registerTitle;
     }
@@ -107,6 +114,9 @@ public class ModuleConfiguration {
 
         @NonNull
         private Class<? extends ActivityStarter> activityStarter;
+
+        @NonNull
+        private Class<? extends ClientFormContract.View> jsonFormActivity;
 
         private boolean isBottomNavigationEnabled;
 
@@ -154,6 +164,11 @@ public class ModuleConfiguration {
 
         public Builder setModuleFormProcessorClass(@Nullable Class<? extends ModuleFormProcessor> moduleFormProcessorClass) {
             this.moduleFormProcessorClass = moduleFormProcessorClass;
+            return this;
+        }
+
+        public Builder setJsonFormActivity(@NonNull Class<? extends ClientFormContract.View> jsonFormActivity) {
+            this.jsonFormActivity = jsonFormActivity;
             return this;
         }
 

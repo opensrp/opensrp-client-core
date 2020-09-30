@@ -98,7 +98,7 @@ public class RegisterQueryProvider extends ModuleRegisterQueryProviderContract {
         for (int i = 0; i < tableColsInnerJoins.length; i++) {
             InnerJoinObject tableColInnerJoin = tableColsInnerJoins[i];
 
-            OpdRegisterQueryBuilder countQueryBuilder = new OpdRegisterQueryBuilder();
+            SampleAppRegisterQueryBuilder countQueryBuilder = new SampleAppRegisterQueryBuilder();
             countQueryBuilder.SelectInitiateMainTable(tableColInnerJoin);
             countQueryBuilder.mainCondition(tableColInnerJoin.getMainCondition());
 
@@ -127,7 +127,7 @@ public class RegisterQueryProvider extends ModuleRegisterQueryProviderContract {
         for (int i = 0; i < tableCols.length; i++) {
             QueryTable tableCol = tableCols[i];
 
-            OpdRegisterQueryBuilder countQueryBuilder = new OpdRegisterQueryBuilder();
+            SampleAppRegisterQueryBuilder countQueryBuilder = new SampleAppRegisterQueryBuilder();
             //countQueryBuilder.SelectInitiateMainTable(tableCol.getTableName(), tableCol.getColNames());
             countQueryBuilder.mainCondition(tableCol.getMainCondition());
 
@@ -162,7 +162,7 @@ public class RegisterQueryProvider extends ModuleRegisterQueryProviderContract {
         for (int i = 0; i < tableColsInnerJoins.length; i++) {
             InnerJoinObject tableColInnerJoin = tableColsInnerJoins[i];
 
-            OpdRegisterQueryBuilder countQueryBuilder = new OpdRegisterQueryBuilder();
+            SampleAppRegisterQueryBuilder countQueryBuilder = new SampleAppRegisterQueryBuilder();
             countQueryBuilder.SelectInitiateMainTable(tableColInnerJoin);
             countQueryBuilder.mainCondition(tableColInnerJoin.getMainCondition());
 
@@ -176,7 +176,7 @@ public class RegisterQueryProvider extends ModuleRegisterQueryProviderContract {
         for (int i = 0; i < tableCols.length; i++) {
             QueryTable tableCol = tableCols[i];
 
-            OpdRegisterQueryBuilder countQueryBuilder = new OpdRegisterQueryBuilder();
+            SampleAppRegisterQueryBuilder countQueryBuilder = new SampleAppRegisterQueryBuilder();
             //countQueryBuilder.SelectInitiateMainTable(tableCol.getTableName(), tableCol.getColNames());
             countQueryBuilder.mainCondition(tableCol.getMainCondition());
 

@@ -17,7 +17,7 @@ public interface ModuleFormProcessor {
 
     HashMap<Client, List<Event>> extractEventClient(@NonNull String jsonString, @Nullable Intent data, @Nullable FormTag formTag) throws JSONException;
 
-    JSONObject getFormAsJson(@NonNull JSONObject form, @NonNull String formName, @NonNull String id, @NonNull String currentLocationId, @org.jetbrains.annotations.Nullable HashMap<String, String> injectedFieldValues) throws JSONException;
+    JSONObject getFormAsJson(@NonNull JSONObject form, @NonNull String formName, @NonNull String entityId, @NonNull String currentLocationId, @Nullable HashMap<String, String> injectedFieldValues) throws JSONException;
 
 
 }

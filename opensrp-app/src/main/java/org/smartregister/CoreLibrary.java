@@ -292,7 +292,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     }
 
     @NonNull
-    public ModuleConfiguration getConfiguration(@NonNull String moduleName) {
+    public ModuleConfiguration getModuleConfiguration(@NonNull String moduleName) {
         ModuleConfiguration moduleConfiguration = this.moduleConfigurations.get(moduleName);
 
         if (moduleConfiguration == null) {
@@ -303,14 +303,19 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     }
 
     @NonNull
-    public String getCurrentModule() {
+    public String getCurrentModuleName() {
         return currentModule != null ? currentModule : defaultModule;
+    }
+
+    @NonNull
+    public ModuleConfiguration getCurrentModuleConfiguration() {
+        return getModuleConfiguration(getCurrentModuleName());
     }
 
     @NonNull
     public void startRegisterActivity(@NonNull android.content.Context context) {
         Intent intent = new Intent(context, BaseConfigurableRegisterActivity.class);
-        intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, getCurrentModule());
+        intent.putExtra(AllConstants.IntentExtra.MODULE_NAME, getCurrentModuleName());
         context.startActivity(intent);
     }
 
