@@ -440,7 +440,7 @@
 
     <string name="check_in">CHECK IN</string>
     <string name="care_giver_initials">CG</string>
-    <string name="opd_str_page_info">Page {0} of {1}</string>
+    <string name="base_register_page_numbering">Page {0} of {1}</string>
     <string name="abbrv_years">y</string>
 
 

@@ -338,16 +338,6 @@ public class SampleAppJsonFormUtils extends JsonFormUtils {
         }
     }
 
-    public static void mergeAndSaveClient(@NonNull Client baseClient) throws Exception {
-        ECSyncHelper ecSyncHelper = ECSyncHelper.getInstance(CoreLibrary.getInstance().context().applicationContext());
-        JSONObject updatedClientJson = new JSONObject(JsonFormUtils.gson.toJson(baseClient));
-        JSONObject originalClientJsonObject = ecSyncHelper.getClient(baseClient.getBaseEntityId());
-        if (originalClientJsonObject != null) {
-            JSONObject mergedJson = JsonFormUtils.merge(originalClientJsonObject, updatedClientJson);
-            ecSyncHelper.addClient(baseClient.getBaseEntityId(), mergedJson);
-        }
-    }
-
     public static void saveImage(@NonNull String providerId, @NonNull String entityId, @Nullable String imageLocation) {
         try {
             if (StringUtils.isBlank(imageLocation)) {

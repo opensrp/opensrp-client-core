@@ -496,69 +496,15 @@ public class AllConstants {
         
         interface FieldKey {
             String LAST_INTERACTED_WITH = "last_interacted_with";
-
-
-            // UNUSED
-            String DOB = "dob";
             String DOB_UNKNOWN = "dob_unknown";
             String OPTIONS = "options";
             String SEX = "Sex";
 
             String AGE_ENTERED = "age_entered";
             String DOB_ENTERED = "dob_entered";
-            String ADDRESS_WIDGET_KEY = "home_address";
-            String NAME = "opd_registration";
-            String REMINDERS = "reminders";
-
-            String SERVICE_FEE = "service_fee";
-            String VISIT_ID = "visitId";
-            String MEDICINE = "medicine";
-            String DOSAGE = "dosage";
-            String DURATION = "duration";
-            String INFO = "info";
-            String META = "meta";
-            String DIAGNOSIS = "diagnosis";
-            String DIAGNOSIS_TYPE = "diagnosis_type";
-            String DISEASE_CODE = "disease_code";
-            String CODE = "code";
-            String ICD10 = "icd10";
-            String DIAGNOSTIC_TEST_RESULT_SPINNER = "diagnostic_test_result_spinner";
-            String DIAGNOSTIC_TEST_OTHER = "diagnostic_test_other";
-            String DIAGNOSTIC_TEST = "diagnostic_test";
-            String DIAGNOSTIC_TEST_RESULT_SPECIFY = "diagnostic_test_result_specify";
-            String ID = "ID";
-            String VISIT_END_DATE = "visit_end_date";
-
-            String FIRST_NAME = "first_name";
-            String LAST_NAME = "last_name";
-            String BHT_ID = "bht_mid";
-            String PHONE_NUMBER = "phone_number";
-            String NATIONAL_ID = "national_id";
-            String HOME_ADDRESS = "home_address";
-            String AGE_CALCULATED = "age_calculated";
-            String GENDER = "gender";
-            String ENCOUNTER_TYPE = "encounter_type";
-            String ENTITY_ID = "entity_id";
-            String ENCOUNTER = "encounter";
-            String ENCOUNTER_LOCATION = "encounter_location";
-            String UNIQUE_ID = "unique_id";
-            String AGE = "age";
-            String OPD_EDIT_FORM_TITLE = "Update Opd Registration";
-            String FORM_TITLE = "title";
             String OPENSRP_ID = "opensrp_id";
-            public static final String CURRENT_OPENSRP_ID = "current_opensrp_id";
-            public static final String ZEIR_ID = "zeir_id";
-
-            String DIAGNOSTIC_TEST_RESULT_GLUCOSE = "diagnostic_test_result_glucose";
-            String DIAGNOSTIC_TEST_RESULT_SPINNER_BLOOD_TYPE = "diagnostic_test_result_spinner_blood_type";
-            String FREQUENCY = "frequency";
-            String HOME_FACILITY = "Home_Facility";
-            String SPECIAL_INSTRUCTIONS = "special_instructions";
-            String TREATMENT_TYPE = "treatment_type";
-            String TREATMENT_TYPE_SPECIFY = "treatment_type_specify";
-            String DIAGNOSIS_SAME = "diagnosis_same";
-            String VILLAGE = "village";
-            public static String TESTS_REPEATING_GROUP = "tests_repeating_group";
+            String CURRENT_OPENSRP_ID = "current_opensrp_id";
+            String ZEIR_ID = "zeir_id";
         }
     }
 

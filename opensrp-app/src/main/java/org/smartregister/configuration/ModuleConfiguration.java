@@ -29,15 +29,12 @@ public class ModuleConfiguration {
     private void setDefaults() {
         if (builder.registerProviderMetadata == null) {
             builder.registerProviderMetadata = BaseRegisterProviderMetadata.class;
-        }/*
-        if (!builder.opdFormProcessingMap.containsKey(OpdConstants.EventType.DIAGNOSIS_AND_TREAT)) {
-            builder.opdFormProcessingMap.put(OpdConstants.EventType.DIAGNOSIS_AND_TREAT, new OpdDiagnoseAndTreatFormProcessor());
-        }*/
+        }
     }
 
     @Nullable
     public ModuleMetadata getModuleMetadata() {
-        return builder.opdMetadata;
+        return builder.moduleMetadata;
     }
 
     @NonNull
@@ -120,7 +117,7 @@ public class ModuleConfiguration {
 
         private boolean isBottomNavigationEnabled;
 
-        private ModuleMetadata opdMetadata;
+        private ModuleMetadata moduleMetadata;
         private int maxCheckInDurationInMinutes = 24 * 60;
         private ConfigurableViewsLibrary configurableViewsLibrary;
         private String registerTitle;
@@ -147,8 +144,8 @@ public class ModuleConfiguration {
             return this;
         }
 
-        public Builder setModuleMetadata(@NonNull ModuleMetadata opdMetadata) {
-            this.opdMetadata = opdMetadata;
+        public Builder setModuleMetadata(@NonNull ModuleMetadata moduleMetadata) {
+            this.moduleMetadata = moduleMetadata;
             return this;
         }
 
@@ -157,8 +154,8 @@ public class ModuleConfiguration {
             return this;
         }
 
-        public Builder addModuleFormProcessingClass(String eventType, Class<? extends ModuleFormProcessor> opdFormProcessor) {
-            this.formProcessingMap.put(eventType, opdFormProcessor);
+        public Builder addModuleFormProcessingClass(String eventType, Class<? extends ModuleFormProcessor> moduleFormProcessor) {
+            this.formProcessingMap.put(eventType, moduleFormProcessor);
             return this;
         }
 

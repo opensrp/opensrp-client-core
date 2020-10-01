@@ -19,7 +19,7 @@ import timber.log.Timber;
  * Created by Ephraim Kigamba - ekigamba@ona.io on 2019-09-13
  */
 
-public class OpdRegisterFragmentModel implements BaseRegisterFragmentContract.Model {
+public class BaseConfigurableRegisterFragmentModel implements BaseRegisterFragmentContract.Model {
 
     @Override
     public IViewConfiguration getViewConfiguration(String viewConfigurationIdentifier) {

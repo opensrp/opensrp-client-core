@@ -51,7 +51,7 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
     private RegisterProviderMetadata registerProviderMetadata;
 
     @Nullable
-    private BaseRegisterRowOptions opdRegisterRowOptions;
+    private BaseRegisterRowOptions baseRegisterRowOptions;
 
     public BaseRegisterProvider(@NonNull Context context, @NonNull View.OnClickListener onClickListener, @NonNull View.OnClickListener paginationClickListener) {
 
@@ -67,9 +67,9 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
         this.registerProviderMetadata = ConfigurationInstancesHelper
                 .newInstance(moduleConfiguration.getRegisterProviderMetadata());
 
-        Class<? extends BaseRegisterRowOptions> opdRegisterRowOptionsClass = moduleConfiguration.getRegisterRowOptions();
-        if (opdRegisterRowOptionsClass != null) {
-            this.opdRegisterRowOptions = ConfigurationInstancesHelper.newInstance(opdRegisterRowOptionsClass);
+        Class<? extends BaseRegisterRowOptions> registerRowOptions = moduleConfiguration.getRegisterRowOptions();
+        if (registerRowOptions != null) {
+            this.baseRegisterRowOptions = ConfigurationInstancesHelper.newInstance(registerRowOptions);
         }
     }
 
@@ -83,13 +83,13 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
     public void getView(Cursor cursor, SmartRegisterClient client, BaseRegisterViewHolder viewHolder) {
         CommonPersonObjectClient pc = (CommonPersonObjectClient) client;
 
-        if (opdRegisterRowOptions != null && opdRegisterRowOptions.isDefaultPopulatePatientColumn()) {
-            opdRegisterRowOptions.populateClientRow(cursor, pc, client, viewHolder);
+        if (baseRegisterRowOptions != null && baseRegisterRowOptions.isDefaultPopulatePatientColumn()) {
+            baseRegisterRowOptions.populateClientRow(cursor, pc, client, viewHolder);
         } else {
             populatePatientColumn(pc, viewHolder);
 
-            if (opdRegisterRowOptions != null) {
-                opdRegisterRowOptions.populateClientRow(cursor, pc, client, viewHolder);
+            if (baseRegisterRowOptions != null) {
+                baseRegisterRowOptions.populateClientRow(cursor, pc, client, viewHolder);
             }
         }
     }
@@ -98,7 +98,7 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
     public void getFooterView(RecyclerView.ViewHolder viewHolder, int currentPageCount, int totalPageCount, boolean hasNext, boolean hasPrevious) {
         FooterViewHolder footerViewHolder = (FooterViewHolder) viewHolder;
         footerViewHolder.pageInfoView.setText(
-                MessageFormat.format(context.getString(R.string.opd_str_page_info), currentPageCount,
+                MessageFormat.format(context.getString(R.string.base_register_page_numbering), currentPageCount,
                         totalPageCount));
 
         footerViewHolder.nextPageView.setVisibility(hasNext ? View.VISIBLE : View.INVISIBLE);
@@ -129,18 +129,18 @@ public class BaseRegisterProvider extends ConfigurableComponentImpl implements R
 
     @Override
     public BaseRegisterViewHolder createViewHolder(ViewGroup parent) {
-        int resId = R.layout.opd_register_list_row;
+        int resId = R.layout.base_configurable_register_list_row;
 
-        if (opdRegisterRowOptions != null
-                && opdRegisterRowOptions.useCustomViewLayout()
-                && opdRegisterRowOptions.getCustomViewLayoutId() != 0) {
-            resId = opdRegisterRowOptions.getCustomViewLayoutId();
+        if (baseRegisterRowOptions != null
+                && baseRegisterRowOptions.useCustomViewLayout()
+                && baseRegisterRowOptions.getCustomViewLayoutId() != 0) {
+            resId = baseRegisterRowOptions.getCustomViewLayoutId();
         }
 
         View view = inflater.inflate(resId, parent, false);
 
-        if (opdRegisterRowOptions != null && opdRegisterRowOptions.isCustomViewHolder()) {
-            return opdRegisterRowOptions.createCustomViewHolder(view);
+        if (baseRegisterRowOptions != null && baseRegisterRowOptions.isCustomViewHolder()) {
+            return baseRegisterRowOptions.createCustomViewHolder(view);
         } else {
             return new BaseRegisterViewHolder(view);
         }

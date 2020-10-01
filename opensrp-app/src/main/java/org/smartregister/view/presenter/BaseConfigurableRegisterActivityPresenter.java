@@ -185,13 +185,13 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
             registerParams.setFormTag(JsonFormUtils.formTag(CoreLibrary.getInstance().context().allSharedPreferences()));
         }
 
-        HashMap<Client, List<Event>> opdEventClientList = model.processRegistration(jsonString, registerParams.getFormTag());
-        if (opdEventClientList == null || opdEventClientList.isEmpty()) {
+        HashMap<Client, List<Event>> clientListHashMap = model.processRegistration(jsonString, registerParams.getFormTag());
+        if (clientListHashMap == null || clientListHashMap.isEmpty()) {
             Timber.i(jsonString);
             throw new RuntimeException("The form above could not be processed to generate Events and Clients");
         }
 
         registerParams.setEditMode(false);
-        interactor.saveRegistration(opdEventClientList, jsonString, registerParams, this);
+        interactor.saveRegistration(clientListHashMap, jsonString, registerParams, this);
     }
 }

@@ -84,15 +84,15 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
     }
 
     @Override
-    public void saveRegistration(HashMap<Client, List<Event>> opdEventClientList, String jsonString, RegisterParams registerParams, ConfigurableRegisterActivityContract.InteractorCallBack callBack) {
+    public void saveRegistration(HashMap<Client, List<Event>> clientListHashMap, String jsonString, RegisterParams registerParams, ConfigurableRegisterActivityContract.InteractorCallBack callBack) {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                saveRegistration(opdEventClientList, jsonString, registerParams);
+                saveRegistration(clientListHashMap, jsonString, registerParams);
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        callBack.onRegistrationSaved(registerParams, opdEventClientList);
+                        callBack.onRegistrationSaved(registerParams, clientListHashMap);
                     }
                 });
             }
@@ -178,7 +178,7 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
                             try {
                                 JsonFormUtils.mergeAndSaveClient(client);
                             } catch (Exception e) {
-                                Timber.e(e, "OpdRegisterInteractor --> mergeAndSaveClient");
+                                Timber.e(e);
                             }
                         } else {
                             getSyncHelper().addClient(client.getBaseEntityId(), clientJson);
@@ -193,7 +193,7 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
                         }
                     }
                 } catch (Exception e) {
-                    Timber.e(e, "OpdRegisterInteractor --> saveRegistration loop");
+                    Timber.e(e);
                 }
             }
 
@@ -202,7 +202,7 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
             getClientProcessorForJava().processClient(getSyncHelper().getEvents(currentFormSubmissionIds));
             getAllSharedPreferences().saveLastUpdatedAtDate(lastSyncDate.getTime());
         } catch (Exception e) {
-            Timber.e(e, "OpdRegisterInteractor --> saveRegistration");
+            Timber.e(e);
         }
     }
 

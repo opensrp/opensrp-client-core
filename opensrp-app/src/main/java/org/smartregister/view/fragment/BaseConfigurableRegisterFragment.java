@@ -31,8 +31,8 @@ import org.smartregister.view.activity.BaseConfigurableRegisterActivity;
 import org.smartregister.view.activity.BaseRegisterActivity;
 import org.smartregister.view.contract.BaseRegisterFragmentContract;
 import org.smartregister.view.dialog.NoMatchDialogFragment;
-import org.smartregister.view.model.OpdRegisterFragmentModel;
-import org.smartregister.view.presenter.OpdRegisterFragmentPresenter;
+import org.smartregister.view.model.BaseConfigurableRegisterFragmentModel;
+import org.smartregister.view.presenter.BaseConfigurableRegisterFragmentPresenter;
 
 import java.util.HashMap;
 import java.util.List;
@@ -49,14 +49,14 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     private View view;
     private View dueOnlyLayout;
     private boolean dueFilterActive = false;
-    private ModuleRegisterQueryProviderContract opdRegisterQueryProvider;
+    private ModuleRegisterQueryProviderContract moduleRegisterQueryProvider;
     private ModuleConfiguration moduleConfiguration;
 
     public BaseConfigurableRegisterFragment() {
     }
 
     public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
-        opdRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
+        moduleRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
         this.moduleConfiguration = moduleConfiguration;
     }
 
@@ -64,8 +64,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         return moduleConfiguration;
     }
 
-    public void setOpdRegisterQueryProvider(ModuleRegisterQueryProviderContract opdRegisterQueryProvider) {
-        this.opdRegisterQueryProvider = opdRegisterQueryProvider;
+    public void setModuleRegisterQueryProvider(ModuleRegisterQueryProviderContract moduleRegisterQueryProvider) {
+        this.moduleRegisterQueryProvider = moduleRegisterQueryProvider;
     }
 
     @Override
@@ -147,7 +147,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         }
 
         if (presenter == null) {
-            presenter = new OpdRegisterFragmentPresenter(getModuleConfiguration(), this, new OpdRegisterFragmentModel());
+            presenter = new BaseConfigurableRegisterFragmentPresenter(getModuleConfiguration(), this, new BaseConfigurableRegisterFragmentModel());
         }
     }
 
@@ -372,11 +372,11 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         String query = "";
         try {
             if (isValidFilterForFts(commonRepository())) {
-                String sql = opdRegisterQueryProvider.getObjectIdsQuery(filters, mainCondition);
+                String sql = moduleRegisterQueryProvider.getObjectIdsQuery(filters, mainCondition);
                 sql = sqb.addlimitandOffset(sql, clientAdapter.getCurrentlimit(), clientAdapter.getCurrentoffset());
 
                 List<String> ids = commonRepository().findSearchIds(sql);
-                query = opdRegisterQueryProvider.mainSelectWhereIDsIn();
+                query = moduleRegisterQueryProvider.mainSelectWhereIDsIn();
 
                 String joinedIds = "'" + StringUtils.join(ids, "','") + "'";
                 return query.replace("%s", joinedIds);
@@ -401,7 +401,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     public void countExecute() {
         try {
             int totalCount = 0;
-            for (String sql : opdRegisterQueryProvider.countExecuteQueries(filters, mainCondition)) {
+            for (String sql : moduleRegisterQueryProvider.countExecuteQueries(filters, mainCondition)) {
                 Timber.i(sql);
                 totalCount += commonRepository().countSearchIds(sql);
             }

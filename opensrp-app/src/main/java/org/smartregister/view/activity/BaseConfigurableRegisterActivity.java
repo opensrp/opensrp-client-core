@@ -206,8 +206,8 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     @Override
     public void startFormActivity(@NonNull JSONObject jsonForm, @Nullable HashMap<String, String> parcelableData) {
-        ModuleMetadata opdMetadata = getModuleConfiguration().getModuleMetadata();
-        if (opdMetadata != null) {
+        ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
+        if (moduleMetadata != null) {
             Intent intent = new Intent(this, getModuleConfiguration().getJsonFormActivity());
             Form form = new Form();
             form.setWizard(false);
@@ -237,7 +237,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
             }
             startActivityForResult(intent, AllConstants.RequestCode.START_JSON_FORM);
         } else {
-            Timber.e(new Exception(), "FormActivity cannot be started because OpdMetadata is NULL");
+            Timber.e(new Exception(), "FormActivity cannot be started because ModuleMetadata is NULL");
         }
     }
 }

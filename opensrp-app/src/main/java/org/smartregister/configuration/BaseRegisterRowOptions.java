@@ -21,7 +21,7 @@ public class BaseRegisterRowOptions implements RegisterRowOptions<BaseRegisterVi
     }
 
     @Override
-    public void populateClientRow(@NonNull Cursor cursor, @NonNull CommonPersonObjectClient commonPersonObjectClient, @NonNull SmartRegisterClient smartRegisterClient, @NonNull BaseRegisterViewHolder opdRegisterViewHolder) {
+    public void populateClientRow(@NonNull Cursor cursor, @NonNull CommonPersonObjectClient commonPersonObjectClient, @NonNull SmartRegisterClient smartRegisterClient, @NonNull BaseRegisterViewHolder registerViewHolder) {
         // Do nothing
     }
 
