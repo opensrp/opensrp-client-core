@@ -1,0 +1,14 @@
+---
+name: step1_current_hiv_status
+description: opd_client_current_hiv_status
+priority: 1
+condition: "step1_hiv_tested == 'No' || step1_hiv_prev_status == 'Unknown' || step1_hiv_prev_status == 'Negative'"
+actions:
+  - "isRelevant = true"
+---
+name: step1_pregnancy_status
+description: opd_client_pregnancy_status
+priority: 1
+condition: "(step1_gender.equalsIgnoreCase('Female') || step1_gender.equalsIgnoreCase('F')) && (step1_age.equals('') || step1_age > 10 )"
+actions:
+  - "isRelevant = true"

@@ -546,6 +546,8 @@ public class AllConstants {
             String OPD_EDIT_FORM_TITLE = "Update Opd Registration";
             String FORM_TITLE = "title";
             String OPENSRP_ID = "opensrp_id";
+            public static final String CURRENT_OPENSRP_ID = "current_opensrp_id";
+            public static final String ZEIR_ID = "zeir_id";
 
             String DIAGNOSTIC_TEST_RESULT_GLUCOSE = "diagnostic_test_result_glucose";
             String DIAGNOSTIC_TEST_RESULT_SPINNER_BLOOD_TYPE = "diagnostic_test_result_spinner_blood_type";

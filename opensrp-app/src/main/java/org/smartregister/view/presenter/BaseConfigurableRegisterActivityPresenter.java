@@ -171,8 +171,11 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
     }
 
     @Override
-    public void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable List<EventClient> clientList) {
-
+    public void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable HashMap<Client, List<Event>> clientList) {
+        if (getView() != null) {
+            getView().refreshList(FetchStatus.fetched);
+            getView().hideProgressDialog();
+        }
     }
 
 

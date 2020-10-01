@@ -9,12 +9,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.UniqueId;
-import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.EventClientRepository;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
@@ -91,7 +92,7 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
                 appExecutors.mainThread().execute(new Runnable() {
                     @Override
                     public void run() {
-                        callBack.onRegistrationSaved(registerParams.isEditMode());
+                        callBack.onRegistrationSaved(registerParams, opdEventClientList);
                     }
                 });
             }
@@ -161,34 +162,36 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
 
 
 
-    private void saveRegistration(@NonNull HashMap<Client, List<Event>> opdEventClientList, @NonNull String jsonString,
+    private void saveRegistration(@NonNull HashMap<Client, List<Event>> clientEventsHashMap, @NonNull String jsonString,
                                   @NonNull RegisterParams params) {
         try {
             List<String> currentFormSubmissionIds = new ArrayList<>();
 
-            for (int i = 0; i < opdEventClientList.size(); i++) {
+            for (Client client: clientEventsHashMap.keySet()) {
                 try {
 
-                    OpdEventClient opdEventClient = opdEventClients.get(i);
-                    Client baseClient = opdEventClient.getClient();
-                    Event baseEvent = opdEventClient.getEvent();
+                    List<Event> clientEvents = clientEventsHashMap.get(client);
 
-                    if (baseClient != null) {
-                        JSONObject clientJson = new JSONObject(OpdJsonFormUtils.gson.toJson(baseClient));
+                    if (client != null) {
+                        JSONObject clientJson = new JSONObject(JsonFormUtils.gson.toJson(client));
                         if (params.isEditMode()) {
                             try {
-                                OpdJsonFormUtils.mergeAndSaveClient(baseClient);
+                                JsonFormUtils.mergeAndSaveClient(client);
                             } catch (Exception e) {
                                 Timber.e(e, "OpdRegisterInteractor --> mergeAndSaveClient");
                             }
                         } else {
-                            getSyncHelper().addClient(baseClient.getBaseEntityId(), clientJson);
+                            getSyncHelper().addClient(client.getBaseEntityId(), clientJson);
                         }
                     }
+                    updateOpenSRPId(jsonString, params, client);
 
-                    addEvent(params, currentFormSubmissionIds, baseEvent);
-                    updateOpenSRPId(jsonString, params, baseClient);
-                    addImageLocation(jsonString, i, baseClient, baseEvent);
+                    if (clientEvents != null) {
+                        for (Event baseEvent : clientEvents) {
+                            addEvent(params, currentFormSubmissionIds, baseEvent);
+                            //addImageLocation(jsonString, i, client, baseEvent);
+                        }
+                    }
                 } catch (Exception e) {
                     Timber.e(e, "OpdRegisterInteractor --> saveRegistration loop");
                 }
@@ -200,6 +203,58 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
             getAllSharedPreferences().saveLastUpdatedAtDate(lastSyncDate.getTime());
         } catch (Exception e) {
             Timber.e(e, "OpdRegisterInteractor --> saveRegistration");
+        }
+    }
+
+    // TODO: FIX SAVING IMAGE
+/*
+    private void addImageLocation(String jsonString, int i, Client baseClient, Event baseEvent) {
+        if (baseClient != null && baseEvent != null) {
+            String imageLocation = null;
+            if (i == 0) {
+                imageLocation = OpdJsonFormUtils.getFieldValue(jsonString, OpdConstants.KEY.PHOTO);
+            } else if (i == 1) {
+                imageLocation =
+                        OpdJsonFormUtils.getFieldValue(jsonString, OpdJsonFormUtils.STEP2, OpdConstants.KEY.PHOTO);
+            }
+
+            if (StringUtils.isNotBlank(imageLocation)) {
+                OpdJsonFormUtils.saveImage(baseEvent.getProviderId(), baseClient.getBaseEntityId(), imageLocation);
+            }
+        }
+    }*/
+
+    private void updateOpenSRPId(@NonNull String jsonString, @NonNull RegisterParams params, @Nullable Client baseClient) {
+        if (params.isEditMode()) {
+            // Unassign current OPENSRP ID
+            if (baseClient != null) {
+                try {
+                    String newOpenSRPId = baseClient.getIdentifier(AllConstants.JSON.FieldKey.OPENSRP_ID).replace("-", "");
+                    String currentOpenSRPId = JsonFormUtils.getString(jsonString, AllConstants.JSON.FieldKey.CURRENT_OPENSRP_ID).replace("-", "");
+                    if (!newOpenSRPId.equals(currentOpenSRPId)) {
+                        //OPENSRP ID was changed
+                        getUniqueIdRepository().open(currentOpenSRPId);
+                    }
+                } catch (Exception e) {//might crash if M_ZEIR
+                    Timber.d(e, "RegisterInteractor --> unassign opensrp id");
+                }
+            }
+
+        } else {
+            if (baseClient != null) {
+                String opensrpId = baseClient.getIdentifier(AllConstants.JSON.FieldKey.ZEIR_ID);
+                //mark OPENSRP ID as used
+                getUniqueIdRepository().close(opensrpId);
+            }
+        }
+    }
+
+    private void addEvent(RegisterParams params, List<String> currentFormSubmissionIds, @Nullable Event baseEvent) throws JSONException {
+        if (baseEvent != null) {
+            JSONObject eventJson = new JSONObject(JsonFormUtils.gson.toJson(baseEvent));
+            getSyncHelper().addEvent(baseEvent.getBaseEntityId(), eventJson, params.getStatus());
+            currentFormSubmissionIds
+                    .add(eventJson.getString(EventClientRepository.event_column.formSubmissionId.toString()));
         }
     }
 

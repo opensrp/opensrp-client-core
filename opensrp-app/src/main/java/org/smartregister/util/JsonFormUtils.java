@@ -23,6 +23,7 @@ import org.smartregister.clientandeventmodel.FormEntityConstants;
 import org.smartregister.clientandeventmodel.Obs;
 import org.smartregister.domain.tag.FormTag;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.sync.helper.ECSyncHelper;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -1241,5 +1242,16 @@ public class JsonFormUtils {
         formTag.appVersion = CoreLibrary.getInstance().getApplicationVersion();
         formTag.databaseVersion = CoreLibrary.getInstance().getDatabaseVersion();
         return formTag;
+    }
+
+    public static void mergeAndSaveClient(@NonNull Client baseClient) throws Exception {
+        JSONObject updatedClientJson = new JSONObject(JsonFormUtils.gson.toJson(baseClient));
+        ECSyncHelper ecSyncHelper = ECSyncHelper.getInstance(CoreLibrary.getInstance().context().applicationContext());
+        JSONObject originalClientJsonObject = ecSyncHelper.getClient(baseClient.getBaseEntityId());
+        
+        if (originalClientJsonObject != null) {
+            JSONObject mergedJson = JsonFormUtils.merge(originalClientJsonObject, updatedClientJson);
+            ecSyncHelper.addClient(baseClient.getBaseEntityId(), mergedJson);
+        }
     }
 }

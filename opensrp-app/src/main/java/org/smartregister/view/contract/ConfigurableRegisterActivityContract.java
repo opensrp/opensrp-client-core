@@ -91,7 +91,7 @@ public interface ConfigurableRegisterActivityContract {
 
         void onNoUniqueId();
 
-        void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable List<EventClient> clientList);
+        void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable HashMap<Client, List<Event>> clientList);
 
         void onEventSaved();
     }
