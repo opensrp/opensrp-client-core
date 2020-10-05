@@ -57,7 +57,7 @@ public class SyncUtils {
         logoutUser(R.string.account_disabled_logged_off);
     }
 
-    public void logoutUser(@StringRes  int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
+    public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
         opensrpContent.userService().forceRemoteLogin(opensrpContent.allSharedPreferences().fetchRegisteredANM());
 
@@ -91,44 +91,48 @@ public class SyncUtils {
         return intent;
     }
 
-    public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
+    public boolean isAppVersionAllowed() {
         boolean isAppVersionAllowed = true;
 
-        // see if setting was synced
-        AllSettings settingsRepository = opensrpContent.allSettings();
-        Setting rawMinAllowedAppVersionSetting=null;
         try {
-            rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
-        }catch ( NullPointerException e ){
+
+            // see if setting was synced
+            AllSettings settingsRepository = opensrpContent.allSettings();
+            Setting rawMinAllowedAppVersionSetting;
+            try {
+                rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+            } catch (NullPointerException e) {
+                Timber.e(e);
+                return true;
+            }
+            if (rawMinAllowedAppVersionSetting == null) {
+                return true;
+            }
+
+            // if min version is already extracted
+            Setting extractedMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
+            if (extractedMinAllowedAppVersionSetting != null
+                    && isNewerSetting(extractedMinAllowedAppVersionSetting, rawMinAllowedAppVersionSetting)) {
+                return !isOutdatedVersion(Long.parseLong(extractedMinAllowedAppVersionSetting.getValue()));
+            }
+
+            // else, attempt to extract it
+            int minAllowedAppVersion = extractMinAllowedAppVersion(rawMinAllowedAppVersionSetting.getValue());
+            if (isOutdatedVersion(minAllowedAppVersion)) {
+                isAppVersionAllowed = false;
+            }
+
+            // update settings repository with the extracted version of the min allowed setting
+            extractedMinAllowedAppVersionSetting = new Setting();
+            extractedMinAllowedAppVersionSetting.setValue(String.valueOf(minAllowedAppVersion));
+            extractedMinAllowedAppVersionSetting.setKey(MIN_ALLOWED_APP_VERSION);
+            extractedMinAllowedAppVersionSetting.setSyncStatus(BaseRepository.TYPE_Synced);
+            extractedMinAllowedAppVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
+            extractedMinAllowedAppVersionSetting.setVersion(getIncrementedServerVersion(rawMinAllowedAppVersionSetting));
+            settingsRepository.putSetting(extractedMinAllowedAppVersionSetting);
+        } catch (Exception e) {
             Timber.e(e);
-            return true;
         }
-        if (rawMinAllowedAppVersionSetting == null) {
-            return true;
-        }
-
-        // if min version is already extracted
-        Setting extractedMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
-        if (extractedMinAllowedAppVersionSetting != null
-                && isNewerSetting(extractedMinAllowedAppVersionSetting, rawMinAllowedAppVersionSetting)) {
-            return !isOutdatedVersion(Long.parseLong(extractedMinAllowedAppVersionSetting.getValue()));
-        }
-
-        // else, attempt to extract it
-        int minAllowedAppVersion = extractMinAllowedAppVersion(rawMinAllowedAppVersionSetting.getValue());
-        if (isOutdatedVersion(minAllowedAppVersion)) {
-            isAppVersionAllowed = false;
-        }
-
-        // update settings repository with the extracted version of the min allowed setting
-        extractedMinAllowedAppVersionSetting = new Setting();
-        extractedMinAllowedAppVersionSetting.setValue(String.valueOf(minAllowedAppVersion));
-        extractedMinAllowedAppVersionSetting.setKey(MIN_ALLOWED_APP_VERSION);
-        extractedMinAllowedAppVersionSetting.setSyncStatus(BaseRepository.TYPE_Synced);
-        extractedMinAllowedAppVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
-        extractedMinAllowedAppVersionSetting.setVersion(getIncrementedServerVersion(rawMinAllowedAppVersionSetting));
-        settingsRepository.putSetting(extractedMinAllowedAppVersionSetting);
-
         return isAppVersionAllowed;
     }
 
