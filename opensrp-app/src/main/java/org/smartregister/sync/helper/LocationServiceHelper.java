@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 
 import com.google.gson.Gson;
@@ -394,6 +395,11 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
+        fetchAllLocation(null);
+    }
+
+    public void fetchAllLocation(@Nullable String parentId) {
+
         try {
             HTTPAgent httpAgent = getHttpAgent();
             if (httpAgent == null) {
@@ -405,6 +411,9 @@ public class LocationServiceHelper extends BaseHelper {
             JSONObject request = new JSONObject();
             request.put(IS_JURISDICTION, true);
             request.put(AllConstants.SERVER_VERSION, 0);
+            if (parentId != null) {
+                request.put(PARENT_ID, parentId);
+            }
 
             Response<String> resp = httpAgent.post(
                     MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
