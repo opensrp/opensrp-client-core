@@ -30,6 +30,7 @@ import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
+import org.smartregister.util.StringUtil;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
@@ -395,10 +396,10 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
-        fetchAllLocation(null);
+        fetchAllLocations(null);
     }
 
-    public void fetchAllLocation(@Nullable String parentId) {
+    public void fetchAllLocations(@Nullable String parentId) {
 
         try {
             HTTPAgent httpAgent = getHttpAgent();
@@ -411,7 +412,7 @@ public class LocationServiceHelper extends BaseHelper {
             JSONObject request = new JSONObject();
             request.put(IS_JURISDICTION, true);
             request.put(AllConstants.SERVER_VERSION, 0);
-            if (parentId != null) {
+            if (StringUtils.isNotBlank(parentId)) {
                 request.put(PARENT_ID, parentId);
             }
 
