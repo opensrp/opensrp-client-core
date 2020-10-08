@@ -30,7 +30,6 @@ import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.PropertiesConverter;
-import org.smartregister.util.StringUtil;
 import org.smartregister.util.Utils;
 
 import java.text.MessageFormat;
