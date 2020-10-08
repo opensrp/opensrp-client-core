@@ -86,7 +86,7 @@ dependencies {
     // ------------------------------------------
     // START OF OPENSRP-CLIENT-CORE DEPENDENCIES
 
-    implementation 'org.smartregister:opensrp-client-utils:0.0.4.2-SNAPSHOT'
+    implementation 'org.smartregister:opensrp-client-utils:0.0.4-SNAPSHOT'
     implementation 'org.apache.commons:commons-lang3:3.2'
 
     // END OF OPENSRP-CLIENT-CORE DEPENDENCIES
