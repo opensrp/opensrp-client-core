@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
@@ -1388,6 +1389,39 @@ public class EventClientRepository extends BaseRepository {
                 String jsonString = cursor.getString(0);
                 jsonString = jsonString.replaceAll("'", "");
                 return convert(jsonString, Client.class);
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public CommonPersonObjectClient fetchCommonPersonObjectClientByBaseEntityId(String baseEntityId) {
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT "
+                    + client_column.json
+                    + " FROM "
+                    + clientTable.name()
+                    + " WHERE "
+                    + client_column.baseEntityId.name()
+                    + " = ? ", new String[]{baseEntityId});
+            if (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+
+                Map map = convert(jsonString, Map.class);
+                HashMap<String, String> details = new HashMap<>();
+
+                for (Object key: map.keySet()) {
+                    details.put(String.valueOf(key), String.valueOf(map.get(key)));
+                }
+
+                return new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
             }
         } catch (Exception e) {
             Timber.e(e);
