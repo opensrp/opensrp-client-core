@@ -22,6 +22,7 @@ import org.smartregister.domain.LocationTag;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.SyncEntity;
 import org.smartregister.domain.SyncProgress;
+import org.smartregister.domain.jsonmapping.util.LocationTree;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
@@ -29,6 +30,7 @@ import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.LocationTagRepository;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.AssetHandler;
 import org.smartregister.util.PropertiesConverter;
 import org.smartregister.util.Utils;
 
@@ -57,6 +59,7 @@ public class LocationServiceHelper extends BaseHelper {
     public static final String CREATE_STRUCTURE_URL = "/rest/location/add";
     public static final String COMMON_LOCATIONS_SERVICE_URL = "/location/by-level-and-tags";
     public static final String OPENMRS_LOCATION_BY_TEAM_IDS = "/location/by-team-ids";
+    public static final String LOCATION_HIERARCHY_URL = "/rest/location/hierarchy/";
     public static final String STRUCTURES_LAST_SYNC_DATE = "STRUCTURES_LAST_SYNC_DATE";
     public static final String LOCATION_LAST_SYNC_DATE = "LOCATION_LAST_SYNC_DATE";
     private static final String LOCATIONS_NOT_PROCESSED = "Locations with Ids not processed: ";
@@ -395,11 +398,6 @@ public class LocationServiceHelper extends BaseHelper {
     }
 
     public void fetchAllLocations() {
-        fetchAllLocations(null);
-    }
-
-    public void fetchAllLocations(@Nullable String parentId) {
-
         try {
             HTTPAgent httpAgent = getHttpAgent();
             if (httpAgent == null) {
@@ -411,9 +409,6 @@ public class LocationServiceHelper extends BaseHelper {
             JSONObject request = new JSONObject();
             request.put(IS_JURISDICTION, true);
             request.put(AllConstants.SERVER_VERSION, 0);
-            if (StringUtils.isNotBlank(parentId)) {
-                request.put(PARENT_ID, parentId);
-            }
 
             Response<String> resp = httpAgent.post(
                     MessageFormat.format("{0}{1}", baseUrl, LOCATION_STRUCTURE_URL),
@@ -449,6 +444,20 @@ public class LocationServiceHelper extends BaseHelper {
         } catch (Exception e) {
             Timber.e(e, "EXCEPTION %s", e.toString());
         }
+    }
+
+    @Nullable
+    public LocationTree getLocationHierarchy(String locationId) {
+        LocationTree locationTree = null;
+        Response<String> resp = getHttpAgent().fetch(MessageFormat.format("{0}{1}{2}",
+                getFormattedBaseUrl(), LOCATION_HIERARCHY_URL, locationId));
+
+        if (resp.isFailure()) {
+            Timber.e("Location hierarchy sync failed");
+            return locationTree;
+        }
+
+        return AssetHandler.jsonStringToJava(resp.payload(), LocationTree.class);
     }
 }
 
