@@ -240,7 +240,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                     boolean accountExists = false;
 
                     for (Account account : accounts) {
-                        if (account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
+                        if (account.type.equals(getAccountAuthenticatorXml().getAccountType()) && account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
                             accountExists = true;
                             break;
                         }
