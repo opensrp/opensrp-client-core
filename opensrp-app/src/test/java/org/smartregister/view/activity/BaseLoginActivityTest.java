@@ -201,6 +201,41 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Assert.assertFalse(ReflectionHelpers.getField(alertDialog, "mCancelable"));
     }
 
+    @Test
+    public void testShowProgressShouldExecuteWhenActivityIsActive() {
+        baseLoginActivity.showProgress(true);
+        ProgressDialog progressDialog = ReflectionHelpers.getField(baseLoginActivity, "progressDialog");
+        Assert.assertTrue(progressDialog.isShowing());
+    }
+
+    @Test
+    public void testShowProgressShouldNotExecuteWhenActivityIsDestroyed() {
+        ProgressDialog spyProgressDialog = Mockito.spy(new ProgressDialog(baseLoginActivity));
+        ReflectionHelpers.setField(baseLoginActivity, "progressDialog", spyProgressDialog);
+        baseLoginActivity.finish();
+        baseLoginActivity.showProgress(true);
+        Mockito.verify(spyProgressDialog, Mockito.never()).show();
+    }
+
+    @Test
+    public void testUpdateProgressMessageShouldExecuteWhenActivityIsActive() {
+        String msg = "text";
+        ProgressDialog spyProgressDialog = Mockito.spy(new ProgressDialog(baseLoginActivity));
+        ReflectionHelpers.setField(baseLoginActivity, "progressDialog", spyProgressDialog);
+        baseLoginActivity.updateProgressMessage(msg);
+        Mockito.verify(spyProgressDialog, Mockito.times(1)).setTitle(Mockito.eq(msg));
+    }
+
+    @Test
+    public void testUpdateProgressMessageShouldNotExecuteWhenActivityIsDestroyed() {
+        String msg = "text";
+        ProgressDialog spyProgressDialog = Mockito.spy(new ProgressDialog(baseLoginActivity));
+        ReflectionHelpers.setField(baseLoginActivity, "progressDialog", spyProgressDialog);
+        baseLoginActivity.finish();
+        baseLoginActivity.updateProgressMessage(msg);
+        Mockito.verify(spyProgressDialog, Mockito.never()).setTitle(Mockito.eq(msg));
+    }
+
     public static class BaseLoginActivityImpl extends BaseLoginActivity {
 
         @Override

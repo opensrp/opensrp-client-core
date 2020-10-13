@@ -21,16 +21,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import timber.log.Timber;
-
-import static org.smartregister.AllConstants.CAMPAIGNS;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
 
 
 /**
@@ -52,8 +48,6 @@ public class LocationHelper {
     private List<String> ADVANCED_DATA_CAPTURE_LEVELS;
 
     private String DEFAULT_LOCATION_LEVEL;
-    private List<String> allCampaigns = new ArrayList<>();
-    private List<String> allOperationalArea = new ArrayList<>();
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     private LocationHelper(List<String> allowedLevels, String defaultLocationLevel) {
@@ -80,6 +74,7 @@ public class LocationHelper {
 
         }
     }
+
     public static void init(List<String> allowedLevels, String defaultLocationLevel, List<String> advancedDataCaptureStrategies) {
         if (instance == null && StringUtils.isNotEmpty(defaultLocationLevel) && allowedLevels != null && allowedLevels.contains(defaultLocationLevel)) {
             instance = new LocationHelper(allowedLevels, defaultLocationLevel, advancedDataCaptureStrategies);
@@ -121,15 +116,6 @@ public class LocationHelper {
                         locations.addAll(foundLocations);
                     }
                 }
-
-                if (ALLOWED_LEVELS.contains("reveal")) {
-                    if (allCampaigns != null && !allCampaigns.isEmpty()) {
-                        allSharedPreferences.savePreference(CAMPAIGNS, android.text.TextUtils.join(",", allCampaigns));
-                    }
-                    if (allOperationalArea != null && !allOperationalArea.isEmpty()) {
-                        allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", allOperationalArea));
-                    }
-                }
             }
         } catch (Exception e) {
             Timber.e(e);
@@ -169,7 +155,7 @@ public class LocationHelper {
         } catch (Exception e) {
             Timber.e(e);
         }
-        return locationName.equals(response) ? AllConstants.ADVANCED_DATA_CAPTURE_STRATEGY_PREFIX + locationName.trim().replaceAll(" ", "-").toLowerCase(Locale.ENGLISH) : response;
+        return response;
     }
 
     public String getOpenMrsLocationName(String locationId) {
@@ -333,17 +319,9 @@ public class LocationHelper {
             Set<String> levels = node.getTags();
 
             if (!Utils.isEmptyCollection(levels)) {
-                String teamUID = allSharedPreferences.fetchDefaultTeamId(allSharedPreferences.fetchRegisteredANM());
                 for (String level : levels) {
                     if (ALLOWED_LEVELS.contains(level)) {
 
-                        if (node.getAttribute("campaign_id") != null) {
-
-                            allCampaigns.add(node.getAttribute("campaign_id").toString());
-                        }
-                        if (node.getAttribute("team_id") != null && node.getAttribute("team_id").toString().equals(teamUID)) {
-                            allOperationalArea.add(node.getName());
-                        }
                         if (!fetchLocationIds && DEFAULT_LOCATION_LEVEL.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
                             return locationList;
                         }

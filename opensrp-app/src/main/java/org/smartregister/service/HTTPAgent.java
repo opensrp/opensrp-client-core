@@ -706,7 +706,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                Timber.e("Invalid credentials for: %s using token %s", oauthAccessToken, url);
+                Timber.e("Invalid credentials accessing: %s using token %s", url, oauthAccessToken);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>

@@ -20,7 +20,7 @@ import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.repository.Repository;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
-import org.smartregister.shadows.ShadowJobManager;
+import com.evernote.android.job.ShadowJobManager;
 import org.smartregister.shadows.ShadowSQLiteDatabase;
 import org.smartregister.util.CredentialsHelper;
 

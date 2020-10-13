@@ -34,8 +34,6 @@ import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
-import timber.log.Timber;
-
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
 /**
@@ -97,6 +95,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
             if (logoffReason != null) {
                 showErrorDialog(dialogTitle, logoffReason);
+                getIntent().removeExtra(ACCOUNT_DISABLED);
             }
         }
     }
@@ -180,7 +179,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showErrorDialog(String title, String message) {
-
+        if (isDestroyed() || isFinishing()) {
+            return;
+        }
         if (alertDialog == null) {
             alertDialog = new AlertDialog.Builder(this)
                     .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create();
@@ -193,10 +194,12 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showProgress(final boolean show) {
-        if (show) {
-            progressDialog.show();
-        } else {
-            progressDialog.dismiss();
+        if (!isFinishing()) {
+            if (show) {
+                progressDialog.show();
+            } else {
+                progressDialog.dismiss();
+            }
         }
     }
 
@@ -270,7 +273,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public void updateProgressMessage(String message) {
-        progressDialog.setTitle(message);
+        if (!isFinishing()) {
+            progressDialog.setTitle(message);
+        }
     }
 
     protected void renderBuildInfo() {
@@ -286,13 +291,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public boolean isAppVersionAllowed() {
-        boolean isAppVersionAllowed = true;
-        try {
-            isAppVersionAllowed = syncUtils.isAppVersionAllowed();
-        } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e);
-        }
-        return isAppVersionAllowed;
+        return syncUtils.isAppVersionAllowed();
     }
 
     @Override

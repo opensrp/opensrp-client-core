@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -54,10 +55,14 @@ public class SyncUtils {
     }
 
     public void logoutUser() throws AuthenticatorException, OperationCanceledException, IOException {
+        logoutUser(R.string.account_disabled_logged_off);
+    }
+
+    public void logoutUser(@StringRes int logoutMessage) throws AuthenticatorException, OperationCanceledException, IOException {
         //force remote login
         opensrpContent.userService().forceRemoteLogin(opensrpContent.allSharedPreferences().fetchRegisteredANM());
 
-        Intent logoutUserIntent = getLogoutUserIntent();
+        Intent logoutUserIntent = getLogoutUserIntent(logoutMessage);
 
         AccountManagerFuture<Bundle> reAuthenticateFuture = AccountHelper.reAuthenticateUserAfterSessionExpired(opensrpContent.allSharedPreferences().fetchRegisteredANM(), CoreLibrary.getInstance().getAccountAuthenticatorXml().getAccountType(), AccountHelper.TOKEN_TYPE.PROVIDER);
         Intent accountAuthenticatorIntent = reAuthenticateFuture.getResult().getParcelable(AccountManager.KEY_INTENT);
@@ -69,7 +74,7 @@ public class SyncUtils {
     }
 
     @NonNull
-    private Intent getLogoutUserIntent() {
+    private Intent getLogoutUserIntent(@StringRes int logoutMessage) {
 
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.setPackage(context.getPackageName());
@@ -81,50 +86,53 @@ public class SyncUtils {
             intent.addCategory(Intent.CATEGORY_HOME);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.putExtra(ACCOUNT_DISABLED, context.getString(R.string.account_disabled_logged_off));
+            intent.putExtra(ACCOUNT_DISABLED, context.getString(logoutMessage));
         }
 
         return intent;
     }
 
-    public boolean isAppVersionAllowed() throws PackageManager.NameNotFoundException {
+    public boolean isAppVersionAllowed() {
         boolean isAppVersionAllowed = true;
-
-        // see if setting was synced
-        AllSettings settingsRepository = opensrpContent.allSettings();
-        Setting rawMinAllowedAppVersionSetting = null;
         try {
-            rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
-        } catch (NullPointerException e) {
+
+            // see if setting was synced
+            AllSettings settingsRepository = opensrpContent.allSettings();
+            Setting rawMinAllowedAppVersionSetting;
+            try {
+                rawMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION_SETTING);
+            } catch (NullPointerException e) {
+                Timber.e(e);
+                return true;
+            }
+            if (rawMinAllowedAppVersionSetting == null) {
+                return true;
+            }
+
+            // if min version is already extracted
+            Setting extractedMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
+            if (extractedMinAllowedAppVersionSetting != null
+                    && isNewerSetting(extractedMinAllowedAppVersionSetting, rawMinAllowedAppVersionSetting)) {
+                return !isOutdatedVersion(Long.parseLong(extractedMinAllowedAppVersionSetting.getValue()));
+            }
+
+            // else, attempt to extract it
+            int minAllowedAppVersion = extractMinAllowedAppVersion(rawMinAllowedAppVersionSetting.getValue());
+            if (isOutdatedVersion(minAllowedAppVersion)) {
+                isAppVersionAllowed = false;
+            }
+
+            // update settings repository with the extracted version of the min allowed setting
+            extractedMinAllowedAppVersionSetting = new Setting();
+            extractedMinAllowedAppVersionSetting.setValue(String.valueOf(minAllowedAppVersion));
+            extractedMinAllowedAppVersionSetting.setKey(MIN_ALLOWED_APP_VERSION);
+            extractedMinAllowedAppVersionSetting.setSyncStatus(BaseRepository.TYPE_Synced);
+            extractedMinAllowedAppVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
+            extractedMinAllowedAppVersionSetting.setVersion(getIncrementedServerVersion(rawMinAllowedAppVersionSetting));
+            settingsRepository.putSetting(extractedMinAllowedAppVersionSetting);
+        } catch (Exception e) {
             Timber.e(e);
-            return true;
         }
-        if (rawMinAllowedAppVersionSetting == null) {
-            return true;
-        }
-
-        // if min version is already extracted
-        Setting extractedMinAllowedAppVersionSetting = settingsRepository.getSetting(MIN_ALLOWED_APP_VERSION);
-        if (extractedMinAllowedAppVersionSetting != null
-                && isNewerSetting(extractedMinAllowedAppVersionSetting, rawMinAllowedAppVersionSetting)) {
-            return !isOutdatedVersion(Long.parseLong(extractedMinAllowedAppVersionSetting.getValue()));
-        }
-
-        // else, attempt to extract it
-        int minAllowedAppVersion = extractMinAllowedAppVersion(rawMinAllowedAppVersionSetting.getValue());
-        if (isOutdatedVersion(minAllowedAppVersion)) {
-            isAppVersionAllowed = false;
-        }
-
-        // update settings repository with the extracted version of the min allowed setting
-        extractedMinAllowedAppVersionSetting = new Setting();
-        extractedMinAllowedAppVersionSetting.setValue(String.valueOf(minAllowedAppVersion));
-        extractedMinAllowedAppVersionSetting.setKey(MIN_ALLOWED_APP_VERSION);
-        extractedMinAllowedAppVersionSetting.setSyncStatus(BaseRepository.TYPE_Synced);
-        extractedMinAllowedAppVersionSetting.setIdentifier(MIN_ALLOWED_APP_VERSION);
-        extractedMinAllowedAppVersionSetting.setVersion(getIncrementedServerVersion(rawMinAllowedAppVersionSetting));
-        settingsRepository.putSetting(extractedMinAllowedAppVersionSetting);
-
         return isAppVersionAllowed;
     }
 

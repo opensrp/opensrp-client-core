@@ -225,6 +225,10 @@ public class AllSharedPreferences {
         return preferences.getString(key, "");
     }
 
+    public boolean getBooleanPreference(String key) {
+        return preferences.getBoolean(key, false);
+    }
+
     public void updateUrl(String baseUrl) {
         try {
 

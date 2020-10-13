@@ -1,10 +1,7 @@
-package org.smartregister.shadows;
+package com.evernote.android.job;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
-
-import com.evernote.android.job.JobManager;
-import com.evernote.android.job.JobManagerCreateException;
 
 import org.mockito.Mockito;
 import org.robolectric.annotation.Implementation;
@@ -17,12 +14,24 @@ import org.robolectric.annotation.Implements;
 public class ShadowJobManager {
 
     public static JobManager mockJobManager;
+    public static JobStorage jobStorage;
 
     @Implementation
     public static JobManager create(@NonNull Context context) throws JobManagerCreateException {
 
+        return createMockJobManager();
+    }
+
+    @Implementation
+    public static JobManager instance() {
+        return mockJobManager;
+    }
+
+    public static JobManager createMockJobManager() {
         if (mockJobManager == null) {
             mockJobManager = Mockito.mock(JobManager.class);
+            jobStorage = Mockito.mock(JobStorage.class);
+            Mockito.doReturn(jobStorage).when(mockJobManager).getJobStorage();
         }
 
         return mockJobManager;

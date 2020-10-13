@@ -19,6 +19,15 @@ public class AllConstants {
     public static final String SETTINGS = "settings";
     public static final String SERVER_VERSION = "serverVersion";
 
+    public static final String DETAILS = "details";
+    public static final String PLAN_IDENTIFIER = "planIdentifier";
+    public static final String LOCATION_ID = "locationId";
+    public static final String RESIDENCE = "residence";
+    public static final String CLIENT_TYPE = "clientType";
+    public static final String ATTRIBUTES = "attributes";
+    public static final String FAMILY = "Family";
+    public static final String RELATIONSHIPS = "relationships";
+
 
     // Maximum time difference between server and client time in milliseconds
     public static final long MAX_SERVER_TIME_DIFFERENCE = 300000L;
@@ -34,7 +43,6 @@ public class AllConstants {
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
     public static final String DATA_STRATEGY = "data_strategy";
-    public static final String ADVANCED_DATA_CAPTURE_STRATEGY_PREFIX = "ADCS_";
     public static final String ENGLISH_LOCALE = "en";
     public static final String KANNADA_LOCALE = "kn";
     public static final String DEFAULT_LOCALE = ENGLISH_LOCALE;
@@ -100,6 +108,7 @@ public class AllConstants {
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
+    public static final String JURISDICTION_IDS = "JURISDICTION_IDS";
     public static final String ORGANIZATION_IDS = "ORGANIZATION_IDS";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
@@ -127,6 +136,7 @@ public class AllConstants {
 
     public static final String CLIENT_FORM_ASSET_VERSION = "base version";
     public static final String RETURN_COUNT = "return_count";
+    public static final String COMBINE_CHECKBOX_OPTION_VALUES = "combine_checkbox_option_values";
 
 
     public static class Immunizations {
@@ -483,6 +493,7 @@ public class AllConstants {
         String TOTAL_RECORDS = "total_records";
         String SYNC_PROGRESS_DATA = "sync_progress_data";
     }
+
     public interface LocationConstants {
         String SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS = "SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS";
         String LOCATIONS = "locations";
@@ -503,6 +514,7 @@ public class AllConstants {
         String FOREIGN_CLIENT = "ForeignClient";
         String FOREIGN_EVENT = "ForeignEvent";
     }
+
     public static class HTTP_REQUEST_HEADERS {
         public static String AUTHORIZATION = "Authorization";
     }

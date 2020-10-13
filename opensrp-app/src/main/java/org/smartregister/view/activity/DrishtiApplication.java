@@ -170,4 +170,5 @@ public abstract class DrishtiApplication extends Application {
     public Context getContext() {
         return context;
     }
+
 }
