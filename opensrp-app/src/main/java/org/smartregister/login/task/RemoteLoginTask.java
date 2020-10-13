@@ -26,6 +26,7 @@ import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -136,7 +137,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     }
                 } else {
                     if (response.getAccountError() != null && response.getAccountError().getError() != null) {
-                        return LoginResponse.valueOf(response.getAccountError().getError());
+                        return LoginResponse.valueOf(response.getAccountError().getError().toUpperCase(Locale.ENGLISH));
                     } else if (loginResponse == null) {
                         return null;
                     }
