@@ -1,12 +1,10 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import android.text.TextUtils;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-
-import android.content.Intent;
-import android.text.TextUtils;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;

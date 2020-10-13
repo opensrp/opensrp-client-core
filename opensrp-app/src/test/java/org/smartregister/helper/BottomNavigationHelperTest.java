@@ -34,7 +34,7 @@ public class BottomNavigationHelperTest extends BaseUnitTest {
 
     @Test
     public void testConvertDrawableToBitmap() {
-        BottomNavigationHelper spyBottomNavigationHelper = Mockito.spy(bottomNavigationHelper);
+        //BottomNavigationHelper spyBottomNavigationHelper = Mockito.spy(bottomNavigationHelper);
 
         Resources resources = Mockito.mock(Resources.class);
         Assert.assertNotNull(resources);
