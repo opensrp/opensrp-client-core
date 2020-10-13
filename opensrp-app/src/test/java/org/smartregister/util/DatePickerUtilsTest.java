@@ -2,6 +2,10 @@ package org.smartregister.util;
 
 import android.app.DatePickerDialog;
 import android.content.res.Resources;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +18,16 @@ import android.widget.TextView;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.shadows.ShadowDatePickerDialog;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
+
+import java.util.Calendar;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 29-09-2020.
@@ -33,9 +42,23 @@ public class DatePickerUtilsTest extends BaseRobolectricUnitTest {
     public void tearDown() throws Exception {
     }
 
+
+    @Ignore
     @Test
     public void testThemeDatePickerShouldAddNumberPickersInDialogWhenGivenDatePickerDialog() {
-        DatePickerDialog datePickerDialog = new DatePickerDialog(RuntimeEnvironment.application);
+        /*TestDialogActivity testDialogActivity = Robolectric.buildActivity(TestDialogActivity.class)
+                .create()
+                .start()
+                .resume()
+                .visible()
+                .get();
+        DatePickerDialog datePickerDialog = testDialogActivity.getDatePickerDialog();*/
+
+        /*DatePickerDialog datePickerDialog = new DatePickerDialog(RuntimeEnvironment.application);
+        datePickerDialog.show();*/
+
+        DatePickerDialog datePickerDialog = (DatePickerDialog) ShadowDatePickerDialog.getLatestDialog();
+        datePickerDialog.updateDate(2010, 5, 10);
         DatePicker datePicker = datePickerDialog.getDatePicker();
 
 
@@ -79,7 +102,7 @@ public class DatePickerUtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void testThemeDatePickerShouldAddNumberPickersInTheRightOrder() {
         View view = LayoutInflater.from(RuntimeEnvironment.application)
-                .inflate(R.layout.date_picker_test_layout, null);
+                .inflate(R.layout.test_html, null);
         DatePicker datePicker = view.findViewById(R.id.test_date_picker);
 
         int idYear = Resources.getSystem().getIdentifier("year", "id", "android");
@@ -115,10 +138,29 @@ public class DatePickerUtilsTest extends BaseRobolectricUnitTest {
     @Test(expected = IllegalArgumentException.class)
     public void testThemeDatePickerShouldThrowExceptionWhenInValidYmDOrderIsProvided() {
         View view = LayoutInflater.from(RuntimeEnvironment.application)
-                .inflate(R.layout.date_picker_test_layout, null);
+                .inflate(R.layout.test_html, null);
         DatePicker datePicker = Mockito.spy(view.findViewById(R.id.test_date_picker));
 
         // Call the method under test
         DatePickerUtils.themeDatePicker(datePicker, new char[]{'e', 'y', 'm'});
     }
+
+    public static class TestDialogActivity extends AppCompatActivity {
+
+        private DatePickerDialog datePickerDialog;
+
+        @Override
+        protected void onCreate(@Nullable Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setContentView(R.layout.html);
+
+            datePickerDialog = new DatePickerDialog(TestDialogActivity.this);
+            datePickerDialog.show();
+        }
+
+        public DatePickerDialog getDatePickerDialog() {
+            return datePickerDialog;
+        }
+    }
+
 }
