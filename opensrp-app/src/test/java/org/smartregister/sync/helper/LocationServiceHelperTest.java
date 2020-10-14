@@ -316,12 +316,12 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         LocationTree tree = locationServiceHelper.getLocationHierarchy(parentLocation);
 
         String expectedUrl = MessageFormat.format("{0}{1}{2}", locationServiceHelper.getFormattedBaseUrl(), LocationServiceHelper.LOCATION_HIERARCHY_URL, parentLocation);
-        assertEquals(expectedUrl, stringArgumentCaptor.getAllValues().get(0));
+        assertEquals(expectedUrl, stringArgumentCaptor.getValue());
         assertNull(tree);
     }
 
     @Test
-    public void testGetLocationHierarchyReturnsNullForInvalidParentLocationId() {
+    public void testGetLocationHierarchyReturnsEmptyTreeForInvalidParentLocationId() {
         String parentLocation = "1c7ba751-35e8-4b46-9e53-3cb8fd193697";
 
         Mockito.doReturn(new Response<>(ResponseStatus.success, "{}"))
@@ -330,7 +330,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         LocationTree tree = locationServiceHelper.getLocationHierarchy(parentLocation);
 
         String expectedUrl = MessageFormat.format("{0}{1}{2}", locationServiceHelper.getFormattedBaseUrl(), LocationServiceHelper.LOCATION_HIERARCHY_URL, parentLocation);
-        assertEquals(expectedUrl, stringArgumentCaptor.getAllValues().get(0));
+        assertEquals(expectedUrl, stringArgumentCaptor.getValue());
         assertNotNull(tree);
         assertEquals(0, tree.getLocationsHierarchy().size());
     }
@@ -346,7 +346,7 @@ public class LocationServiceHelperTest extends BaseRobolectricUnitTest {
         LocationTree tree = locationServiceHelper.getLocationHierarchy(parentLocation);
 
         String expectedUrl = MessageFormat.format("{0}{1}{2}", locationServiceHelper.getFormattedBaseUrl(), LocationServiceHelper.LOCATION_HIERARCHY_URL, parentLocation);
-        assertEquals(expectedUrl, stringArgumentCaptor.getAllValues().get(0));
+        assertEquals(expectedUrl, stringArgumentCaptor.getValue());
         assertNotNull(tree);
         assertTrue(tree.hasLocation(parentLocation));
         assertEquals(3, tree.getLocationsHierarchy().get(parentLocation).getChildren().size());
