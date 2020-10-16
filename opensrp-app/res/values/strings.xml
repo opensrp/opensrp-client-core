@@ -348,6 +348,8 @@
 
     <!-- base register -->
     <string name="filter">Filter</string>
+    <string name="filters">Filters</string>
+    <string name="map">Map</string>
     <string name="due_only">Due only</string>
     <string name="search_hint">Find name or ID</string>
     <string name="_0_clients_sort_updated">0 Clients (Sort: updated)</string>

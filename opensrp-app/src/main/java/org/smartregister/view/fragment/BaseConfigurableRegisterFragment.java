@@ -69,6 +69,15 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     }
 
     @Override
+    protected int getLayout() {
+        if (moduleConfiguration.isNewLayoutEnabled()) {
+            return 0;
+        } else {
+            return super.getLayout();
+        }
+    }
+
+    @Override
     public void setupViews(View view) {
         super.setupViews(view);
 
@@ -188,7 +197,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
         ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
         // TODO: ADD RxJava for entityId
-        if (getActivity() instanceof  BaseConfigurableRegisterActivity && moduleMetadata != null) {
+        if (getActivity() instanceof BaseConfigurableRegisterActivity && moduleMetadata != null) {
             ((BaseConfigurableRegisterActivity) getActivity()).startFormActivity(moduleMetadata.getRegistrationFormName(), null, (String) null);
         }
     }
@@ -273,9 +282,9 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         FragmentActivity activity = getActivity();
         if (activity instanceof BaseConfigurableRegisterActivity) {
             ConfigurationInstancesHelper.newInstance(
-            ((BaseConfigurableRegisterActivity) activity)
-                    .getModuleConfiguration()
-                    .getActivityStarter())
+                    ((BaseConfigurableRegisterActivity) activity)
+                            .getModuleConfiguration()
+                            .getActivityStarter())
                     .startProfileActivity(getActivity(), commonPersonObjectClient);
         }
     }

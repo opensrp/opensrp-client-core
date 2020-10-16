@@ -86,6 +86,10 @@ public class ModuleConfiguration {
         return builder.isBottomNavigationEnabled;
     }
 
+    public boolean isNewLayoutEnabled() {
+        return builder.isNewLayoutEnabled;
+    }
+
     @NonNull
     public Class<? extends ActivityStarter> getActivityStarter() {
         return builder.activityStarter;
@@ -116,6 +120,7 @@ public class ModuleConfiguration {
         private Class<? extends ClientFormContract.View> jsonFormActivity;
 
         private boolean isBottomNavigationEnabled;
+        private boolean isNewLayoutEnabled;
 
         private ModuleMetadata moduleMetadata;
         private int maxCheckInDurationInMinutes = 24 * 60;
@@ -136,6 +141,11 @@ public class ModuleConfiguration {
 
         public Builder setRegisterRowOptions(@Nullable Class<? extends BaseRegisterRowOptions> registerRowOptions) {
             this.registerRowOptions = registerRowOptions;
+            return this;
+        }
+
+        public Builder setNewLayoutEnabled(boolean isNewLayoutEnabled) {
+            this.isNewLayoutEnabled = isNewLayoutEnabled;
             return this;
         }
 
