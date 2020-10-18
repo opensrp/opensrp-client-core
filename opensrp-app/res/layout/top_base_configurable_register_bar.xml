@@ -3,72 +3,80 @@
     android:id="@+id/register_nav_bar_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/customAppThemeBlue"
-    android:orientation="horizontal"
-    android:focusableInTouchMode="true">
+    android:background="@color/NewThemeBlue"
+    android:focusableInTouchMode="true"
+    android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/top_left_logo"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_dialog_email"
-            android:visibility="visible"
-            android:contentDescription="logo" />
+    <ImageView
+        android:id="@+id/top_left_logo"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:contentDescription="logo"
+        android:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/register_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:contentDescription="@string/register_label"
-            android:src="@android:drawable/ic_input_add" />
+    <ImageView
+        android:id="@+id/register_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:contentDescription="@string/register_label"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/ic_baseline_view_list" />
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/register_title_label"
-            style="@style/CustomFontTextViewStyle.NavBar.Black"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:background="@android:color/transparent"
-            android:text="@string/register_label" />
+    <org.smartregister.view.customcontrols.CustomFontTextView
+        android:id="@+id/register_title_label"
+        style="@style/CustomFontTextViewNewThemeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:text="@string/register_label" />
 
-        <ImageView
-            android:id="@+id/filters_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/filters"
-            android:padding="5dp"
-            android:layout_gravity="center"
-            android:src="@android:drawable/ic_dialog_info" />
+    <ImageView
+        android:id="@+id/filters_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginStart="15dp"
+        android:contentDescription="@string/filters"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:src="@drawable/ic_baseline_filter_list" />
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/filters_title_label"
-            style="@style/CustomFontTextViewStyle.NavBar.Black"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:text="@string/filters"
-            android:visibility="visible" />
+    <org.smartregister.view.customcontrols.CustomFontTextView
+        android:id="@+id/filters_title_label"
+        style="@style/CustomFontTextViewNewThemeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:text="@string/filters"
+        android:visibility="visible" />
 
-        <ImageView
-            android:id="@+id/map_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/map"
-            android:padding="5dp"
-            android:scaleType="center"
-            android:src="@android:drawable/ic_dialog_map" />
+    <ImageView
+        android:id="@+id/map_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:contentDescription="@string/map"
+        android:paddingStart="5dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:scaleType="center"
+        android:src="@drawable/ic_baseline_map" />
 
-        <org.smartregister.view.customcontrols.CustomFontTextView
-            android:id="@+id/txt_title_label"
-            style="@style/CustomFontTextViewStyle.NavBar.Black"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:layout_gravity="center"
-            android:text="@string/map"
-            android:visibility="visible" />
-
+    <org.smartregister.view.customcontrols.CustomFontTextView
+        android:id="@+id/txt_title_label"
+        style="@style/CustomFontTextViewNewThemeStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:background="@android:color/transparent"
+        android:text="@string/map"
+        android:visibility="visible" />
 
 </LinearLayout>

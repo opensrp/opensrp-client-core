@@ -9,20 +9,20 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:popupTheme="@style/AppTheme.PopupOverlay"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:popupTheme="@style/AppTheme.PopupOverlay">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/register_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"
-            app:contentInsetRight="0dp"
             app:contentInsetEnd="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetRight="0dp"
+            app:contentInsetStart="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-            <include layout="@layout/top_base_register_bar" />
+            <include layout="@layout/top_base_configurable_register_bar" />
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
