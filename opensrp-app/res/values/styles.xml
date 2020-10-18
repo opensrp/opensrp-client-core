@@ -124,6 +124,15 @@
         <item name="android:shadowRadius">1</item>
     </style>
 
+    <style name="CustomFontTextViewNewThemeStyle">
+        <item name="fontVariant">regular</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <style name="CustomFontTextViewStyle.NavBar.Bold">
         <item name="fontVariant">bold</item>
         <item name="android:textSize">23sp</item>
@@ -295,6 +304,13 @@
         <item name="fontVariant">thin</item>
     </style>
 
+    <style name="RegisterFilterListTitle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#FF4D606D</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:lineSpacingMultiplier">1.23</item>
+    </style>
 
     <style name="CustomFontTextViewStyle.tabIndicator" parent="CustomFontTextViewStyle.ClientList.Bold">
         <item name="fontVariant">medium</item>

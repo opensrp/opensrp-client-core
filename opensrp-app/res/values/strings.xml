@@ -366,6 +366,10 @@
     <string name="data_synced">Data synced: %1$s at %2$s</string>
     <string name="scan_qr_code_title">Scan QR Code</string>
 
+
+    <!-- New UI base register -->
+    <string name="clients">Register Clients</string>
+
     <!--The barcode strings-->
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection.</string>
