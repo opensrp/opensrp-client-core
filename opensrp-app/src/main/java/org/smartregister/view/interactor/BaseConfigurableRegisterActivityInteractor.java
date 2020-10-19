@@ -4,6 +4,7 @@ package org.smartregister.view.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -225,6 +226,8 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
     }*/
 
     private void updateOpenSRPId(@NonNull String jsonString, @NonNull RegisterParams params, @Nullable Client baseClient) {
+
+        // TODO: FIX THE USE OF zeir_id AND opensrp_id HERE
         if (params.isEditMode()) {
             // Unassign current OPENSRP ID
             if (baseClient != null) {
@@ -243,6 +246,11 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
         } else {
             if (baseClient != null) {
                 String opensrpId = baseClient.getIdentifier(AllConstants.JSON.FieldKey.ZEIR_ID);
+
+                if (TextUtils.isEmpty(opensrpId)) {
+                    opensrpId = baseClient.getIdentifier(AllConstants.JSON.FieldKey.OPENSRP_ID);
+                }
+
                 //mark OPENSRP ID as used
                 getUniqueIdRepository().close(opensrpId);
             }
