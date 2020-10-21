@@ -4,6 +4,7 @@ package org.smartregister.view.interactor;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
+import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -20,6 +21,7 @@ import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.AppExecutors;
+import org.smartregister.util.ConfigurationInstancesHelper;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -192,6 +194,10 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
                             //addImageLocation(jsonString, i, client, baseEvent);
                         }
                     }
+
+                    // Save the image
+                    ConfigurationInstancesHelper.newInstance(CoreLibrary.getInstance().getCurrentModuleConfiguration().getFormProcessorClass())
+                            .saveFormImages(client, clientEvents, jsonString);
                 } catch (Exception e) {
                     Timber.e(e);
                 }
@@ -225,6 +231,8 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
     }*/
 
     private void updateOpenSRPId(@NonNull String jsonString, @NonNull RegisterParams params, @Nullable Client baseClient) {
+
+        // TODO: FIX THE USE OF zeir_id AND opensrp_id HERE
         if (params.isEditMode()) {
             // Unassign current OPENSRP ID
             if (baseClient != null) {
@@ -243,6 +251,11 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
         } else {
             if (baseClient != null) {
                 String opensrpId = baseClient.getIdentifier(AllConstants.JSON.FieldKey.ZEIR_ID);
+
+                if (TextUtils.isEmpty(opensrpId)) {
+                    opensrpId = baseClient.getIdentifier(AllConstants.JSON.FieldKey.OPENSRP_ID);
+                }
+
                 //mark OPENSRP ID as used
                 getUniqueIdRepository().close(opensrpId);
             }
