@@ -21,6 +21,7 @@ import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.sync.ClientProcessorForJava;
 import org.smartregister.sync.helper.ECSyncHelper;
 import org.smartregister.util.AppExecutors;
+import org.smartregister.util.ConfigurationInstancesHelper;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -193,6 +194,10 @@ public class BaseConfigurableRegisterActivityInteractor implements BaseRegisterC
                             //addImageLocation(jsonString, i, client, baseEvent);
                         }
                     }
+
+                    // Save the image
+                    ConfigurationInstancesHelper.newInstance(CoreLibrary.getInstance().getCurrentModuleConfiguration().getFormProcessorClass())
+                            .saveFormImages(client, clientEvents, jsonString);
                 } catch (Exception e) {
                     Timber.e(e);
                 }

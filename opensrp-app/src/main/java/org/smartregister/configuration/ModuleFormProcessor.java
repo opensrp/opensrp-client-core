@@ -19,6 +19,6 @@ public interface ModuleFormProcessor {
 
     JSONObject getFormAsJson(@NonNull JSONObject form, @NonNull String formName, @NonNull String entityId, @NonNull String currentLocationId, @Nullable HashMap<String, String> injectedFieldValues) throws JSONException;
 
-    boolean saveFormImages(Client client, Event event, String formJsonString);
+    boolean saveFormImages(Client client, List<Event> events, String formJsonString);
 
 }
