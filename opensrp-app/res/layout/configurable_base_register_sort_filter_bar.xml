@@ -13,6 +13,6 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:singleLine="true"
-        android:text="@string/clients" />
+        android:text="@string/register_clients" />
 
 </LinearLayout>
