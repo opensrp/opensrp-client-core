@@ -49,7 +49,7 @@ public class BaseRepository {
         return DrishtiApplication.getInstance().getRepository().getReadableDatabase();
     }
 
-    interface BaseTable {
+    public interface BaseTable {
         Column[] columns();
 
         String name();

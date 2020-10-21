@@ -2,7 +2,7 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.ibm.fhir.model.resource.QuestionnaireResponse;
 
@@ -359,7 +359,8 @@ public class ClientProcessorForJava {
                 // save the values to db
                 executeInsertStatement(contentValues, clientType);
 
-                updateFTSsearch(clientType, baseEntityId, contentValues);
+                String entityId=contentValues.getAsString("base_entity_id");
+                updateFTSsearch(clientType, entityId, contentValues);
                 Long timestamp = getEventDate(event.getEventDate());
                 addContentValuesToDetailsTable(contentValues, timestamp);
                 updateClientDetailsTable(event, client);

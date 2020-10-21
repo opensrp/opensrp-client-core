@@ -1,6 +1,6 @@
 package org.smartregister.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -41,6 +41,18 @@ public class DatabaseMigrationUtils {
             }
             cursor.close();
         }
+        return false;
+    }
+
+    public static boolean addColumnIfNotExists(SQLiteDatabase db, String table, String column, String dataType) {
+        if (!isColumnExists(db, table, column)) {
+            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s", table, column, dataType));
+        }
+        return false;
+    }
+
+    public static boolean addIndexIfNotExists(SQLiteDatabase db, String table, String columm) {
+        db.execSQL(String.format("CREATE INDEX IF NOT EXISTS  %s_%s_idx  ON %s(%s)", table, columm,table, columm));
         return false;
     }
 

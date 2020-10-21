@@ -24,6 +24,7 @@ import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ChildRepository;
 import org.smartregister.repository.ClientFormRepository;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.DetailsRepository;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.EligibleCoupleRepository;
@@ -94,6 +95,7 @@ import org.smartregister.util.AppProperties;
 import org.smartregister.util.Cache;
 import org.smartregister.util.Session;
 import org.smartregister.util.Utils;
+import org.smartregister.view.activity.DrishtiApplication;
 import org.smartregister.view.contract.ANCClients;
 import org.smartregister.view.contract.ECClients;
 import org.smartregister.view.contract.FPClients;
@@ -219,6 +221,7 @@ public class Context {
     private LocationTagRepository locationTagRepository;
     private ManifestRepository manifestRepository;
     private ClientFormRepository clientFormRepository;
+    private ClientRelationshipRepository clientRelationshipRepository;
 
     /////////////////////////////////////////////////
     protected Context() {
@@ -519,8 +522,7 @@ public class Context {
 
     public HTTPAgent httpAgent() {
         if (httpAgent == null) {
-            httpAgent = new HTTPAgent(applicationContext, allSettings(), allSharedPreferences(),
-                    configuration());
+            httpAgent = new HTTPAgent(applicationContext, allSharedPreferences(), configuration());
         }
         return httpAgent;
     }
@@ -1135,6 +1137,10 @@ public class Context {
         return foreignEventClientRepository;
     }
 
+    public boolean hasForeignEvents(){
+        return DrishtiApplication.getInstance().getP2PClassifier() != null;
+    }
+
     public LocationRepository getLocationRepository() {
         if (locationRepository == null) {
             locationRepository = new LocationRepository();
@@ -1184,5 +1190,12 @@ public class Context {
         return clientFormRepository;
     }
 
-///////////////////////////////////////////////////////////////////////////////
+    public ClientRelationshipRepository getClientRelationshipRepository() {
+        if (clientRelationshipRepository == null) {
+            clientRelationshipRepository = new ClientRelationshipRepository();
+        }
+        return clientRelationshipRepository;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
 }

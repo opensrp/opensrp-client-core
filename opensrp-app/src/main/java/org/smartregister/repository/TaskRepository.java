@@ -1,14 +1,10 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
-import com.ibm.fhir.model.resource.QuestionnaireResponse;
-import com.ibm.fhir.path.FHIRPathElementNode;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -17,17 +13,16 @@ import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
 import org.smartregister.domain.Task;
+import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.p2p.sync.data.JsonData;
-import org.smartregister.pathevaluator.PathEvaluatorLibrary;
-import org.smartregister.pathevaluator.dao.TaskDao;
 import org.smartregister.sync.helper.TaskServiceHelper;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
@@ -42,16 +37,13 @@ import java.util.Set;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED;
-import static org.smartregister.AllConstants.INTENT_KEY.TASK_GENERATED_EVENT;
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
-import static org.smartregister.domain.Task.TaskStatus;
 
 /**
  * Created by samuelgithengi on 11/23/18.
  */
-public class TaskRepository extends BaseRepository implements TaskDao {
+public class TaskRepository extends BaseRepository {
 
     private static final String ID = "_id";
     private static final String PLAN_ID = "plan_id";
@@ -120,7 +112,12 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
+
     public void addOrUpdate(Task task) {
+        addOrUpdate(task, false);
+    }
+
+    public void addOrUpdate(Task task, boolean updateOnly) {
         if (StringUtils.isBlank(task.getIdentifier())) {
             throw new IllegalArgumentException("identifier must be specified");
         }
@@ -159,7 +156,11 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         contentValues.put(LOCATION, task.getLocation());
         contentValues.put(REQUESTER, task.getRequester());
 
-        getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+        if (updateOnly) {
+            getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
+        } else {
+            getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+        }
 
         if (task.getNotes() != null) {
             for (Note note : task.getNotes())
@@ -209,14 +210,11 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         return null;
     }
 
-    public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
+    private Set<Task> getTasks(String query, String[] params) {
         Cursor cursor = null;
         Set<Task> taskSet = new HashSet<>();
         try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
-                    TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
-                    TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
-                    , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
+            cursor = getReadableDatabase().rawQuery(query, params);
             while (cursor.moveToNext()) {
                 Task task = readCursor(cursor);
                 taskSet.add(task);
@@ -230,6 +228,27 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         return taskSet;
     }
 
+    public Set<Task> getTasksByEntityAndCode(String planId, String groupId, String forEntity, String code) {
+        return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s =?  AND %s =? AND %s  NOT IN (%s)",
+                TASK_TABLE, PLAN_ID, GROUP_ID, FOR, CODE, STATUS,
+                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                , ArrayUtils.addAll(new String[]{planId, groupId, forEntity, code}, INACTIVE_TASK_STATUS));
+    }
+
+    public Set<Task> getTasksByPlanAndEntity(String planId, String forEntity) {
+        return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s  NOT IN (%s)",
+                TASK_TABLE, PLAN_ID, FOR, STATUS,
+                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                , ArrayUtils.addAll(new String[]{planId, forEntity}, INACTIVE_TASK_STATUS));
+    }
+
+    public Set<Task> getTasksByEntity(String forEntity) {
+        return getTasks(String.format("SELECT * FROM %s WHERE %s =? AND %s  NOT IN (%s)",
+                TASK_TABLE, FOR, STATUS,
+                TextUtils.join(",", Collections.nCopies(INACTIVE_TASK_STATUS.length, "?")))
+                , ArrayUtils.addAll(new String[]{forEntity}, INACTIVE_TASK_STATUS));
+    }
+
     /**
      * Gets tasks for an entity using plan and task status
      *
@@ -239,22 +258,9 @@ public class TaskRepository extends BaseRepository implements TaskDao {
      * @return the set of tasks matching the above params
      */
     public Set<Task> getTasksByEntityAndStatus(String planId, String forEntity, TaskStatus taskStatus) {
-        Cursor cursor = null;
-        Set<Task> taskSet = new HashSet<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
-                    TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
-            while (cursor.moveToNext()) {
-                Task task = readCursor(cursor);
-                taskSet.add(task);
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return taskSet;
+
+        return getTasks(String.format("SELECT * FROM %s WHERE %s=? AND %s =? AND %s = ? ",
+                TASK_TABLE, PLAN_ID, STATUS, FOR), new String[]{planId, taskStatus.name(), forEntity});
     }
 
     //Do not make private - used in deriving classes
@@ -336,20 +342,7 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        Cursor cursor = null;
-        List<Task> tasks = new ArrayList<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created});
-            while (cursor.moveToNext()) {
-                tasks.add(readCursor(cursor));
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return tasks;
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL", TASK_TABLE, SYNC_STATUS, SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
@@ -511,23 +504,25 @@ public class TaskRepository extends BaseRepository implements TaskDao {
     }
 
     /**
-     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     * Fetches {@link Task}s whose rowid > #lastRowId up to the #limit provided.
      *
      * @param lastRowId
+     * @param jurisdictionId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * of {@link Task}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getTasks(long lastRowId, int limit) {
+    public JsonData getTasks(long lastRowId, int limit, String jurisdictionId) {
         JsonData jsonData = null;
         long maxRowId = 0;
-
+        String locationFilter = jurisdictionId != null ? String.format(" %s =? AND ", GROUP_ID) : "";
         String query = "SELECT "
                 + ROWID
                 + ",* FROM "
                 + TASK_TABLE
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
@@ -536,7 +531,7 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         JSONArray jsonArray = new JSONArray();
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            cursor = getWritableDatabase().rawQuery(query, jurisdictionId != null ? new Object[]{jurisdictionId, lastRowId, limit} : new Object[]{lastRowId, limit});
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
@@ -582,6 +577,29 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s =?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
     }
 
+    /**
+     * Cancels a particular task
+     *
+     * Cancels the task if it has a status ready @{@link TaskStatus}
+     *
+     * @param identifier id of the task to be cancelled
+     */
+    public void cancelTaskByIdentifier(@NonNull String identifier) {
+        if (StringUtils.isBlank(identifier))
+            return;
+        Task task = getTaskByIdentifier(identifier);
+        if (task == null || !TaskStatus.READY.equals(task.getStatus()))
+            return;
+        task.setStatus(TaskStatus.CANCELLED);
+        // update task sync status to unsynced if it was already synced,
+        // ignore if task status is created so that it will be created on server
+        if (!BaseRepository.TYPE_Created.equals(task.getSyncStatus())) {
+            task.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        }
+        task.setLastModified(DateTime.now());
+        addOrUpdate(task, true);
+    }
+
 
     /**
      * Archive tasks for an entity
@@ -616,54 +634,5 @@ public class TaskRepository extends BaseRepository implements TaskDao {
         }
 
         return unsyncedRecordsCount;
-    }
-
-    @Override
-    public List<com.ibm.fhir.model.resource.Task> findTasksForEntity(String id, String planIdentifier) {
-        //TODO implement method
-        return null;
-    }
-
-    @Override
-    public void saveTask(Task task, QuestionnaireResponse questionnaireResponse) {
-        if (questionnaireResponse != null) {
-            FHIRPathElementNode structure = PathEvaluatorLibrary.getInstance()
-                    .evaluateElementExpression(questionnaireResponse,
-                            "$this.item.where(url='details' and linkId='location_id').answer");
-            if (structure != null) {
-                String structureId = structure.element().as(QuestionnaireResponse.Item.Answer.class).as(com.ibm.fhir.model.type.String.class).getValue();
-                task.setStructureId(structureId);
-            } else {
-                task.setStructureId(task.getForEntity());
-            }
-        }
-        addOrUpdate(task);
-        Intent intent = new Intent();
-        Intent refreshGeoWidgetIntent = new Intent(TASK_GENERATED_EVENT);
-        refreshGeoWidgetIntent.putExtra(TASK_GENERATED, task);
-        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
-    }
-
-    @Override
-    public boolean checkIfTaskExists(String s, String s1, String s2) {
-        // TODO implement this
-        return false;
-    }
-
-    @Override
-    public List<com.ibm.fhir.model.resource.Task> findAllTasksForEntity(String s) {
-        // TODO implement this
-        return null;
-    }
-
-    @Override
-    public Task getTaskByEntityId(String s) {
-        // TODO implement this
-        return null;
-    }
-
-    @Override
-    public void updateTask(Task task) {
-        // TODO implement this
     }
 }

@@ -156,7 +156,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
     }
 
-    public MatrixCursor getEventCursor() throws Exception {
+    public static MatrixCursor getEventCursor() throws Exception {
         MatrixCursor matrixCursor = new MatrixCursor(new String[]{"json", "timestamp"});
         JSONArray eventArray = new JSONArray(ClientData.eventJsonArray);
         for (int i = 0; i < eventArray.length(); i++) {
@@ -378,7 +378,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         }
         Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM event WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
 
-        JsonData jsonData = eventClientRepository.getEvents(0, 20);
+        JsonData jsonData = eventClientRepository.getEvents(0, 20, null);
 
         Assert.assertEquals(30L, jsonData.getHighestRecordId());
         JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
@@ -396,7 +396,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
 
-        JsonData jsonData = eventClientRepository.getClients(0, 20);
+        JsonData jsonData = eventClientRepository.getClients(0, 20,null);
 
         Assert.assertEquals(30L, jsonData.getHighestRecordId());
         JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
