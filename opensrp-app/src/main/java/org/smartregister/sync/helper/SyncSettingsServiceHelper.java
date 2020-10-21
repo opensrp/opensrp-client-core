@@ -79,19 +79,12 @@ public class SyncSettingsServiceHelper {
 
     // will automatically use the resolve check
     private void getExtraSettings(JSONArray settings) throws JSONException {
-        JSONArray completeExtraSettings = new JSONArray();
         if (getInstance().getSyncConfiguration().hasExtraSettingsSync()) {
-            List<String> syncParams = getInstance().getSyncConfiguration().getExtraSettingsParameters();
-            if (syncParams.size() > 0) {
-                for (String params : syncParams) {
-                    String url = SettingsSyncIntentService.SETTINGS_URL + "?" + params + "&" + AllConstants.SERVER_VERSION + "=0&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
-                    JSONArray extraSettings = pullSettings(url);
-                    if (extraSettings != null) {
-                        aggregateSettings(completeExtraSettings, extraSettings);
-                    }
-                }
-
-                aggregateSettings(settings, completeExtraSettings);
+            String syncParams = getInstance().getSyncConfiguration().getExtraSettingsParameters();
+            String url = SettingsSyncIntentService.SETTINGS_URL + "?" + syncParams + "&" + AllConstants.SERVER_VERSION + "=0&" + AllConstants.RESOLVE + "=" + getInstance().getSyncConfiguration().resolveSettings();
+            JSONArray extraSettings = pullSettings(url);
+            if (extraSettings != null) {
+                aggregateSettings(settings, extraSettings);
             }
         }
     }
