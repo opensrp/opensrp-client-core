@@ -1,8 +1,9 @@
 package org.smartregister.sample.configuration;
 
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,5 +34,10 @@ public class FormProcessor implements ModuleFormProcessor {
     @Override
     public JSONObject getFormAsJson(@NonNull JSONObject form, @NonNull String formName, @NonNull String entityId, @NonNull String currentLocationId, @Nullable HashMap<String, String> injectedFieldValues) throws JSONException {
         return SampleAppJsonFormUtils.getFormAsJson(form, formName, entityId, currentLocationId, injectedFieldValues);
+    }
+
+    @Override
+    public boolean saveFormImages(Client client, List<Event> events, String formJsonString) {
+        return false;
     }
 }

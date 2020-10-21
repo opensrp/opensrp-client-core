@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,12 +13,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTag;
-import org.smartregister.domain.PhysicalLocation;
-import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import timber.log.Timber;
@@ -73,6 +73,17 @@ public class LocationRepository extends BaseRepository {
         contentValues.put(GEOJSON, gson.toJson(location));
         contentValues.put(SYNC_STATUS, location.getSyncStatus());
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
+    }
+
+    /**
+     * Deletes jurisdiction locations which a user no longer has access to
+     *
+     * @param locationIdentifiers the set of jurisdiction identifiers to delete
+     */
+    public void deleteLocations(@NonNull Set<String> locationIdentifiers) {
+        getWritableDatabase().delete(LOCATION_TABLE,
+                String.format("%s IN (%s)", ID, StringUtils.repeat("?", ",", locationIdentifiers.size())),
+                locationIdentifiers.toArray(new String[]{}));
     }
 
     public List<Location> getAllLocations() {

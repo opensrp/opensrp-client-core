@@ -1,7 +1,8 @@
 package org.smartregister.configuration;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 

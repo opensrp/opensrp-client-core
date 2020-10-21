@@ -1,6 +1,6 @@
 package org.smartregister.configuration;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 24-09-2020.

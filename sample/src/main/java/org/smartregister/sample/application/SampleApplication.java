@@ -1,7 +1,8 @@
 package org.smartregister.sample.application;
 
 import android.app.Activity;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;

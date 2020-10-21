@@ -1,6 +1,6 @@
 package org.smartregister.sample.configuration;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.pojo.InnerJoinObject;

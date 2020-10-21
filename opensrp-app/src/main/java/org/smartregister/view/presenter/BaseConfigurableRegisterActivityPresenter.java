@@ -1,10 +1,9 @@
 package org.smartregister.view.presenter;
 
-
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -15,7 +14,6 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.FetchStatus;
-import org.smartregister.domain.db.EventClient;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.contract.ConfigurableRegisterActivityContract;
@@ -23,7 +21,6 @@ import org.smartregister.view.contract.RegisterParams;
 import org.smartregister.view.interactor.BaseConfigurableRegisterActivityInteractor;
 
 import java.lang.ref.WeakReference;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 

@@ -1,9 +1,8 @@
 package org.smartregister.repository;
 
 import android.content.SharedPreferences;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
+import androidx.annotation.Nullable;
+import androidx.annotation.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
 import org.smartregister.util.Log;
@@ -224,6 +223,10 @@ public class AllSharedPreferences {
 
     public String getPreference(String key) {
         return preferences.getString(key, "");
+    }
+
+    public boolean getBooleanPreference(String key) {
+        return preferences.getBoolean(key, false);
     }
 
     public void updateUrl(String baseUrl) {
