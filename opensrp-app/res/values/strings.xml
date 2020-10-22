@@ -369,6 +369,7 @@
 
     <!-- New UI base register -->
     <string name="register_clients">Register Clients</string>
+    <string name="add_new_client">Add new client</string>
 
     <!--The barcode strings-->
     <string name="ok">OK</string>
