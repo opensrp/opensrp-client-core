@@ -12,12 +12,13 @@
         android:id="@+id/edt_search"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginEnd="0dp"
         android:background="@drawable/curved_search_edit_text"
         android:ellipsize="end"
         android:hint="@string/str_ec_search_hint"
         android:maxLines="1"
         android:minWidth="100dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
         android:padding="@dimen/register_search_bar_padding"
         android:textSize="@dimen/default_font_size_search_bar" />
 
