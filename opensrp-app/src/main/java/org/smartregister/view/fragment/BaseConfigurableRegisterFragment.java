@@ -14,6 +14,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.R;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -71,8 +73,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     @Override
     protected int getLayout() {
-        if (moduleConfiguration.isNewLayoutEnabled()) {
-            return 0;
+        if (getModuleConfiguration().isNewLayoutEnabled()) {
+            return R.layout.configurable_fragment_base_register;
         } else {
             return super.getLayout();
         }
@@ -81,8 +83,12 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     @Override
     public void setupViews(View view) {
         super.setupViews(view);
-
         this.view = view;
+
+        if (getModuleConfiguration().isNewLayoutEnabled()) {
+            initializeConfigurableLayoutViews(view);
+            return;
+        }
 
         // Update top left icon
         qrCodeScanImageView = view.findViewById(org.smartregister.R.id.scanQrCode);
@@ -148,6 +154,24 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
                 startRegistration();
             }
         });
+    }
+
+    public void initializeConfigurableLayoutViews(View view) {
+        // Update logo
+        ImageView logo = view.findViewById(R.id.top_left_logo);
+        if (logo != null) {
+            // TODO -> Set LOGO from config
+            // logo.setImageDrawable(context().getDrawable());
+            // logo.setVisibility(View.VISIBLE);
+        }
+        ImageView backButton = view.findViewById(R.id.back_arrow);
+        if (backButton != null)
+            backButton.setOnClickListener(v -> getActivity().finish());
+
+        ExtendedFloatingActionButton addClientsFab = view.findViewById(R.id.add_new_client_fab);
+        if (addClientsFab != null) {
+            addClientsFab.setOnClickListener(v -> startRegistration());
+        }
     }
 
     @Override
