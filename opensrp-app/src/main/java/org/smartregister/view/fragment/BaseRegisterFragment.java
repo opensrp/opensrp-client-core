@@ -2,11 +2,13 @@ package org.smartregister.view.fragment;
 
 import android.content.Context;
 import android.os.Bundle;
+
 import androidx.annotation.LayoutRes;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
@@ -279,7 +281,8 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
                     String.format(getActivity().getString(R.string.clients), clientAdapter.getTotalcount()) :
                     String.format(getActivity().getString(R.string.client), clientAdapter.getTotalcount()));
 
-            filterRelativeLayout.setVisibility(View.GONE);
+            if (filterRelativeLayout != null)
+                filterRelativeLayout.setVisibility(View.GONE);
         }
     }
 
