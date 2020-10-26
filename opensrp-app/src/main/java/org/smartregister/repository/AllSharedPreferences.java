@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
+import org.smartregister.CoreLibrary;
 import org.smartregister.util.Log;
 
 import java.net.MalformedURLException;
@@ -356,20 +357,22 @@ public class AllSharedPreferences {
     }
 
     public String getPassphrase(String encryptionParam, String username) {
-        return preferences.getString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).append(username).toString(), null);
+        return preferences.getString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).append('_').append(username).toString(), null);
     }
 
     public void savePassphrase(String passphrase, String encryptionParam, String username) {
-        preferences.edit().putString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).append(username).toString(), passphrase).commit();
+        preferences.edit().putString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).append('_').append(username).toString(), passphrase).commit();
     }
 
     /**
      * Allows migration of older passphrase so that is linked to pioneer user
-     * @param passphrase the passphrase
-     * @param encryptionParam the the encyption param
      **/
-    public void upgradePassphrase(String passphrase, String encryptionParam) {
-        savePassphrase(passphrase, encryptionParam, fetchPioneerUser());
+    public void migratePassphrase() {
+        String encryptionParam = CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name();
+        String passphrase = preferences.getString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).toString(), null);
+        if (passphrase != null) {
+            savePassphrase(passphrase, encryptionParam, fetchPioneerUser());
+        }
     }
 
     public int getDBEncryptionVersion() {
