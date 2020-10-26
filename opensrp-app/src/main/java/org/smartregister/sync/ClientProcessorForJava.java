@@ -375,12 +375,12 @@ public class ClientProcessorForJava {
     }
 
     /***
-     * Getter for baseEntityId used when processing Case Models
+     * Method for retrieving baseEntityId used when processing Case Models
      * Allows customizing the baseEntityId for different cases
      * @param event event object
      * @param client client object
      * @param clientType client classification type
-     * @return
+     * @return base entity id
      */
     protected String getBaseEntityId(Event event, Client client, String clientType) {
         return client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
