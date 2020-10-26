@@ -363,6 +363,15 @@ public class AllSharedPreferences {
         preferences.edit().putString(new StringBuffer(ENCRYPTED_PASSPHRASE_KEY).append('_').append(encryptionParam).append(username).toString(), passphrase).commit();
     }
 
+    /**
+     * Allows migration of older passphrase so that is linked to pioneer user
+     * @param passphrase the passphrase
+     * @param encryptionParam the the encyption param
+     **/
+    public void upgradePassphrase(String passphrase, String encryptionParam) {
+        savePassphrase(passphrase, encryptionParam, fetchPioneerUser());
+    }
+
     public int getDBEncryptionVersion() {
         return preferences.getInt(DB_ENCRYPTION_VERSION, 0);
     }
