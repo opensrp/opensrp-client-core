@@ -1,5 +1,6 @@
 package org.smartregister.sync.intent;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,8 @@ import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
+import org.smartregister.domain.Response;
+import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.UniqueIdRepository;
 import org.smartregister.service.HTTPAgent;
 
@@ -42,9 +45,12 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
     @Captor
     private ArgumentCaptor<List<String>> listArgumentCaptor;
 
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
+
     private PullUniqueIdsIntentService pullUniqueIdsIntentService;
 
-    private String identifiers = "{\n" +
+    private String identifiersJsonString = "{\n" +
             "    \"identifiers\": [\n" +
             "        \"1780900-5\",\n" +
             "        \"1780901-3\"\n" +
@@ -65,7 +71,7 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
     @Test
     public void testParseResponse() throws Exception {
 
-        JSONObject identifiersJson = new JSONObject(identifiers);
+        JSONObject identifiersJson = new JSONObject(identifiersJsonString);
         Whitebox.invokeMethod(pullUniqueIdsIntentService, "parseResponse", identifiersJson);
 
         verify(uniqueIdRepo).bulkInsertOpenmrsIds(listArgumentCaptor.capture());
@@ -77,8 +83,18 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
     }
 
     @Test
-    public void onHandleIntent() {
-        //TODO implement this
+    public void testFetchOpenMRSIds() throws Exception {
+
+        int source = 2;
+        int numberTogenerate = 2;
+
+        Mockito.doReturn(new Response<>(ResponseStatus.success, identifiersJsonString))
+                .when(httpAgent).fetch(stringArgumentCaptor.capture());
+
+        JSONObject actualIdentifiersJson = Whitebox.invokeMethod(pullUniqueIdsIntentService, "fetchOpenMRSIds", source, numberTogenerate);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/uniqueids/get?source=2&numberToGenerate=2", stringArgumentCaptor.getValue());
+        assertNotNull(actualIdentifiersJson);
+        assertEquals(new JSONArray("[\"1780900-5\",\"1780901-3\"]"), actualIdentifiersJson.get("identifiers"));
     }
 
 }
