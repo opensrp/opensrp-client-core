@@ -1,9 +1,10 @@
 package org.smartregister.service;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;

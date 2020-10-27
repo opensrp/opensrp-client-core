@@ -9,8 +9,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -93,7 +94,6 @@ public class SyncUtils {
 
     public boolean isAppVersionAllowed() {
         boolean isAppVersionAllowed = true;
-
         try {
 
             // see if setting was synced
