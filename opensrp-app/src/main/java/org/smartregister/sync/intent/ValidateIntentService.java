@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -109,7 +110,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             Timber.e(e);
         }
     }

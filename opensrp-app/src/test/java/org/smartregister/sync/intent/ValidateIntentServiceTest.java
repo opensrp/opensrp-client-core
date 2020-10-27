@@ -18,7 +18,9 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
+import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.EventClientRepository;
@@ -27,6 +29,9 @@ import org.smartregister.service.HTTPAgent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 
 /**
  * Created by Vincent Karuri on 22/09/2020
@@ -69,16 +74,23 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         ReflectionHelpers.setField(validateIntentService, "context", null);
         ReflectionHelpers.setField(validateIntentService, "httpAgent", null);
         ReflectionHelpers.setField(validateIntentService, "openSRPContext", null);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 
     private void mockMethods() throws JSONException {
+        CoreLibrary coreLibrary = mock(CoreLibrary.class);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        doReturn(openSRPContext).when(coreLibrary).context();
+        doReturn(mock(HTTPAgent.class)).when(openSRPContext).httpAgent();
+        doReturn(mock(SyncConfiguration.class)).when(coreLibrary).getSyncConfiguration();
+
         Mockito.doReturn(eventClientRepository).when(openSRPContext).getEventClientRepository();
         Mockito.doReturn(getClientIds()).when(eventClientRepository)
                 .getUnValidatedClientBaseEntityIds(ArgumentMatchers.anyInt());
         Mockito.doReturn(getEventIds()).when(eventClientRepository)
                 .getUnValidatedEventFormSubmissionIds(ArgumentMatchers.anyInt());
 
-        DristhiConfiguration dristhiConfiguration = Mockito.mock(DristhiConfiguration.class);
+        DristhiConfiguration dristhiConfiguration = mock(DristhiConfiguration.class);
         Mockito.doReturn("/").when(dristhiConfiguration).dristhiBaseURL();
         Mockito.doReturn(dristhiConfiguration).when(openSRPContext).configuration();
 
