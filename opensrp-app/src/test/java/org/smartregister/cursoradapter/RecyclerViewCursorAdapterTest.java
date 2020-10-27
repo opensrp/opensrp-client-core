@@ -11,6 +11,8 @@ import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.shadows.RecyclerViewCursorAdapterShadow;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,6 +30,7 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
+        when(cursor.getColumnIndex("_id")).thenReturn(0);
     }
 
     @Test
@@ -49,5 +52,21 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
         verify(cursor, never()).getCount();
     }
 
+    @Test
+    public void testGetItemIdShouldReadFromCursor() {
+        when(cursor.moveToPosition(1)).thenReturn(true);
+        when(cursor.getLong(0)).thenReturn(200L);
+        assertEquals(200, recyclerViewCursorAdapter.getItemId(12));
+        verify(cursor).getLong(0);
+        verify(cursor).moveToPosition(12);
+    }
+
+    @Test
+    public void testGetItemIdShouldReturnZeroIfCursorIsBlank() {
+        when(cursor.moveToPosition(1)).thenReturn(false);
+        assertEquals(0, recyclerViewCursorAdapter.getItemId(1));
+        verify(cursor).moveToPosition(1);
+        verify(cursor,never()).getLong(anyInt());
+    }
 
 }
