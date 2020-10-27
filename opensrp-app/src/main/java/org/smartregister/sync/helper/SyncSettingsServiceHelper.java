@@ -1,6 +1,6 @@
 package org.smartregister.sync.helper;
 
-import android.support.annotation.VisibleForTesting;
+import androidx.annotation.VisibleForTesting;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -116,7 +116,7 @@ public class SyncSettingsServiceHelper {
     }
 
     private void aggregateSettings(JSONArray settings, JSONArray globalSettings) throws JSONException {
-        if (!JsonFormUtils.isBlankJsonArray(globalSettings)) {
+        if (!JsonFormUtils.isBlankJsonArray(globalSettings) && settings != null) {
             for (int i = 0; i < globalSettings.length(); i++) {
                 JSONObject global = globalSettings.getJSONObject(i);
                 settings.put(global);
@@ -221,17 +221,5 @@ public class SyncSettingsServiceHelper {
     @VisibleForTesting
     protected Response<String> getResponse(String completeUrl, String accessToken) {
         return httpAgent.fetchWithCredentials(completeUrl, accessToken);
-    }
-
-    public void setHttpAgent(HTTPAgent httpAgent) {
-        this.httpAgent = httpAgent;
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    public void setSharedPreferences(AllSharedPreferences sharedPreferences) {
-        this.sharedPreferences = sharedPreferences;
     }
 }

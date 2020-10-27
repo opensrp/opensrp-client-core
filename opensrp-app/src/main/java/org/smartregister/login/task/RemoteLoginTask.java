@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
+import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,12 +21,14 @@ import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountHelper;
 import org.smartregister.account.AccountResponse;
 import org.smartregister.domain.LoginResponse;
+import org.smartregister.domain.jsonmapping.User;
 import org.smartregister.event.Listener;
 import org.smartregister.sync.helper.SyncSettingsServiceHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
 
 import java.util.Arrays;
+import java.util.Locale;
 
 import timber.log.Timber;
 
@@ -96,13 +99,16 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
 
                 AccountManager mAccountManager = CoreLibrary.getInstance().getAccountManager();
 
-                final Account account = new Account(mUsername, mAccountAuthenticatorXml.getAccountType());
-
                 loginResponse = getOpenSRPContext().userService().fetchUserDetails(response.getAccessToken());
 
                 if (loginResponse != null && loginResponse.equals(LoginResponse.SUCCESS)) {
+                    User user = loginResponse.payload() != null ? loginResponse.payload().user : null;
+                    String username = user != null && StringUtils.isNotBlank(user.getUsername())
+                            ? user.getUsername() : mUsername;
 
-                    Bundle userData = getOpenSRPContext().userService().saveUserCredentials(mUsername, mPassword, loginResponse.payload());
+                    Bundle userData = getOpenSRPContext().userService().saveUserCredentials(username, mPassword, loginResponse.payload());
+
+                    final Account account = new Account(username, mAccountAuthenticatorXml.getAccountType());
 
                     mAccountManager.addAccountExplicitly(account, response.getRefreshToken(), userData);
                     mAccountManager.setAuthToken(account, mLoginView.getAuthTokenType(), response.getAccessToken());
@@ -116,7 +122,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                         mAccountManager.notifyAccountAuthenticated(account);
                     }
 
-                    if (getOpenSRPContext().userService().getDecryptedPassphraseValue(mUsername) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
+                    if (getOpenSRPContext().userService().getDecryptedPassphraseValue(username) != null && CoreLibrary.getInstance().getSyncConfiguration().isSyncSettings()) {
 
                         publishProgress(R.string.loading_client_settings);
 
@@ -136,7 +142,7 @@ public class RemoteLoginTask extends AsyncTask<Void, Integer, LoginResponse> {
                     }
                 } else {
                     if (response.getAccountError() != null && response.getAccountError().getError() != null) {
-                        return LoginResponse.valueOf(response.getAccountError().getError());
+                        return LoginResponse.valueOf(response.getAccountError().getError().toUpperCase(Locale.ENGLISH));
                     } else if (loginResponse == null) {
                         return null;
                     }

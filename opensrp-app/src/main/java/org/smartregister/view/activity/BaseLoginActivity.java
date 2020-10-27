@@ -8,9 +8,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.StringRes;
-import android.support.v7.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
+import androidx.appcompat.app.AppCompatActivity;
 import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
@@ -33,8 +33,6 @@ import org.smartregister.security.SecurityHelper;
 import org.smartregister.util.SyncUtils;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseLoginContract;
-
-import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ACCOUNT_DISABLED;
 
@@ -97,6 +95,7 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
             if (logoffReason != null) {
                 showErrorDialog(dialogTitle, logoffReason);
+                getIntent().removeExtra(ACCOUNT_DISABLED);
             }
         }
     }
@@ -180,7 +179,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showErrorDialog(String title, String message) {
-
+        if (isDestroyed() || isFinishing()) {
+            return;
+        }
         if (alertDialog == null) {
             alertDialog = new AlertDialog.Builder(this)
                     .setPositiveButton("OK", (dialogInterface, i) -> dialogInterface.dismiss()).create();
@@ -193,10 +194,12 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
     }
 
     public void showProgress(final boolean show) {
-        if (show) {
-            progressDialog.show();
-        } else {
-            progressDialog.dismiss();
+        if (!isFinishing()) {
+            if (show) {
+                progressDialog.show();
+            } else {
+                progressDialog.dismiss();
+            }
         }
     }
 
@@ -270,7 +273,9 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public void updateProgressMessage(String message) {
-        progressDialog.setTitle(message);
+        if (!isFinishing()) {
+            progressDialog.setTitle(message);
+        }
     }
 
     protected void renderBuildInfo() {
@@ -286,20 +291,14 @@ public abstract class BaseLoginActivity extends MultiLanguageActivity implements
 
     @Override
     public boolean isAppVersionAllowed() {
-        boolean isAppVersionAllowed = true;
-        try {
-            isAppVersionAllowed = syncUtils.isAppVersionAllowed();
-        } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e);
-        }
-        return isAppVersionAllowed;
+        return syncUtils.isAppVersionAllowed();
     }
 
     @Override
     public void showClearDataDialog(@NonNull DialogInterface.OnClickListener onClickListener) {
         String username = DrishtiApplication.getInstance().getContext().allSharedPreferences().fetchRegisteredANM();
         String teamName = DrishtiApplication.getInstance().getContext().allSharedPreferences().fetchDefaultTeam(username);
-        new android.support.v7.app.AlertDialog.Builder(this)
+        new androidx.appcompat.app.AlertDialog.Builder(this)
                 .setTitle(R.string.clear_data_dialog_title)
                 .setMessage(String.format(getString(R.string.clear_data_dialog_message), username, teamName))
                 .setPositiveButton(R.string.ok, onClickListener)

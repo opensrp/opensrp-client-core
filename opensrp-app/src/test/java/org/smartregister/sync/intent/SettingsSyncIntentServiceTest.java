@@ -2,15 +2,21 @@ package org.smartregister.sync.intent;
 
 import android.content.Intent;
 
+import com.evernote.android.job.JobRequest;
+
 import org.json.JSONException;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
+
+import com.evernote.android.job.ShadowJobManager;
 
 
 /**
@@ -27,11 +33,18 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
                 .get();
     }
 
-    @Ignore
+    @After
+    public void tearDown() throws Exception {
+        ReflectionHelpers.setStaticField(Context.class, "context", null);
+    }
+
     @Test
-    public void onHandleIntent() {
-        // TODO: Implement this in the next round of tests
-        Assert.assertEquals(2, 1 + 1);
+    public void onHandleIntentShouldScheduleJobRequestAndInvokeProcessSettingsWhenGivenNullIntent() {
+        settingsSyncIntentService = Mockito.spy(settingsSyncIntentService);
+        settingsSyncIntentService.onHandleIntent(null);
+
+        Mockito.verify(ShadowJobManager.mockJobManager).schedule(Mockito.any(JobRequest.class));
+        Mockito.verify(settingsSyncIntentService).processSettings(Mockito.nullable(Intent.class));
     }
 
     @Test
@@ -55,17 +68,15 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
         Assert.assertEquals(30, intent.getIntExtra(AllConstants.INTENT_KEY.SYNC_TOTAL_RECORDS, 0));
     }
 
-    @Ignore
     @Test
-    public void onCreate() {
-        // TODO: Implement this in the next round of tests
-        Assert.assertEquals(2, 1 + 1);
+    public void onCreateShouldCreateSyncSettingsServiceHelper() {
+        settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentService.class)
+                .get();
+        Assert.assertNull(settingsSyncIntentService.syncSettingsServiceHelper);
+
+        settingsSyncIntentService.onCreate();
+
+        Assert.assertNotNull(settingsSyncIntentService.syncSettingsServiceHelper);
     }
 
-    @Ignore
-    @Test
-    public void onDestroy() {
-        // TODO: Implement this in the next round of tests
-        Assert.assertEquals(2, 1 + 1);
-    }
 }

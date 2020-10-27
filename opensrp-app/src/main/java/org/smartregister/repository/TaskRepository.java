@@ -1,9 +1,10 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.SQLException;
@@ -12,6 +13,7 @@ import net.sqlcipher.database.SQLiteStatement;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.domain.Client;
@@ -502,23 +504,25 @@ public class TaskRepository extends BaseRepository {
     }
 
     /**
-     * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
+     * Fetches {@link Task}s whose rowid > #lastRowId up to the #limit provided.
      *
      * @param lastRowId
+     * @param jurisdictionId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * of {@link Task}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getTasks(long lastRowId, int limit) {
+    public JsonData getTasks(long lastRowId, int limit, String jurisdictionId) {
         JsonData jsonData = null;
         long maxRowId = 0;
-
+        String locationFilter = jurisdictionId != null ? String.format(" %s =? AND ", GROUP_ID) : "";
         String query = "SELECT "
                 + ROWID
                 + ",* FROM "
                 + TASK_TABLE
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
@@ -527,7 +531,7 @@ public class TaskRepository extends BaseRepository {
         JSONArray jsonArray = new JSONArray();
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            cursor = getWritableDatabase().rawQuery(query, jurisdictionId != null ? new Object[]{jurisdictionId, lastRowId, limit} : new Object[]{lastRowId, limit});
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(0);
@@ -571,6 +575,29 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(STATUS, TaskStatus.CANCELLED.name());
         contentValues.put(SYNC_STATUS, BaseRepository.TYPE_Unsynced);
         getWritableDatabase().update(TASK_TABLE, contentValues, String.format("%s = ? AND %s =?", FOR, STATUS), new String[]{entityId, TaskStatus.READY.name()});
+    }
+
+    /**
+     * Cancels a particular task
+     *
+     * Cancels the task if it has a status ready @{@link TaskStatus}
+     *
+     * @param identifier id of the task to be cancelled
+     */
+    public void cancelTaskByIdentifier(@NonNull String identifier) {
+        if (StringUtils.isBlank(identifier))
+            return;
+        Task task = getTaskByIdentifier(identifier);
+        if (task == null || !TaskStatus.READY.equals(task.getStatus()))
+            return;
+        task.setStatus(TaskStatus.CANCELLED);
+        // update task sync status to unsynced if it was already synced,
+        // ignore if task status is created so that it will be created on server
+        if (!BaseRepository.TYPE_Created.equals(task.getSyncStatus())) {
+            task.setSyncStatus(BaseRepository.TYPE_Unsynced);
+        }
+        task.setLastModified(DateTime.now());
+        addOrUpdate(task, true);
     }
 
 

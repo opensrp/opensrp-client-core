@@ -1,7 +1,7 @@
 package org.smartregister.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -433,10 +433,6 @@ public class JsonFormUtils {
                             continue;
                         }
                         if (CONCEPT.equals(entity)) {
-                            // For options with concepts create an observation for each
-                            option.put(AllConstants.TYPE, type);
-                            option.put(AllConstants.PARENT_ENTITY_ID, fieldsOpenmrsEntityId);
-                            option.put(KEY, fieldKey);
 
                             if (shouldBeCombined) {
                                 String optionKey = option.optString(KEY);
@@ -445,6 +441,11 @@ public class JsonFormUtils {
                                 optionEntityIds.add(optionsOpenmrsEntityId);
                                 continue;
                             }
+                            // For options with concepts create an observation for each
+                            option.put(AllConstants.TYPE, type);
+                            option.put(AllConstants.PARENT_ENTITY_ID, fieldsOpenmrsEntityId);
+                            option.put(KEY, fieldKey);
+
                             createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
                         } else {
                             String optionText = option.optString(AllConstants.TEXT);

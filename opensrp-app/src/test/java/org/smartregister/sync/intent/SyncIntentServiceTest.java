@@ -437,7 +437,7 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         verify(syncIntentService).updateProgress(1,2);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/event/add", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/add", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedRequest.toString(), requestString);
 
