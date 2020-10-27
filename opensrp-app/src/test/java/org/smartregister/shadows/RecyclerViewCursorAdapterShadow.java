@@ -17,7 +17,7 @@ public class RecyclerViewCursorAdapterShadow extends RecyclerViewCursorAdapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, Cursor cursor) {//mock method
     }
 
     @NonNull
