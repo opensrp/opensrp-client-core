@@ -8,14 +8,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.cursoradapter.RecyclerViewCursorAdapter.NotifyingDataSetObserver;
 import org.smartregister.shadows.RecyclerViewCursorAdapterShadow;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -56,7 +58,7 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testGetItemCountShouldReturnZero() {
-        Whitebox.setInternalState(recyclerViewCursorAdapter, "mDataValid", false);
+        ReflectionHelpers.setField(recyclerViewCursorAdapter, "mDataValid", false);
         assertEquals(0, recyclerViewCursorAdapter.getItemCount());
         verify(cursor, never()).getCount();
     }
@@ -81,10 +83,10 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
     @Test
     public void testSetHasStableIdsShouldPassTrueToSuper() {
         recyclerViewCursorAdapter.setHasStableIds(false);
-        assertEquals(true, Whitebox.getInternalState(recyclerViewCursorAdapter, "mHasStableIds"));
+        assertEquals(true, ReflectionHelpers.getField(recyclerViewCursorAdapter, "mHasStableIds"));
 
         recyclerViewCursorAdapter.setHasStableIds(true);
-        assertEquals(true, Whitebox.getInternalState(recyclerViewCursorAdapter, "mHasStableIds"));
+        assertEquals(true, ReflectionHelpers.getField(recyclerViewCursorAdapter, "mHasStableIds"));
     }
 
     @Test
@@ -101,7 +103,7 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
 
     @Test(expected = IllegalStateException.class)
     public void testOnBindViewHolderShouldThrowExceptionIfCursorNotValid() {
-        Whitebox.setInternalState(recyclerViewCursorAdapter, "mDataValid", false);
+        ReflectionHelpers.setField(recyclerViewCursorAdapter, "mDataValid", false);
         recyclerViewCursorAdapter.onBindViewHolder(viewHolder, 2);
     }
 
@@ -135,12 +137,26 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
     @Test
     public void testSwapCursorShouldProcessCorrectly() {
         recyclerViewCursorAdapter = spy(recyclerViewCursorAdapter);
-        NotifyingDataSetObserver mDataSetObserver = Whitebox.getInternalState(recyclerViewCursorAdapter, "mDataSetObserver");
+        NotifyingDataSetObserver mDataSetObserver = ReflectionHelpers.getField(recyclerViewCursorAdapter, "mDataSetObserver");
         Cursor newCursor = mock(Cursor.class);
         android.database.Cursor old = recyclerViewCursorAdapter.swapCursor(newCursor);
         assertNotNull(old);
         verify(cursor).unregisterDataSetObserver(mDataSetObserver);
         verify(newCursor).registerDataSetObserver(mDataSetObserver);
         verify(recyclerViewCursorAdapter).notifyDataSetChanged();
+    }
+
+    @Test
+    public void testNotifyingDataSetObserverOnchange() {
+        NotifyingDataSetObserver mDataSetObserver = ReflectionHelpers.getField(recyclerViewCursorAdapter, "mDataSetObserver");
+        mDataSetObserver.onChanged();
+        assertTrue(ReflectionHelpers.getField(recyclerViewCursorAdapter, "mDataValid"));
+    }
+
+    @Test
+    public void testNotifyingDataSetObserverOnInvalidated() {
+        NotifyingDataSetObserver mDataSetObserver = ReflectionHelpers.getField(recyclerViewCursorAdapter, "mDataSetObserver");
+        mDataSetObserver.onInvalidated();
+        assertFalse(ReflectionHelpers.getField(recyclerViewCursorAdapter, "mDataValid"));
     }
 }
