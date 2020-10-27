@@ -1,13 +1,12 @@
 package org.smartregister.sync.intent;
 
-import android.content.Context;
-
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
@@ -16,6 +15,7 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.repository.UniqueIdRepository;
+import org.smartregister.service.HTTPAgent;
 
 import java.util.List;
 
@@ -36,12 +36,13 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
     @Mock
     private SyncConfiguration syncConfiguration;
 
+    @Mock
+    private HTTPAgent httpAgent;
+
     @Captor
-    ArgumentCaptor<List<String>> listArgumentCaptor;
+    private ArgumentCaptor<List<String>> listArgumentCaptor;
 
     private PullUniqueIdsIntentService pullUniqueIdsIntentService;
-
-    private Context context = RuntimeEnvironment.application;
 
     private String identifiers = "{\n" +
             "    \"identifiers\": [\n" +
@@ -55,9 +56,10 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(CoreLibrary.getInstance(), "syncConfiguration", syncConfiguration);
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        pullUniqueIdsIntentService = new PullUniqueIdsIntentService();
+        pullUniqueIdsIntentService = Mockito.spy(PullUniqueIdsIntentService.class);
         Whitebox.setInternalState(pullUniqueIdsIntentService, "mBase", RuntimeEnvironment.application);
         Whitebox.setInternalState(pullUniqueIdsIntentService, "uniqueIdRepo", uniqueIdRepo);
+        Mockito.doReturn(httpAgent).when(pullUniqueIdsIntentService).getHttpAgent();
     }
 
     @Test
@@ -73,4 +75,10 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
         assertTrue(actualIdentifierList.contains("1780900-5"));
         assertTrue(actualIdentifierList.contains("1780901-3"));
     }
+
+    @Test
+    public void onHandleIntent() {
+        //TODO implement this
+    }
+
 }
