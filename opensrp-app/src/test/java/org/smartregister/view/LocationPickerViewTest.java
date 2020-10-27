@@ -3,6 +3,7 @@ package org.smartregister.view;
 import android.app.Dialog;
 import android.widget.ListView;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,6 +37,9 @@ public class LocationPickerViewTest extends BaseUnitTest {
 
     @Test
     public void initShouldCorrectlyInitializeLocationPicker() {
+        if (LocationHelper.getInstance() != null) {
+            ReflectionHelpers.setField(LocationHelper.getInstance(), "instance", null);
+        }
         LocationPickerView.OnLocationChangeListener onLocationChangeListener = Mockito.mock(LocationPickerView.OnLocationChangeListener.class);
         CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(defaultLocation);
         LocationHelper.init(new ArrayList<String>(){{ add(defaultLocation); }}, defaultLocation,
@@ -62,6 +66,11 @@ public class LocationPickerViewTest extends BaseUnitTest {
         Assert.assertEquals(defaultLocation, locationPickerView.getText());
         Mockito.verify(onLocationChangeListener).onLocationChange(ArgumentMatchers.eq(defaultLocation));
         Assert.assertFalse(locationPickerDialog.isShowing());
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(LocationHelper.class, "instance", null);
     }
 
     private void verifyCurrentLocationDetailsAreUpdated(ListView listView, int position, String currentLocation, String currentStrategy) {
