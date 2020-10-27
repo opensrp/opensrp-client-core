@@ -4,9 +4,9 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -240,7 +240,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
                     boolean accountExists = false;
 
                     for (Account account : accounts) {
-                        if (account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
+                        if (account.type.equals(getAccountAuthenticatorXml().getAccountType()) && account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
                             accountExists = true;
                             break;
                         }
