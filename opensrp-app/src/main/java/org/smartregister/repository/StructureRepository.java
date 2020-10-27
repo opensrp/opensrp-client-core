@@ -1,8 +1,9 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -32,10 +33,10 @@ import timber.log.Timber;
 public class StructureRepository extends LocationRepository {
 
     public static String STRUCTURE_TABLE = "structure";
-    private static final String SYNC_STATUS = "sync_status";
+    protected static final String SYNC_STATUS = "sync_status";
 
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
+    protected static final String LATITUDE = "latitude";
+    protected static final String LONGITUDE = "longitude";
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + STRUCTURE_TABLE + " (" +

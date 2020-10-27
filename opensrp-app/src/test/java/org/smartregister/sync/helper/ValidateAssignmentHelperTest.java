@@ -199,6 +199,8 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
         verify(planDefinitionRepository).findAllPlanDefinitionIds();
         verify(locationRepository).getAllLocationIds();
         verify(userService).fetchOrganizations();
+        verify(userService).hasSessionExpired();
+
 
         verify(syncUtils).logoutUser(R.string.account_new_assignment_logged_off);
 

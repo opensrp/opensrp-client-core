@@ -224,7 +224,6 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         Mockito.verify(eventClientRepository, Mockito.never()).getClients(lastRecordId, batchSize, null);
     }
 
-
     @Test
     public void getMultiMediaDataShouldCallImageRepositoryAndReturnMultiMediaDataWhenDataTypeIsProfielPic() throws IOException {
         ((TestApplication) TestApplication.getInstance()).setP2PClassifier(Mockito.mock(P2PClassifier.class));
@@ -260,7 +259,54 @@ public class P2PSenderTransferDaoTest extends BaseRobolectricUnitTest {
         Assert.assertEquals(String.valueOf(87L), actualJsonData.getMediaDetails().get(AllConstants.ROWID));
         Assert.assertEquals(87L, actualJsonData.getRecordId());
         Assert.assertNotNull(actualJsonData.getFile());
+    }
 
-        Mockito.verify(imageRepository).getImage(lastRecordId);
+    @Test
+    public void getMultiMediaDataShouldReturnNullWhenDataTypeIsNotProfielPic() throws IOException {
+        ((TestApplication) TestApplication.getInstance()).setP2PClassifier(Mockito.mock(P2PClassifier.class));
+        ImageRepository imageRepository = Mockito.spy(CoreLibrary.getInstance().context().imageRepository());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "imageRepository", imageRepository);
+
+        int lastRecordId = 789;
+        String anmId = "90293-fsdawecSD";
+        String imagePath = "profile-pig.png";
+
+        // Create the image
+        new File(imagePath).createNewFile();
+
+        HashMap<String, Object> imageDetails = new HashMap<>();
+        imageDetails.put(ImageRepository.filepath_COLUMN, imagePath);
+        imageDetails.put(ImageRepository.syncStatus_COLUMN, SyncStatus.SYNCED.value());
+        imageDetails.put(AllConstants.ROWID, 87L);
+        imageDetails.put(ImageRepository.filecategory_COLUMN, "profile-pic-male");
+        imageDetails.put(ImageRepository.anm_ID_COLUMN, anmId);
+        imageDetails.put(ImageRepository.entityID_COLUMN, "entity-id");
+
+        Mockito.doReturn(imageDetails).when(imageRepository).getImage(lastRecordId);
+
+        DataType dataType = new DataType("some data type", DataType.Type.MEDIA, 9);
+
+        // Call the method under test
+        MultiMediaData actualJsonData = p2PSenderTransferDao.getMultiMediaData(dataType, lastRecordId);
+
+        // Verify that the repository was called
+        Mockito.verify(imageRepository, Mockito.times(0)).getImage(lastRecordId);
+        Assert.assertNull(actualJsonData);
+    }
+    @Test
+    public void getMultiMediaDataShouldCallImageRepositoryAndReturnNullWhenDataTypeIsProfielPicAndImageRecordIsNotFound() throws IOException {
+        ((TestApplication) TestApplication.getInstance()).setP2PClassifier(Mockito.mock(P2PClassifier.class));
+        ImageRepository imageRepository = Mockito.spy(CoreLibrary.getInstance().context().imageRepository());
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "imageRepository", imageRepository);
+
+        int lastRecordId = 789;
+        Mockito.doReturn(null).when(imageRepository).getImage(lastRecordId);
+
+        // Call the method under test
+        MultiMediaData actualJsonData = p2PSenderTransferDao.getMultiMediaData(p2PSenderTransferDao.profilePic, lastRecordId);
+
+        // Verify that the repository was called
+        Mockito.verify(imageRepository, Mockito.times(1)).getImage(lastRecordId);
+        Assert.assertNull(actualJsonData);
     }
 }
