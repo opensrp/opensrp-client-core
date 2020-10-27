@@ -83,6 +83,7 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         if (shouldMigrate && StringUtils.isNotBlank(instance.context().userService().getAllSharedPreferences().fetchPioneerUser())) {//Force remote login
             Utils.logoutUser(instance.context(), instance.context().applicationContext().getString(R.string.new_db_encryption_version_migration));
         }
+        instance.context().userService().getAllSharedPreferences().migratePassphrase();
     }
 
     public static CoreLibrary getInstance() {
