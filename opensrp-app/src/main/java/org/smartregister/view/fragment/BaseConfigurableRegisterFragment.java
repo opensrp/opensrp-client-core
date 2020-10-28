@@ -160,9 +160,10 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         // Update logo
         ImageView logo = view.findViewById(R.id.top_left_logo);
         if (logo != null) {
-            // TODO -> Set LOGO from config
-            // logo.setImageDrawable(context().getDrawable());
-            // logo.setVisibility(View.VISIBLE);
+            if (getModuleConfiguration().getRegisterLogo() > 0) {
+                logo.setImageDrawable(context().getDrawable(moduleConfiguration.getRegisterLogo()));
+                logo.setVisibility(View.VISIBLE);
+            }
         }
         ImageView backButton = view.findViewById(R.id.back_arrow);
         if (backButton != null)
