@@ -78,6 +78,10 @@ public class ModuleConfiguration {
         return builder.registerTitle;
     }
 
+    public int getRegisterLogo() {
+        return builder.registerLogo;
+    }
+
     public int getMaxCheckInDurationInMinutes() {
         return builder.maxCheckInDurationInMinutes;
     }
@@ -126,12 +130,18 @@ public class ModuleConfiguration {
         private int maxCheckInDurationInMinutes = 24 * 60;
         private ConfigurableViewsLibrary configurableViewsLibrary;
         private String registerTitle;
+        private int registerLogo;
 
         public Builder(@NonNull String registerTitle, @NonNull Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider, @NonNull ConfigurableViewsLibrary configurableViewsLibrary, @NonNull Class<? extends ActivityStarter> activityStarter) {
             this.registerQueryProvider = registerQueryProvider;
             this.configurableViewsLibrary = configurableViewsLibrary;
             this.registerTitle = registerTitle;
             this.activityStarter = activityStarter;
+        }
+
+        public Builder setRegisterLogo(int registerLogo) {
+            this.registerLogo = registerLogo;
+            return this;
         }
 
         public Builder setRegisterProviderMetadata(@Nullable Class<? extends RegisterProviderMetadata> registerProviderMetadata) {
