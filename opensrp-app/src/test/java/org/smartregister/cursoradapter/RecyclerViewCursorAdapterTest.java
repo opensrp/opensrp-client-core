@@ -83,10 +83,10 @@ public class RecyclerViewCursorAdapterTest extends BaseRobolectricUnitTest {
     @Test
     public void testSetHasStableIdsShouldPassTrueToSuper() {
         recyclerViewCursorAdapter.setHasStableIds(false);
-        assertEquals(true, ReflectionHelpers.getField(recyclerViewCursorAdapter, "mHasStableIds"));
+        assertTrue( ReflectionHelpers.getField(recyclerViewCursorAdapter, "mHasStableIds"));
 
         recyclerViewCursorAdapter.setHasStableIds(true);
-        assertEquals(true, ReflectionHelpers.getField(recyclerViewCursorAdapter, "mHasStableIds"));
+        assertTrue( ReflectionHelpers.getField(recyclerViewCursorAdapter, "mHasStableIds"));
     }
 
     @Test
