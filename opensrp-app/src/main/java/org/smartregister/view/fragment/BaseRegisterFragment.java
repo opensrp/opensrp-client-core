@@ -300,7 +300,9 @@ public abstract class BaseRegisterFragment extends RecyclerViewFragment implemen
     protected abstract String getDefaultSortQuery();
 
     public void filter(String filterString, String joinTableString, String mainConditionString, boolean qrCode) {
-        getSearchCancelView().setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
+        View searchCancelView = getSearchCancelView();
+        if (searchCancelView != null)
+            searchCancelView.setVisibility(isEmpty(filterString) ? View.INVISIBLE : View.VISIBLE);
         if (isEmpty(filterString)) {
             Utils.hideKeyboard(getActivity());
         }
