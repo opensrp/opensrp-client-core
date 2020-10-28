@@ -84,15 +84,15 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         doReturn(mock(HTTPAgent.class)).when(openSRPContext).httpAgent();
         doReturn(mock(SyncConfiguration.class)).when(coreLibrary).getSyncConfiguration();
 
-        Mockito.doReturn(eventClientRepository).when(openSRPContext).getEventClientRepository();
-        Mockito.doReturn(getClientIds()).when(eventClientRepository)
+        doReturn(eventClientRepository).when(openSRPContext).getEventClientRepository();
+        doReturn(getClientIds()).when(eventClientRepository)
                 .getUnValidatedClientBaseEntityIds(ArgumentMatchers.anyInt());
-        Mockito.doReturn(getEventIds()).when(eventClientRepository)
+        doReturn(getEventIds()).when(eventClientRepository)
                 .getUnValidatedEventFormSubmissionIds(ArgumentMatchers.anyInt());
 
         DristhiConfiguration dristhiConfiguration = mock(DristhiConfiguration.class);
-        Mockito.doReturn("/").when(dristhiConfiguration).dristhiBaseURL();
-        Mockito.doReturn(dristhiConfiguration).when(openSRPContext).configuration();
+        doReturn("/").when(dristhiConfiguration).dristhiBaseURL();
+        doReturn(dristhiConfiguration).when(openSRPContext).configuration();
 
         JSONObject results = new JSONObject();
         JSONArray invalidClients = new JSONArray(Arrays.asList("client_id1"));
@@ -102,7 +102,7 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
         results.put(AllConstants.KEY.EVENTS, invalidEvents);
 
         Response<String> response = new Response(ResponseStatus.success, results.toString());
-        Mockito.doReturn(response).when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        doReturn(response).when(httpAgent).postWithJsonResponse(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
     }
 
     private List<String> getEventIds() {
