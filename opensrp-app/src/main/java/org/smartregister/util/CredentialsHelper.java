@@ -48,11 +48,11 @@ public class CredentialsHelper {
     }
 
 
-    public void saveCredentials(String type, String encryptedPassphrase) {
+    public void saveCredentials(String type, String encryptedPassphrase,String username) {
 
         if (CREDENTIALS_TYPE.DB_AUTH.equals(type)) {
 
-            allSharedPreferences.savePassphrase(encryptedPassphrase, CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name());
+            allSharedPreferences.savePassphrase(encryptedPassphrase, CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name(),username);
             allSharedPreferences.setDBEncryptionVersion(BuildConfig.DB_ENCRYPTION_VERSION);
 
         }/* else if (CREDENTIALS_TYPE.LOCAL_AUTH.equals(type)) {
