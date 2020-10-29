@@ -12,7 +12,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.AllConstants;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.Response;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.verify;
  * Created by Richard Kareko on 10/27/20.
  */
 
-public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
+public class PullUniqueIdsIntentServiceTest extends BaseRobolectricUnitTest {
 
     @Mock
     private UniqueIdRepository uniqueIdRepo;
@@ -75,7 +75,7 @@ public class PullUniqueIdsIntentServiceTest extends BaseUnitTest {
         Whitebox.invokeMethod(pullUniqueIdsIntentService, "parseResponse", identifiersJson);
 
         verify(uniqueIdRepo).bulkInsertOpenmrsIds(listArgumentCaptor.capture());
-        List<String> actualIdentifierList = listArgumentCaptor.getAllValues().get(0);
+        List<String> actualIdentifierList = listArgumentCaptor.getValue();
         assertNotNull(actualIdentifierList);
         assertEquals(2, actualIdentifierList.size());
         assertTrue(actualIdentifierList.contains("1780900-5"));
