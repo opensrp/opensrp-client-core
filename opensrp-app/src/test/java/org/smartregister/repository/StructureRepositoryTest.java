@@ -4,6 +4,7 @@ import android.content.ContentValues;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -18,13 +19,17 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.domain.Geometry;
 import org.smartregister.domain.Location;
+import org.smartregister.domain.LocationProperty;
 import org.smartregister.domain.LocationTest;
 import org.smartregister.p2p.sync.data.JsonData;
+import org.smartregister.repository.helper.MappingHelper;
 import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -232,19 +237,43 @@ public class StructureRepositoryTest extends BaseUnitTest {
     }
 
     @Test
-    public void testGetStructures() throws Exception {
+    public void testGetStructuresWithNullStructureId() throws Exception {
         Location expectedStructure = gson.fromJson(locationJson, Location.class);
         String sql = "SELECT rowid,* FROM structure WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?";
         long lastRowId = 1l;
         int limit = 10;
         when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenReturn(getCursor());
 
-        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit);
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit, null);
 
         verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
         assertEquals(sql, stringArgumentCaptor.getValue());
         assertEquals(lastRowId, objectArgsCaptor.getValue()[0]);
         assertEquals(limit, objectArgsCaptor.getValue()[1]);
+
+        JSONObject structureJsonObject = actualStructureData.getJsonArray().getJSONObject(0);
+        Location structure = gson.fromJson(String.valueOf(structureJsonObject), Location.class);
+
+        assertEquals(expectedStructure.getId(), structure.getId());
+        assertEquals(expectedStructure.getType(), structure.getType());
+    }
+
+    @Test
+    public void testGetStructuresWithStructureId() throws Exception {
+        Location expectedStructure = gson.fromJson(locationJson, Location.class);
+        String sql = "SELECT rowid,* FROM structure WHERE  parent_id =? AND rowid > ?  ORDER BY rowid ASC LIMIT ?";
+        long lastRowId = 1l;
+        int limit = 10;
+        String locationId= java.util.UUID.randomUUID().toString();
+        when(sqLiteDatabase.rawQuery(anyString(), (Object[]) any())).thenReturn(getCursor());
+
+        JsonData actualStructureData = structureRepository.getStructures(lastRowId, limit, locationId);
+
+        verify(sqLiteDatabase).rawQuery(stringArgumentCaptor.capture(), objectArgsCaptor.capture());
+        assertEquals(sql, stringArgumentCaptor.getValue());
+        assertEquals(locationId, objectArgsCaptor.getValue()[0]);
+        assertEquals(lastRowId, objectArgsCaptor.getValue()[1]);
+        assertEquals(limit, objectArgsCaptor.getValue()[2]);
 
         JSONObject structureJsonObject = actualStructureData.getJsonArray().getJSONObject(0);
         Location structure = gson.fromJson(String.valueOf(structureJsonObject), Location.class);
@@ -295,6 +324,118 @@ public class StructureRepositoryTest extends BaseUnitTest {
                 "parent_id VARCHAR , name VARCHAR , sync_status VARCHAR DEFAULT Synced, latitude FLOAT , " +
                 "longitude FLOAT , geojson VARCHAR NOT NULL ) ", stringArgumentCaptor.getAllValues().get(0));
         assertEquals("CREATE INDEX structure_parent_id_ind ON structure(parent_id)", stringArgumentCaptor.getAllValues().get(1));
+    }
+
+    @Test
+    public void testAddOrUpdateShouldGenerateContentValuesWithPointLatLngWhenGivenPointStructure() {
+        Location location = new Location();
+        Geometry geometry = new Geometry();
+        geometry.setType(Geometry.GeometryType.POINT);
+
+        JsonArray coordinates = new JsonArray();
+        float lon = 4.5f;
+        float lat = 9.7f;
+
+        coordinates.add(lon);
+        coordinates.add(lat);
+        geometry.setCoordinates(coordinates);
+
+        String locationId = "location-id";
+        String parentId = "parent-id";
+        String locationUuid = "uuid";
+        String locationName = "location-name";
+        String locationSyncStatus = "sync-status";
+
+        location.setGeometry(geometry);
+        location.setId(locationId);
+        location.setSyncStatus(locationSyncStatus);
+
+        LocationProperty locationProperties = new LocationProperty();
+        locationProperties.setParentId(parentId);
+        locationProperties.setUid(locationUuid);
+        locationProperties.setName(locationName);
+
+        location.setProperties(locationProperties);
+
+        // Call the method under test
+        structureRepository.addOrUpdate(location);
+
+        // Verify method calls & assert values
+        ArgumentCaptor<ContentValues> contentValuesArgumentCaptor = ArgumentCaptor.forClass(ContentValues.class);
+        verify(sqLiteDatabase).replace(Mockito.anyString(), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+
+        assertEquals(lat, contentValues.getAsFloat(StructureRepository.LATITUDE), 0);
+        assertEquals(lon, contentValues.getAsFloat(StructureRepository.LONGITUDE), 0);
+        assertEquals(locationId, contentValues.getAsString(StructureRepository.ID));
+        assertEquals(locationUuid, contentValues.getAsString(StructureRepository.UUID));
+        assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
+        assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
+        assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
+    }
+
+
+    @Test
+    public void testAddOrUpdateShouldGenerateContentValuesWithCenterPointLatLngWhenGivenPolygonStructure() {
+        Location location = new Location();
+        Geometry geometry = new Geometry();
+        geometry.setType(Geometry.GeometryType.POLYGON);
+
+        JsonArray coordinates = new JsonArray();
+        coordinates.add(-10f);
+        coordinates.add(-20f);
+        coordinates.add(50f);
+        coordinates.add(-20f);
+        coordinates.add(50f);
+        coordinates.add(24f);
+        coordinates.add(-10f);
+        coordinates.add(24f);
+        coordinates.add(-10f);
+        coordinates.add(-20f);
+
+        geometry.setCoordinates(coordinates);
+
+        String locationId = "location-id";
+        String parentId = "parent-id";
+        String locationUuid = "uuid";
+        String locationName = "location-name";
+        String locationSyncStatus = "sync-status";
+
+        location.setGeometry(geometry);
+        location.setId(locationId);
+        location.setSyncStatus(locationSyncStatus);
+
+        LocationProperty locationProperties = new LocationProperty();
+        locationProperties.setParentId(parentId);
+        locationProperties.setUid(locationUuid);
+        locationProperties.setName(locationName);
+
+        location.setProperties(locationProperties);
+
+        MappingHelper helper = Mockito.mock(MappingHelper.class);
+        android.location.Location center = new android.location.Location("my-provider");
+        center.setLatitude(2f);
+        center.setLongitude(20f);
+        Mockito.doReturn(center).when(helper).getCenter(Mockito.anyString());
+        structureRepository.setHelper(helper);
+
+        // Call the method under test
+        structureRepository.addOrUpdate(location);
+
+        // Verify method calls and assert values
+        ArgumentCaptor<ContentValues> contentValuesArgumentCaptor = ArgumentCaptor.forClass(ContentValues.class);
+        verify(sqLiteDatabase).replace(Mockito.anyString(), Mockito.nullable(String.class), contentValuesArgumentCaptor.capture());
+
+        ContentValues contentValues = contentValuesArgumentCaptor.getValue();
+
+        assertEquals(2f, contentValues.getAsFloat(StructureRepository.LATITUDE), 0);
+        assertEquals(20f, contentValues.getAsFloat(StructureRepository.LONGITUDE), 0);
+        assertEquals(locationId, contentValues.getAsString(StructureRepository.ID));
+        assertEquals(locationUuid, contentValues.getAsString(StructureRepository.UUID));
+        assertEquals(parentId, contentValues.getAsString(StructureRepository.PARENT_ID));
+        assertEquals(locationName, contentValues.getAsString(StructureRepository.NAME));
+        assertEquals(locationSyncStatus, contentValues.getAsString(StructureRepository.SYNC_STATUS));
     }
 
     public MatrixCursor getCursor() {

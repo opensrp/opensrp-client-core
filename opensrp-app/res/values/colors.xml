@@ -45,6 +45,7 @@
     <color name="sort_bar_grey">#E9E9E9</color>
 
     <color name="customAppThemeBlue">#218CC5</color>
+    <color name="NewThemeBlue">#005084</color>
 
     <color name="search_bar_background_black">#2E383D</color>
     <color name="search_textfield_background_grey">#4A5357</color>
@@ -62,5 +63,7 @@
     <color name="white">#FFFFFF</color>
 
     <color name="translucent_yellow">#CCEDCA00</color>
+    <color name="brown">#C15F26</color>
+    <color name="chw_primary">@color/customAppThemeBlue</color>
 
 </resources>

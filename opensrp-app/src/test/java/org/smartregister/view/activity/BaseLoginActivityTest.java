@@ -7,15 +7,17 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import org.junit.After;
 import org.junit.Assert;
@@ -58,6 +60,12 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         BaseLoginActivityImpl spyActivity = Mockito.spy((BaseLoginActivityImpl) ReflectionHelpers.getField(controller, "component"));
         ReflectionHelpers.setField(controller, "component", spyActivity);
 
+        AppCompatDelegate delegate = AppCompatDelegate.create(RuntimeEnvironment.application, spyActivity, spyActivity);
+        Mockito.doReturn(delegate).when(spyActivity).getDelegate();
+
+        ActionBar actionBar = Mockito.mock(ActionBar.class);
+        Mockito.doReturn(actionBar).when(spyActivity).getSupportActionBar();
+
         Mockito.doReturn(RuntimeEnvironment.application.getPackageManager()).when(spyActivity).getPackageManager();
 
         controller.create()
@@ -79,6 +87,9 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
         BaseLoginActivityImpl spyActivity = Mockito.spy((BaseLoginActivityImpl) ReflectionHelpers.getField(controller, "component"));
         ReflectionHelpers.setField(controller, "component", spyActivity);
+
+        AppCompatDelegate delegate = AppCompatDelegate.create(RuntimeEnvironment.application, spyActivity, spyActivity);
+        Mockito.doReturn(delegate).when(spyActivity).getDelegate();
 
         Mockito.doReturn(RuntimeEnvironment.application.getPackageManager()).when(spyActivity).getPackageManager();
         Mockito.doReturn(actionBar).when(spyActivity).getSupportActionBar();
@@ -190,6 +201,41 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
         Assert.assertFalse(ReflectionHelpers.getField(alertDialog, "mCancelable"));
     }
 
+    @Test
+    public void testShowProgressShouldExecuteWhenActivityIsActive() {
+        baseLoginActivity.showProgress(true);
+        ProgressDialog progressDialog = ReflectionHelpers.getField(baseLoginActivity, "progressDialog");
+        Assert.assertTrue(progressDialog.isShowing());
+    }
+
+    @Test
+    public void testShowProgressShouldNotExecuteWhenActivityIsDestroyed() {
+        ProgressDialog spyProgressDialog = Mockito.spy(new ProgressDialog(baseLoginActivity));
+        ReflectionHelpers.setField(baseLoginActivity, "progressDialog", spyProgressDialog);
+        baseLoginActivity.finish();
+        baseLoginActivity.showProgress(true);
+        Mockito.verify(spyProgressDialog, Mockito.never()).show();
+    }
+
+    @Test
+    public void testUpdateProgressMessageShouldExecuteWhenActivityIsActive() {
+        String msg = "text";
+        ProgressDialog spyProgressDialog = Mockito.spy(new ProgressDialog(baseLoginActivity));
+        ReflectionHelpers.setField(baseLoginActivity, "progressDialog", spyProgressDialog);
+        baseLoginActivity.updateProgressMessage(msg);
+        Mockito.verify(spyProgressDialog, Mockito.times(1)).setTitle(Mockito.eq(msg));
+    }
+
+    @Test
+    public void testUpdateProgressMessageShouldNotExecuteWhenActivityIsDestroyed() {
+        String msg = "text";
+        ProgressDialog spyProgressDialog = Mockito.spy(new ProgressDialog(baseLoginActivity));
+        ReflectionHelpers.setField(baseLoginActivity, "progressDialog", spyProgressDialog);
+        baseLoginActivity.finish();
+        baseLoginActivity.updateProgressMessage(msg);
+        Mockito.verify(spyProgressDialog, Mockito.never()).setTitle(Mockito.eq(msg));
+    }
+
     public static class BaseLoginActivityImpl extends BaseLoginActivity {
 
         @Override
@@ -210,7 +256,7 @@ public class BaseLoginActivityTest extends BaseRobolectricUnitTest {
 
         @Override
         public void onCreate(@Nullable Bundle savedInstanceState) {
-            setTheme(R.style.AppTheme); //we need this here
+            setTheme(R.style.Theme_AppCompat_Light_DarkActionBar); //we need this here
             super.onCreate(savedInstanceState);
         }
     }

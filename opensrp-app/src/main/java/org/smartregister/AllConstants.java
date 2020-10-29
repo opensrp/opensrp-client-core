@@ -43,7 +43,6 @@ public class AllConstants {
     public static final String LANGUAGE_PREFERENCE_KEY = "locale";
     public static final String CURRENT_LOCALITY = "current_locality";
     public static final String DATA_STRATEGY = "data_strategy";
-    public static final String ADVANCED_DATA_CAPTURE_STRATEGY_PREFIX = "ADCS_";
     public static final String ENGLISH_LOCALE = "en";
     public static final String KANNADA_LOCALE = "kn";
     public static final String DEFAULT_LOCALE = ENGLISH_LOCALE;
@@ -109,6 +108,7 @@ public class AllConstants {
 
     public static final String CAMPAIGNS = "CAMPAIGNS";
     public static final String OPERATIONAL_AREAS = "OPERATIONAL_AREAS";
+    public static final String JURISDICTION_IDS = "JURISDICTION_IDS";
     public static final String ORGANIZATION_IDS = "ORGANIZATION_IDS";
 
     public static final String ACCOUNT_DISABLED = "account_disabled_reason";
@@ -485,6 +485,26 @@ public class AllConstants {
             String IS_NEW = "is_new";
             String FORM_VERSION = "form_version";
             String CLIENT_FORM_ID = "client_form_id";
+            String ENCOUNTER_TYPE = "encounter_type";
+            String COUNT = JSON.COUNT;
+            String STEP = JSON.STEP;
+        }
+
+        String COUNT = AllConstants.COUNT;
+        String STEP = AllConstants.STEP;
+        String FIELDS = "fields";
+        
+        interface FieldKey {
+            String LAST_INTERACTED_WITH = "last_interacted_with";
+            String DOB_UNKNOWN = "dob_unknown";
+            String OPTIONS = "options";
+            String SEX = "Sex";
+
+            String AGE_ENTERED = "age_entered";
+            String DOB_ENTERED = "dob_entered";
+            String OPENSRP_ID = "opensrp_id";
+            String CURRENT_OPENSRP_ID = "current_opensrp_id";
+            String ZEIR_ID = "zeir_id";
         }
     }
 
@@ -493,6 +513,7 @@ public class AllConstants {
         String TOTAL_RECORDS = "total_records";
         String SYNC_PROGRESS_DATA = "sync_progress_data";
     }
+
     public interface LocationConstants {
         String SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS = "SPECIAL_TAG_FOR_OPENMRS_TEAM_MEMBERS";
         String LOCATIONS = "locations";
@@ -513,6 +534,7 @@ public class AllConstants {
         String FOREIGN_CLIENT = "ForeignClient";
         String FOREIGN_EVENT = "ForeignEvent";
     }
+
     public static class HTTP_REQUEST_HEADERS {
         public static String AUTHORIZATION = "Authorization";
     }
@@ -525,5 +547,35 @@ public class AllConstants {
     public static class DATA_CAPTURE_STRATEGY {
         public static String ADVANCED = "Advanced";
         public static String NORMAL = "Normal";
+    }
+
+    public interface RequestCode {
+        int START_JSON_FORM = 2244;
+    }
+
+    public interface IntentExtra {
+
+        String MODULE_NAME = "module-name";
+
+        interface JsonForm {
+            String JSON = "json";
+            String FORM = "form";
+            String BASE_ENTITY_ID = "base-entity-id";
+            String ENTITY_TABLE = "entity_table";
+        }
+    }
+
+    public interface ENTITY {
+        String PERSON = "person";
+    }
+
+    public interface OPENMRS {
+        String ENTITY = "openmrs_entity";
+        String ENTITY_ID = "openmrs_entity_id";
+    }
+
+    public interface BOOLEAN_INT {
+        int TRUE = 1;
+        int FALSE = 0;
     }
 }

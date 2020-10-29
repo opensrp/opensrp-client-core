@@ -92,6 +92,18 @@
             android:gravity="center"
             android:src="@drawable/ic_icon_synchronize" />
 
+        <ImageView
+            android:id="@+id/add_child_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="3dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginRight="15dp"
+            android:gravity="center"
+            android:src="@drawable/icon_plus_add_fp" />
+
         <ProgressBar
             android:id="@+id/sync_progress_bar"
             android:layout_width="45dp"

@@ -26,10 +26,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".BasicActivity" />
+
         <activity
             android:name=".SampleLoginActivity"
             android:screenOrientation="fullSensor"
-            android:theme="@style/AppThemeNoTitle"></activity>
+            android:theme="@style/AppThemeNoTitle"/>
+
+        <activity
+            android:launchMode="singleTask"
+            android:name=".SampleAppFormActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            android:theme="@style/AppThemeNoActionBarAndTitle"/>
     </application>
 
 </manifest>

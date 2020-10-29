@@ -1,0 +1,27 @@
+{
+  "case_classification_rules": [
+    {
+      "comment": "Child: This rule checks whether a given case belongs to Child register",
+      "rule": {
+        "type": "event",
+        "fields": [
+          {
+            "field": "eventType",
+            "field_value": "Visit",
+            "creates_case": [
+              "ec_mother"
+            ]
+          },
+          {
+            "field": "eventType",
+            "field_value": "Opd Registration",
+            "creates_case": [
+              "ec_client"
+            ]
+          }
+
+        ]
+      }
+    }
+  ]
+}

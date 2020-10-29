@@ -1,8 +1,7 @@
 package org.smartregister.configuration;
 
-
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.smartregister.view.activity.BaseProfileActivity;
 import org.smartregister.view.activity.FormActivity;
@@ -39,8 +38,7 @@ public class ModuleMetadata {
 
     private LocationTagsConfiguration locationTagsConfiguration;
 
-    private String lookUpQueryForModuleClient;/* = String.format("select id as _id, %s, %s, %s, %s, %s, %s, %s, national_id from " + getTableName() + " where [condition] ", OpdConstants.KEY.RELATIONALID, OpdConstants.KEY.FIRST_NAME,
-            OpdConstants.KEY.LAST_NAME, OpdConstants.KEY.GENDER, OpdConstants.KEY.DOB, OpdConstants.KEY.BASE_ENTITY_ID, OpdDbConstants.KEY.OPENSRP_ID);*/
+    private String lookUpQueryForModuleClient;
 
     public ModuleMetadata(@NonNull String registrationFormName, @NonNull String tableName, @NonNull String registerEventType, @NonNull String updateEventType, @NonNull LocationTagsConfiguration locationTagsConfiguration,
                           @NonNull String config, @NonNull Class<? extends FormActivity> formActivity, @Nullable Class<? extends BaseProfileActivity> profileActivity, boolean formWizardValidateRequiredFieldsBefore, @NonNull String lookUpQueryForModuleClient) {

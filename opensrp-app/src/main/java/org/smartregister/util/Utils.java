@@ -32,11 +32,12 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -963,5 +964,23 @@ public class Utils {
         context.applicationContext().startActivity(intent);
         context.userService().forceRemoteLogin(context.allSharedPreferences().fetchRegisteredANM());
         context.userService().logoutSession();
+    }
+
+
+    @NonNull
+    public static String getClientAge(String dobString, String translatedYearInitial) {
+        String age = dobString;
+        if (dobString.contains(translatedYearInitial)) {
+            String extractedYear = dobString.substring(0, dobString.indexOf(translatedYearInitial));
+            int year = dobString.contains(translatedYearInitial) ? Integer.parseInt(extractedYear) : 0;
+            if (year >= 5) {
+                age = extractedYear;
+            }
+        }
+        return age;
+    }
+
+    public static float convertDpToPixel(float dp, @NonNull Context context) {
+        return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
     }
 }

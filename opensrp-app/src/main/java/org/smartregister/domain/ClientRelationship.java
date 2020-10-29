@@ -1,6 +1,7 @@
 package org.smartregister.domain;
 
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 import lombok.Builder;
 import lombok.Getter;

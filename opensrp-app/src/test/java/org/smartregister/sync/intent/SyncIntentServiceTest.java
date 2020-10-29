@@ -30,15 +30,16 @@ import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.util.SyncUtils;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -436,10 +437,46 @@ public class SyncIntentServiceTest extends BaseRobolectricUnitTest {
         verify(syncIntentService).updateProgress(1,2);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/event/add", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/add", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedRequest.toString(), requestString);
 
+    }
+
+    @Test
+    public void testPullEcFromServerUsingGETUsesCorrectURLAndParams() {
+
+        initMocksForPullECFromServerUsingPOST();
+        when(syncConfiguration.isSyncUsingPost()).thenReturn(false);
+        ResponseStatus responseStatus = ResponseStatus.failure;
+        responseStatus.setDisplayValue(ResponseErrorStatus.malformed_url.name());
+        Mockito.doReturn(new Response<>(responseStatus, null))
+                .when(httpAgent).fetch(stringArgumentCaptor.capture());
+
+        syncIntentService.pullECFromServer();
+        String syncUrl = stringArgumentCaptor.getValue();
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/event/sync?locationId=location-1&serverVersion=0&limit=250", syncUrl);
+
+    }
+
+    @Test
+    public void testOnHandleIntentCallsHandleSync() {
+        Intent intent = mock(Intent.class);
+        syncIntentService = spy(syncIntentService);
+        syncIntentService.onHandleIntent(intent);
+
+        verify(syncIntentService).handleSync();
+    }
+
+    @Test
+    public void testUpdateProgress() {
+        syncIntentService = spy(syncIntentService);
+        syncIntentService.updateProgress(70, 100);
+        verify(syncIntentService).sendBroadcast(intentArgumentCaptor.capture());
+        assertEquals(SyncStatusBroadcastReceiver.ACTION_SYNC_STATUS, intentArgumentCaptor.getValue().getAction());
+        FetchStatus actualFetchStatus = (FetchStatus) intentArgumentCaptor.getValue().getSerializableExtra(SyncStatusBroadcastReceiver.EXTRA_FETCH_STATUS);
+        assertEquals(FetchStatus.fetchProgress, actualFetchStatus);
+        assertEquals("Sync upload progress 70%", actualFetchStatus.displayValue());
     }
 
     private void initMocksForPullECFromServerUsingPOST() {

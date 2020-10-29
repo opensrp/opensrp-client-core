@@ -124,6 +124,15 @@
         <item name="android:shadowRadius">1</item>
     </style>
 
+    <style name="CustomFontTextViewNewThemeStyle">
+        <item name="fontVariant">regular</item>
+        <item name="android:gravity">left|center_vertical</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
     <style name="CustomFontTextViewStyle.NavBar.Bold">
         <item name="fontVariant">bold</item>
         <item name="android:textSize">23sp</item>
@@ -249,6 +258,46 @@
         <item name="android:windowContentOverlay">@null</item>
     </style>
 
+    <style name="MaterialAppThemeNoActionBarAndTitle" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Widget.App.ExtendedFloatingActionButton" parent="Widget.MaterialComponents.ExtendedFloatingActionButton">
+        <item name="paddingStart">9dp</item>
+        <item name="paddingEnd">9dp</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="shapeAppearanceOverlay">
+            @style/ShapeAppearance.App.SmallComponent
+        </item>
+        <item name="materialThemeOverlay">
+            @style/CustomExtendedFabTheme
+        </item>
+    </style>
+
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">22dp</item>
+    </style>
+
+    <style name="CustomExtendedFabTheme" parent="">
+        <!--this attribute gives makes the change in the background of the FAB-->
+        <item name="colorSecondary">@color/NewThemeBlue</item>
+        <!--this attribute gives makes the change in the text and icon color of the FAB-->
+        <item name="colorOnSecondary">@android:color/white</item>
+    </style>
+
+    <style name="AddNewClientTextStyle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:textSize">16sp</item>
+        <item name="textAllCaps">false</item>
+        <item name="android:lineSpacingMultiplier">1.21</item>
+    </style>
 
     <style name="AppAlertDialog" parent="Theme.AppCompat.Light.Dialog.Alert">
         <!-- <item name="colorPrimary">@color/primary</item>
@@ -295,6 +344,13 @@
         <item name="fontVariant">thin</item>
     </style>
 
+    <style name="RegisterFilterListTitle">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#FF4D606D</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:padding">5dp</item>
+        <item name="android:lineSpacingMultiplier">1.23</item>
+    </style>
 
     <style name="CustomFontTextViewStyle.tabIndicator" parent="CustomFontTextViewStyle.ClientList.Bold">
         <item name="fontVariant">medium</item>

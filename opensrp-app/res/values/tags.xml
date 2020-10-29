@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="VIEW_ID" type="id"/>
+    <item name="VIEW_TYPE" type="id"/>
+    <item name="VIEW_CLIENT" type="id"/>
+</resources>

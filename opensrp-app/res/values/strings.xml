@@ -348,6 +348,8 @@
 
     <!-- base register -->
     <string name="filter">Filter</string>
+    <string name="filters">Filters</string>
+    <string name="map">Map</string>
     <string name="due_only">Due only</string>
     <string name="search_hint">Find name or ID</string>
     <string name="_0_clients_sort_updated">0 Clients (Sort: updated)</string>
@@ -363,6 +365,11 @@
     <string name="log_out_text">Logout</string>
     <string name="data_synced">Data synced: %1$s at %2$s</string>
     <string name="scan_qr_code_title">Scan QR Code</string>
+
+
+    <!-- New UI base register -->
+    <string name="register_clients">Register Clients</string>
+    <string name="add_new_client">Add new client</string>
 
     <!--The barcode strings-->
     <string name="ok">OK</string>
@@ -387,6 +394,8 @@
 
     <string name="account_disabled">Account Disabled</string>
     <string name="account_disabled_logged_off">You have been logged off as your account has been disabled. Please contact your administrator.</string>
+    <string name="account_new_assignment_logged_off">You have been logged off as your account has new assignments. Log in again so that new assignments take effect</string>
+    <string name="default_location_revoked_logged_off">You have been logged off as access to your default location has been revoked</string>
 
     <!--Alerts-->
     <string name="invalid_url_massage">Please enter a valid url.</string>
@@ -436,4 +445,15 @@
     <string name="component_desc_p2p_process_records_service">Processes the records when using peer to peer for file sharing</string>
     <string name="new_db_encryption_version_migration">You have been logged off as your application database encryption version has changed. Please login in again to complete the upgrade.</string>
     <string name="account_removed">You have been logged off as your account has been removed from the accounts manager.</string>
+
+
+    <string name="check_in">CHECK IN</string>
+    <string name="care_giver_initials">CG</string>
+    <string name="base_register_page_numbering">Page {0} of {1}</string>
+    <string name="abbrv_years">y</string>
+
+
+    <string name="cancel">Cancel</string>
+    <string name="no_matching_record_found_on_this_device">No matching record found on this device.</string>
+    <string name="error_unable_to_start_form">Unable to start form</string>
 </resources>
