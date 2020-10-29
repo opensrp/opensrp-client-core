@@ -1,8 +1,9 @@
 package org.smartregister.location.helper;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 import android.util.Pair;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.AllConstants;
@@ -27,9 +28,6 @@ import java.util.regex.Pattern;
 
 import timber.log.Timber;
 
-import static org.smartregister.AllConstants.CAMPAIGNS;
-import static org.smartregister.AllConstants.OPERATIONAL_AREAS;
-
 
 /**
  * Created by ndegwamartin on 09/04/2018.
@@ -50,8 +48,6 @@ public class LocationHelper {
     private List<String> ADVANCED_DATA_CAPTURE_LEVELS;
 
     private String DEFAULT_LOCATION_LEVEL;
-    private List<String> allCampaigns = new ArrayList<>();
-    private List<String> allOperationalArea = new ArrayList<>();
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
     private LocationHelper(List<String> allowedLevels, String defaultLocationLevel) {
@@ -118,15 +114,6 @@ public class LocationHelper {
 
                     if (!Utils.isEmptyCollection(foundLocations)) {
                         locations.addAll(foundLocations);
-                    }
-                }
-
-                if (ALLOWED_LEVELS.contains("reveal")) {
-                    if (allCampaigns != null && !allCampaigns.isEmpty()) {
-                        allSharedPreferences.savePreference(CAMPAIGNS, android.text.TextUtils.join(",", allCampaigns));
-                    }
-                    if (allOperationalArea != null && !allOperationalArea.isEmpty()) {
-                        allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", allOperationalArea));
                     }
                 }
             }
@@ -332,17 +319,9 @@ public class LocationHelper {
             Set<String> levels = node.getTags();
 
             if (!Utils.isEmptyCollection(levels)) {
-                String teamUID = allSharedPreferences.fetchDefaultTeamId(allSharedPreferences.fetchRegisteredANM());
                 for (String level : levels) {
                     if (ALLOWED_LEVELS.contains(level)) {
 
-                        if (node.getAttribute("campaign_id") != null) {
-
-                            allCampaigns.add(node.getAttribute("campaign_id").toString());
-                        }
-                        if (node.getAttribute("team_id") != null && node.getAttribute("team_id").toString().equals(teamUID)) {
-                            allOperationalArea.add(node.getName());
-                        }
                         if (!fetchLocationIds && DEFAULT_LOCATION_LEVEL.equals(level) && defaultLocation != null && !defaultLocation.equals(value)) {
                             return locationList;
                         }

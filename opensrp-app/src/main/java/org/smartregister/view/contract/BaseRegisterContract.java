@@ -46,7 +46,9 @@ public interface BaseRegisterContract {
         void updateInitialsText(String initials);
     }
 
-    interface Model extends ConfigurableRegisterActivityContract.Model {
+    interface Model extends ConfigurableRegisterActivityContract.Model {}
 
-    }
+    interface InteractorCallBack extends ConfigurableRegisterActivityContract.InteractorCallBack {}
+
+    interface Interactor extends ConfigurableRegisterActivityContract.Interactor {}
 }

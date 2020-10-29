@@ -1,10 +1,11 @@
 package org.smartregister.login.presenter;
 
 import android.content.res.Configuration;
-import android.support.v7.app.AppCompatActivity;
 import android.view.ViewTreeObserver;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.junit.After;
 import org.junit.Before;

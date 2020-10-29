@@ -1,7 +1,7 @@
 package com.evernote.android.job;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import org.mockito.Mockito;
 import org.robolectric.annotation.Implementation;

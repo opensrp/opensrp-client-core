@@ -2,3 +2,11 @@ rootProject.name = 'opensrp-client-core'
 include ':opensrp-app', ':sample'
 
 project(':opensrp-app').projectDir = "$rootDir/opensrp-app" as File
+
+/*
+include ':opensrp-chw-anc'
+project(":opensrp-chw-anc").projectDir = new File("../opensrp-client-chw-anc/opensrp-chw-anc")
+
+
+include ':opensrp-opd'
+project(":opensrp-opd").projectDir = new File("../opensrp-client-opd/opensrp-opd")*/

@@ -4,8 +4,9 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.security.KeyPairGeneratorSpec;
-import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
+
+import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.BuildConfig;
@@ -51,7 +52,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -62,6 +65,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ENGLISH_LANGUAGE;
 import static org.smartregister.AllConstants.ENGLISH_LOCALE;
+import static org.smartregister.AllConstants.JURISDICTION_IDS;
 import static org.smartregister.AllConstants.KANNADA_LANGUAGE;
 import static org.smartregister.AllConstants.KANNADA_LOCALE;
 import static org.smartregister.AllConstants.OPENSRP_AUTH_USER_URL_PATH;
@@ -306,7 +310,7 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
-                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name()));
+                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name(), userName));
             } catch (Exception e) {
                 Timber.e(e);
             }
@@ -394,6 +398,7 @@ public class UserService {
         saveDefaultTeamId(username, getUserDefaultTeamId(userInfo));
         saveServerTimeZone(userInfo);
         saveJurisdictions(userInfo.jurisdictions);
+        saveJurisdictionIds(userInfo.jurisdictionIds);
         saveOrganizations(getUserTeam(userInfo));
         if (loginSuccessful &&
                 (StringUtils.isBlank(getUserDefaultLocationId(userInfo)) ||
@@ -530,12 +535,31 @@ public class UserService {
             allSharedPreferences.savePreference(OPERATIONAL_AREAS, android.text.TextUtils.join(",", jurisdictions));
     }
 
+    public void saveJurisdictionIds(Set<String> jurisdictionIds) {
+        if (jurisdictionIds != null && !jurisdictionIds.isEmpty())
+            allSharedPreferences.savePreference(JURISDICTION_IDS, android.text.TextUtils.join(",", jurisdictionIds));
+    }
+
+    public Set<String> fetchJurisdictionIds() {
+        String jurisdictionIds = allSharedPreferences.getPreference(JURISDICTION_IDS);
+        return Arrays.stream(StringUtils.split(jurisdictionIds, ",")).collect(Collectors.toSet());
+    }
+
     public void saveOrganizations(TeamMember teamMember) {
         if (teamMember != null && teamMember.team != null) {
             List<Long> organizations = teamMember.team.organizationIds;
             if (organizations != null && !organizations.isEmpty())
-                allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+                saveOrganizations(organizations);
         }
+    }
+
+    public void saveOrganizations(List<Long> organizations) {
+        allSharedPreferences.savePreference(ORGANIZATION_IDS, android.text.TextUtils.join(",", organizations));
+    }
+
+    public Set<Long> fetchOrganizations() {
+        String organizationIds = allSharedPreferences.getPreference(ORGANIZATION_IDS);
+        return Arrays.stream(StringUtils.split(organizationIds, ",")).map(Long::parseLong).collect(Collectors.toSet());
     }
 
     public void saveUserInfo(User user) {
@@ -591,7 +615,7 @@ public class UserService {
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, Base64.encodeToString(localAuthHash.getSalt(), Base64.DEFAULT));
 
                     //Save db credentials
-                    if (CredentialsHelper.shouldMigrate()) {
+                    if (CredentialsHelper.shouldMigrate() || !username.equals(allSharedPreferences.fetchPioneerUser())) {
 
                         byte[] passphrase = DrishtiApplication.getInstance().credentialsProvider().generateDBCredentials(SecurityHelper.toChars(localAuthHash.getPassword()), userInfo);
                         byte[] oldPassword = allSharedPreferences.getDBEncryptionVersion() == 0 ? getGroupId(username) : DrishtiApplication.getInstance().credentialsProvider().getCredentials(username, CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
@@ -600,7 +624,7 @@ public class UserService {
                             try {
 
                                 DrishtiApplication.getInstance().getRepository().getReadableDatabase(SecurityHelper.toChars(oldPassword)).changePassword(SecurityHelper.toChars(passphrase));
-                                DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+                                DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase), username);
 
                             } catch (Exception e) {
                                 Timber.e("Database encryption migration to version %s failed!!! ", BuildConfig.DB_ENCRYPTION_VERSION);
@@ -609,7 +633,7 @@ public class UserService {
 
                         } else {
 
-                            DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+                            DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase), username);
                         }
                     }
 

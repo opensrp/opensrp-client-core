@@ -3,9 +3,9 @@ package org.smartregister.sample;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.widget.Toolbar;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.smartregister.CoreLibrary;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.sample.fragment.ReportFragment;
 import org.smartregister.util.DateUtil;
@@ -44,9 +45,12 @@ public class MainActivity extends MultiLanguageActivity {
 
         setTitle(R.string.app_name);
 
+        CoreLibrary.getInstance()
+                .startRegisterActivity(this);
+
         Activity activity = this;
-        tvw = (TextView) findViewById(R.id.textView1);
-        picker = (DatePicker) findViewById(R.id.datePicker1);
+        tvw = findViewById(R.id.textView1);
+        picker = findViewById(R.id.datePicker1);
 
         picker.setMinDate(new LocalDate().minusYears(2).toDate().getTime());
 
@@ -54,7 +58,7 @@ public class MainActivity extends MultiLanguageActivity {
 
         picker.updateDate(2019, 5, 22);
 
-        btnGet = (Button) findViewById(R.id.button1);
+        btnGet = findViewById(R.id.button1);
         btnGet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,35 +1,37 @@
 package org.smartregister.view.contract;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.smartregister.domain.db.EventClient;
+import org.smartregister.clientandeventmodel.Client;
+import org.smartregister.clientandeventmodel.Event;
 import org.smartregister.domain.tag.FormTag;
 
+import java.util.HashMap;
 import java.util.List;
 
 public interface ConfigurableRegisterActivityContract {
 
     interface View {
         Presenter presenter();
+
+        void startFormActivity(String formName, String entityId, String metaData, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String clientTable);
+
+        void startFormActivity(@NonNull JSONObject jsonForm, @Nullable HashMap<String, String> parcelableData);
     }
 
     interface Presenter {
 
-         default void saveLanguage(String language) {
+        default void saveLanguage(String language) {}
 
-         }
+        default void startForm(String formName, String entityId, String metadata, String currentLocationId) {}
 
-        default void startForm(String formName, String entityId, String metadata, String currentLocationId) {
+        default void startForm(String formName, String entityId, String metaData, String locationId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {}
 
-        }
-
-        default void saveForm(String jsonString, @NonNull RegisterParams registerParams) {
-
-        }
+        default void saveForm(String jsonString, @NonNull RegisterParams registerParams) {}
 
         default Interactor createInteractor() {
              return null;
@@ -38,8 +40,14 @@ public interface ConfigurableRegisterActivityContract {
 
     interface Model {
 
+        default JSONObject getFormAsJson(String formName, String entityId,
+                                 String currentLocationId) throws JSONException {
+            return getFormAsJson(formName, entityId, currentLocationId, null);
+        }
+
+        @Nullable
         JSONObject getFormAsJson(String formName, String entityId,
-                                 String currentLocationId) throws JSONException;
+                                 String currentLocationId, @Nullable HashMap<String, String> injectedValues) throws JSONException;
 
         void registerViewConfigurations(List<String> viewIdentifiers);
 
@@ -47,7 +55,7 @@ public interface ConfigurableRegisterActivityContract {
 
         void saveLanguage(String language);
 
-        List<EventClient> processRegistration(String jsonString, FormTag formTag);
+        HashMap<Client, List<Event>> processRegistration(String jsonString, FormTag formTag);
 
         String getLocationId(String locationName);
 
@@ -60,7 +68,14 @@ public interface ConfigurableRegisterActivityContract {
 
         void getNextUniqueId(Triple<String, String, String> triple, ConfigurableRegisterActivityContract.InteractorCallBack callBack);
 
-        void saveRegistration(@Nullable final List<EventClient> clientList, final String jsonString, @NonNull RegisterParams registerParams, final ConfigurableRegisterActivityContract.InteractorCallBack callBack);
+        // TODO: FIX THIS. This should be the method with the functionality and not the above. We can change this to throw an exception instead
+        default void getNextUniqueId(Triple<String, String, String> triple, ConfigurableRegisterActivityContract.InteractorCallBack callBack, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
+            getNextUniqueId(triple, callBack);
+        }
+
+        void saveRegistration(@Nullable HashMap<Client, List<Event>> clientList, final String jsonString, @NonNull RegisterParams registerParams, final ConfigurableRegisterActivityContract.InteractorCallBack callBack);
+
+        void saveEvents(@NonNull List<Event> events, @NonNull InteractorCallBack callBack);
 
     }
 
@@ -68,8 +83,15 @@ public interface ConfigurableRegisterActivityContract {
 
         void onUniqueIdFetched(Triple<String, String, String> triple, String entityId);
 
+        // TODO: FIX THIS. This should be the method with the functionality and not the above. We can change this to throw an exception instead
+        default void onUniqueIdFetched(Triple<String, String, String> triple, String entityId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
+            onUniqueIdFetched(triple, entityId);
+        }
+
         void onNoUniqueId();
 
-        void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable List<EventClient> clientList);
+        void onRegistrationSaved(@NonNull RegisterParams registerParams, @Nullable HashMap<Client, List<Event>> clientList);
+
+        void onEventSaved();
     }
 }

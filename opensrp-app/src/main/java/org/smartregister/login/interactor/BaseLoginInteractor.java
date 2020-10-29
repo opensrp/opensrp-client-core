@@ -109,7 +109,10 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     private void navigateToHomePage(String userName) {
 
         getUserService().localLoginWith(userName);
-        getLoginView().goToHome(false);
+
+        if (mLoginPresenter != null) {
+            getLoginView().goToHome(false);
+        }
 
         CoreLibrary.getInstance().initP2pLibrary(userName);
 
@@ -230,7 +233,7 @@ public abstract class BaseLoginInteractor implements BaseLoginContract.Interacto
     }
 
     public UserService getUserService() {
-        return mLoginPresenter.getOpenSRPContext().userService();
+        return CoreLibrary.getInstance().context().userService();
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.smartregister.view.contract;
 
+import androidx.annotation.Nullable;
+
 import org.json.JSONArray;
 import org.smartregister.domain.Response;
 
@@ -14,6 +16,11 @@ public interface ConfigurableRegisterFragmentContract {
 
         Presenter presenter();
 
+        default void initializeAdapter() {}
+
+        @Nullable
+        default String getDueOnlyText() {return null;}
+
     }
 
     interface Presenter {
@@ -25,6 +32,8 @@ public interface ConfigurableRegisterFragmentContract {
         default String getDefaultSortQuery() { return null; }
 
         default String getQueryTable()  {return null; }
+
+        default String getDueFilterCondition() {return "DUE_ONLY";}
     }
 
     interface Model {

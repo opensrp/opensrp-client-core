@@ -1123,4 +1123,27 @@ public class FormUtils {
         mCloudantDataHandler.createClientDocument(client);
     }
 
+    public static JSONArray getMultiStepFormFields(JSONObject jsonForm) {
+        JSONArray fields = new JSONArray();
+        try {
+            if (jsonForm.has(AllConstants.COUNT)) {
+                int stepCount = Integer.parseInt(jsonForm.getString(AllConstants.JSON.COUNT));
+                for (int i = 0; i < stepCount; i++) {
+                    String stepName = AllConstants.JSON.STEP + (i + 1);
+                    JSONObject step = jsonForm.has(stepName) ? jsonForm.getJSONObject(stepName) : null;
+                    if (step != null && step.has(AllConstants.JSON.FIELDS)) {
+                        JSONArray stepFields = step.getJSONArray(AllConstants.JSON.FIELDS);
+                        for (int k = 0; k < stepFields.length(); k++) {
+                            JSONObject field = stepFields.getJSONObject(k);
+                            fields.put(field);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            Timber.e(e, " --> getMultiStepFormFields()");
+        }
+        return fields;
+    }
+
 }

@@ -2,8 +2,8 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 
@@ -20,6 +20,7 @@ import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.DateUtil;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.ClientRelationship;
 import org.smartregister.domain.Event;
@@ -144,6 +145,17 @@ public class EventClientRepository extends BaseRepository {
      */
     public static void createAdditionalColumns(SQLiteDatabase db) {
         createAdditionalColumns(db, Table.event.name(), Table.client.name());
+    }
+
+    /**
+     * add locationId  column on event table
+     *
+     * @param db the database being upgraded
+     */
+    public static void addEventLocationId(SQLiteDatabase db) {
+        DatabaseMigrationUtils.addColumnIfNotExists(db, Table.event.name(), event_column.locationId.name(), VARCHAR);
+        DatabaseMigrationUtils.addIndexIfNotExists(db, Table.event.name(), event_column.locationId.name());
+        db.execSQL(String.format("UPDATE %s set %s = %s WHERE %s >0", Table.event.name(), event_column.locationId.name(), "substr(json,instr(json, '\"locationId\":')+14,36)", "instr(json, '\"locationId\":')"));
     }
 
     public static void dropIndexes(SQLiteDatabase db, BaseTable table) {
@@ -304,6 +316,7 @@ public class EventClientRepository extends BaseRepository {
                 statement.bindString(columnOrder.get(event_column.syncStatus.name()), syncStatus);
                 statement.bindString(columnOrder.get(event_column.validationStatus.name()), BaseRepository.TYPE_Valid);
                 statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
+                statement.bindString(columnOrder.get(event_column.locationId.name()), jsonObject.optString(event_column.locationId.name()));
                 if (jsonObject.has(EVENT_ID))
                     statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
                 else if (jsonObject.has(_ID))
@@ -1399,6 +1412,39 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+    public CommonPersonObjectClient fetchCommonPersonObjectClientByBaseEntityId(String baseEntityId) {
+        Cursor cursor = null;
+        try {
+            cursor = getWritableDatabase().rawQuery("SELECT "
+                    + client_column.json
+                    + " FROM "
+                    + clientTable.name()
+                    + " WHERE "
+                    + client_column.baseEntityId.name()
+                    + " = ? ", new String[]{baseEntityId});
+            if (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+
+                Map map = convert(jsonString, Map.class);
+                HashMap<String, String> details = new HashMap<>();
+
+                for (Object key: map.keySet()) {
+                    details.put(String.valueOf(key), String.valueOf(map.get(key)));
+                }
+
+                return new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
     public JSONObject getUnSyncedClientByBaseEntityId(String baseEntityId) {
         Cursor cursor = null;
         try {
@@ -1494,15 +1540,17 @@ public class EventClientRepository extends BaseRepository {
      * default properties as the one fetched from the DB with an additional property that holds the {@code syncStatus}
      * and {@code rowid} which are used for peer-to-peer sync.
      *
-     * @param lastRowId
+     * @param lastRowId  the last rowId sent
+     * @param locationId optional locationId filter
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
      * of {@link Event}s returned. This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getEvents(long lastRowId, int limit) {
+    public JsonData getEvents(long lastRowId, int limit, @Nullable String locationId) {
         JsonData jsonData = null;
         JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
+        String locationFilter = locationId != null ? String.format(" %s =? AND ", event_column.locationId.name()) : "";
 
         String query = "SELECT "
                 + event_column.json
@@ -1513,13 +1561,14 @@ public class EventClientRepository extends BaseRepository {
                 + " FROM "
                 + eventTable.name()
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
         Cursor cursor = null;
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            cursor = getWritableDatabase().rawQuery(query, locationId != null ? new Object[]{locationId, lastRowId, limit} : new Object[]{lastRowId, limit});
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(2);
@@ -1642,33 +1691,43 @@ public class EventClientRepository extends BaseRepository {
     /**
      * Fetches {@link Client}s whose rowid > #lastRowId up to the #limit provided.
      *
-     * @param lastRowId
+     * @param lastRowId  the last row Id queries
+     * @param limit      the number of rows to the pulled
+     * @param locationId an optional locationId filter for getting the data
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
      * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getClients(long lastRowId, int limit) {
+    public JsonData getClients(long lastRowId, int limit, @Nullable String locationId) {
         JsonData jsonData = null;
         JSONArray jsonArray = new JSONArray();
         long maxRowId = 0;
 
+        String locationFilter = locationId != null ? String.format(" %s =? AND ", client_column.locationId.name()) : "";
         String query = "SELECT "
-                + event_column.json
+                + client_column.json
                 + ","
-                + event_column.syncStatus
+                + client_column.syncStatus
                 + ","
                 + ROWID
                 + " FROM "
                 + clientTable.name()
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
         Cursor cursor = null;
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            Object[] params;
+            if (locationId == null) {
+                params = new Object[]{lastRowId, limit};
+            } else {
+                params = new Object[]{locationId, lastRowId, limit};
+            }
+            cursor = getWritableDatabase().rawQuery(query, params);
 
             while (cursor.moveToNext()) {
                 long rowId = cursor.getLong(2);
@@ -1775,6 +1834,7 @@ public class EventClientRepository extends BaseRepository {
             values.put(event_column.updatedAt.name(), dateFormat.format(new Date()));
             values.put(event_column.baseEntityId.name(), baseEntityId);
             values.put(event_column.syncStatus.name(), syncStatus);
+            values.put(event_column.locationId.name(), jsonObject.optString(event_column.locationId.name()));
             JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
             if (details != null)
                 values.put(event_column.planId.name(), details.optString(AllConstants.PLAN_IDENTIFIER));
@@ -2058,7 +2118,8 @@ public class EventClientRepository extends BaseRepository {
         formSubmissionId(ColumnAttribute.Type.text, false, true),
         updatedAt(ColumnAttribute.Type.date, false, true),
         serverVersion(ColumnAttribute.Type.longnum, false, true),
-        planId(ColumnAttribute.Type.text, false, true);
+        planId(ColumnAttribute.Type.text, false, true),
+        locationId(ColumnAttribute.Type.text, false, true);
 
         private ColumnAttribute column;
 
