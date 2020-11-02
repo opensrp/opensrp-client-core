@@ -27,7 +27,7 @@ import timber.log.Timber;
 
 public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTransferDao {
 
-    private static final String SEPARATOR = "-";
+    private static final String SEPARATOR = "~";
 
     @Nullable
     @Override

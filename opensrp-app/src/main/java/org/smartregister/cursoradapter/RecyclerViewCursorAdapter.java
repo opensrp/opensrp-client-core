@@ -133,7 +133,7 @@ public abstract class RecyclerViewCursorAdapter extends RecyclerView.Adapter<Rec
         return oldCursor;
     }
 
-    private class NotifyingDataSetObserver extends DataSetObserver {
+    protected class NotifyingDataSetObserver extends DataSetObserver {
         @Override
         public void onChanged() {
             super.onChanged();
