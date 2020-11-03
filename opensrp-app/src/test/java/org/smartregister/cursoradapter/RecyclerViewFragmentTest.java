@@ -1,5 +1,7 @@
 package org.smartregister.cursoradapter;
 
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,13 +13,15 @@ import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
-import org.smartregister.cursoradapter.mock.RecyclerViewFragmentMock;
 import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.SortOption;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 /**
  * Created by samuelgithengi on 11/3/20.
@@ -39,11 +43,11 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        recyclerViewFragment = new RecyclerViewFragmentMock();
+        recyclerViewFragment = spy(new RecyclerViewFragmentMock());
     }
 
     public void initWithActivity() {
-        activity = Robolectric.buildActivity(BaseRegisterActivityMock.class).create().start().resume().get();
+        activity = spy(Robolectric.buildActivity(BaseRegisterActivityMock.class).create().start().resume().get());
         activity.getSupportFragmentManager().beginTransaction().add(recyclerViewFragment, "recyclerViewFragment").commit();
     }
 
@@ -101,5 +105,18 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
         assertEquals(adapter, recyclerViewFragment.getClientsCursorAdapter());
     }
 
+    @Test
+    public void testOnCreateShouldSetupViewsAndInvokeResumption() {
+        initWithActivity();
+        verify(recyclerViewFragment).onInitialization();
+        verify(recyclerViewFragment).setupSearchView(any(View.class));
+        verify(recyclerViewFragment).onResumption();
+    }
 
+    //@Test
+    public void testUpdateDefaultOptions() {
+        assertNotNull(recyclerViewFragment.getCurrentVillageFilter());
+        assertNotNull(recyclerViewFragment.getCurrentServiceModeOption());
+        assertNotNull(recyclerViewFragment.getCurrentSortOption());
+    }
 }
