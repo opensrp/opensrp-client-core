@@ -1,7 +1,5 @@
 package org.smartregister.sync.helper;
 
-import junit.framework.Assert;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -14,11 +12,24 @@ import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.EventClientRepository;
 
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by ndegwamartin on 07/09/2018.
@@ -62,11 +73,11 @@ public class ECSyncHelperTest extends BaseUnitTest {
 
         boolean result = syncHelperSpy.saveAllClientsAndEvents(object);
 
-        Mockito.verify(syncHelperSpy).batchSave(eventsArray, clientsArray);
-        Assert.assertTrue(result);
+        verify(syncHelperSpy).batchSave(eventsArray, clientsArray);
+        assertTrue(result);
 
         result = syncHelperSpy.saveAllClientsAndEvents(object);
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 
     @Test
@@ -74,7 +85,7 @@ public class ECSyncHelperTest extends BaseUnitTest {
         ECSyncHelper syncHelperSpy = Mockito.spy(syncHelper);
 
         boolean result = syncHelperSpy.saveAllClientsAndEvents(null);
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
 
     @Test
@@ -85,16 +96,16 @@ public class ECSyncHelperTest extends BaseUnitTest {
         Mockito.doReturn(null).when(eventClientRepository).fetchEventClients(DUMMY_LONG, DUMMY_LONG);
 
         List<EventClient> result = syncHelperSpy.allEventClients(DUMMY_LONG, DUMMY_LONG);
-        Assert.assertNull(result);
+        assertNull(result);
 
-        Mockito.verify(eventClientRepository).fetchEventClients(DUMMY_LONG, DUMMY_LONG);
+        verify(eventClientRepository).fetchEventClients(DUMMY_LONG, DUMMY_LONG);
 
         //On Exception
         EventClientRepository eventClientRepository = null;
         Whitebox.setInternalState(syncHelperSpy, EVENT_CLIENT_REPOSITORY, eventClientRepository);
         result = syncHelperSpy.allEventClients(DUMMY_LONG, DUMMY_LONG);
-        Assert.assertNotNull(result);
-        Assert.assertTrue(result.isEmpty());
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
     }
 
 
@@ -115,7 +126,70 @@ public class ECSyncHelperTest extends BaseUnitTest {
 
         syncHelperSpy.batchSave(eventsArray, clientsArray);
 
-        Mockito.verify(eventClientRepository).batchInsertClients(clientsArray);
+        verify(eventClientRepository).batchInsertClients(clientsArray);
     }
+
+    @Test
+    public void testUpdateLastSyncTimeStamp() {
+        long expectedTimeStamp = 1604387699l;
+        syncHelper.updateLastSyncTimeStamp(expectedTimeStamp);
+        verify(allSharedPreferences).saveLastSyncDate(expectedTimeStamp);
+    }
+
+    @Test
+    public void testGetLastCheckTimeStamp() {
+        syncHelper.getLastCheckTimeStamp();
+        verify(allSharedPreferences).fetchLastCheckTimeStamp();
+    }
+
+    @Test
+    public void testGetEventsByLastSyncDateAndSyncStatus() {
+        Date lastSyncDate = new Date();
+        String syncStatus = BaseRepository.TYPE_Synced;
+        Event event = new Event();
+        event.setBaseEntityId("baseEntityid1");
+        EventClient eventClient = new EventClient(event);
+        when(eventClientRepository.fetchEventClients(lastSyncDate, syncStatus)).thenReturn(Collections.singletonList(eventClient));
+        List<EventClient> actualevents = syncHelper.getEvents(lastSyncDate, syncStatus);
+        assertEquals(1, actualevents.size());
+        assertEquals("baseEntityid1", actualevents.get(0).getEvent().getBaseEntityId());
+    }
+
+    @Test
+    public void testGetEventsByLastSyncDateAndSyncStatusReturnsEmptyArrayWhenExceptionIsThrown() {
+        Date lastSyncDate = new Date();
+        String syncStatus = BaseRepository.TYPE_Synced;
+
+        doThrow(new NullPointerException()).when(eventClientRepository).fetchEventClients(lastSyncDate, syncStatus);
+        List<EventClient> actualevents = syncHelper.getEvents(lastSyncDate, syncStatus);
+        assertNotNull(actualevents);
+        assertEquals(0, actualevents.size());
+    }
+
+
+    @Test
+    public void testGetEventsByFormSubmissionIds() {
+        String formsubmissionid = "formsubmissionid1";
+        List<String> formSubmissionIds = Collections.singletonList(formsubmissionid);
+        String baseEntityId = "baseEntityid1";
+        Event event = new Event();
+        event.setBaseEntityId(baseEntityId);
+        EventClient eventClient = new EventClient(event);
+        when(eventClientRepository.fetchEventClients(formSubmissionIds)).thenReturn(Collections.singletonList(eventClient));
+        List<EventClient> actualevents = syncHelper.getEvents(formSubmissionIds);
+        assertEquals(1, actualevents.size());
+        assertEquals(baseEntityId, actualevents.get(0).getEvent().getBaseEntityId());
+    }
+
+    @Test
+    public void testGetEventsByFormSubmissionIdsReturnsEmptyArrayWhenExceptionIsThrown() {
+        String formsubmissionid = "formsubmissionid1";
+        List<String> formSubmissionIds = Collections.singletonList(formsubmissionid);
+        doThrow(new NullPointerException()).when(eventClientRepository).fetchEventClients(formSubmissionIds);
+        List<EventClient> actualevents = syncHelper.getEvents(formSubmissionIds);
+        assertNotNull(actualevents);
+        assertEquals(0, actualevents.size());
+    }
+
 
 }
