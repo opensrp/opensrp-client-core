@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 /**
  * Created by keyman on 25/04/2017.
+ *
+ * Note that this is a duplicate of the class at https://github.com/OpenSRP/opensrp-client-core/blob/master/opensrp-app/src/main/java/org/smartregister/util/DatePickerUtils.java
  */
 public class DatePickerUtils {
 
