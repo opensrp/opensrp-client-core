@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,18 +43,64 @@ public class ECSyncHelperTest extends BaseUnitTest {
 
     private static final long DUMMY_LONG = 1000l;
 
+    private JSONObject clientJson;
+    private String clientBaseEntityId;
+    private JSONObject eventJson;
+    private String eventBaseEntityId;
+
     @Mock
     private EventClientRepository eventClientRepository;
 
     @Mock
     private AllSharedPreferences allSharedPreferences;
 
+    private String clientString = "{\n" +
+            "  \"type\": \"Client\",\n" +
+            "  \"dateCreated\": \"2019-11-21T15:29:36.799+07:00\",\n" +
+            "  \"baseEntityId\": \"8b503cdc-5187-47c9-afc0-3e01b924dbe2\",\n" +
+            "  \"identifiers\": {\n" +
+            "    \"opensrp_id\": \"11138021_family\"\n" +
+            "  },\n" +
+            "  \"firstName\": \"Test 2\",\n" +
+            "  \"lastName\": \"Family\",\n" +
+            "  \"birthdate\": \"1970-01-01T14:00:00.000+07:00\",\n" +
+            "  \"birthdateApprox\": true,\n" +
+            "  \"deathdateApprox\": false,\n" +
+            "  \"gender\": \"Male\",\n" +
+            "  \"_id\": \"f187d396-c25e-4dd7-adc8-dc921c1f8ae4\",\n" +
+            "  \"_rev\": \"v1\"\n" +
+            "}";
+
+    private String eventString = "{\n" +
+            "  \"type\": \"Event\",\n" +
+            "  \"dateCreated\": \"2019-11-20T15:38:53.593+07:00\",\n" +
+            "  \"serverVersion\": 1574239133593,\n" +
+            "  \"identifiers\": {},\n" +
+            "  \"baseEntityId\": \"a7baf57d-ad31-46d2-8d28-0c81dd306b09\",\n" +
+            "  \"locationId\": \"a7baf57d-ad31-46d2-8d28-0c81dd306b09\",\n" +
+            "  \"eventDate\": \"2019-10-02T07:00:00.000+07:00\",\n" +
+            "  \"eventType\": \"Case Details\",\n" +
+            "  \"formSubmissionId\": \"ed521540-5b80-411e-921b-4a1bb9864c66\",\n" +
+            "  \"providerId\": \"nifi-user\",\n" +
+            "  \"duration\": 0,\n" +
+            "  \"obs\": [],\n" +
+            "  \"entityType\": \"Case Details\",\n" +
+            "  \"version\": 1557860282617,\n" +
+            "  \"teamId\": \" \",\n" +
+            "  \"_id\": \"010a1a0c-1337-4307-97c5-2ddc8d7bb760\",\n" +
+            "  \"_rev\": \"v1\"\n" +
+            "}";
+
     @Before
-    public void setUp() {
+    public void setUp() throws JSONException {
         MockitoAnnotations.initMocks(this);
         syncHelper = new ECSyncHelper(RuntimeEnvironment.application, eventClientRepository);
         Whitebox.setInternalState(syncHelper, EVENT_CLIENT_REPOSITORY, eventClientRepository);
         Whitebox.setInternalState(syncHelper, allSharedPreferences, allSharedPreferences);
+        clientJson = new JSONObject(clientString);
+        clientBaseEntityId = "client-base-entity-id1";
+        eventJson = new JSONObject(eventString);
+        eventBaseEntityId = "event-base-entity-id1";
     }
 
     @Test
@@ -147,12 +194,12 @@ public class ECSyncHelperTest extends BaseUnitTest {
         Date lastSyncDate = new Date();
         String syncStatus = BaseRepository.TYPE_Synced;
         Event event = new Event();
-        event.setBaseEntityId("baseEntityid1");
+        event.setBaseEntityId(eventBaseEntityId);
         EventClient eventClient = new EventClient(event);
         when(eventClientRepository.fetchEventClients(lastSyncDate, syncStatus)).thenReturn(Collections.singletonList(eventClient));
         List<EventClient> actualevents = syncHelper.getEvents(lastSyncDate, syncStatus);
         assertEquals(1, actualevents.size());
-        assertEquals("baseEntityid1", actualevents.get(0).getEvent().getBaseEntityId());
+        assertEquals(eventBaseEntityId, actualevents.get(0).getEvent().getBaseEntityId());
     }
 
     @Test
@@ -171,14 +218,13 @@ public class ECSyncHelperTest extends BaseUnitTest {
     public void testGetEventsByFormSubmissionIds() {
         String formsubmissionid = "formsubmissionid1";
         List<String> formSubmissionIds = Collections.singletonList(formsubmissionid);
-        String baseEntityId = "baseEntityid1";
         Event event = new Event();
-        event.setBaseEntityId(baseEntityId);
+        event.setBaseEntityId(eventBaseEntityId);
         EventClient eventClient = new EventClient(event);
         when(eventClientRepository.fetchEventClients(formSubmissionIds)).thenReturn(Collections.singletonList(eventClient));
         List<EventClient> actualevents = syncHelper.getEvents(formSubmissionIds);
         assertEquals(1, actualevents.size());
-        assertEquals(baseEntityId, actualevents.get(0).getEvent().getBaseEntityId());
+        assertEquals(eventBaseEntityId, actualevents.get(0).getEvent().getBaseEntityId());
     }
 
     @Test
@@ -191,5 +237,26 @@ public class ECSyncHelperTest extends BaseUnitTest {
         assertEquals(0, actualevents.size());
     }
 
+    @Test
+    public void testGetClient() {
+        when(eventClientRepository.getClientByBaseEntityId(clientBaseEntityId)).thenReturn(clientJson);
+        JSONObject actualClient = syncHelper.getClient(clientBaseEntityId);
+        verify(eventClientRepository).getClientByBaseEntityId(clientBaseEntityId);
+        assertEquals(clientJson,actualClient);
+    }
+
+    @Test
+    public void testAddClient() {
+        syncHelper.addClient(clientBaseEntityId, clientJson);
+        verify(eventClientRepository).addorUpdateClient(clientBaseEntityId, clientJson);
+
+    }
+
+    @Test
+    public void testAddEvent() {
+        syncHelper.addEvent(eventBaseEntityId, eventJson);
+        verify(eventClientRepository).addEvent(eventBaseEntityId, eventJson);
+
+    }
 
 }
