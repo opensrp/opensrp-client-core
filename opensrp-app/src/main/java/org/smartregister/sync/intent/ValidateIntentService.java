@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
@@ -28,6 +29,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
     private HTTPAgent httpAgent;
     private static final int FETCH_LIMIT = 100;
     private static final String VALIDATE_SYNC_PATH = "rest/validate/sync";
+    private org.smartregister.Context openSRPContext = CoreLibrary.getInstance().context();
 
     public ValidateIntentService() {
         super("ValidateIntentService");
@@ -36,9 +38,8 @@ public class ValidateIntentService extends BaseSyncIntentService {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         context = getBaseContext();
-        httpAgent = CoreLibrary.getInstance().context().getHttpAgent();
+        httpAgent = getOpenSRPContext().getHttpAgent();
         return super.onStartCommand(intent, flags, startId);
-
     }
 
     @Override
@@ -47,7 +48,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
         try {
             super.onHandleIntent(intent);
             int fetchLimit = FETCH_LIMIT;
-            EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
+            EventClientRepository db = getOpenSRPContext().getEventClientRepository();
 
             List<String> clientIds = db.getUnValidatedClientBaseEntityIds(fetchLimit);
             if (!clientIds.isEmpty()) {
@@ -64,7 +65,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                 return;
             }
 
-            String baseUrl = CoreLibrary.getInstance().context().configuration().dristhiBaseURL();
+            String baseUrl = getOpenSRPContext().configuration().dristhiBaseURL();
             if (baseUrl.endsWith(context.getString(R.string.url_separator))) {
                 baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf(context.getString(R.string.url_separator)));
             }
@@ -109,7 +110,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
                 }
             }
 
-        } catch (Exception e) {
+        } catch (JSONException e) {
             Timber.e(e);
         }
     }
@@ -147,4 +148,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
         return null;
     }
 
+    private org.smartregister.Context getOpenSRPContext() {
+        return openSRPContext;
+    }
 }

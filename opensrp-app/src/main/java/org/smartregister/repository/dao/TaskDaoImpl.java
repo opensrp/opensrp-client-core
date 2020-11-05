@@ -54,10 +54,9 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
             }
         }
         addOrUpdate(task);
-        Intent intent = new Intent();
         Intent taskGeneratedIntent = new Intent(TASK_GENERATED_EVENT);
         taskGeneratedIntent.putExtra(TASK_GENERATED, task);
-        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(taskGeneratedIntent);
     }
 
     @Override
