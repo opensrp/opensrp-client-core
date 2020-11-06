@@ -117,7 +117,7 @@ public class TaskRepository extends BaseRepository {
         addOrUpdate(task, false);
     }
 
-    public void addOrUpdate(Task task, boolean updateOnly) {
+    public Task addOrUpdate(Task task, boolean updateOnly) {
         if (StringUtils.isBlank(task.getIdentifier())) {
             throw new IllegalArgumentException("identifier must be specified");
         }
@@ -126,7 +126,7 @@ public class TaskRepository extends BaseRepository {
         Task existingTask = getTaskByIdentifier(task.getIdentifier());
         if (existingTask != null) {
             if (existingTask.getLastModified().isAfter(task.getLastModified())) {
-                return;
+                return task;
             }
             int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
             contentValues.put(ROWID, ++maxRowId);
@@ -167,6 +167,7 @@ public class TaskRepository extends BaseRepository {
                 taskNotesRepository.addOrUpdate(note, task.getIdentifier());
         }
 
+        return task;
     }
 
     public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
