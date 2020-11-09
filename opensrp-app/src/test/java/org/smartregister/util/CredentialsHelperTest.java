@@ -26,6 +26,8 @@ import org.smartregister.service.UserService;
 
 import java.util.Arrays;
 
+import static org.mockito.ArgumentMatchers.eq;
+
 /**
  * Created by ndegwamartin on 22/07/2020.
  */
@@ -121,12 +123,12 @@ public class CredentialsHelperTest extends BaseUnitTest {
         Mockito.doReturn(syncConfiguration).when(coreLibrary).getSyncConfiguration();
         Mockito.doReturn(SyncFilter.TEAM_ID).when(syncConfiguration).getEncryptionParam();
 
-        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD);
+        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD,TEST_USERNAME);
 
         ArgumentCaptor<String> encryptionValueArgCaptor = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<String> encryptionParamArgCaptor = ArgumentCaptor.forClass(String.class);
 
-        Mockito.verify(allSharedPreferences, Mockito.times(1)).savePassphrase(encryptionValueArgCaptor.capture(), encryptionParamArgCaptor.capture());
+        Mockito.verify(allSharedPreferences, Mockito.times(1)).savePassphrase(encryptionValueArgCaptor.capture(), encryptionParamArgCaptor.capture(),eq(TEST_USERNAME));
 
         Assert.assertEquals(TEST_ENCRYPTED_PWD, encryptionValueArgCaptor.getValue());
         Assert.assertEquals(SyncFilter.TEAM_ID.name(), encryptionParamArgCaptor.getValue());
@@ -137,7 +139,7 @@ public class CredentialsHelperTest extends BaseUnitTest {
 
         Mockito.doReturn(SyncFilter.LOCATION_ID).when(syncConfiguration).getEncryptionParam();
 
-        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD);
+        credentialsHelper.saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, TEST_ENCRYPTED_PWD,TEST_USERNAME);
 
         ArgumentCaptor<Integer> encryptionValueArgCaptor = ArgumentCaptor.forClass(Integer.class);
 

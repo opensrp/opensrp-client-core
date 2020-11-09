@@ -1,9 +1,10 @@
 package org.smartregister.service;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.common.io.BaseEncoding;
 import com.google.gson.Gson;
@@ -705,7 +706,7 @@ public class HTTPAgent {
                 LoginResponseData responseData = getResponseBody(responseString);
                 loginResponse = retrieveResponse(responseData);
             } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                Timber.e("Invalid credentials for: %s using token %s", oauthAccessToken, url);
+                Timber.e("Invalid credentials accessing: %s using token %s", url, oauthAccessToken);
                 loginResponse = UNAUTHORIZED;
             } else if (StringUtils.isNotBlank(responseString)) {
                 //extract message string from the default tomcat server response which is usually between <p><b>message</b> and </u></p>

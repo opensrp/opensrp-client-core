@@ -1,7 +1,7 @@
 package org.smartregister.repository;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.smartregister.AllConstants;
@@ -27,7 +27,7 @@ import timber.log.Timber;
 
 public class P2PSenderTransferDao extends BaseP2PTransferDao implements SenderTransferDao {
 
-    private static final String SEPARATOR = "-";
+    private static final String SEPARATOR = "~";
 
     @Nullable
     @Override
