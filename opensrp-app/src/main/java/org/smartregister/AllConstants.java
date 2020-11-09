@@ -493,7 +493,7 @@ public class AllConstants {
         String COUNT = AllConstants.COUNT;
         String STEP = AllConstants.STEP;
         String FIELDS = "fields";
-        
+
         interface FieldKey {
             String LAST_INTERACTED_WITH = "last_interacted_with";
             String DOB_UNKNOWN = "dob_unknown";
@@ -562,6 +562,8 @@ public class AllConstants {
             String FORM = "form";
             String BASE_ENTITY_ID = "base-entity-id";
             String ENTITY_TABLE = "entity_table";
+            String ACTION_REGISTRATION = "registration";
+            String ACTION = "action";
         }
     }
 

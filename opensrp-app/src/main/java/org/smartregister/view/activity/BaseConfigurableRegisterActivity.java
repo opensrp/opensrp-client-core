@@ -3,6 +3,7 @@ package org.smartregister.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -33,6 +34,11 @@ import java.util.Map;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.IntentExtra.JsonForm.ACTION;
+import static org.smartregister.AllConstants.IntentExtra.JsonForm.ACTION_REGISTRATION;
+import static org.smartregister.AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID;
+import static org.smartregister.AllConstants.IntentExtra.JsonForm.ENTITY_TABLE;
+
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 25-09-2020
  */
@@ -48,6 +54,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
         fetchModuleConfiguration();
 
         super.onCreate(savedInstanceState);
+        onStartActivityWithAction();
 
     }
 
@@ -71,6 +78,15 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
             moduleName = intent.getStringExtra(AllConstants.IntentExtra.MODULE_NAME);
         } else {
             throw new IllegalStateException("Module name was not passed to the activity! Kindly use ModuleLibrary.getInstance().startRegisterActivity() to start the activity");
+        }
+    }
+
+    protected void onStartActivityWithAction() {
+        String baseEntityId = getIntent().getStringExtra(BASE_ENTITY_ID);
+        String action = getIntent().getStringExtra(ACTION);
+        ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
+        if (ACTION_REGISTRATION.equals(action) && moduleMetadata != null) {
+            startFormActivity(moduleMetadata.getRegistrationFormName(), baseEntityId, (String) null);
         }
     }
 
