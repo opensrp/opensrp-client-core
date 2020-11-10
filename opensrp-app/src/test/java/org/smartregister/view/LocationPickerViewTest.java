@@ -17,8 +17,11 @@ import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.location.helper.LocationHelper;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.util.ArrayList;
+
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by Vincent Karuri on 06/10/2020
@@ -33,6 +36,8 @@ public class LocationPickerViewTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         locationPickerView = new LocationPickerView(RuntimeEnvironment.application);
+        AllSharedPreferences allSharedPreferences= new AllSharedPreferences(getDefaultSharedPreferences(RuntimeEnvironment.application));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(),"allSharedPreferences",allSharedPreferences);
     }
 
     @Test
