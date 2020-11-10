@@ -162,8 +162,8 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
     @Test
     public void saveManifestVersionShouldSaveVersionInSharedPreferences() {
-        AllSharedPreferences allSharedPreferences= new AllSharedPreferences(getDefaultSharedPreferences(RuntimeEnvironment.application));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(),"allSharedPreferences",allSharedPreferences);
+
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(),"allSharedPreferences",null);
 
         Assert.assertNull(CoreLibrary.getInstance().context().allSharedPreferences().fetchManifestVersion());
         String manifestVersion = "0.0.89";

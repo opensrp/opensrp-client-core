@@ -39,8 +39,7 @@ public class LocationPickerViewTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         locationPickerView = new LocationPickerView(RuntimeEnvironment.application);
-        AllSharedPreferences allSharedPreferences= new AllSharedPreferences(getDefaultSharedPreferences(RuntimeEnvironment.application));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(),"allSharedPreferences",allSharedPreferences);
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
     }
 
     @Test
@@ -50,8 +49,12 @@ public class LocationPickerViewTest extends BaseUnitTest {
         }
         LocationPickerView.OnLocationChangeListener onLocationChangeListener = Mockito.mock(LocationPickerView.OnLocationChangeListener.class);
         CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(defaultLocation);
-        LocationHelper.init(new ArrayList<String>(){{ add(defaultLocation); }}, defaultLocation,
-                new ArrayList<String>(){{ add(advancedLocation); }});
+        LocationHelper.init(new ArrayList<String>() {{
+                                add(defaultLocation);
+                            }}, defaultLocation,
+                new ArrayList<String>() {{
+                    add(advancedLocation);
+                }});
         ReflectionHelpers.setField(LocationHelper.getInstance(), "defaultLocation", defaultLocation);
 
         locationPickerView.init();

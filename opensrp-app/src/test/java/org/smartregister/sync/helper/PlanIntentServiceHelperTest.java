@@ -61,6 +61,7 @@ public class PlanIntentServiceHelperTest extends BaseRobolectricUnitTest {
         MockitoAnnotations.initMocks(this);
         Whitebox.setInternalState(planIntentServiceHelper, "planDefinitionRepository", planDefinitionRepository);
         Whitebox.setInternalState(planIntentServiceHelper, "locationRepository", locationRepository);
+        CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.ORGANIZATION_IDS, "org1,org2");
         Mockito.doReturn(httpAgent).when(planIntentServiceHelper).getHttpAgent();
