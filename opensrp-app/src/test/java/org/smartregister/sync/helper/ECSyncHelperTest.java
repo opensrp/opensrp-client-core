@@ -259,4 +259,42 @@ public class ECSyncHelperTest extends BaseUnitTest {
 
     }
 
+    @Test
+    public void testAddEventWithSyncStatus() {
+        syncHelper.addEvent(eventBaseEntityId, eventJson, BaseRepository.TYPE_Synced);
+        verify(eventClientRepository).addEvent(eventBaseEntityId, eventJson, BaseRepository.TYPE_Synced);
+    }
+
+    @Test
+    public void testAllEvents() {
+        long startSyncTimeStamp = 1604995368l;
+        long lastSyncTimeStamp = 2604995368l;
+        syncHelper.allEventClients(startSyncTimeStamp, lastSyncTimeStamp);
+        verify(eventClientRepository).fetchEventClients(startSyncTimeStamp, lastSyncTimeStamp);
+    }
+
+    @Test
+    public void testBatchInsertClients() {
+        JSONArray clientsArray = new JSONArray();
+        clientsArray.put(clientJson);
+        syncHelper.batchInsertClients(clientsArray);
+        verify(eventClientRepository).batchInsertClients(clientsArray);
+    }
+
+    @Test
+    public void testBatchInsertEvents() {
+        JSONArray eventsArray = new JSONArray();
+        eventsArray.put(eventJson);
+        long lastSyncTimeStamp = 2604995368l;
+        when(allSharedPreferences.fetchLastSyncDate(0)).thenReturn(lastSyncTimeStamp);
+        syncHelper.batchInsertEvents(eventsArray);
+        verify(eventClientRepository).batchInsertEvents(eventsArray,lastSyncTimeStamp);
+    }
+
+    @Test
+    public void testDeleteClient(){
+        syncHelper.deleteClient(clientBaseEntityId);
+        verify(eventClientRepository).deleteClient(clientBaseEntityId);
+    }
+
 }
