@@ -46,7 +46,6 @@ public class LocationPickerViewTest extends BaseUnitTest {
             ReflectionHelpers.setField(LocationHelper.getInstance(), "instance", null);
         }
         LocationPickerView.OnLocationChangeListener onLocationChangeListener = Mockito.mock(LocationPickerView.OnLocationChangeListener.class);
-        System.out.println(CoreLibrary.getInstance().context().allSharedPreferences());
         CoreLibrary.getInstance().context().allSharedPreferences().saveCurrentLocality(defaultLocation);
         LocationHelper.init(new ArrayList<String>(){{ add(defaultLocation); }}, defaultLocation,
                 new ArrayList<String>(){{ add(advancedLocation); }});

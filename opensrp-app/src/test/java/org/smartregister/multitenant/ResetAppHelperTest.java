@@ -111,7 +111,7 @@ public class ResetAppHelperTest extends BaseRobolectricUnitTest {
 
         assertEquals(4, preResetAppChecks.size());
         for (PreResetAppCheck preResetAppCheck: mockedPreResetAppChecks) {
-            Mockito.verify(preResetAppCheck).isCheckOk(Mockito.eq(DrishtiApplication.getInstance()));
+            Mockito.verify(preResetAppCheck,Mockito.timeout(ASYNC_TIMEOUT)).isCheckOk(Mockito.eq(DrishtiApplication.getInstance()));
         }
 
         Mockito.verify(resetAppHelper).dismissDialog();
