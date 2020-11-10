@@ -426,7 +426,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
 
         View parentLayout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(parentLayout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);

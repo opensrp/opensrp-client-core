@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.widget.TableRow;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import com.google.common.collect.ImmutableMap;
 
 import org.joda.time.DateTime;
@@ -16,7 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -50,12 +52,12 @@ import static org.smartregister.util.Utils.getDefaultLocale;
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-public class UtilsTest extends BaseUnitTest {
+public class UtilsTest extends BaseRobolectricUnitTest {
 
     @Before
-    public void setUp(){
-        AllSharedPreferences allSharedPreferences= new AllSharedPreferences(getDefaultSharedPreferences(RuntimeEnvironment.application));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(),"allSharedPreferences",allSharedPreferences);
+    public void setUp() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
     }
 
     @Test
