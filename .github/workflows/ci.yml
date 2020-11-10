@@ -24,6 +24,8 @@ jobs:
         run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.0.6113669" --sdk_root=${ANDROID_SDK_ROOT}
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+      - name: Debug tests with Gradle
+        run: ./gradlew opensrp-app:clean :opensrp-app:testDebugUnitTest --tests "DocumentConfigurationServiceTest"
       - name: Run unit tests with Gradle
         run: ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport --stacktrace
       - name: Generate Javadoc with Gradle
