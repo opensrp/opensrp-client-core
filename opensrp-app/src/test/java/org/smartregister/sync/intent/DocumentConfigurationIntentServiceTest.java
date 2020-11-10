@@ -1,6 +1,7 @@
 package org.smartregister.sync.intent;
 
 import org.json.JSONException;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,6 +9,8 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
+import org.smartregister.CoreLibrary;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.service.DocumentConfigurationService;
 
@@ -23,6 +26,12 @@ public class DocumentConfigurationIntentServiceTest extends BaseRobolectricUnitT
         documentConfigurationIntentService = Mockito.spy(Robolectric.buildIntentService(DocumentConfigurationIntentService.class)
                 .create()
                 .get());
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        ReflectionHelpers.setStaticField(Context.class, "context", null);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 
     @Test

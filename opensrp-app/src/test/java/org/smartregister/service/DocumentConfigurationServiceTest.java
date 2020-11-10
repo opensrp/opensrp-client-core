@@ -165,8 +165,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
     }
 
     @After
-    public void tearDown() throws Exception {
-        CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit().clear().commit();
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+    public void tearDown() {
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
     }
 }
