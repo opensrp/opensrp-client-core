@@ -63,6 +63,8 @@ public class EventClientRepository extends BaseRepository {
     protected Table clientTable;
     protected Table eventTable;
 
+    private Set<String> formSubmissionIds;
+
     public EventClientRepository() {
         this.clientTable = Table.client;
         this.eventTable = Table.event;
@@ -255,11 +257,45 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
-    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
-        return checkIfExistsByFormSubmissionId(table, formSubmissionId, getWritableDatabase());
+    public void populateFormSubmissionIds() {
+        Cursor mCursor = null;
+        if (formSubmissionIds == null)
+            formSubmissionIds = new HashSet<>();
+
+        try {
+            String query = "SELECT "
+                    + event_column.formSubmissionId
+                    + " FROM "
+                    + eventTable.name();
+            mCursor = getReadableDatabase().rawQuery(query, new String[]{});
+            if (mCursor != null) {
+                while (mCursor.moveToNext()) {
+                    formSubmissionIds.add(mCursor.getString(0));
+                }
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (mCursor != null) {
+                mCursor.close();
+            }
+        }
+
     }
 
-    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId, SQLiteDatabase sqLiteDatabase) {
+    public Boolean checkIfExistsByFormSubmissionId(String formSubmissionId) {
+        if (formSubmissionIds != null && StringUtils.isNotBlank(formSubmissionId)) {
+            return !formSubmissionIds.add(formSubmissionId);
+        }
+        return false;
+    }
+
+    public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
+        return checkIfExistsByFormSubmissionId(table, formSubmissionId, getReadableDatabase());
+    }
+
+    public Boolean checkIfExistsByFormSubmissionId(Table table, String
+            formSubmissionId, SQLiteDatabase sqLiteDatabase) {
         Cursor mCursor = null;
         try {
             String query = "SELECT "
@@ -284,7 +320,8 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
-    private boolean populateStatement(SQLiteStatement statement, Table table, JSONObject jsonObject, Map<String, Integer> columnOrder) {
+    private boolean populateStatement(SQLiteStatement statement, Table table, JSONObject
+            jsonObject, Map<String, Integer> columnOrder) {
         if (statement == null)
             return false;
         statement.clearBindings();
@@ -532,13 +569,16 @@ public class EventClientRepository extends BaseRepository {
         return batchInsertEvents(array, serverVersion, getWritableDatabase());
     }
 
-    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase sqLiteDatabase) {
+    public boolean batchInsertEvents(JSONArray array, long serverVersion, SQLiteDatabase
+            sqLiteDatabase) {
         if (array == null || array.length() == 0) {
             return false;
         }
 
         SQLiteStatement insertStatement = null;
         SQLiteStatement updateStatement = null;
+
+        populateFormSubmissionIds();
 
         try {
 
@@ -564,7 +604,7 @@ public class EventClientRepository extends BaseRepository {
                 }
 
                 maxRowId++;
-                if (checkIfExistsByFormSubmissionId(eventTable, formSubmissionId, sqLiteDatabase)) {
+                if (checkIfExistsByFormSubmissionId(formSubmissionId)) {
                     if (populateStatement(updateStatement, eventTable, jsonObject, updateQueryWrapper.columnOrder)) {
                         updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                         updateStatement.executeUpdateDelete();
@@ -770,7 +810,8 @@ public class EventClientRepository extends BaseRepository {
                 new String[]{String.valueOf(startServerVersion), String.valueOf(lastServerVersion)});
     }
 
-    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(long lastProcessedRowId) {
+    public P2pProcessRecordsService.EventClientQueryResult fetchEventClientsByRowId(
+            long lastProcessedRowId) {
         List<EventClient> list = new ArrayList<>();
         Cursor cursor = null;
         int maxRowId = 0;
@@ -1467,7 +1508,8 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
-    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String syncStatus, List<String> baseEntityIds) {
+    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String
+                                                                           syncStatus, List<String> baseEntityIds) {
         List<EventClient> list = new ArrayList<>();
         if (Utils.isEmptyCollection(baseEntityIds))
             return list;
