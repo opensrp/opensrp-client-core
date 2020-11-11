@@ -37,7 +37,6 @@ import timber.log.Timber;
 import static org.smartregister.AllConstants.IntentExtra.JsonForm.ACTION;
 import static org.smartregister.AllConstants.IntentExtra.JsonForm.ACTION_REGISTRATION;
 import static org.smartregister.AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID;
-import static org.smartregister.AllConstants.IntentExtra.JsonForm.ENTITY_TABLE;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 25-09-2020

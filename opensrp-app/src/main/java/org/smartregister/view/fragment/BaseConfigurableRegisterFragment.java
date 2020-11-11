@@ -22,6 +22,7 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
 import org.smartregister.configuration.ModuleRegisterQueryProviderContract;
+import org.smartregister.configuration.ToolbarOptions;
 import org.smartregister.cursoradapter.RecyclerViewPaginatedAdapter;
 import org.smartregister.cursoradapter.SmartRegisterQueryBuilder;
 import org.smartregister.domain.FetchStatus;
@@ -54,6 +55,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     private boolean dueFilterActive = false;
     private ModuleRegisterQueryProviderContract moduleRegisterQueryProvider;
     private ModuleConfiguration moduleConfiguration;
+    private ToolbarOptions toolbarOptions;
 
     public BaseConfigurableRegisterFragment() {
     }
@@ -61,6 +63,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
         moduleRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
         this.moduleConfiguration = moduleConfiguration;
+        this.toolbarOptions = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getToolbarOptions());
     }
 
     public ModuleConfiguration getModuleConfiguration() {
@@ -73,7 +76,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     @Override
     protected int getLayout() {
-        if (getModuleConfiguration().isNewLayoutEnabled()) {
+        if (toolbarOptions.isNewToolbarEnabled()) {
             return R.layout.configurable_fragment_base_register;
         } else {
             return super.getLayout();
@@ -85,7 +88,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         super.setupViews(view);
         this.view = view;
 
-        if (getModuleConfiguration().isNewLayoutEnabled()) {
+        if (toolbarOptions.isNewToolbarEnabled()) {
             initializeConfigurableLayoutViews(view);
             return;
         }
@@ -160,8 +163,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         // Update logo
         ImageView logo = view.findViewById(R.id.top_left_logo);
         if (logo != null) {
-            if (getModuleConfiguration().getRegisterLogo() > 0) {
-                logo.setImageDrawable(context().getDrawable(moduleConfiguration.getRegisterLogo()));
+            if (toolbarOptions.getLogoResourceId() > 0) {
+                logo.setImageDrawable(context().getDrawable(toolbarOptions.getLogoResourceId()));
                 logo.setVisibility(View.VISIBLE);
             }
         }
@@ -171,8 +174,23 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
         ExtendedFloatingActionButton addClientsFab = view.findViewById(R.id.add_new_client_fab);
         if (addClientsFab != null) {
-            addClientsFab.setOnClickListener(v -> startRegistration());
+            if (toolbarOptions.isFabEnabled()) {
+                addClientsFab.setVisibility(View.VISIBLE);
+                addClientsFab.setOnClickListener(v -> startRegistration());
+            } else {
+                addClientsFab.setVisibility(View.GONE);
+            }
         }
+
+        ImageView registerSelect = view.findViewById(R.id.register_icon);
+        if (registerSelect != null) {
+            registerSelect.setOnClickListener(v -> {
+                if (getActivity() instanceof BaseConfigurableRegisterActivity) {
+                    ((BaseConfigurableRegisterActivity) getActivity()).showFragmentDialog(toolbarOptions.getDialogOptionModel());
+                }
+            });
+        }
+
     }
 
     @Override

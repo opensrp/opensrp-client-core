@@ -306,4 +306,4 @@ coveralls {
     sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
-apply from: '../maven.gradle'
+// apply from: '../maven.gradle'
