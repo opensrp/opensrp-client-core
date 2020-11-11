@@ -78,8 +78,8 @@ public class ModuleConfiguration {
         return builder.registerTitle;
     }
 
-    public int getRegisterLogo() {
-        return builder.registerLogo;
+    public Class<? extends ToolbarOptions> getToolbarOptions() {
+        return builder.toolbarOptions;
     }
 
     public int getMaxCheckInDurationInMinutes() {
@@ -88,10 +88,6 @@ public class ModuleConfiguration {
 
     public boolean isBottomNavigationEnabled() {
         return builder.isBottomNavigationEnabled;
-    }
-
-    public boolean isNewLayoutEnabled() {
-        return builder.isNewLayoutEnabled;
     }
 
     @NonNull
@@ -123,25 +119,20 @@ public class ModuleConfiguration {
         @NonNull
         private Class<? extends ClientFormContract.View> jsonFormActivity;
 
+        private Class<? extends ToolbarOptions> toolbarOptions;
+
         private boolean isBottomNavigationEnabled;
-        private boolean isNewLayoutEnabled;
 
         private ModuleMetadata moduleMetadata;
         private int maxCheckInDurationInMinutes = 24 * 60;
         private ConfigurableViewsLibrary configurableViewsLibrary;
         private String registerTitle;
-        private int registerLogo;
 
         public Builder(@NonNull String registerTitle, @NonNull Class<? extends ModuleRegisterQueryProviderContract> registerQueryProvider, @NonNull ConfigurableViewsLibrary configurableViewsLibrary, @NonNull Class<? extends ActivityStarter> activityStarter) {
             this.registerQueryProvider = registerQueryProvider;
             this.configurableViewsLibrary = configurableViewsLibrary;
             this.registerTitle = registerTitle;
             this.activityStarter = activityStarter;
-        }
-
-        public Builder setRegisterLogo(int registerLogo) {
-            this.registerLogo = registerLogo;
-            return this;
         }
 
         public Builder setRegisterProviderMetadata(@Nullable Class<? extends RegisterProviderMetadata> registerProviderMetadata) {
@@ -154,11 +145,6 @@ public class ModuleConfiguration {
             return this;
         }
 
-        public Builder setNewLayoutEnabled(boolean isNewLayoutEnabled) {
-            this.isNewLayoutEnabled = isNewLayoutEnabled;
-            return this;
-        }
-
         public Builder setBottomNavigationEnabled(boolean isBottomNavigationEnabled) {
             this.isBottomNavigationEnabled = isBottomNavigationEnabled;
             return this;
@@ -166,6 +152,11 @@ public class ModuleConfiguration {
 
         public Builder setModuleMetadata(@NonNull ModuleMetadata moduleMetadata) {
             this.moduleMetadata = moduleMetadata;
+            return this;
+        }
+
+        public Builder setToolbarOptions(@Nullable Class<? extends ToolbarOptions> toolbarOptions) {
+            this.toolbarOptions = toolbarOptions;
             return this;
         }
 
