@@ -25,6 +25,7 @@ import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.domain.TaskUpdate;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.sync.helper.TaskServiceHelper;
+import org.smartregister.util.DatabaseMigrationUtils;
 import org.smartregister.util.DateUtil;
 import org.smartregister.util.P2PUtil;
 
@@ -40,6 +41,7 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
+import static org.smartregister.repository.EventClientRepository.VARCHAR;
 
 /**
  * Created by samuelgithengi on 11/23/18.
@@ -70,10 +72,13 @@ public class TaskRepository extends BaseRepository {
     private static final String REASON_REFERENCE = "reason_reference";
     private static final String LOCATION = "location";
     private static final String REQUESTER = "requester";
+    private static final String RESTRICTION_REPEAT = "restriction_repeat";
+    private static final String RESTRICTION_START = "restriction_start";
+    private static final String RESTRICTION_END = "restriction_start";
 
     private TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER};
+    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER, RESTRICTION_REPEAT, RESTRICTION_START, RESTRICTION_END};
 
     protected static final String TASK_TABLE = "task";
 
@@ -99,7 +104,10 @@ public class TaskRepository extends BaseRepository {
                     STRUCTURE_ID + " VARCHAR, " +
                     REASON_REFERENCE + " VARCHAR, " +
                     LOCATION + " VARCHAR, " +
-                    REQUESTER + " VARCHAR  )";
+                    REQUESTER + " VARCHAR,  " +
+                    RESTRICTION_REPEAT + " INTEGER,  " +
+                    RESTRICTION_START + " VARCHAR,  " +
+                    RESTRICTION_END + " VARCHAR )";
 
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
@@ -113,6 +121,13 @@ public class TaskRepository extends BaseRepository {
         database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
+
+    public static void updatePriorityToEnumAndAddRestrictions(SQLiteDatabase database) {
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_REPEAT, VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, VARCHAR);
+        DatabaseMigrationUtils.recreateSyncTableWithExistingColumnsOnly(database, TASK_TABLE, COLUMNS, CREATE_TASK_TABLE);
+    }
 
     public void addOrUpdate(Task task) {
         addOrUpdate(task, false);
@@ -282,7 +297,7 @@ public class TaskRepository extends BaseRepository {
         task.setDescription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
         task.setFocus(cursor.getString(cursor.getColumnIndex(FOCUS)));
         task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
-        Period period= new Period();
+        Period period = new Period();
         period.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
         period.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
         task.setExecutionPeriod(period);
