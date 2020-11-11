@@ -1,7 +1,8 @@
 package org.smartregister.repository.dao;
 
 import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.ibm.fhir.model.resource.QuestionnaireResponse;
 import com.ibm.fhir.model.resource.Task;
@@ -53,10 +54,9 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
             }
         }
         addOrUpdate(task);
-        Intent intent = new Intent();
         Intent taskGeneratedIntent = new Intent(TASK_GENERATED_EVENT);
         taskGeneratedIntent.putExtra(TASK_GENERATED, task);
-        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(intent);
+        LocalBroadcastManager.getInstance(CoreLibrary.getInstance().context().applicationContext()).sendBroadcast(taskGeneratedIntent);
     }
 
     @Override

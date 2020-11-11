@@ -2,7 +2,7 @@ package org.smartregister.sync;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.ibm.fhir.model.resource.QuestionnaireResponse;
 
@@ -342,7 +342,7 @@ public class ClientProcessorForJava {
             for (String clientType : createsCase) {
                 Table table = getColumnMappings(clientType);
                 List<Column> columns = table.columns;
-                String baseEntityId = client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
+                String baseEntityId = getBaseEntityId(event, client, clientType);
 
                 ContentValues contentValues = new ContentValues();
                 //Add the base_entity_id
@@ -372,6 +372,18 @@ public class ClientProcessorForJava {
 
             return null;
         }
+    }
+
+    /***
+     * Method for retrieving baseEntityId used when processing Case Models
+     * Allows customizing the baseEntityId for different cases
+     * @param event event object
+     * @param client client object
+     * @param clientType client classification type
+     * @return base entity id
+     */
+    protected String getBaseEntityId(Event event, Client client, String clientType) {
+        return client != null ? client.getBaseEntityId() : event != null ? event.getBaseEntityId() : null;
     }
 
     public void processCaseModel(Event event, Client client, Column column, ContentValues contentValues) {

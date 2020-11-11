@@ -3,8 +3,9 @@ package org.smartregister.sync.helper;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.content.Intent;
-import android.support.annotation.StringRes;
-import android.support.annotation.VisibleForTesting;
+
+import androidx.annotation.StringRes;
+import androidx.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 
