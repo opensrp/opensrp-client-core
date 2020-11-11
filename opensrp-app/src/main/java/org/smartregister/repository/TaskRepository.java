@@ -76,9 +76,9 @@ public class TaskRepository extends BaseRepository {
     private static final String RESTRICTION_START = "restriction_start";
     private static final String RESTRICTION_END = "restriction_start";
 
-    private TaskNotesRepository taskNotesRepository;
+    private final TaskNotesRepository taskNotesRepository;
 
-    protected static final String[] COLUMNS = {ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER, RESTRICTION_REPEAT, RESTRICTION_START, RESTRICTION_END};
+    protected static final String[] COLUMNS = {ROWID, ID, PLAN_ID, GROUP_ID, STATUS, BUSINESS_STATUS, PRIORITY, CODE, DESCRIPTION, FOCUS, FOR, START, END, AUTHORED_ON, LAST_MODIFIED, OWNER, SYNC_STATUS, SERVER_VERSION, STRUCTURE_ID, REASON_REFERENCE, LOCATION, REQUESTER, RESTRICTION_REPEAT, RESTRICTION_START, RESTRICTION_END};
 
     protected static final String TASK_TABLE = "task";
 
@@ -121,12 +121,16 @@ public class TaskRepository extends BaseRepository {
         database.execSQL(CREATE_TASK_PLAN_GROUP_INDEX);
     }
 
-
-    public static void updatePriorityToEnumAndAddRestrictions(SQLiteDatabase database) {
+    /**
+     * Migrate the older database by add restriction columns and changing of priority to enum
+     * @param database the database being upgraded
+     */
+    public static void updatePriorityToEnumAndAddRestrictions(@NonNull SQLiteDatabase database) {
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_REPEAT, VARCHAR);
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, VARCHAR);
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, VARCHAR);
         DatabaseMigrationUtils.recreateSyncTableWithExistingColumnsOnly(database, TASK_TABLE, COLUMNS, CREATE_TASK_TABLE);
+        database.execSQL(String.format("UPDATE %s SET %s=? WHERE %s =? ", TASK_TABLE, PRIORITY, PRIORITY), new Object[]{"3", "3"});
     }
 
     public void addOrUpdate(Task task) {
