@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.smartregister.domain.Client;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.Note;
+import org.smartregister.domain.Period;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.Task.TaskStatus;
 import org.smartregister.domain.TaskUpdate;
@@ -83,7 +84,7 @@ public class TaskRepository extends BaseRepository {
                     GROUP_ID + " VARCHAR NOT NULL, " +
                     STATUS + " VARCHAR  NOT NULL, " +
                     BUSINESS_STATUS + " VARCHAR,  " +
-                    PRIORITY + " INTEGER,  " +
+                    PRIORITY + " VARCHAR,  " +
                     CODE + " VARCHAR , " +
                     DESCRIPTION + " VARCHAR , " +
                     FOCUS + " VARCHAR , " +
@@ -139,13 +140,15 @@ public class TaskRepository extends BaseRepository {
             contentValues.put(STATUS, task.getStatus().name());
         }
         contentValues.put(BUSINESS_STATUS, task.getBusinessStatus());
-        contentValues.put(PRIORITY, task.getPriority());
+        contentValues.put(PRIORITY, task.getPriority().name());
         contentValues.put(CODE, task.getCode());
         contentValues.put(DESCRIPTION, task.getDescription());
         contentValues.put(FOCUS, task.getFocus());
         contentValues.put(FOR, task.getForEntity());
-        contentValues.put(START, DateUtil.getMillis(task.getExecutionStartDate()));
-        contentValues.put(END, DateUtil.getMillis(task.getExecutionEndDate()));
+        if (task.getExecutionPeriod() != null) {
+            contentValues.put(START, DateUtil.getMillis(task.getExecutionPeriod().getStart()));
+            contentValues.put(END, DateUtil.getMillis(task.getExecutionPeriod().getEnd()));
+        }
         contentValues.put(AUTHORED_ON, DateUtil.getMillis(task.getAuthoredOn()));
         contentValues.put(LAST_MODIFIED, DateUtil.getMillis(task.getLastModified()));
         contentValues.put(OWNER, task.getOwner());
@@ -274,13 +277,15 @@ public class TaskRepository extends BaseRepository {
             task.setStatus(TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(STATUS))));
         }
         task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
-        task.setPriority(cursor.getInt(cursor.getColumnIndex(PRIORITY)));
+        task.setPriority(Task.TaskPriority.get(cursor.getString(cursor.getColumnIndex(PRIORITY))));
         task.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
         task.setDescription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
         task.setFocus(cursor.getString(cursor.getColumnIndex(FOCUS)));
         task.setForEntity(cursor.getString(cursor.getColumnIndex(FOR)));
-        task.setExecutionStartDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
-        task.setExecutionEndDate(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
+        Period period= new Period();
+        period.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(START))));
+        period.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(END))));
+        task.setExecutionPeriod(period);
         task.setAuthoredOn(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(AUTHORED_ON))));
         task.setLastModified(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(LAST_MODIFIED))));
         task.setOwner(cursor.getString(cursor.getColumnIndex(OWNER)));
@@ -580,7 +585,7 @@ public class TaskRepository extends BaseRepository {
 
     /**
      * Cancels a particular task
-     *
+     * <p>
      * Cancels the task if it has a status ready @{@link TaskStatus}
      *
      * @param identifier id of the task to be cancelled
