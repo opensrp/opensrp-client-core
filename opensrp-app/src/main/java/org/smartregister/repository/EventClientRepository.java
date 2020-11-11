@@ -2,13 +2,15 @@ package org.smartregister.repository;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Pair;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.reflect.TypeToken;
 
+import net.sqlcipher.SQLException;
 import net.sqlcipher.database.SQLiteDatabase;
 import net.sqlcipher.database.SQLiteStatement;
 
@@ -256,25 +258,19 @@ public class EventClientRepository extends BaseRepository {
     }
 
     private Set<String> populateFormSubmissionIds() {
-        Cursor mCursor = null;
         Set<String> formSubmissionIds = new HashSet<>();
-        try {
-            String query = "SELECT "
-                    + event_column.formSubmissionId
-                    + " FROM "
-                    + eventTable.name();
-            mCursor = getReadableDatabase().rawQuery(query, new String[]{});
+        String query = "SELECT "
+                + event_column.formSubmissionId
+                + " FROM "
+                + eventTable.name();
+        try (Cursor mCursor = getReadableDatabase().rawQuery(query, new String[]{})) {
             if (mCursor != null) {
                 while (mCursor.moveToNext()) {
                     formSubmissionIds.add(mCursor.getString(0));
                 }
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             Timber.e(e);
-        } finally {
-            if (mCursor != null) {
-                mCursor.close();
-            }
         }
         return formSubmissionIds;
     }
