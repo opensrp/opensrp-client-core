@@ -4,8 +4,9 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.security.KeyPairGeneratorSpec;
-import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
+
+import androidx.annotation.VisibleForTesting;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.BuildConfig;
@@ -309,7 +310,7 @@ public class UserService {
         if (keyStore != null && userName != null) {
             try {
                 KeyStore.PrivateKeyEntry privateKeyEntry = getUserKeyPair(userName);
-                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name()));
+                return decryptString(privateKeyEntry, allSharedPreferences.getPassphrase(CoreLibrary.getInstance().getSyncConfiguration().getEncryptionParam().name(), userName));
             } catch (Exception e) {
                 Timber.e(e);
             }
@@ -614,7 +615,7 @@ public class UserService {
                     bundle.putString(AccountHelper.INTENT_KEY.ACCOUNT_LOCAL_PASSWORD_SALT, Base64.encodeToString(localAuthHash.getSalt(), Base64.DEFAULT));
 
                     //Save db credentials
-                    if (CredentialsHelper.shouldMigrate()) {
+                    if (CredentialsHelper.shouldMigrate() || !username.equals(allSharedPreferences.fetchPioneerUser())) {
 
                         byte[] passphrase = DrishtiApplication.getInstance().credentialsProvider().generateDBCredentials(SecurityHelper.toChars(localAuthHash.getPassword()), userInfo);
                         byte[] oldPassword = allSharedPreferences.getDBEncryptionVersion() == 0 ? getGroupId(username) : DrishtiApplication.getInstance().credentialsProvider().getCredentials(username, CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
@@ -623,7 +624,7 @@ public class UserService {
                             try {
 
                                 DrishtiApplication.getInstance().getRepository().getReadableDatabase(SecurityHelper.toChars(oldPassword)).changePassword(SecurityHelper.toChars(passphrase));
-                                DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+                                DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase), username);
 
                             } catch (Exception e) {
                                 Timber.e("Database encryption migration to version %s failed!!! ", BuildConfig.DB_ENCRYPTION_VERSION);
@@ -632,7 +633,7 @@ public class UserService {
 
                         } else {
 
-                            DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase));
+                            DrishtiApplication.getInstance().credentialsProvider().saveCredentials(CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH, encryptString(privateKeyEntry, passphrase), username);
                         }
                     }
 
