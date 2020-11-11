@@ -263,7 +263,7 @@ public class EventClientRepository extends BaseRepository {
                 + event_column.formSubmissionId
                 + " FROM "
                 + eventTable.name();
-        try (Cursor mCursor = getReadableDatabase().rawQuery(query, new String[]{})) {
+        try (Cursor mCursor = getReadableDatabase().rawQuery(query, null)) {
             if (mCursor != null) {
                 while (mCursor.moveToNext()) {
                     formSubmissionIds.add(mCursor.getString(0));
