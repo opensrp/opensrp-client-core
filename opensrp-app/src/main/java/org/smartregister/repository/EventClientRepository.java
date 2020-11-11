@@ -63,8 +63,6 @@ public class EventClientRepository extends BaseRepository {
     protected Table clientTable;
     protected Table eventTable;
 
-    private Set<String> formSubmissionIds;
-
     public EventClientRepository() {
         this.clientTable = Table.client;
         this.eventTable = Table.event;
@@ -257,11 +255,9 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
-    public void populateFormSubmissionIds() {
+    private Set<String> populateFormSubmissionIds() {
         Cursor mCursor = null;
-        if (formSubmissionIds == null)
-            formSubmissionIds = new HashSet<>();
-
+        Set<String> formSubmissionIds = new HashSet<>();
         try {
             String query = "SELECT "
                     + event_column.formSubmissionId
@@ -280,10 +276,10 @@ public class EventClientRepository extends BaseRepository {
                 mCursor.close();
             }
         }
-
+        return formSubmissionIds;
     }
 
-    public Boolean checkIfExistsByFormSubmissionId(String formSubmissionId) {
+    public Boolean checkIfExistsByFormSubmissionId(String formSubmissionId, Set<String> formSubmissionIds) {
         if (formSubmissionIds != null && StringUtils.isNotBlank(formSubmissionId)) {
             return !formSubmissionIds.add(formSubmissionId);
         }
@@ -578,7 +574,7 @@ public class EventClientRepository extends BaseRepository {
         SQLiteStatement insertStatement = null;
         SQLiteStatement updateStatement = null;
 
-        populateFormSubmissionIds();
+        Set<String> formSubmissionIds = populateFormSubmissionIds();
 
         try {
 
@@ -604,7 +600,7 @@ public class EventClientRepository extends BaseRepository {
                 }
 
                 maxRowId++;
-                if (checkIfExistsByFormSubmissionId(formSubmissionId)) {
+                if (checkIfExistsByFormSubmissionId(formSubmissionId, formSubmissionIds)) {
                     if (populateStatement(updateStatement, eventTable, jsonObject, updateQueryWrapper.columnOrder)) {
                         updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                         updateStatement.executeUpdateDelete();
@@ -1508,8 +1504,7 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
-    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String
-                                                                           syncStatus, List<String> baseEntityIds) {
+    public List<EventClient> getEventsByBaseEntityIdsAndSyncStatus(String syncStatus, List<String> baseEntityIds) {
         List<EventClient> list = new ArrayList<>();
         if (Utils.isEmptyCollection(baseEntityIds))
             return list;
