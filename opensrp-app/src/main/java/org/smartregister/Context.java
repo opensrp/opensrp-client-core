@@ -1,8 +1,12 @@
 package org.smartregister;
 
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+
+import androidx.security.crypto.EncryptedSharedPreferences;
+import androidx.security.crypto.MasterKeys;
 
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
@@ -107,8 +111,10 @@ import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -121,6 +127,7 @@ import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 public class Context {
 
     ///////////////////common bindtypes///////////////
+
     public static ArrayList<CommonRepositoryInformationHolder> bindtypes;
     private static Context context = new Context();
     protected DristhiConfiguration configuration;
@@ -223,7 +230,10 @@ public class Context {
     private ClientFormRepository clientFormRepository;
     private ClientRelationshipRepository clientRelationshipRepository;
 
+    private static final String SHARED_PREFERENCES_FILENAME = "sharedpreferences";
+
     /////////////////////////////////////////////////
+
     protected Context() {
     }
 
@@ -584,10 +594,40 @@ public class Context {
 
     public AllSharedPreferences allSharedPreferences() {
         if (allSharedPreferences == null) {
-            allSharedPreferences = new AllSharedPreferences(
-                    getDefaultSharedPreferences(this.applicationContext));
+            allSharedPreferences = new AllSharedPreferences(createSharedPreferences(this.applicationContext));
         }
         return allSharedPreferences;
+    }
+
+    private SharedPreferences createSharedPreferences(android.content.Context context) {
+        SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
+        if (syncConfiguration != null && syncConfiguration.encryptSharedPreferences()) {
+            return createEncryptedSharedPreferences(context);
+        } else {
+            return getDefaultSharedPreferences(context);
+        }
+    }
+
+    private SharedPreferences createEncryptedSharedPreferences(android.content.Context context) {
+        SharedPreferences sharedPreferences = null;
+
+        try {
+            String masterKeyAlias = MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC);
+
+            sharedPreferences = EncryptedSharedPreferences.create(
+                    SHARED_PREFERENCES_FILENAME,
+                    masterKeyAlias,
+                    context,
+                    EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
+                    EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
+            );
+        } catch (GeneralSecurityException e) {
+            Timber.e(e);
+        } catch (IOException e) {
+            Timber.e(e);
+        }
+
+        return sharedPreferences;
     }
 
     public AllBeneficiaries allBeneficiaries() {
@@ -1141,7 +1181,7 @@ public class Context {
         return foreignEventClientRepository;
     }
 
-    public boolean hasForeignEvents(){
+    public boolean hasForeignEvents() {
         return DrishtiApplication.getInstance().getP2PClassifier() != null;
     }
 
