@@ -94,7 +94,6 @@ public abstract class SyncConfiguration {
         this.readTimeout = readTimeout;
     }
 
-
     /**
      * This method control if POST of GET HTTP method is used to sync clients and events
      *
@@ -184,4 +183,12 @@ public abstract class SyncConfiguration {
 
     public abstract Class<? extends BaseLoginActivity> getAuthenticationActivity();
 
+    /**
+     * Configure whether the app should encrypt SharedPreferences
+     *
+     * @return true/false -- {@link Boolean}
+     */
+    public boolean encryptSharedPreferences() {
+        return false;
+    }
 }
