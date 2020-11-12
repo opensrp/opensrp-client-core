@@ -28,7 +28,7 @@ import org.smartregister.util.Utils;
 
 import timber.log.Timber;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
