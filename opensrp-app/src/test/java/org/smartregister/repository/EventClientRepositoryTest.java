@@ -3,6 +3,7 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.util.Pair;
 
+import net.sqlcipher.Cursor;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -16,6 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseUnitTest;
@@ -30,6 +33,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Created by onaio on 29/08/2017.
@@ -348,7 +355,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         for (int i = 0; i < 5; i++) {
             JSONObject jsonObject1 = new JSONObject();
-            jsonObject1.put("serverVersion", (i +1) * 1000L);
+            jsonObject1.put("serverVersion", (i + 1) * 1000L);
 
             jsonArray.put(jsonObject1);
         }
@@ -396,7 +403,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
 
         Mockito.doReturn(matrixCursor).when(sqliteDatabase).rawQuery(Mockito.eq("SELECT json,syncStatus,rowid FROM client WHERE rowid > ?  ORDER BY rowid ASC LIMIT ?"), Mockito.any(Object[].class));
 
-        JsonData jsonData = eventClientRepository.getClients(0, 20,null);
+        JsonData jsonData = eventClientRepository.getClients(0, 20, null);
 
         Assert.assertEquals(30L, jsonData.getHighestRecordId());
         JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
@@ -421,5 +428,49 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         JSONObject jsonObject = jsonData.getJsonArray().getJSONObject(0);
         Assert.assertTrue(jsonObject.has(EventClientRepository.event_column.syncStatus.name()));
         Assert.assertTrue(jsonObject.has(AllConstants.ROWID));
+    }
+
+
+    @Test
+    public void testPopulateFormSubmissionIdsShouldPartitionListWithPageSize() {
+        EventClientRepository spyEventClientRepository = Mockito.spy(eventClientRepository);
+        Set<String> formSubmissionIds = new HashSet<>();
+        List<String> formSubmissionIdsList = new ArrayList<>();
+        formSubmissionIdsList.add("erwr");
+        formSubmissionIdsList.add("trytry");
+        formSubmissionIdsList.add("poll;");
+        formSubmissionIdsList.add("wer");
+        formSubmissionIdsList.add("qasdcwe");
+
+        Cursor mockCursor = Mockito.mock(Cursor.class);
+
+        Mockito.doReturn(sqliteDatabase).when(spyEventClientRepository).getReadableDatabase();
+
+        Mockito.doReturn(mockCursor).when(sqliteDatabase).rawQuery(Mockito.anyString(), Mockito.any());
+
+        Mockito.doAnswer(new Answer() {
+            int count = 0;
+
+            @Override
+            public Object answer(InvocationOnMock invocation) {
+                ++count;
+                if (count <= 1)
+                    return true;
+                else {
+                    count = 0;
+                    return false;
+                }
+            }
+        }).when(mockCursor).moveToNext();
+
+        Mockito.doAnswer(invocation -> UUID.randomUUID().toString()).when(mockCursor).getString(Mockito.eq(0));
+
+        spyEventClientRepository
+                .populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds, 2);
+
+        Mockito.verify(spyEventClientRepository, Mockito.times(3))
+                .populateFormSubmissionIds(Mockito.anyList(), Mockito.anySet(), Mockito.eq(2));
+
+        Assert.assertEquals(3, formSubmissionIds.size());
     }
 }

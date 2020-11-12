@@ -257,12 +257,55 @@ public class EventClientRepository extends BaseRepository {
         return false;
     }
 
-    private Set<String> populateFormSubmissionIds() {
-        Set<String> formSubmissionIds = new HashSet<>();
+    private List<String> getFormSubmissionIdsFromJsonArray(JSONArray array) {
+        if (array != null && array.length() != 0) {
+            List<String> stringList = new ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject jsonObject = array.optJSONObject(i);
+                if (jsonObject != null) {
+                    String formSubmissionId = jsonObject.optString(event_column.formSubmissionId.name());
+                    if (StringUtils.isNotBlank(formSubmissionId)) {
+                        stringList.add(formSubmissionId);
+                    }
+                }
+            }
+            return stringList;
+        }
+        return new ArrayList<>();
+    }
+
+    protected void populateFormSubmissionIds(@NonNull List<String> formSubmissionIdsList,
+                                             Set<String> formSubmissionIds) {
+        populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds, null);
+    }
+
+    protected void populateFormSubmissionIds(@NonNull List<String> formSubmissionIdsList,
+                                             Set<String> formSubmissionIds, @Nullable Integer pageSize) {
+        Integer pageSizeInteger = pageSize;
+
+        if (pageSizeInteger == null) {
+            pageSizeInteger = 250;
+        }
+
         String query = "SELECT "
-                + event_column.formSubmissionId
-                + " FROM "
-                + eventTable.name();
+                + EventClientRepository.event_column.formSubmissionId
+                + " FROM event";
+
+        List<String> tempList;
+
+        boolean shouldEnd = false;
+
+        if (formSubmissionIdsList.size() <= pageSizeInteger) {
+            tempList = formSubmissionIdsList;
+            shouldEnd = true;
+        } else {
+            tempList = formSubmissionIdsList.subList(0, pageSizeInteger);
+        }
+
+        int limit = formSubmissionIdsList.size() - pageSizeInteger;
+
+        query += " WHERE " + EventClientRepository.event_column.formSubmissionId + " IN ('" + StringUtils.join(tempList, "','") + "')";
+
         try (Cursor mCursor = getReadableDatabase().rawQuery(query, null)) {
             if (mCursor != null) {
                 while (mCursor.moveToNext()) {
@@ -272,14 +315,12 @@ public class EventClientRepository extends BaseRepository {
         } catch (SQLException e) {
             Timber.e(e);
         }
-        return formSubmissionIds;
-    }
 
-    public Boolean checkIfExistsByFormSubmissionId(String formSubmissionId, Set<String> formSubmissionIds) {
-        if (formSubmissionIds != null && StringUtils.isNotBlank(formSubmissionId)) {
-            return !formSubmissionIds.add(formSubmissionId);
+        if (shouldEnd) {
+            return;
         }
-        return false;
+
+        populateFormSubmissionIds(formSubmissionIdsList.subList(pageSizeInteger, pageSizeInteger + limit), formSubmissionIds, pageSizeInteger);
     }
 
     public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
@@ -570,7 +611,11 @@ public class EventClientRepository extends BaseRepository {
         SQLiteStatement insertStatement = null;
         SQLiteStatement updateStatement = null;
 
-        Set<String> formSubmissionIds = populateFormSubmissionIds();
+        List<String> formSubmissionIdsList = getFormSubmissionIdsFromJsonArray(array);
+
+        Set<String> formSubmissionIds = new HashSet<>();
+
+        populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds);
 
         try {
 
@@ -596,7 +641,7 @@ public class EventClientRepository extends BaseRepository {
                 }
 
                 maxRowId++;
-                if (checkIfExistsByFormSubmissionId(formSubmissionId, formSubmissionIds)) {
+                if (formSubmissionIds.contains(formSubmissionId)) {
                     if (populateStatement(updateStatement, eventTable, jsonObject, updateQueryWrapper.columnOrder)) {
                         updateStatement.bindLong(updateQueryWrapper.columnOrder.get(ROWID), (long) maxRowId);
                         updateStatement.executeUpdateDelete();
