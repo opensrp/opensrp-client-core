@@ -459,7 +459,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
         FetchStatus status = FetchStatus.fetchedFailed;
         status.setDisplayValue(ResponseErrorStatus.malformed_url.name());
         baseRegisterFragment.refreshSyncStatusViews(status);
@@ -472,7 +472,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
         FetchStatus status = FetchStatus.fetchedFailed;
         status.setDisplayValue(ResponseErrorStatus.not_found.name());
         baseRegisterFragment.refreshSyncStatusViews(status);
@@ -485,7 +485,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
         FetchStatus status = FetchStatus.fetchedFailed;
         status.setDisplayValue(ResponseErrorStatus.timeout.name());
         baseRegisterFragment.refreshSyncStatusViews(status);
@@ -498,7 +498,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
         baseRegisterFragment.refreshSyncStatusViews(FetchStatus.fetched);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
     }
@@ -509,7 +509,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
 
         View Layout = LayoutInflater.from(RuntimeEnvironment.application.getApplicationContext()).inflate(R.layout.fragment_base_register, null, false);
         doReturn(Layout).when(layoutInflater).inflate(R.layout.fragment_base_register, container, false);
@@ -532,7 +532,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
         baseRegisterFragment.refreshSyncStatusViews(null);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
     }
