@@ -2,7 +2,6 @@ package org.smartregister;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.test.core.app.ApplicationProvider;
 
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobCreator;

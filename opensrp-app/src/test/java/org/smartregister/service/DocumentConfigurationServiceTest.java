@@ -1,8 +1,5 @@
 package org.smartregister.service;
 
-import android.content.Context;
-import android.content.res.Configuration;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -27,14 +24,12 @@ import org.smartregister.domain.Manifest;
 import org.smartregister.domain.Response;
 import org.smartregister.dto.ClientFormResponse;
 import org.smartregister.dto.ManifestDTO;
-import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.ClientFormRepository;
 import org.smartregister.repository.ManifestRepository;
 import org.smartregister.shadows.ShadowUtils;
 
 import java.util.List;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.smartregister.domain.ResponseStatus.success;
 import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
