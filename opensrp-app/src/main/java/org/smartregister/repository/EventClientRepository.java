@@ -65,6 +65,8 @@ public class EventClientRepository extends BaseRepository {
     protected Table clientTable;
     protected Table eventTable;
 
+    protected int FORM_SUBMISSION_IDS_PAGE_SIZE = 250;
+
     public EventClientRepository() {
         this.clientTable = Table.client;
         this.eventTable = Table.event;
@@ -284,7 +286,7 @@ public class EventClientRepository extends BaseRepository {
         Integer pageSizeInteger = pageSize;
 
         if (pageSizeInteger == null) {
-            pageSizeInteger = 250;
+            pageSizeInteger = FORM_SUBMISSION_IDS_PAGE_SIZE;
         }
 
         String query = "SELECT "
