@@ -3,6 +3,7 @@ package org.smartregister.sync.helper;
 import com.google.gson.reflect.TypeToken;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -79,6 +80,7 @@ public class PlanIntentServiceHelperTest extends BaseRobolectricUnitTest {
     }
 
     @Test
+    @Ignore
     public void testBatchFetchPlansFromServer() {
 
         PlanDefinition expectedPlan = PlanIntentServiceHelper.gson.fromJson(planJson, new TypeToken<PlanDefinition>() {

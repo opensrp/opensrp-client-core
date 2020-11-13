@@ -448,7 +448,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
         doReturn(resources).when(activitySpy).getResources();
-        doReturn("Test").when(activitySpy).getString(ArgumentMatchers.anyInt());
+        doReturn("Test").when(activitySpy).getString(anyInt());
         baseRegisterFragment.refreshSyncStatusViews(FetchStatus.fetchStarted);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
     }
