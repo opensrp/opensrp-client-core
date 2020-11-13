@@ -198,8 +198,10 @@ public class SyncIntentService extends BaseSyncIntentService {
             fetchFailed(count);
         } else {
             final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
-
-            long lastServerVersion = serverVersionPair.second;
+            long lastServerVersion = serverVersionPair.second - 1;
+            if (eCount < getEventPullLimit()) {
+                lastServerVersion = serverVersionPair.second;
+            }
 
             boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
             //update sync time if all event client is save.
