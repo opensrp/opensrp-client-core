@@ -364,38 +364,10 @@ public class EventClientRepository extends BaseRepository {
         try {
             if (table.equals(clientTable)) {
                 columns = Arrays.asList(client_column.values());
-                String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
-                jsonObject.remove(client_column.syncStatus.name());
-                statement.bindString(columnOrder.get(client_column.json.name()), jsonObject.toString());
-                statement.bindString(columnOrder.get(client_column.updatedAt.name()), dateFormat.format(new Date()));
-                statement.bindString(columnOrder.get(client_column.syncStatus.name()), syncStatus);
-                statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
-                statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
-
-                bindString(statement, columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
-                bindString(statement, columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
-                JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
-                if (attributes != null) {
-                    bindString(statement, columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
-                }
+                createClientBindings(statement, jsonObject, columnOrder);
             } else if (table.equals(eventTable)) {
                 columns = Arrays.asList(event_column.values());
-                String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
-                jsonObject.remove(client_column.syncStatus.name());
-                statement.bindString(columnOrder.get(event_column.json.name()), jsonObject.toString());
-                statement.bindString(columnOrder.get(event_column.updatedAt.name()), dateFormat.format(new Date()));
-                statement.bindString(columnOrder.get(event_column.syncStatus.name()), syncStatus);
-                statement.bindString(columnOrder.get(event_column.validationStatus.name()), BaseRepository.TYPE_Valid);
-                statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
-                statement.bindString(columnOrder.get(event_column.locationId.name()), jsonObject.optString(event_column.locationId.name()));
-                if (jsonObject.has(EVENT_ID))
-                    statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
-                else if (jsonObject.has(_ID))
-                    statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
-                JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
-                if (details != null) {
-                    bindString(statement, columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
-                }
+                createEventBindings(statement, jsonObject, columnOrder);
             } else {
                 return false;
             }
@@ -426,6 +398,42 @@ public class EventClientRepository extends BaseRepository {
         } catch (JSONException e) {
             Timber.e(e);
             return false;
+        }
+    }
+
+    private void createEventBindings(SQLiteStatement statement, JSONObject jsonObject, Map<String, Integer> columnOrder) throws JSONException {
+        String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
+        jsonObject.remove(client_column.syncStatus.name());
+        statement.bindString(columnOrder.get(event_column.json.name()), jsonObject.toString());
+        statement.bindString(columnOrder.get(event_column.updatedAt.name()), dateFormat.format(new Date()));
+        statement.bindString(columnOrder.get(event_column.syncStatus.name()), syncStatus);
+        statement.bindString(columnOrder.get(event_column.validationStatus.name()), BaseRepository.TYPE_Valid);
+        statement.bindString(columnOrder.get(event_column.baseEntityId.name()), jsonObject.getString(event_column.baseEntityId.name()));
+        statement.bindString(columnOrder.get(event_column.locationId.name()), jsonObject.optString(event_column.locationId.name()));
+        if (jsonObject.has(EVENT_ID))
+            statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(EVENT_ID));
+        else if (jsonObject.has(_ID))
+            statement.bindString(columnOrder.get(event_column.eventId.name()), jsonObject.getString(_ID));
+        JSONObject details = jsonObject.optJSONObject(AllConstants.DETAILS);
+        if (details != null) {
+            bindString(statement, columnOrder.get(event_column.planId.name()), details.optString(AllConstants.PLAN_IDENTIFIER));
+        }
+    }
+
+    private void createClientBindings(SQLiteStatement statement, JSONObject jsonObject, Map<String, Integer> columnOrder) throws JSONException {
+        String syncStatus = jsonObject.has(client_column.syncStatus.name()) ? jsonObject.getString(client_column.syncStatus.name()) : BaseRepository.TYPE_Synced;
+        jsonObject.remove(client_column.syncStatus.name());
+        statement.bindString(columnOrder.get(client_column.json.name()), jsonObject.toString());
+        statement.bindString(columnOrder.get(client_column.updatedAt.name()), dateFormat.format(new Date()));
+        statement.bindString(columnOrder.get(client_column.syncStatus.name()), syncStatus);
+        statement.bindString(columnOrder.get(client_column.validationStatus.name()), BaseRepository.TYPE_Valid);
+        statement.bindString(columnOrder.get(client_column.baseEntityId.name()), jsonObject.getString(client_column.baseEntityId.name()));
+
+        bindString(statement, columnOrder.get(client_column.locationId.name()), jsonObject.optString(AllConstants.LOCATION_ID));
+        bindString(statement, columnOrder.get(client_column.clientType.name()), jsonObject.optString(AllConstants.CLIENT_TYPE));
+        JSONObject attributes = jsonObject.optJSONObject(AllConstants.ATTRIBUTES);
+        if (attributes != null) {
+            bindString(statement, columnOrder.get(client_column.residence.name()), attributes.optString(AllConstants.RESIDENCE));
         }
     }
 
