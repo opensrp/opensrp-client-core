@@ -80,6 +80,7 @@ public class SettingsActivityTest extends BaseUnitTest {
         Mockito.verify(sharedPreferences).savePort(8080);
 
         Mockito.verify(sharedPreferences).saveHost(HOSTURL);
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
     }
 
 
