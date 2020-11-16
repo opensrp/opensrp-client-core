@@ -283,10 +283,10 @@ public class EventClientRepository extends BaseRepository {
 
     protected void populateFormSubmissionIds(@NonNull List<String> formSubmissionIdsList,
                                              Set<String> formSubmissionIds, @Nullable Integer pageSize) {
-        Integer pageSizeInteger = pageSize;
+        Integer tempPageSize = pageSize;
 
-        if (pageSizeInteger == null) {
-            pageSizeInteger = FORM_SUBMISSION_IDS_PAGE_SIZE;
+        if (tempPageSize == null) {
+            tempPageSize = FORM_SUBMISSION_IDS_PAGE_SIZE;
         }
 
         String query = "SELECT "
@@ -297,18 +297,18 @@ public class EventClientRepository extends BaseRepository {
 
         boolean shouldEnd = false;
 
-        if (formSubmissionIdsList.size() <= pageSizeInteger) {
+        if (formSubmissionIdsList.size() <= tempPageSize) {
             tempList = formSubmissionIdsList;
             shouldEnd = true;
         } else {
-            tempList = formSubmissionIdsList.subList(0, pageSizeInteger);
+            tempList = formSubmissionIdsList.subList(0, tempPageSize);
         }
 
-        int limit = formSubmissionIdsList.size() - pageSizeInteger;
+        int limit = formSubmissionIdsList.size() - tempPageSize;
 
-        query += " WHERE " + EventClientRepository.event_column.formSubmissionId + " IN ('" + StringUtils.join(tempList, "','") + "')";
+        query += " WHERE " + EventClientRepository.event_column.formSubmissionId + " IN ( " + StringUtils.repeat("?", ", ", tempList.size()) + ")";
 
-        try (Cursor mCursor = getReadableDatabase().rawQuery(query, null)) {
+        try (Cursor mCursor = getReadableDatabase().rawQuery(query, tempList.toArray(new String[0]))) {
             if (mCursor != null) {
                 while (mCursor.moveToNext()) {
                     formSubmissionIds.add(mCursor.getString(0));
@@ -322,7 +322,7 @@ public class EventClientRepository extends BaseRepository {
             return;
         }
 
-        populateFormSubmissionIds(formSubmissionIdsList.subList(pageSizeInteger, pageSizeInteger + limit), formSubmissionIds, pageSizeInteger);
+        populateFormSubmissionIds(formSubmissionIdsList.subList(tempPageSize, tempPageSize + limit), formSubmissionIds, tempPageSize);
     }
 
     public Boolean checkIfExistsByFormSubmissionId(Table table, String formSubmissionId) {
