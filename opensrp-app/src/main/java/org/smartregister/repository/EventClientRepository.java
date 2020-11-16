@@ -1452,12 +1452,12 @@ public class EventClientRepository extends BaseRepository {
         try {
             if (TextUtils.isEmpty(otherTableName)) {
                 cursor = getWritableDatabase().rawQuery(String.format(
-                        "SELECT * FROM %s WHERE %s = ? OR %s = ?", primaryTableName, client_column.baseEntityId.name(), "base_entity_id"), new String[]{baseEntityId, baseEntityId});
+                        "SELECT * FROM %s WHERE %s = ?", primaryTableName, "base_entity_id"), new String[]{baseEntityId});
             } else {
                 cursor = getWritableDatabase().rawQuery(String.format(
-                        "SELECT * FROM %s INNER JOIN %s ON %s.base_entity_id = %s.base_entity_id WHERE %s.%s = ? OR %s.%s = ?"
-                        , primaryTableName, otherTableName, primaryTableName, otherTableName, primaryTableName, client_column.baseEntityId.name(), primaryTableName, "base_entity_id")
-                        , new String[]{baseEntityId, baseEntityId});
+                        "SELECT * FROM %s INNER JOIN %s ON %s.base_entity_id = %s.base_entity_id WHERE %s.%s = ?"
+                        , primaryTableName, otherTableName, primaryTableName, otherTableName, primaryTableName, "base_entity_id")
+                        , new String[]{baseEntityId});
             }
 
             if (cursor != null && cursor.moveToNext()) {
@@ -1465,27 +1465,25 @@ public class EventClientRepository extends BaseRepository {
 
                 int cols = cursor.getColumnCount();
 
-                while (cursor.moveToNext()) {
-                    for (int i = 0; i < cols; i++) {
-                        int type = cursor.getType(i);
-                        Object cellValue = null;
+                for (int i = 0; i < cols; i++) {
+                    int type = cursor.getType(i);
+                    Object cellValue = null;
 
-                        if (type == Cursor.FIELD_TYPE_FLOAT) {
-                            cellValue = cursor.getFloat(i);
-                        } else if (type == Cursor.FIELD_TYPE_INTEGER) {
-                            cellValue = cursor.getLong(i);
-                        } else if (type == Cursor.FIELD_TYPE_STRING) {
-                            cellValue = cursor.getString(i);
-                        }
-
-                        // Types BLOB and NULL are ignored
-                        // Blob is not supposed to a reporting result & NULL is already defined in the cellValue at the top
-
-                        details.put(cursor.getColumnName(i), String.valueOf(cellValue));
+                    if (type == Cursor.FIELD_TYPE_FLOAT) {
+                        cellValue = cursor.getFloat(i);
+                    } else if (type == Cursor.FIELD_TYPE_INTEGER) {
+                        cellValue = cursor.getLong(i);
+                    } else if (type == Cursor.FIELD_TYPE_STRING) {
+                        cellValue = cursor.getString(i);
                     }
+
+                    // Types BLOB and NULL are ignored
+                    // Blob is not supposed to a reporting result & NULL is already defined in the cellValue at the top
+
+                    details.put(cursor.getColumnName(i), String.valueOf(cellValue));
                 }
 
-                CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
+                CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient(details.get("base_entity_id"), details, details.get("first_name") + " " + details.get("last_name"));
                 commonPersonObjectClient.setColumnmaps(details);
 
                 return commonPersonObjectClient;
