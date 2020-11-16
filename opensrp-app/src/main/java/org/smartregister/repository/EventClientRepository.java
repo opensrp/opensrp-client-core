@@ -1433,7 +1433,62 @@ public class EventClientRepository extends BaseRepository {
                     details.put(String.valueOf(key), String.valueOf(map.get(key)));
                 }
 
-                return new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
+                CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
+                commonPersonObjectClient.setColumnmaps(details);
+                return commonPersonObjectClient;
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return null;
+    }
+
+    public CommonPersonObjectClient fetchCommonPersonObjectClientByBaseEntityId(@NonNull String primaryTableName, @NonNull String baseEntityId, @Nullable String otherTableName) {
+        Cursor cursor = null;
+        try {
+            if (TextUtils.isEmpty(otherTableName)) {
+                cursor = getWritableDatabase().rawQuery(String.format(
+                        "SELECT * FROM %s WHERE %s = ? OR %s = ?", primaryTableName, client_column.baseEntityId.name(), "base_entity_id"), new String[]{baseEntityId, baseEntityId});
+            } else {
+                cursor = getWritableDatabase().rawQuery(String.format(
+                        "SELECT * FROM %s INNER JOIN %s ON %s.base_entity_id = %s.base_entity_id WHERE %s.%s = ? OR %s.%s = ?"
+                        , primaryTableName, otherTableName, primaryTableName, otherTableName, primaryTableName, client_column.baseEntityId.name(), primaryTableName, "base_entity_id")
+                        , new String[]{baseEntityId, baseEntityId});
+            }
+
+            if (cursor != null && cursor.moveToNext()) {
+                HashMap<String, String> details = new HashMap<>();
+
+                int cols = cursor.getColumnCount();
+
+                while (cursor.moveToNext()) {
+                    for (int i = 0; i < cols; i++) {
+                        int type = cursor.getType(i);
+                        Object cellValue = null;
+
+                        if (type == Cursor.FIELD_TYPE_FLOAT) {
+                            cellValue = cursor.getFloat(i);
+                        } else if (type == Cursor.FIELD_TYPE_INTEGER) {
+                            cellValue = cursor.getLong(i);
+                        } else if (type == Cursor.FIELD_TYPE_STRING) {
+                            cellValue = cursor.getString(i);
+                        }
+
+                        // Types BLOB and NULL are ignored
+                        // Blob is not supposed to a reporting result & NULL is already defined in the cellValue at the top
+
+                        details.put(cursor.getColumnName(i), String.valueOf(cellValue));
+                    }
+                }
+
+                CommonPersonObjectClient commonPersonObjectClient = new CommonPersonObjectClient(details.get("baseEntityId"), details, details.get("first_name") + " " + details.get("last_name"));
+                commonPersonObjectClient.setColumnmaps(details);
+
+                return commonPersonObjectClient;
             }
         } catch (Exception e) {
             Timber.e(e);
