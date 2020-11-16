@@ -13,6 +13,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.util.JsonFormUtils;
 import org.smartregister.view.contract.BaseRegisterContract;
@@ -114,6 +115,11 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
     }
 
     @Override
+    public HashMap<String, String> getInjectedFieldValues(@NonNull CommonPersonObjectClient client) {
+        return model.getInjectedFieldValues(client);
+    }
+
+    @Override
     public void startForm(@NonNull String formName, @NonNull String entityId, String metaData
             , @NonNull String locationId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
         // Fetch the OpenSRP ID if this is not available
@@ -125,13 +131,15 @@ public class BaseConfigurableRegisterActivityPresenter implements BaseRegisterCo
 
         form = null;
         try {
-            form = model.getFormAsJson(formName, entityId, locationId, getInjectedFields(formName, entityId));
+            if (injectedFieldValues == null) {
+                injectedFieldValues = getInjectedFields(formName, entityId);
+            }
+            form = model.getFormAsJson(formName, entityId, locationId, injectedFieldValues);
             // TODO: FIX THIS
             /*if (formName.equals(OpdConstants.Form.OPD_DIAGNOSIS_AND_TREAT)) {
                 interactor.fetchSavedDiagnosisAndTreatmentForm(entityId, entityTable, this);
                 return;
             }*/
-
 
         } catch (JSONException e) {
             Timber.e(e);

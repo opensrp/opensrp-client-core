@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.domain.tag.FormTag;
 
 import java.util.HashMap;
@@ -25,23 +26,31 @@ public interface ConfigurableRegisterActivityContract {
 
     interface Presenter {
 
-        default void saveLanguage(String language) {}
+        default void saveLanguage(String language) {
+        }
 
-        default void startForm(String formName, String entityId, String metadata, String currentLocationId) {}
+        default void startForm(String formName, String entityId, String metadata, String currentLocationId) {
+        }
 
-        default void startForm(String formName, String entityId, String metaData, String locationId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {}
+        default void startForm(String formName, String entityId, String metaData, String locationId, @Nullable HashMap<String, String> injectedFieldValues, @Nullable String entityTable) {
+        }
 
-        default void saveForm(String jsonString, @NonNull RegisterParams registerParams) {}
+        default void saveForm(String jsonString, @NonNull RegisterParams registerParams) {
+        }
 
         default Interactor createInteractor() {
-             return null;
+            return null;
+        }
+
+        default HashMap<String, String> getInjectedFieldValues(CommonPersonObjectClient client) {
+            return null;
         }
     }
 
     interface Model {
 
         default JSONObject getFormAsJson(String formName, String entityId,
-                                 String currentLocationId) throws JSONException {
+                                         String currentLocationId) throws JSONException {
             return getFormAsJson(formName, entityId, currentLocationId, null);
         }
 
@@ -56,6 +65,10 @@ public interface ConfigurableRegisterActivityContract {
         void saveLanguage(String language);
 
         HashMap<Client, List<Event>> processRegistration(String jsonString, FormTag formTag);
+
+        default HashMap<String, String> getInjectedFieldValues(CommonPersonObjectClient client) {
+            return null;
+        }
 
         String getLocationId(String locationName);
 
