@@ -261,7 +261,6 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
             if (viewClient != null) {
                 if (viewClient instanceof CommonPersonObjectClient) {
                     if (view.getTag(R.id.VIEW_TYPE).equals(RegisterViewConstants.Provider.CHILD_COLUMN)) {
-
                         goToClientDetailActivity((CommonPersonObjectClient) viewClient);
                     } else if (view.getTag(R.id.VIEW_TYPE).equals(RegisterViewConstants.Provider.ACTION_BUTTON_COLUMN)) {
                         performPatientAction((CommonPersonObjectClient) viewClient);
@@ -378,9 +377,8 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     @Override
     public void initializeAdapter() {
-        BaseRegisterProvider childRegisterProvider = new BaseRegisterProvider(getActivity(), registerActionHandler, paginationViewHandler);
-        //childRegisterProvider.setModuleName("custom-family");
-        clientAdapter = new RecyclerViewPaginatedAdapter(null, childRegisterProvider, context().commonrepository(this.tablename));
+        BaseRegisterProvider registerProvider = new BaseRegisterProvider(getActivity(), registerActionHandler, paginationViewHandler);
+        clientAdapter = new RecyclerViewPaginatedAdapter(null, registerProvider, context().commonrepository(this.tablename));
         clientAdapter.setCurrentlimit(20);
         clientsView.setAdapter(clientAdapter);
     }

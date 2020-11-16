@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.smartregister.CoreLibrary;
 import org.smartregister.clientandeventmodel.Client;
 import org.smartregister.clientandeventmodel.Event;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.domain.tag.FormTag;
 import org.smartregister.location.helper.LocationHelper;
@@ -74,6 +75,20 @@ public class BaseConfigurableRegisterActivityModel implements BaseRegisterContra
 
     @Nullable
     @Override
+    public HashMap<String, String> getInjectedFieldValues(CommonPersonObjectClient client) {
+        HashMap<String, String> injectableFields = ConfigurationInstancesHelper.newInstance(getModuleConfiguration().getFormProcessorClass()).getInjectableFields();
+        if (injectableFields != null) {
+            HashMap<String, String> injectableFieldValues = new HashMap<>();
+            for (String formKey : injectableFields.keySet()) {
+                injectableFieldValues.put(formKey, client.getDetails().get(injectableFields.get(formKey)));
+            }
+            return injectableFieldValues;
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
     public JSONObject getFormAsJson(String formName, String entityId, String currentLocationId) throws JSONException {
         return getFormAsJson(formName, entityId, currentLocationId, null);
     }
@@ -81,7 +96,7 @@ public class BaseConfigurableRegisterActivityModel implements BaseRegisterContra
     @Nullable
     @Override
     public JSONObject getFormAsJson(String formName, String entityId,
-                             String currentLocationId, @Nullable HashMap<String, String> injectedValues) throws JSONException {
+                                    String currentLocationId, @Nullable HashMap<String, String> injectedValues) throws JSONException {
         try {
             JSONObject form = FormUtils.getInstance(CoreLibrary.getInstance().context().applicationContext())
                     .getFormJson(formName);
