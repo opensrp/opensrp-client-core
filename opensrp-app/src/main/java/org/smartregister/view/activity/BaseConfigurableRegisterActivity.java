@@ -18,6 +18,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.client.utils.domain.Form;
+import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
 import org.smartregister.util.JsonFormUtils;
@@ -54,7 +55,6 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
         super.onCreate(savedInstanceState);
         onStartActivityWithAction();
-
     }
 
     private void fetchModuleConfiguration() {
@@ -81,11 +81,16 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
     }
 
     protected void onStartActivityWithAction() {
-        String baseEntityId = getIntent().getStringExtra(BASE_ENTITY_ID);
         String action = getIntent().getStringExtra(ACTION);
-        ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
-        if (ACTION_REGISTRATION.equals(action) && moduleMetadata != null) {
-            startFormActivity(moduleMetadata.getRegistrationFormName(), baseEntityId, (String) null);
+        if (action != null) {
+            CommonPersonObjectClient client = (CommonPersonObjectClient) getIntent().getSerializableExtra(AllConstants.INTENT_KEY.COMMON_PERSON_CLIENT);
+            ModuleMetadata moduleMetadata = getModuleConfiguration().getModuleMetadata();
+            if (ACTION_REGISTRATION.equals(action) && moduleMetadata != null) {
+                String baseEntityId = getIntent().getStringExtra(AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID);
+                String table = getIntent().getStringExtra(AllConstants.IntentExtra.JsonForm.ENTITY_TABLE);
+
+                startFormActivity(moduleMetadata.getRegistrationFormName(), baseEntityId, null, presenter().getInjectedFieldValues(client), table);
+            }
         }
     }
 
