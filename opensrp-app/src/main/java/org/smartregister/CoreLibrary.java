@@ -4,9 +4,11 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -301,6 +303,10 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         }
         return moduleConfiguration;
 
+    }
+
+    public void setCurrentModule(@NonNull String moduleName) {
+        this.currentModule = moduleName;
     }
 
     @NonNull
