@@ -5,16 +5,20 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.widget.TableRow;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import com.google.common.collect.ImmutableMap;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.robolectric.RuntimeEnvironment;
-import org.smartregister.BaseUnitTest;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
@@ -26,6 +30,7 @@ import org.smartregister.domain.jsonmapping.util.Team;
 import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
+import org.smartregister.repository.AllSharedPreferences;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +40,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -46,7 +52,13 @@ import static org.smartregister.util.Utils.getDefaultLocale;
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
-public class UtilsTest extends BaseUnitTest {
+public class UtilsTest extends BaseRobolectricUnitTest {
+
+    @Before
+    public void setUp() {
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
+    }
 
     @Test
     public void assertConvertDateFormatTestReturnsDate() throws Exception {
