@@ -29,6 +29,7 @@ import org.smartregister.shadows.ShadowUtils;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.spy;
 import static org.smartregister.domain.ResponseStatus.success;
 import static org.smartregister.service.DocumentConfigurationService.IDENTIFIERS;
 import static org.smartregister.service.DocumentConfigurationService.MANIFEST_FORMS_VERSION;
@@ -58,7 +59,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        documentConfigurationService = Mockito.spy(new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration));
+        documentConfigurationService = new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration);
         Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
     }
 
@@ -101,7 +102,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
                 new Response<String>(
                         success,
                         jsonObject));
-
+        documentConfigurationService=spy(documentConfigurationService);
         Mockito.doNothing().when(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
         Mockito.doNothing().when(documentConfigurationService).syncClientForms(Mockito.any());
         documentConfigurationService.fetchManifest();
@@ -124,6 +125,7 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
         manifest.setFormVersion("0.0.1");
         Mockito.doReturn(manifest).when(manifestRepository).getActiveManifest();
         Mockito.doNothing().when(manifestRepository).addOrUpdate(Mockito.any(Manifest.class));
+        documentConfigurationService=spy(documentConfigurationService);
         Mockito.doNothing().when(documentConfigurationService).syncClientForms(Mockito.any());
         documentConfigurationService.fetchManifest();
 
