@@ -1,6 +1,7 @@
 package org.smartregister.sync.helper;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 
@@ -281,8 +282,7 @@ public class TaskServiceHelper extends BaseHelper {
         }
     }
 
-    @VisibleForTesting
-    protected HTTPAgent getHttpAgent() {
+    private HTTPAgent getHttpAgent() {
         return CoreLibrary.getInstance().context().getHttpAgent();
     }
 }

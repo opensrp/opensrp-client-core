@@ -2,8 +2,8 @@ package org.smartregister.sync.helper;
 
 import com.google.gson.reflect.TypeToken;
 
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
@@ -33,6 +33,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -43,7 +44,6 @@ import static org.smartregister.sync.helper.TaskServiceHelper.TASK_LAST_SYNC_DAT
  * Created by Richard Kareko on 6/23/20.
  */
 
-@Ignore
 public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Mock
@@ -64,28 +64,33 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Captor
     private ArgumentCaptor<Task> taskArgumentCaptor;
 
-    private TaskServiceHelper taskServiceHelper = Mockito.spy(TaskServiceHelper.getInstance());
+    private TaskServiceHelper taskServiceHelper;
 
-    private String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": 3, \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionEndDate\": \"2020-04-02T00:00:00.000+02:00\", \"executionStartDate\": \"2020-03-26T00:00:00.000+02:00\"}";
+    private final String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": 3, \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionEndDate\": \"2020-04-02T00:00:00.000+02:00\", \"executionStartDate\": \"2020-03-26T00:00:00.000+02:00\"}";
 
-    private String planId = "eb3cd7e1-c849-5230-8d49-943218018f9f";
+    private final String planId = "eb3cd7e1-c849-5230-8d49-943218018f9f";
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        Whitebox.setInternalState(taskServiceHelper, "taskRepository", taskRepository);
+        taskServiceHelper = new TaskServiceHelper(taskRepository);
         CoreLibrary.getInstance().context().updateApplicationContext(RuntimeEnvironment.application);
         CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "planDefinitionRepository", planDefinitionRepository);
         Whitebox.setInternalState(CoreLibrary.getInstance().context(), "locationRepository", locationRepository);
-        Mockito.doReturn(httpAgent).when(taskServiceHelper).getHttpAgent();
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "httpAgent", httpAgent);
+    }
 
+    @After
+    public void tearDown() {
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "httpAgent", (HTTPAgent) null);
     }
 
     @Test
     public void testSyncTasks() {
+        taskServiceHelper=spy(taskServiceHelper);
         taskServiceHelper.syncTasks();
         verify(taskServiceHelper).syncCreatedTaskToServer();
         verify(taskServiceHelper).syncTaskStatusToServer();
@@ -108,8 +113,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
-        ArrayList tasks = new ArrayList();
-        tasks.add(expectedTask);
+        List<Task> tasks = Collections.singletonList(expectedTask);
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
                         TaskServiceHelper.taskGson.toJson(tasks)).withTotalRecords(1L),
@@ -145,8 +149,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Unsynced);
-        ArrayList tasks = new ArrayList();
-        tasks.add(expectedTask);
+        List<Task> tasks = Collections.singletonList(expectedTask);
 
         //reset task last sync date to zero since this is updated by other tests
         CoreLibrary.getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
@@ -218,8 +221,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
-        ArrayList tasks = new ArrayList();
-        tasks.add(expectedTask);
+        List<Task> tasks = Collections.singletonList(expectedTask);
         String expectedJsonPayload = TaskServiceHelper.taskGson.toJson(tasks);
 
         when(taskRepository.getAllUnsynchedCreatedTasks()).thenReturn(tasks);
@@ -244,8 +246,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
-        ArrayList tasks = new ArrayList();
-        tasks.add(expectedTask);
+        List<Task> tasks = Collections.singletonList(expectedTask);
         String expectedJsonPayload = TaskServiceHelper.taskGson.toJson(tasks);
 
         when(taskRepository.getAllUnsynchedCreatedTasks()).thenReturn(tasks);
@@ -269,8 +270,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
         expectedTask.setSyncStatus(BaseRepository.TYPE_Created);
-        ArrayList tasks = new ArrayList();
-        tasks.add(expectedTask);
+        List<Task> tasks = Collections.singletonList(expectedTask);
         String expectedJsonPayload = TaskServiceHelper.taskGson.toJson(tasks);
 
         when(taskRepository.getAllUnsynchedCreatedTasks()).thenReturn(tasks);
