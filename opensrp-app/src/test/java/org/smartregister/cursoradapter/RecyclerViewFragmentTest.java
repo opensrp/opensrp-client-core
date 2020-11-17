@@ -47,7 +47,7 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
     }
 
     public void initWithActivity() {
-        activity = spy(Robolectric.buildActivity(BaseRegisterActivityMock.class).create().start().resume().get());
+        activity = Robolectric.buildActivity(BaseRegisterActivityMock.class).create().start().resume().get();
         activity.getSupportFragmentManager().beginTransaction().add(recyclerViewFragment, "recyclerViewFragment").commit();
     }
 
@@ -81,8 +81,8 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testGetCurrentVillageFilter() {
-        ReflectionHelpers.setField(recyclerViewFragment, "getCurrentVillageFilter", sortOption);
-        assertEquals(sortOption, recyclerViewFragment.getCurrentVillageFilter());
+        ReflectionHelpers.setField(recyclerViewFragment, "currentVillageFilter", filterOption);
+        assertEquals(filterOption, recyclerViewFragment.getCurrentVillageFilter());
     }
 
     @Test
