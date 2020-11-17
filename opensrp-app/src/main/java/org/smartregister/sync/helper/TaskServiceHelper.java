@@ -40,7 +40,7 @@ import timber.log.Timber;
 
 public class TaskServiceHelper extends BaseHelper {
 
-    private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
+    private final AllSharedPreferences allSharedPreferences;
 
     protected final Context context;
     private TaskRepository taskRepository;
@@ -63,6 +63,7 @@ public class TaskServiceHelper extends BaseHelper {
 
     /**
      * If set to false tasks will sync by owner otherwise defaults to sync by group identifier
+     *
      * @param syncByGroupIdentifier flag for determining if tasks should be synced by group identifier
      *                              or owner (username)
      */
@@ -85,6 +86,7 @@ public class TaskServiceHelper extends BaseHelper {
     public TaskServiceHelper(TaskRepository taskRepository) {
         this.context = CoreLibrary.getInstance().context().applicationContext();
         this.taskRepository = taskRepository;
+        this.allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
     }
 
     public List<Task> syncTasks() {
@@ -109,7 +111,7 @@ public class TaskServiceHelper extends BaseHelper {
         syncProgress.setSyncEntity(SyncEntity.TASKS);
         syncProgress.setTotalRecords(totalRecords);
 
-        List<Task> tasks = batchFetchTasksFromServer(planDefinitions,groups, new ArrayList<>(), true);
+        List<Task> tasks = batchFetchTasksFromServer(planDefinitions, groups, new ArrayList<>(), true);
 
         syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, tasks.size()));
         sendSyncProgressBroadcast(syncProgress, context);

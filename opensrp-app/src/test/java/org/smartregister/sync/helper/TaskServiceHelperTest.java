@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.Task;
@@ -76,9 +77,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        taskServiceHelper = new TaskServiceHelper(taskRepository);
         allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
-        Whitebox.setInternalState(taskServiceHelper, "allSharedPreferences", allSharedPreferences);
+        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
+        taskServiceHelper = new TaskServiceHelper(taskRepository);
         allSharedPreferences.getPreferences().edit().clear().apply();
         allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
         allSharedPreferences.savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
@@ -89,7 +90,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        Whitebox.setInternalState(getInstance().context(), "httpAgent", (HTTPAgent) null);
+        initCoreLibrary();
     }
 
     @Test
