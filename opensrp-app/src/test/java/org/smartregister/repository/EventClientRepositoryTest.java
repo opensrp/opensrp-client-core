@@ -434,6 +434,7 @@ public class EventClientRepositoryTest extends BaseUnitTest {
     @Test
     public void testPopulateFormSubmissionIdsShouldPartitionListWithPageSize() {
         EventClientRepository spyEventClientRepository = Mockito.spy(eventClientRepository);
+        spyEventClientRepository.FORM_SUBMISSION_IDS_PAGE_SIZE = 2;
         Set<String> formSubmissionIds = new HashSet<>();
         List<String> formSubmissionIdsList = new ArrayList<>();
         formSubmissionIdsList.add("erwr");
@@ -466,10 +467,10 @@ public class EventClientRepositoryTest extends BaseUnitTest {
         Mockito.doAnswer(invocation -> UUID.randomUUID().toString()).when(mockCursor).getString(Mockito.eq(0));
 
         spyEventClientRepository
-                .populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds, 2);
+                .populateFormSubmissionIds(formSubmissionIdsList, formSubmissionIds);
 
         Mockito.verify(spyEventClientRepository, Mockito.times(3))
-                .populateFormSubmissionIds(Mockito.anyList(), Mockito.anySet(), Mockito.eq(2));
+                .populateFormSubmissionIds(Mockito.anyList(), Mockito.anySet());
 
         Assert.assertEquals(3, formSubmissionIds.size());
     }
