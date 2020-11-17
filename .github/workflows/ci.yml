@@ -25,10 +25,15 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
       - name: Run unit tests with Gradle
+        run: ./gradlew :opensrp-app:testDebugUnitTest --tests org.smartregister.sync.helper.BaseHelperTest
+      - name: Run unit tests with Gradle
+        run: ./gradlew :opensrp-app:testDebugUnitTest --tests org.smartregister.sync.intent.SettingsSyncIntentServiceTest
+      - name: Run unit tests with Gradle
         run: ./gradlew opensrp-app:clean opensrp-app:jacocoTestReport --stacktrace --info
       - name: Generate Javadoc with Gradle
         run: ./gradlew javadoc
       - name: Upload coverage to Coveralls with Gradle
         run: ./gradlew opensrp-app:coveralls --stacktrace
+
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_TOKEN }}

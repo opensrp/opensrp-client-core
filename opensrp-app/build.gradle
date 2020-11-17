@@ -128,11 +128,22 @@ android {
     }
 }
 
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.api.tasks.testing.logging.TestLogEvent
+
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     testLogging {
         // to see the exceptions of failed tests in Travis-CI console.
-        exceptionFormat = 'full'
+        //exceptionFormat = 'full'
+        events TestLogEvent.FAILED,
+                TestLogEvent.PASSED,
+                TestLogEvent.SKIPPED,
+                TestLogEvent.STANDARD_OUT
+        exceptionFormat TestExceptionFormat.FULL
+        showExceptions true
+        showCauses true
+        showStackTraces true
 
         error {
             exceptionFormat = 'full'
