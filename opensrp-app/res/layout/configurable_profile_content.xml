@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/sick_child_reg_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/child_icon"
+            android:layout_width="58dp"
+            android:layout_height="38dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_child_care"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_sick_child_reg"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="44dp"
+            android:text="View sick child registration"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_child_registration"
+            app:layout_constraintStart_toEndOf="@+id/child_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_child_reg_days_ago"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="105dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:text="3 days ago"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/light_grey_text"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_child_registration"
+            app:layout_constraintHorizontal_bias="0.06"
+            app:layout_constraintStart_toEndOf="@+id/child_icon"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_sick_child_reg" />
+
+        <ImageView
+            android:id="@+id/navigate_child_registration"
+            android:layout_width="39dp"
+            android:layout_height="53dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_navigate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/medical_history_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/medical_history_icon"
+            android:layout_width="58dp"
+            android:layout_height="38dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_child_care"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_medical_history"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="44dp"
+            android:text="View medical history"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_medical_history"
+            app:layout_constraintStart_toEndOf="@+id/medical_history_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_last_visit_days_ago"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="215dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:text="Last visit 12 Jan 2018"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/light_grey_text"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_medical_history"
+            app:layout_constraintHorizontal_bias="0.178"
+            app:layout_constraintStart_toEndOf="@+id/medical_history_icon"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_medical_history" />
+
+        <ImageView
+            android:id="@+id/navigate_medical_history"
+            android:layout_width="39dp"
+            android:layout_height="53dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_navigate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/upcoming_services_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/upcoming_services_icon"
+            android:layout_width="58dp"
+            android:layout_height="38dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_child_care"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_upcoming_services"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="44dp"
+            android:text="Upcoming services"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_upcoming_services"
+            app:layout_constraintStart_toEndOf="@+id/upcoming_services_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_upcoming_services_due"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="215dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:text="MNP due 30 Jan"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/light_grey_text"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_upcoming_services"
+            app:layout_constraintHorizontal_bias="0.178"
+            app:layout_constraintStart_toEndOf="@+id/upcoming_services_icon"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_upcoming_services" />
+
+        <ImageView
+            android:id="@+id/navigate_upcoming_services"
+            android:layout_width="39dp"
+            android:layout_height="53dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_navigate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/family_profile_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/family_profile_icon"
+            android:layout_width="58dp"
+            android:layout_height="38dp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_child_care"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_family_profile"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="216dp"
+            android:layout_height="25dp"
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="44dp"
+            android:text="Family profile"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:textColor="@android:color/black"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_family_profile"
+            app:layout_constraintStart_toEndOf="@+id/family_profile_icon"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <org.smartregister.view.customcontrols.CustomFontTextView
+            android:id="@+id/text_view_family_profile_services_due"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
+            android:layout_width="215dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:text="Family has services due"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/light_grey_text"
+            app:layout_constraintEnd_toStartOf="@+id/navigate_family_profile"
+            app:layout_constraintHorizontal_bias="0.178"
+            app:layout_constraintStart_toEndOf="@+id/family_profile_icon"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_family_profile" />
+
+        <ImageView
+            android:id="@+id/navigate_family_profile"
+            android:layout_width="39dp"
+            android:layout_height="53dp"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="16dp"
+            android:src="@drawable/ic_navigate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

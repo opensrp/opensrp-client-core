@@ -145,5 +145,7 @@
 
     <dimen name="register_list_item_padding">7dp</dimen>
     <dimen name="register_list_top_bottom_padding">7dp</dimen>
+    
+    <dimen name="configurable_member_profile_name_size">20sp</dimen>
 
 </resources>

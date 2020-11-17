@@ -66,4 +66,6 @@
     <color name="brown">#C15F26</color>
     <color name="chw_primary">@color/customAppThemeBlue</color>
 
+    <color name="top_section_background_grey">#ecf1f7</color>
+
 </resources>
