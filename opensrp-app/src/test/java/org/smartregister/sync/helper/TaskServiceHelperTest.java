@@ -9,16 +9,14 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.robolectric.RuntimeEnvironment;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.CoreLibrary;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.Task;
 import org.smartregister.domain.TaskUpdate;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.LocationRepository;
 import org.smartregister.repository.PlanDefinitionRepository;
@@ -37,6 +35,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
+import static org.smartregister.CoreLibrary.getInstance;
 import static org.smartregister.repository.AllSharedPreferences.ANM_IDENTIFIER_PREFERENCE_KEY;
 import static org.smartregister.sync.helper.TaskServiceHelper.TASK_LAST_SYNC_DATE;
 
@@ -72,25 +71,24 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         taskServiceHelper = new TaskServiceHelper(taskRepository);
-        CoreLibrary.getInstance().context().updateApplicationContext(RuntimeEnvironment.application);
-        CoreLibrary.getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
-        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "planDefinitionRepository", planDefinitionRepository);
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "locationRepository", locationRepository);
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "httpAgent", httpAgent);
+        Whitebox.setInternalState(getInstance().context(), "allSharedPreferences", (AllSharedPreferences) null);
+        getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
+        getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
+        getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
+        Whitebox.setInternalState(getInstance().context(), "planDefinitionRepository", planDefinitionRepository);
+        Whitebox.setInternalState(getInstance().context(), "locationRepository", locationRepository);
+        Whitebox.setInternalState(getInstance().context(), "httpAgent", httpAgent);
     }
 
     @After
     public void tearDown() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "httpAgent", (HTTPAgent) null);
+        Whitebox.setInternalState(getInstance().context(), "httpAgent", (HTTPAgent) null);
     }
 
     @Test
     public void testSyncTasks() {
-        taskServiceHelper=spy(taskServiceHelper);
+        taskServiceHelper = spy(taskServiceHelper);
         taskServiceHelper.syncTasks();
         verify(taskServiceHelper).syncCreatedTaskToServer();
         verify(taskServiceHelper).syncTaskStatusToServer();
@@ -100,15 +98,15 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     public void testFetchTasksFromServerSyncByGroupIdentifier() {
         Set<String> planIdSet = new HashSet<>();
         planIdSet.add(planId);
-        when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
+        when(getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
 
         String locationId = "3952";
         List<String> locationIdList = new ArrayList<>();
         locationIdList.add(locationId);
-        when(CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
+        when(getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
 
         //reset task last sync date to zero since this is updated by other tests
-        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
+        getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
@@ -139,12 +137,12 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     public void testFetchTasksFromServerSyncByOwner() {
         Set<String> planIdSet = new HashSet<>();
         planIdSet.add(planId);
-        when(CoreLibrary.getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
+        when(getInstance().context().getPlanDefinitionRepository().findAllPlanDefinitionIds()).thenReturn(planIdSet);
 
         String locationId = "3952";
         List<String> locationIdList = new ArrayList<>();
         locationIdList.add(locationId);
-        when(CoreLibrary.getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
+        when(getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
 
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
@@ -152,7 +150,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         List<Task> tasks = Collections.singletonList(expectedTask);
 
         //reset task last sync date to zero since this is updated by other tests
-        CoreLibrary.getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
+        getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
                         TaskServiceHelper.taskGson.toJson(tasks)).withTotalRecords(1L),
