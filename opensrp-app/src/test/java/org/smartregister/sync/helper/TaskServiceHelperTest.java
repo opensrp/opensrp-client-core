@@ -1,5 +1,7 @@
 package org.smartregister.sync.helper;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import com.google.gson.reflect.TypeToken;
 
 import org.junit.After;
@@ -29,6 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.spy;
@@ -65,6 +68,8 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     private TaskServiceHelper taskServiceHelper;
 
+    private AllSharedPreferences allSharedPreferences;
+
     private final String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": 3, \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionEndDate\": \"2020-04-02T00:00:00.000+02:00\", \"executionStartDate\": \"2020-03-26T00:00:00.000+02:00\"}";
 
     private final String planId = "eb3cd7e1-c849-5230-8d49-943218018f9f";
@@ -72,10 +77,11 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() {
         taskServiceHelper = new TaskServiceHelper(taskRepository);
-        Whitebox.setInternalState(getInstance().context(), "allSharedPreferences", (AllSharedPreferences) null);
-        getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
-        getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
+        allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
+        Whitebox.setInternalState(taskServiceHelper, "allSharedPreferences", allSharedPreferences);
+        allSharedPreferences.getPreferences().edit().clear().apply();
+        allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
+        allSharedPreferences.savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
         Whitebox.setInternalState(getInstance().context(), "planDefinitionRepository", planDefinitionRepository);
         Whitebox.setInternalState(getInstance().context(), "locationRepository", locationRepository);
         Whitebox.setInternalState(getInstance().context(), "httpAgent", httpAgent);
@@ -106,7 +112,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         when(getInstance().context().getLocationRepository().getAllLocationIds()).thenReturn(locationIdList);
 
         //reset task last sync date to zero since this is updated by other tests
-        getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Task expectedTask = TaskServiceHelper.taskGson.fromJson(taskJSon, new TypeToken<Task>() {
         }.getType());
@@ -150,7 +156,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         List<Task> tasks = Collections.singletonList(expectedTask);
 
         //reset task last sync date to zero since this is updated by other tests
-        getInstance().context().allSharedPreferences().savePreference(TASK_LAST_SYNC_DATE, "0");
+        allSharedPreferences.savePreference(TASK_LAST_SYNC_DATE, "0");
 
         Mockito.doReturn(new Response<>(ResponseStatus.success,    // returned on first call
                         TaskServiceHelper.taskGson.toJson(tasks)).withTotalRecords(1L),
