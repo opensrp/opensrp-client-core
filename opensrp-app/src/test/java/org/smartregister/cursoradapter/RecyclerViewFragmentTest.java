@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
 import org.smartregister.R;
 import org.smartregister.view.activity.mock.BaseRegisterActivityMock;
 import org.smartregister.view.dialog.FilterOption;
@@ -49,6 +50,8 @@ public class RecyclerViewFragmentTest extends BaseRobolectricUnitTest {
     public void initWithActivity() {
         activity = Robolectric.buildActivity(BaseRegisterActivityMock.class).create().start().resume().get();
         activity.getSupportFragmentManager().beginTransaction().add(recyclerViewFragment, "recyclerViewFragment").commit();
+        Context.getInstance();
+        Context.getInstance().updateApplicationContext(activity.getApplicationContext());
     }
 
     @After

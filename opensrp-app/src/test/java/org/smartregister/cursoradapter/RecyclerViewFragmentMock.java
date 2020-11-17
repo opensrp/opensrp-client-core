@@ -1,10 +1,7 @@
 package org.smartregister.cursoradapter;
 
-import org.mockito.Mockito;
-import org.smartregister.cursoradapter.RecyclerViewFragment;
 import org.smartregister.provider.SmartRegisterClientsProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity;
-import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.ClientsHeaderProvider;
 import org.smartregister.view.activity.SecuredNativeSmartRegisterActivity.DefaultOptionsProvider;
 import org.smartregister.view.dialog.FilterOption;
 import org.smartregister.view.dialog.ServiceModeOption;
