@@ -27,7 +27,6 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
-import org.smartregister.TestApplication;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountError;

@@ -78,7 +78,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() {
         allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
+        Whitebox.setInternalState(getInstance().context(), "allSharedPreferences", allSharedPreferences);
         taskServiceHelper = new TaskServiceHelper(taskRepository);
         allSharedPreferences.getPreferences().edit().clear().apply();
         allSharedPreferences.savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");

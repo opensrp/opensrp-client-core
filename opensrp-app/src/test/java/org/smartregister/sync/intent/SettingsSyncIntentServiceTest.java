@@ -3,6 +3,7 @@ package org.smartregister.sync.intent;
 import android.content.Intent;
 
 import com.evernote.android.job.JobRequest;
+import com.evernote.android.job.ShadowJobManager;
 
 import org.json.JSONException;
 import org.junit.After;
@@ -11,12 +12,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.Robolectric;
-import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
-
-import com.evernote.android.job.ShadowJobManager;
 
 
 /**

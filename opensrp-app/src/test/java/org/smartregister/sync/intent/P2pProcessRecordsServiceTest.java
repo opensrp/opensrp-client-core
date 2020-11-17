@@ -10,7 +10,6 @@ import org.robolectric.Robolectric;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.TestP2pApplication;
 import org.smartregister.domain.FetchStatus;

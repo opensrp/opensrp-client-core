@@ -9,8 +9,6 @@ import org.mockito.Mockito;
 import org.robolectric.Robolectric;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
-import org.smartregister.CoreLibrary;
 import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.service.DocumentConfigurationService;
 
