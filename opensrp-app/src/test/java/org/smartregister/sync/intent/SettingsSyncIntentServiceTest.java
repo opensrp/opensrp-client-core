@@ -35,7 +35,7 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() throws Exception {
-        ReflectionHelpers.setStaticField(Context.class, "context", null);
+        initCoreLibrary();
     }
 
     @Test

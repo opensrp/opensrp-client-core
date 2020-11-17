@@ -55,11 +55,8 @@ public class P2pProcessRecordsServiceTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() throws Exception {
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "eventClientRepository", null);
         ReflectionHelpers.setStaticField(ClientProcessorForJava.class, "instance", null);
-        ReflectionHelpers.setStaticField(Context.class, "context", null);
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        initCoreLibrary();
     }
 
     @Test

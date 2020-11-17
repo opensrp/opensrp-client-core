@@ -30,8 +30,7 @@ public class DocumentConfigurationIntentServiceTest extends BaseRobolectricUnitT
 
     @After
     public void tearDown() throws Exception {
-        ReflectionHelpers.setStaticField(Context.class, "context", null);
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        initCoreLibrary();
     }
 
     @Test

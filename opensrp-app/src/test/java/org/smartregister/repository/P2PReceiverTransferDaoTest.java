@@ -83,8 +83,7 @@ public class P2PReceiverTransferDaoTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() throws Exception {
-        ReflectionHelpers.setStaticField(Context.class, "context", null);
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        initCoreLibrary();
     }
 
     @Test

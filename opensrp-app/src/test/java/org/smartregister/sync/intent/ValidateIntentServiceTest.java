@@ -21,6 +21,7 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.DristhiConfiguration;
 import org.smartregister.SyncConfiguration;
+import org.smartregister.TestApplication;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.repository.EventClientRepository;
@@ -71,10 +72,7 @@ public class ValidateIntentServiceTest extends BaseUnitTest {
 
     @After
     public void tearDown() {
-        ReflectionHelpers.setField(validateIntentService, "context", null);
-        ReflectionHelpers.setField(validateIntentService, "httpAgent", null);
-        ReflectionHelpers.setField(validateIntentService, "openSRPContext", null);
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        TestApplication.getInstance().initCoreLibrary();
     }
 
     private void mockMethods() throws JSONException {

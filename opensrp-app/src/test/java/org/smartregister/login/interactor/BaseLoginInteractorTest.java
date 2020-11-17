@@ -27,6 +27,7 @@ import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
+import org.smartregister.TestApplication;
 import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.account.AccountConfiguration;
 import org.smartregister.account.AccountError;
@@ -189,10 +190,7 @@ public class BaseLoginInteractorTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        Whitebox.setInternalState(CoreLibrary.getInstance().context(), "userService", userService);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "context", context);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "accountManager", mAccountManager);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "authenticatorXml", accountAuthenticatorXml);
+        initCoreLibrary();
     }
 
     @Test
