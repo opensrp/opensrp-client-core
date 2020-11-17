@@ -1,9 +1,7 @@
 package org.smartregister.sync.helper;
 
 import org.json.JSONException;
-import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockitoAnnotations;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
@@ -16,14 +14,6 @@ import static org.junit.Assert.assertEquals;
 
 public class SyncableJSONObjectTest extends BaseRobolectricUnitTest {
 
-    private SyncableJSONObject syncableJSONObject;
-
-    @Before
-    public void setUp() {
-        MockitoAnnotations.initMocks(this);
-
-    }
-
     @Test
     public void testConstructor() throws JSONException {
         String username = "testuser";
@@ -31,7 +21,7 @@ public class SyncableJSONObjectTest extends BaseRobolectricUnitTest {
         CoreLibrary.getInstance().context().allSharedPreferences().saveDefaultLocalityId(username, "location-id1");
         CoreLibrary.getInstance().context().allSharedPreferences().saveDefaultTeam(username, "testteam");
         CoreLibrary.getInstance().context().allSharedPreferences().saveDefaultTeamId(username, "test-team-id");
-        syncableJSONObject = new SyncableJSONObject("{\"name\" : \"testObject\"}");
+        SyncableJSONObject syncableJSONObject = new SyncableJSONObject("{\"name\" : \"testObject\"}");
 
         assertEquals("testObject", syncableJSONObject.getString("name"));
         assertEquals("testuser", syncableJSONObject.getString(SyncFilter.PROVIDER.value()));
