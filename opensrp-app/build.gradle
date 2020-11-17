@@ -133,6 +133,10 @@ tasks.withType(Test) {
     testLogging {
         // to see the exceptions of failed tests in Travis-CI console.
         exceptionFormat = 'full'
+
+        error {
+            exceptionFormat = 'full'
+        }
     }
     maxHeapSize = "2g"
 }
