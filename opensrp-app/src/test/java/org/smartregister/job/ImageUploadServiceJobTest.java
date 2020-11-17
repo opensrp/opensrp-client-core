@@ -1,17 +1,28 @@
 package org.smartregister.job;
 
-import org.junit.Test;
-import org.smartregister.BaseUnitTest;
+import android.content.ContextWrapper;
+import android.content.Intent;
 
-import static org.junit.Assert.*;
+import org.junit.Assert;
+import org.junit.Test;
+import org.robolectric.Shadows;
+import org.robolectric.shadows.ShadowLooper;
+import org.smartregister.BaseUnitTest;
+import org.smartregister.TestApplication;
+import org.smartregister.service.ImageUploadSyncService;
 
 /**
  * Created by Vincent Karuri on 17/11/2020
  */
-public class ImageUploadServiceJobTest extends BaseUnitTest {
+public class ImageUploadServiceJobTest extends ServiceJobTest {
 
-    @Test
-    public void testOnRunJobShouldStartImageUploadService() {
-        ImageUploadServiceJob.scheduleJobImmediately(ImageUploadServiceJob.TAG);
+    @Override
+    protected String getServiceId() {
+        return "org.smartregister.service.ImageUploadSyncService";
+    }
+
+    @Override
+    protected BaseJob getJob() {
+        return new ImageUploadServiceJob();
     }
 }

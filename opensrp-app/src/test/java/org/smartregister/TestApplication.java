@@ -76,8 +76,6 @@ public class TestApplication extends DrishtiApplication {
             switch (tag) {
                 case SyncServiceJob.TAG:
                     return new SyncServiceJob(SyncIntentService.class);
-                case ImageUploadServiceJob.TAG:
-                    return new ImageUploadServiceJob();
                 default:
                     break;
             }
