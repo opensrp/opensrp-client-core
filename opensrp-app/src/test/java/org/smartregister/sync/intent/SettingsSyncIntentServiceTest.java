@@ -29,8 +29,10 @@ public class SettingsSyncIntentServiceTest extends BaseRobolectricUnitTest {
     @Before
     public void setUp() throws Exception {
         // Clear the following
-        /*ShadowJobManager.jobStorage = null;
-        ShadowJobManager.mockJobManager = null;*/
+        ShadowJobManager.jobStorage = null;
+        ShadowJobManager.mockJobManager = null;
+        ShadowJobManager.createMockJobManager();
+
         settingsSyncIntentService = Robolectric.buildIntentService(SettingsSyncIntentService.class)
                 .create()
                 .get();
