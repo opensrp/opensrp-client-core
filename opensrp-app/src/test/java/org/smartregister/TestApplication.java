@@ -1,22 +1,20 @@
 package org.smartregister;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.evernote.android.job.Job;
 import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
 
 import org.json.JSONObject;
-import org.smartregister.job.ImageUploadServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.P2PClassifier;
 import org.smartregister.sync.intent.SyncIntentService;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
 
 /**
  * Created by samuelgithengi on 12/30/19.
