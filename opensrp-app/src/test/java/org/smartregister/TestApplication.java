@@ -34,7 +34,7 @@ public class TestApplication extends DrishtiApplication {
     }
 
     public void initCoreLibrary() {
-        context = new Context();
+        context = Context.setInstance(new Context());
         context.updateApplicationContext(getApplicationContext());
         CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
     }
