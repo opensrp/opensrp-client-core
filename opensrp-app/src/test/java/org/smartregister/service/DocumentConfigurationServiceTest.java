@@ -9,12 +9,9 @@ import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
@@ -61,11 +58,8 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         documentConfigurationService = Mockito.spy(new DocumentConfigurationService(httpAgent, manifestRepository, clientFormRepository, configuration));
         Mockito.when(configuration.dristhiBaseURL()).thenReturn("http://opensrp_base_url");
-
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "applicationContext", RuntimeEnvironment.application);
     }
 
     @Test
@@ -157,10 +151,9 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void saveManifestVersionShouldSaveVersionInSharedPreferences() {
 
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(),"allSharedPreferences",null);
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
 
         Assert.assertNull(CoreLibrary.getInstance().context().allSharedPreferences().fetchManifestVersion());
         String manifestVersion = "0.0.89";
@@ -172,6 +165,6 @@ public class DocumentConfigurationServiceTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() {
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
+        initCoreLibrary();
     }
 }

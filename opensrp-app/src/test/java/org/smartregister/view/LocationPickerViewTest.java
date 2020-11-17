@@ -6,7 +6,6 @@ import android.widget.ListView;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
@@ -34,12 +33,9 @@ public class LocationPickerViewTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         locationPickerView = new LocationPickerView(RuntimeEnvironment.application);
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
-        CoreLibrary.getInstance().context().updateApplicationContext(RuntimeEnvironment.application);
     }
 
     @Test
-    @Ignore
     public void initShouldCorrectlyInitializeLocationPicker() {
         if (LocationHelper.getInstance() != null) {
             ReflectionHelpers.setField(LocationHelper.getInstance(), "instance", null);

@@ -2,7 +2,6 @@ package org.smartregister.multitenant.check;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
@@ -42,7 +41,6 @@ public class TaskSyncedCheckTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    @Ignore
     public void performPreResetAppOperations() throws PreResetAppOperationException {
         TaskServiceHelper taskServiceHelper = Mockito.spy(TaskServiceHelper.getInstance());
 
