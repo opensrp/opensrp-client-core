@@ -106,9 +106,6 @@ android {
             resources.srcDir 'resources'
         }
         androidTest.setRoot('src/androidTest')
-        test {
-            res.srcDirs = ['src/test/res']
-        }
     }
 
     aaptOptions {
