@@ -8,6 +8,7 @@ import com.evernote.android.job.JobCreator;
 import com.evernote.android.job.JobManager;
 
 import org.json.JSONObject;
+import org.smartregister.job.ImageUploadServiceJob;
 import org.smartregister.job.SyncServiceJob;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.P2PClassifier;
@@ -15,6 +16,7 @@ import org.smartregister.sync.intent.SyncIntentService;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 
 /**
  * Created by samuelgithengi on 12/30/19.
@@ -74,7 +76,8 @@ public class TestApplication extends DrishtiApplication {
             switch (tag) {
                 case SyncServiceJob.TAG:
                     return new SyncServiceJob(SyncIntentService.class);
-
+                case ImageUploadServiceJob.TAG:
+                    return new ImageUploadServiceJob();
                 default:
                     break;
             }
