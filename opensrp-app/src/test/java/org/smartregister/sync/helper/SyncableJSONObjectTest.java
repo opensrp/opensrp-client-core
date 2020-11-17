@@ -4,7 +4,7 @@ import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.SyncFilter;
 
@@ -14,9 +14,9 @@ import static org.junit.Assert.assertEquals;
  * Created by Richard Kareko on 11/17/20.
  */
 
-public class SyncableJSONObjectTest extends BaseUnitTest {
+public class SyncableJSONObjectTest extends BaseRobolectricUnitTest {
 
-    SyncableJSONObject syncableJSONObject;
+    private SyncableJSONObject syncableJSONObject;
 
     @Before
     public void setUp() {
