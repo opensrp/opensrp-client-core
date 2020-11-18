@@ -12,7 +12,9 @@ import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.customshadows.ShadowLocalBroadcastManager;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
+
 import com.evernote.android.job.ShadowJobManager;
+
 import org.smartregister.shadows.ShadowSQLiteDatabase;
 
 /**
@@ -26,6 +28,10 @@ public abstract class BaseRobolectricUnitTest {
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
 
-    public static final int ASYNC_TIMEOUT=2000;
+    public static final int ASYNC_TIMEOUT = 2000;
+
+    public void initCoreLibrary() {
+        TestApplication.getInstance().initCoreLibrary();
+    }
 
 }
