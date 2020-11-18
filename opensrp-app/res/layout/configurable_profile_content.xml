@@ -137,7 +137,6 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@+id/text_view_last_visit_days_ago"
-            app:layout_constraintBottom_toTopOf="upcoming_services_row"
             android:background="@color/top_section_background_grey" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -206,7 +205,6 @@
             android:layout_marginBottom="10dp"
             android:layout_marginTop="10dp"
             app:layout_constraintTop_toBottomOf="@+id/text_view_upcoming_services_due"
-            app:layout_constraintBottom_toTopOf="family_profile_row"
             android:background="@color/top_section_background_grey" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

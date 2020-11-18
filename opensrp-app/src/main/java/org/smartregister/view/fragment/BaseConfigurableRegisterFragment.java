@@ -63,7 +63,10 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
     public void setModuleConfiguration(@NonNull ModuleConfiguration moduleConfiguration) {
         moduleRegisterQueryProvider = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getRegisterQueryProvider());
         this.moduleConfiguration = moduleConfiguration;
-        this.toolbarOptions = ConfigurationInstancesHelper.newInstance(moduleConfiguration.getToolbarOptions());
+        Class<? extends ToolbarOptions> toolbarOptionsClass = moduleConfiguration.getToolbarOptions();
+        if (toolbarOptionsClass != null) {
+            this.toolbarOptions = ConfigurationInstancesHelper.newInstance(toolbarOptionsClass);
+        }
     }
 
     public ModuleConfiguration getModuleConfiguration() {
@@ -76,7 +79,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
     @Override
     protected int getLayout() {
-        if (toolbarOptions.isNewToolbarEnabled()) {
+        if (toolbarOptions != null && toolbarOptions.isNewToolbarEnabled()) {
             return R.layout.configurable_fragment_base_register;
         } else {
             return super.getLayout();
@@ -88,7 +91,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
         super.setupViews(view);
         this.view = view;
 
-        if (toolbarOptions.isNewToolbarEnabled()) {
+        if (toolbarOptions != null && toolbarOptions.isNewToolbarEnabled()) {
             initializeConfigurableLayoutViews(view);
             return;
         }
@@ -151,12 +154,7 @@ public class BaseConfigurableRegisterFragment extends BaseRegisterFragment {
 
         ((TextView) view.findViewById(R.id.due_only_text_view)).setText(getDueOnlyText());
 
-        topRightLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startRegistration();
-            }
-        });
+        topRightLayout.setOnClickListener(v -> startRegistration());
     }
 
     public void initializeConfigurableLayoutViews(View view) {
