@@ -203,7 +203,7 @@ dependencies {
     implementation 'com.cloudant:cloudant-http:2.7.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
-    implementation 'androidx.security:security-crypto:1.0.0-alpha02'
+    implementation 'androidx.security:security-crypto:1.0.0-rc03'
 
     implementation('com.google.android.material:material:1.1.0') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
