@@ -73,7 +73,7 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     }
 
     @Override
-    public void updateTask(org.smartregister.domain.Task task) {
-        addOrUpdate(task, true);
+    public org.smartregister.domain.Task  updateTask(org.smartregister.domain.Task task) {
+       return addOrUpdate(task, true);
     }
 }
