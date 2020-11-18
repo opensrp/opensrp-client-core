@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 
 import androidx.security.crypto.EncryptedSharedPreferences;
 import androidx.security.crypto.MasterKeys;
@@ -539,31 +540,31 @@ public class Context {
 
     public ArrayList<DrishtiRepository> sharedRepositories() {
         assignbindtypes();
-        ArrayList<DrishtiRepository> drishtireposotorylist = new ArrayList<DrishtiRepository>();
-        drishtireposotorylist.add(settingsRepository());
-        drishtireposotorylist.add(alertRepository());
-        drishtireposotorylist.add(eligibleCoupleRepository());
-        drishtireposotorylist.add(childRepository());
-        drishtireposotorylist.add(timelineEventRepository());
-        drishtireposotorylist.add(motherRepository());
-        drishtireposotorylist.add(reportRepository());
-        drishtireposotorylist.add(formDataRepository());
-        drishtireposotorylist.add(serviceProvidedRepository());
-        drishtireposotorylist.add(formsVersionRepository());
-        drishtireposotorylist.add(imageRepository());
-        drishtireposotorylist.add(detailsRepository());
+        ArrayList<DrishtiRepository> drishtiRepositoryList = new ArrayList<DrishtiRepository>();
+        drishtiRepositoryList.add(settingsRepository());
+        drishtiRepositoryList.add(alertRepository());
+        drishtiRepositoryList.add(eligibleCoupleRepository());
+        drishtiRepositoryList.add(childRepository());
+        drishtiRepositoryList.add(timelineEventRepository());
+        drishtiRepositoryList.add(motherRepository());
+        drishtiRepositoryList.add(reportRepository());
+        drishtiRepositoryList.add(formDataRepository());
+        drishtiRepositoryList.add(serviceProvidedRepository());
+        drishtiRepositoryList.add(formsVersionRepository());
+        drishtiRepositoryList.add(imageRepository());
+        drishtiRepositoryList.add(detailsRepository());
         for (int i = 0; i < bindtypes.size(); i++) {
-            drishtireposotorylist.add(commonrepository(bindtypes.get(i).getBindtypename()));
+            drishtiRepositoryList.add(commonrepository(bindtypes.get(i).getBindtypename()));
         }
-        return drishtireposotorylist;
+        return drishtiRepositoryList;
 
     }
 
     public DrishtiRepository[] sharedRepositoriesArray() {
         ArrayList<DrishtiRepository> drishtiRepositories = sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtiRepositories
+        DrishtiRepository[] drishtiRepositoryArray = drishtiRepositories
                 .toArray(new DrishtiRepository[drishtiRepositories.size()]);
-        return drishtireposotoryarray;
+        return drishtiRepositoryArray;
     }
 
     public AllEligibleCouples allEligibleCouples() {
@@ -597,7 +598,11 @@ public class Context {
 
     private SharedPreferences createSharedPreferences(android.content.Context context) {
         SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
-        if (syncConfiguration != null && syncConfiguration.encryptSharedPreferences()) {
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                && syncConfiguration != null
+                && syncConfiguration.encryptSharedPreferences()) {
+
             return createEncryptedSharedPreferences(context);
         } else {
             return getDefaultSharedPreferences(context);
