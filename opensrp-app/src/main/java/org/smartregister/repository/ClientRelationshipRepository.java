@@ -59,6 +59,7 @@ public class ClientRelationshipRepository extends BaseRepository {
             statement.bindString(3, clientRelationship.getRelationalId());
             statement.executeInsert();
         }
+        statement.close();
     }
 
     public List<Client> findClientByRelationship(String relationShip, String relationalId) {
