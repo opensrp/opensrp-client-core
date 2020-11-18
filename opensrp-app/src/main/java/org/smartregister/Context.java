@@ -112,10 +112,8 @@ import org.smartregister.view.controller.ANMController;
 import org.smartregister.view.controller.ANMLocationController;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -123,7 +121,7 @@ import java.util.Map;
 
 import timber.log.Timber;
 
-import static android.preference.PreferenceManager.getDefaultSharedPreferences;
+import static androidx.preference.PreferenceManager.getDefaultSharedPreferences;
 
 public class Context {
 
@@ -602,7 +600,7 @@ public class Context {
 
     private SharedPreferences createSharedPreferences(android.content.Context context) {
         SyncConfiguration syncConfiguration = CoreLibrary.getInstance().getSyncConfiguration();
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && syncConfiguration != null
                 && syncConfiguration.encryptSharedPreferences()) {
@@ -626,10 +624,11 @@ public class Context {
                     EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
                     EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
             );
-        } catch (GeneralSecurityException e) {
-            Timber.e(e);
-        } catch (IOException e) {
-            Timber.e(e);
+        } catch (Exception e) {
+            Timber.e(e, "Error creating encrypted SharedPreferences");
+
+            // fallback to unencrypted SharedPreferences
+            sharedPreferences = getDefaultSharedPreferences(context);
         }
 
         return sharedPreferences;
