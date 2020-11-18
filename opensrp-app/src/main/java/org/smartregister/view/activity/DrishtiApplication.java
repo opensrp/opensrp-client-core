@@ -2,9 +2,11 @@ package org.smartregister.view.activity;
 
 import android.app.Application;
 import android.os.Build;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDex;
+
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONObject;
@@ -147,7 +149,7 @@ public abstract class DrishtiApplication extends Application {
 
     public String getUsername() {
         if (username == null) {
-            username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
+            username = context.allSharedPreferences().fetchRegisteredANM();
         }
         return username;
     }
