@@ -1,11 +1,18 @@
 package org.smartregister;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.powermock.api.mockito.PowerMockito;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllReports;
 import org.smartregister.repository.AllServicesProvided;
+import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.AllTimelineEvents;
 import org.smartregister.repository.CampaignRepository;
 import org.smartregister.repository.ClientFormRepository;
@@ -48,8 +55,15 @@ public class ContextTest extends BaseUnitTest {
 
     private Context context;
 
+    @Mock
+    private CoreLibrary coreLibrary;
+
+    @Mock
+    private SyncConfiguration syncConfiguration;
+
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         context = Context.getInstance();
     }
 
@@ -301,5 +315,29 @@ public class ContextTest extends BaseUnitTest {
     public void testGetClientFormRepository() {
         ClientFormRepository clientFormRepository = context.getClientFormRepository();
         Assert.assertNotNull(clientFormRepository);
+    }
+
+    @Test
+    public void testAllSharedPreferencesCreatesUnencryptedSharedPreferencesWhenEncryptSharedPreferencesSyncConfigurationFlagIsFalse() {
+        AllSharedPreferences allSharedPreferences = context.allSharedPreferences();
+        Assert.assertNotNull(allSharedPreferences);
+    }
+
+    @Test
+    public void testAllSharedPreferencesCreatesEncryptedSharedPreferencesWhenEncryptSharedPreferencesSyncConfigurationFlagIsTrue() throws Exception {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
+        Mockito.when(syncConfiguration.encryptSharedPreferences()).thenReturn(true);
+
+        Context spyContext = PowerMockito.spy(context);
+
+        AllSharedPreferences allSharedPreferences = spyContext.allSharedPreferences();
+        Assert.assertNotNull(allSharedPreferences);
+        PowerMockito.verifyPrivate(spyContext).invoke("createEncryptedSharedPreferences", context.applicationContext());
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
