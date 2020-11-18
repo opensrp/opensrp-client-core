@@ -62,6 +62,15 @@
             android:src="@drawable/ic_navigate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_child_reg_days_ago"
+            android:background="@color/top_section_background_grey" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -75,8 +84,8 @@
             android:layout_height="38dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/ic_child_care"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_medical_history"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -86,12 +95,13 @@
             android:layout_width="216dp"
             android:layout_height="25dp"
             android:layout_marginStart="22dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="44dp"
             android:text="View medical history"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/navigate_medical_history"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/medical_history_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -115,13 +125,22 @@
             android:layout_width="39dp"
             android:layout_height="53dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_navigate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_last_visit_days_ago"
+            app:layout_constraintBottom_toTopOf="upcoming_services_row"
+            android:background="@color/top_section_background_grey" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upcoming_services_row"
@@ -134,8 +153,8 @@
             android:layout_height="38dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
-            android:src="@drawable/ic_child_care"
+            android:layout_marginTop="4dp"
+            android:src="@drawable/ic_upcoming_services"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,12 +164,13 @@
             android:layout_width="216dp"
             android:layout_height="25dp"
             android:layout_marginStart="22dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="44dp"
             android:text="Upcoming services"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/navigate_upcoming_services"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/upcoming_services_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -174,13 +194,22 @@
             android:layout_width="39dp"
             android:layout_height="53dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_navigate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_upcoming_services_due"
+            app:layout_constraintBottom_toTopOf="family_profile_row"
+            android:background="@color/top_section_background_grey" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/family_profile_row"
@@ -193,7 +222,7 @@
             android:layout_height="38dp"
             android:layout_centerVertical="true"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="4dp"
             android:src="@drawable/ic_child_care"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -204,12 +233,13 @@
             android:layout_width="216dp"
             android:layout_height="25dp"
             android:layout_marginStart="22dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="44dp"
             android:text="Family profile"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/navigate_family_profile"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/family_profile_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -233,11 +263,20 @@
             android:layout_width="39dp"
             android:layout_height="53dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="4dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_navigate"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_family_profile_services_due"
+            android:background="@color/top_section_background_grey" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>
