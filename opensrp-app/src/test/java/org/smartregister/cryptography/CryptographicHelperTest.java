@@ -41,7 +41,7 @@ public class CryptographicHelperTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
 
-        cryptographicHelper = CryptographicHelper.getInstance(RuntimeEnvironment.application.getApplicationContext());
+        cryptographicHelper = CryptographicHelper.getInstance(RuntimeEnvironment.application);
 
         Assert.assertNotNull(cryptographicHelper);
         cryptographicHelper.setMCryptography(androidMCryptography);
@@ -61,7 +61,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    @Config(sdk = Build.VERSION_CODES.M)
+    @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
     public void testCryptographicHelperEncryptInvokesLegacyEncryptMethod() throws UnsupportedEncodingException {
         cryptographicHelper.encrypt(SAMPLE_STRING.getBytes(CharEncoding.UTF_8), SAMPLE_KEY_ALIAS);
 
@@ -76,7 +76,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    @Config(sdk = Build.VERSION_CODES.M)
+    @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
     public void testCryptographicHelperDecryptInvokesLegacyDecryptMethod() throws UnsupportedEncodingException {
         cryptographicHelper.decrypt(SAMPLE_STRING.getBytes(CharEncoding.UTF_8), SAMPLE_KEY_ALIAS);
 
@@ -91,7 +91,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    @Config(sdk = Build.VERSION_CODES.M)
+    @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
     public void testCryptographicHelperGenerateKeyInvokesLegacyGenerateKeyMethod() {
         cryptographicHelper.generateKey(SAMPLE_KEY_ALIAS);
 
@@ -106,7 +106,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    @Config(sdk = Build.VERSION_CODES.M)
+    @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
     public void testCryptographicHelperGetKeyInvokesLegacyGetKeyMethod() {
         cryptographicHelper.getKey(SAMPLE_KEY_ALIAS);
 
@@ -121,7 +121,7 @@ public class CryptographicHelperTest {
     }
 
     @Test
-    @Config(sdk = Build.VERSION_CODES.M)
+    @Config(sdk = Build.VERSION_CODES.LOLLIPOP_MR1)
     public void testCryptographicHelperDeleteKeyInvokesLegacyGetKeyMethod() {
         cryptographicHelper.deleteKey(SAMPLE_KEY_ALIAS);
 
