@@ -83,8 +83,7 @@ public class P2PReceiverTransferDaoTest extends BaseRobolectricUnitTest {
 
     @After
     public void tearDown() throws Exception {
-        ReflectionHelpers.setStaticField(Context.class, "context", null);
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
+        initCoreLibrary();
     }
 
     @Test
@@ -174,10 +173,6 @@ public class P2PReceiverTransferDaoTest extends BaseRobolectricUnitTest {
         ArgumentCaptor<ProfileImage> profileImageArgumentCaptor = ArgumentCaptor.forClass(ProfileImage.class);
 
         DataType dataType = new DataType(p2PReceiverTransferDao.profilePic.getName(), DataType.Type.MEDIA, 1);
-
-        DrishtiApplication drishtiApplication = Mockito.mock(DrishtiApplication.class);
-        ReflectionHelpers.setStaticField(DrishtiApplication.class, "mInstance", drishtiApplication);
-        Mockito.doReturn(RuntimeEnvironment.application).when(drishtiApplication).getApplicationContext();
 
         HashMap<String, Object> multimediaDetails = new HashMap<>();
         multimediaDetails.put(ImageRepository.syncStatus_COLUMN, BaseRepository.TYPE_Unsynced);
