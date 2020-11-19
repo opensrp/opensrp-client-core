@@ -67,9 +67,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyByJurisdiction() throws Exception {
@@ -83,9 +81,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyByResidence() throws Exception {
@@ -99,9 +95,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyMemberByJurisdiction() throws Exception {
@@ -115,9 +109,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     @Test
     public void testFindFamilyMemberByResidence() throws Exception {
@@ -131,7 +123,6 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
 
     @Test
@@ -149,9 +140,7 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
     }
-
 
     public static MatrixCursor getCursor() throws Exception {
         return getCursor(Integer.MAX_VALUE);
@@ -165,6 +154,4 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         }
         return matrixCursor;
     }
-
-
 }
