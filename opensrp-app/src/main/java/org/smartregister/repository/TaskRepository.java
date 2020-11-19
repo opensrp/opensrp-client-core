@@ -304,7 +304,7 @@ public class TaskRepository extends BaseRepository {
             task.setStatus(TaskStatus.valueOf(cursor.getString(cursor.getColumnIndex(STATUS))));
         }
         task.setBusinessStatus(cursor.getString(cursor.getColumnIndex(BUSINESS_STATUS)));
-        task.setPriority(Task.TaskPriority.get(cursor.getString(cursor.getColumnIndex(PRIORITY))));
+        task.setPriority(Task.TaskPriority.valueOf(cursor.getString(cursor.getColumnIndex(PRIORITY))));
         task.setCode(cursor.getString(cursor.getColumnIndex(CODE)));
         task.setDescription(cursor.getString(cursor.getColumnIndex(DESCRIPTION)));
         task.setFocus(cursor.getString(cursor.getColumnIndex(FOCUS)));
