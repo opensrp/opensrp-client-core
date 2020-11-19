@@ -73,7 +73,6 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
-            checkPlatformMigrations();
         }
     }
 
@@ -105,6 +104,8 @@ public class CoreLibrary implements OnAccountsUpdateListener {
         if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
             PathEvaluatorLibrary.init(new LocationDaoImpl(), new ClientDaoImpl(), new TaskDaoImpl(new TaskNotesRepository()), new EventDaoImpl());
         }
+
+        checkPlatformMigrations();
     }
 
     public void initP2pLibrary(@Nullable String username) {
