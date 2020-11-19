@@ -326,7 +326,9 @@ public class TaskRepository extends BaseRepository {
         restrictionPeriod.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(RESTRICTION_START))));
         restrictionPeriod.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(RESTRICTION_END))));
         Task.Restriction restriction = new Task.Restriction(cursor.getInt(cursor.getColumnIndex(RESTRICTION_REPEAT)), restrictionPeriod);
-        task.setRestriction(restriction);
+        if (restriction.getRepetitions() != 0 || restrictionPeriod.getStart() != null && restrictionPeriod.getEnd() != null) {
+            task.setRestriction(restriction);
+        }
         return task;
     }
 
