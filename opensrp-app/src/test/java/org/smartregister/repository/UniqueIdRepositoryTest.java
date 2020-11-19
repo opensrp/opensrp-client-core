@@ -6,6 +6,7 @@ import android.database.SQLException;
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.TestApplication;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -63,10 +65,10 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     private static final String testUsername = "testUser1";
 
     @Mock
-    Context context;
+    private Context context;
 
     @Mock
-    AllSharedPreferences allSharedPreferences;
+    private AllSharedPreferences allSharedPreferences;
 
     @Before
     public void setUp() {
@@ -84,6 +86,11 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
+    }
+
+    @After
+    public void tearDown() {
+        TestApplication.getInstance().initCoreLibrary();
     }
 
     @Test
@@ -220,7 +227,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     public void testReleaseReserveIds() {
         uniqueIdRepository.releaseReservedIds();
 
-        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(),argsCaptor.capture());
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
 
         Assert.assertNotNull(stringArgumentCaptor.getValue());
         assertEquals("unique_ids", stringArgumentCaptor.getAllValues().get(0));

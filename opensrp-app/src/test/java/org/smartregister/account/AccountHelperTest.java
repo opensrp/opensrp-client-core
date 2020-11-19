@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 
 import java.io.IOException;
@@ -22,7 +23,6 @@ import java.io.IOException;
 /**
  * Created by ndegwamartin on 26/05/2020.
  */
-
 public class AccountHelperTest extends BaseUnitTest {
     private static final String CORE_ACCOUNT_NAME = "demo";
     private static final String CORE_ACCOUNT_TYPE = "org.smartregister.core";
@@ -41,7 +41,7 @@ public class AccountHelperTest extends BaseUnitTest {
         Account[] accounts = {new Account(CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE)};
         Mockito.doReturn(accounts).when(accountManager).getAccountsByType(CORE_ACCOUNT_TYPE);
 
-        Whitebox.setInternalState(AccountHelper.class, "accountManager", accountManager);
+        ReflectionHelpers.setStaticField(AccountHelper.class, "accountManager", accountManager);
     }
 
     @Test
