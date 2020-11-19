@@ -55,8 +55,6 @@ public class AccountHelperTest extends BaseUnitTest {
     @Test
     public void testGetAccountManagerValue() {
 
-        Whitebox.setInternalState(AccountHelper.class, "accountManager", accountManager);
-
         Mockito.doReturn(TEST_VALUE).when(accountManager).getUserData(ArgumentMatchers.any(Account.class), ArgumentMatchers.eq(TEST_KEY));
 
         String value = AccountHelper.getAccountManagerValue(TEST_KEY, CORE_ACCOUNT_NAME, CORE_ACCOUNT_TYPE);

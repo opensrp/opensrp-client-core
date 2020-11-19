@@ -6,6 +6,7 @@ import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.json.JSONArray;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,6 +50,11 @@ public class ClientDaoImplTest extends BaseUnitTest {
         when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
         when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+    }
+
+    @After
+    public void tearDown() {
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", (Repository) null);
     }
 
     @Test

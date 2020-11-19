@@ -16,9 +16,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
-import org.smartregister.TestApplication;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -64,21 +62,13 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
     private static final String testUsername = "testUser1";
 
-    @Mock
-    private Context context;
-
-    @Mock
-    private AllSharedPreferences allSharedPreferences;
 
     @Before
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
 
-        when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(testUsername);
-
-        CoreLibrary.init(context);
+        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
 
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
 
@@ -90,7 +80,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
     @After
     public void tearDown() {
-        TestApplication.getInstance().initCoreLibrary();
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository",(Repository) null);
     }
 
     @Test
