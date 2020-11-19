@@ -74,7 +74,7 @@ public class TaskRepository extends BaseRepository {
     private static final String REQUESTER = "requester";
     private static final String RESTRICTION_REPEAT = "restriction_repeat";
     private static final String RESTRICTION_START = "restriction_start";
-    private static final String RESTRICTION_END = "restriction_start";
+    private static final String RESTRICTION_END = "restriction_end";
 
     private final TaskNotesRepository taskNotesRepository;
 
@@ -123,6 +123,7 @@ public class TaskRepository extends BaseRepository {
 
     /**
      * Migrate the older database by add restriction columns and changing of priority to enum
+     *
      * @param database the database being upgraded
      */
     public static void updatePriorityToEnumAndAddRestrictions(@NonNull SQLiteDatabase database) {
@@ -130,7 +131,7 @@ public class TaskRepository extends BaseRepository {
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, VARCHAR);
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, VARCHAR);
         DatabaseMigrationUtils.recreateSyncTableWithExistingColumnsOnly(database, TASK_TABLE, COLUMNS, CREATE_TASK_TABLE);
-        database.execSQL(String.format("UPDATE %s SET %s=? WHERE %s =? ", TASK_TABLE, PRIORITY, PRIORITY), new Object[]{"3", "3"});
+        database.execSQL(String.format("UPDATE %s SET %s=? WHERE %s =? ", TASK_TABLE, PRIORITY, PRIORITY), new Object[]{"routine", "3"});
     }
 
     public void addOrUpdate(Task task) {
@@ -177,6 +178,13 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(REASON_REFERENCE, task.getReasonReference());
         contentValues.put(LOCATION, task.getLocation());
         contentValues.put(REQUESTER, task.getRequester());
+        if (task.getRestriction() != null) {
+            contentValues.put(RESTRICTION_REPEAT, task.getRestriction().getRepetitions());
+            if (task.getRestriction().getPeriod() != null) {
+                contentValues.put(RESTRICTION_START, DateUtil.getMillis(task.getRestriction().getPeriod().getStart()));
+                contentValues.put(RESTRICTION_END, DateUtil.getMillis(task.getRestriction().getPeriod().getEnd()));
+            }
+        }
 
         if (updateOnly) {
             getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
@@ -314,7 +322,11 @@ public class TaskRepository extends BaseRepository {
         task.setReasonReference(cursor.getString(cursor.getColumnIndex(REASON_REFERENCE)));
         task.setLocation(cursor.getString(cursor.getColumnIndex(LOCATION)));
         task.setRequester(cursor.getString(cursor.getColumnIndex(REQUESTER)));
-
+        Period restrictionPeriod = new Period();
+        restrictionPeriod.setStart(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(RESTRICTION_START))));
+        restrictionPeriod.setEnd(DateUtil.getDateTimeFromMillis(cursor.getLong(cursor.getColumnIndex(RESTRICTION_END))));
+        Task.Restriction restriction = new Task.Restriction(cursor.getInt(cursor.getColumnIndex(RESTRICTION_REPEAT)), restrictionPeriod);
+        task.setRestriction(restriction);
         return task;
     }
 
