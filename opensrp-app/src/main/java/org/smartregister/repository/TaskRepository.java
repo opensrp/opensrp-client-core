@@ -131,7 +131,7 @@ public class TaskRepository extends BaseRepository {
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, VARCHAR);
         DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, VARCHAR);
         DatabaseMigrationUtils.recreateSyncTableWithExistingColumnsOnly(database, TASK_TABLE, COLUMNS, CREATE_TASK_TABLE);
-        database.execSQL(String.format("UPDATE %s SET %s=?", TASK_TABLE, PRIORITY), new Object[]{"routine"});
+        database.execSQL(String.format("UPDATE %s SET %s=?", TASK_TABLE, PRIORITY), new Object[]{Task.TaskPriority.ROUTINE.name()});
     }
 
     public void addOrUpdate(Task task) {
