@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,6 +19,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
@@ -65,10 +67,13 @@ public class ClientProcessorTest extends BaseUnitTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        CoreLibrary.init(context, new TestSyncConfiguration());
-        when(context.detailsRepository()).thenReturn(detailsRepository);
 
-        when(coreLibrary.context()).thenReturn(context);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        doReturn(new TestSyncConfiguration()).when(coreLibrary).getSyncConfiguration();
+        doReturn(context).when(coreLibrary).context();
+        doReturn("ec_client_fields.json").when(coreLibrary).getEcClientFieldsFile();
+
+        when(context.detailsRepository()).thenReturn(detailsRepository);
         when(context.commonrepository(Mockito.anyString())).thenReturn(cr);
         when(cr.executeInsertStatement(Mockito.any(ContentValues.class), Mockito.anyString())).thenReturn(1l);
         context.updateApplicationContext(RuntimeEnvironment.application);
@@ -216,5 +221,10 @@ public class ClientProcessorTest extends BaseUnitTest {
         Boolean b = clientProcessor.processCaseModel(eventList.get(0), clientList.get(0), creates_case);
         Assert.assertEquals(Boolean.TRUE, b);
 
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
