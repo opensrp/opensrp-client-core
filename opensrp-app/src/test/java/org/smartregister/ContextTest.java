@@ -7,7 +7,6 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.api.mockito.PowerMockito;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.repository.AllAlerts;
 import org.smartregister.repository.AllReports;
@@ -324,16 +323,13 @@ public class ContextTest extends BaseUnitTest {
     }
 
     @Test
-    public void testAllSharedPreferencesCreatesEncryptedSharedPreferencesWhenEncryptSharedPreferencesSyncConfigurationFlagIsTrue() throws Exception {
+    public void testAllSharedPreferencesCreatesEncryptedSharedPreferencesWhenEncryptSharedPreferencesSyncConfigurationFlagIsTrue() {
         ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
         Mockito.when(coreLibrary.getSyncConfiguration()).thenReturn(syncConfiguration);
         Mockito.when(syncConfiguration.encryptSharedPreferences()).thenReturn(true);
 
-        Context spyContext = PowerMockito.spy(context);
-
-        AllSharedPreferences allSharedPreferences = spyContext.allSharedPreferences();
+        AllSharedPreferences allSharedPreferences = context.allSharedPreferences();
         Assert.assertNotNull(allSharedPreferences);
-        PowerMockito.verifyPrivate(spyContext).invoke("createEncryptedSharedPreferences", context.applicationContext());
     }
 
     @After
