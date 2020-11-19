@@ -71,7 +71,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     private AllSharedPreferences allSharedPreferences;
 
-    private final String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": 3, \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionEndDate\": \"2020-04-02T00:00:00.000+02:00\", \"executionStartDate\": \"2020-03-26T00:00:00.000+02:00\"}";
+    private final String taskJSon = "{\"for\": \"154167\", \"code\": \"Bednet Distribution\", \"focus\": \"158b73f5-49d0-50a9-8020-0468c1bbabdd\", \"owner\": \"nifiUser\", \"status\": \"Cancelled\", \"priority\": \"routine\", \"authoredOn\": \"2020-03-26T10:47:03.586+02:00\", \"identifier\": \"c256c9d8-fe9b-4763-b5af-26585dcbe6bf\", \"description\": \"Visit 100% of residential structures in the operational area and provide nets\", \"lastModified\": \"2020-03-26T10:52:09.750+02:00\", \"serverVersion\": 1585212830433, \"businessStatus\": \"Not Visited\", \"planIdentifier\": \"eb3cd7e1-c849-5230-8d49-943218018f9f\", \"groupIdentifier\": \"3952\", \"executionPeriod\":{\"end\": \"2020-04-02T00:00:00.000+02:00\", \"start\": \"2020-03-26T00:00:00.000+02:00\"}}";
 
     private final String planId = "eb3cd7e1-c849-5230-8d49-943218018f9f";
 
@@ -132,7 +132,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task actualTask = actualTasks.get(0);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/task/sync", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/v2/task/sync", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"group\":[\"3952\"],\"serverVersion\":0,\"return_count\":true}", requestString);
 
@@ -173,7 +173,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         Task actualTask = actualTasks.get(0);
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/task/sync", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp/rest/v2/task/sync", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals("{\"plan\":[\"eb3cd7e1-c849-5230-8d49-943218018f9f\"],\"owner\":\"onatest\",\"serverVersion\":0,\"return_count\":true}", requestString);
         verifyTaskInformationFetchedFromServer(expectedTask, actualTask);
@@ -215,7 +215,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         taskServiceHelper.syncTaskStatusToServer();
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/update_status", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/v2/task/update_status", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals("[{\"identifier\":\"eb3cd7e1-c849-5230-8d49-943218018f9f\",\"status\":\"Cancelled\",\"businessStatus\":\"Not Visited\"}]", requestString);
         verify(taskRepository).markTaskAsSynced(taskUpdate.getIdentifier());
@@ -238,7 +238,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         taskServiceHelper.syncCreatedTaskToServer();
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/add", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/v2/task/add", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedJsonPayload, requestString);
         verify(taskRepository).getAllUnsynchedCreatedTasks();
@@ -263,7 +263,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         taskServiceHelper.syncCreatedTaskToServer();
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/add", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/v2/task/add", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedJsonPayload, requestString);
         verify(taskRepository).getAllUnsynchedCreatedTasks();
@@ -287,7 +287,7 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
         taskServiceHelper.syncCreatedTaskToServer();
 
         String syncUrl = stringArgumentCaptor.getAllValues().get(0);
-        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/task/add", syncUrl);
+        assertEquals("https://sample-stage.smartregister.org/opensrp//rest/v2/task/add", syncUrl);
         String requestString = stringArgumentCaptor.getAllValues().get(1);
         assertEquals(expectedJsonPayload, requestString);
         verify(taskRepository).getAllUnsynchedCreatedTasks();
