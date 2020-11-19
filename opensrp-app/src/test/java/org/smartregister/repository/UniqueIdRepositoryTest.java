@@ -19,6 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -66,26 +67,37 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
     private static final String testUsername = "testUser1";
 
+    @Mock
+    private CoreLibrary coreLibrary;
+
+    @Mock
+    private Context context;
+
+    @Mock
+    private AllSharedPreferences allSharedPreferences;
 
     @Before
     public void setUp() {
-
         MockitoAnnotations.initMocks(this);
 
-        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
-        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
+        CoreLibrary.init(context);
 
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
-        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
 
         uniqueIdRepository = new UniqueIdRepository();
 
+        when(coreLibrary.context()).thenReturn(context);
+        when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
+        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(testUsername);
+        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
+        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
 
     @After
     public void tearDown() {
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository",(Repository) null);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 
     @Test
@@ -106,8 +118,7 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testUpdateOpenMRSIdentifierStatusInvokesDatabaseUpdateMethodOnceIfRowUpdated() {
-
-        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
+        allSharedPreferences.updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
 
         doReturn(1).when(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
@@ -121,14 +132,11 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
         ContentValues values = contentValuesArgumentCaptor.getValue();
         assertEquals(testUsername, values.getAsString("used_by"));
-
-
     }
 
     @Test
     public void testBulkInsertOpenMrsIds() {
-
-        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
+        allSharedPreferences.updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
         List<String> openMrsIds = Collections.singletonList(openMrsId);
 
@@ -145,23 +153,19 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
         assertEquals("not_used", values.getAsString("status"));
         assertEquals(testUsername, values.getAsString("synced_by"));
         assertNotNull(values.getAsString("created_at"));
-
     }
 
     @Test
     public void testBulkInsertOpenMrsIdsWithEmptyParamList() {
-
-        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
+        allSharedPreferences.updateANMUserName(testUsername);
         uniqueIdRepository.bulkInsertOpenmrsIds(null);
 
         verifyNoMoreInteractions(sqLiteDatabase);
-
     }
 
     @Test
     public void testBulkInsertOpenMrsIdsWithExceptionThrown() {
-
-        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
+        allSharedPreferences.updateANMUserName(testUsername);
         String openMrsId = "3298938-2";
         List<String> openMrsIds = Collections.singletonList(openMrsId);
         uniqueIdRepository = spy(uniqueIdRepository);
@@ -184,7 +188,6 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testCountUnusedIds() {
-
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCountCursor());
         long actualCount = uniqueIdRepository.countUnUsedIds();
 
@@ -261,5 +264,4 @@ public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
         cursor.addRow(new Object[]{"12", "openrs-id1", "not-used", "test-owner", 1583830167});
         return cursor;
     }
-
 }
