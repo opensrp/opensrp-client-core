@@ -165,7 +165,7 @@ public class DatabaseMigrationUtils {
         //
         String insertQuery = "INSERT INTO "
                 + table
-                + " (" + StringUtils.join(table, ", ") + ")"
+                + " (" + StringUtils.join(columns, ", ") + ")"
                 + " SELECT " + StringUtils.join(columns, ", ") + " FROM "
                 + TABLE_PREFIX + table;
 
