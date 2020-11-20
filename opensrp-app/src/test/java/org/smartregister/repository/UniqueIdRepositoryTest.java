@@ -19,9 +19,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
-import org.smartregister.TestApplication;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
 
