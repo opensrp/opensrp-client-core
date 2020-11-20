@@ -3,10 +3,12 @@ package org.smartregister.repository.dao;
 import com.ibm.fhir.model.resource.Patient;
 
 import org.smartregister.AllConstants;
+import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.converters.ClientConverter;
 import org.smartregister.domain.Client;
 import org.smartregister.pathevaluator.dao.ClientDao;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.EventClientRepository;
 
 import java.util.Collections;
@@ -62,7 +64,9 @@ public class ClientDaoImpl extends EventClientRepository implements ClientDao {
 
     @Override
     public List<Patient> findClientByRelationship(String relationship, String id) {
-        return CoreLibrary.getInstance().context().getClientRelationshipRepository().findClientByRelationship(relationship, id)
+        Context context = CoreLibrary.getInstance().context();
+        ClientRelationshipRepository clientRelationshipRepository = context.getClientRelationshipRepository();
+        return clientRelationshipRepository.findClientByRelationship(relationship, id)
                 .stream()
                 .map(ClientConverter::convertClientToPatientResource)
                 .collect(Collectors.toList());

@@ -3,6 +3,8 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.database.SQLException;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
@@ -15,6 +17,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.TestApplication;
@@ -26,6 +30,7 @@ import java.util.List;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,7 +48,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by ndegwamartin on 2019-12-02.
  */
-public class UniqueIdRepositoryTest extends BaseUnitTest {
+public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
     @Mock
     private Repository repository;
 
@@ -68,16 +73,16 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
-        TestApplication.getInstance().initCoreLibrary();
 
-        CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
 
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
+        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
 
         uniqueIdRepository = new UniqueIdRepository();
 
-        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
     }
 
     @After

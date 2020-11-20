@@ -8,14 +8,13 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.json.JSONArray;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
-import org.smartregister.BaseUnitTest;
-import org.smartregister.TestApplication;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.CoreLibrary;
+import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientData;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -33,9 +32,7 @@ import static org.mockito.Mockito.when;
  * Created by samuelgithengi on 9/3/20.
  */
 
-public class ClientDaoImplTest extends BaseUnitTest {
-    @Rule
-    public MockitoRule rule = MockitoJUnit.rule();
+public class ClientDaoImplTest extends BaseRobolectricUnitTest {
 
     private ClientDaoImpl clientDao;
 
@@ -139,7 +136,9 @@ public class ClientDaoImplTest extends BaseUnitTest {
 
     @Test
     public void testFindClientByRelationship() throws Exception {
-        TestApplication.getInstance().initCoreLibrary();
+
+        ClientRelationshipRepository clientRelationshipRepository = new ClientRelationshipRepository();
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "clientRelationshipRepository", clientRelationshipRepository);
         String query = "SELECT json FROM client_relationship JOIN  client  ON base_entity_id=baseEntityId WHERE relationship=? AND relational_id =?";
         String[] params = new String[]{"41587456-b7c8-4c4e-b433-23a786f742fc", "Family"};
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor(2));
