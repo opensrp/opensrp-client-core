@@ -9,23 +9,21 @@ import android.os.Bundle;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
-import org.smartregister.BaseUnitTest;
+import org.smartregister.BaseRobolectricUnitTest;
 
 import java.io.IOException;
 
 /**
  * Created by ndegwamartin on 26/05/2020.
  */
-@Ignore
-public class AccountHelperTest extends BaseUnitTest {
+
+public class AccountHelperTest extends BaseRobolectricUnitTest {
     private static final String CORE_ACCOUNT_NAME = "demo";
     private static final String CORE_ACCOUNT_TYPE = "org.smartregister.core";
     private static final String TEST_KEY = "testKey";
