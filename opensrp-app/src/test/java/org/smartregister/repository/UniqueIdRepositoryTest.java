@@ -17,6 +17,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.TestApplication;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -67,6 +68,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
+        TestApplication.getInstance().initCoreLibrary();
 
         CoreLibrary.getInstance().context().allSharedPreferences().updateANMUserName(testUsername);
 

@@ -15,6 +15,7 @@ import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
 import org.smartregister.BaseUnitTest;
+import org.smartregister.TestApplication;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientData;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -138,6 +139,7 @@ public class ClientDaoImplTest extends BaseUnitTest {
 
     @Test
     public void testFindClientByRelationship() throws Exception {
+        TestApplication.getInstance().initCoreLibrary();
         String query = "SELECT json FROM client_relationship JOIN  client  ON base_entity_id=baseEntityId WHERE relationship=? AND relational_id =?";
         String[] params = new String[]{"41587456-b7c8-4c4e-b433-23a786f742fc", "Family"};
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor(2));
