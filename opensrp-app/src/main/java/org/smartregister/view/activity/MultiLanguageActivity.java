@@ -1,5 +1,8 @@
 package org.smartregister.view.activity;
 
+import android.content.res.Configuration;
+import android.os.Build;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.smartregister.util.LangUtils;
