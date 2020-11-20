@@ -3,7 +3,6 @@ package org.smartregister.util;
 import android.content.Context;
 import android.content.pm.PackageManager;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -117,10 +116,5 @@ public class SyncUtilsTest extends BaseUnitTest {
                 "}";
 
         return setting;
-    }
-
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }

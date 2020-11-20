@@ -18,7 +18,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.loader.app.LoaderManager;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -540,10 +539,5 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         doReturn("Test").when(activitySpy).getString(anyInt());
         baseRegisterFragment.refreshSyncStatusViews(null);
         Mockito.verify(baseRegisterFragment).refreshSyncProgressSpinner();
-    }
-
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }

@@ -1,7 +1,6 @@
 package org.smartregister.view.preProcessor;
 
 import org.joda.time.LocalDate;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -318,11 +317,5 @@ public class PNCClientPreProcessorTest {
         processedClient = new PNCClientPreProcessor().preProcess(pncClient);
 
         assertEquals(1, processedClient.recentlyProvidedServices().size());
-    }
-
-
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }

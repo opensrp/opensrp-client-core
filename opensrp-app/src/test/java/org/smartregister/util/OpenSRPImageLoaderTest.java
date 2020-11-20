@@ -9,7 +9,6 @@ import com.android.volley.toolbox.Volley;
 
 import junit.framework.Assert;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -84,10 +83,5 @@ public class OpenSRPImageLoaderTest extends BaseUnitTest {
         PowerMockito.when(Volley.newRequestQueue(Mockito.any(android.content.Context.class), Mockito.any(HurlStack.class))).thenReturn(Mockito.mock(RequestQueue.class));
         OpenSRPImageLoader openSRPImageLoader = new OpenSRPImageLoader(Mockito.mock(Service.class), -1);
         Assert.assertNotNull(openSRPImageLoader);
-    }
-
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }

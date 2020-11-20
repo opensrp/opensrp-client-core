@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -221,10 +220,5 @@ public class ClientProcessorTest extends BaseUnitTest {
         Boolean b = clientProcessor.processCaseModel(eventList.get(0), clientList.get(0), creates_case);
         Assert.assertEquals(Boolean.TRUE, b);
 
-    }
-
-    @After
-    public void tearDown() {
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
