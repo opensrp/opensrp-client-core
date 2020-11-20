@@ -39,9 +39,9 @@ import java.util.Set;
 
 import timber.log.Timber;
 
+import static org.smartregister.AllConstants.DataTypes.INTEGER;
 import static org.smartregister.AllConstants.ROWID;
 import static org.smartregister.domain.Task.INACTIVE_TASK_STATUS;
-import static org.smartregister.repository.EventClientRepository.VARCHAR;
 
 /**
  * Created by samuelgithengi on 11/23/18.
@@ -106,8 +106,8 @@ public class TaskRepository extends BaseRepository {
                     LOCATION + " VARCHAR, " +
                     REQUESTER + " VARCHAR,  " +
                     RESTRICTION_REPEAT + " INTEGER,  " +
-                    RESTRICTION_START + " VARCHAR,  " +
-                    RESTRICTION_END + " VARCHAR )";
+                    RESTRICTION_START + " INTEGER,  " +
+                    RESTRICTION_END + " INTEGER )";
 
     private static final String CREATE_TASK_PLAN_GROUP_INDEX = "CREATE INDEX "
             + TASK_TABLE + "_plan_group_ind  ON " + TASK_TABLE + "(" + PLAN_ID + "," + GROUP_ID + "," + SYNC_STATUS + ")";
@@ -127,9 +127,9 @@ public class TaskRepository extends BaseRepository {
      * @param database the database being upgraded
      */
     public static void updatePriorityToEnumAndAddRestrictions(@NonNull SQLiteDatabase database) {
-        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_REPEAT, VARCHAR);
-        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, VARCHAR);
-        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, VARCHAR);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_REPEAT, INTEGER);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_START, INTEGER);
+        DatabaseMigrationUtils.addColumnIfNotExists(database, TASK_TABLE, RESTRICTION_END, INTEGER);
         DatabaseMigrationUtils.recreateSyncTableWithExistingColumnsOnly(database, TASK_TABLE, COLUMNS, CREATE_TASK_TABLE);
         database.execSQL(String.format("UPDATE %s SET %s=?", TASK_TABLE, PRIORITY), new Object[]{Task.TaskPriority.ROUTINE.name()});
     }
