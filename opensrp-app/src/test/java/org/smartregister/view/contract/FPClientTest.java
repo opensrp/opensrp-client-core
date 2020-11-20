@@ -1,5 +1,6 @@
 package org.smartregister.view.contract;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,12 +11,15 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 
 import java.util.Arrays;
+
+import static org.mockito.Mockito.doReturn;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CoreLibrary.class)
@@ -32,10 +36,9 @@ public class FPClientTest  {
     @Before
     public void setUp()  {
         MockitoAnnotations.initMocks(this);
-        CoreLibrary.init(context);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        doReturn(context).when(coreLibrary).context();
 
-        PowerMockito.mockStatic(CoreLibrary.class);
-        PowerMockito.when(CoreLibrary.getInstance()).thenReturn(coreLibrary);
         Mockito.doReturn(context).when(coreLibrary).context();
 
         fpClient = new FPClient("entity id 1", "woman name", "husband name", "village name", "ec no 1");
@@ -161,5 +164,10 @@ public class FPClientTest  {
                 .withRefillFollowUps(new RefillFollowUps("Condom Refill", new AlertDTO("Condom Refill", "urgent", "2013-02-02"), "refill"));
 
         Assert.assertEquals(expectedFPClient.refillFollowUps(), fpClient.refillFollowUps());
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
