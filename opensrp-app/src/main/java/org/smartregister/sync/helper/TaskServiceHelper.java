@@ -45,9 +45,9 @@ public class TaskServiceHelper extends BaseHelper {
     protected final Context context;
     private TaskRepository taskRepository;
     public static final String TASK_LAST_SYNC_DATE = "TASK_LAST_SYNC_DATE";
-    public static final String UPDATE_STATUS_URL = "/rest/task/update_status";
-    public static final String ADD_TASK_URL = "/rest/task/add";
-    public static final String SYNC_TASK_URL = "/rest/task/sync";
+    public static final String UPDATE_STATUS_URL = "/rest/v2/task/update_status";
+    public static final String ADD_TASK_URL = "/rest/v2/task/add";
+    public static final String SYNC_TASK_URL = "/rest/v2/task/sync";
 
     private static final String TASKS_NOT_PROCESSED = "Tasks with identifiers not processed: ";
 

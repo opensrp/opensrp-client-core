@@ -3,9 +3,12 @@ package org.smartregister.repository;
 import android.content.ContentValues;
 import android.database.SQLException;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import net.sqlcipher.MatrixCursor;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,8 +17,8 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.reflect.Whitebox;
-import org.smartregister.BaseUnitTest;
-import org.smartregister.Context;
+import org.robolectric.util.ReflectionHelpers;
+import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.domain.UniqueId;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -25,6 +28,7 @@ import java.util.List;
 
 import edu.emory.mathcs.backport.java.util.Collections;
 
+import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -42,7 +46,7 @@ import static org.mockito.Mockito.when;
 /**
  * Created by ndegwamartin on 2019-12-02.
  */
-public class UniqueIdRepositoryTest extends BaseUnitTest {
+public class UniqueIdRepositoryTest extends BaseRobolectricUnitTest {
     @Mock
     private Repository repository;
 
@@ -62,28 +66,26 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
 
     private static final String testUsername = "testUser1";
 
-    @Mock
-    Context context;
-
-    @Mock
-    AllSharedPreferences allSharedPreferences;
 
     @Before
     public void setUp() {
 
         MockitoAnnotations.initMocks(this);
 
-        when(context.allSharedPreferences()).thenReturn(allSharedPreferences);
-        when(allSharedPreferences.fetchRegisteredANM()).thenReturn(testUsername);
-
-        CoreLibrary.init(context);
+        AllSharedPreferences allSharedPreferences = new AllSharedPreferences(getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()));
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", allSharedPreferences);
 
         Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository", repository);
+        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
+        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
 
         uniqueIdRepository = new UniqueIdRepository();
 
-        when(repository.getReadableDatabase()).thenReturn(sqLiteDatabase);
-        when(repository.getWritableDatabase()).thenReturn(sqLiteDatabase);
+    }
+
+    @After
+    public void tearDown() {
+        Whitebox.setInternalState(DrishtiApplication.getInstance(), "repository",(Repository) null);
     }
 
     @Test
@@ -220,7 +222,7 @@ public class UniqueIdRepositoryTest extends BaseUnitTest {
     public void testReleaseReserveIds() {
         uniqueIdRepository.releaseReservedIds();
 
-        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(),argsCaptor.capture());
+        verify(sqLiteDatabase).update(stringArgumentCaptor.capture(), contentValuesArgumentCaptor.capture(), stringArgumentCaptor.capture(), argsCaptor.capture());
 
         Assert.assertNotNull(stringArgumentCaptor.getValue());
         assertEquals("unique_ids", stringArgumentCaptor.getAllValues().get(0));
