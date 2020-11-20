@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import org.smartregister.exception.NoHttpResponseException;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.PlanDefinitionRepository;
 import org.smartregister.service.HTTPAgent;
+import org.smartregister.util.DateTimeTypeConverter;
 import org.smartregister.util.DateTypeConverter;
 import org.smartregister.util.Utils;
 
@@ -38,7 +40,10 @@ public class PlanIntentServiceHelper extends BaseHelper {
 
     private final PlanDefinitionRepository planDefinitionRepository;
     private final AllSharedPreferences allSharedPreferences;
-    protected static final Gson gson = new GsonBuilder().registerTypeAdapter(LocalDate.class, new DateTypeConverter()).create();
+    protected static Gson gson = new GsonBuilder().registerTypeAdapter(DateTime.class, new DateTimeTypeConverter("yyyy-MM-dd"))
+            .registerTypeAdapter(LocalDate.class, new DateTypeConverter())
+            .disableHtmlEscaping()
+            .create();
 
     protected final Context context;
     protected static PlanIntentServiceHelper instance;
