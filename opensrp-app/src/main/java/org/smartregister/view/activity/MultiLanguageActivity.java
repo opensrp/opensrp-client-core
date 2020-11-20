@@ -18,4 +18,17 @@ public class MultiLanguageActivity extends AppCompatActivity {
         super.attachBaseContext(LangUtils.setAppLocale(base, lang));
     }
 
+    //solution borrowed from
+    // https://stackoverflow.com/questions/55265834/change-locale-not-work-after-migrate-to-androidx/61420643#61420643
+    @Override
+    public void applyOverrideConfiguration(Configuration overrideConfiguration) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
+                Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            // add this to fix androidx.appcompat:appcompat 1.1.0 bug
+            // which happens on Android 6.x ~ 7.x
+            getResources();
+        }
+        super.applyOverrideConfiguration(overrideConfiguration);
+    }
+
 }
