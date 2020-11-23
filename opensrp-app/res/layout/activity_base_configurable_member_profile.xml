@@ -69,7 +69,7 @@
                         android:textSize="@dimen/configurable_member_profile_name_size" />
 
                     <org.smartregister.view.customcontrols.CustomFontTextView
-                        android:id="@+id/primary_caregiver"
+                        android:id="@+id/textview_primary_caregiver"
                         style="@style/CustomFontTextViewStyle.ClientList.Light"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -156,12 +156,10 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <ViewStub
-                android:id="@+id/content_layout_stub"
+            <include
+                layout="@layout/configurable_profile_content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inflatedId="@+id/configurable_profile_content"
-                android:layout="@layout/configurable_profile_content" />
+                android:layout_height="wrap_content" />
 
         </LinearLayout>
 

@@ -13,6 +13,7 @@ import org.smartregister.R;
 import org.smartregister.helper.ImageRenderHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseProfileContract;
+import org.smartregister.view.presenter.BaseConfigurableMemberProfilePresenter;
 
 /**
  * Created by ndegwamartin on 16/07/2018.
@@ -57,7 +58,7 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         //TODO Implement this
     }
 
-    protected abstract void initializePresenter();
+    protected abstract BaseConfigurableMemberProfilePresenter initializePresenter();
 
     protected void setupViews() {
         tabLayout = findViewById(R.id.tabs);

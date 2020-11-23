@@ -32,8 +32,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Build.VERSION_CODES;
 import android.os.Environment;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
 import android.text.Html;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -982,5 +984,13 @@ public class Utils {
 
     public static float convertDpToPixel(float dp, @NonNull Context context) {
         return dp * ((float) context.getResources().getDisplayMetrics().densityDpi / DisplayMetrics.DENSITY_DEFAULT);
+    }
+
+    public static String extractModuleName(Intent intent) {
+        if (intent.getExtras() != null && intent.hasExtra(AllConstants.IntentExtra.MODULE_NAME)) {
+            return intent.getStringExtra(AllConstants.IntentExtra.MODULE_NAME);
+        } else {
+            throw new IllegalStateException("Module name was not passed to the activity! Kindly use ModuleLibrary.getInstance().startRegisterActivity() to start the activity");
+        }
     }
 }

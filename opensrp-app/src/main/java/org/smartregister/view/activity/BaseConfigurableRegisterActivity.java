@@ -22,6 +22,7 @@ import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.configuration.ModuleMetadata;
 import org.smartregister.util.JsonFormUtils;
+import org.smartregister.util.Utils;
 import org.smartregister.view.contract.BaseRegisterContract;
 import org.smartregister.view.contract.RegisterParams;
 import org.smartregister.view.fragment.BaseConfigurableRegisterFragment;
@@ -37,7 +38,6 @@ import timber.log.Timber;
 
 import static org.smartregister.AllConstants.IntentExtra.JsonForm.ACTION;
 import static org.smartregister.AllConstants.IntentExtra.JsonForm.ACTION_REGISTRATION;
-import static org.smartregister.AllConstants.IntentExtra.JsonForm.BASE_ENTITY_ID;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 25-09-2020
@@ -50,7 +50,7 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        extractModuleName();
+        moduleName = Utils.extractModuleName(getIntent());
         fetchModuleConfiguration();
 
         super.onCreate(savedInstanceState);
@@ -68,16 +68,6 @@ public class BaseConfigurableRegisterActivity extends BaseRegisterActivity {
 
     public ModuleConfiguration getModuleConfiguration() {
         return moduleConfiguration;
-    }
-
-
-    private void extractModuleName() {
-        Intent intent = getIntent();
-        if (intent.getExtras() != null && intent.hasExtra(AllConstants.IntentExtra.MODULE_NAME)) {
-            moduleName = intent.getStringExtra(AllConstants.IntentExtra.MODULE_NAME);
-        } else {
-            throw new IllegalStateException("Module name was not passed to the activity! Kindly use ModuleLibrary.getInstance().startRegisterActivity() to start the activity");
-        }
     }
 
     protected void onStartActivityWithAction() {
