@@ -120,6 +120,12 @@
             android:screenOrientation="portrait"
             android:theme="@style/MaterialAppThemeNoActionBarAndTitle" />
 
+        <activity
+            android:name=".view.activity.BaseConfigurableMemberProfileActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/MaterialAppThemeNoActionBarAndTitle" />
+
         <receiver
             android:name=".view.receiver.SyncBroadcastReceiver"
             android:exported="false" />
