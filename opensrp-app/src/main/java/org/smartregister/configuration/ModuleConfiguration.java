@@ -74,6 +74,11 @@ public class ModuleConfiguration {
     }
 
     @NonNull
+    public Class<? extends BaseMemberProfileOptions> getMemberProfileOptionsClass() {
+        return builder.memberProfileOptionsClass;
+    }
+
+    @NonNull
     public String getRegisterTitle() {
         return builder.registerTitle;
     }
@@ -109,6 +114,9 @@ public class ModuleConfiguration {
         // TODO: FIX THIS
         @Nullable
         private Class<? extends ModuleFormProcessor> moduleFormProcessorClass;
+
+        @NonNull
+        private Class<? extends BaseMemberProfileOptions> memberProfileOptionsClass;
 
         @NonNull
         private HashMap<String, Class<? extends ModuleFormProcessor>> formProcessingMap = new HashMap<>();
@@ -172,6 +180,11 @@ public class ModuleConfiguration {
 
         public Builder setModuleFormProcessorClass(@Nullable Class<? extends ModuleFormProcessor> moduleFormProcessorClass) {
             this.moduleFormProcessorClass = moduleFormProcessorClass;
+            return this;
+        }
+
+        public Builder setMemberProfileOptionsClass(@NonNull Class<? extends BaseMemberProfileOptions> memberProfileOptionsClass) {
+            this.memberProfileOptionsClass = memberProfileOptionsClass;
             return this;
         }
 
