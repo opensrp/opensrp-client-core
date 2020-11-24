@@ -5,14 +5,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
-import org.robolectric.RuntimeEnvironment;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.view.activity.DrishtiApplication;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 24-11-2020.
@@ -31,8 +27,19 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void isCheckOk() {
+    public void isCheckOkShouldReturnTrueWhenStructuresAreSynced() {
+        structureSyncedCheck = Mockito.spy(structureSyncedCheck);
+        Mockito.doReturn(true).when(structureSyncedCheck).isStructuresSynced(Mockito.eq(DrishtiApplication.getInstance()));
 
+        Assert.assertTrue(structureSyncedCheck.isCheckOk(DrishtiApplication.getInstance()));
+    }
+
+    @Test
+    public void isCheckOkShouldReturnFalseWhenStructuresAreNotSynced() {
+        structureSyncedCheck = Mockito.spy(structureSyncedCheck);
+        Mockito.doReturn(false).when(structureSyncedCheck).isStructuresSynced(Mockito.eq(DrishtiApplication.getInstance()));
+
+        Assert.assertFalse(structureSyncedCheck.isCheckOk(DrishtiApplication.getInstance()));
     }
 
     @Test
@@ -48,7 +55,6 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
 
         Assert.assertFalse(structureSyncedCheck.isStructuresSynced(DrishtiApplication.getInstance()));
     }
-
 
     @Test
     public void isStructuresSyncedShouldReturnTrueWhenUnsyncedStructuresCountIsMoreThan0() {
