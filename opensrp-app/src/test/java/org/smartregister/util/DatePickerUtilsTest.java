@@ -1,8 +1,6 @@
 package org.smartregister.util;
 
-import android.app.DatePickerDialog;
 import android.content.res.Resources;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +10,10 @@ import android.widget.LinearLayout;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
-import org.robolectric.shadows.ShadowDatePickerDialog;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.R;
 
@@ -82,25 +74,6 @@ public class DatePickerUtilsTest extends BaseRobolectricUnitTest {
 
         // Call the method under test
         DatePickerUtils.themeDatePicker(datePicker, new char[]{'e', 'y', 'm'});
-    }
-
-    public static class TestDialogActivity extends AppCompatActivity {
-
-        private DatePickerDialog datePickerDialog;
-
-        @Override
-        protected void onCreate(@Nullable Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            setContentView(R.layout.html);
-
-            datePickerDialog = new DatePickerDialog(TestDialogActivity.this);
-            datePickerDialog.updateDate(1, 1, 1);
-            datePickerDialog.show();
-        }
-
-        public DatePickerDialog getDatePickerDialog() {
-            return datePickerDialog;
-        }
     }
 
 }
