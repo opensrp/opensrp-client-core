@@ -31,6 +31,7 @@ import org.smartregister.domain.jsonmapping.util.TeamLocation;
 import org.smartregister.domain.jsonmapping.util.TeamMember;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
+import org.smartregister.service.UserService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -46,6 +47,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.smartregister.TestUtils.getContext;
 import static org.smartregister.util.Utils.getDefaultLocale;
 
@@ -448,6 +456,19 @@ public class UtilsTest extends BaseRobolectricUnitTest {
     @Test
     public void testGetAppVersionShouldReturnAppVersion() {
         assertNull(Utils.getAppVersion(RuntimeEnvironment.application));
+    }
+
+    @Test
+    public void testLogoutUserShouldInvokeRequiredMethods() {
+        org.smartregister.Context opensrpContext = spy(CoreLibrary.getInstance().context());
+        Context context = spy(opensrpContext.applicationContext());
+        doReturn(context).when(opensrpContext).applicationContext();
+        UserService mockUserService = mock(UserService.class);
+        doReturn(mockUserService).when(opensrpContext).userService();
+        Utils.logoutUser(opensrpContext, "logged out");
+        verify(mockUserService, times(1)).forceRemoteLogin(anyString());
+        verify(mockUserService, times(1)).logoutSession();
+        verify(context, times(1)).startActivity(any(Intent.class));
     }
 }
 
