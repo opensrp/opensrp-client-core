@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.domain.FetchStatus;
 import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.view.activity.DrishtiApplication;
@@ -88,7 +89,17 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void onSyncInProgress() {
+    public void onSyncInProgressShouldLogWhenFetchStatusIsProgress() {
+        structureSyncedCheck.onSyncInProgress(FetchStatus.fetchProgress);
+
+        Mockito.verify(mockitoTree).e("Sync progress is %s", FetchStatus.fetchProgress.displayValue());
+    }
+
+    @Test
+    public void onSyncInProgressShouldNotLogWhenFetchStatusIsNotProgress() {
+        structureSyncedCheck.onSyncInProgress(FetchStatus.fetchStarted);
+
+        Mockito.verify(mockitoTree, Mockito.times(0)).e("Sync progress is %s", FetchStatus.fetchProgress.displayValue());
     }
 
     @Test
