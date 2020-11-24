@@ -11,20 +11,26 @@ import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
+import timber.log.Timber;
+
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 24-11-2020.
  */
 public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
 
     private StructureSyncedCheck structureSyncedCheck;
+    private Timber.Tree mockitoTree;
 
     @Before
     public void setUp() throws Exception {
         structureSyncedCheck = new StructureSyncedCheck();
+        mockitoTree = Mockito.mock(Timber.Tree.class);
+        Timber.plant(mockitoTree);
     }
 
     @After
     public void tearDown() throws Exception {
+        Timber.uproot(mockitoTree);
     }
 
     @Test
@@ -76,6 +82,9 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
 
     @Test
     public void onSyncStart() {
+        structureSyncedCheck.onSyncStart();
+
+        Mockito.verify(mockitoTree).e("Sync is starting");
     }
 
     @Test
