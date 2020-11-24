@@ -572,6 +572,17 @@ public class AllConstants {
         String PERSON = "person";
     }
 
+    public interface Client {
+        String BASE_ENTITY_ID = "base_entity_id";
+        String PHONE_NUMBER = "phone_number";
+        String FIRST_NAME = "first_name";
+        String LAST_NAME = "last_name";
+        String PRIMARY_CAREGIVER = "primary_care_giver";
+        String VILLAGE_TOWN = "village_town";
+        String GENDER = "gender";
+        String DOB = "dob";
+    }
+
     public interface OPENMRS {
         String ENTITY = "openmrs_entity";
         String ENTITY_ID = "openmrs_entity_id";
