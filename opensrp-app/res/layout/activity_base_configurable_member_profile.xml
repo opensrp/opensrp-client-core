@@ -36,6 +36,17 @@
                     app:contentInsetStartWithNavigation="0dp"
                     app:layout_collapseMode="pin">
 
+                    <org.smartregister.view.customcontrols.CustomFontTextView
+                        android:id="@+id/toolbar_title"
+                        style="@style/CustomFontTextViewStyle.ClientList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center_vertical|left"
+                        android:paddingStart="0dp"
+                        android:paddingLeft="0dp"
+                        android:text=""
+                        android:textSize="17sp" />
+
                 </androidx.appcompat.widget.Toolbar>
 
                 <LinearLayout
