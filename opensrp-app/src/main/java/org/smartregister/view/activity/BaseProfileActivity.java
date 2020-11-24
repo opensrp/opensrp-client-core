@@ -1,12 +1,15 @@
 package org.smartregister.view.activity;
 
 import android.app.ProgressDialog;
+
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.tabs.TabLayout;
+
 import androidx.viewpager.widget.ViewPager;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+
 import android.view.View;
 
 import org.smartregister.R;
@@ -58,7 +61,7 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
         //TODO Implement this
     }
 
-    protected abstract BaseConfigurableMemberProfilePresenter initializePresenter();
+    protected abstract void initializePresenter();
 
     protected void setupViews() {
         tabLayout = findViewById(R.id.tabs);
@@ -86,8 +89,9 @@ public abstract class BaseProfileActivity extends SecuredActivity implements Bas
             appBarLayoutScrollRange = appBarLayout.getTotalScrollRange();
         }
         if (appBarLayoutScrollRange + verticalOffset == 0) {
+            if (collapsingToolbarLayout != null)
+                collapsingToolbarLayout.setTitle(patientName);
 
-            collapsingToolbarLayout.setTitle(patientName);
             appBarTitleIsShown = true;
         } else if (appBarTitleIsShown) {
             collapsingToolbarLayout.setTitle(" ");
