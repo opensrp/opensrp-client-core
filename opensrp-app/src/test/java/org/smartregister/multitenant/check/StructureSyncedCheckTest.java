@@ -88,5 +88,6 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
 
     @Test
     public void getUniqueName() {
+        Assert.assertEquals("StructureSyncedCheck", structureSyncedCheck.getUniqueName());
     }
 }
