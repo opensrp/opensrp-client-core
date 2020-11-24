@@ -82,7 +82,7 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void onSyncStart() {
+    public void onSyncStartShouldLogTextAsError() {
         structureSyncedCheck.onSyncStart();
 
         Mockito.verify(mockitoTree).e("Sync is starting");
@@ -103,7 +103,10 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void onSyncComplete() {
+    public void onSyncCompleteShouldLogTextAsError() {
+        structureSyncedCheck.onSyncComplete(FetchStatus.fetched);
+
+        Mockito.verify(mockitoTree).e("The sync is complete");
     }
 
     @Test
