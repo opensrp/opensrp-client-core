@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/sick_child_reg_row"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -76,6 +76,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/medical_history_row"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content">
 
         <ImageView
@@ -144,6 +145,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/upcoming_services_row"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content">
 
         <ImageView
@@ -212,6 +214,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/family_profile_row"
         android:layout_width="match_parent"
+        android:visibility="gone"
         android:layout_height="wrap_content">
 
         <ImageView
