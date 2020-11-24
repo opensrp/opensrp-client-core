@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
+import org.smartregister.exception.PreResetAppOperationException;
 import org.smartregister.repository.StructureRepository;
 import org.smartregister.view.activity.DrishtiApplication;
 
@@ -43,7 +44,14 @@ public class StructureSyncedCheckTest extends BaseRobolectricUnitTest {
     }
 
     @Test
-    public void performPreResetAppOperations() {
+    public void performPreResetAppOperationsShouldCallLocationServiceHelperEvidenceThroughCallingStructureRepository() throws PreResetAppOperationException {
+        // Spy on structure-repository that is called when location repository wants to sync
+        StructureRepository structureRepository = Mockito.spy(DrishtiApplication.getInstance().getContext().getStructureRepository());
+        ReflectionHelpers.setField(DrishtiApplication.getInstance().getContext(), "structureRepository", structureRepository);
+
+        structureSyncedCheck.performPreResetAppOperations(DrishtiApplication.getInstance());
+
+        Mockito.verify(structureRepository).getAllUnsynchedCreatedStructures();
     }
 
     @Test
