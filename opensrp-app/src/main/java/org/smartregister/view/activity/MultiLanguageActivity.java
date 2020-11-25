@@ -1,14 +1,15 @@
 package org.smartregister.view.activity;
 
 import android.content.res.Configuration;
-import android.os.Build;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.smartregister.util.LangUtils;
 
 
-/** Use this class to ensure your activities have multi-language support
+/**
+ * Use this class to ensure your activities have multi-language support
+ *
  * @author Rodgers Andati
  * @since 2019-05-03
  */
@@ -18,20 +19,12 @@ public class MultiLanguageActivity extends AppCompatActivity {
     protected void attachBaseContext(android.content.Context base) {
         // get language from prefs
         String lang = LangUtils.getLanguage(base.getApplicationContext());
-        super.attachBaseContext(LangUtils.setAppLocale(base, lang));
+        Configuration newConfiguration = LangUtils.setAppLocale(base, lang);
+
+        super.attachBaseContext(base);
+
+        applyOverrideConfiguration(newConfiguration);
     }
 
-    //solution borrowed from
-    // https://stackoverflow.com/questions/55265834/change-locale-not-work-after-migrate-to-androidx/61420643#61420643
-    @Override
-    public void applyOverrideConfiguration(Configuration overrideConfiguration) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP &&
-                Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            // add this to fix androidx.appcompat:appcompat 1.1.0 bug
-            // which happens on Android 6.x ~ 7.x
-            getResources();
-        }
-        super.applyOverrideConfiguration(overrideConfiguration);
-    }
 
 }
