@@ -6,10 +6,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
-import org.smartregister.configuration.BaseMemberProfileRowsDataProvider;
-import org.smartregister.domain.AlertStatus;
+import org.smartregister.domain.ConfigurableMemberProfileRowData;
 
-import java.util.Date;
+import java.util.List;
 
 public interface ConfigurableMemberProfileActivityContract {
     interface View extends BaseProfileContract.View {
@@ -29,21 +28,11 @@ public interface ConfigurableMemberProfileActivityContract {
 
         void startFormActivity(JSONObject formJson);
 
-        default void openSickChildRegistration() {
-        }
+        void goToRowActivity(Class<?> rowClickedLaunchedClass);
 
-        void setLastVisit(Date lastVisitDate);
+        void showProgressBar(boolean show);
 
-        void setUpComingServicesStatus(String service, org.smartregister.domain.AlertStatus status, Date date);
-
-        void setFamilyStatus(AlertStatus status);
-
-        void openMedicalHistory();
-
-        void openUpcomingServices();
-
-        void openFamilyDueServices();
-
+        void updateBottomSection(List<ConfigurableMemberProfileRowData> rowDataList);
     }
 
     interface Presenter extends BaseProfileContract.Presenter {
@@ -55,9 +44,6 @@ public interface ConfigurableMemberProfileActivityContract {
         }
 
         void fetchProfileData(CommonPersonObjectClient client);
-
-        default void startSickChildForm(CommonPersonObjectClient client) {
-        }
 
         void processJson(@NotNull Context context, String eventType, @Nullable String tableName, String jsonString);
 
@@ -71,12 +57,7 @@ public interface ConfigurableMemberProfileActivityContract {
     interface InteractorCallBack {
         void refreshProfileTopSection(CommonPersonObjectClient client);
 
-        void refreshLastVisit(Date lastVisitDate);
-
-        void refreshUpComingServicesStatus(String service, AlertStatus status, Date date);
-
-        void refreshFamilyStatus(AlertStatus status);
-
+        void refreshProfileBottomSection(List<ConfigurableMemberProfileRowData> rowDataList);
     }
 
 }

@@ -10,16 +10,15 @@ import org.joda.time.DateTime;
 import org.joda.time.Years;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.BaseMemberProfileOptions;
-import org.smartregister.configuration.BaseMemberProfileRowsDataProvider;
+import org.smartregister.configuration.ConfigurableMemberProfileRowDataProvider;
 import org.smartregister.configuration.ModuleConfiguration;
-import org.smartregister.domain.AlertStatus;
+import org.smartregister.domain.ConfigurableMemberProfileRowData;
 import org.smartregister.util.ConfigurationInstancesHelper;
-import org.smartregister.view.contract.BaseProfileContract;
 import org.smartregister.view.contract.ConfigurableMemberProfileActivityContract;
 import org.smartregister.view.interactor.BaseConfigurableMemberProfileInteractor;
 
 import java.lang.ref.WeakReference;
-import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import static org.smartregister.AllConstants.Client.BASE_ENTITY_ID;
@@ -35,7 +34,7 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
     protected WeakReference<ConfigurableMemberProfileActivityContract.View> viewReference;
     protected ConfigurableMemberProfileActivityContract.Interactor interactor;
     private ModuleConfiguration moduleConfiguration;
-    private BaseMemberProfileRowsDataProvider dataProvider;
+    private ConfigurableMemberProfileRowDataProvider dataProvider;
 
     public BaseConfigurableMemberProfilePresenter(ModuleConfiguration moduleConfiguration, @NonNull ConfigurableMemberProfileActivityContract.View view) {
         this.viewReference = new WeakReference<>(view);
@@ -83,7 +82,7 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
         if (memberProfileOptionsClass != null) {
             memberProfileOptions = ConfigurationInstancesHelper.newInstance(memberProfileOptionsClass);
         }
-        Class<? extends BaseMemberProfileRowsDataProvider> dataProviderClass = memberProfileOptions.getMemberProfileDataProvider();
+        Class<? extends ConfigurableMemberProfileRowDataProvider> dataProviderClass = memberProfileOptions.getMemberProfileDataProvider();
         if (memberProfileOptionsClass != null) {
             this.dataProvider = ConfigurationInstancesHelper.newInstance(dataProviderClass);
         }
@@ -109,23 +108,7 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
     }
 
     @Override
-    public void refreshLastVisit(Date lastVisitDate) {
-        if (getView() != null) {
-            getView().setLastVisit(lastVisitDate);
-        }
-    }
-
-    @Override
-    public void refreshUpComingServicesStatus(String service, AlertStatus status, Date date) {
-        if (getView() != null) {
-            getView().setUpComingServicesStatus(service, status, date);
-        }
-    }
-
-    @Override
-    public void refreshFamilyStatus(AlertStatus status) {
-        if (getView() != null) {
-            getView().setFamilyStatus(status);
-        }
+    public void refreshProfileBottomSection(List<ConfigurableMemberProfileRowData> rowDataList) {
+        getView().updateBottomSection(rowDataList);
     }
 }
