@@ -4,32 +4,32 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import org.joda.time.DateTime;
-import org.joda.time.Days;
 import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
+import org.smartregister.adapter.ConfigurableMemberProfileRowAdapter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
 import org.smartregister.configuration.ModuleConfiguration;
-import org.smartregister.domain.AlertStatus;
+import org.smartregister.domain.ConfigurableMemberProfileRowData;
 import org.smartregister.helper.ImageRenderHelper;
 import org.smartregister.util.Utils;
 import org.smartregister.view.contract.ConfigurableMemberProfileActivityContract;
 import org.smartregister.view.presenter.BaseConfigurableMemberProfilePresenter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -45,16 +45,9 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
     private TextView tvGender;
     private TextView tvAddress;
     private TextView tvId;
-
-    private View sickChildRegistrationRow;
-    private View medicalHistoryRow;
-    private View upcomingServicesRow;
-    private View familyProfileRow;
-
-    private TextView tvChildRegistrationDaysAgo;
-    private TextView tvLastVisitDaysAgo;
-    private TextView tvUpcomingServicesDue;
-    private TextView tvFamilyDueServices;
+    private RecyclerView.Adapter profileRowAdapter;
+    private ProgressBar progressBar;
+    private List<ConfigurableMemberProfileRowData> rowDataList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,8 +77,8 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            final Drawable upArrow = getResources().getDrawable(R.drawable.ic_action_goldsmith_menu_arrow);
-            upArrow.setColorFilter(getResources().getColor(R.color.text_blue), PorterDuff.Mode.SRC_ATOP);
+            final Drawable upArrow = getResources().getDrawable(R.drawable.ic_baseline_arrow_back_24);
+            upArrow.setColorFilter(getResources().getColor(R.color.text_black), PorterDuff.Mode.SRC_ATOP);
             actionBar.setHomeAsUpIndicator(upArrow);
         }
         toolbar.setNavigationOnClickListener(v -> onBackPressed());
@@ -115,26 +108,18 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
         tvGender = findViewById(R.id.textview_gender);
         tvAddress = findViewById(R.id.textview_address);
         tvId = findViewById(R.id.textview_id);
-        tvChildRegistrationDaysAgo = findViewById(R.id.text_view_child_reg_days_ago);
-        tvLastVisitDaysAgo = findViewById(R.id.text_view_last_visit_days_ago);
-        tvUpcomingServicesDue = findViewById(R.id.text_view_upcoming_services_due);
-        tvFamilyDueServices = findViewById(R.id.text_view_family_profile_services_due);
 
-        sickChildRegistrationRow = findViewById(R.id.sick_child_reg_row);
-        sickChildRegistrationRow.setOnClickListener(v -> openSickChildRegistration());
+        profileRowAdapter = new ConfigurableMemberProfileRowAdapter(this, rowDataList);
 
-        medicalHistoryRow = findViewById(R.id.medical_history_row);
-        medicalHistoryRow.setOnClickListener(v -> openMedicalHistory());
+        RecyclerView recyclerView = findViewById(R.id.profile_bottom_recyclerView);
+        recyclerView.setHasFixedSize(false);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(profileRowAdapter);
 
-        upcomingServicesRow = findViewById(R.id.upcoming_services_row);
-        upcomingServicesRow.setOnClickListener(v -> openUpcomingServices());
-
-        upcomingServicesRow = findViewById(R.id.upcoming_services_row);
-        upcomingServicesRow.setOnClickListener(v -> openUpcomingServices());
-
-        familyProfileRow = findViewById(R.id.family_profile_row);
-        familyProfileRow.setOnClickListener(v -> openFamilyDueServices());
+        progressBar = findViewById(R.id.progress_bar);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -154,6 +139,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
 
     @Override
     protected void fetchProfileData() {
+        showProgressBar(true);
         presenter().fetchProfileData(client);
     }
 
@@ -167,8 +153,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
 
     @Override
     public void setProfileImage(String baseEntityId) {
-        // TODO -> Util.getImage(baseEntityId);
-        imageRenderHelper.refreshProfileImage(baseEntityId, profileImageView, R.drawable.ic_child_care);
+        imageRenderHelper.refreshProfileImage(baseEntityId, profileImageView, R.drawable.ic_member);
     }
 
     @Override
@@ -202,57 +187,22 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
     }
 
     @Override
-    public void setLastVisit(Date lastVisitDate) {
-        if (lastVisitDate == null)
+    public void goToRowActivity(Class<?> rowClickedLaunchedClass) {
+
+    }
+
+    @Override
+    public void showProgressBar(boolean show) {
+        progressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void updateBottomSection(List<ConfigurableMemberProfileRowData> dataList) {
+        showProgressBar(false);
+        if (dataList == null)
             return;
 
-        if (lastVisitDate != null) {
-            medicalHistoryRow.setVisibility(View.VISIBLE);
-            int numOfDays = Days.daysBetween(new DateTime(lastVisitDate).toLocalDate(), new DateTime().toLocalDate()).getDays();
-            tvLastVisitDaysAgo.setText(getString(R.string.last_visit_days_ago, (numOfDays <= 1) ? getString(R.string.less_than_twenty_four) : String.valueOf(numOfDays) + " " + getString(R.string.days)));
-        }
-    }
-
-    @Override
-    public void setUpComingServicesStatus(String service, AlertStatus status, Date date) {
-        if (status == AlertStatus.complete)
-            return;
-
-        upcomingServicesRow.setVisibility(View.VISIBLE);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM", Locale.getDefault());
-        if (status == AlertStatus.upcoming) {
-            tvUpcomingServicesDue.setText(Html.fromHtml(getString(R.string.service_upcoming, service, dateFormat.format(date))));
-        } else if (status == AlertStatus.urgent) {
-            tvUpcomingServicesDue.setText(Html.fromHtml(getString(R.string.service_overdue, service, dateFormat.format(date))));
-        } else {
-            tvUpcomingServicesDue.setText(Html.fromHtml(getString(R.string.service_due, service, dateFormat.format(date))));
-        }
-    }
-
-    @Override
-    public void setFamilyStatus(AlertStatus status) {
-        familyProfileRow.setVisibility(View.VISIBLE);
-        if (status == AlertStatus.complete) {
-            tvFamilyDueServices.setText(getString(R.string.family_has_nothing_due));
-        } else if (status == AlertStatus.normal) {
-            tvFamilyDueServices.setText(getString(R.string.family_has_services_due));
-        } else if (status == AlertStatus.urgent) {
-            tvFamilyDueServices.setText(Html.fromHtml(getString(R.string.family_has_service_overdue)));
-        }
-    }
-
-    @Override
-    public void openMedicalHistory() {
-        // TODO
-    }
-
-    @Override
-    public void openUpcomingServices() {
-        // TODO
-    }
-
-    @Override
-    public void openFamilyDueServices() {
-        // TODO
+        this.rowDataList.addAll(dataList);
+        profileRowAdapter.notifyDataSetChanged();
     }
 }
