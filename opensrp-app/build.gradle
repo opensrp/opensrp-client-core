@@ -131,8 +131,7 @@ import org.gradle.api.tasks.testing.logging.TestLogEvent
 tasks.withType(Test) {
     jacoco.includeNoLocationClasses = true
     testLogging {
-        // to see the exceptions of failed tests in Travis-CI console.
-        //exceptionFormat = 'full'
+        // Enables easier debugging of tests in Github Actions CI
         events TestLogEvent.FAILED,
                 TestLogEvent.PASSED,
                 TestLogEvent.SKIPPED,
