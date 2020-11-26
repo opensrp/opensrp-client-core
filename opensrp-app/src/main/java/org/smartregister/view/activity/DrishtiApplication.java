@@ -149,7 +149,7 @@ public abstract class DrishtiApplication extends Application {
 
     public String getUsername() {
         if (username == null) {
-            username = context.allSharedPreferences().fetchRegisteredANM();
+            username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
         }
         return username;
     }
