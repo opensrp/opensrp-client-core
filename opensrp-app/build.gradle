@@ -9,11 +9,9 @@ buildscript {
     }
 
     dependencies {
-
-        classpath "com.android.tools.build:gradle:4.0.1"
-        classpath 'org.apache.commons:commons-lang3:3.3.2'
-        classpath 'io.fabric.tools:gradle:1.30.0'
-        classpath 'gradle.plugin.org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.10.1'
+        classpath "com.android.tools.build:gradle:$androidToolsBuildGradle"
+        classpath 'org.apache.commons:commons-lang3:3.10'
+        classpath 'io.fabric.tools:gradle:1.31.2'
     }
 }
 
@@ -193,7 +191,7 @@ dependencies {
     implementation 'com.github.ybq:Android-SpinKit:1.4.0'
     implementation 'com.mcxiaoke.volley:library:1.0.19'
 
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api fileTree(include: ['*.jar'], dir: 'libs')
     annotationProcessor fileTree(include: ['butterknife*.jar'], dir: 'libs')
 
     implementation 'com.cloudant:cloudant-http:2.7.0'
@@ -307,4 +305,4 @@ coveralls {
     sourceDirs = ["$project.projectDir/src/main/java"]
 }
 
-apply from: '../maven.gradle'
+// apply from: '../maven.gradle'
