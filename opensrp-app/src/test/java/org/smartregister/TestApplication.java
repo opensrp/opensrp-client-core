@@ -26,14 +26,17 @@ public class TestApplication extends DrishtiApplication {
     @Override
     public void onCreate() {
         mInstance = this;
-        context = Context.getInstance();
-        context.updateApplicationContext(getApplicationContext());
-        CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
-
+        initCoreLibrary();
         setTheme(R.style.Theme_AppCompat_NoActionBar); //or just R.style.Theme_AppCompat
 
         // Init Job Creator
         JobManager.create(this).addJobCreator(new TestJobCreator());
+    }
+
+    public void initCoreLibrary() {
+        context = Context.setInstance(new Context());
+        context.updateApplicationContext(getApplicationContext());
+        CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
     }
 
     @Override
@@ -82,5 +85,9 @@ public class TestApplication extends DrishtiApplication {
             return null;
         }
 
+    }
+
+    public static TestApplication getInstance() {
+        return (TestApplication) mInstance;
     }
 }

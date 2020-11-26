@@ -2,6 +2,8 @@ package org.smartregister.view.activity;
 
 import android.os.Build;
 
+import com.evernote.android.job.ShadowJobManager;
+
 import net.sqlcipher.database.SQLiteDatabase;
 
 import org.junit.Assert;
@@ -16,11 +18,11 @@ import org.robolectric.annotation.Config;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.TestSyncConfiguration;
 import org.smartregister.customshadows.FontTextViewShadow;
 import org.smartregister.repository.Repository;
 import org.smartregister.shadows.ShadowAppDatabase;
 import org.smartregister.shadows.ShadowDrawableResourcesImpl;
-import com.evernote.android.job.ShadowJobManager;
 import org.smartregister.shadows.ShadowSQLiteDatabase;
 import org.smartregister.util.CredentialsHelper;
 
@@ -115,7 +117,7 @@ public class DrishtiApplicationTest {
 
             context = Context.getInstance();
             context.updateApplicationContext(getApplicationContext());
-            CoreLibrary.init(context, null, 1588062490000l);
+            CoreLibrary.init(context, new TestSyncConfiguration(), 1588062490000l);
         }
     }
 }

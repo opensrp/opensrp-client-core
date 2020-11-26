@@ -119,6 +119,9 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
     @Mock
     private LoaderManager loaderManager;
 
+    @Mock
+    private CoreLibrary coreLibrary;
+
     @Before
     public void setUp() {
 
@@ -138,8 +141,9 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         AppCompatActivity activitySpy = Mockito.spy(activity);
         doReturn(activitySpy).when(baseRegisterFragment).getActivity();
 
-        ReflectionHelpers.setStaticField(CoreLibrary.class,"instance",null);
-        CoreLibrary.init(opensrpContext);
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
+        doReturn(opensrpContext).when(coreLibrary).context();
+
         doReturn(appProperties).when(opensrpContext).getAppProperties();
 
         doReturn(opensrpContext).when(baseRegisterFragment).context();
@@ -266,7 +270,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         doReturn(activity).when(baseRegisterFragment).getActivity();
 
         doReturn(loaderManager).when(baseRegisterFragment).getLoaderManager();
-        doReturn(null).when(loaderManager).restartLoader(anyInt(),any(),any());
+        doReturn(null).when(loaderManager).restartLoader(anyInt(), any(), any());
 
         baseRegisterFragment.onQRCodeSucessfullyScanned(OPENSRP_ID);
 
@@ -296,7 +300,7 @@ public class BaseRegisterFragmentTest extends BaseUnitTest {
         doReturn(activity).when(baseRegisterFragment).getActivity();
 
         doReturn(loaderManager).when(baseRegisterFragment).getLoaderManager();
-        doReturn(null).when(loaderManager).restartLoader(anyInt(),any(),any());
+        doReturn(null).when(loaderManager).restartLoader(anyInt(), any(), any());
 
         baseRegisterFragment.onQRCodeSucessfullyScanned(OPENSRP_ID);
 

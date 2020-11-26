@@ -4,10 +4,10 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
-import androidx.annotation.NonNull;
+import android.text.TextUtils;
+
 import androidx.annotation.Nullable;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import android.text.TextUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.account.AccountAuthenticatorXml;
@@ -57,19 +57,14 @@ public class CoreLibrary implements OnAccountsUpdateListener {
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-        }
+        init(context, syncConfiguration, BuildConfig.BUILD_TIMESTAMP);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-            buildTimeStamp = buildTimestamp;
-        }
+        init(context, syncConfiguration, buildTimestamp, null);
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @Nullable P2POptions options) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
