@@ -371,17 +371,6 @@
     <string name="register_clients">Register Clients</string>
     <string name="add_new_client">Add new client</string>
 
-    <!-- Configurable member profile -->
-    <string name="last_visit_days_ago">Last visit %1$s ago</string>
-    <string name="less_than_twenty_four">Less than 24 hrs</string>
-    <string name="days">Days</string>
-    <string name="service_overdue"><![CDATA[%1$s <font color=#f04646>overdue (%2$s)</font></b>]]></string>
-    <string name="service_due"><![CDATA[%1$s <font color=#000000>due (%2$s)</font></b>]]></string>
-    <string name="service_upcoming"><![CDATA[%1$s <font color=#7f7f7f>upcoming (%2$s)</font></b>]]></string>
-    <string name="family_has_nothing_due">Family has nothing due</string>
-    <string name="family_has_services_due">Family has services due</string>
-    <string name="family_has_service_overdue"><![CDATA[Family has <font color=#FF0000>services overdue</font></b>]]></string>
-
     <!--The barcode strings-->
     <string name="ok">OK</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection.</string>
