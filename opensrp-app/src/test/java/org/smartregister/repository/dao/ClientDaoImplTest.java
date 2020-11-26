@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.powermock.reflect.Whitebox;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseRobolectricUnitTest;
-import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
 import org.smartregister.repository.ClientRelationshipRepository;
 import org.smartregister.repository.Repository;
@@ -42,12 +41,6 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
 
     @Mock
     private SQLiteDatabase sqLiteDatabase;
-
-    @Mock
-    private CoreLibrary coreLibrary;
-
-    @Mock
-    private Context context;
 
     @Before
     public void setUp() {
@@ -134,18 +127,12 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
 
     @Test
     public void testFindClientByRelationship() throws Exception {
-
         ClientRelationshipRepository clientRelationshipRepository = new ClientRelationshipRepository();
         ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "clientRelationshipRepository", clientRelationshipRepository);
+
         String query = "SELECT json FROM client_relationship JOIN  client  ON base_entity_id=baseEntityId WHERE relationship=? AND relational_id =?";
         String[] params = new String[]{"41587456-b7c8-4c4e-b433-23a786f742fc", "Family"};
         when(sqLiteDatabase.rawQuery(anyString(), any())).thenReturn(getCursor(2));
-
-        ClientRelationshipRepository clientRelationshipRepository = new ClientRelationshipRepository();
-
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", coreLibrary);
-        when(coreLibrary.context()).thenReturn(context);
-        when(context.getClientRelationshipRepository()).thenReturn(clientRelationshipRepository);
 
         List<Patient> patients = clientDao.findClientByRelationship(params[0], params[1]);
         verify(sqLiteDatabase).rawQuery(query, params);
@@ -154,8 +141,6 @@ public class ClientDaoImplTest extends BaseRobolectricUnitTest {
         Patient patient = patients.iterator().next();
         assertNotNull(patient);
         assertEquals("03b1321a-d1fb-4fd0-b1cd-a3f3509fc6a6", patient.getId());
-
-        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 
     public static MatrixCursor getCursor() throws Exception {

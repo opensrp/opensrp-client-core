@@ -627,7 +627,7 @@ public class Context {
         } catch (Exception e) {
             Timber.e(e, "Error creating encrypted SharedPreferences");
 
-            // fallback to unencrypted SharedPreferences
+            // fall back to unencrypted SharedPreferences
             sharedPreferences = getDefaultSharedPreferences(context);
         }
 

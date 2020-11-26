@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
-import org.powermock.reflect.Whitebox;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.annotation.Config;
@@ -42,9 +41,6 @@ public class DrishtiApplicationTest {
     @Before
     public void setUp() throws Exception {
         drishtiApplication = Mockito.spy(new Application());
-
-        CoreLibrary.init(drishtiApplication.getContext(), new TestSyncConfiguration());
-
         Mockito.doReturn(RuntimeEnvironment.application.getFilesDir()).when(drishtiApplication).getFilesDir();
         Mockito.doReturn(RuntimeEnvironment.application).when(drishtiApplication).getApplicationContext();
         Mockito.doReturn(RuntimeEnvironment.application.getResources()).when(drishtiApplication).getResources();
@@ -69,9 +65,6 @@ public class DrishtiApplicationTest {
     @Test
     public void getRepository() {
         drishtiApplication.onCreate();
-
-        Context context = Mockito.mock(Context.class);
-        Whitebox.setInternalState(CoreLibrary.getInstance(), "context", context);
 
         Assert.assertNull(ReflectionHelpers.getField(drishtiApplication, "repository"));
         Assert.assertNotNull(drishtiApplication.getRepository());
