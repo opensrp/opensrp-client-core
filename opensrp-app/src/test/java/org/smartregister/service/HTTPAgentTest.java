@@ -1061,6 +1061,7 @@ public class HTTPAgentTest {
         Mockito.doReturn(httpsURLConnection).when(httpAgentSpy).getHttpURLConnection(TEST_IMAGE_DOWNLOAD_ENDPOINT);
         Mockito.doReturn(HttpURLConnection.HTTP_OK).when(httpsURLConnection).getResponseCode();
         Mockito.doReturn(inputStream).when(httpsURLConnection).getInputStream();
+        Mockito.doReturn("image/png").when(httpsURLConnection).getContentType();
         Mockito.doReturn(bufferedInputStream).when(httpAgentSpy).getBufferedInputStream(inputStream);
         Mockito.doReturn(1985).when(bufferedInputStream).available();
         Mockito.doReturn(-1).when(bufferedInputStream).read();

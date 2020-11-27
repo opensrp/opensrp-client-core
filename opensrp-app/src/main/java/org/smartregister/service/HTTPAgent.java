@@ -766,15 +766,14 @@ public class HTTPAgent {
             int status = httpUrlConnection.getResponseCode();
             if (status == HttpURLConnection.HTTP_OK) {
 
+                if (StringUtils.isBlank(httpUrlConnection.getContentType()))
+                    return new Response<DownloadStatus>(ResponseStatus.success,
+                            DownloadStatus.nothingDownloaded);
+
                 InputStream inputStream = httpUrlConnection.getInputStream();
                 BufferedInputStream bufferedInputStream = getBufferedInputStream(inputStream);
 
-                long fileLength = bufferedInputStream.available();
-                if (fileLength == 0) {
-                    return new Response<DownloadStatus>(ResponseStatus.success,
-                            DownloadStatus.nothingDownloaded);
-                }
-                Timber.d("DownloadFormService %s %d", "file length : ", fileLength);
+                Timber.d("DownloadFormService file content type : %s", httpUrlConnection.getContentType());
 
                 ByteArrayBuffer baf = new ByteArrayBuffer(9999);
                 int current = 0;
