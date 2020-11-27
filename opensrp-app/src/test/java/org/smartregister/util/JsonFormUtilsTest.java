@@ -663,7 +663,7 @@ public class JsonFormUtilsTest {
                         "*\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\"," +
                         "\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        Event event = Mockito.mock(Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
     }
@@ -677,7 +677,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\"," +
                         "\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        Event event = Mockito.mock(Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
     }
@@ -717,7 +717,7 @@ public class JsonFormUtilsTest {
                         "        ]\n" +
                         "      }";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        Event event = Mockito.mock(Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(obsArgumentCaptor.capture());
         List<Object> values = obsArgumentCaptor.getValue().getValues();
@@ -1116,7 +1116,7 @@ public class JsonFormUtilsTest {
 
         assertNotNull(formTag);
 
-        org.smartregister.clientandeventmodel.Event event =
+        Event event =
                 JsonFormUtils.createEvent(fields, metadata, formTag, "97dc48f681ddcf188b2758fba89635fe", "Quick Check", "");
         assertNotNull(event.getEventType());
         Assert.assertEquals(event.getObs().size(), 20);
@@ -1480,7 +1480,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_entity_id\":\"\",\"openmrs_entity_parent\":\"\"," +
                         "\"openmrs_data_type\":\"text\",\"type\":\"gps\",\"key\":\"gps\"}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.spy(new Event());
+        Event event = Mockito.spy(new Event());
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.times(5)).addObs(any(Obs.class));
         String values[] = observationJsonObject.optString(VALUE).split(" ");
