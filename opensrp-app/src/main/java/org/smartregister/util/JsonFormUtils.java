@@ -193,7 +193,6 @@ public class JsonFormUtils {
                 addMultiSelectListObservations(event, jsonObject);
                 continue;
             }
-
             setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
         }
@@ -466,9 +465,43 @@ public class JsonFormUtils {
             } catch (JSONException e1) {
                 Timber.e(e1);
             }
+        } else if (AllConstants.GPS.equals(type)) {
+            createGpsObservation(e, jsonObject, value);
         } else {
             createObservation(e, jsonObject, value);
         }
+    }
+
+    private static void createGpsObservation(Event e, JSONObject jsonObject, String value) {
+        createObservation(e, jsonObject, value);
+        if (StringUtils.isNotBlank(value)) {
+            String[] valueArr = value.split(" ");
+            String formSubmissionFieldPrefix = getString(jsonObject, KEY);
+            if (valueArr.length >= 2) {
+                String latitude = valueArr[0];
+                String longitude = valueArr[1];
+                String formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LATITUDE;
+                addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(latitude));
+
+                formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LONGITUDE;
+                addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(longitude));
+
+                if (valueArr.length >= 4) {
+                    String altitude = valueArr[2];
+                    String accuracy = valueArr[3];
+                    formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ALTITUDE;
+                    addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(altitude));
+
+                    formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ACCURACY;
+                    addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(accuracy));
+                }
+            }
+        }
+    }
+
+    private static void addObs(Event e, String formSubmissionField, String text, List<Object> strings) {
+        e.addObs(new Obs("formsubmissionField", text, formSubmissionField, "",
+                strings, new ArrayList<>(), null, formSubmissionField));
     }
 
     private static void createObservation(Event e, JSONObject jsonObject, String value) {
