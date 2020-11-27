@@ -2,6 +2,7 @@ package org.smartregister.service;
 
 import android.content.Context;
 import android.util.Base64;
+import android.webkit.MimeTypeMap;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -57,6 +58,8 @@ import java.net.ProtocolException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -736,22 +739,25 @@ public class HTTPAgent {
         return loginResponse;
     }
 
+    public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName) {
+        return downloadFromURL(downloadURL_, fileName, new HashMap<>());
+    }
+
     /**
      * @param downloadURL_ This is the url of the image
      * @param fileName     This is how the image should be name after it has been downloaded.
      * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
      */
-    public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName) {
+    public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName, Map<String, String> detailsMap) {
 
         HttpURLConnection httpUrlConnection = null;
         try {
+
             File dir = getSDCardDownloadPath();
 
             if (!dir.exists()) {
                 dir.mkdirs();
             }
-
-            File file = getFile(fileName, dir);
 
             long startTime = System.currentTimeMillis();
             Timber.d("DownloadFormService %s", "download begin");
@@ -769,6 +775,17 @@ public class HTTPAgent {
                 if (StringUtils.isBlank(httpUrlConnection.getContentType()))
                     return new Response<DownloadStatus>(ResponseStatus.success,
                             DownloadStatus.nothingDownloaded);
+
+                int periodIndex = fileName.lastIndexOf(".");
+                if (periodIndex == -1) {
+                    String mimeType = httpUrlConnection.getContentType().split(";")[0];
+                    fileName = String.format("%s.%s", fileName, MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType));
+                }
+
+                File file = getFile(fileName, dir);
+
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_NAME, fileName);
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_PATH, file.getPath());
 
                 InputStream inputStream = httpUrlConnection.getInputStream();
                 BufferedInputStream bufferedInputStream = getBufferedInputStream(inputStream);
