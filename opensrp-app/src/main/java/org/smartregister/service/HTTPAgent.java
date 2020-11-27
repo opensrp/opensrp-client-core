@@ -739,6 +739,11 @@ public class HTTPAgent {
         return loginResponse;
     }
 
+    /**
+     * @param downloadURL_ This is the url of the image
+     * @param fileName     This is how the image should be name after it has been downloaded.
+     * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
+     */
     public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName) {
         return downloadFromURL(downloadURL_, fileName, new HashMap<>());
     }
@@ -746,6 +751,7 @@ public class HTTPAgent {
     /**
      * @param downloadURL_ This is the url of the image
      * @param fileName     This is how the image should be name after it has been downloaded.
+     * @param detailsMap   store values that might be needed after save of file
      * @return Response<DownloadStatus> This returns whether the download succeeded or failed.
      */
     public Response<DownloadStatus> downloadFromURL(String downloadURL_, String fileName, Map<String, String> detailsMap) {
