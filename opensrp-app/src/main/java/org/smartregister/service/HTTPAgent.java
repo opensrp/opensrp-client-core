@@ -754,7 +754,7 @@ public class HTTPAgent {
         try {
 
             File dir = getSDCardDownloadPath();
-
+            String tempFileName = fileName;
             if (!dir.exists()) {
                 dir.mkdirs();
             }
@@ -762,7 +762,7 @@ public class HTTPAgent {
             long startTime = System.currentTimeMillis();
             Timber.d("DownloadFormService %s", "download begin");
             Timber.d("DownloadFormService %s %s", "download url: ", downloadURL_);
-            Timber.d("DownloadFormService %s %s", "download file name: ", fileName);
+            Timber.d("DownloadFormService %s %s", "download file name: ", tempFileName);
 
 
             String downloadURL = downloadURL_.replaceAll("\\s+", "");
@@ -776,15 +776,15 @@ public class HTTPAgent {
                     return new Response<DownloadStatus>(ResponseStatus.success,
                             DownloadStatus.nothingDownloaded);
 
-                int periodIndex = fileName.lastIndexOf(".");
+                int periodIndex = tempFileName.lastIndexOf(".");
                 if (periodIndex == -1) {
                     String mimeType = httpUrlConnection.getContentType().split(";")[0];
-                    fileName = String.format("%s.%s", fileName, MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType));
+                    tempFileName = String.format("%s.%s", tempFileName, MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType));
                 }
 
-                File file = getFile(fileName, dir);
+                File file = getFile(tempFileName, dir);
 
-                detailsMap.put(AllConstants.DownloadFileConstants.FILE_NAME, fileName);
+                detailsMap.put(AllConstants.DownloadFileConstants.FILE_NAME, tempFileName);
                 detailsMap.put(AllConstants.DownloadFileConstants.FILE_PATH, file.getPath());
 
                 InputStream inputStream = httpUrlConnection.getInputStream();
