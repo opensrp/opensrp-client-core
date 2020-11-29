@@ -117,6 +117,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(profileRowAdapter);
 
+        profileRowAdapter.notifyDataSetChanged();
         progressBar = findViewById(R.id.progress_bar);
     }
 
