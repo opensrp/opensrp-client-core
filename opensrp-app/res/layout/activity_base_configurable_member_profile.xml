@@ -53,10 +53,11 @@
                     android:id="@+id/profile_name_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="50dp"
+                    android:layout_marginTop="30dp"
                     android:gravity="center_horizontal"
                     android:orientation="vertical"
                     android:paddingTop="10dp"
+                    android:paddingBottom="15dp"
                     app:layout_collapseMode="parallax">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -88,6 +89,7 @@
                         android:paddingTop="2dp"
                         android:text="Caregiver: Jack Smith"
                         android:textColor="@color/text_black"
+                        android:textStyle="bold"
                         android:visibility="gone" />
 
                     <LinearLayout
@@ -107,7 +109,8 @@
                             android:gravity="center_horizontal"
                             android:text="Female"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -116,7 +119,8 @@
                             android:layout_marginLeft="@dimen/profile_dot_separator_margin"
                             android:layout_marginRight="@dimen/profile_dot_separator_margin"
                             android:text="\u00b7"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
 
                         <org.smartregister.view.customcontrols.CustomFontTextView
                             android:id="@+id/textview_address"
@@ -127,7 +131,8 @@
                             android:paddingLeft="0dp"
                             android:text="Lavington #445"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -136,7 +141,8 @@
                             android:layout_marginLeft="@dimen/profile_dot_separator_margin"
                             android:layout_marginRight="@dimen/profile_dot_separator_margin"
                             android:text="\u00b7"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
 
 
                         <org.smartregister.view.customcontrols.CustomFontTextView
@@ -149,7 +155,8 @@
                             android:paddingLeft="0dp"
                             android:text="ID: 25398735"
                             android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                            android:textColor="@android:color/black" />
+                            android:textColor="@android:color/black"
+                            android:textStyle="bold" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -161,8 +168,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/profile_bottom_recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="20dp" />
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

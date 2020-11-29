@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/member_profile_row_item_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -16,8 +15,8 @@
             android:layout_width="58dp"
             android:layout_height="38dp"
             android:layout_centerVertical="true"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="14dp"
             android:src="@drawable/ic_child_care"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -27,20 +26,21 @@
             style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
             android:layout_width="216dp"
             android:layout_height="25dp"
-            android:layout_marginStart="22dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="14dp"
             android:layout_marginEnd="44dp"
             android:text="View registration"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
             android:textColor="@android:color/black"
             app:layout_constraintEnd_toStartOf="@+id/navigate_icon"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toEndOf="@+id/row_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
         <org.smartregister.view.customcontrols.CustomFontTextView
             android:id="@+id/text_view_row_detail"
-            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines"
-            android:layout_width="105dp"
+            style="@style/CustomFontTextViewStyle.ListView.Normal.MultipleLines.Extended"
+            android:layout_width="wrap_content"
             android:layout_height="24dp"
             android:layout_marginTop="4dp"
             android:text="3 days ago"
@@ -54,7 +54,7 @@
             android:layout_width="39dp"
             android:layout_height="53dp"
             android:layout_centerVertical="true"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="14dp"
             android:layout_marginEnd="16dp"
             android:src="@drawable/ic_navigate"
             app:layout_constraintEnd_toEndOf="parent"
