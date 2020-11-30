@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.adapter.ConfigurableMemberProfileRowAdapter;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.configuration.BaseMemberProfileOptions;
 import org.smartregister.configuration.ModuleConfiguration;
 import org.smartregister.domain.ConfigurableMemberProfileRowData;
 import org.smartregister.helper.ImageRenderHelper;
@@ -48,6 +50,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
     private RecyclerView.Adapter profileRowAdapter;
     private ProgressBar progressBar;
     private List<ConfigurableMemberProfileRowData> rowDataList = new ArrayList<>();
+    private BaseMemberProfileOptions memberProfileOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +100,7 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
         }
 
         initializePresenter();
+        memberProfileOptions = presenter().getMemberProfileOptions();
         presenter().fetchProfileData(client);
     }
 
@@ -124,8 +128,14 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // TODO -> Get menu from Config
+        getMenuInflater().inflate(memberProfileOptions.getMenuLayoutId(), menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        memberProfileOptions.onMenuOptionsItemSelected(item, this, client);
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
