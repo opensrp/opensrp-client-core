@@ -24,5 +24,8 @@ public class BaseHelperTest extends BaseRobolectricUnitTest {
         Assert.assertNotNull(CoreLibrary.getInstance().context().configuration().dristhiBaseURL());
 
         Assert.assertEquals("http://site.com", new BaseHelper().getFormattedBaseUrl());
+
+        // Return the configuration to the previous state to fix the TaskServiceHelperTest failures
+        ReflectionHelpers.setStaticField(CoreLibrary.class, "instance", null);
     }
 }
