@@ -22,6 +22,7 @@ import org.smartregister.domain.tag.FormTag;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -162,7 +163,7 @@ public class JsonFormUtilsTest {
     private JSONObject formjson;
     private String bindtype = "ec_child";
 
-    private final String STEP_1_FIELDS =  "[\n" +
+    private final String STEP_1_FIELDS = "[\n" +
             "  {\n" +
             "    \"openmrs_entity\": \"entity\",\n" +
             "    \"openmrs_entity_id\": \"entity_id\",\n" +
@@ -663,7 +664,7 @@ public class JsonFormUtilsTest {
                         "*\",\"openmrs_entity_parent\":\"\",\"openmrs_data_type\":\"text\",\"type\":\"edit_text\"," +
                         "\"key\":\"Birth_Weight\",\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        Event event = Mockito.mock(Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
     }
@@ -677,7 +678,7 @@ public class JsonFormUtilsTest {
                         "\"openmrs_data_type\":\"text\",\"type\":\"edit_text\",\"key\":\"Birth_Weight\"," +
                         "\"v_numeric\":{\"value\":\"true\",\"err\":\"Enter a valid weight\"}}";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        Event event = Mockito.mock(Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(any(Obs.class));
     }
@@ -717,7 +718,7 @@ public class JsonFormUtilsTest {
                         "        ]\n" +
                         "      }";
         JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
-        org.smartregister.clientandeventmodel.Event event = Mockito.mock(org.smartregister.clientandeventmodel.Event.class);
+        Event event = Mockito.mock(Event.class);
         JsonFormUtils.addObservation(event, observationJsonObject);
         Mockito.verify(event, Mockito.atLeastOnce()).addObs(obsArgumentCaptor.capture());
         List<Object> values = obsArgumentCaptor.getValue().getValues();
@@ -1116,7 +1117,7 @@ public class JsonFormUtilsTest {
 
         assertNotNull(formTag);
 
-        org.smartregister.clientandeventmodel.Event event =
+        Event event =
                 JsonFormUtils.createEvent(fields, metadata, formTag, "97dc48f681ddcf188b2758fba89635fe", "Quick Check", "");
         assertNotNull(event.getEventType());
         Assert.assertEquals(event.getObs().size(), 20);
@@ -1164,12 +1165,12 @@ public class JsonFormUtilsTest {
         JSONObject jsonObject1 = new JSONObject();
         jsonObject1.put(OPENMRS_ENTITY_ID, "entityId");
         jsonObject1.put(OPENMRS_ENTITY, "concept");
-        jsonObject1.put(AllConstants.TEXT,"text");
+        jsonObject1.put(AllConstants.TEXT, "text");
 
         JSONObject jsonObject2 = new JSONObject();
         jsonObject2.put(OPENMRS_ENTITY_ID, "entityId2");
         jsonObject2.put(OPENMRS_ENTITY, "concept");
-        jsonObject2.put(AllConstants.TEXT,"text2");
+        jsonObject2.put(AllConstants.TEXT, "text2");
 
         JSONArray jsonArray = new JSONArray();
         jsonArray.put(jsonObject1);
@@ -1299,7 +1300,7 @@ public class JsonFormUtilsTest {
     public void testGetJSONArrayShouldGetCorrectJSONArray() throws JSONException {
         JSONObject jsonObject = new JSONObject(JSON_ARRAY);
         assertEquals(jsonObject.getJSONArray("json_array"), JsonFormUtils.getJSONArray(jsonObject, "json_array"));
-        assertNull( JsonFormUtils.getJSONArray(jsonObject, "json_array_1"));
+        assertNull(JsonFormUtils.getJSONArray(jsonObject, "json_array_1"));
     }
 
     @Test
@@ -1407,7 +1408,7 @@ public class JsonFormUtilsTest {
     @Test
     public void testGetFieldValueFromJsonObjShouldGetCorrectValue() {
         assertEquals("Secondary", JsonFormUtils.getFieldValue(multiStepForm, "educ_level"));
-        assertEquals( "primary" , JsonFormUtils.getFieldValue(multiStepForm, "educ_level_2"));
+        assertEquals("primary", JsonFormUtils.getFieldValue(multiStepForm, "educ_level_2"));
     }
 
     @Test
@@ -1471,5 +1472,36 @@ public class JsonFormUtilsTest {
         assertFalse(obs.isSaveObsAsArray());
         assertEquals(values, obs.getValues());
         assertEquals(keyValPairs, obs.getKeyValPairs());
+    }
+
+    @Test
+    public void addObservationAddsGpsObservationsToEvent() throws Exception {
+        String observationJsonObjectString =
+                "{\"value\":\"-2.4535 37.324 0.2 0.3\",\"openmrs_entity\":\"\"," +
+                        "\"openmrs_entity_id\":\"\",\"openmrs_entity_parent\":\"\"," +
+                        "\"openmrs_data_type\":\"text\",\"type\":\"gps\",\"key\":\"gps\"}";
+        JSONObject observationJsonObject = new JSONObject(observationJsonObjectString);
+        Event event = Mockito.spy(new Event());
+        JsonFormUtils.addObservation(event, observationJsonObject);
+        Mockito.verify(event, Mockito.times(5)).addObs(any(Obs.class));
+        String values[] = observationJsonObject.optString(VALUE).split(" ");
+        String latitudeKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.LATITUDE;
+        String longitudeKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.LONGITUDE;
+        String altitudeKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.ALTITUDE;
+        String accuracyKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.ACCURACY;
+        List<String> formSubmissionFields = Arrays.asList(latitudeKey, longitudeKey, accuracyKey, altitudeKey, "gps");
+        for (Obs obs : event.getObs()) {
+            String formSubmissionField = obs.getFormSubmissionField();
+            assertTrue(formSubmissionFields.contains(formSubmissionField));
+            if (formSubmissionField.equals(latitudeKey)) {
+                assertEquals(values[0], obs.getValues().get(0));
+            } else if (formSubmissionField.equals(longitudeKey)) {
+                assertEquals(values[1], obs.getValues().get(0));
+            } else if (formSubmissionField.equals(altitudeKey)) {
+                assertEquals(values[2], obs.getValues().get(0));
+            } else if (formSubmissionField.equals(accuracyKey)) {
+                assertEquals(values[3], obs.getValues().get(0));
+            }
+        }
     }
 }
