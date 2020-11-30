@@ -8,6 +8,7 @@ import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -480,16 +481,25 @@ public class JsonFormUtils {
             if (valueArr.length >= 2) {
                 String latitude = valueArr[0];
                 String longitude = valueArr[1];
-                addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LATITUDE, AllConstants.TEXT, Collections.singletonList(latitude));
-                addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LONGITUDE, AllConstants.TEXT, Collections.singletonList(longitude));
+                addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.LATITUDE, latitude);
+                addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.LONGITUDE, longitude);
                 if (valueArr.length >= 4) {
                     String altitude = valueArr[2];
                     String accuracy = valueArr[3];
-                    addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ALTITUDE, AllConstants.TEXT, Collections.singletonList(altitude));
-                    addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ACCURACY, AllConstants.TEXT, Collections.singletonList(accuracy));
+                    addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.ALTITUDE, altitude);
+                    addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.ACCURACY, accuracy);
                 }
             }
         }
+    }
+
+    private static void addGpsObs(Event e, String formSubmissionFieldPrefix, String formSubmissionFieldSuffix, String value) {
+        addObs(e, getGpsFormSubmissionField(formSubmissionFieldPrefix, formSubmissionFieldSuffix), AllConstants.TEXT, Collections.singletonList(value));
+    }
+
+    @NotNull
+    private static String getGpsFormSubmissionField(String formSubmissionFieldPrefix, String suffix) {
+        return formSubmissionFieldPrefix + "_" + suffix;
     }
 
     private static void addObs(Event e, String formSubmissionField, String text, List<Object> strings) {
