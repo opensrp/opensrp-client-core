@@ -6,6 +6,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.json.JSONObject;
 import org.smartregister.commonregistry.CommonPersonObjectClient;
+import org.smartregister.configuration.BaseMemberProfileOptions;
 import org.smartregister.domain.ConfigurableMemberProfileRowData;
 
 import java.util.List;
@@ -38,6 +39,8 @@ public interface ConfigurableMemberProfileActivityContract {
     interface Presenter extends BaseProfileContract.Presenter {
 
         View getView();
+
+        BaseMemberProfileOptions getMemberProfileOptions();
 
         default Interactor createInteractor() {
             return null;

@@ -76,18 +76,6 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
         return new BaseConfigurableMemberProfileInteractor(dataProvider);
     }
 
-    private void getProfileMemberDataProvider(){
-        BaseMemberProfileOptions memberProfileOptions = null;
-        Class<? extends BaseMemberProfileOptions> memberProfileOptionsClass = moduleConfiguration.getMemberProfileOptionsClass();
-        if (memberProfileOptionsClass != null) {
-            memberProfileOptions = ConfigurationInstancesHelper.newInstance(memberProfileOptionsClass);
-        }
-        Class<? extends ConfigurableMemberProfileRowDataProvider> dataProviderClass = memberProfileOptions.getMemberProfileDataProvider();
-        if (memberProfileOptionsClass != null) {
-            this.dataProvider = ConfigurationInstancesHelper.newInstance(dataProviderClass);
-        }
-    }
-
     @Override
     public void fetchProfileData(CommonPersonObjectClient client) {
         interactor.refreshProfileView(client, false, this);
@@ -111,4 +99,23 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
     public void refreshProfileBottomSection(List<ConfigurableMemberProfileRowData> rowDataList) {
         getView().updateBottomSection(rowDataList);
     }
+
+    @Override
+    public BaseMemberProfileOptions getMemberProfileOptions() {
+        BaseMemberProfileOptions memberProfileOptions = null;
+        Class<? extends BaseMemberProfileOptions> memberProfileOptionsClass = moduleConfiguration.getMemberProfileOptionsClass();
+        if (memberProfileOptionsClass != null) {
+            memberProfileOptions = ConfigurationInstancesHelper.newInstance(memberProfileOptionsClass);
+        }
+        return memberProfileOptions;
+    }
+
+    private void getProfileMemberDataProvider() {
+        BaseMemberProfileOptions memberProfileOptions = getMemberProfileOptions();
+        Class<? extends ConfigurableMemberProfileRowDataProvider> dataProviderClass = memberProfileOptions.getMemberProfileDataProvider();
+        if (dataProviderClass != null) {
+            this.dataProvider = ConfigurationInstancesHelper.newInstance(dataProviderClass);
+        }
+    }
+
 }
