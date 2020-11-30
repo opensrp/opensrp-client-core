@@ -478,17 +478,11 @@ public class JsonFormUtils {
         if (StringUtils.isNotBlank(value)) {
             String[] valueArr = value.split(" ");
             String formSubmissionFieldPrefix = getString(jsonObject, KEY);
-            if (valueArr.length >= 2) {
-                String latitude = valueArr[0];
-                String longitude = valueArr[1];
-                addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.LATITUDE, latitude);
-                addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.LONGITUDE, longitude);
-                if (valueArr.length >= 4) {
-                    String altitude = valueArr[2];
-                    String accuracy = valueArr[3];
-                    addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.ALTITUDE, altitude);
-                    addGpsObs(e, formSubmissionFieldPrefix, AllConstants.GpsConstants.ACCURACY, accuracy);
-                }
+            String[] gpsProperties = new String[]{
+                    AllConstants.GpsConstants.LATITUDE, AllConstants.GpsConstants.LONGITUDE,
+                    AllConstants.GpsConstants.ALTITUDE, AllConstants.GpsConstants.ACCURACY};
+            for (int i = 0; i < valueArr.length; i++) {
+                addGpsObs(e, formSubmissionFieldPrefix, gpsProperties[i], valueArr[i]);
             }
         }
     }
