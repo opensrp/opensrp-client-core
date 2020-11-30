@@ -532,4 +532,9 @@ public class AllConstants {
     public static class DataTypes {
         public static final String INTEGER = "INTEGER";
     }
+
+    public interface DownloadFileConstants {
+        String FILE_NAME = "FILE_NAME";
+        String FILE_PATH = "FILE_PATH";
+    }
 }
