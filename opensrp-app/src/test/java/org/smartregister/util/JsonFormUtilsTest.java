@@ -22,6 +22,7 @@ import org.smartregister.domain.tag.FormTag;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1488,9 +1489,10 @@ public class JsonFormUtilsTest {
         String longitudeKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.LONGITUDE;
         String altitudeKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.ALTITUDE;
         String accuracyKey = observationJsonObject.getString(KEY) + "_" + AllConstants.GpsConstants.ACCURACY;
-
+        List<String> formSubmissionFields = Arrays.asList(latitudeKey, longitudeKey, accuracyKey, altitudeKey, "gps");
         for (Obs obs : event.getObs()) {
             String formSubmissionField = obs.getFormSubmissionField();
+            assertTrue(formSubmissionFields.contains(formSubmissionField));
             if (formSubmissionField.equals(latitudeKey)) {
                 assertEquals(values[0], obs.getValues().get(0));
             } else if (formSubmissionField.equals(longitudeKey)) {

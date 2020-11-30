@@ -480,20 +480,13 @@ public class JsonFormUtils {
             if (valueArr.length >= 2) {
                 String latitude = valueArr[0];
                 String longitude = valueArr[1];
-                String formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LATITUDE;
-                addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(latitude));
-
-                formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LONGITUDE;
-                addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(longitude));
-
+                addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LATITUDE, AllConstants.TEXT, Collections.singletonList(latitude));
+                addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.LONGITUDE, AllConstants.TEXT, Collections.singletonList(longitude));
                 if (valueArr.length >= 4) {
                     String altitude = valueArr[2];
                     String accuracy = valueArr[3];
-                    formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ALTITUDE;
-                    addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(altitude));
-
-                    formSubmissionField = formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ACCURACY;
-                    addObs(e, formSubmissionField, AllConstants.TEXT, Collections.singletonList(accuracy));
+                    addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ALTITUDE, AllConstants.TEXT, Collections.singletonList(altitude));
+                    addObs(e, formSubmissionFieldPrefix + "_" + AllConstants.GpsConstants.ACCURACY, AllConstants.TEXT, Collections.singletonList(accuracy));
                 }
             }
         }
