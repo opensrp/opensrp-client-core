@@ -113,11 +113,12 @@ public class TaskRepository extends BaseRepository {
     }
 
 
-    public void addOrUpdate(Task task) {
-        addOrUpdate(task, false);
+    public boolean addOrUpdate(Task task) {
+        return addOrUpdate(task, false);
     }
 
-    public void addOrUpdate(Task task, boolean updateOnly) {
+    public boolean addOrUpdate(Task task, boolean updateOnly) {
+        boolean taskOperationSuccessful = true;
         if (StringUtils.isBlank(task.getIdentifier())) {
             throw new IllegalArgumentException("identifier must be specified");
         }
@@ -126,8 +127,9 @@ public class TaskRepository extends BaseRepository {
         Task existingTask = getTaskByIdentifier(task.getIdentifier());
         if (existingTask != null) {
             if (existingTask.getLastModified().isAfter(task.getLastModified())) {
-                return;
+                return false;
             }
+
             int maxRowId = P2PUtil.getMaxRowId(TASK_TABLE, getWritableDatabase());
             contentValues.put(ROWID, ++maxRowId);
         }
@@ -157,16 +159,25 @@ public class TaskRepository extends BaseRepository {
         contentValues.put(REQUESTER, task.getRequester());
 
         if (updateOnly) {
-            getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
+            int affectedRows = getWritableDatabase().update(TASK_TABLE, contentValues, ID + " =?", new String[]{task.getIdentifier()});
+            if (affectedRows < 1) {
+                taskOperationSuccessful = false;
+            }
         } else {
-            getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+            long newRowId = getWritableDatabase().replace(TASK_TABLE, null, contentValues);
+            if (newRowId == -1) {
+                taskOperationSuccessful = false;
+            }
         }
 
         if (task.getNotes() != null) {
             for (Note note : task.getNotes())
                 taskNotesRepository.addOrUpdate(note, task.getIdentifier());
+        } else {
+            return true;
         }
 
+        return taskOperationSuccessful;
     }
 
     public Map<String, Set<Task>> getTasksByPlanAndGroup(String planId, String groupId) {
