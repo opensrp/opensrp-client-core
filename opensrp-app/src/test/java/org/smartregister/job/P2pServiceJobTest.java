@@ -10,10 +10,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.robolectric.Robolectric;
 import org.smartregister.BaseRobolectricUnitTest;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 01-12-2020.
@@ -36,6 +33,6 @@ public class P2pServiceJobTest extends BaseRobolectricUnitTest {
 
         // Assert the service started
         Intent intent = intentArgumentCaptor.getValue();
-        junit.framework.Assert.assertEquals("org.smartregister.sync.intent.P2pProcessRecordsService", intent.getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.sync.intent.P2pProcessRecordsService", intent.getComponent().getClassName());
     }
 }

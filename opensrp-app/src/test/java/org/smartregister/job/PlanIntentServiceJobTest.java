@@ -12,8 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.smartregister.BaseRobolectricUnitTest;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by Ephraim Kigamba - nek.eam@gmail.com on 01-12-2020.
  */
@@ -35,6 +33,6 @@ public class PlanIntentServiceJobTest extends BaseRobolectricUnitTest {
 
         // Assert the service started
         Intent intent = intentArgumentCaptor.getValue();
-        junit.framework.Assert.assertEquals("org.smartregister.sync.intent.PlanIntentService", intent.getComponent().getClassName());
+        Assert.assertEquals("org.smartregister.sync.intent.PlanIntentService", intent.getComponent().getClassName());
     }
 }
