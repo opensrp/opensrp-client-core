@@ -1,5 +1,6 @@
 package org.smartregister.util;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,6 +11,7 @@ import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.Context;
 import org.smartregister.CoreLibrary;
+import org.smartregister.TestApplication;
 import org.smartregister.domain.Photo;
 import org.smartregister.domain.ProfileImage;
 import org.smartregister.repository.ImageRepository;
@@ -28,6 +30,11 @@ public class ImageUtilsTest extends BaseUnitTest {
     public void setUp() throws Exception {
         super.setUp();
         mockMethods();
+    }
+
+    @After
+    public void tearDown() {
+        ReflectionHelpers.setField(CoreLibrary.getInstance(), "context", null);
     }
 
     @Test
