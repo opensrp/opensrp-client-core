@@ -128,14 +128,15 @@ public class BaseConfigurableMemberProfileActivity extends BaseProfileActivity i
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        if (memberProfileOptions != null)
+        if (memberProfileOptions != null && memberProfileOptions.getMenuLayoutId() > 0)
             getMenuInflater().inflate(memberProfileOptions.getMenuLayoutId(), menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        memberProfileOptions.onMenuOptionsItemSelected(item, this, client);
+        if (memberProfileOptions != null)
+            memberProfileOptions.onMenuOptionsItemSelected(item, this, client);
         return super.onOptionsItemSelected(item);
     }
 

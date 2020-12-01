@@ -102,8 +102,12 @@ public class BaseConfigurableMemberProfilePresenter implements ConfigurableMembe
 
     @Override
     public BaseMemberProfileOptions getMemberProfileOptions() {
-        Class<? extends BaseMemberProfileOptions> memberProfileOptionsClass = moduleConfiguration.getMemberProfileOptionsClass();
-        return ConfigurationInstancesHelper.newInstance(memberProfileOptionsClass);
+        if (moduleConfiguration != null) {
+            Class<? extends BaseMemberProfileOptions> memberProfileOptionsClass = moduleConfiguration.getMemberProfileOptionsClass();
+            if (memberProfileOptionsClass != null)
+                return ConfigurationInstancesHelper.newInstance(memberProfileOptionsClass);
+        }
+        return null;
     }
 
     private void getProfileMemberDataProvider() {
