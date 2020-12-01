@@ -35,7 +35,6 @@ import static org.mockito.Mockito.when;
 /**
  * Created by ndegwamartin on 07/09/2018.
  */
-@PrepareForTest(CoreLibrary.class)
 public class ECSyncHelperTest extends BaseUnitTest {
 
     private ECSyncHelper syncHelper;
