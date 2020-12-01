@@ -3,7 +3,9 @@ package org.smartregister;
 import android.os.Build;
 import android.view.View;
 
+import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
@@ -39,6 +41,11 @@ public abstract class BaseUnitTest {
     protected static final String TEST_BASE_ENTITY_ID = "23ka2-3e23h2-n3g2i4-9q3b-yts4-20";
     protected static final String TEST_FORM_NAME = "child_enrollment.json";
     protected static final String TEST_RANDOM_STRING = "random text string";
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
 
     public void resetWindowManager() {
 
