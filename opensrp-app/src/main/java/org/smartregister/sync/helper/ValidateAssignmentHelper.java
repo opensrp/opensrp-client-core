@@ -94,7 +94,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
                 UserAssignmentDTO removedAssignments = processRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
-                if (newAssignments) {
+                if (newAssignments && !existingPlans.isEmpty()) {
                     logoff(R.string.account_new_assignment_logged_off);
                     resetSync();
                 } else if (removedAssignments.isRemoved()) {
