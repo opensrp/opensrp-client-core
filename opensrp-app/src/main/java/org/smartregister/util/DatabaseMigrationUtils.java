@@ -1,6 +1,6 @@
 package org.smartregister.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -41,6 +41,18 @@ public class DatabaseMigrationUtils {
             }
             cursor.close();
         }
+        return false;
+    }
+
+    public static boolean addColumnIfNotExists(SQLiteDatabase db, String table, String column, String dataType) {
+        if (!isColumnExists(db, table, column)) {
+            db.execSQL(String.format("ALTER TABLE %s ADD COLUMN %s %s", table, column, dataType));
+        }
+        return false;
+    }
+
+    public static boolean addIndexIfNotExists(SQLiteDatabase db, String table, String columm) {
+        db.execSQL(String.format("CREATE INDEX IF NOT EXISTS  %s_%s_idx  ON %s(%s)", table, columm,table, columm));
         return false;
     }
 
@@ -136,6 +148,32 @@ public class DatabaseMigrationUtils {
         database.execSQL(insertQuery);
 
         database.execSQL("DROP TABLE " + TABLE_PREFIX + table.name());
+
+        database.setTransactionSuccessful();
+
+        database.endTransaction();
+
+    }
+
+
+    public static void recreateSyncTableWithExistingColumnsOnly(SQLiteDatabase database, String table ,String[] columns, String createTableDDL) {
+        database.beginTransaction();
+        //rename original table
+        database.execSQL("ALTER TABLE " + table + " RENAME TO " + TABLE_PREFIX + table);
+        //recreate table
+        database.execSQL(createTableDDL);
+        //
+        String insertQuery = "INSERT INTO "
+                + table
+                + " (" + StringUtils.join(columns, ", ") + ")"
+                + " SELECT " + StringUtils.join(columns, ", ") + " FROM "
+                + TABLE_PREFIX + table;
+
+        Log.d(TAG, "Insert query is\n---------------------------\n" + insertQuery);
+
+        database.execSQL(insertQuery);
+
+        database.execSQL("DROP TABLE " + TABLE_PREFIX + table);
 
         database.setTransactionSuccessful();
 

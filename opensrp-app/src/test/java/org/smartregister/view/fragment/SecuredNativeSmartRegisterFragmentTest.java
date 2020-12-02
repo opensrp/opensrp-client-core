@@ -1,7 +1,7 @@
 package org.smartregister.view.fragment;
 
 import android.graphics.drawable.Drawable;
-import android.support.v4.app.FragmentActivity;
+import androidx.fragment.app.FragmentActivity;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,13 +43,10 @@ import org.smartregister.view.dialog.VillageFilter;
 /**
  * Created by kaderchowdhury on 14/11/17.
  */
-@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*","javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*",
+@PowerMockIgnore({"javax.xml.*", "org.xml.sax.*", "org.w3c.dom.*", "org.springframework.context.*", "org.apache.log4j.*", "javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*",
         "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*"})
 @Config(shadows = {FontTextViewShadow.class})
 public class SecuredNativeSmartRegisterFragmentTest extends BaseUnitTest {
-
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
 
     @Mock
     private View searchCancelButton;

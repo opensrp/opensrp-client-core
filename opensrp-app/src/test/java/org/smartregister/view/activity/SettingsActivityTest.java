@@ -4,32 +4,33 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.preference.EditTextPreference;
 import android.view.View;
+import android.widget.Toast;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.rule.PowerMockRule;
 import org.robolectric.Robolectric;
 import org.robolectric.RuntimeEnvironment;
 import org.robolectric.android.controller.ActivityController;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowToast;
 import org.robolectric.util.ReflectionHelpers;
 import org.smartregister.BaseUnitTest;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.repository.AllSharedPreferences;
-import org.smartregister.util.Utils;
+import org.smartregister.shadows.ShadowPreferenceManager;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by kaderchowdhury on 12/11/17.
  */
 
-@PrepareForTest({Utils.class})
+@Config(shadows = {ShadowPreferenceManager.class})
 public class SettingsActivityTest extends BaseUnitTest {
 
     private static final String HOSTURL = "https://www.opensrp.smartregister.com";
@@ -52,8 +53,8 @@ public class SettingsActivityTest extends BaseUnitTest {
     @Mock
     private View view;
 
-    @Rule
-    public PowerMockRule rule = new PowerMockRule();
+    private EditTextPreference baseUrlEditTextPreference = new EditTextPreference(RuntimeEnvironment.application);
+
 
     @Before
     public void setUp() throws Exception {
@@ -63,7 +64,6 @@ public class SettingsActivityTest extends BaseUnitTest {
         controller = Robolectric.buildActivity(SettingsActivity.class, intent);
         activity = controller.get();
         controller.setup();
-
     }
 
     @Test
@@ -74,15 +74,13 @@ public class SettingsActivityTest extends BaseUnitTest {
     @Test
     public void testOnPreferenceChangeInvokesPreferenceSettingsWithCorrectValues() {
 
-
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getAllSharedPreferences()).thenReturn(sharedPreferences);
-
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", sharedPreferences);
         activity.onPreferenceChange(null, HOSTURL + ":" + PORT);
 
         Mockito.verify(sharedPreferences).savePort(8080);
 
         Mockito.verify(sharedPreferences).saveHost(HOSTURL);
+        ReflectionHelpers.setField(CoreLibrary.getInstance().context(), "allSharedPreferences", null);
     }
 
 
@@ -91,7 +89,7 @@ public class SettingsActivityTest extends BaseUnitTest {
 
         ReflectionHelpers.setField(activity, "dialog", alertDialog);
 
-        EditTextPreference baseUrlEditTextPreference = ReflectionHelpers.getField(activity, "baseUrlEditTextPreference");
+        ReflectionHelpers.setField(activity, "baseUrlEditTextPreference", baseUrlEditTextPreference);
         Assert.assertNotNull(baseUrlEditTextPreference);
         baseUrlEditTextPreference.getEditText().setText(HOSTURL + ":" + PORT);
 
@@ -105,18 +103,16 @@ public class SettingsActivityTest extends BaseUnitTest {
     public void testOnClickInvokesShowErrorToastIfInvalidUrlEntered() {
 
         ReflectionHelpers.setField(activity, "dialog", alertDialog);
+        ReflectionHelpers.setField(activity, "baseUrlEditTextPreference", baseUrlEditTextPreference);
 
-        PowerMockito.mockStatic(Utils.class);
-        PowerMockito.when(Utils.getAllSharedPreferences()).thenReturn(sharedPreferences);
 
-        EditTextPreference baseUrlEditTextPreference = ReflectionHelpers.getField(activity, "baseUrlEditTextPreference");
         Assert.assertNotNull(baseUrlEditTextPreference);
         baseUrlEditTextPreference.getEditText().setText("baddly-formed-url:" + PORT);
 
         activity.onClick(view);
 
-        PowerMockito.verifyStatic();
-        Utils.showShortToast(activity, RuntimeEnvironment.application.getString(R.string.invalid_url_massage));
-
+        Toast toast = ShadowToast.getLatestToast();
+        assertEquals(Toast.LENGTH_SHORT, toast.getDuration());
+        assertEquals(RuntimeEnvironment.application.getString(R.string.invalid_url_massage), ShadowToast.getTextOfLatestToast());
     }
 }

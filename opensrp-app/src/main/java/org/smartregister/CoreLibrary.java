@@ -1,24 +1,39 @@
 package org.smartregister;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.OnAccountsUpdateListener;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.content.LocalBroadcastManager;
 import android.text.TextUtils;
 
+import androidx.annotation.Nullable;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
+import org.apache.commons.lang3.StringUtils;
+import org.smartregister.account.AccountAuthenticatorXml;
 import org.smartregister.authorizer.P2PSyncAuthorizationService;
 import org.smartregister.p2p.P2PLibrary;
+import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.P2PReceiverTransferDao;
 import org.smartregister.repository.P2PSenderTransferDao;
+import org.smartregister.repository.TaskNotesRepository;
+import org.smartregister.repository.dao.ClientDaoImpl;
+import org.smartregister.repository.dao.EventDaoImpl;
+import org.smartregister.repository.dao.LocationDaoImpl;
+import org.smartregister.repository.dao.TaskDaoImpl;
 import org.smartregister.sync.P2PSyncFinishCallback;
+import org.smartregister.util.CredentialsHelper;
+import org.smartregister.util.Utils;
+
+import timber.log.Timber;
 
 import static android.preference.PreferenceManager.getDefaultSharedPreferences;
 
 /**
  * Created by keyman on 31/07/17.
  */
-public class CoreLibrary {
+public class CoreLibrary implements OnAccountsUpdateListener {
 
     private final Context context;
 
@@ -33,28 +48,37 @@ public class CoreLibrary {
 
     private P2POptions p2POptions;
 
+    private AccountManager accountManager;
+
+    private AccountAuthenticatorXml authenticatorXml;
+
     public static void init(Context context) {
         init(context, null);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-        }
+        init(context, syncConfiguration, BuildConfig.BUILD_TIMESTAMP);
     }
 
     public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp) {
-        if (instance == null) {
-            instance = new CoreLibrary(context, syncConfiguration, null);
-            buildTimeStamp = buildTimestamp;
-        }
+        init(context, syncConfiguration, buildTimestamp, null);
     }
 
-    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @NonNull P2POptions options) {
+    public static void init(Context context, SyncConfiguration syncConfiguration, long buildTimestamp, @Nullable P2POptions options) {
         if (instance == null) {
             instance = new CoreLibrary(context, syncConfiguration, options);
             buildTimeStamp = buildTimestamp;
+            checkPlatformMigrations();
         }
+    }
+
+
+    private static void checkPlatformMigrations() {
+        boolean shouldMigrate = CredentialsHelper.shouldMigrate();
+        if (shouldMigrate && StringUtils.isNotBlank(instance.context().userService().getAllSharedPreferences().fetchPioneerUser())) {//Force remote login
+            Utils.logoutUser(instance.context(), instance.context().applicationContext().getString(R.string.new_db_encryption_version_migration));
+        }
+        instance.context().userService().getAllSharedPreferences().migratePassphrase();
     }
 
     public static CoreLibrary getInstance() {
@@ -73,6 +97,9 @@ public class CoreLibrary {
         this.p2POptions = p2POptions;
 
         initP2pLibrary(null);
+        if (syncConfiguration != null && syncConfiguration.runPlanEvaluationOnClientProcessing()) {
+            PathEvaluatorLibrary.init(new LocationDaoImpl(), new ClientDaoImpl(), new TaskDaoImpl(new TaskNotesRepository()), new EventDaoImpl());
+        }
     }
 
     public void initP2pLibrary(@Nullable String username) {
@@ -146,6 +173,22 @@ public class CoreLibrary {
         return syncConfiguration;
     }
 
+    public AccountManager getAccountManager() {
+        if (accountManager == null) {
+            accountManager = AccountManager.get(context.applicationContext());
+            accountManager.addOnAccountsUpdatedListener(this, null, true);
+        }
+
+        return accountManager;
+    }
+
+    public AccountAuthenticatorXml getAccountAuthenticatorXml() {
+        if (authenticatorXml == null)
+            authenticatorXml = Utils.parseAuthenticatorXMLConfigData(context.applicationContext());
+
+        return authenticatorXml;
+    }
+
     public static long getBuildTimeStamp() {
         return buildTimeStamp;
     }
@@ -180,5 +223,34 @@ public class CoreLibrary {
 
         LocalBroadcastManager.getInstance(context.applicationContext())
                 .sendBroadcast(intent);
+    }
+
+    @Override
+    public void onAccountsUpdated(Account[] accounts) {
+        if (context.allSharedPreferences().getDBEncryptionVersion() > 0) {
+            try {
+                String loggedInUser = context.allSharedPreferences().fetchRegisteredANM();
+
+                if (!StringUtils.isBlank(loggedInUser)) {
+
+                    boolean accountExists = false;
+
+                    for (Account account : accounts) {
+                        if (account.type.equals(getAccountAuthenticatorXml().getAccountType()) && account.name.equals(context.allSharedPreferences().fetchRegisteredANM())) {
+                            accountExists = true;
+                            break;
+                        }
+                    }
+
+                    if (!accountExists) {
+
+                        Utils.logoutUser(context, context.applicationContext().getString(R.string.account_removed));
+
+                    }
+                }
+            } catch (Exception e) {
+                Timber.e(e);
+            }
+        }
     }
 }

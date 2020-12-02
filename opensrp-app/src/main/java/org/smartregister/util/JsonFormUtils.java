@@ -1,13 +1,14 @@
 package org.smartregister.util;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -116,6 +117,9 @@ public class JsonFormUtils {
                 .withBirthdate((birthdate), birthdateApprox).withDeathdate(deathdate, deathdateApprox).withGender(gender)
                 .withDateCreated(new Date());
 
+        client.setLocationId(formTag.locationId);
+        client.setTeamId(formTag.teamId);
+
         client.setClientApplicationVersion(formTag.appVersion);
         client.setClientApplicationVersionName(formTag.appVersionName);
         client.setClientDatabaseVersion(formTag.databaseVersion);
@@ -190,7 +194,6 @@ public class JsonFormUtils {
                 addMultiSelectListObservations(event, jsonObject);
                 continue;
             }
-
             setGlobalCheckBoxProperty(metadata, jsonObject);
             addObservation(event, jsonObject);
         }
@@ -201,8 +204,8 @@ public class JsonFormUtils {
     }
 
     /**
-     *  Global setting for all checkboxes in a form,
-     *  allowing saving of checkbox values as a json array string
+     * Global setting for all checkboxes in a form,
+     * allowing saving of checkbox values as a json array string
      *
      * @param metadata
      * @param jsonObject
@@ -249,7 +252,9 @@ public class JsonFormUtils {
     }
 
     private static void createFormMetadataObs(JSONObject metadata, Event event) {
-        if (metadata == null) { return; }
+        if (metadata == null) {
+            return;
+        }
 
         Iterator<?> keys = metadata.keys();
         while (keys.hasNext()) {
@@ -404,42 +409,96 @@ public class JsonFormUtils {
 
     public static void addObservation(Event e, JSONObject jsonObject) {
         String value = getString(jsonObject, VALUE);
-        if (StringUtils.isBlank(value)) { return; }
+        if (StringUtils.isBlank(value)) {
+            return;
+        }
 
         String type = getString(jsonObject, AllConstants.TYPE);
-        String entity =  getString(jsonObject, OPENMRS_ENTITY);
         if (AllConstants.CHECK_BOX.equals(type)) {
             try {
                 List<Object> optionValues = new ArrayList<>();
+                List<Object> optionEntityIds = new ArrayList<>();
+                Map<String, Object> optionKeyVals = new HashMap<>();
                 if (jsonObject.has(AllConstants.OPTIONS)) {
                     JSONArray options = jsonObject.getJSONArray(AllConstants.OPTIONS);
+                    String fieldsOpenmrsEntityId = jsonObject.optString(OPENMRS_ENTITY_ID);
+                    String fieldOpenmrsEntityParent = jsonObject.optString(OPENMRS_ENTITY_PARENT);
+                    String fieldKey = jsonObject.optString(KEY);
+                    boolean shouldBeCombined = jsonObject.optBoolean(AllConstants.COMBINE_CHECKBOX_OPTION_VALUES);
+                    String entity = getString(jsonObject, OPENMRS_ENTITY);
                     for (int i = 0; i < options.length(); i++) {
                         JSONObject option = options.getJSONObject(i);
                         boolean optionValue = option.optBoolean(VALUE);
-                        entity = getString(jsonObject, OPENMRS_ENTITY);
-                        if (optionValue) {
-                            option.put(AllConstants.TYPE, type);
-                            option.put(AllConstants.PARENT_ENTITY_ID, jsonObject.getString(OPENMRS_ENTITY_ID));
-                            option.put(KEY, jsonObject.getString(KEY));
-                            if (CONCEPT.equals(entity)) {
-                                // For options with concepts create an observation for each
-                                createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
-                            } else {
-                                optionValues.add(option.optString(AllConstants.TEXT));
+                        if (!optionValue) {
+                            continue;
+                        }
+                        if (CONCEPT.equals(entity)) {
+
+                            if (shouldBeCombined) {
+                                String optionKey = option.optString(KEY);
+                                String optionsOpenmrsEntityId = option.optString(OPENMRS_ENTITY_ID);
+                                optionValues.add(optionKey);
+                                optionEntityIds.add(optionsOpenmrsEntityId);
+                                continue;
                             }
+                            // For options with concepts create an observation for each
+                            option.put(AllConstants.TYPE, type);
+                            option.put(AllConstants.PARENT_ENTITY_ID, fieldsOpenmrsEntityId);
+                            option.put(KEY, fieldKey);
+
+                            createObservation(e, option, String.valueOf(option.getBoolean(VALUE)));
+                        } else {
+                            String optionText = option.optString(AllConstants.TEXT);
+                            optionValues.add(optionText);
+                            optionKeyVals.put(option.optString(KEY), optionText);
                         }
                     }
                     if (!optionValues.isEmpty()) {
-                        // For options without concepts combine the values into one observation
-                        createObservation(e, jsonObject, optionValues);
+                        if (CONCEPT.equals(entity) && shouldBeCombined) {
+                            e.addObs(new Obs(CONCEPT, AllConstants.CHECK_BOX, fieldsOpenmrsEntityId, fieldOpenmrsEntityParent, optionEntityIds, optionValues, null,
+                                    fieldKey));
+                        } else {
+                            // For options without concepts combine the values into one observation
+                            createObservation(e, jsonObject, optionKeyVals, optionValues);
+                        }
                     }
                 }
             } catch (JSONException e1) {
                 Timber.e(e1);
             }
+        } else if (AllConstants.GPS.equals(type)) {
+            createGpsObservation(e, jsonObject, value);
         } else {
             createObservation(e, jsonObject, value);
         }
+    }
+
+    private static void createGpsObservation(Event e, JSONObject jsonObject, String value) {
+        createObservation(e, jsonObject, value);
+        if (StringUtils.isNotBlank(value)) {
+            String[] valueArr = value.split(" ");
+            String formSubmissionFieldPrefix = getString(jsonObject, KEY);
+            String[] gpsProperties = new String[]{
+                    AllConstants.GpsConstants.LATITUDE, AllConstants.GpsConstants.LONGITUDE,
+                    AllConstants.GpsConstants.ALTITUDE, AllConstants.GpsConstants.ACCURACY};
+            for (int i = 0; i < valueArr.length; i++) {
+                addGpsObs(e, formSubmissionFieldPrefix, gpsProperties[i], valueArr[i]);
+            }
+        }
+    }
+
+    private static void addGpsObs(Event e, String formSubmissionFieldPrefix, String formSubmissionFieldSuffix, String value) {
+        addObs(e, getGpsFormSubmissionField(formSubmissionFieldPrefix, formSubmissionFieldSuffix), AllConstants.TEXT, Collections.singletonList(value));
+    }
+
+    @NotNull
+    private static String getGpsFormSubmissionField(String formSubmissionFieldPrefix, String suffix) {
+        return formSubmissionFieldPrefix + "_" + suffix;
+    }
+
+    private static void addObs(Event e, String formSubmissionField, String text, List<Object> strings) {
+        e.addObs(new Obs("formsubmissionField", text, formSubmissionField, "",
+                strings, new ArrayList<>(), null, formSubmissionField));
     }
 
     private static void createObservation(Event e, JSONObject jsonObject, String value) {
@@ -516,13 +575,14 @@ public class JsonFormUtils {
     }
 
     /**
-     * This method creates an observation with single or multiple values combined
+     * This method creates an observation with single or multiple keys and values combined
      *
-     * @param e          The event that the observation is added to
-     * @param jsonObject The JSONObject representing the checkbox values
-     * @param vall       A list of option values to be added to the observation
+     * @param e           The event that the observation is added to
+     * @param jsonObject  The JSONObject representing the checkbox values
+     * @param keyValPairs A list of option keys to be added to the observation
+     * @param values      A list of option values to be added to the observation
      */
-    private static void createObservation(Event e, JSONObject jsonObject, List<Object> vall) {
+    private static void createObservation(Event e, JSONObject jsonObject, Map<String, Object> keyValPairs, List<Object> values) {
         String formSubmissionField = jsonObject.optString(KEY);
         String dataType = jsonObject.optString(OPENMRS_DATA_TYPE);
         if (StringUtils.isBlank(dataType)) {
@@ -530,8 +590,8 @@ public class JsonFormUtils {
         }
 
         e.addObs(new Obs("formsubmissionField", dataType, formSubmissionField,
-                "", vall, new ArrayList<>(), null, formSubmissionField,
-                jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)));
+                "", values, new ArrayList<>(), null, formSubmissionField,
+                jsonObject.optBoolean(SAVE_OBS_AS_ARRAY)).withKeyValPairs(keyValPairs));
     }
 
 
@@ -588,7 +648,7 @@ public class JsonFormUtils {
         String fingerprintOption = getString(jsonObject, FINGERPRINT_OPTION);
 
         if (key.equals(FINGERPRINT_KEY)
-                && fingerprintOption.equals(FINGERPRINT_OPTION_REGISTER)){
+                && fingerprintOption.equals(FINGERPRINT_OPTION_REGISTER)) {
 
             pids.put(SIMPRINTS_GUID, value);
 
@@ -1193,11 +1253,11 @@ public class JsonFormUtils {
         return null;
     }
 
-    private static boolean isBlankJsonArray(JSONArray jsonArray) {
+    public static boolean isBlankJsonArray(JSONArray jsonArray) {
         return jsonArray == null || jsonArray.length() == 0;
     }
 
-    private static boolean isBlankJsonObject(JSONObject jsonObject) {
+    public static boolean isBlankJsonObject(JSONObject jsonObject) {
         return jsonObject == null || jsonObject.length() == 0;
     }
 }

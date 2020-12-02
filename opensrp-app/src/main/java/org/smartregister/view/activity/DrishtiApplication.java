@@ -2,11 +2,12 @@ package org.smartregister.view.activity;
 
 import android.app.Application;
 import android.os.Build;
-import android.support.annotation.NonNull;
-import android.support.multidex.MultiDex;
-
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.multidex.MultiDex;
 import net.sqlcipher.database.SQLiteDatabase;
 
+import org.json.JSONObject;
 import org.smartregister.AllConstants;
 import org.smartregister.BuildConfig;
 import org.smartregister.Context;
@@ -15,8 +16,10 @@ import org.smartregister.R;
 import org.smartregister.repository.DrishtiRepository;
 import org.smartregister.repository.Repository;
 import org.smartregister.sync.ClientProcessorForJava;
+import org.smartregister.sync.P2PClassifier;
 import org.smartregister.util.BitmapImageCache;
 import org.smartregister.util.CrashLyticsTree;
+import org.smartregister.util.CredentialsHelper;
 import org.smartregister.util.OpenSRPImageLoader;
 
 import java.io.File;
@@ -28,18 +31,24 @@ import timber.log.Timber;
 import static org.smartregister.util.Log.logError;
 
 public abstract class DrishtiApplication extends Application {
-    private static final String TAG = "DrishtiApplication";
+
     protected static DrishtiApplication mInstance;
     private static BitmapImageCache memoryImageCache;
     private static OpenSRPImageLoader cachedImageLoader;
     protected Locale locale = null;
     protected Context context;
     protected Repository repository;
-    private String password;
+    private byte[] password;
     private String username;
+    private static CredentialsHelper credentialsHelper;
 
     public static synchronized <X extends DrishtiApplication> X getInstance() {
         return (X) mInstance;
+    }
+
+    @Nullable
+    public P2PClassifier<JSONObject> getP2PClassifier() {
+        return null;
     }
 
     public static BitmapImageCache getMemoryCacheInstance() {
@@ -101,26 +110,33 @@ public abstract class DrishtiApplication extends Application {
     }
 
     public Repository getRepository() {
-        ArrayList<DrishtiRepository> drishtireposotorylist = CoreLibrary.getInstance().context()
-                .sharedRepositories();
-        DrishtiRepository[] drishtireposotoryarray = drishtireposotorylist
-                .toArray(new DrishtiRepository[drishtireposotorylist.size()]);
+        ArrayList<DrishtiRepository> drishtiRepositoryList = CoreLibrary.getInstance().context().sharedRepositories();
+        DrishtiRepository[] drishtiRepositoryArray = drishtiRepositoryList.toArray(new DrishtiRepository[drishtiRepositoryList.size()]);
         if (repository == null) {
-            repository = new Repository(getInstance().getApplicationContext(), null,
-                    drishtireposotoryarray);
+            repository = new Repository(getInstance().getApplicationContext(), null, drishtiRepositoryArray);
         }
         return repository;
     }
 
-    public String getPassword() {
-        if (password == null) {
-            String username = context.userService().getAllSharedPreferences().fetchRegisteredANM();
-            password = context.userService().getGroupId(username);
+    public CredentialsHelper credentialsProvider() {
+
+        if (credentialsHelper == null) {
+            credentialsHelper = new CredentialsHelper(context);
         }
+
+        return credentialsHelper;
+    }
+
+    public final byte[] getPassword() {
+
+        if (password == null) {
+            password = credentialsProvider().getCredentials(getUsername(), CredentialsHelper.CREDENTIALS_TYPE.DB_AUTH);
+        }
+
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(byte[] password) {
         this.password = password;
     }
 
@@ -154,4 +170,5 @@ public abstract class DrishtiApplication extends Application {
     public Context getContext() {
         return context;
     }
+
 }

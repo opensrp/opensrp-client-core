@@ -1,6 +1,7 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
+import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -11,10 +12,15 @@ import net.sqlcipher.database.SQLiteDatabase;
 import org.apache.commons.lang3.StringUtils;
 import org.smartregister.domain.Location;
 import org.smartregister.domain.LocationProperty;
+import org.smartregister.domain.LocationTag;
+import org.smartregister.domain.PhysicalLocation;
+import org.smartregister.pathevaluator.dao.LocationDao;
 import org.smartregister.util.PropertiesConverter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import timber.log.Timber;
 
@@ -35,7 +41,7 @@ public class LocationRepository extends BaseRepository {
 
     protected static final String LOCATION_TABLE = "location";
 
-    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME,GEOJSON};
+    protected static final String[] COLUMNS = new String[]{ID, UUID, PARENT_ID, NAME, GEOJSON};
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + LOCATION_TABLE + " (" +
@@ -67,9 +73,19 @@ public class LocationRepository extends BaseRepository {
         contentValues.put(PARENT_ID, location.getProperties().getParentId());
         contentValues.put(NAME, location.getProperties().getName());
         contentValues.put(GEOJSON, gson.toJson(location));
-        contentValues.put(SYNC_STATUS, location.getSyncStatus() );
+        contentValues.put(SYNC_STATUS, location.getSyncStatus());
         getWritableDatabase().replace(getLocationTableName(), null, contentValues);
+    }
 
+    /**
+     * Deletes jurisdiction locations which a user no longer has access to
+     *
+     * @param locationIdentifiers the set of jurisdiction identifiers to delete
+     */
+    public void deleteLocations(@NonNull Set<String> locationIdentifiers) {
+        getWritableDatabase().delete(LOCATION_TABLE,
+                String.format("%s IN (%s)", ID, StringUtils.repeat("?", ",", locationIdentifiers.size())),
+                locationIdentifiers.toArray(new String[]{}));
     }
 
     public List<Location> getAllLocations() {
@@ -109,9 +125,13 @@ public class LocationRepository extends BaseRepository {
     }
 
     public Location getLocationById(String id) {
+        return getLocationById(id, getLocationTableName());
+    }
+
+    public Location getLocationById(String id, String tableName) {
         Cursor cursor = null;
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName() +
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + tableName +
                     " WHERE " + ID + " =?", new String[]{id});
             if (cursor.moveToFirst()) {
                 return readCursor(cursor);
@@ -145,10 +165,14 @@ public class LocationRepository extends BaseRepository {
     }
 
     public List<Location> getLocationsByParentId(String parentId) {
+        return getLocationsByParentId(parentId, getLocationTableName());
+    }
+
+    public List<Location> getLocationsByParentId(String parentId, String tableName) {
         Cursor cursor = null;
         List<Location> locations = new ArrayList<>();
         try {
-            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + getLocationTableName() +
+            cursor = getReadableDatabase().rawQuery("SELECT * FROM " + tableName +
                     " WHERE " + PARENT_ID + " =?", new String[]{parentId});
             while (cursor.moveToNext()) {
                 locations.add(readCursor(cursor));
@@ -162,7 +186,6 @@ public class LocationRepository extends BaseRepository {
         }
         return locations;
     }
-
 
     public Location getLocationByName(String name) {
         Cursor cursor = null;
@@ -196,7 +219,7 @@ public class LocationRepository extends BaseRepository {
      * Get a List of locations that either match or don't match the list of ids provided
      * depending on value of the inclusive flag
      *
-     * @param ids list of location ids
+     * @param ids       list of location ids
      * @param inclusive flag that determines whether the list of locations returned
      *                  should include the locations whose ids match the params provided
      *                  or exclude them
@@ -225,7 +248,6 @@ public class LocationRepository extends BaseRepository {
                 cursor.close();
         }
         return locations;
-
     }
 
     protected Location readCursor(Cursor cursor) {
@@ -261,6 +283,23 @@ public class LocationRepository extends BaseRepository {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Get a List of locations that match provided tag name
+     *
+     * @param tagName Tag name
+     * @return List of locations
+     */
+    public List<Location> getLocationsByTagName(String tagName) {
+        LocationTagRepository locationTagRepository = new LocationTagRepository();
+        List<LocationTag> locationTags = locationTagRepository.getLocationTagsByTagName(tagName);
+
+        List<String> locationIds = locationTags.stream()
+                .map(LocationTag::getLocationId)
+                .collect(Collectors.toList());
+
+        return getLocationsByIds(locationIds);
     }
 
 }

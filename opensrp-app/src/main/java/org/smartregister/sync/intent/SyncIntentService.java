@@ -2,8 +2,9 @@ package org.smartregister.sync.intent;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.IntRange;
-import android.support.annotation.NonNull;
+import androidx.annotation.IntRange;
+import androidx.annotation.NonNull;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.util.Pair;
 
 import com.google.firebase.perf.FirebasePerformance;
@@ -20,14 +21,18 @@ import org.smartregister.R;
 import org.smartregister.SyncConfiguration;
 import org.smartregister.domain.FetchStatus;
 import org.smartregister.domain.Response;
+import org.smartregister.domain.SyncEntity;
+import org.smartregister.domain.SyncProgress;
 import org.smartregister.domain.db.EventClient;
 import org.smartregister.receiver.SyncStatusBroadcastReceiver;
 import org.smartregister.repository.AllSharedPreferences;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
 import org.smartregister.sync.helper.ECSyncHelper;
+import org.smartregister.sync.helper.ValidateAssignmentHelper;
 import org.smartregister.util.NetworkUtils;
 import org.smartregister.util.SyncUtils;
+import org.smartregister.util.Utils;
 import org.smartregister.view.activity.DrishtiApplication;
 
 import java.text.MessageFormat;
@@ -48,7 +53,7 @@ public class SyncIntentService extends BaseSyncIntentService {
     public static final String SYNC_URL = "/rest/event/sync";
     protected static final int EVENT_PULL_LIMIT = 250;
     protected static final int EVENT_PUSH_LIMIT = 50;
-    private static final String ADD_URL = "/rest/event/add";
+    private static final String ADD_URL = "rest/event/add";
     private Context context;
     private HTTPAgent httpAgent;
     private SyncUtils syncUtils;
@@ -57,11 +62,15 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     private AllSharedPreferences allSharedPreferences = CoreLibrary.getInstance().context().allSharedPreferences();
 
+    private ValidateAssignmentHelper validateAssignmentHelper;
+    private long totalRecords;
+    private int fetchedRecords = 0;
+
     public SyncIntentService() {
         super("SyncIntentService");
     }
 
-    public SyncIntentService(String name){
+    public SyncIntentService(String name) {
         super(name);
     }
 
@@ -72,6 +81,7 @@ public class SyncIntentService extends BaseSyncIntentService {
         eventSyncTrace = FirebasePerformance.getInstance().newTrace(EVENT_SYNC);
         String providerId = allSharedPreferences.fetchRegisteredANM();
         team = allSharedPreferences.fetchDefaultTeam(providerId);
+        validateAssignmentHelper = new ValidateAssignmentHelper(syncUtils);
     }
 
     @Override
@@ -123,10 +133,10 @@ public class SyncIntentService extends BaseSyncIntentService {
     }
 
     protected void pullECFromServer() {
-        fetchRetry(0);
+        fetchRetry(0, true);
     }
 
-    private synchronized void fetchRetry(final int count) {
+    private synchronized void fetchRetry(final int count, boolean returnCount) {
         try {
             SyncConfiguration configs = CoreLibrary.getInstance().getSyncConfiguration();
             if (configs.getSyncFilterParam() == null || StringUtils.isBlank(configs.getSyncFilterValue())) {
@@ -135,17 +145,14 @@ public class SyncIntentService extends BaseSyncIntentService {
             }
 
             final ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
-            String baseUrl = CoreLibrary.getInstance().context().
-                    configuration().dristhiBaseURL();
-            if (baseUrl.endsWith("/")) {
-                baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
-            }
+            String baseUrl = getFormattedBaseUrl();
 
             Long lastSyncDatetime = ecSyncUpdater.getLastSyncTimeStamp();
             Timber.i("LAST SYNC DT %s", new DateTime(lastSyncDatetime));
 
             if (httpAgent == null) {
                 complete(FetchStatus.fetchedFailed);
+                return;
             }
 
             startEventTrace(FETCH, 0);
@@ -157,6 +164,7 @@ public class SyncIntentService extends BaseSyncIntentService {
                 syncParams.put(configs.getSyncFilterParam().value(), configs.getSyncFilterValue());
                 syncParams.put("serverVersion", lastSyncDatetime);
                 syncParams.put("limit", getEventPullLimit());
+                syncParams.put(AllConstants.RETURN_COUNT, returnCount);
                 resp = httpAgent.postWithJsonResponse(url, syncParams.toString());
             } else {
                 url += "?" + configs.getSyncFilterParam().value() + "=" + configs.getSyncFilterValue() + "&serverVersion=" + lastSyncDatetime + "&limit=" + getEventPullLimit();
@@ -173,52 +181,65 @@ public class SyncIntentService extends BaseSyncIntentService {
             if (resp.isTimeoutError()) {
                 FetchStatus.fetchedFailed.setDisplayValue(resp.status().displayValue());
                 complete(FetchStatus.fetchedFailed);
+                return;
             }
 
             if (resp.isFailure() && !resp.isUrlError() && !resp.isTimeoutError()) {
                 fetchFailed(count);
-            }
-            int eCount;
-            JSONObject jsonObject = new JSONObject();
-            if (resp.payload() == null) {
-                eCount = 0;
-            } else {
-                jsonObject = new JSONObject((String) resp.payload());
-                eCount = fetchNumberOfEvents(jsonObject);
-                Timber.i("Parse Network Event Count: %s", eCount);
+                return;
             }
 
-            if (eCount == 0) {
-                complete(FetchStatus.nothingFetched);
-            } else if (eCount < 0) {
-                fetchFailed(count);
-            } else {
-                final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
-                long lastServerVersion = serverVersionPair.second - 1;
-                if (eCount < getEventPullLimit()) {
-                    lastServerVersion = serverVersionPair.second;
-                }
-
-                boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
-                //update sync time if all event client is save.
-                if (isSaved) {
-                    processClient(serverVersionPair);
-                    ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
-                }
-                fetchRetry(0);
+            if (returnCount) {
+                totalRecords = resp.getTotalRecords();
             }
-            eventSyncTrace.putAttribute(COUNT, String.valueOf(eCount));
-            eventSyncTrace.stop();
+
+            processFetchedEvents(resp, ecSyncUpdater, count);
+
         } catch (Exception e) {
             Timber.e(e, "Fetch Retry Exception:  %s", e.getMessage());
             fetchFailed(count);
         }
     }
 
+    private void processFetchedEvents(Response resp, ECSyncHelper ecSyncUpdater, final int count) throws JSONException {
+        int eCount;
+        JSONObject jsonObject = new JSONObject();
+        if (resp.payload() == null) {
+            eCount = 0;
+        } else {
+            jsonObject = new JSONObject((String) resp.payload());
+            eCount = fetchNumberOfEvents(jsonObject);
+            Timber.i("Parse Network Event Count: %s", eCount);
+        }
+
+        if (eCount == 0) {
+            complete(FetchStatus.nothingFetched);
+        } else if (eCount < 0) {
+            fetchFailed(count);
+        } else {
+            final Pair<Long, Long> serverVersionPair = getMinMaxServerVersions(jsonObject);
+            long lastServerVersion = serverVersionPair.second - 1;
+            if (eCount < getEventPullLimit()) {
+                lastServerVersion = serverVersionPair.second;
+            }
+
+            boolean isSaved = ecSyncUpdater.saveAllClientsAndEvents(jsonObject);
+            //update sync time if all event client is save.
+            if (isSaved) {
+                processClient(serverVersionPair);
+                ecSyncUpdater.updateLastSyncTimeStamp(lastServerVersion);
+            }
+            sendSyncProgressBroadcast(eCount);
+            fetchRetry(0, false);
+            eventSyncTrace.putAttribute(COUNT, String.valueOf(eCount));
+            eventSyncTrace.stop();
+        }
+    }
+
     public void fetchFailed(int count) {
         if (count < CoreLibrary.getInstance().getSyncConfiguration().getSyncMaxRetries()) {
             int newCount = count + 1;
-            fetchRetry(newCount);
+            fetchRetry(newCount, false);
         } else {
             complete(FetchStatus.fetchedFailed);
         }
@@ -237,13 +258,14 @@ public class SyncIntentService extends BaseSyncIntentService {
 
     // PUSH TO SERVER
     private boolean pushToServer() {
-        return pushECToServer();
+        return pushECToServer(CoreLibrary.getInstance().context().getEventClientRepository()) &&
+                (!CoreLibrary.getInstance().context().hasForeignEvents() || pushECToServer(CoreLibrary.getInstance().context().getForeignEventClientRepository()));
     }
 
-    private boolean pushECToServer() {
+    private boolean pushECToServer(EventClientRepository db) {
         boolean isSuccessfulPushSync = true;
 
-        EventClientRepository db = CoreLibrary.getInstance().context().getEventClientRepository();
+        // push foreign events to server
         int totalEventCount = db.getUnSyncedEventsCount();
         int eventsUploadedCount = 0;
 
@@ -321,13 +343,15 @@ public class SyncIntentService extends BaseSyncIntentService {
         if (!fetchStatus.equals(FetchStatus.noConnection) && !fetchStatus.equals(FetchStatus.fetchedFailed)) {
             ECSyncHelper ecSyncUpdater = ECSyncHelper.getInstance(context);
             ecSyncUpdater.updateLastCheckTimeStamp(new Date().getTime());
+            validateAssignmentHelper.validateUserAssignment();
+
         }
 
     }
 
-    protected void updateProgress(@IntRange(from=0) int progress, @IntRange(from=1) int total) {
+    protected void updateProgress(@IntRange(from = 0) int progress, @IntRange(from = 1) int total) {
         FetchStatus uploadProgressStatus = FetchStatus.fetchProgress;
-        uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress *100)/total));
+        uploadProgressStatus.setDisplayValue(String.format(getString(R.string.sync_upload_progress_float), (progress * 100) / total));
         sendSyncStatusBroadcastMessage(uploadProgressStatus);
     }
 
@@ -378,6 +402,18 @@ public class SyncIntentService extends BaseSyncIntentService {
         return count;
     }
 
+    protected void sendSyncProgressBroadcast(int eventCount) {
+        fetchedRecords = fetchedRecords + eventCount;
+        SyncProgress syncProgress = new SyncProgress();
+        syncProgress.setSyncEntity(SyncEntity.EVENTS);
+        syncProgress.setTotalRecords(totalRecords);
+        syncProgress.setPercentageSynced(Utils.calculatePercentage(totalRecords, fetchedRecords));
+        Intent intent = new Intent();
+        intent.setAction(AllConstants.SyncProgressConstants.ACTION_SYNC_PROGRESS);
+        intent.putExtra(AllConstants.SyncProgressConstants.SYNC_PROGRESS_DATA, syncProgress);
+        LocalBroadcastManager.getInstance(context).sendBroadcast(intent);
+    }
+
     public int getEventPullLimit() {
         return EVENT_PULL_LIMIT;
     }
@@ -389,4 +425,15 @@ public class SyncIntentService extends BaseSyncIntentService {
     public Context getContext() {
         return this.context;
     }
+
+    @NonNull
+    protected String getFormattedBaseUrl() {
+        String baseUrl = CoreLibrary.getInstance().context().
+                configuration().dristhiBaseURL();
+        if (baseUrl.endsWith("/")) {
+            baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf("/"));
+        }
+        return baseUrl;
+    }
+
 }

@@ -1,9 +1,9 @@
 package org.smartregister.repository;
 
 import android.content.ContentValues;
-import android.support.annotation.Nullable;
 
-import com.google.gson.Gson;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import net.sqlcipher.Cursor;
 import net.sqlcipher.database.SQLiteDatabase;
@@ -13,12 +13,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.smartregister.domain.Geometry;
 import org.smartregister.domain.Location;
-import org.smartregister.domain.db.Client;
 import org.smartregister.p2p.sync.data.JsonData;
 import org.smartregister.repository.helper.MappingHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.smartregister.AllConstants.ROWID;
 
@@ -32,11 +32,11 @@ import timber.log.Timber;
  */
 public class StructureRepository extends LocationRepository {
 
-    protected static String STRUCTURE_TABLE = "structure";
-    private static final String SYNC_STATUS = "sync_status";
+    public static String STRUCTURE_TABLE = "structure";
+    protected static final String SYNC_STATUS = "sync_status";
 
-    private static final String LATITUDE = "latitude";
-    private static final String LONGITUDE = "longitude";
+    protected static final String LATITUDE = "latitude";
+    protected static final String LONGITUDE = "longitude";
 
     private static final String CREATE_LOCATION_TABLE =
             "CREATE TABLE " + STRUCTURE_TABLE + " (" +
@@ -57,6 +57,11 @@ public class StructureRepository extends LocationRepository {
     public static void createTable(SQLiteDatabase database) {
         database.execSQL(CREATE_LOCATION_TABLE);
         database.execSQL(CREATE_LOCATION_PARENT_INDEX);
+    }
+
+    @Override
+    public void deleteLocations(@NonNull Set<String> locationIdentifiers) {
+        throw new UnsupportedOperationException("deleteLocations not supported for Structures");
     }
 
     @Override
@@ -159,20 +164,22 @@ public class StructureRepository extends LocationRepository {
      * Fetches {@link Location}s whose rowid > #lastRowId up to the #limit provided.
      *
      * @param lastRowId
+     * @param parentLocationId
      * @return JsonData which contains a {@link JSONArray} and the maximum row id in the array
-     * of {@link Client}s returned or {@code null} if no records match the conditions or an exception occurred.
+     * of {@link Location}s returned or {@code null} if no records match the conditions or an exception occurred.
      * This enables this method to be called again for the consequent batches
      */
     @Nullable
-    public JsonData getStructures(long lastRowId, int limit) {
+    public JsonData getStructures(long lastRowId, int limit, String parentLocationId) {
         JsonData jsonData = null;
         long maxRowId = 0;
-
+        String locationFilter = parentLocationId != null ? String.format(" %s =? AND ", PARENT_ID) : "";
         String query = "SELECT "
                 + ROWID
-                +",* FROM "
+                + ",* FROM "
                 + STRUCTURE_TABLE
                 + " WHERE "
+                + locationFilter
                 + ROWID
                 + " > ? "
                 + " ORDER BY " + ROWID + " ASC LIMIT ?";
@@ -181,7 +188,7 @@ public class StructureRepository extends LocationRepository {
         JSONArray jsonArray = new JSONArray();
 
         try {
-            cursor = getWritableDatabase().rawQuery(query, new Object[]{lastRowId, limit});
+            cursor = getWritableDatabase().rawQuery(query, parentLocationId != null ? new Object[]{parentLocationId, lastRowId, limit} : new Object[]{lastRowId, limit});
 
 
             while (cursor.moveToNext()) {
