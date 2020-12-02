@@ -94,7 +94,7 @@ public class ValidateAssignmentHelper extends BaseHelper {
                 Set<String> existingPlans = planDefinitionRepository.findAllPlanDefinitionIds();
                 boolean newAssignments = hasNewAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions);
                 UserAssignmentDTO removedAssignments = processRemovedAssignments(currentUserAssignment, existingOrganizations, existingJurisdictions, existingPlans);
-                if (newAssignments && !existingPlans.isEmpty()) {
+                if (newAssignments) {
                     logoff(R.string.account_new_assignment_logged_off);
                     resetSync();
                 } else if (removedAssignments.isRemoved()) {
@@ -175,6 +175,14 @@ public class ValidateAssignmentHelper extends BaseHelper {
 
 
     private boolean hasNewAssignments(UserAssignmentDTO currentUserAssignment, Set<Long> existingOrganizations, Set<String> existingJurisdictions) {
+        if (existingJurisdictions.isEmpty()) {
+            LocationTree locationTree = gson.fromJson(settingsRepository.fetchANMLocation(), LocationTree.class);
+            for (String location : currentUserAssignment.getJurisdictions()) {
+                if (!locationTree.hasLocation(location)) return true;
+            }
+            return false;
+        }
+
         return !existingOrganizations.containsAll(currentUserAssignment.getOrganizationIds()) || !existingJurisdictions.containsAll(currentUserAssignment.getJurisdictions());
     }
 
