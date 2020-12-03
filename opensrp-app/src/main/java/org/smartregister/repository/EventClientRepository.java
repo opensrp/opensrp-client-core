@@ -1488,6 +1488,27 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+
+    public List<Client> fetchClientByBaseEntityIds(Set<String> baseEntityIds) {
+        List<Client> clients = new ArrayList<>();
+        try (Cursor cursor = getWritableDatabase().rawQuery("SELECT "
+                + client_column.json
+                + " FROM "
+                + clientTable.name()
+                + " WHERE "
+                + client_column.baseEntityId.name()
+                + " in  (" + StringUtils.repeat("?", baseEntityIds.size()) + ")", baseEntityIds.toArray(new String[0]))) {
+            while (cursor.moveToNext()) {
+                String jsonString = cursor.getString(0);
+                jsonString = jsonString.replaceAll("'", "");
+                clients.add(convert(jsonString, Client.class));
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return clients;
+    }
+
     public JSONObject getUnSyncedClientByBaseEntityId(String baseEntityId) {
         Cursor cursor = null;
         try {
