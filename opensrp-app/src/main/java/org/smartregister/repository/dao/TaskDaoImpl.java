@@ -12,6 +12,7 @@ import org.smartregister.CoreLibrary;
 import org.smartregister.converters.TaskConverter;
 import org.smartregister.pathevaluator.PathEvaluatorLibrary;
 import org.smartregister.pathevaluator.dao.TaskDao;
+import org.smartregister.repository.BaseRepository;
 import org.smartregister.repository.TaskNotesRepository;
 import org.smartregister.repository.TaskRepository;
 
@@ -53,6 +54,7 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
                 task.setStructureId(task.getForEntity());
             }
         }
+        task.setSyncStatus(BaseRepository.TYPE_Created);
         addOrUpdate(task);
         Intent taskGeneratedIntent = new Intent(TASK_GENERATED_EVENT);
         taskGeneratedIntent.putExtra(TASK_GENERATED, task);
@@ -73,7 +75,9 @@ public class TaskDaoImpl extends TaskRepository implements TaskDao {
     }
 
     @Override
-    public org.smartregister.domain.Task  updateTask(org.smartregister.domain.Task task) {
-       return addOrUpdate(task, true);
+    public org.smartregister.domain.Task updateTask(org.smartregister.domain.Task task) {
+        task.setSyncStatus(BaseRepository.TYPE_Created);
+        addOrUpdate(task, true);
+        return task;
     }
 }

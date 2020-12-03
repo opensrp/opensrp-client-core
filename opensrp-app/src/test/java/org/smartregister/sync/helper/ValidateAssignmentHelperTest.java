@@ -189,7 +189,43 @@ public class ValidateAssignmentHelperTest extends BaseUnitTest {
 
 
     @Test
-    public void testValidateUserAssignmentShouldLogoffAndResetSync() throws Exception {
+    public void testValidateUserAssignmentWithDownloadedLocationsShouldLogoffAndResetSync() throws Exception {
+
+        List<String> results = new ArrayList<>(Collections.singleton("67c5e0a4-132f-457b-b573-9abf5ec95c75"));
+        doReturn(results).when(locationRepository).getAllLocationIds();
+
+        when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
+        when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
+        validateAssignmentHelper.validateUserAssignment();
+
+        verify(allSharedPreferences).getBooleanPreference(IS_KEYCLOAK_CONFIGURED);
+        verify(httpAgent).fetch(anyString());
+        verify(planDefinitionRepository).findAllPlanDefinitionIds();
+        verify(locationRepository).getAllLocationIds();
+        verify(userService).fetchOrganizations();
+        verify(userService).hasSessionExpired();
+
+
+        verify(syncUtils).logoutUser(R.string.account_new_assignment_logged_off);
+
+        verify(allSharedPreferences).savePreference(LOCATION_LAST_SYNC_DATE, "0");
+        verify(allSharedPreferences).savePreference(STRUCTURES_LAST_SYNC_DATE, "0");
+        verify(allSharedPreferences).savePreference(PLAN_LAST_SYNC_DATE, "0");
+        verify(allSharedPreferences).savePreference(TASK_LAST_SYNC_DATE, "0");
+        verify(allSharedPreferences).saveLastSyncDate(0);
+
+        verifyNoMoreInteractions(planDefinitionRepository);
+        verifyNoMoreInteractions(userService);
+        verifyNoMoreInteractions(locationRepository);
+
+    }
+
+
+    @Test
+    public void testValidateUserAssignmentWithAuthenticationLocationsShouldLogoffAndResetSync() throws Exception {
+        String anmLocation = "{\"locationsHierarchy\":{\"map\":{\"dfb6293c-5a9a-4b1c-87b1-5f92f3d41d68\":{\"children\":{\"860ce011-9109-4814-b81d-5bfb0977c195\":{\"children\":{\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\":{\"children\":{\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\":{\"children\":{\"8162ed2e-6de0-4238-8d56-429145d1dd2c\":{\"children\":{\"d934eeb8-9762-4ce3-92d8-def05676ac1a\":{\"id\":\"d934eeb8-9762-4ce3-92d8-def05676ac1a\",\"label\":\"Village 21\",\"node\":{\"attributes\":{\"geographicLevel\":0.0},\"locationId\":\"d934eeb8-9762-4ce3-92d8-def05676ac1a\",\"name\":\"Village 21\",\"parentLocation\":{\"locationId\":\"8162ed2e-6de0-4238-8d56-429145d1dd2c\",\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"tags\":[\"VILLAGE/COMMUNAUTE\"],\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"parent\":\"8162ed2e-6de0-4238-8d56-429145d1dd2c\"}},\"id\":\"8162ed2e-6de0-4238-8d56-429145d1dd2c\",\"label\":\"CAC1\",\"node\":{\"attributes\":{\"geographicLevel\":0.0},\"locationId\":\"8162ed2e-6de0-4238-8d56-429145d1dd2c\",\"name\":\"CAC1\",\"parentLocation\":{\"locationId\":\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\",\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"tags\":[\"CAC\"],\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"parent\":\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\"}},\"id\":\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\",\"label\":\"Wakam\",\"node\":{\"attributes\":{\"geographicLevel\":0.0},\"locationId\":\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\",\"name\":\"Wakam\",\"parentLocation\":{\"locationId\":\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\",\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"tags\":[\"Aire de Sante\"],\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"parent\":\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\"}},\"id\":\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\",\"label\":\"Wesele\",\"node\":{\"attributes\":{\"geographicLevel\":0.0},\"locationId\":\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\",\"name\":\"Wesele\",\"parentLocation\":{\"locationId\":\"860ce011-9109-4814-b81d-5bfb0977c195\",\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"tags\":[\"Zone de Sante\"],\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"parent\":\"860ce011-9109-4814-b81d-5bfb0977c195\"}},\"id\":\"860ce011-9109-4814-b81d-5bfb0977c195\",\"label\":\"Wagadugu\",\"node\":{\"attributes\":{\"geographicLevel\":0.0},\"locationId\":\"860ce011-9109-4814-b81d-5bfb0977c195\",\"name\":\"Wagadugu\",\"parentLocation\":{\"locationId\":\"dfb6293c-5a9a-4b1c-87b1-5f92f3d41d68\",\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"tags\":[\"Province(DPS)\"],\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"},\"parent\":\"dfb6293c-5a9a-4b1c-87b1-5f92f3d41d68\"}},\"id\":\"dfb6293c-5a9a-4b1c-87b1-5f92f3d41d68\",\"label\":\"Wakanda\",\"node\":{\"attributes\":{\"geographicLevel\":0.0},\"locationId\":\"dfb6293c-5a9a-4b1c-87b1-5f92f3d41d68\",\"name\":\"Wakanda\",\"tags\":[\"Pays\"],\"serverVersion\":0,\"voided\":false,\"type\":\"Location\"}}},\"parentChildren\":{\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\":[\"8162ed2e-6de0-4238-8d56-429145d1dd2c\"],\"dfb6293c-5a9a-4b1c-87b1-5f92f3d41d68\":[\"860ce011-9109-4814-b81d-5bfb0977c195\"],\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\":[\"3ccd757d-b7d3-45ef-853b-2b109d8b9b47\"],\"860ce011-9109-4814-b81d-5bfb0977c195\":[\"9e64d862-f96a-4b8f-b4df-a264bbc920c8\"],\"8162ed2e-6de0-4238-8d56-429145d1dd2c\":[\"d934eeb8-9762-4ce3-92d8-def05676ac1a\"]}}}";
+        doReturn(anmLocation).when(settingsRepository).fetchANMLocation();
+
         when(allSharedPreferences.getBooleanPreference(IS_KEYCLOAK_CONFIGURED)).thenReturn(true);
         when(httpAgent.fetch(anyString())).thenReturn(new Response<>(ResponseStatus.success, gson.toJson(userAssignment)));
         validateAssignmentHelper.validateUserAssignment();
