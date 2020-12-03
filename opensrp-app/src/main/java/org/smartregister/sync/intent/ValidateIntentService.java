@@ -133,7 +133,7 @@ public class ValidateIntentService extends BaseSyncIntentService {
     private Set<String> filterArchivedClients(Set<String> ids) {
         return eventClientRepository.fetchClientByBaseEntityIds(ids)
                 .stream()
-                .filter(c -> c.getDateVoided() != null)
+                .filter(c -> c.getDateVoided() == null)
                 .map(Client::getBaseEntityId)
                 .collect(Collectors.toSet());
     }
@@ -141,8 +141,8 @@ public class ValidateIntentService extends BaseSyncIntentService {
     private Set<String> filterArchivedEvents(Set<String> ids) {
         return eventClientRepository.getEventsByEventIds(ids)
                 .stream()
-                .filter(e -> e.getDateVoided() != null)
-                .map(Event::getId)
+                .filter(e -> e.getDateVoided() == null)
+                .map(Event::getEventId)
                 .collect(Collectors.toSet());
     }
 
