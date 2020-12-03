@@ -381,7 +381,7 @@ public class TaskRepository extends BaseRepository {
     }
 
     public List<Task> getAllUnsynchedCreatedTasks() {
-        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0 ", TASK_TABLE, SYNC_STATUS, SERVER_VERSION,SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
+        return new ArrayList<>(getTasks(String.format("SELECT *  FROM %s WHERE %s =? OR %s IS NULL OR %s = 0", TASK_TABLE, SYNC_STATUS, SERVER_VERSION,SERVER_VERSION), new String[]{BaseRepository.TYPE_Created}));
     }
 
     /**
