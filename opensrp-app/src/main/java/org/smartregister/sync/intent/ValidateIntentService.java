@@ -3,6 +3,8 @@ package org.smartregister.sync.intent;
 import android.content.Context;
 import android.content.Intent;
 
+import com.ibm.fhir.model.resource.Composition;
+
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -11,6 +13,7 @@ import org.smartregister.AllConstants;
 import org.smartregister.CoreLibrary;
 import org.smartregister.R;
 import org.smartregister.domain.Client;
+import org.smartregister.domain.Event;
 import org.smartregister.domain.Response;
 import org.smartregister.repository.EventClientRepository;
 import org.smartregister.service.HTTPAgent;
@@ -103,8 +106,8 @@ public class ValidateIntentService extends BaseSyncIntentService {
 
             if (results.has(AllConstants.KEY.EVENTS)) {
                 JSONArray inValidEvents = results.getJSONArray(AllConstants.KEY.EVENTS);
-                for (int i = 0; i < inValidEvents.length(); i++) {
-                    String inValidEventId = inValidEvents.getString(i);
+                Set<String> inValidEventIds = filterArchivedEvents(extractIds(inValidEvents));
+                for (String inValidEventId : inValidEventIds) {
                     eventIds.remove(inValidEventId);
                     eventClientRepository.markEventValidationStatus(inValidEventId, false);
                 }
@@ -132,6 +135,14 @@ public class ValidateIntentService extends BaseSyncIntentService {
                 .stream()
                 .filter(c -> c.getDateVoided() != null)
                 .map(Client::getBaseEntityId)
+                .collect(Collectors.toSet());
+    }
+
+    private Set<String> filterArchivedEvents(Set<String> ids) {
+        return eventClientRepository.getEventsByEventIds(ids)
+                .stream()
+                .filter(e -> e.getDateVoided() != null)
+                .map(Event::getId)
                 .collect(Collectors.toSet());
     }
 

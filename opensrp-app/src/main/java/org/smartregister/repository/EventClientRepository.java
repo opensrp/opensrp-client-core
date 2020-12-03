@@ -1409,6 +1409,27 @@ public class EventClientRepository extends BaseRepository {
         return null;
     }
 
+    public List<Event> getEventsByEventIds(Set<String> eventIds) {
+        List<Event> events = new ArrayList<>();
+        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT json FROM "
+                + eventTable.name()
+                + " WHERE "
+                + event_column.eventId.name()
+                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray())) {
+            while (cursor.moveToNext()) {
+                String jsonEventStr = cursor.getString(0);
+
+                jsonEventStr = jsonEventStr.replaceAll("'", "");
+
+                events.add(convert(jsonEventStr, Event.class));
+
+            }
+        } catch (Exception e) {
+            Timber.e(e);
+        }
+        return events;
+    }
+
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
         if (StringUtils.isBlank(formSubmissionId)) {
             return null;
@@ -1497,7 +1518,7 @@ public class EventClientRepository extends BaseRepository {
                 + clientTable.name()
                 + " WHERE "
                 + client_column.baseEntityId.name()
-                + " in  (" + StringUtils.repeat("?", baseEntityIds.size()) + ")", baseEntityIds.toArray(new String[0]))) {
+                + " in  (" + StringUtils.repeat("?", baseEntityIds.size()) + ")", baseEntityIds.toArray())) {
             while (cursor.moveToNext()) {
                 String jsonString = cursor.getString(0);
                 jsonString = jsonString.replaceAll("'", "");
