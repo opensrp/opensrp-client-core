@@ -1410,24 +1410,11 @@ public class EventClientRepository extends BaseRepository {
     }
 
     public List<Event> getEventsByEventIds(Set<String> eventIds) {
-        List<Event> events = new ArrayList<>();
-        try (Cursor cursor = getReadableDatabase().rawQuery("SELECT json FROM "
+        return fetchEvents("SELECT json FROM "
                 + eventTable.name()
                 + " WHERE "
                 + event_column.eventId.name()
-                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray())) {
-            while (cursor.moveToNext()) {
-                String jsonEventStr = cursor.getString(0);
-
-                jsonEventStr = jsonEventStr.replaceAll("'", "");
-
-                events.add(convert(jsonEventStr, Event.class));
-
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return events;
+                + " IN (" + StringUtils.repeat(",", eventIds.size()) + ")", eventIds.toArray(new String[0]));
     }
 
     public JSONObject getEventsByFormSubmissionId(String formSubmissionId) {
@@ -1511,23 +1498,13 @@ public class EventClientRepository extends BaseRepository {
 
 
     public List<Client> fetchClientByBaseEntityIds(Set<String> baseEntityIds) {
-        List<Client> clients = new ArrayList<>();
-        try (Cursor cursor = getWritableDatabase().rawQuery("SELECT "
+        return fetchClients("SELECT "
                 + client_column.json
                 + " FROM "
                 + clientTable.name()
                 + " WHERE "
                 + client_column.baseEntityId.name()
-                + " in  (" + StringUtils.repeat("?", baseEntityIds.size()) + ")", baseEntityIds.toArray())) {
-            while (cursor.moveToNext()) {
-                String jsonString = cursor.getString(0);
-                jsonString = jsonString.replaceAll("'", "");
-                clients.add(convert(jsonString, Client.class));
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        }
-        return clients;
+                + " in  (" + StringUtils.repeat("?", baseEntityIds.size()) + ")", baseEntityIds.toArray(new String[0]));
     }
 
     public JSONObject getUnSyncedClientByBaseEntityId(String baseEntityId) {
