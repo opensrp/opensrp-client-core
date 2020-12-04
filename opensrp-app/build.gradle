@@ -224,7 +224,7 @@ dependencies {
         transitive = true
     }
 
-    api ('org.smartregister:opensrp-plan-evaluator:0.1.6.3-GS-SNAPSHOT'){
+    api ('org.smartregister:opensrp-plan-evaluator:0.1.6.4-GS-SNAPSHOT'){
         transitive = true
     }
 
