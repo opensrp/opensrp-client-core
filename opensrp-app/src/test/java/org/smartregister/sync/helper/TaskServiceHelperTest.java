@@ -13,6 +13,7 @@ import org.powermock.reflect.Whitebox;
 import org.smartregister.AllConstants;
 import org.smartregister.BaseRobolectricUnitTest;
 import org.smartregister.CoreLibrary;
+import org.smartregister.DristhiConfiguration;
 import org.smartregister.domain.Response;
 import org.smartregister.domain.ResponseStatus;
 import org.smartregister.domain.Task;
@@ -57,6 +58,9 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
     @Mock
     private HTTPAgent httpAgent;
 
+    @Mock
+    private DristhiConfiguration configuration;
+
     @Captor
     private ArgumentCaptor<String> stringArgumentCaptor;
 
@@ -72,13 +76,15 @@ public class TaskServiceHelperTest extends BaseRobolectricUnitTest {
 
     @Before
     public void setUp() {
-        getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
-        getInstance().context().allSharedPreferences().savePreference(AllConstants.DRISHTI_BASE_URL, "https://sample-stage.smartregister.org/opensrp");
-        getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
-        taskServiceHelper = new TaskServiceHelper(taskRepository);
         Whitebox.setInternalState(getInstance().context(), "planDefinitionRepository", planDefinitionRepository);
         Whitebox.setInternalState(getInstance().context(), "locationRepository", locationRepository);
         Whitebox.setInternalState(getInstance().context(), "httpAgent", httpAgent);
+        Whitebox.setInternalState(getInstance().context(), "configuration", configuration);
+        when(configuration.dristhiBaseURL()).thenReturn("https://sample-stage.smartregister.org/opensrp");
+        getInstance().context().allSharedPreferences().getPreferences().edit().clear().apply();
+        getInstance().context().allSharedPreferences().savePreference(ANM_IDENTIFIER_PREFERENCE_KEY, "onatest");
+        taskServiceHelper = new TaskServiceHelper(taskRepository);
+
     }
 
     @After
