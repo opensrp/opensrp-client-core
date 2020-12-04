@@ -3,8 +3,6 @@ package org.smartregister.sync.intent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.ibm.fhir.model.resource.Composition;
-
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
