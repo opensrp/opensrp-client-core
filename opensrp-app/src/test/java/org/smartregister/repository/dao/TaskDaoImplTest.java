@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
 import org.powermock.reflect.Whitebox;
@@ -84,5 +85,23 @@ public class TaskDaoImplTest extends BaseUnitTest {
         assertEquals("2018-10-31T0700", javaTimeFormater.format(task.getLastModified().getValue()));
         assertEquals("demouser", task.getOwner().getReference().getValue());
 
+    }
+
+    @Test
+    public void testFindTasksByJurisdiction() {
+        String jurisdictionId = "jurisdiction-id";
+
+
+        String query = "SELECT * FROM task WHERE group_id = ?";
+        when(sqLiteDatabase.rawQuery(query, new Object[]{jurisdictionId})).thenReturn(getCursor());
+        taskDao = Mockito.spy(taskDao);
+
+
+        // Call the method under test
+        List<Task> allTasks = taskDao.findTasksByJurisdiction(jurisdictionId);
+
+        // Perform verifications and assertions
+        verify(taskDao).getTasksByJurisdiction(jurisdictionId);
+        assertEquals(1, allTasks.size());
     }
 }
