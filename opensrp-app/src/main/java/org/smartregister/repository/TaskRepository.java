@@ -678,20 +678,6 @@ public class TaskRepository extends BaseRepository {
     @NonNull
     public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
         String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
-        Cursor cursor = null;
-        Set<Task> taskSet = new HashSet<>();
-        try {
-            cursor = getReadableDatabase().rawQuery(query, new Object[]{jurisdictionId});
-            while (cursor.moveToNext()) {
-                Task task = readCursor(cursor);
-                taskSet.add(task);
-            }
-        } catch (Exception e) {
-            Timber.e(e);
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-        return taskSet;
+        return getTasks(query, new String[]{jurisdictionId});
     }
 }
