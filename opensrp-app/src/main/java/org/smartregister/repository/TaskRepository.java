@@ -674,4 +674,10 @@ public class TaskRepository extends BaseRepository {
 
         return unsyncedRecordsCount;
     }
+
+    @NonNull
+    public Set<Task> getTasksByJurisdiction(@NonNull String jurisdictionId) {
+        String query = "SELECT * FROM " + TASK_TABLE + " WHERE " + GROUP_ID + " = ?";
+        return getTasks(query, new String[]{jurisdictionId});
+    }
 }
