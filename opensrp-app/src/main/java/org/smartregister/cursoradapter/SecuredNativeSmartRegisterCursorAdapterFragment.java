@@ -403,7 +403,7 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
     }
 
     public void refresh() {
-        int textSize = getResources().getDimensionPixelSize(R.dimen.pagination_page_info_size);
+        int textSize = getPaginationInfoTextSize();
         int startIndex = getResources().getString(R.string.str_page_info).indexOf("{");
         pageInfoView.setText(
                 format(getResources().getString(R.string.str_page_info), (getCurrentPageCount()),
@@ -716,5 +716,9 @@ public abstract class SecuredNativeSmartRegisterCursorAdapterFragment extends
         private void clearSearchText() {
             searchView.setText("");
         }
+    }
+
+    protected int getPaginationInfoTextSize() {
+        return getResources().getDimensionPixelSize(R.dimen.pagination_bar_text_size);
     }
 }

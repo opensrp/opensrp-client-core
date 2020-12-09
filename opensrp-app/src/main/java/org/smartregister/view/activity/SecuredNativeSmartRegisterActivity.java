@@ -581,7 +581,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
 
         public void refresh() {
-            int textSize = getResources().getDimensionPixelSize(R.dimen.pagination_page_info_size);
+            int textSize = getPaginationInfoTextSize();
             int startIndex = getResources().getString(R.string.str_page_info).indexOf("{");
             pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
                     (getCurrentPageCount()), (clientsAdapter.pageCount())));
@@ -651,4 +651,7 @@ public abstract class SecuredNativeSmartRegisterActivity extends SecuredActivity
         }
     }
 
+    protected int getPaginationInfoTextSize() {
+        return getResources().getDimensionPixelSize(R.dimen.pagination_bar_text_size);
+    }
 }

@@ -443,7 +443,7 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
         }
 
         public void refresh() {
-            int textSize = getResources().getDimensionPixelSize(R.dimen.pagination_page_info_size);
+            int textSize = getPaginationInfoTextSize();
             int startIndex = getResources().getString(R.string.str_page_info).indexOf("{");
 
             pageInfoView.setText(format(getResources().getString(R.string.str_page_info),
@@ -503,5 +503,9 @@ public abstract class SecuredNativeSmartRegisterFragment extends SecuredFragment
             searchView.setText("");
         }
 
+    }
+
+    protected int getPaginationInfoTextSize() {
+        return getResources().getDimensionPixelSize(R.dimen.pagination_bar_text_size);
     }
 }
